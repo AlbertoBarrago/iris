@@ -1,0 +1,122 @@
+use mailrs_domain::Address;
+use mailrs_gmail::HistoryChange;
+use mailrs_gmail::convert::{history_page, message_meta};
+use mailrs_gmail::model::{HistoryList, Message};
+
+fn addr(name: Option<&str>, email: &str) -> Address {
+    Address {
+        name: name.map(str::to_string),
+        email: email.into(),
+    }
+}
+
+#[test]
+fn metadata_converts_to_domain() {
+    let msg: Message = serde_json::from_str(
+        r#"{
+          "id":"m1","threadId":"t1","labelIds":["INBOX","UNREAD"],"snippet":"Hi &amp; bye",
+          "internalDate":"1700000000000","sizeEstimate":2048,
+          "payload":{"mimeType":"multipart/mixed","headers":[
+            {"name":"From","value":"Ann Lee <ann@example.com>"},
+            {"name":"To","value":"me@example.com, Bob <bob@example.com>"},
+            {"name":"Subject","value":"Hello"},
+            {"name":"Message-Id","value":"<abc@example.com>"}
+          ]}
+        }"#,
+    )
+    .unwrap();
+    let meta = message_meta(&msg, 7);
+    assert_eq!(meta.account_id, 7);
+    assert_eq!(meta.from, Some(addr(Some("Ann Lee"), "ann@example.com")));
+    assert_eq!(meta.to.len(), 2);
+    assert!(meta.cc.is_empty());
+    assert_eq!(meta.subject, "Hello");
+    assert_eq!(meta.rfc822_msgid.as_deref(), Some("<abc@example.com>"));
+    assert_eq!(meta.snippet, "Hi & bye");
+    assert_eq!(meta.date, 1_700_000_000_000);
+    assert!(meta.has_attachments);
+    assert!(meta.is_unread());
+    assert_eq!(meta.list_unsubscribe, None, "no header, no list");
+    assert!(!meta.one_click);
+}
+
+#[test]
+fn the_unsubscribe_headers_come_through_metadata() {
+    let message = |headers: &str| -> Message {
+        serde_json::from_str(&format!(
+            r#"{{"id":"m1","threadId":"t1","payload":{{"headers":[{headers}]}}}}"#
+        ))
+        .unwrap()
+    };
+    let promised = message_meta(
+        &message(
+            r#"{"name":"List-Unsubscribe","value":"  <https://news.example/u/1>  "},
+               {"name":"List-Unsubscribe-Post","value":"List-Unsubscribe=One-Click"}"#,
+        ),
+        1,
+    );
+    assert_eq!(
+        promised.list_unsubscribe.as_deref(),
+        Some("<https://news.example/u/1>"),
+        "the header arrives trimmed"
+    );
+    assert!(promised.one_click);
+
+    let page = message_meta(
+        &message(r#"{"name":"List-Unsubscribe","value":"<https://news.example/u/2>"}"#),
+        1,
+    );
+    assert_eq!(
+        page.list_unsubscribe.as_deref(),
+        Some("<https://news.example/u/2>")
+    );
+    assert!(!page.one_click, "no Post header is no one-click promise");
+}
+
+#[test]
+fn message_without_payload_still_converts() {
+    let msg: Message = serde_json::from_str(r#"{"id":"m1","threadId":"t1"}"#).unwrap();
+    let meta = message_meta(&msg, 1);
+    assert_eq!(meta.subject, "");
+    assert!(meta.from.is_none());
+    assert!(!meta.has_attachments);
+}
+
+#[test]
+fn history_flattens_in_order() {
+    let list: HistoryList = serde_json::from_str(
+        r#"{"history":[
+            {"id":"1","messagesAdded":[{"message":{"id":"a","threadId":"ta"}}]},
+            {"id":"2","labelsAdded":[{"message":{"id":"a","threadId":"ta"},"labelIds":["STARRED"]}]},
+            {"id":"3","labelsRemoved":[{"message":{"id":"a","threadId":"ta"},"labelIds":["UNREAD"]}]},
+            {"id":"4","messagesDeleted":[{"message":{"id":"b","threadId":"tb"}}]}
+          ],"historyId":"50","nextPageToken":"p2"}"#,
+    )
+    .unwrap();
+    let page = history_page(list);
+    assert_eq!(page.history_id, 50);
+    assert_eq!(page.next_page_token.as_deref(), Some("p2"));
+    assert_eq!(
+        page.changes,
+        vec![
+            HistoryChange::MessageAdded {
+                id: "a".into(),
+                thread_id: "ta".into()
+            },
+            HistoryChange::LabelsAdded {
+                id: "a".into(),
+                thread_id: "ta".into(),
+                label_ids: vec!["STARRED".into()]
+            },
+            HistoryChange::LabelsRemoved {
+                id: "a".into(),
+                thread_id: "ta".into(),
+                label_ids: vec!["UNREAD".into()]
+            },
+            HistoryChange::MessageDeleted {
+                id: "b".into(),
+                thread_id: "tb".into()
+            },
+        ]
+    );
+}

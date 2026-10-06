@@ -1,0 +1,218 @@
+# Accessibility
+
+What a screen reader gets from Penguin Mail, how to check it, and what is
+still out of a keyboard's reach.
+
+## Names
+
+Every control a person acts on carries a name in the accessible tree. A
+button with an icon and no label has none of its own, and GTK never reads
+a tooltip out, so `mailrs::ui` holds four helpers and the call sites use
+them:
+
+- `name` sets the name.
+- `name_with_shortcut` takes a tooltip that ends in its keys, such as
+  `Archive (E or Ctrl+Alt+A)`, and splits it: the words become the name
+  and the keys a property of their own.
+- `describe` adds the line read after the name.
+- `labelled_by` ties a field to the word standing beside it.
+
+A menu built from a `gio::Menu` needs one more step. GTK makes each item
+itself and ties it to its words through a relation whose target never
+reaches the accessible tree, so a reader heard "menu item" and nothing
+else. `name_menu_items` names the items of a `PopoverMenu` each time it
+opens and again when its model changes while it is open;
+`name_menu_items_of` does the same for the menu of a `MenuButton` or an
+`adw::SplitButton`. Every menu built from a model goes through one of
+them, and WebKit's own right-click menu in a message is named with
+`name_menu_items_under` once it appears.
+
+Every name is a translated string like any other word a person reads, and
+the wording a count or a state decides is built by a function of its own
+so a test can read it without a window.
+
+Two things a box cannot do: a widget whose role is `generic`, which is
+what a `GtkBox` gets, is given no name however one is set on it, and a
+widget the list view wraps for itself cannot be named from outside
+without crashing GTK. The thread row takes the `ListItem` role instead,
+and then the name it builds is the one a reader hears.
+
+## The message
+
+`app/src/render.rs` writes the page the WebView shows, so the message
+gets HTML accessibility: the subject is the page's only `h1` and each
+sender is a heading under it, the details panel is a real `<details>`,
+the attachment rows are a list whose links say which file they act on,
+and the page carries the language it is written in. A picture the sender
+described keeps their words; one nobody described is given an empty
+description in `sanitize.rs`, so a reader passes over it rather than
+spelling a kilobyte of base64 out.
+
+## Labels, tags and the inbox tabs
+
+The Labels button and the Tags button sit in one capsule of the header
+bar. The Tags button shows only while the open mail comes from one
+account that keeps tags, and not in a conversation's own window. Its
+name is "Tags"; the Tags… item in the More menu and in the message menu
+opens the same picker, and `win.tag` has no key. The picker names each
+row like a label row, with the tag's name, and "{tag}, on this mail"
+when the tag is ticked, since the tick itself is drawn without a name.
+An account with no tags, or mail from several accounts, gets a line of
+words instead of rows.
+
+Focused and Other are the category bar's toggles, the same control as
+Gmail's categories, and each is named with its unread count, as in
+"Focused, 6 unread". Only one of the two bars shows over an inbox.
+
+## Add Account
+
+Each provider tile in Add Account and on the first-run page is one
+button, named with its title, its subtitle and how it signs in, as in
+"Microsoft, Outlook, 365, signs in through your browser". The globe on
+the Google and Microsoft tiles is drawn without a name, since the name
+already says it. A copy built without Microsoft's client shows no
+Microsoft tile; typing an Outlook or Microsoft 365 address there shows a
+card that says the copy cannot sign in to Microsoft. The page that waits
+for the browser lists each provider's own steps, two for Microsoft and
+three for Google, and the band above it is read as "Waiting for your
+browser, Microsoft".
+
+## The composer from the keyboard
+
+Tab goes From, To, Cc and Bcc while they show, Subject, the formatting
+bar, then the body. The bar is one stop: it has the toolbar role, and
+Left, Right, Home and End move between its buttons while Tab leaves it.
+Tab comes back to the button you left it on. `ui::roving` holds this, and
+a click on a button leaves the focus in the text.
+
+Every formatting button has a shortcut as well, Insert Image included
+(Ctrl+Shift+P). The headings and block styles have none and are reached
+through More Formatting, the last button on the bar.
+
+The chips in an address field stay out of the Tab chain too, so crossing
+a field takes one press. Left at the start of the entry steps onto the
+last chip, Left and Right move between chips, and Right from the last one
+goes back to the entry; Home and End go to the first chip and to the
+entry. Delete or Backspace removes the chip with the focus. Backspace
+moves the focus to the chip before it and Delete to the one after, and
+the focus goes back to the entry once no chip is left. Each chip reads as
+its name and address with "Press Delete to remove" after it, and carries
+a `recipient.remove` action a screen reader can run; its close button
+runs the same action.
+
+## The thread list from the keyboard
+
+The thread list is one Tab stop, like the mailbox list. Its list view
+uses GTK's `ListTabBehavior::Item`, so Tab and Shift+Tab leave it, and
+Up, Down, Home, End, Page Up and Page Down move between rows. Moving
+selects the row and opens its conversation, as a click does, since the
+reading pane is where the row's content is. With nothing open, the
+first arrow opens the row under the focus rather than the next one;
+GTK's list view does that. Enter opens the
+conversation in a window of its own. Tab lands on the open
+conversation's row, or the first row when none is open: GTK would go
+back to the row the focus last left, which a reload can leave somewhere
+else (`thread_list/entry.rs`). Each list item carries the row's spoken
+name, so a screen reader reads the row the focus reaches. GTK draws
+libadwaita's focus ring on a row the arrows reach in a list view, so
+this list needs none of the sidebar's `keyed` class.
+## Menus
+
+A thread row's menu holds `Export…`, and in the Outbox `Edit…`, `Send
+Now` and `Delete`. A right-click or a long press opens it, and so do Menu
+and Shift+F10 on the row with the focus. The focus sits on the list item
+GTK wraps each row in, and the row is a child of that item, so a key
+controller on the row would never see the key: the list view takes both
+keys itself and opens the menu of the row in focus, over the row. The
+Keyboard Shortcuts dialog lists them.
+
+One message of an open conversation has a menu of its own, holding what
+acts on that message alone. The messages are drawn in a web view, so the
+page answers both the right click and the keys: a script injected into
+every load listens for `contextmenu`, and for Menu and Shift+F10, finds
+the message under the pointer or under the focus, and asks the app for
+its menu through a `mailrs:menu/` link. The header link that opens and
+closes a message is what takes the focus, so the keys always have a
+message to name. The menu's first section carries a heading saying whose
+message it is, since the items themselves read as `Archive` and
+`Move to Trash`, the same words the header buttons use. The Keyboard
+Shortcuts dialog lists both keys.
+
+A queued message opens in the conversation pane like any other, with a
+card above it that says when it goes or why it has not gone, with
+buttons that act on it.
+
+## The calendar from the keyboard
+
+In Day and Week, Tab passes the day headings first, each of which opens
+its day, then the all-day row, then the events, day by day and earliest
+first. A "N more" button sits among a day's events at the hour it
+starts. Space opens the event with the focus, and the popover starts on
+your current answer when you are a guest; Enter opens the editor
+instead, for an event the account may change as a whole, and otherwise
+opens the popover, same as Space. Escape closes the popover and gives
+the focus back to the event; the popover no longer auto-hides, so a
+press anywhere else in the window closes it the same way. Delete (and
+the numeric keypad's own Delete) takes the focused event off the grid
+at once and offers Undo, for an event the account may change as a
+whole. Tab reaches only the range on screen: the ranges either side,
+kept ready for a swipe, are hidden from the keyboard and from screen
+readers. In a week or a month each event names its day, such as
+"Stand-up, Monday 21, 09:30 to 09:45, Work".
+
+T goes to today; D, W and M switch to Day, Week and Month; Left and
+Right step to the previous or next range. After a change of view or
+range, the focus goes to the first event on screen, or to Today when
+there is none. Ctrl+F opens the calendar's own search bar, which wins
+over the main window's search while the calendar shows. N opens quick
+create at the focused slot in Day or Week, or at nine in the morning on
+the focused day in Month; the narrow list has no grid to point quick
+create at, so N opens the editor there instead. It does nothing while
+no calendar takes new events, the same as the New Event button beside
+the header. Every one of these gives way while a text field, such as
+search, has the focus. The main menu's Assistant item, and Ctrl+J, open
+the assistant in either space.
+
+A double click opens the popover on its first click and the editor on
+its second, for an event the account may change as a whole; on any
+other event the second click does nothing more, since the popover
+already answers it. Edit and Delete sit as two icons in the popover's
+title row, for the same events; an invitation the account only
+answers, such as the mockup draws, has neither.
+
+In Day and Week, a drag of a card has a keyboard path beside it: with
+the focus on a card the account may move, Shift+Up and Shift+Down move
+it a quarter hour earlier or later, and Shift+Alt+Up and Shift+Alt+Down
+shorten or lengthen it by the same step. A card that offers this says so
+in the line read after its name.
+
+## Checking it
+
+```
+scripts/a11y-names.sh
+```
+
+opens the demo on a hidden display, walks the accessible tree over
+AT-SPI, and names every control that would be announced as nothing. It
+exits 1 while anything is unnamed. A menu is in the tree only while it
+is open, so on the hidden display the script also right-clicks every
+row it can scroll to and presses every button that opens a menu, then
+opens each submenu, and reads the items of each menu it sees. It
+reaches the menus of the main window this way, but not the message
+menu, which the page opens, nor the composer's menus. It also switches
+to the calendar and walks Day, Week, Month and the list a narrow
+window shows, opens an invitation's popover in Week and a crowded day's
+"N more" list in Month, reads the main menu there, Show Declined Events
+included, opens the New Event button and the editor it shows, expands
+its More section, walks it, then opens the Repeats row's Custom Repeat
+page and walks that too before closing the editor, and reports the
+calendar's own line of controls apart from the mail walk's. `--here`
+reads the copy already on your screen instead, which is how to check a
+dialog or the composer: open it, then run the script.
+
+## What the keyboard cannot reach
+
+Nothing known. The last four gaps closed in September 2026: the row
+menus open with Menu or Shift+F10, the formatting bar is one tab stop,
+Insert Image has Ctrl+Shift+P, and the arrow keys reach every recipient
+chip. Write a new gap down here when you find one, with why it was left.

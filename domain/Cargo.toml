@@ -1,0 +1,19 @@
+[package]
+name = "mailrs-domain"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+chrono.workspace = true
+chrono-tz.workspace = true
+gettext-rs.workspace = true
+icalendar.workspace = true
+rrule.workspace = true
+serde.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

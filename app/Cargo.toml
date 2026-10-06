@@ -1,0 +1,77 @@
+[package]
+name = "mailrs"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Mail and calendar for Linux"
+
+[[bin]]
+name = "penguin-mail"
+path = "src/main.rs"
+
+[dependencies]
+mailrs-discover.workspace = true
+mailrs-domain.workspace = true
+mailrs-gmail.workspace = true
+mailrs-graph.workspace = true
+mailrs-imap.workspace = true
+mailrs-mime.workspace = true
+mailrs-store.workspace = true
+# `--demo` runs on sync's in-memory Gmail, so the app asks for it.
+mailrs-sync = { workspace = true, features = ["fake"] }
+mailrs-ai.workspace = true
+mailrs-pgp.workspace = true
+mailrs-smime.workspace = true
+adw.workspace = true
+ammonia.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+reqwest.workspace = true
+sha2.workspace = true
+async-channel.workspace = true
+base64.workspace = true
+chrono.workspace = true
+# The editor's draft keeps the zone it opened in, at run time, not only
+# under tests.
+chrono-tz.workspace = true
+futures.workspace = true
+# Startup binds the text domain; the words themselves go through
+# `mailrs_domain::translate`.
+gettext-rs.workspace = true
+gtk.workspace = true
+ksni.workspace = true
+mail-builder.workspace = true
+# The message inside an encrypted one arrives as MIME, not through Gmail.
+mail-parser.workspace = true
+notify-rust.workspace = true
+pulldown-cmark.workspace = true
+rand.workspace = true
+rusqlite.workspace = true
+serde.workspace = true
+spellbook.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+toml.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+# The web source checks a page's host before it downloads anything.
+url.workspace = true
+webkit.workspace = true
+
+[dev-dependencies]
+mail-parser.workspace = true
+tempfile.workspace = true
+wiremock.workspace = true
+
+# The kind of package a build is for; see src/packaging.rs. A plain build
+# is the .deb or the tarball.
+[features]
+packaging-rpm = []
+packaging-arch = []
+# Also moves the Google refresh tokens, the IMAP passwords and the
+# assistant's API keys and MCP tokens from the desktop keyring to the
+# Secret portal; see gmail/src/secret_portal.rs.
+packaging-flatpak = ["mailrs-gmail/packaging-flatpak", "mailrs-sync/packaging-flatpak"]
+packaging-snap = []

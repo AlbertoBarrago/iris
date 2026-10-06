@@ -1,0 +1,21 @@
+[package]
+name = "mailrs-store"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+chrono.workspace = true
+mailrs-domain.workspace = true
+mailrs-mime.workspace = true
+rusqlite = { workspace = true, features = ["blob", "functions"] }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+
+[dev-dependencies]
+mailrs-gmail.workspace = true
+tempfile.workspace = true

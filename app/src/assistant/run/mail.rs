@@ -1,0 +1,416 @@
+//! The mail tools that came after the first set: muting, erasing, Send
+//! Later, templates, reading an attachment, and finding a person in the
+//! address book. Each one goes through the module the window uses for the
+//! same thing, so the assistant cannot do what the user could not.
+//! Leaving a mailing list is next door, in [`super::unsubscribe`].
+
+use std::time::Duration;
+
+use mailrs_store::{address_book, contacts, templates};
+use tokio::io::AsyncWriteExt;
+
+use super::*;
+use crate::templates::{Filling, expand, today};
+
+/// The most text an attachment gives the model, in characters.
+const MOST_ATTACHMENT_CHARS: usize = 20_000;
+
+/// The most people each half of a contact search gives back.
+const MOST_PEOPLE: usize = 10;
+
+/// How long `pdftotext` may take over one file.
+const PDF_SECONDS: u64 = 30;
+
+/// How an attachment turns into text the model can read.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum Kind {
+    Text,
+    Html,
+    Pdf,
+    /// Anything else: pictures, archives, office files.
+    Other,
+}
+
+/// What kind of file an attachment is, by its type and, since senders
+/// often label everything `application/octet-stream`, by its name.
+pub(super) fn kind_of(mime: &str, name: &str) -> Kind {
+    let mime = mime.to_ascii_lowercase();
+    let extension = name
+        .rsplit_once('.')
+        .map(|(_, ext)| ext.to_ascii_lowercase())
+        .unwrap_or_default();
+    let ext = extension.as_str();
+    if mime == "text/html" || matches!(ext, "html" | "htm") {
+        Kind::Html
+    } else if mime == "application/pdf" || ext == "pdf" {
+        Kind::Pdf
+    } else if mime.starts_with("text/")
+        || matches!(
+            mime.as_str(),
+            "application/json" | "application/xml" | "application/csv" | "application/ics"
+        )
+        || matches!(
+            ext,
+            "txt" | "md" | "csv" | "tsv" | "json" | "xml" | "ics" | "log" | "vcf" | "yaml" | "yml"
+        )
+    {
+        Kind::Text
+    } else {
+        Kind::Other
+    }
+}
+
+/// The text of a PDF, from poppler's `pdftotext`. `None` when this computer
+/// has no `pdftotext` to ask.
+pub(super) async fn pdf_text(bytes: Vec<u8>) -> Result<Option<String>, String> {
+    let spawned = tokio::process::Command::new("pdftotext")
+        .args(["-layout", "-enc", "UTF-8", "-", "-"])
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::null())
+        .kill_on_drop(true)
+        .spawn();
+    let mut child = match spawned {
+        Ok(child) => child,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(err) => return Err(format!("Could not start pdftotext: {err}")),
+    };
+    // The file goes in while the text comes out, so a large PDF cannot
+    // fill one pipe while pdftotext waits on the other.
+    let mut stdin = child.stdin.take().ok_or("pdftotext took no input.")?;
+    let feeding = tokio::spawn(async move {
+        let _ = stdin.write_all(&bytes).await;
+    });
+    let output = tokio::time::timeout(Duration::from_secs(PDF_SECONDS), child.wait_with_output())
+        .await
+        .map_err(|_| "pdftotext took too long over that PDF.".to_string())?
+        .map_err(|err| format!("pdftotext failed: {err}"))?;
+    let _ = feeding.await;
+    if !output.status.success() {
+        return Err("pdftotext could not read that PDF.".into());
+    }
+    Ok(Some(String::from_utf8_lossy(&output.stdout).into_owned()))
+}
+
+/// The attachment `wanted` names among `files`: by its file name, or by
+/// its number in the list, counting from 1. Reading a file and attaching
+/// one to a message find it the same way.
+pub(super) fn named_attachment<'a>(
+    files: &'a [mailrs_domain::Attachment],
+    wanted: &str,
+) -> Result<&'a mailrs_domain::Attachment, String> {
+    let found = files
+        .iter()
+        .find(|a| a.filename.eq_ignore_ascii_case(wanted))
+        .or_else(|| {
+            let number: usize = wanted.parse().ok()?;
+            files.get(number.checked_sub(1)?)
+        });
+    found.ok_or_else(|| {
+        let names: Vec<&str> = files.iter().map(|a| a.filename.as_str()).collect();
+        match names.is_empty() {
+            true => "That message has no attachments.".into(),
+            false => format!(
+                "That message has no attachment called {wanted}. It has: {}.",
+                names.join(", ")
+            ),
+        }
+    })
+}
+
+impl<A: Accounts> Tools<A> {
+    pub(super) async fn find_contact(&self, input: &Value) -> ToolResult {
+        let query = required(input, "query")?;
+        let words: Vec<String> = query.split_whitespace().map(str::to_lowercase).collect();
+        let wanted = query.clone();
+        let (known, suggested) = self
+            .read(move |c| Ok((address_book::search(c, &wanted)?, contacts::suggestions(c)?)))
+            .await?;
+        let people: Vec<Value> = known
+            .iter()
+            .take(MOST_PEOPLE)
+            .map(|contact| {
+                json!({
+                    "id": contact.resource,
+                    "name": contact.name,
+                    "emails": contact.emails,
+                    "organization": contact.organization,
+                    "phone": contact.phone,
+                    "account": self.email_of(contact.account_id),
+                })
+            })
+            .collect();
+        // People the address books do not hold, found in stored mail. They
+        // come second, as the recipient suggestions put them.
+        let from_mail: Vec<Value> = suggested
+            .iter()
+            .filter(|s| !s.known())
+            .filter(|s| {
+                let text =
+                    format!("{} {}", s.name.as_deref().unwrap_or_default(), s.email).to_lowercase();
+                words.iter().all(|word| text.contains(word))
+            })
+            .take(MOST_PEOPLE)
+            .map(|s| json!({"name": s.name, "email": s.email}))
+            .collect();
+        Ok(json!({"contacts": people, "from_mail": from_mail}))
+    }
+
+    pub(super) async fn mute(&self, input: &Value) -> ToolResult {
+        let targets = self.parse_targets(input)?;
+        let muted = flag(input, "mute").unwrap_or(true);
+        let from = self.moved_from(input)?;
+        report(&self.act_from(targets, MailAction::Mute { muted }, from).await)
+    }
+
+    pub(super) async fn delete_forever<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let targets = self.parse_targets(input)?;
+        let first = targets.first().ok_or("`targets` is empty")?.account_id;
+        let accounts = self.desk.accounts();
+        // Group by account, as the window's own plan does: only the
+        // accounts that can erase for good take part, and the count and
+        // the question's wording follow what is left once they are
+        // dropped. The answer names the threads left behind, so the model
+        // does not report them as deleted.
+        let mut erasing: Vec<Target> = Vec::new();
+        let mut erasers: Vec<String> = Vec::new();
+        let mut left: Vec<Value> = Vec::new();
+        for target in &targets {
+            let Some(account) = accounts.iter().find(|a| a.id == target.account_id) else {
+                continue;
+            };
+            if self.unavailable(account, Missing::DeleteForever).is_some() {
+                left.push(json!({
+                    "account": account.email,
+                    "thread_id": target.thread_id,
+                    "unavailable": crate::offered::reason(account, Missing::DeleteForever, None),
+                }));
+                continue;
+            }
+            erasing.push(target.clone());
+            let provider = account.provider_name().to_string();
+            if !erasers.contains(&provider) {
+                erasers.push(provider);
+            }
+        }
+        if erasing.is_empty() {
+            let account = accounts
+                .into_iter()
+                .find(|a| a.id == first)
+                .ok_or("That account is gone.")?;
+            let answer = self
+                .unavailable(&account, Missing::DeleteForever)
+                .ok_or("That account is gone.")?;
+            return Ok(Plan::without_asking(async move { Ok(answer) }));
+        }
+        let leader = erasing[0].account_id;
+        let account = accounts
+            .into_iter()
+            .find(|a| a.id == leader)
+            .ok_or("That account is gone.")?;
+        let refs: Vec<&str> = erasers.iter().map(String::as_str).collect();
+        let question = erase_question(erasing.len(), &refs);
+        Ok(Plan::ask(question, self.erase(account, erasing, left)))
+    }
+
+    /// Erases `targets` for good. `left` names the threads of the call
+    /// that stayed, on accounts that cannot erase.
+    async fn erase(&self, account: Account, targets: Vec<Target>, left: Vec<Value>) -> ToolResult {
+        let mail = Arc::clone(&self.modules.mail);
+        let outcome = self
+            .permitted(&account, Permission::Delete, async move {
+                mail.erase(&targets).await
+            })
+            .await?;
+        self.effects.relist();
+        if let (true, Some(error)) = (outcome.done.is_empty(), outcome.first_error()) {
+            return Err(error.to_string());
+        }
+        let mut result = json!({
+            "deleted": outcome.done.len(),
+            "undo": "Deleted mail cannot be brought back.",
+        });
+        if !outcome.failed.is_empty() {
+            result["failed"] = outcome
+                .failed
+                .iter()
+                .map(|f| json!({"thread_id": f.target.thread_id, "error": f.error}))
+                .collect();
+        }
+        if !left.is_empty() {
+            result["left"] = Value::Array(left);
+        }
+        Ok(result)
+    }
+
+    pub(super) async fn send_later<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let at = future_instant(&required(input, "at")?)?;
+        let draft = match input.get("draft").filter(|v| v.is_object()) {
+            Some(saved) => self.saved_draft(saved).await?,
+            None => self.draft_from(input).await?,
+        };
+        if let Some(problem) = draft.problem() {
+            return Err(problem);
+        }
+        let when = crate::format::future_date(at, Local::now());
+        let question = fill(
+            &gettext("Send “{subject}” to {recipients} {when}?"),
+            &[
+                ("subject", &draft.subject),
+                ("recipients", &compose::format_recipients(&draft.to)),
+                ("when", &when),
+            ],
+        );
+        Ok(Plan::ask(question, async move {
+            self.effects.send_later(draft, at)?;
+            Ok(json!({
+                "scheduled": local_text(at),
+                "where": "It waits in the Send Later mailbox, where the user can change or cancel it.",
+            }))
+        }))
+    }
+
+    /// The draft a conversation holds, ready to send as it stands.
+    async fn saved_draft(&self, saved: &Value) -> Result<Draft, String> {
+        let (account, sync) = self.sync_for(&required(saved, "account")?)?;
+        let thread_id = required(saved, "thread_id")?;
+        let key = thread_id.clone();
+        let found = self
+            .read(move |c| messages::thread_messages(c, account.id, &key))
+            .await?;
+        let message = found
+            .iter()
+            .rev()
+            .find(|m| m.in_role(Role::Drafts))
+            .cloned()
+            .ok_or("That conversation holds no draft.")?;
+        // Sending rebuilds the message from the draft as Gmail holds it,
+        // which is the only copy of its Bcc, its reply headers and its files.
+        let (s, id) = (Arc::clone(&sync), message.id.clone());
+        let raw = self.call(async move { s.raw_message(&id).await }).await?;
+        // An encrypted draft opens only with the writer's passphrase, so
+        // the writer sends that one from the composer.
+        if crate::protection::draft::standard_of(&raw).is_some() {
+            return Err("That draft is encrypted, and the assistant cannot open it. Ask the user to open it and choose Send Later in the composer.".into());
+        }
+        let id = message.id.clone();
+        let draft_id = self
+            .call(async move { sync.draft_id_for(&id).await })
+            .await?
+            .ok_or("Gmail no longer holds that draft.")?;
+        let mut draft = self.effects.new_draft(account.id)?;
+        crate::protection::draft::reopen_plain(&raw, &mut draft);
+        draft.thread_id = (found.len() > 1).then_some(thread_id);
+        draft.draft_id = Some(draft_id);
+        Ok(draft)
+    }
+
+    pub(super) async fn list_templates(&self) -> ToolResult {
+        let all = self.read(templates::list).await?;
+        Ok(json!({
+            "templates": all.iter().map(|t| json!({
+                "name": t.name,
+                "subject": t.subject,
+                "body": t.markdown,
+            })).collect::<Vec<_>>(),
+        }))
+    }
+
+    pub(super) async fn insert_template(&self, input: &Value) -> ToolResult {
+        let name = required(input, "template")?;
+        let all = self.read(templates::list).await?;
+        let template = all
+            .into_iter()
+            .find(|t| t.name.trim().eq_ignore_ascii_case(&name))
+            .ok_or_else(|| format!("There is no template called {name}."))?;
+        let mut draft = self.draft_from(input).await?;
+        if draft.subject.is_empty() {
+            draft.subject = template.subject.clone();
+        }
+        let filling = |subject: &str| Filling {
+            recipient: draft.to.first().cloned(),
+            subject: subject.to_string(),
+            date: today(Local::now()),
+        };
+        // The subject fills in first, so `{{subject}}` in the body reads
+        // the subject the message goes out with.
+        let subject = expand(&draft.subject, &filling(&draft.subject));
+        let markdown = expand(&template.markdown, &filling(&subject));
+        draft.subject = subject;
+        draft.markdown = markdown;
+        let (subject, body) = (draft.subject.clone(), draft.markdown.clone());
+        self.effects.compose(draft)?;
+        Ok(json!({
+            "opened": "A composer window shows the message for the user to review.",
+            "subject": subject,
+            "body": body,
+        }))
+    }
+
+    pub(super) async fn read_attachment(&self, input: &Value) -> ToolResult {
+        let (_, sync) = self.sync_for(&required(input, "account")?)?;
+        let message_id = required(input, "message_id")?;
+        let wanted = required(input, "attachment")?;
+        let (s, id) = (Arc::clone(&sync), message_id.clone());
+        let body = self.call(async move { s.body(&id).await }).await?;
+        let file = named_attachment(&body.attachments, &wanted)?;
+        let handle = file
+            .attachment_id
+            .clone()
+            .ok_or("The server gives no way to fetch that attachment.")?;
+        let bytes = self
+            .call(async move { sync.attachment(&message_id, &handle).await })
+            .await?;
+        let mut result = json!({
+            "name": file.filename,
+            "type": file.mime_type,
+            "size": file.size,
+        });
+        let text = match kind_of(&file.mime_type, &file.filename) {
+            Kind::Text => Some(String::from_utf8_lossy(&bytes).into_owned()),
+            Kind::Html => Some(mailrs_mime::html::html_to_text(&String::from_utf8_lossy(&bytes))),
+            Kind::Pdf => match self.away(pdf_text(bytes)).await?? {
+                Some(text) => Some(text),
+                None => {
+                    result["note"] = json!(
+                        "This computer has no pdftotext, so the PDF cannot be read. Installing poppler-utils adds it."
+                    );
+                    None
+                }
+            },
+            Kind::Other => {
+                result["note"] = json!(format!(
+                    "Penguin Mail cannot read {} files as text. The user can open it from the conversation.",
+                    file.mime_type
+                ));
+                None
+            }
+        };
+        if let Some(text) = text {
+            let mut text = text.trim().to_string();
+            if text.chars().count() > MOST_ATTACHMENT_CHARS {
+                text =
+                    text.chars().take(MOST_ATTACHMENT_CHARS).collect::<String>() + "\n[cut short]";
+            }
+            result["text"] = json!(text);
+        }
+        Ok(result)
+    }
+}
+
+/// The question before the assistant erases `count` conversations, from
+/// accounts on `erasers`' servers: one provider's name when every
+/// account shares it, as `press::erase_question` words it, or "Each
+/// account's server" when they differ.
+pub(super) fn erase_question(count: usize, erasers: &[&str]) -> String {
+    let who = match erasers {
+        [provider] => (*provider).to_string(),
+        _ => gettext("Each account's server"),
+    };
+    fill_plural(
+        "Delete {count} conversation forever? {provider} cannot bring it back.",
+        "Delete {count} conversations forever? {provider} cannot bring them back.",
+        count,
+        &[("count", &count.to_string()), ("provider", who.as_str())],
+    )
+}

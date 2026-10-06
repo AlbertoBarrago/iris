@@ -1,0 +1,610 @@
+//! One POP3 check (spec section 3): sign in, list what the server holds,
+//! download what is new a message at a time, ask for the DELEs the
+//! account's setting wants, and sign off. Each message's bytes are written
+//! before the next is asked for, and the server's list is compared with
+//! the store a page at a time. When `STAT` finds the server as the last
+//! clean check left it and the store owes it nothing, the check signs off
+//! without listing.
+
+use std::collections::{BTreeSet, HashMap, HashSet};
+use std::time::Duration;
+
+use mailrs_domain::{ChangeEvent, RemoveSetting};
+use mailrs_pop3::{MOST_MESSAGE_BYTES, Pop3Api, Pop3Error, Stat, Uidl, UidlListing};
+use tokio::time::Instant;
+use mailrs_store::pop3::FailReason;
+use mailrs_store::{accounts, pop3};
+
+use super::AccountSync;
+use crate::services::pop3::{keep_local, local_meta};
+use crate::{AnyMail, BackendError, SyncError, now_millis};
+
+const DAY: i64 = 24 * 60 * 60 * 1000;
+
+/// How long `STAT` alone may stand for the server's list. Two maildrops
+/// match in count and octets when another client removed a message and a
+/// new one of the same size came, and only a full listing tells them
+/// apart.
+const FULL_LISTING_EVERY: Duration = Duration::from_secs(60 * 60);
+
+/// What the last clean check found, so the next one can stop at `STAT`
+/// when the server holds what it held then.
+pub(super) struct Quiet {
+    stat: Stat,
+    /// When the server's list was last read in full.
+    listed_at: Instant,
+}
+
+/// Downloads older than this go under Remove After `days` Days.
+fn removal_cutoff(days: u32) -> i64 {
+    now_millis() - i64::from(days) * DAY
+}
+
+/// What a check did before its QUIT.
+#[derive(Default)]
+struct Done {
+    /// Every UIDL the server listed, once the listing came back whole and
+    /// every line of it read. Empty otherwise, and nothing is forgotten.
+    listed: HashSet<String>,
+    /// The listing came back whole and every line of it read.
+    listed_whole: bool,
+    /// The UIDLs a DELE went out for this session.
+    removed: Vec<String>,
+    threads: BTreeSet<String>,
+    new_mail: Vec<String>,
+    /// A message reached its third refused RETR.
+    failing_grew: bool,
+    /// Messages that reached the menu when their answer had ended the
+    /// session, for the next session to name through `TOP`.
+    unnamed: Vec<String>,
+}
+
+/// What counting one failed message did.
+struct Counted {
+    /// The message just reached the account's menu.
+    shown: bool,
+    /// The session is still open for the next command.
+    session_kept: bool,
+}
+
+impl AccountSync {
+    /// One check of a POP3 account's server, for the engine's tick. Any
+    /// other account has nothing to check.
+    pub async fn pop3_check(&self) -> Result<(), SyncError> {
+        match &self.services.mail {
+            AnyMail::Pop3(adapter) => self.check_with(adapter.client().as_ref()).await,
+            _ => Ok(()),
+        }
+    }
+
+    /// The check over `pop3`, one at a time for this account.
+    pub(crate) async fn check_with<P: Pop3Api>(&self, pop3: &P) -> Result<(), SyncError> {
+        let mut quiet = self.pop3_checking.lock().await;
+        let account_id = self.account_id;
+        // The setting is read at each check: Server Settings for the
+        // account can change it between checks. Work the store owes the
+        // server makes the check list the server whatever `STAT` says.
+        let (remove, owed) = self
+            .db
+            .read(move |c| {
+                let remove = accounts::pop3_remove(c, account_id)?;
+                let removal = match remove {
+                    // Leave on Server sends no DELE, even for a row an
+                    // earlier setting marked.
+                    RemoveSetting::Never => false,
+                    RemoveSetting::Downloaded => pop3::removal_due(c, account_id, None)?,
+                    RemoveSetting::Days(days) => {
+                        pop3::removal_due(c, account_id, Some(removal_cutoff(days)))?
+                    }
+                };
+                let owed = removal
+                    || pop3::retry_due(c, account_id)?
+                    || !pop3::first_check_finished(c, account_id)?;
+                Ok((remove, owed))
+            })
+            .await?;
+        // A check that fails from here on leaves nothing to compare with.
+        let last = quiet.take();
+        pop3.connect().await.map_err(BackendError::from)?;
+        let stat = match pop3.stat().await {
+            Ok(stat) => Some(stat),
+            // RFC 1939 requires STAT, and a server that refuses it gets
+            // the full listing at every check.
+            Err(Pop3Error::Refused(_)) => None,
+            Err(err) => {
+                let _ = pop3.quit().await;
+                return Err(BackendError::from(err).into());
+            }
+        };
+        if let (Some(stat), Some(last)) = (stat, last)
+            && !owed
+            && stat == last.stat
+            && last.listed_at.elapsed() < FULL_LISTING_EVERY
+        {
+            pop3.quit().await.map_err(BackendError::from)?;
+            *quiet = Some(last);
+            return Ok(());
+        }
+        let listed_at = Instant::now();
+        let mut done = Done::default();
+        let checked = self.check_session(pop3, remove, &mut done).await;
+        // After a failure, QUIT still lets go of the server's lock. A DELE
+        // it carries out was one the account wanted; that row waits, and
+        // goes once the server stops listing the message.
+        let quit = pop3.quit().await;
+        let Done {
+            listed,
+            listed_whole,
+            removed,
+            threads,
+            new_mail,
+            failing_grew,
+            // Left unnamed when the check ended before another session.
+            unnamed: _,
+        } = done;
+        // What was stored stays stored whatever went wrong after it, so
+        // the window and the local rules hear of it either way.
+        let new_mail = self.file_muted_replies(new_mail).await;
+        self.emit_threads(threads);
+        if !new_mail.is_empty() {
+            self.emit(ChangeEvent::NewMail {
+                account_id,
+                message_ids: new_mail,
+            });
+        }
+        if failing_grew {
+            self.emit(ChangeEvent::LabelsChanged { account_id });
+        }
+        checked?;
+        // A QUIT that did not come back carried out no DELE; the rows still
+        // want removal, and the next check sends them again.
+        quit.map_err(BackendError::from)?;
+        // The DELEs a clean QUIT carried out changed the maildrop after its
+        // STAT, and a listing with a line that did not read may hide a
+        // message, so neither check is one to compare with.
+        *quiet = match (stat, removed.is_empty() && listed_whole) {
+            (Some(stat), true) => Some(Quiet { stat, listed_at }),
+            _ => None,
+        };
+        let menu_changed = self
+            .db
+            .write(move |c| {
+                pop3::mark_removed(c, account_id, &removed)?;
+                // A server listing nothing may have lost its list for a
+                // moment, so the rows wait for a listing that names
+                // something before any is forgotten.
+                if listed.is_empty() {
+                    return Ok(false);
+                }
+                pop3::forget_gone(c, account_id, &listed)?;
+                pop3::forget_gone_failures(c, account_id, &listed)
+            })
+            .await?;
+        if menu_changed {
+            self.emit(ChangeEvent::LabelsChanged { account_id });
+        }
+        Ok(())
+    }
+
+    async fn check_session<P: Pop3Api>(
+        &self,
+        pop3: &P,
+        remove: RemoveSetting,
+        done: &mut Done,
+    ) -> Result<(), SyncError> {
+        let account_id = self.account_id;
+        // Decided by the marker, not by whether anything is downloaded: a
+        // first download that failed partway leaves mail here that is still
+        // old mail.
+        let first = !self
+            .db
+            .read(move |c| pop3::first_check_finished(c, account_id))
+            .await?;
+        // The UIDLs that failed during this check, so a session opened
+        // after a broken answer neither counts nor asks for them twice. A
+        // download needs no entry: the store already has it. Each new
+        // session follows a failure added here, so the loop ends.
+        let mut handled: HashSet<String> = HashSet::new();
+        let listing = loop {
+            if let Some(listing) = self
+                .download_pass(pop3, first, remove, &mut handled, done)
+                .await?
+            {
+                break listing;
+            }
+            pop3.connect().await.map_err(BackendError::from)?;
+        };
+        let UidlListing {
+            messages: listed,
+            unreadable,
+        } = listing;
+        if let RemoveSetting::Days(days) = remove {
+            let cutoff = removal_cutoff(days);
+            self.db
+                .write(move |c| pop3::want_removed_before(c, account_id, cutoff))
+                .await?;
+        }
+        // Leave on Server sends no DELE, even for a row an earlier setting
+        // marked. A checkpoint syncs the database file and can hold the
+        // writer for the busy timeout, so a check with no DELE to send
+        // runs none.
+        let pending = remove != RemoveSetting::Never
+            && !self
+                .db
+                .read(move |c| pop3::pending_removal(c, account_id, None, 1))
+                .await?
+                .is_empty();
+        if pending {
+            // The store commits without syncing, and a DELE lets the server
+            // drop the other copy at QUIT. A power cut after that QUIT and
+            // before SQLite's own checkpoint would lose the message from
+            // both, so the downloads go to disk first. When a reader holds
+            // the log back, the DELEs wait for the next check.
+            if self.db.checkpoint().await? {
+                self.send_deles(pop3, &listed, done).await?;
+            } else {
+                tracing::warn!(
+                    account = account_id,
+                    "the downloads are not on disk yet; removal from the server waits for the next check"
+                );
+            }
+        }
+        // A line that did not read left its message out of the listing,
+        // and forgetting what the listing lacks would forget that one too.
+        if unreadable == 0 {
+            done.listed_whole = true;
+            done.listed = listed.into_iter().map(|u| u.uidl).collect();
+        } else {
+            tracing::warn!(
+                account = account_id,
+                unreadable,
+                "the UIDL answer had lines that do not read; nothing is forgotten this check"
+            );
+        }
+        Ok(())
+    }
+
+    /// One pass over what the open session lists: every message not yet
+    /// here and not handled this check, those that never failed first.
+    /// Answers the listing, or `None` when a broken answer ended the
+    /// session and another must carry on.
+    async fn download_pass<P: Pop3Api>(
+        &self,
+        pop3: &P,
+        first: bool,
+        remove: RemoveSetting,
+        handled: &mut HashSet<String>,
+        done: &mut Done,
+    ) -> Result<Option<UidlListing>, SyncError> {
+        let account_id = self.account_id;
+        let listing = pop3.uidl().await.map_err(BackendError::from)?;
+        let listed = &listing.messages;
+        let sizes: HashMap<u32, u64> = pop3
+            .list()
+            .await
+            .map_err(BackendError::from)?
+            .into_iter()
+            .map(|item| (item.id, item.octets))
+            .collect();
+        // Named before any RETR, which could end this session too. Each is
+        // tried once, so a TOP that breaks every session cannot keep the
+        // check opening new ones.
+        for uidl in std::mem::take(&mut done.unnamed) {
+            let Some(listing) = listed.iter().find(|u| u.uidl == uidl) else {
+                continue;
+            };
+            if !self.name_failing(pop3, listing.id, &uidl).await? {
+                return Ok(None);
+            }
+        }
+        // A server should never list one UIDL twice in a session, but a
+        // buggy one can. The first listing downloads and the rest are
+        // skipped, so neither body replaces the other.
+        let mut taken: HashSet<&str> = HashSet::new();
+        // A message that failed before waits until the rest are down, so
+        // one that fails at every check never holds up the mail listed
+        // after it.
+        let mut retry: Vec<(&Uidl, FailReason)> = Vec::new();
+        for page in listed.chunks(pop3::PAGE) {
+            let names: Vec<String> = page
+                .iter()
+                .filter(|u| !handled.contains(&u.uidl))
+                .map(|u| u.uidl.clone())
+                .collect();
+            let (new, failed) = self
+                .db
+                .read(move |c| {
+                    let new = pop3::unseen(c, account_id, &names)?;
+                    let failed = pop3::failure_reasons(c, account_id, &new)?;
+                    Ok((new, failed))
+                })
+                .await?;
+            let new: HashSet<String> = new.into_iter().collect();
+            let failed: HashMap<String, FailReason> = failed.into_iter().collect();
+            for listing in page.iter().filter(|u| new.contains(&u.uidl)) {
+                if !taken.insert(&listing.uidl) {
+                    tracing::warn!(
+                        account = account_id,
+                        uidl = listing.uidl,
+                        message = listing.id,
+                        "the server listed this UIDL twice; only its first message downloads"
+                    );
+                    continue;
+                }
+                if let Some(reason) = failed.get(&listing.uidl) {
+                    retry.push((listing, *reason));
+                    continue;
+                }
+                let size = sizes.get(&listing.id).copied();
+                if !self
+                    .download_one(pop3, listing, size, None, first, remove, handled, done)
+                    .await?
+                {
+                    return Ok(None);
+                }
+            }
+        }
+        // Every listed message is downloaded or recorded as failed. A
+        // check that ended early never reaches this line, so the next one
+        // is still a first check and takes the old mail as old.
+        if first {
+            self.db
+                .write(move |c| pop3::finish_first_check(c, account_id))
+                .await?;
+        }
+        for (listing, reason) in retry {
+            let size = sizes.get(&listing.id).copied();
+            if !self
+                .download_one(
+                    pop3,
+                    listing,
+                    size,
+                    Some(reason),
+                    first,
+                    remove,
+                    handled,
+                    done,
+                )
+                .await?
+            {
+                return Ok(None);
+            }
+        }
+        Ok(Some(listing))
+    }
+
+    /// Downloads one listed message of `size` octets, or counts why it did
+    /// not come down. `earlier` is why it failed last time. False when the
+    /// session ended, on the RETR or on the TOP after it, and the check
+    /// must open another.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "one step of the pass, which holds all of these"
+    )]
+    async fn download_one<P: Pop3Api>(
+        &self,
+        pop3: &P,
+        listing: &Uidl,
+        size: Option<u64>,
+        earlier: Option<FailReason>,
+        first: bool,
+        remove: RemoveSetting,
+        handled: &mut HashSet<String>,
+        done: &mut Done,
+    ) -> Result<bool, SyncError> {
+        let Uidl { id, uidl } = listing;
+        let account_id = self.account_id;
+        // A message over the cap is never asked for, and neither is one
+        // whose answer ran past the cap before: reading it again would
+        // fetch up to the cap and fail at the same place.
+        if size.is_some_and(|octets| octets > MOST_MESSAGE_BYTES)
+            || earlier == Some(FailReason::TooLarge)
+        {
+            handled.insert(uidl.clone());
+            let counted = self
+                .count_failure(pop3, *id, uidl, &Pop3Error::TooLarge, true)
+                .await?;
+            done.failing_grew |= counted.shown;
+            return Ok(counted.session_kept);
+        }
+        let answer = pop3.retr(*id, size.unwrap_or(0)).await;
+        if answer.is_err() {
+            handled.insert(uidl.clone());
+        }
+        match answer {
+            Ok(raw) => self.keep_download(uidl, raw, first, remove, done).await?,
+            // One message the server will not hand over holds up nothing
+            // else; the next check asks for it again.
+            Err(err @ Pop3Error::Refused(_)) => {
+                tracing::warn!(account = account_id, uidl, %err, "the server would not hand over a message");
+                let counted = self.count_failure(pop3, *id, uidl, &err, true).await?;
+                done.failing_grew |= counted.shown;
+                return Ok(counted.session_kept);
+            }
+            // An answer past the cap that LIST put under it, one that is not
+            // POP3, or a connection that drops partway leaves the rest of it
+            // unread, and the client has dropped the session. The message is
+            // counted and another session carries on with the rest, so a
+            // server that drops on one message every time still gets its
+            // DELEs. A server that is down fails that session's connect and
+            // ends the check.
+            Err(err @ (Pop3Error::TooLarge | Pop3Error::Protocol(_) | Pop3Error::Network(_))) => {
+                tracing::warn!(account = account_id, uidl, %err, "could not read a message's answer");
+                if self
+                    .count_failure(pop3, *id, uidl, &err, false)
+                    .await?
+                    .shown
+                {
+                    done.failing_grew = true;
+                    done.unnamed.push(uidl.clone());
+                }
+                return Ok(false);
+            }
+            Err(err) => return Err(BackendError::from(err).into()),
+        }
+        Ok(true)
+    }
+
+    /// Stores one download. The bytes, the row and the UIDL go in one
+    /// write, so a crash between them leaves nothing half kept and the
+    /// next check fetches the message again. `raw` is dropped once the
+    /// write is done, before the next RETR.
+    async fn keep_download(
+        &self,
+        uidl: &str,
+        raw: Vec<u8>,
+        first: bool,
+        remove: RemoveSetting,
+        done: &mut Done,
+    ) -> Result<(), SyncError> {
+        let account_id = self.account_id;
+        let received = now_millis();
+        // A first download takes each message's own date, which stands
+        // for the INTERNALDATE a server would keep. Later mail is dated
+        // when it arrived here, so a message whose Date header is older
+        // than the rules' watermark still runs through them. The store id
+        // is chosen in the write below, so the row gets it there.
+        let (mut meta, links) = local_meta(account_id, "", &raw, "inbox", &[], received, first);
+        let uidl = uidl.to_string();
+        let (id, threads) = self
+            .db
+            .write(move |c| {
+                // Never `pop3/<uidl>` blindly: that id may belong to an
+                // older message the server once gave the same UIDL.
+                let id = pop3::download_id(c, account_id, &uidl)?;
+                meta.id.clone_from(&id);
+                meta.thread_id.clone_from(&id);
+                let threads = keep_local(c, account_id, meta, links, &raw)?;
+                pop3::mark_downloaded(c, account_id, &uidl, &id, received)?;
+                if remove == RemoveSetting::Downloaded {
+                    pop3::want_removed(c, account_id, std::slice::from_ref(&uidl))?;
+                }
+                Ok((id, threads))
+            })
+            .await?;
+        done.threads.extend(threads);
+        // A first download would raise a notification for every message
+        // the server ever held.
+        if !first {
+            done.new_mail.push(id);
+        }
+        Ok(())
+    }
+
+    /// Counts a failed RETR of message `id`, called `uidl`, and why. A
+    /// message the server stopped listing and lists again counts from
+    /// nothing and reaches the menu again (`pop3::forget_gone_failures`).
+    /// With the session still open, the third failure names the message
+    /// through `TOP` (see [`AccountSync::name_failing`]).
+    async fn count_failure<P: Pop3Api>(
+        &self,
+        pop3: &P,
+        id: u32,
+        uidl: &str,
+        err: &Pop3Error,
+        session_open: bool,
+    ) -> Result<Counted, SyncError> {
+        let (reason, words) = match err {
+            Pop3Error::Refused(text) => (FailReason::Refused, text.clone()),
+            Pop3Error::TooLarge => (FailReason::TooLarge, String::new()),
+            Pop3Error::Network(_) => (FailReason::Dropped, String::new()),
+            _ => (FailReason::Unreadable, String::new()),
+        };
+        let (account_id, recorded) = (self.account_id, uidl.to_string());
+        let failures = self
+            .db
+            .write(move |c| pop3::record_failure(c, account_id, &recorded, reason, &words))
+            .await?;
+        let shown = failures == pop3::SHOWN_AFTER;
+        let session_kept = if shown && session_open {
+            self.name_failing(pop3, id, uidl).await?
+        } else {
+            session_open
+        };
+        Ok(Counted {
+            shown,
+            session_kept,
+        })
+    }
+
+    /// Reads the headers of failing message `id`, called `uidl`, with
+    /// `TOP n 0`, so the account's menu can say who sent it and what it is
+    /// about. False when the TOP ended the session: the client drops it on
+    /// any failure but `-ERR`, and the next command would fail and be
+    /// charged to a message that did nothing wrong.
+    async fn name_failing<P: Pop3Api>(
+        &self,
+        pop3: &P,
+        id: u32,
+        uidl: &str,
+    ) -> Result<bool, SyncError> {
+        let account_id = self.account_id;
+        match pop3.top(id, 0).await {
+            Ok(head) => {
+                let summary = mailrs_mime::summary(&head);
+                let sender = summary.from.map(|from| from.display().to_string());
+                let subject = Some(summary.subject).filter(|s| !s.is_empty());
+                let uidl = uidl.to_string();
+                self.db
+                    .write(move |c| {
+                        pop3::name_failure(
+                            c,
+                            account_id,
+                            &uidl,
+                            sender.as_deref(),
+                            subject.as_deref(),
+                        )
+                    })
+                    .await?;
+                Ok(true)
+            }
+            // The headers only name the message; a server that cannot
+            // answer TOP leaves the menu to number it.
+            Err(err) => {
+                tracing::info!(account = account_id, uidl, %err, "could not read the failing message's headers");
+                Ok(matches!(err, Pop3Error::Refused(_)))
+            }
+        }
+    }
+
+    /// A DELE for each message the account wants off the server that the
+    /// server still lists, a page of rows at a time, noting each in
+    /// `done.removed` for a clean QUIT to confirm. A DELE the server
+    /// refuses goes again at the next check.
+    async fn send_deles<P: Pop3Api>(
+        &self,
+        pop3: &P,
+        listed: &[Uidl],
+        done: &mut Done,
+    ) -> Result<(), SyncError> {
+        // A UIDL listed twice maps to its first number, the message that
+        // came down; the skipped one stays on the server.
+        let mut numbers: HashMap<&str, u32> = HashMap::with_capacity(listed.len());
+        for Uidl { id, uidl } in listed {
+            numbers.entry(uidl.as_str()).or_insert(*id);
+        }
+        let account_id = self.account_id;
+        let mut after: Option<String> = None;
+        loop {
+            let from = after.take();
+            let page = self
+                .db
+                .read(move |c| pop3::pending_removal(c, account_id, from.as_deref(), pop3::PAGE))
+                .await?;
+            let Some(last) = page.last().cloned() else {
+                return Ok(());
+            };
+            for uidl in page {
+                let Some(id) = numbers.get(uidl.as_str()) else {
+                    continue;
+                };
+                match pop3.dele(*id).await {
+                    Ok(()) => done.removed.push(uidl),
+                    Err(Pop3Error::Refused(_)) => {}
+                    Err(err) => return Err(BackendError::from(err).into()),
+                }
+            }
+            after = Some(last);
+        }
+    }
+}

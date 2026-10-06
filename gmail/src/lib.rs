@@ -1,0 +1,67 @@
+//! Gmail REST client: OAuth, quota limiting, and conversion to Penguin Mail domain types.
+
+pub mod calendar;
+mod calendar_list;
+mod client;
+pub mod convert;
+pub mod drive;
+mod error;
+pub mod labels;
+pub mod limiter;
+pub mod model;
+mod oauth;
+pub mod people;
+pub mod query;
+#[cfg(feature = "packaging-flatpak")]
+pub mod secret_portal;
+pub mod structure;
+mod token_store;
+
+pub use calendar::{
+    CALENDAR_API_BASE, CALENDAR_LIST_SCOPE, CALENDAR_LIST_WRITE_SCOPE, CALENDAR_SCOPE, CALENDARS_SCOPE,
+    google_event,
+};
+pub use client::{
+    Authorized, BATCH_LIMIT, GMAIL_API_BASE, GmailClient, authorize, cost, one_click_unsubscribe,
+};
+pub use convert::{HistoryChange, HistoryPage};
+pub use drive::DRIVE_UPLOAD_BASE;
+pub use error::{GmailError, OneClickError};
+pub use limiter::{AccountQuota, Priority, QuotaLimiter, QuotaPool, Waiting};
+pub use model::{
+    Draft, LabelColor, MessagePage, MessageRef, Profile, RemoteLabel, SendAs, is_reserved_label_name,
+};
+pub use oauth::{
+    AccessToken, DELETE_SCOPE, DRIVE_FILE_SCOPE, GMAIL_SCOPE, Granted, LoopbackListener, OAuthClient, Pkce,
+    SETTINGS_SCOPE, SIGN_IN_SCOPES, Tokens, built_in_client,
+    client_from, parse_redirect, random_token,
+};
+pub use people::{CONTACTS_SCOPE, CONTACTS_WRITE_SCOPE, ConnectionsPage, ContactFields, Person};
+pub use token_store::{KeyringTokenStore, MemoryTokenStore, TokenStore};
+
+#[cfg(test)]
+pub(crate) mod tests {
+    use mailrs_domain::MessageMeta;
+
+    /// A message in account 1 with nothing in it or on it.
+    pub(crate) fn blank_meta() -> MessageMeta {
+        MessageMeta {
+            account_id: 1,
+            id: "m1".into(),
+            thread_id: "t1".into(),
+            rfc822_msgid: None,
+            from: None,
+            to: vec![],
+            cc: vec![],
+            subject: String::new(),
+            date: 0,
+            snippet: String::new(),
+            size: 0,
+            has_attachments: false,
+            held: Default::default(),
+            roles: vec![],
+            list_unsubscribe: None,
+            one_click: false,
+        }
+    }
+}

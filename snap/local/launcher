@@ -1,0 +1,26 @@
+#!/bin/sh
+# Starts Penguin Mail inside the snap with its libraries' data found in the
+# snap rather than in the base, which has no GTK. snapcraft.yaml runs this
+# before the app.
+arch=x86_64-linux-gnu
+
+export XDG_DATA_DIRS="$SNAP/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+export GSETTINGS_SCHEMA_DIR="$SNAP/usr/share/glib-2.0/schemas"
+export GIO_MODULE_DIR="$SNAP/usr/lib/$arch/gio/modules"
+export LD_LIBRARY_PATH="$SNAP/usr/lib/$arch:$SNAP/usr/lib/$arch/webkitgtk-6.0/injected-bundle${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+# gpg and gpgsm keep a keyring of their own inside the snap, since the
+# store would not let the snap open ~/.gnupg. gpg refuses a home that
+# anyone but its owner can read, so a new one starts at mode 700. It lives
+# in $SNAP_USER_COMMON, which every revision shares: snapd keeps
+# $SNAP_USER_DATA per revision, so a revert would hide keys imported since
+# the refresh. A keyring an earlier release made there moves across once.
+export GNUPGHOME="$SNAP_USER_COMMON/.gnupg"
+if [ ! -d "$GNUPGHOME" ]; then
+    if [ -d "$SNAP_USER_DATA/.gnupg" ]; then
+        cp -a "$SNAP_USER_DATA/.gnupg" "$GNUPGHOME"
+    else
+        mkdir -m 700 "$GNUPGHOME"
+    fi
+fi
+
+exec "$@"

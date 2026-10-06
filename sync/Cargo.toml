@@ -1,0 +1,64 @@
+[package]
+name = "mailrs-sync"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[features]
+# Ships `fake::FakeGmail`, the in-memory Gmail, to other crates. Sync's own
+# tests always have it; `penguin-mail` turns it on for `--demo`.
+fake = ["dep:base64", "dep:mail-parser", "mailrs-dav/fake", "mailrs-sieve/fake"]
+# Reaches IMAP passwords through the Secret portal instead of the
+# desktop keyring; only a Flatpak build turns this on.
+packaging-flatpak = ["mailrs-gmail/packaging-flatpak"]
+
+[dependencies]
+# Only the fake encodes or decodes base64 outside a test.
+base64 = { workspace = true, optional = true }
+mailrs-dav.workspace = true
+mailrs-discover.workspace = true
+mailrs-domain.workspace = true
+mailrs-gmail.workspace = true
+mailrs-graph.workspace = true
+mailrs-imap.workspace = true
+mailrs-mime.workspace = true
+mailrs-pop3.workspace = true
+mailrs-sieve.workspace = true
+mailrs-store.workspace = true
+async-channel.workspace = true
+chrono.workspace = true
+chrono-tz.workspace = true
+dirs.workspace = true
+futures.workspace = true
+keyring.workspace = true
+mail-builder.workspace = true
+# Reads what the fake sends into its Sent copy; only the fake needs it.
+mail-parser = { workspace = true, optional = true }
+rand.workspace = true
+rusqlite.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+toml.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+base64.workspace = true
+mail-parser.workspace = true
+mailrs-testmail.workspace = true
+# The in-memory ManageSieve server the Sieve adapter tests run against.
+mailrs-sieve = { workspace = true, features = ["fake"] }
+# The in-memory CalDAV and CardDAV server the DAV adapter tests run against.
+mailrs-dav = { workspace = true, features = ["fake"] }
+# The in-memory network the service-finding tests run against.
+mailrs-discover = { workspace = true, features = ["fake"] }
+tempfile.workspace = true
+wiremock.workspace = true
+# Lets a test read what the code logged.
+tracing-subscriber.workspace = true
+# `start_paused` lets a test watch a retry wait out Gmail's Retry-After
+# without waiting itself.
+tokio = { workspace = true, features = ["test-util"] }

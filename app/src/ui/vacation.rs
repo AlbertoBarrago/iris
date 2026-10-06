@@ -1,0 +1,410 @@
+//! The automatic reply dialog: what the server answers new mail with for one
+//! account, and the days it runs between. `mailrs_sync::AccountSettings`
+//! reads and stores it.
+
+use std::rc::Rc;
+use std::sync::Arc;
+
+use adw::prelude::*;
+use gtk::glib;
+use mailrs_domain::{Account, Provider};
+use mailrs_sync::{AutomaticReply, Offers, Permitted};
+
+use crate::core::Core;
+use crate::permission::Permission;
+use crate::ui::permission;
+use mailrs_domain::translate::{fill, gettext, with_reason};
+
+/// Shows the dialog for `account`. `grant` runs when the server says Penguin Mail lacks
+/// the settings permission, to send the user through consent again. `saved`
+/// receives a confirmation to show once the reply is stored.
+pub fn present(
+    core: &Rc<Core>,
+    account: &Account,
+    parent: &impl IsA<gtk::Widget>,
+    grant: impl Fn() + 'static,
+    saved: impl Fn(&str) + 'static,
+) {
+    let stack = gtk::Stack::builder()
+        .transition_type(gtk::StackTransitionType::Crossfade)
+        .build();
+    stack.add_named(
+        &adw::Spinner::builder()
+            .width_request(32)
+            .height_request(32)
+            .halign(gtk::Align::Center)
+            .valign(gtk::Align::Center)
+            .build(),
+        Some("loading"),
+    );
+    let save = gtk::Button::builder()
+        .label(gettext("Save"))
+        .css_classes(["suggested-action"])
+        .sensitive(false)
+        .build();
+    let cancel = gtk::Button::with_label(&gettext("Cancel"));
+    let header = adw::HeaderBar::builder()
+        .show_start_title_buttons(false)
+        .show_end_title_buttons(false)
+        .build();
+    header.pack_start(&cancel);
+    header.pack_end(&save);
+    let toasts = adw::ToastOverlay::new();
+    toasts.set_child(Some(&stack));
+    let toolbar = adw::ToolbarView::new();
+    toolbar.add_top_bar(&header);
+    toolbar.set_content(Some(&toasts));
+    let dialog = adw::Dialog::builder()
+        .title(gettext("Automatic Reply"))
+        .content_width(480)
+        .content_height(640)
+        .child(&toolbar)
+        .build();
+    let closer = dialog.clone();
+    cancel.connect_clicked(move |_| {
+        closer.close();
+    });
+    dialog.present(Some(parent));
+
+    if core.account(account.id).is_none() {
+        let said = gettext("This account is not syncing yet.");
+        stack.add_named(&problem(&said), Some("error"));
+        stack.set_visible_child_name("error");
+        return;
+    }
+    let (core, email, account_id) = (Rc::clone(core), account.email.clone(), account.id);
+    let provider = account.provider;
+    let provider_name = account.provider_name().to_string();
+    let offers = crate::offered::offers_for(core.account(account.id).as_ref().map(|sync| sync.services()));
+    let settings = core.gmail_settings();
+    glib::spawn_future_local(async move {
+        let loaded = {
+            let settings = Arc::clone(&settings);
+            core.call(async move { settings.automatic_reply(account_id).await })
+                .await
+        };
+        let reply = match loaded {
+            Ok(Permitted::Done(reply)) => reply,
+            Ok(Permitted::NeedsPermission) => {
+                let closer = dialog.clone();
+                let page = permission::page(
+                    &gettext("Allow Automatic Replies"),
+                    Permission::Settings,
+                    &email,
+                    provider,
+                    move || {
+                        closer.close();
+                        grant();
+                    },
+                );
+                stack.add_named(&page, Some("error"));
+                stack.set_visible_child_name("error");
+                return;
+            }
+            Err(err) => {
+                stack.add_named(&problem(&err.to_string()), Some("error"));
+                stack.set_visible_child_name("error");
+                return;
+            }
+        };
+        let form = Form::new(&reply, offers, &provider_name);
+        stack.add_named(&form.page, Some("form"));
+        stack.set_visible_child_name("form");
+        save.set_sensitive(true);
+        let saved = Rc::new(saved);
+        save.connect_clicked(move |button| {
+            let saved = Rc::clone(&saved);
+            let wanted = form.reply(&reply);
+            button.set_sensitive(false);
+            let (core, settings, dialog, toasts, button) = (
+                Rc::clone(&core),
+                Arc::clone(&settings),
+                dialog.clone(),
+                toasts.clone(),
+                button.clone(),
+            );
+            glib::spawn_future_local(async move {
+                let enabled = wanted.enabled;
+                let stored = core
+                    .call(async move { settings.set_automatic_reply(account_id, &wanted).await })
+                    .await;
+                match stored {
+                    Ok(Permitted::Done(())) => {
+                        dialog.close();
+                        saved(&if enabled {
+                            gettext("Automatic reply is on")
+                        } else {
+                            gettext("Automatic reply is off")
+                        });
+                    }
+                    Ok(Permitted::NeedsPermission) => {
+                        button.set_sensitive(true);
+                        toasts.add_toast(crate::ui::toast(&crate::permission::settings_needed(provider)));
+                    }
+                    Err(err) => {
+                        button.set_sensitive(true);
+                        let said = with_reason(&gettext("Could not save: {reason}"), &err, &[]);
+                        toasts.add_toast(crate::ui::toast(&said));
+                    }
+                }
+            });
+        });
+    });
+}
+
+fn problem(message: &str) -> adw::StatusPage {
+    adw::StatusPage::builder()
+        .icon_name("dialog-warning-symbolic")
+        .title(gettext("Could Not Load the Automatic Reply"))
+        .description(glib::markup_escape_text(message).as_str())
+        .build()
+}
+
+/// The switch's subtitle: who answers while the person is away. An IMAP
+/// account with no provider name has only "IMAP" to call its server, which
+/// reads badly as a subject, so it says "Your mail server".
+fn away_subtitle(provider_name: &str) -> String {
+    let who = if provider_name == Provider::Imap.name() {
+        gettext("Your mail server")
+    } else {
+        provider_name.to_string()
+    };
+    fill(
+        &gettext("{provider} answers new mail while you are away, even when this computer is off"),
+        &[("provider", &who)],
+    )
+}
+
+/// The subject a save sends: what was typed when the row shows, and what
+/// the reply already held when it does not, so a hidden row never blanks it.
+fn subject_to_save(shown: bool, typed: &str, kept: &str) -> String {
+    if shown { typed.to_string() } else { kept.to_string() }
+}
+
+struct Form {
+    page: adw::PreferencesPage,
+    enabled: adw::SwitchRow,
+    dated: adw::SwitchRow,
+    first: DateButton,
+    last: DateButton,
+    subject: adw::EntryRow,
+    /// Whether the subject row shows, and so whether its text is saved.
+    keeps_subject: bool,
+    body: gtk::TextView,
+    contacts_only: adw::SwitchRow,
+}
+
+impl Form {
+    fn new(reply: &AutomaticReply, offers: Offers, provider_name: &str) -> Rc<Form> {
+        let can_limit_to_contacts = offers.auto_reply_contacts_only;
+        let keeps_subject = offers.auto_reply_subject;
+        let page = adw::PreferencesPage::new();
+
+        let enabled = adw::SwitchRow::builder()
+            .title(gettext("Send Automatic Replies"))
+            .subtitle(away_subtitle(provider_name))
+            .active(reply.enabled)
+            .build();
+        let top = adw::PreferencesGroup::new();
+        top.add(&enabled);
+        page.add(&top);
+
+        let today = glib::DateTime::now_local().expect("the clock reads");
+        let first_day = reply.first_day.map_or_else(|| today.clone(), local_day);
+        let last_day = reply.last_day.map_or_else(
+            || today.add_days(6).expect("a week from now exists"),
+            local_day,
+        );
+        let dated = adw::SwitchRow::builder()
+            .title(gettext("Only Between These Dates"))
+            .active(reply.first_day.is_some() || reply.last_day.is_some())
+            .build();
+        let first = DateButton::new(&gettext("First Day"), &first_day);
+        let last = DateButton::new(&gettext("Last Day"), &last_day);
+        for row in [&first.row, &last.row] {
+            dated
+                .bind_property("active", row, "sensitive")
+                .sync_create()
+                .build();
+        }
+        let dates = adw::PreferencesGroup::builder()
+            .title(gettext("Dates"))
+            .build();
+        dates.add(&dated);
+        dates.add(&first.row);
+        dates.add(&last.row);
+        page.add(&dates);
+
+        let subject = adw::EntryRow::builder().title(gettext("Subject")).build();
+        subject.set_text(&reply.subject);
+        let body = gtk::TextView::builder()
+            .wrap_mode(gtk::WrapMode::WordChar)
+            .top_margin(12)
+            .bottom_margin(12)
+            .left_margin(12)
+            .right_margin(12)
+            .accepts_tab(false)
+            .build();
+        body.buffer().set_text(&reply.body);
+        crate::ui::name(&body, &gettext("Message"));
+        let frame = gtk::ScrolledWindow::builder()
+            .child(&body)
+            .min_content_height(160)
+            .hscrollbar_policy(gtk::PolicyType::Never)
+            .css_classes(["card"])
+            .margin_top(12)
+            .build();
+        let message = adw::PreferencesGroup::builder()
+            .title(gettext("Message"))
+            .build();
+        // Outlook keeps a reply's text but not its subject.
+        if keeps_subject {
+            message.add(&subject);
+        } else {
+            message.set_description(Some(&gettext(
+                "The same reply goes to people inside and outside your organization.",
+            )));
+        }
+        message.add(&frame);
+        page.add(&message);
+
+        let contacts_only = adw::SwitchRow::builder()
+            .title(gettext("Only Reply to My Contacts"))
+            .active(reply.contacts_only)
+            .build();
+        let who = adw::PreferencesGroup::new();
+        who.add(&contacts_only);
+        // When the row is hidden the saved reply keeps `contacts_only` as
+        // read, so nothing changes for it.
+        who.set_visible(can_limit_to_contacts);
+        page.add(&who);
+
+        for widget in [
+            dates.upcast_ref::<gtk::Widget>(),
+            message.upcast_ref(),
+            who.upcast_ref(),
+        ] {
+            enabled
+                .bind_property("active", widget, "sensitive")
+                .sync_create()
+                .build();
+        }
+        Rc::new(Form {
+            page,
+            enabled,
+            dated,
+            first,
+            last,
+            subject,
+            keeps_subject,
+            body,
+            contacts_only,
+        })
+    }
+
+    /// `base` with the form's values. Keeps settings the form does not show.
+    fn reply(&self, base: &AutomaticReply) -> AutomaticReply {
+        let buffer = self.body.buffer();
+        let dated = self.dated.is_active();
+        let first = midnight(&self.first.date());
+        let last = midnight(&self.last.date()).max(first);
+        AutomaticReply {
+            enabled: self.enabled.is_active(),
+            subject: subject_to_save(self.keeps_subject, self.subject.text().trim(), &base.subject),
+            body: buffer
+                .text(&buffer.start_iter(), &buffer.end_iter(), false)
+                .trim_end()
+                .to_string(),
+            contacts_only: self.contacts_only.is_active(),
+            first_day: dated.then_some(first),
+            last_day: dated.then_some(last),
+            ..base.clone()
+        }
+    }
+}
+
+/// A row whose button opens a calendar.
+struct DateButton {
+    row: adw::ActionRow,
+    calendar: gtk::Calendar,
+}
+
+impl DateButton {
+    fn new(title: &str, day: &glib::DateTime) -> DateButton {
+        let calendar = gtk::Calendar::new();
+        calendar.set_date(day);
+        let button = gtk::MenuButton::builder()
+            .label(day_label(day))
+            .valign(gtk::Align::Center)
+            .popover(&gtk::Popover::builder().child(&calendar).build())
+            .build();
+        let shown = button.clone();
+        calendar.connect_day_selected(move |calendar| {
+            shown.set_label(&day_label(&calendar.date()));
+            if let Some(popover) = shown.popover() {
+                popover.popdown();
+            }
+        });
+        // The button shows the day; the row beside it says which day it
+        // is, and a reader on the button alone would not hear that.
+        button.update_property(&[gtk::accessible::Property::Description(title)]);
+        let row = adw::ActionRow::builder().title(title).build();
+        row.add_suffix(&button);
+        row.set_activatable_widget(Some(&button));
+        DateButton { row, calendar }
+    }
+
+    fn date(&self) -> glib::DateTime {
+        self.calendar.date()
+    }
+}
+
+/// The day on a date button. It goes through chrono rather than glib's
+/// own formatter, which takes its names from `LC_TIME` and could put
+/// Portuguese months in an English window.
+fn day_label(day: &glib::DateTime) -> String {
+    chrono::NaiveDate::from_ymd_opt(day.year(), day.month() as u32, day.day_of_month() as u32)
+        .map(|day| crate::format::short_date(day, chrono::Local::now().date_naive()))
+        .unwrap_or_default()
+}
+
+fn local_day(millis: i64) -> glib::DateTime {
+    glib::DateTime::from_unix_local(millis / 1000)
+        .or_else(|_| glib::DateTime::now_local())
+        .expect("the clock reads")
+}
+
+/// Local midnight at the start of `day`, in epoch milliseconds.
+fn midnight(day: &glib::DateTime) -> i64 {
+    let (year, month, date) = day.ymd();
+    glib::DateTime::from_local(year, month, date, 0, 0, 0.0)
+        .map(|d| d.to_unix() * 1000)
+        .unwrap_or_default()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_subtitle_names_the_provider_that_answers() {
+        let off = "while you are away, even when this computer is off";
+        assert_eq!(away_subtitle("Gmail"), format!("Gmail answers new mail {off}"));
+        assert_eq!(away_subtitle("Outlook"), format!("Outlook answers new mail {off}"));
+        assert_eq!(away_subtitle("Fastmail"), format!("Fastmail answers new mail {off}"));
+    }
+
+    #[test]
+    fn an_imap_account_with_no_provider_name_says_its_mail_server_answers() {
+        assert_eq!(
+            away_subtitle(Provider::Imap.name()),
+            "Your mail server answers new mail while you are away, even when this computer is off"
+        );
+    }
+
+    #[test]
+    fn a_hidden_subject_row_leaves_the_subject_as_it_was() {
+        assert_eq!(subject_to_save(false, "", "Away"), "Away");
+        assert_eq!(subject_to_save(true, "Back soon", "Away"), "Back soon");
+    }
+}

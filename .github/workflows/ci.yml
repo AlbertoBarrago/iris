@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Tests, clippy, translations, accessibility
+    runs-on: ubuntu-latest
+    # GitHub's hosted runners stop short of the GTK, libadwaita and WebKitGTK
+    # the app needs, so the gate runs on the release it targets.
+    container: ubuntu:26.04
+    timeout-minutes: 60
+    env:
+      CARGO_TERM_COLOR: always
+      # A build machine must not pass the crypto tests by skipping them.
+      PENGUIN_MAIL_REQUIRE_CRYPTO: "1"
+    steps:
+      - name: Install git
+        run: apt-get update && apt-get install -y --no-install-recommends git ca-certificates
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install build dependencies
+        run: scripts/ci-deps.sh
+      - name: Put cargo on PATH
+        run: echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      # The release workflow's build starts from this cache, so both jobs
+      # name it the same.
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          shared-key: ubuntu-26.04
+      # update-po.sh reads the Rust sources with xtr. The cache restored
+      # above keeps ~/.cargo/bin, so cargo install usually finds it there
+      # and has nothing to build.
+      - name: Install xtr
+        run: cargo install --locked xtr --version 0.1.11
+      - name: Tests
+        run: cargo test --workspace
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Translation template is current
+        run: scripts/update-po.sh --check
+      # --no-net skips fetching the screenshots, which live on main: a
+      # branch that adds one would fail here until it merged.
+      - name: Store listing and desktop entry are valid
+        run: |
+          appstreamcli validate --strict --no-net app/data/io.github.c9dev.PenguinMail.metainfo.xml
+          desktop-file-validate app/data/io.github.c9dev.PenguinMail.desktop
+          scripts/metainfo.sh --check
+      - name: Every package build gets the Microsoft client id
+        run: scripts/check-secrets.sh
+      - name: Every control has an accessible name
+        run: scripts/a11y-names.sh
+
+  imap:
+    name: IMAP and SMTP against real servers
+    # The suite starts Dovecot and Mailpit in Docker. The gate's container
+    # has no Docker, so this job runs on the runner, which has it, and
+    # builds only the crates the suite tests. None of them needs GTK.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CARGO_TERM_COLOR: always
+      # A pass here must mean the servers ran, not that the suite skipped
+      # for want of Docker.
+      PENGUIN_MAIL_REQUIRE_IMAP: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Rust
+        run: scripts/ci-deps.sh --rust-only
+      - name: Put cargo on PATH
+        run: echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          shared-key: docker-suite
+      # The tests never pull; this step fetches every pinned image once.
+      - name: Pull the test images
+        run: scripts/test-images.sh
+      - name: The test servers
+        run: cargo test -p mailrs-testmail
+      - name: The client against Dovecot and Mailpit
+        run: cargo test -p mailrs-imap --test dovecot --test dovecot_untrusted
+      # --nocapture keeps each profile's IDLE time in the log.
+      - name: The adapter against Dovecot
+        run: cargo test -p mailrs-sync --test dovecot -- --nocapture
+      - name: CalDAV and CardDAV against Radicale
+        run: cargo test -p mailrs-dav --test radicale && cargo test -p mailrs-sync --test radicale
+      - name: ManageSieve against Dovecot
+        run: cargo test -p mailrs-sieve --test dovecot && cargo test -p mailrs-sync --test managesieve
+      - name: POP3 against Dovecot
+        run: cargo test -p mailrs-pop3 --test dovecot && cargo test -p mailrs-sync --test pop3
+
+  flatpak:
+    name: Flatpak builds and starts
+    runs-on: ubuntu-latest
+    # Flathub's own image, with flatpak-builder and the GNOME 50 SDK the
+    # manifest names. flatpak-builder needs the privileges to make its own
+    # sandbox inside the container.
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # The build runs offline from packaging/flatpak/cargo-sources.json, so
+      # a Cargo.lock change without scripts/flatpak-sources.sh fails here.
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@79327416609af08178ad73b352877e51450790b3 # v6.8
+        with:
+          bundle: penguin-mail.flatpak
+          manifest-path: packaging/flatpak/io.github.c9dev.PenguinMail.yml
+          cache-key: flatpak-builder-${{ hashFiles('Cargo.lock') }}
+      # Starting the app with the manifest's permissions catches one it
+      # needs and lacks before Flathub's reviewers or a user do. It starts
+      # from the bundle the step above made, installed and run the way a
+      # user runs it. `flatpak-builder --run` would need rofiles-fuse, which
+      # this container cannot start, and it takes no option to skip it.
+      - name: Start it
+        run: |
+          command -v Xvfb dbus-run-session || dnf install -y xorg-x11-server-Xvfb dbus-tools
+          flatpak install --noninteractive -y --bundle penguin-mail.flatpak
+          scripts/smoke-start.sh flatpak run io.github.c9dev.PenguinMail

@@ -1,0 +1,880 @@
+//! S/MIME in the app: which call a message needs, and what comes back when
+//! gpgsm has run.
+//!
+//! It is `pgp`'s peer over `protection`: it turns what gpgsm said into a
+//! [`Found`] in the words both standards share, and `protection::read`
+//! alone turns that into the card and the body, so a reader never has to
+//! know which standard a message arrived under. Every call below blocks,
+//! so the window hands them to `Core::gpgsm` rather than running them
+//! itself.
+
+use std::process::Command;
+
+use mailrs_domain::MessageBody;
+use mailrs_domain::translate::{fill, gettext};
+use mailrs_smime::{Chain, Recipient, Signature, Smime, SmimeError, Verdict};
+
+use crate::protection::{
+    self, Found, Named, Part, Read, Refusal, Signed, Signer, Standard, Vouched,
+};
+
+/// Which call of the engine one message needs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Opening {
+    /// `Smime::verify`, over the first part of a `multipart/signed`.
+    Verify,
+    /// `Smime::open_signed`, over a blob holding the message and the
+    /// signature together.
+    Opaque,
+    /// `Smime::decrypt`, over an enveloped blob.
+    Decrypt,
+}
+
+/// Runs the call `opening` asks for and says what the window should show.
+///
+/// `raw` is the message as it arrived, from `format=raw`, which is the one
+/// copy whose bytes a signature still covers. Every branch has an answer,
+/// including the ones where gpgsm refused, so the card never goes blank.
+pub fn read(smime: &Smime, opening: Opening, raw: &[u8], body: &MessageBody) -> Read {
+    protection::read(
+        Standard::Smime,
+        open(smime, opening, raw),
+        body,
+        protection::from_address(raw).as_deref(),
+    )
+}
+
+/// What gpgsm found in the message, before anything is worded.
+pub fn open(smime: &Smime, opening: Opening, raw: &[u8]) -> Result<Found, Refusal> {
+    match opening {
+        Opening::Verify => {
+            let (part, signature) = protection::wrapper_parts(raw).ok_or(Refusal::Unreadable)?;
+            let found = smime.verify(part, signature).map_err(refusal)?;
+            Ok(Found {
+                encrypted: false,
+                signatures: vec![signed(&found)],
+                part: Part::Entity(part.to_vec()),
+            })
+        }
+        Opening::Opaque => {
+            let blob = blob(raw).ok_or(Refusal::Unreadable)?;
+            let opened = smime.open_signed(blob).map_err(refusal)?;
+            Ok(Found {
+                encrypted: false,
+                signatures: vec![signed(&opened.signature)],
+                part: Part::Entity(opened.part),
+            })
+        }
+        Opening::Decrypt => {
+            let blob = blob(raw).ok_or(Refusal::Unreadable)?;
+            let part = smime.decrypt(blob).map_err(refusal)?;
+            Ok(opened(smime, &part))
+        }
+    }
+}
+
+/// What gpgsm says it is, for Preferences. The version is the last word of
+/// its first line, as in `gpgsm (GnuPG) 2.4.8`.
+pub fn version(smime: &Smime) -> Option<String> {
+    let run = Command::new(smime.program())
+        .arg("--version")
+        .output()
+        .ok()?;
+    protection::version_of(&String::from_utf8_lossy(&run.stdout))
+}
+
+/// Why this draft cannot be encrypted under S/MIME, for the Encrypt button
+/// to say. `None` means every recipient has a certificate this computer
+/// trusts. One that only arrived in somebody's mail is not one of them, so
+/// the words say so rather than leave the writer wondering why the
+/// certificate they can see in the keybox does not count.
+pub fn cannot_encrypt(held: &[Recipient]) -> Option<String> {
+    if held.is_empty() {
+        return Some(gettext("Add a recipient whose certificate gpgsm trusts."));
+    }
+    let missing: Vec<&str> = held
+        .iter()
+        .filter(|recipient| recipient.certificate.is_none())
+        .map(|recipient| recipient.address.as_str())
+        .collect();
+    (!missing.is_empty()).then(|| {
+        fill(
+            &gettext(
+                "gpgsm holds no trusted certificate for {addresses}. A certificate that only \
+                 arrived in mail does not count.",
+            ),
+            &[("addresses", &protection::listed(&missing))],
+        )
+    })
+}
+
+/// What Preferences says about the addresses this person sends from:
+/// which of them gpgsm holds a certificate for, and which it holds none
+/// for.
+pub fn own_certificates(held: &[Recipient]) -> String {
+    let addresses = |wanted: bool| -> Vec<&str> {
+        held.iter()
+            .filter(|recipient| recipient.certificate.is_some() == wanted)
+            .map(|recipient| recipient.address.as_str())
+            .collect()
+    };
+    let (mine, missing) = (addresses(true), addresses(false));
+    match (mine.as_slice(), missing.as_slice()) {
+        ([], _) => gettext("gpgsm holds no certificate for any of the addresses you send from."),
+        (mine, []) => fill(
+            &gettext("gpgsm holds a certificate for {addresses}."),
+            &[("addresses", &protection::joined(mine))],
+        ),
+        (mine, missing) => fill(
+            &gettext("gpgsm holds a certificate for {addresses}, and none for {without}."),
+            &[
+                ("addresses", &protection::joined(mine)),
+                ("without", &protection::joined(missing)),
+            ],
+        ),
+    }
+}
+
+/// What came out of an envelope: the message, and whatever signature
+/// travelled inside with it.
+///
+/// gpgsm opens one wrapper at a time, so a message that was signed before
+/// it was enveloped arrives here as a signed entity, and the signature
+/// that matters is the one inside. An outer signature means nothing,
+/// since anyone can wrap somebody else's ciphertext in one of their own.
+fn opened(smime: &Smime, part: &[u8]) -> Found {
+    let inside = match inner(part) {
+        Some(Opening::Verify) => protection::wrapper_parts(part)
+            .map(|(signed, signature)| (signed.to_vec(), smime.verify(signed, signature))),
+        Some(Opening::Opaque) => blob(part).map(|blob| match smime.open_signed(blob) {
+            Ok(found) => (found.part, Ok(found.signature)),
+            Err(err) => (part.to_vec(), Err(err)),
+        }),
+        _ => None,
+    };
+    let (part, signature) = match inside {
+        Some((part, Ok(signature))) => (part, Some(signature)),
+        // The envelope opened and the signature inside it did not. What
+        // came out is still the closest thing to the message there is, so
+        // it goes up with the card saying only that it arrived encrypted.
+        Some((part, Err(_))) => (part, None),
+        None => (part.to_vec(), None),
+    };
+    Found {
+        encrypted: true,
+        signatures: signature.as_ref().map(signed).into_iter().collect(),
+        part: Part::Entity(part),
+    }
+}
+
+/// Which call the entity inside an envelope needs, when it is signed.
+fn inner(part: &[u8]) -> Option<Opening> {
+    let blank = protection::find(part, b"\r\n\r\n")?;
+    let content_type = protection::unfolded(&part[..blank], "content-type")?;
+    let media = content_type.split(';').next()?.trim().to_ascii_lowercase();
+    match media.as_str() {
+        "multipart/signed" => Some(Opening::Verify),
+        "application/pkcs7-mime" | "application/x-pkcs7-mime" => {
+            protection::param(&content_type, "smime-type")
+                .filter(|kind| kind.eq_ignore_ascii_case("signed-data"))
+                .map(|_| Opening::Opaque)
+        }
+        _ => None,
+    }
+}
+
+/// The body of the one part `raw` holds: everything after the blank line
+/// that ends its headers. An S/MIME blob is a part of its own rather than
+/// one of several, so there is nothing to pick out beside it.
+fn blob(raw: &[u8]) -> Option<&[u8]> {
+    Some(&raw[protection::find(raw, b"\r\n\r\n")? + 4..])
+}
+
+/// gpgsm's answer about a signature, in the words both standards share.
+fn signed(signature: &Signature) -> Signed {
+    Signed {
+        verdict: match signature.verdict {
+            Verdict::Good => protection::Verdict::Good,
+            Verdict::Bad => protection::Verdict::Bad,
+            Verdict::ExpiredCertificate => protection::Verdict::KeyExpired,
+            Verdict::RevokedCertificate => protection::Verdict::KeyRevoked,
+            Verdict::Expired => protection::Verdict::SignatureExpired,
+            Verdict::NoCertificate => protection::Verdict::NoKey,
+            Verdict::Unchecked => protection::Verdict::Unchecked,
+        },
+        signer: Signer {
+            name: signature
+                .subject
+                .as_deref()
+                .map(|subject| name(subject).to_string()),
+            // The chain vouches for the whole certificate, so for every
+            // address on it alike.
+            addresses: signature
+                .emails
+                .iter()
+                .map(|address| Named {
+                    address: address.clone(),
+                    vouched: chain(signature.chain),
+                })
+                .collect(),
+            // A certificate is named by its subject; a fingerprint on the
+            // card would tell a reader nothing.
+            key: None,
+        },
+        vouched: chain(signature.chain),
+    }
+}
+
+/// How far the chain vouches for a certificate, in the words both
+/// standards share.
+fn chain(chain: Chain) -> Vouched {
+    match chain {
+        Chain::Trusted => Vouched::Yes,
+        Chain::Untrusted => Vouched::Nobody,
+        Chain::RevocationUnknown => Vouched::RevocationUnknown,
+        Chain::Unknown => Vouched::Unsaid,
+    }
+}
+
+/// Why gpgsm would not answer, in the words both standards share.
+fn refusal(err: SmimeError) -> Refusal {
+    match err {
+        SmimeError::NotForYou => Refusal::NotForYou,
+        SmimeError::NotSmime => Refusal::Unreadable,
+        other => Refusal::Failed(explain(&other)),
+    }
+}
+
+/// What went wrong with gpgsm, in the reader's language. `mailrs_smime`
+/// words its errors for a log; anything the window shows goes through
+/// here.
+pub fn explain(err: &SmimeError) -> String {
+    match err {
+        SmimeError::NoGpgsm => {
+            gettext("This computer has no gpgsm. Install GnuPG to read or send S/MIME mail.")
+        }
+        SmimeError::CannotRun { program, reason } => fill(
+            &gettext("Could not run {program}: {reason}"),
+            &[("program", program), ("reason", reason)],
+        ),
+        SmimeError::Temp(reason) => fill(
+            &gettext("Could not write a temporary file: {reason}"),
+            &[("reason", reason)],
+        ),
+        SmimeError::NotForYou => {
+            gettext("This message is encrypted to a certificate this computer does not hold.")
+        }
+        SmimeError::CannotSign(address) => fill(
+            &gettext("gpgsm holds no secret key to sign as {address}."),
+            &[("address", address)],
+        ),
+        SmimeError::NoCertificateFor(address) => fill(
+            &gettext("gpgsm holds no trusted certificate it can encrypt to for {address}."),
+            &[("address", address)],
+        ),
+        SmimeError::NotSmime => gettext("This part holds no S/MIME data."),
+        SmimeError::NotACertificate => gettext("This file holds no certificate."),
+        SmimeError::WrongPassphrase => {
+            gettext("That passphrase does not open this file. Nothing was imported.")
+        }
+        SmimeError::NoPassphrase => {
+            gettext("The file needs its passphrase, and none was given. Nothing was imported.")
+        }
+        SmimeError::Gpgsm(reason) => {
+            fill(&gettext("gpgsm failed: {reason}"), &[("reason", reason)])
+        }
+    }
+}
+
+/// The common name out of a distinguished name, which gpgsm writes as
+/// `/CN=Ada Lovelace/O=Example`. A subject with no common name goes in as
+/// it came, since something is better than a blank.
+fn name(subject: &str) -> &str {
+    subject
+        .split('/')
+        .find_map(|piece| piece.trim().strip_prefix("CN="))
+        .unwrap_or(subject)
+        .trim()
+}
+
+#[cfg(test)]
+mod tests {
+    use std::process::Stdio;
+
+    use mailrs_smime::Certificate;
+
+    use super::*;
+    use crate::protection::{Mark, Tone};
+
+    /// The card for a message that arrived in the clear with `signature`
+    /// over it, through the one function both standards answer through.
+    fn mark(signature: &Signature) -> Mark {
+        protection::read(
+            Standard::Smime,
+            Ok(Found {
+                encrypted: false,
+                signatures: vec![signed(signature)],
+                part: Part::Text("Meet at six.".into()),
+            }),
+            &MessageBody::default(),
+            Some("ada@example.test"),
+        )
+        .mark
+    }
+
+    /// The card for a message that arrived enveloped, with `signature`
+    /// inside it when it carried one.
+    fn enveloped(signature: Option<&Signature>) -> Mark {
+        protection::read(
+            Standard::Smime,
+            Ok(Found {
+                encrypted: true,
+                signatures: signature.map(signed).into_iter().collect(),
+                part: Part::Text("Meet at six.".into()),
+            }),
+            &MessageBody::default(),
+            Some("ada@example.test"),
+        )
+        .mark
+    }
+
+    /// A GnuPG home under a temp directory, with one certificate in it. It
+    /// touches no keybox of whoever runs the tests, and the round trips
+    /// below say so and stop when this computer has no gpgsm.
+    struct Home {
+        dir: tempfile::TempDir,
+        smime: Smime,
+        address: String,
+    }
+
+    impl Home {
+        fn new() -> Option<Home> {
+            let Ok(smime) = Smime::find() else {
+                eprintln!("skipping: no gpgsm on PATH, so the round trips cannot run");
+                require_crypto();
+                return None;
+            };
+            let dir = tempfile::tempdir().expect("a temp directory");
+            permit_owner_only(dir.path());
+            // gpg-agent asks the person things through a pinentry window,
+            // and a test must never put one on somebody's screen. A
+            // pinentry that cannot run is a pinentry that cannot
+            // interrupt: the agent gets an error instead.
+            std::fs::write(
+                dir.path().join("gpg-agent.conf"),
+                "pinentry-program /bin/false\n",
+            )
+            .expect("write");
+            let address = "ada@example.test";
+            let params = dir.path().join("params");
+            std::fs::write(
+                &params,
+                format!(
+                    "Key-Type: RSA\nKey-Length: 2048\nKey-Usage: sign, encrypt\n\
+                     Serial: random\nName-DN: CN=Ada Lovelace\nName-Email: {address}\n\
+                     Not-After: 2038-01-01\n%commit\n"
+                ),
+            )
+            .expect("write");
+            let certificate = dir.path().join("certificate.pem");
+            let made = gpgsm(&smime, dir.path())
+                .args(["--pinentry-mode", "loopback", "--passphrase-fd", "0"])
+                .args(["--armor", "--generate-key", "--output"])
+                .arg(&certificate)
+                .arg(&params)
+                .stdin(Stdio::null())
+                .status()
+                .expect("gpgsm runs");
+            assert!(
+                made.success(),
+                "gpgsm could not generate a test certificate"
+            );
+            let imported = gpgsm(&smime, dir.path())
+                .arg("--import")
+                .arg(&certificate)
+                .status()
+                .expect("gpgsm runs");
+            assert!(imported.success(), "gpgsm could not import the certificate");
+            let home = Home {
+                smime: smime.with_home(dir.path()),
+                dir,
+                address: address.to_string(),
+            };
+            home.trust();
+            Some(home)
+        }
+
+        /// Marks the home's own certificate as a root worth believing,
+        /// which is what a chain has to reach.
+        fn trust(&self) {
+            let out = gpgsm(&self.smime, self.dir.path())
+                .args(["--with-colons", "--list-keys", &self.address])
+                .stdout(Stdio::piped())
+                .output()
+                .expect("gpgsm runs");
+            let fingerprint = String::from_utf8_lossy(&out.stdout)
+                .lines()
+                .find_map(|record| record.strip_prefix("fpr:"))
+                .and_then(|rest| rest.split(':').nth(8).map(str::to_string))
+                .expect("a fingerprint");
+            let spaced: Vec<String> = fingerprint
+                .as_bytes()
+                .chunks(2)
+                .map(|pair| String::from_utf8_lossy(pair).into_owned())
+                .collect();
+            std::fs::write(
+                self.dir.path().join("trustlist.txt"),
+                format!("{} S relax\n", spaced.join(":")),
+            )
+            .expect("write");
+        }
+
+        /// The message a send would put on the wire: the headers of the
+        /// message, then the entity the engine handed back, byte for byte.
+        fn message(&self, entity: &[u8]) -> Vec<u8> {
+            let mut raw = format!(
+                "From: Ada Lovelace <{0}>\r\nTo: Ada Lovelace <{0}>\r\n\
+                 Subject: Six\r\nMIME-Version: 1.0\r\n",
+                self.address
+            )
+            .into_bytes();
+            raw.extend_from_slice(entity);
+            raw
+        }
+    }
+
+    impl Drop for Home {
+        fn drop(&mut self) {
+            // The agent gpgsm started holds sockets under the temp
+            // directory.
+            let _ = Command::new("gpgconf")
+                .arg("--homedir")
+                .arg(self.dir.path())
+                .args(["--kill", "all"])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status();
+        }
+    }
+
+    /// gpgsm as the test drives it, rather than as the code under test
+    /// does.
+    fn gpgsm(smime: &Smime, home: &std::path::Path) -> Command {
+        let mut command = Command::new(smime.program());
+        command
+            .args(["--batch", "--no-tty", "--disable-dirmngr", "--homedir"])
+            .arg(home)
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        command
+    }
+
+    #[cfg(unix)]
+    fn permit_owner_only(path: &std::path::Path) {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o700)).expect("chmod");
+    }
+
+    #[cfg(not(unix))]
+    fn permit_owner_only(_path: &std::path::Path) {}
+
+    fn signature(verdict: Verdict, chain: Chain) -> Signature {
+        Signature {
+            verdict,
+            subject: Some("/CN=Ada Lovelace/O=Example".into()),
+            emails: vec!["ada@example.test".into()],
+            fingerprint: Some("F".repeat(40)),
+            chain,
+        }
+    }
+
+    fn certificate(address: &str, held: bool) -> Recipient {
+        Recipient {
+            address: address.to_string(),
+            certificate: held.then(|| Certificate {
+                fingerprint: "F".repeat(40),
+                subject: format!("CN={address}"),
+                email: address.to_string(),
+            }),
+        }
+    }
+
+    #[test]
+    fn a_good_signature_names_the_signer_and_how_far_the_chain_reached() {
+        let mark = mark(&signature(Verdict::Good, Chain::Trusted));
+        assert_eq!(mark.title, "Signed by Ada Lovelace <ada@example.test>");
+        assert_eq!(
+            mark.detail.as_deref(),
+            Some("Its certificate leads back to an authority you trust.")
+        );
+        assert_eq!(mark.tone, Tone::Good);
+    }
+
+    #[test]
+    fn a_chain_that_reached_nobody_we_trust_leaves_the_card_unchecked() {
+        let mark = mark(&signature(Verdict::Good, Chain::Untrusted));
+        assert_eq!(mark.title, "Signed by Ada Lovelace <ada@example.test>");
+        assert_eq!(mark.tone, Tone::Unchecked);
+        assert!(
+            mark.detail
+                .as_deref()
+                .is_some_and(|detail| detail.contains("nobody you trust")),
+            "{mark:?}"
+        );
+    }
+
+    #[test]
+    fn a_bad_signature_says_so_plainly() {
+        let mark = mark(&signature(Verdict::Bad, Chain::Trusted));
+        assert_eq!(mark.title, "This message changed after it was signed");
+        assert_eq!(mark.tone, Tone::Bad);
+    }
+
+    #[test]
+    fn a_certificate_that_ran_out_is_not_a_bad_signature() {
+        let mark = mark(&signature(Verdict::ExpiredCertificate, Chain::Trusted));
+        assert!(
+            mark.title.ends_with("whose certificate has run out"),
+            "{mark:?}"
+        );
+        assert_eq!(mark.tone, Tone::Unchecked);
+    }
+
+    /// The owner's rule: an S/MIME signature whose revocation nobody could
+    /// check still opens, with the signer named, and the card says what was
+    /// left unchecked in the neutral tone rather than in green.
+    #[test]
+    fn a_revocation_nobody_could_check_leaves_the_card_neutral() {
+        let mark = mark(&signature(Verdict::Good, Chain::RevocationUnknown));
+        assert_eq!(mark.title, "Signed by Ada Lovelace <ada@example.test>");
+        assert_eq!(
+            mark.detail.as_deref(),
+            Some(
+                "Its certificate leads back to an authority you trust, but this computer \
+                 could not check whether it was revoked."
+            )
+        );
+        assert_eq!(mark.tone, Tone::Unchecked);
+
+        let inside = enveloped(Some(&signature(Verdict::Good, Chain::RevocationUnknown)));
+        assert_eq!(
+            inside.title,
+            "Encrypted, and signed by Ada Lovelace <ada@example.test>"
+        );
+        assert_eq!(inside.tone, Tone::Unchecked);
+    }
+
+    /// The window keeps an answer for the rest of the run, and this one can
+    /// change once the authority is back in reach, so it says so.
+    #[test]
+    fn a_revocation_nobody_could_check_is_marked_as_one_to_ask_again() {
+        let answer = |chain| {
+            protection::read(
+                Standard::Smime,
+                Ok(Found {
+                    encrypted: false,
+                    signatures: vec![signed(&signature(Verdict::Good, chain))],
+                    part: Part::Text("Meet at six.".into()),
+                }),
+                &MessageBody::default(),
+                Some("ada@example.test"),
+            )
+        };
+        assert!(answer(Chain::RevocationUnknown).revocation_unchecked);
+        assert!(!answer(Chain::Trusted).revocation_unchecked);
+    }
+
+    /// gpgsm reports a certificate its authority's CRL lists as a good
+    /// signature beside `TRUST_NEVER 94`, so the chain says untrusted as
+    /// well. The revocation is what the card names.
+    #[test]
+    fn a_revoked_certificate_is_bad_whatever_the_chain_says() {
+        let mark = mark(&signature(Verdict::RevokedCertificate, Chain::Untrusted));
+        assert!(
+            mark.title.ends_with("whose certificate was taken back"),
+            "{mark:?}"
+        );
+        assert_eq!(mark.tone, Tone::Bad);
+    }
+
+    #[test]
+    fn a_certificate_we_do_not_hold_is_its_own_answer() {
+        let unknown = Signature {
+            subject: None,
+            emails: Vec::new(),
+            fingerprint: None,
+            ..signature(Verdict::NoCertificate, Chain::Unknown)
+        };
+        let mark = mark(&unknown);
+        assert_eq!(
+            mark.title,
+            "Signed by a certificate this computer does not hold"
+        );
+        assert_eq!(mark.tone, Tone::Unchecked);
+    }
+
+    #[test]
+    fn an_enveloped_message_says_it_arrived_that_way() {
+        let alone = enveloped(None);
+        assert_eq!(alone.title, "This message arrived encrypted");
+        assert_eq!(alone.tone, Tone::Unchecked);
+
+        let inside = enveloped(Some(&signature(Verdict::Good, Chain::Trusted)));
+        assert_eq!(
+            inside.title,
+            "Encrypted, and signed by Ada Lovelace <ada@example.test>"
+        );
+        assert_eq!(inside.tone, Tone::Good);
+
+        let broken = enveloped(Some(&signature(Verdict::Bad, Chain::Trusted)));
+        assert_eq!(
+            broken.title,
+            "Encrypted. This message changed after it was signed"
+        );
+        assert_eq!(broken.tone, Tone::Bad);
+    }
+
+    #[test]
+    fn every_engine_error_has_words_a_person_reads() {
+        let cases = [
+            (SmimeError::NoGpgsm, "GnuPG"),
+            (
+                SmimeError::CannotRun {
+                    program: "/usr/bin/gpgsm".into(),
+                    reason: "busy".into(),
+                },
+                "busy",
+            ),
+            (SmimeError::Temp("full".into()), "full"),
+            (SmimeError::NotForYou, "certificate"),
+            (
+                SmimeError::CannotSign("ada@example.test".into()),
+                "ada@example.test",
+            ),
+            (
+                SmimeError::NoCertificateFor("bo@example.test".into()),
+                "bo@example.test",
+            ),
+            (SmimeError::NotSmime, "S/MIME"),
+            (SmimeError::Gpgsm("bad blob".into()), "bad blob"),
+        ];
+        for (err, names) in cases {
+            let said = explain(&err);
+            assert!(said.contains(names), "{said}");
+        }
+    }
+
+    #[test]
+    fn a_message_for_somebody_else_says_so_where_the_message_would_be() {
+        let mark = protection::read(
+            Standard::Smime,
+            Err(refusal(SmimeError::NotForYou)),
+            &MessageBody::default(),
+            None,
+        )
+        .mark;
+        assert_eq!(
+            mark.title,
+            "This message is encrypted to a certificate you do not hold"
+        );
+        assert_eq!(mark.tone, Tone::Unchecked);
+    }
+
+    #[test]
+    fn preferences_say_which_of_your_own_addresses_gpgsm_has_a_certificate_for() {
+        assert_eq!(
+            own_certificates(&[certificate("ada@example.test", false)]),
+            "gpgsm holds no certificate for any of the addresses you send from."
+        );
+        assert_eq!(
+            own_certificates(&[
+                certificate("ada@example.test", true),
+                certificate("work@example.test", true),
+            ]),
+            "gpgsm holds a certificate for ada@example.test and work@example.test."
+        );
+        assert_eq!(
+            own_certificates(&[
+                certificate("ada@example.test", true),
+                certificate("work@example.test", false),
+            ]),
+            "gpgsm holds a certificate for ada@example.test, and none for work@example.test."
+        );
+    }
+
+    #[test]
+    fn a_message_signed_by_the_engine_reads_back_as_signed_here() {
+        let Some(home) = Home::new() else { return };
+        let part = b"Content-Type: text/plain; charset=utf-8\r\n\r\nMeet at six.\r\n";
+        let entity = home.smime.sign(part, &home.address).expect("a signed body");
+        let raw = home.message(&entity);
+
+        let read = read(&home.smime, Opening::Verify, &raw, &MessageBody::default());
+
+        assert_eq!(read.mark.title, "Signed by Ada Lovelace <ada@example.test>");
+        assert_eq!(read.mark.tone, Tone::Good, "{:?}", read.mark);
+        let shown = read.body.expect("the body is cut from what was signed");
+        assert_eq!(shown.text.as_deref(), Some("Meet at six."));
+    }
+
+    #[test]
+    fn a_part_nobody_signed_is_not_drawn_under_the_card() {
+        use crate::protection::tampered::{as_gmail_read_it, with_unsigned_part};
+
+        let Some(home) = Home::new() else { return };
+        let part = b"Content-Type: text/plain; charset=utf-8\r\n\r\nMeet at six.\r\n";
+        let entity = home.smime.sign(part, &home.address).expect("a signed body");
+        let raw = home.message(&with_unsigned_part(&entity));
+
+        let read = read(&home.smime, Opening::Verify, &raw, &as_gmail_read_it());
+
+        assert_eq!(read.mark.title, "Signed by Ada Lovelace <ada@example.test>");
+        let shown = read.body.expect("the body is cut from what was signed");
+        assert_eq!(shown.html, None, "{shown:?}");
+        assert!(shown.attachments.is_empty(), "{shown:?}");
+        assert_eq!(shown.text.as_deref(), Some("Meet at six."));
+    }
+
+    #[test]
+    fn a_message_the_engine_enveloped_comes_back_readable_and_signed() {
+        let Some(home) = Home::new() else { return };
+        let part = b"Content-Type: text/plain; charset=utf-8\r\n\r\nThe key is under the mat.\r\n";
+        let entity = home
+            .smime
+            .encrypt(
+                part,
+                std::slice::from_ref(&home.address),
+                Some(&home.address),
+            )
+            .expect("an enveloped body");
+        let raw = home.message(&entity);
+
+        let read = read(&home.smime, Opening::Decrypt, &raw, &MessageBody::default());
+
+        assert_eq!(
+            read.mark.title,
+            "Encrypted, and signed by Ada Lovelace <ada@example.test>"
+        );
+        assert_eq!(read.mark.tone, Tone::Good, "{:?}", read.mark);
+        let inside = read.body.expect("the message that was inside");
+        // The blank line at the end of a signed part is not part of it, so
+        // what was signed, enveloped and opened again ends at the full stop.
+        assert_eq!(inside.text.as_deref(), Some("The key is under the mat."));
+    }
+
+    #[test]
+    fn a_message_inside_its_own_signature_is_drawn_from_what_was_in_there() {
+        let Some(home) = Home::new() else { return };
+        let part = b"Content-Type: text/plain; charset=utf-8\r\n\r\nMeet at six.\r\n";
+        let file = home.dir.path().join("signed");
+        std::fs::write(&file, part).expect("write");
+        // What Outlook sends: the message inside the blob, base64, with the
+        // headers of one part around it.
+        let out = gpgsm(&home.smime, home.dir.path())
+            .args(["--sign", "--local-user", &home.address, "--output", "-"])
+            .arg(&file)
+            .stdout(Stdio::piped())
+            .output()
+            .expect("gpgsm runs");
+        assert!(out.status.success(), "gpgsm could not sign");
+        let mut entity = b"Content-Type: application/pkcs7-mime; smime-type=signed-data;\r\n \
+             name=\"smime.p7m\"\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+            .to_vec();
+        entity.extend_from_slice(&mailrs_smime::mime::base64(&out.stdout));
+        let raw = home.message(&entity);
+
+        let read = read(&home.smime, Opening::Opaque, &raw, &MessageBody::default());
+
+        assert_eq!(read.mark.title, "Signed by Ada Lovelace <ada@example.test>");
+        assert_eq!(read.mark.tone, Tone::Good, "{:?}", read.mark);
+        let inside = read.body.expect("the message that was inside");
+        assert_eq!(inside.text.as_deref(), Some("Meet at six.\r\n"));
+    }
+
+    #[test]
+    fn a_draft_signed_on_its_way_out_verifies_on_its_way_in() {
+        let Some(home) = Home::new() else { return };
+        let me = mailrs_domain::Address {
+            name: Some("Ada Lovelace".into()),
+            email: home.address.clone(),
+        };
+        let mut draft = crate::compose::Draft::new(1, me.clone());
+        draft.to = vec![me];
+        draft.subject = "Six".into();
+        draft.markdown = "Meet at six.".into();
+        let part = crate::compose::build_body_part(&draft).expect("a body part");
+        let entity = home
+            .smime
+            .sign(&part, &home.address)
+            .expect("a signed body");
+        let raw =
+            crate::compose::build_protected(&draft, 1_757_000_000, "<id@example.test>", entity)
+                .expect("a message");
+
+        let read = read(&home.smime, Opening::Verify, &raw, &MessageBody::default());
+
+        assert_eq!(read.mark.title, "Signed by Ada Lovelace <ada@example.test>");
+        assert_eq!(read.mark.tone, Tone::Good, "{:?}", read.mark);
+    }
+
+    #[test]
+    fn an_encrypted_draft_reopens_out_of_its_envelope() {
+        use crate::protection::{Standard, draft};
+
+        let Some(home) = Home::new() else { return };
+        let me = mailrs_domain::Address {
+            name: Some("Ada Lovelace".into()),
+            email: home.address.clone(),
+        };
+        let mut written = crate::compose::Draft::new(1, me.clone());
+        written.to = vec![me];
+        written.subject = "Six".into();
+        written.markdown = "Meet at six.".into();
+        written.encrypt = true;
+        written.standard = Standard::Smime;
+        let part = crate::compose::build_body_part(&written).expect("a body part");
+        let entity = draft::for_writer_smime(&home.smime, &part, &home.address)
+            .expect("gpgsm answers")
+            .expect("gpgsm holds the writer's own certificate");
+        let raw =
+            draft::build(&written, 1_757_000_000, "<id@example.test>", entity).expect("a draft");
+        assert!(!String::from_utf8_lossy(&raw).contains("Meet at six"));
+        assert_eq!(draft::standard_of(&raw), Some(Standard::Smime));
+
+        let read = read(&home.smime, Opening::Decrypt, &raw, &MessageBody::default());
+        let mut reopened = crate::compose::Draft::new(1, written.from.clone());
+        draft::reopen(&raw, Standard::Smime, read, &mut reopened).expect("it opens");
+
+        assert_eq!(reopened.to, written.to);
+        assert_eq!(reopened.markdown.trim(), "Meet at six.");
+        assert!(reopened.encrypt);
+        assert!(!reopened.sign, "the header says it was not to be signed");
+        assert_eq!(reopened.standard, Standard::Smime);
+    }
+
+    #[test]
+    fn a_message_that_says_it_is_smime_and_is_not_says_so() {
+        let Some(home) = Home::new() else { return };
+        let raw = home.message(b"Content-Type: multipart/signed\r\n\r\nMeet at six.\r\n");
+
+        let read = read(&home.smime, Opening::Verify, &raw, &MessageBody::default());
+
+        assert_eq!(read.mark.title, "This message says it is S/MIME and is not");
+        assert_eq!(read.mark.tone, Tone::Unchecked);
+    }
+
+    /// Stops a run that was meant to exercise the real thing from passing on a
+    /// computer that cannot. The round trips skip when GnuPG is missing, so a
+    /// developer without it can still run the suite; that same skip would let
+    /// a build machine report a green S/MIME and OpenPGP suite having tested
+    /// nothing. Setting `PENGUIN_MAIL_REQUIRE_CRYPTO` turns the skip into a
+    /// failure, which is what a build machine should do.
+    fn require_crypto() {
+        if std::env::var_os("PENGUIN_MAIL_REQUIRE_CRYPTO").is_some() {
+            panic!(
+                "PENGUIN_MAIL_REQUIRE_CRYPTO is set and GnuPG is not on PATH, \
+                 so these tests would have proved nothing"
+            );
+        }
+    }
+}

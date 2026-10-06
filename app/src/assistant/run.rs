@@ -1,0 +1,1847 @@
+//! What the assistant's mail tools do. A call arrives by name with its JSON
+//! input, [`Tools::run`] finds the tool in the catalog, and the tool's
+//! handler answers from the mail modules plus two ports: [`Desk`] for what
+//! the window has on screen, and [`Effects`] for what a tool asks the
+//! window to do.
+//!
+//! Nothing here touches GTK. The window is one adapter behind the ports and
+//! the tests are another, so the whole tool loop runs headless. The two
+//! types the unsubscribe dialog is asked with are plain data the ui module
+//! happens to declare, and no widget comes with them.
+
+use std::collections::HashMap;
+use std::future::Future;
+use std::pin::Pin;
+use std::rc::Rc;
+use std::sync::Arc;
+
+use chrono::{DateTime, Local, NaiveDate, NaiveDateTime, TimeZone};
+use mailrs_ai::ToolOutcome;
+use mailrs_domain::smart::{Condition, SmartMailbox};
+use mailrs_domain::{
+    Account, AccountId, Category, EpochMillis, FlagColor, Folder, Label, LabelKind, MailSet,
+    MessageMeta, Role, Target, ThreadSummary,
+};
+use mailrs_store::{Db, messages};
+use mailrs_sync::mailbox::Standard;
+use mailrs_sync::{
+    AccountSettings, AccountSync, Accounts, AutomaticReply, BackendError, Calendar, Categorized, Failure,
+    History, Invitations, Loaded, MailAction, MailActions, MailBackend, Mailbox, Mailboxes, Missing,
+    MovedFrom, NewLabels, Outcome, Permitted, Scope, SyncError, TriageAction, View,
+};
+use serde_json::{Value, json};
+
+use crate::compose::{self, Draft};
+use crate::protection::{self, Held};
+use crate::rules::{RuleForm, describe_action, describe_criteria};
+use crate::settings::{
+    Change, Choice, ColorScheme, MarkRead, RemoteImages, Setting, Settings, TextSize, UndoSend,
+};
+use crate::ui::unsubscribe::{ListLine, Way};
+use crate::unsubscribe::RequestSent;
+use crate::unsubscribe_page::{Adviser, Browser};
+use mailrs_domain::translate::{date_locale, fill, fill_plural, gettext};
+
+mod calendar;
+mod catalog;
+#[cfg(test)]
+mod fake;
+mod mail;
+mod manage;
+mod queue;
+#[cfg(test)]
+mod tests;
+mod unsubscribe;
+mod writing;
+
+use catalog::Plan;
+pub use catalog::{label, specs};
+
+/// The id a planned rule gives a label the account lacks, until the user
+/// approves and the label is made. Gmail ids never hold a space.
+const NEW_LABEL: &str = "new label";
+
+type ToolResult = Result<Value, String>;
+
+/// An account a tool named, with the loop that syncs it.
+type Syncing = (Account, Arc<AccountSync>);
+
+pub use crate::wanted::Answer;
+
+/// The conversation the window shows, if any.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct OpenConversation {
+    pub account_id: AccountId,
+    pub thread_id: String,
+    /// Set when the window shows one message of the thread rather than all.
+    pub message_id: Option<String>,
+    pub subject: String,
+}
+
+/// What the window has on screen when a tool call arrives.
+#[derive(Debug, Clone, Default)]
+pub struct OnScreen {
+    /// The mailbox title, as the header shows it.
+    pub mailbox: String,
+    pub open: Option<OpenConversation>,
+    pub selected: Vec<ThreadSummary>,
+}
+
+/// What the tools read from the window. Every method gives back plain data,
+/// so a test fills it in without a widget.
+pub trait Desk {
+    fn settings(&self) -> Settings;
+    fn accounts(&self) -> Vec<Account>;
+    fn labels(&self) -> HashMap<AccountId, Vec<Label>>;
+    /// The settings that change what a mailbox lists.
+    fn view(&self) -> View;
+    fn on_screen(&self) -> OnScreen;
+    /// The account a new message comes from: the one set in Preferences,
+    /// else the account in view, else the first.
+    fn default_account(&self) -> Option<AccountId>;
+    /// Where `export_mail` saves a file the user named no place for: the
+    /// XDG download directory.
+    fn downloads(&self) -> std::path::PathBuf;
+}
+
+/// A Google permission a tool can find missing. The window asks for the
+/// same four, so the two share one type.
+pub use crate::permission::Permission;
+
+/// What the tools ask the window to do. A test records the calls instead.
+pub trait Effects {
+    /// Asks the user to approve an action. `true` when they agree.
+    fn confirm(&self, question: String) -> Answer<'_, bool>;
+    /// Offers the account a Google permission it still lacks.
+    fn ask_permission(&self, account_id: AccountId, permission: Permission);
+    /// Tells the user that the Google Cloud project has `service` switched
+    /// off, and offers the page at `enable_url` that turns it on.
+    fn explain_api_off(&self, service: &str, enable_url: &str);
+    /// Sends the draft at `at`, from a Gmail draft, as Send Later does. A
+    /// draft with no `draft_id` is new and gets its signature first; one
+    /// that has an id already went through a composer that signed it.
+    fn send_later(&self, draft: Draft, at: EpochMillis) -> Result<(), String>;
+    /// Sends the request mail a list asks for to be let go, as it
+    /// stands: no signature, no composer. It goes from `from` when that
+    /// is one of the account's addresses, and answers once the outbox
+    /// has sent it or kept it.
+    fn send_request(
+        &self,
+        account_id: AccountId,
+        from: String,
+        to: String,
+        subject: String,
+        body: String,
+    ) -> Answer<'_, Result<RequestSent, String>>;
+    /// Opens a list's unsubscribe page in the person's browser, for them
+    /// to finish.
+    fn open_page(&self, url: &str);
+    /// Takes the Unsubscribe banner off the conversation, wherever it is
+    /// on screen, once its list has let go.
+    fn left_list(&self, account_id: AccountId, thread_id: &str);
+
+    // ---- Leaving lists that only a page will take ------------------------
+    // Leaving several lists at once needs two things of the window: the
+    // hidden view a page loads in, and the one dialog that asks about
+    // every list. The dialog's own words are the window's, so these two
+    // hand its types straight through rather than building it here.
+
+    /// The hidden view one run loads its pages in, one page at a time.
+    /// It is dropped when the run ends.
+    fn page_browser(&self) -> Rc<dyn Browser>;
+    /// The model a page the rules cannot read is shown to, or nothing
+    /// when the Unsubscribing feature has none.
+    fn page_adviser(&self) -> Option<Box<dyn Adviser>>;
+    /// Asks about leaving `lines`, filling each page line in as
+    /// `updates` says what that page turned out to hold. Answers the
+    /// ticked lines with the way each settled on, or nothing when the
+    /// person said no.
+    fn confirm_unsubscribe(
+        &self,
+        lines: Vec<ListLine>,
+        updates: async_channel::Receiver<(usize, Way)>,
+    ) -> Answer<'_, Option<Vec<(usize, Way)>>>;
+
+    fn change_settings(&self, change: Change) -> Result<(), String>;
+    /// A blank message from the account, carrying its identity.
+    fn new_draft(&self, account_id: AccountId) -> Result<Draft, String>;
+    /// Opens a composer on the draft, signed.
+    fn compose(&self, draft: Draft) -> Result<(), String>;
+    /// Sends the draft, signed, after the undo delay.
+    fn send(&self, draft: Draft) -> Result<(), String>;
+    fn show_thread(&self, summary: ThreadSummary);
+    fn copy(&self, text: &str);
+    /// Redraws what a mail action changed and lists the mailbox again.
+    fn mail_changed(&self, action: &MailAction, outcome: &Outcome);
+    /// Counts and rows again, after a change no mail action covers.
+    fn relist(&self);
+    /// Rows again after mail moved between categories, which can add
+    /// rows to a Gmail folder that only a fresh search shows.
+    fn categories_moved(&self);
+
+    // ---- What waits: Send Later, the Outbox, and Undo --------------------
+
+    /// Opens a composer on a message whose only copy Penguin Mail holds,
+    /// marked unsaved, so closing it asks before the message is lost.
+    fn reopen_unsent(&self, draft: Draft) -> Result<(), String>;
+    /// Counts, the Send Later and Outbox lists, and a queued message on
+    /// screen again, after a queued message went, moved, or left.
+    fn queue_changed(&self);
+    /// Redraws what an undo put back.
+    fn undone(&self, outcome: &Outcome);
+
+    /// Reads the senders allowed to load remote images again, after a
+    /// tool changed the list the window keeps a copy of.
+    fn image_senders_changed(&self);
+
+    // ---- The engines and Gmail's Drafts, for the writing tools ----------
+    // The composer reaches gpg, gpgsm and the drafts through the core. The
+    // writing tools ask the window, so a test can stand in for all three.
+
+    /// What gpg and gpgsm hold for `addresses`. An engine this computer
+    /// lacks answers `None`.
+    fn keys(&self, addresses: Vec<String>) -> Answer<'_, Held>;
+    /// Which standard signs a message from `from`.
+    fn signing_standard(&self, from: String) -> Answer<'_, protection::Standard>;
+    /// `draft` filled in from the Gmail draft `raw`, opened whichever way
+    /// Gmail holds it. An encrypted one goes to its engine, which may ask
+    /// for the passphrase.
+    fn reopen_draft(&self, raw: Vec<u8>, draft: Draft) -> Answer<'_, Result<Draft, String>>;
+    /// Saves `draft` over the Gmail draft it names, encrypted to the writer
+    /// when it goes out encrypted, as the composer's Save Draft does.
+    fn save_draft(&self, draft: Draft) -> Answer<'_, Result<(), String>>;
+}
+
+/// Hands a future to the sync runtime. The GTK thread has no tokio reactor
+/// of its own, so every store and Gmail call crosses here.
+pub trait Background {
+    fn start(&self, task: Pin<Box<dyn Future<Output = ()> + Send>>);
+}
+
+/// The modules a tool call works through: mail actions, mailbox listing,
+/// Gmail settings, the calendar, the invitations in mail, the address
+/// books, the accounts that sync, and the store.
+pub struct Modules<A: Accounts> {
+    pub mail: Arc<MailActions<A>>,
+    pub lists: Arc<Mailboxes<A>>,
+    pub gmail: Arc<AccountSettings<A>>,
+    pub calendar: Arc<Calendar<A>>,
+    pub invitations: Arc<Invitations<A>>,
+    pub contacts: Arc<mailrs_sync::ContactBook<A>>,
+    pub accounts: Arc<A>,
+    pub db: Db,
+}
+
+/// The assistant's tools, and the one way to run them.
+pub struct Tools<A: Accounts> {
+    modules: Modules<A>,
+    background: Rc<dyn Background>,
+    desk: Rc<dyn Desk>,
+    effects: Rc<dyn Effects>,
+}
+
+fn text(input: &Value, key: &str) -> Option<String> {
+    input
+        .get(key)
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(str::to_string)
+}
+
+fn flag(input: &Value, key: &str) -> Option<bool> {
+    input.get(key).and_then(Value::as_bool)
+}
+
+fn required(input: &Value, key: &str) -> Result<String, String> {
+    text(input, key).ok_or_else(|| format!("`{key}` is missing"))
+}
+
+/// What the model hears after a tool asked the user for `permission`.
+fn asked_for(permission: Permission, account: &Account) -> String {
+    format!(
+        "Penguin Mail needs permission to {} for {}. The user was asked to grant it; try again once they have.",
+        permission.purpose(),
+        account.email
+    )
+}
+
+/// The category a tool names. The tools offer no "all", since the whole
+/// inbox needs no category.
+fn named_category(key: &str) -> Result<Category, String> {
+    Category::from_key(key)
+        .filter(|c| *c != Category::All)
+        .ok_or_else(|| format!("Unknown category {key}."))
+}
+
+/// The standard places `meta` sits in, plain English words the model
+/// reads. Archive and All Mail hold everything that is in none of the
+/// others, so they name nothing here.
+fn roles_of(meta: &MessageMeta) -> Vec<&'static str> {
+    const NAMED: [(Role, &str); 6] = [
+        (Role::Inbox, "Inbox"),
+        (Role::Sent, "Sent"),
+        (Role::Drafts, "Drafts"),
+        (Role::Trash, "Trash"),
+        (Role::Junk, "Spam"),
+        (Role::Important, "Important"),
+    ];
+    NAMED
+        .into_iter()
+        .filter(|(role, _)| meta.in_role(*role))
+        .map(|(_, name)| name)
+        .collect()
+}
+
+/// A category's plain English name. Model-facing, not translated: the
+/// model reads English whatever the user's locale is.
+fn category_name(category: Category) -> &'static str {
+    match category {
+        Category::Updates => "Updates",
+        Category::Promotions => "Promotions",
+        Category::Social => "Social",
+        Category::Focused => "Focused",
+        Category::Other => "Other",
+        Category::Primary | Category::All => "Primary",
+    }
+}
+
+/// The mailbox that lists `label` of `account_id`, where `set` is the mail
+/// set the account's mail service reads the label as. A person's label
+/// lists its own mail. A server's own labels can stand for mail sets
+/// rather than mailboxes: the ones with a sidebar row open that row, and
+/// the rest, such as unread mail or a category, list their set.
+fn label_mailbox(account_id: AccountId, label: &Label, set: MailSet) -> Mailbox {
+    if label.kind == LabelKind::System {
+        if let Some(which) = Standard::from_key(&label.id) {
+            return Mailbox::Standard { account_id, which };
+        }
+        if !matches!(set, MailSet::Mailbox(_)) {
+            return Mailbox::Set {
+                account_id,
+                set,
+                name: label.name.clone(),
+            };
+        }
+    }
+    Mailbox::Label {
+        account_id,
+        label_id: label.id.clone(),
+        name: label.name.clone(),
+    }
+}
+
+/// What `named_mailboxes` found for a tool's mailbox name: mailboxes to
+/// list, or the model's answer when a system label needs a running
+/// account's services to say what it stands for.
+enum Named {
+    Found(Vec<Mailbox>),
+    Unavailable(Value),
+}
+
+/// A mailbox `list_mail` names. Its keys make the schema's enum, so the
+/// model is offered the names this parser takes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum MailboxName {
+    Inbox,
+    Flagged,
+    Sent,
+    Drafts,
+    Vips,
+    /// Sent mail that has waited 3 to 30 days for a reply.
+    FollowUp,
+    /// Received mail taken out of the inbox.
+    Archive,
+    Junk,
+    Trash,
+    AllMail,
+    /// The label `list_mail` names in its `label` field.
+    Label,
+    /// Messages that could not go out and wait to be tried again.
+    Outbox,
+    /// Messages waiting for the hour Send Later gave them.
+    SendLater,
+    /// Conversations set aside with Remind Me.
+    Reminders,
+    Muted,
+    /// The saved smart mailbox `list_mail` names in its `name` field.
+    Smart,
+}
+
+impl MailboxName {
+    const ALL: [MailboxName; 16] = [
+        MailboxName::Inbox,
+        MailboxName::Flagged,
+        MailboxName::Sent,
+        MailboxName::Drafts,
+        MailboxName::Vips,
+        MailboxName::FollowUp,
+        MailboxName::Archive,
+        MailboxName::Junk,
+        MailboxName::Trash,
+        MailboxName::AllMail,
+        MailboxName::Label,
+        MailboxName::Outbox,
+        MailboxName::SendLater,
+        MailboxName::Reminders,
+        MailboxName::Muted,
+        MailboxName::Smart,
+    ];
+
+    fn key(self) -> &'static str {
+        match self {
+            MailboxName::Inbox => "inbox",
+            MailboxName::Flagged => "flagged",
+            MailboxName::Sent => "sent",
+            MailboxName::Drafts => "drafts",
+            MailboxName::Vips => "vips",
+            MailboxName::FollowUp => "follow_up",
+            MailboxName::Archive => "archive",
+            MailboxName::Junk => "junk",
+            MailboxName::Trash => "trash",
+            MailboxName::AllMail => "all_mail",
+            MailboxName::Label => "label",
+            MailboxName::Outbox => "outbox",
+            MailboxName::SendLater => "send_later",
+            MailboxName::Reminders => "reminders",
+            MailboxName::Muted => "muted",
+            MailboxName::Smart => "smart",
+        }
+    }
+
+    /// Whether the mailbox lists what waits for a time, soonest first,
+    /// rather than mail, newest first.
+    fn waits(self) -> bool {
+        matches!(
+            self,
+            MailboxName::Outbox | MailboxName::SendLater | MailboxName::Reminders
+        )
+    }
+
+    fn named(key: &str) -> Option<MailboxName> {
+        MailboxName::ALL.into_iter().find(|m| m.key() == key)
+    }
+}
+
+/// What `organize` does to conversations. Its keys make the schema's enum.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Organize {
+    Archive,
+    Trash,
+    Junk,
+    NotJunk,
+    MoveToInbox,
+    MarkRead,
+    MarkUnread,
+    Flag,
+    Unflag,
+}
+
+impl Organize {
+    const ALL: [Organize; 9] = [
+        Organize::Archive,
+        Organize::Trash,
+        Organize::Junk,
+        Organize::NotJunk,
+        Organize::MoveToInbox,
+        Organize::MarkRead,
+        Organize::MarkUnread,
+        Organize::Flag,
+        Organize::Unflag,
+    ];
+
+    fn key(self) -> &'static str {
+        match self {
+            Organize::Archive => "archive",
+            Organize::Trash => "trash",
+            Organize::Junk => "junk",
+            Organize::NotJunk => "not_junk",
+            Organize::MoveToInbox => "move_to_inbox",
+            Organize::MarkRead => "mark_read",
+            Organize::MarkUnread => "mark_unread",
+            Organize::Flag => "flag",
+            Organize::Unflag => "unflag",
+        }
+    }
+
+    fn named(key: &str) -> Option<Organize> {
+        Organize::ALL.into_iter().find(|o| o.key() == key)
+    }
+
+    /// The mail action, flagging in `color`.
+    fn action(self, color: FlagColor) -> MailAction {
+        let triage = MailAction::Triage;
+        match self {
+            Organize::Archive => triage(TriageAction::Archive),
+            Organize::Trash => triage(TriageAction::Trash),
+            Organize::Junk => triage(TriageAction::Junk),
+            Organize::NotJunk => triage(TriageAction::NotJunk),
+            Organize::MoveToInbox => triage(TriageAction::Untrash),
+            Organize::MarkRead => triage(TriageAction::MarkRead),
+            Organize::MarkUnread => triage(TriageAction::MarkUnread),
+            Organize::Flag => MailAction::Flag(Some(color)),
+            Organize::Unflag => MailAction::Flag(None),
+        }
+    }
+}
+
+/// Every choice of a setting, in the shape the settings file uses.
+fn choices<T: Choice + serde::Serialize>() -> Vec<Value> {
+    T::ALL
+        .iter()
+        .filter_map(|c| serde_json::to_value(c).ok())
+        .collect()
+}
+
+impl<A: Accounts> Tools<A> {
+    pub fn new(
+        modules: Modules<A>,
+        background: Rc<dyn Background>,
+        desk: Rc<dyn Desk>,
+        effects: Rc<dyn Effects>,
+    ) -> Tools<A> {
+        Tools {
+            modules,
+            background,
+            desk,
+            effects,
+        }
+    }
+
+    /// Runs one tool call from the assistant.
+    pub async fn run(&self, name: &str, input: Value) -> ToolOutcome {
+        let result = match catalog::find::<A>(name) {
+            Some(tool) => tool.run(self, &input).await,
+            None => Err(format!("There is no tool called {name}.")),
+        };
+        match result {
+            Ok(value) => ToolOutcome::Ok(value),
+            Err(message) => ToolOutcome::Err(message),
+        }
+    }
+
+    // ---- Crossing to the runtime -----------------------------------------
+
+    /// Runs `task` on the sync runtime and waits for its answer here.
+    async fn away<T: Send + 'static>(
+        &self,
+        task: impl Future<Output = T> + Send + 'static,
+    ) -> Result<T, String> {
+        let (done, answer) = async_channel::bounded(1);
+        self.background.start(Box::pin(async move {
+            let _ = done.send(task.await).await;
+        }));
+        answer
+            .recv()
+            .await
+            .map_err(|_| "The background task failed.".to_string())
+    }
+
+    /// As [`Tools::away`], with the task's own error folded into the answer.
+    async fn call<T, E>(
+        &self,
+        task: impl Future<Output = Result<T, E>> + Send + 'static,
+    ) -> Result<T, String>
+    where
+        T: Send + 'static,
+        E: std::fmt::Display + Send + 'static,
+    {
+        match self.away(task).await {
+            Ok(Ok(value)) => Ok(value),
+            Ok(Err(err)) => Err(err.to_string()),
+            Err(problem) => Err(problem),
+        }
+    }
+
+    /// Runs a read query on the store's reader pool.
+    async fn read<T, F>(&self, query: F) -> Result<T, String>
+    where
+        F: FnOnce(&rusqlite::Connection) -> mailrs_store::Result<T> + Send + 'static,
+        T: Send + 'static,
+    {
+        let db = self.modules.db.clone();
+        self.call(async move { db.read(query).await }).await
+    }
+
+    // ---- Lookups ---------------------------------------------------------
+
+    fn account_named(&self, email: &str) -> Result<Account, String> {
+        self.desk
+            .accounts()
+            .into_iter()
+            .find(|a| a.email.eq_ignore_ascii_case(email.trim()))
+            .ok_or_else(|| format!("There is no account {email}."))
+    }
+
+    fn sync_for(&self, email: &str) -> Result<Syncing, String> {
+        let account = self.account_named(email)?;
+        let sync = self
+            .modules
+            .accounts
+            .account(account.id)
+            .ok_or_else(|| format!("{} is not connected.", account.email))?;
+        Ok((account, sync))
+    }
+
+    /// The account a tool names and its Gmail settings.
+    fn settings_for(&self, email: &str) -> Result<(Account, Arc<AccountSettings<A>>), String> {
+        let account = self.account_named(email)?;
+        if self.modules.accounts.account(account.id).is_none() {
+            return Err(format!("{} is not connected.", account.email));
+        }
+        Ok((account, Arc::clone(&self.modules.gmail)))
+    }
+
+    /// The answer for a tool the account cannot serve: why, in the words
+    /// Preferences uses, as a result the model reads rather than an error.
+    /// The run holds no store, so it gives the general reason and not why
+    /// the last search for a calendar or contacts server failed.
+    fn unavailable(&self, account: &Account, missing: Missing) -> Option<Value> {
+        self.offers(account.id)
+            .missing()
+            .contains(&missing)
+            .then(|| json!({"unavailable": crate::offered::reason(account, missing, None)}))
+    }
+
+    fn offers(&self, account_id: AccountId) -> mailrs_sync::Offers {
+        let services = self.modules.accounts.services(account_id);
+        crate::offered::offers_for(services.as_ref())
+    }
+
+    /// Whether the account named `email` reads a search in its own
+    /// syntax, so Gmail's operators describe what it will fetch: true for
+    /// Gmail, false for a folder account whose server runs only IMAP
+    /// SEARCH. No account named, which spans every account, or one not
+    /// yet running counts as Gmail's, so a printed query does not
+    /// flicker between the two as accounts start.
+    fn native_search(&self, email: Option<&str>) -> bool {
+        let Some(email) = email else { return true };
+        let Ok(account) = self.account_named(email) else {
+            return true;
+        };
+        self.modules
+            .accounts
+            .services(account.id)
+            .is_none_or(|services| services.capabilities().native_search)
+    }
+
+    fn email_of(&self, account_id: AccountId) -> String {
+        self.desk
+            .accounts()
+            .into_iter()
+            .find(|a| a.id == account_id)
+            .map(|a| a.email)
+            .unwrap_or_default()
+    }
+
+    fn parse_targets(&self, input: &Value) -> Result<Vec<Target>, String> {
+        let items = input
+            .get("targets")
+            .and_then(Value::as_array)
+            .ok_or("`targets` is missing")?;
+        items
+            .iter()
+            .map(|item| {
+                Ok(Target {
+                    account_id: self.account_named(&required(item, "account")?)?.id,
+                    thread_id: required(item, "thread_id")?,
+                    message_id: text(item, "message_id"),
+                })
+            })
+            .collect()
+    }
+
+    fn row_json(&self, row: &ThreadSummary) -> Value {
+        let date = crate::format::local(row.last_message_at)
+            .map(|d| d.format("%Y-%m-%d %H:%M").to_string())
+            .unwrap_or_default();
+        json!({
+            "account": self.email_of(row.account_id),
+            "thread_id": row.id,
+            "message_id": row.message_id,
+            "from": row.from,
+            "from_email": row.from_email,
+            "subject": row.subject,
+            "date": date,
+            "unread": row.unread,
+            "flagged": row.starred,
+            "flag_color": row.flag_color.map(|c| c.as_str()),
+            "messages": row.message_count,
+            "has_attachments": row.has_attachments,
+            "snippet": row.snippet,
+        })
+    }
+
+    /// Asks the user for the Gmail settings permission, and says so.
+    fn needs_permission(&self, account: &Account) -> String {
+        self.effects
+            .ask_permission(account.id, Permission::Settings);
+        asked_for(Permission::Settings, account)
+    }
+
+    /// Runs a call that needs a Google permission, and turns the two ways
+    /// Google can refuse into what the model should hear. A missing
+    /// permission asks the user for it; an API the Cloud project has
+    /// switched off shows the user where to turn it on, since no
+    /// permission would help.
+    async fn permitted<T: Send + 'static>(
+        &self,
+        account: &Account,
+        permission: Permission,
+        task: impl Future<Output = Result<Permitted<T>, SyncError>> + Send + 'static,
+    ) -> Result<T, String> {
+        match self.away(task).await? {
+            Ok(Permitted::Done(value)) => Ok(value),
+            Ok(Permitted::NeedsPermission) => {
+                self.effects.ask_permission(account.id, permission);
+                Err(asked_for(permission, account))
+            }
+            Err(SyncError::Backend(BackendError::ApiDisabled {
+                service,
+                enable_url,
+            })) => {
+                self.effects.explain_api_off(&service, &enable_url);
+                Err(format!(
+                    "The {service} is switched off in the Google Cloud project Penguin Mail signs in with, so Google refuses the call. The user was shown where to turn it on ({enable_url}); try again once they have."
+                ))
+            }
+            Err(err) => Err(err.to_string()),
+        }
+    }
+
+    /// The account a tool names, or the default one when it names none.
+    fn account_or_default(&self, input: &Value) -> Result<Account, String> {
+        match text(input, "account") {
+            Some(email) => self.account_named(&email),
+            None => {
+                let id = self.desk.default_account().ok_or("Add an account first.")?;
+                self.desk
+                    .accounts()
+                    .into_iter()
+                    .find(|a| a.id == id)
+                    .ok_or_else(|| "Add an account first.".to_string())
+            }
+        }
+    }
+
+    // ---- Reading ---------------------------------------------------------
+
+    fn context(&self) -> ToolResult {
+        let settings = self.desk.settings();
+        let labels = self.desk.labels();
+        let accounts: Vec<Value> = self
+            .desk
+            .accounts()
+            .iter()
+            .map(|a| {
+                let names: Vec<String> = labels
+                    .get(&a.id)
+                    .map(|all| {
+                        all.iter()
+                            .filter(|l| l.kind == LabelKind::User)
+                            .map(|l| l.name.clone())
+                            .collect()
+                    })
+                    .unwrap_or_default();
+                json!({
+                    "email": a.email,
+                    "name": settings.account_names.get(&a.email),
+                    "labels": names,
+                })
+            })
+            .collect();
+        let screen = self.desk.on_screen();
+        let open = screen.open.as_ref().map(|o| {
+            json!({
+                "account": self.email_of(o.account_id),
+                "thread_id": o.thread_id,
+                "message_id": o.message_id,
+                "subject": o.subject,
+            })
+        });
+        let selected: Vec<Value> = screen.selected.iter().map(|r| self.row_json(r)).collect();
+        Ok(json!({
+            "now": Local::now().format("%A %Y-%m-%d %H:%M").to_string(),
+            "accounts": accounts,
+            "default_account": settings.default_account,
+            "vips": settings.vips.keys().collect::<Vec<_>>(),
+            "mailbox_on_screen": screen.mailbox,
+            "open_conversation": open,
+            "selected": selected,
+        }))
+    }
+
+    /// The accounts a listing may read, in sidebar order.
+    fn scope(&self) -> Scope {
+        Scope::over(self.desk.accounts())
+    }
+
+    /// One page of each mailbox, through `Mailboxes::list`.
+    async fn rows_of(&self, mailbox: Mailbox, view: View) -> Result<Vec<ThreadSummary>, String> {
+        let lists = Arc::clone(&self.modules.lists);
+        let scope = self.scope();
+        let listed = self
+            .call(async move { lists.list(&mailbox, &scope, &view, Loaded::nothing()).await })
+            .await?;
+        match listed.notices.first() {
+            Some(problem) => Err(problem.clone()),
+            None => Ok(listed.rows),
+        }
+    }
+
+    async fn list(&self, input: &Value) -> ToolResult {
+        let name = required(input, "mailbox")?;
+        let limit = input
+            .get("limit")
+            .and_then(Value::as_u64)
+            .unwrap_or(30)
+            .clamp(1, 200) as usize;
+        let unread_only = flag(input, "unread_only").unwrap_or(false);
+        let scope = match text(input, "account") {
+            Some(email) => Some(self.account_named(&email)?),
+            None => None,
+        };
+        let category = match text(input, "category") {
+            Some(key) => Some(named_category(&key)?),
+            None => None,
+        };
+        let mailboxes = match self.named_mailboxes(&name, input, scope.as_ref())? {
+            Named::Found(mailboxes) => mailboxes,
+            Named::Unavailable(answer) => return Ok(answer),
+        };
+        let waits = MailboxName::named(&name).is_some_and(MailboxName::waits);
+        // Unread mail is picked out of the rows, so ask for extra.
+        let view = View {
+            category,
+            limit: Some(limit * if unread_only { 4 } else { 1 }),
+            ..self.desk.view()
+        };
+        let mut rows: Vec<ThreadSummary> = Vec::new();
+        for mailbox in mailboxes {
+            rows.extend(self.rows_of(mailbox, view.clone()).await?);
+        }
+        // The mailboxes of what waits span every account, so one account
+        // named narrows them here.
+        if let Some(account) = &scope {
+            rows.retain(|r| r.account_id == account.id);
+        }
+        match waits {
+            true => rows.sort_by_key(|r| r.last_message_at),
+            false => rows.sort_by_key(|r| std::cmp::Reverse(r.last_message_at)),
+        }
+        if unread_only {
+            rows.retain(|r| r.unread);
+        }
+        rows.truncate(limit);
+        let json = |r: &ThreadSummary| match waits {
+            true => self.waiting_json(&name, r),
+            false => self.row_json(r),
+        };
+        Ok(json!({
+            "count": rows.len(),
+            "conversations": rows.iter().map(json).collect::<Vec<_>>(),
+        }))
+    }
+
+    /// The mailboxes a tool's name stands for. A label with no account
+    /// named becomes one mailbox per account that has it.
+    fn named_mailboxes(
+        &self,
+        name: &str,
+        input: &Value,
+        scope: Option<&Account>,
+    ) -> Result<Named, String> {
+        let at = |which: Standard| match scope {
+            Some(account) => Mailbox::Standard {
+                account_id: account.id,
+                which,
+            },
+            None => Mailbox::Unified(which),
+        };
+        let folder = |folder| Mailbox::Folder {
+            account_id: scope.map(|a| a.id),
+            folder,
+        };
+        let named = MailboxName::named(name).ok_or_else(|| format!("Unknown mailbox {name}."))?;
+        Ok(Named::Found(match named {
+            MailboxName::Inbox => vec![at(Standard::Inbox)],
+            MailboxName::Flagged => vec![at(Standard::Flagged)],
+            MailboxName::Sent => vec![at(Standard::Sent)],
+            MailboxName::Drafts => vec![at(Standard::Drafts)],
+            MailboxName::FollowUp => vec![Mailbox::FollowUp],
+            MailboxName::Archive => vec![folder(Folder::Archive)],
+            MailboxName::Junk => vec![folder(Folder::Junk)],
+            MailboxName::Trash => vec![folder(Folder::Trash)],
+            MailboxName::AllMail => vec![folder(Folder::AllMail)],
+            MailboxName::Vips => vec![Mailbox::Vips {
+                emails: self.desk.settings().vips.keys().cloned().collect(),
+                name: "VIPs".into(),
+            }],
+            MailboxName::Outbox => vec![Mailbox::Outbox],
+            MailboxName::SendLater => vec![Mailbox::Scheduled],
+            MailboxName::Reminders => vec![Mailbox::Reminders],
+            MailboxName::Muted => vec![at(Standard::Muted)],
+            MailboxName::Smart => {
+                vec![Mailbox::Smart(self.smart_named(&required(input, "name")?)?)]
+            }
+            MailboxName::Label => {
+                let wanted = text(input, "label").ok_or("`label` is missing")?;
+                let labels = self.desk.labels();
+                let mut found = Vec::new();
+                for (id, all) in labels.iter().filter(|(id, _)| scope.is_none_or(|a| a.id == **id)) {
+                    for label in all.iter().filter(|l| l.name.eq_ignore_ascii_case(&wanted)) {
+                        if let Some(answer) = self.label_unavailable(*id, label) {
+                            return Ok(Named::Unavailable(answer));
+                        }
+                        found.push(label_mailbox(*id, label, self.set_of(*id, &label.id)));
+                    }
+                }
+                if found.is_empty() {
+                    return Err(format!("There is no label called {wanted}."));
+                }
+                found
+            }
+        }))
+    }
+
+    /// The answer when `label` of `account_id` is a system label that
+    /// stands for a mail set, such as unread mail or a category, and the
+    /// account has no services running to say which set. Without this
+    /// check, `set_of` falls back to reading the label literally, which
+    /// lists nothing instead of saying why.
+    fn label_unavailable(&self, account_id: AccountId, label: &Label) -> Option<Value> {
+        let stands_for_a_set =
+            label.kind == LabelKind::System && Standard::from_key(&label.id).is_none();
+        (stands_for_a_set && self.modules.accounts.services(account_id).is_none()).then(|| {
+            json!({"unavailable": format!("{} is not syncing yet.", self.email_of(account_id))})
+        })
+    }
+
+    async fn search(&self, input: &Value) -> ToolResult {
+        let query = required(input, "query")?;
+        let limit = input
+            .get("limit")
+            .and_then(Value::as_u64)
+            .unwrap_or(30)
+            .clamp(1, 100) as usize;
+        let scope = match text(input, "account") {
+            Some(email) => Some(self.account_named(&email)?),
+            None => None,
+        };
+        let mailbox = Mailbox::Search {
+            query,
+            account_id: scope.map(|a| a.id),
+        };
+        let view = View {
+            threading: true,
+            limit: Some(limit),
+            ..self.desk.view()
+        };
+        let rows = self.rows_of(mailbox, view).await?;
+        Ok(json!({
+            "count": rows.len(),
+            "conversations": rows.iter().map(|r| self.row_json(r)).collect::<Vec<_>>(),
+        }))
+    }
+
+    async fn read_thread(&self, input: &Value) -> ToolResult {
+        const MAX_CHARS: usize = 8000;
+        let (account, sync) = self.sync_for(&required(input, "account")?)?;
+        let thread_id = required(input, "thread_id")?;
+        let (s, t) = (Arc::clone(&sync), thread_id.clone());
+        if let Err(err) = self.call(async move { s.ensure_thread(&t).await }).await {
+            tracing::info!(error = %err, "reading the stored copy of the thread");
+        }
+        let key = thread_id.clone();
+        let found = self
+            .read(move |c| messages::thread_messages(c, account.id, &key))
+            .await?;
+        if found.is_empty() {
+            return Err("That conversation was not found.".into());
+        }
+        let mut out = Vec::new();
+        for meta in found {
+            let (s, id) = (Arc::clone(&sync), meta.id.clone());
+            let body = self.call(async move { s.body(&id).await }).await.ok();
+            let mut body_text = body
+                .as_ref()
+                .map(compose::body_text)
+                .unwrap_or_else(|| meta.snippet.clone());
+            if body_text.chars().count() > MAX_CHARS {
+                body_text = body_text.chars().take(MAX_CHARS).collect::<String>() + "\n[cut short]";
+            }
+            let people = |list: &[mailrs_domain::Address]| {
+                list.iter()
+                    .map(|a| a.display().to_string() + " <" + &a.email + ">")
+                    .collect::<Vec<_>>()
+            };
+            let labels = self.labels_of(meta.account_id);
+            let named: Vec<&str> = labels
+                .iter()
+                .filter(|l| l.kind == LabelKind::User && meta.in_mailbox(&l.id))
+                .map(|l| l.name.as_str())
+                .collect();
+            out.push(json!({
+                "message_id": meta.id,
+                "from": meta.from.as_ref().map(|a| format!("{} <{}>", a.display(), a.email)),
+                "to": people(&meta.to),
+                "cc": people(&meta.cc),
+                "date": crate::format::local(meta.date).map(|d| d.format("%Y-%m-%d %H:%M").to_string()),
+                "subject": meta.subject,
+                "labels": named,
+                "unread": meta.is_unread(),
+                "flagged": meta.is_flagged(),
+                "muted": meta.is_muted(),
+                "in": roles_of(&meta),
+                "category": meta.category().map(category_name),
+                "text": body_text,
+                "invitation": body.as_ref().is_some_and(|b| b.calendar.is_some()),
+                "unsubscribe": body.as_ref().is_some_and(|b| {
+                    crate::unsubscribe::choose_with_body(
+                        b.list_unsubscribe.as_deref(),
+                        b.one_click_unsubscribe,
+                        b.html.as_deref(),
+                    )
+                    .is_some()
+                }),
+                "attachments": body
+                    .map(|b| b.attachments.iter().map(|a| a.filename.clone()).collect::<Vec<_>>())
+                    .unwrap_or_default(),
+            }));
+        }
+        Ok(json!({"account": account.email, "thread_id": thread_id, "messages": out}))
+    }
+
+    // ---- Organizing ------------------------------------------------------
+
+    /// Asks only before trashing more than 25 conversations. Ctrl+Z undoes
+    /// the rest, and a handful in the Trash is easy to see and fetch back.
+    async fn organize<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let targets = self.parse_targets(input)?;
+        let from = self.moved_from(input)?;
+        let key = required(input, "action")?;
+        let organize = Organize::named(&key).ok_or_else(|| format!("Unknown action {key}."))?;
+        let color: Option<FlagColor> = text(input, "color").and_then(|c| c.parse().ok());
+        let action = organize.action(color.unwrap_or_else(|| self.desk.settings().flag_color));
+        let count = targets.len();
+        let change = async move { report(&self.act_from(targets, action, from).await) };
+        if organize == Organize::Trash && count > 25 {
+            return Ok(Plan::ask(
+                fill_plural(
+                    "Move {count} conversation to the Trash?",
+                    "Move {count} conversations to the Trash?",
+                    count,
+                    &[("count", &count.to_string())],
+                ),
+                change,
+            ));
+        }
+        Ok(Plan::without_asking(change))
+    }
+
+    /// The place the conversations a tool call names were listed from,
+    /// read from its `from`, which names a mailbox as `list_mail` takes
+    /// one. A move on a folder account then carries only the messages
+    /// there, as the window's does. No `from` names no place.
+    fn moved_from(&self, input: &Value) -> Result<MovedFrom, String> {
+        let Some(from) = input.get("from").filter(|from| !from.is_null()) else {
+            return Ok(MovedFrom::nowhere());
+        };
+        let name = required(from, "mailbox")?;
+        match self.named_mailboxes(&name, from, None)? {
+            Named::Found(mailboxes) => Ok(mailboxes
+                .iter()
+                .fold(MovedFrom::nowhere(), |all, mailbox| all.and(mailbox.moved_from()))),
+            Named::Unavailable(answer) => Err(answer["unavailable"]
+                .as_str()
+                .unwrap_or("That mailbox cannot be read now.")
+                .to_string()),
+        }
+    }
+
+    /// Runs a mail action that Ctrl+Z can undo, then updates the window,
+    /// on mail picked from no one place.
+    async fn act(&self, targets: Vec<Target>, action: MailAction) -> Outcome {
+        self.act_from(targets, action, MovedFrom::nowhere()).await
+    }
+
+    /// Runs a mail action that Ctrl+Z can undo on mail listed from `from`,
+    /// then updates the window.
+    async fn act_from(&self, targets: Vec<Target>, action: MailAction, from: MovedFrom) -> Outcome {
+        let mail = Arc::clone(&self.modules.mail);
+        let (given, asked) = (targets.clone(), action.clone());
+        let outcome = self
+            .away(async move { mail.run_from(&given, asked, History::Record, &from).await })
+            .await
+            .unwrap_or_else(|err| Outcome {
+                done: vec![],
+                failed: targets
+                    .into_iter()
+                    .map(|target| Failure {
+                        target,
+                        error: err.clone(),
+                    })
+                    .collect(),
+            });
+        self.effects.mail_changed(&action, &outcome);
+        outcome
+    }
+
+    /// Labels by name. A label an account lacks waits for the user's word,
+    /// asked once for the whole call while Ask Before Acting is on. A "no"
+    /// labels only the mail in accounts that hold the names already.
+    async fn label(&self, input: &Value) -> ToolResult {
+        let targets = self.parse_targets(input)?;
+        let from = self.moved_from(input)?;
+        let names = |key: &str| -> Vec<String> {
+            input
+                .get(key)
+                .and_then(Value::as_array)
+                .map(|a| {
+                    a.iter()
+                        .filter_map(|v| v.as_str().map(str::to_string))
+                        .collect()
+                })
+                .unwrap_or_default()
+        };
+        let (add, remove) = (names("add"), names("remove"));
+        let in_folders = targets
+            .iter()
+            .map(|t| t.account_id)
+            .find(|id| !self.offers(*id).labels);
+        if let Some(account_id) = in_folders {
+            return self.move_by_label(targets, account_id, &add, &remove, from).await;
+        }
+        let plan = NewLabels::plan(&targets, &add, &remove, |account_id| {
+            self.labels_of(account_id)
+                .into_iter()
+                .map(|l| l.name)
+                .collect()
+        });
+        let kept = plan.kept(&targets);
+        let create = plan.is_empty()
+            || !self.desk.settings().ai.confirm_actions
+            || self
+                .effects
+                .confirm(self.new_labels_question(&plan, !kept.is_empty()))
+                .await;
+        let targets = if create { targets } else { kept };
+        if targets.is_empty() {
+            return Err("The user declined.".into());
+        }
+        let action = MailAction::Label {
+            add,
+            remove,
+            create,
+        };
+        let mut result = report(&self.act_from(targets, action, from).await)?;
+        if !create {
+            result["declined"] = json!(
+                "The user declined new labels, so mail in accounts without them was left alone."
+            );
+        }
+        Ok(result)
+    }
+
+    /// Labelling on an account that files in folders, where `account_id`
+    /// is one. A message there sits in one folder, and adding a label
+    /// would copy it, so one name to add and none to remove moves the
+    /// mail into that folder, out of `from`. Anything else is out of
+    /// reach, and the answer says why. The answers are model-facing, in
+    /// English.
+    async fn move_by_label(
+        &self,
+        targets: Vec<Target>,
+        account_id: AccountId,
+        add: &[String],
+        remove: &[String],
+        from: MovedFrom,
+    ) -> ToolResult {
+        let email = self.email_of(account_id);
+        let unavailable = |why: String| Ok(json!({"unavailable": why}));
+        if targets.iter().any(|t| t.account_id != account_id) {
+            return unavailable(format!(
+                "{email} files mail in folders. Label or move its mail in a call of its own."
+            ));
+        }
+        let ([name], []) = (add, remove) else {
+            return unavailable(format!(
+                "{email} files mail in folders, one folder per message. To take mail out of a \
+                 folder, archive it with organize; to move it, name one folder in `add` and \
+                 none in `remove`."
+            ));
+        };
+        let folder = self
+            .labels_of(account_id)
+            .into_iter()
+            .find(|l| l.kind == LabelKind::User && l.name.eq_ignore_ascii_case(name));
+        let Some(folder) = folder else {
+            return unavailable(format!("{email} has no folder called {name}."));
+        };
+        let action = MailAction::Triage(TriageAction::MoveTo(folder.id));
+        report(&self.act_from(targets, action, from).await)
+    }
+
+    /// The question before labelling makes new labels. `partly` says a "no"
+    /// still labels the mail in accounts that have the names.
+    fn new_labels_question(&self, plan: &NewLabels, partly: bool) -> String {
+        let mut question = format!(
+            "{} {}",
+            plan.heading(),
+            plan.who(|account_id| self.email_of(account_id))
+        );
+        if partly {
+            question.push(' ');
+            question.push_str(&gettext(
+                "Don't Allow labels only the mail in accounts that have the label already.",
+            ));
+        }
+        question
+    }
+
+    async fn create_label(&self, input: &Value) -> ToolResult {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        let (name, account_id) = (required(input, "name")?, account.id);
+        let made = self
+            .call(async move { settings.create_label(account_id, &name).await })
+            .await?;
+        match made {
+            Permitted::Done(label) => Ok(json!({"account": account.email, "created": label.name})),
+            Permitted::NeedsPermission => Err(self.needs_permission(&account)),
+        }
+    }
+
+    async fn remind(&self, input: &Value) -> ToolResult {
+        let targets = self.parse_targets(input)?;
+        let when = future_instant(&required(input, "at")?)?;
+        let from = self.moved_from(input)?;
+        let remind = MailAction::Remind { at: when };
+        let mut result = report(&self.act_from(targets, remind, from).await)?;
+        result["returns"] = json!(crate::format::future_date(when, Local::now()));
+        Ok(result)
+    }
+
+    // ---- Gmail settings --------------------------------------------------
+
+    async fn block<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        if let Some(answer) = self.unavailable(&account, Missing::Rules) {
+            return Ok(Plan::without_asking(async move { Ok(answer) }));
+        }
+        let email = required(input, "email")?;
+        let question = fill(
+            &gettext("Block {address}? Their future mail goes straight to the Trash."),
+            &[("address", &email)],
+        );
+        Ok(Plan::ask(question, async move {
+            let blocked = {
+                let (email, account_id) = (email.clone(), account.id);
+                self.call(async move { settings.block_sender(account_id, &email).await })
+                    .await
+            };
+            match blocked {
+                Ok(Permitted::Done(_)) => Ok(json!({"blocked": email})),
+                Ok(Permitted::NeedsPermission) => Err(self.needs_permission(&account)),
+                Err(err) => Err(err),
+            }
+        }))
+    }
+
+    async fn get_vacation(&self, input: &Value) -> ToolResult {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        if let Some(answer) = self.unavailable(&account, Missing::AutoReply) {
+            return Ok(answer);
+        }
+        let account_id = account.id;
+        let loaded = self
+            .call(async move { settings.automatic_reply(account_id).await })
+            .await;
+        match loaded {
+            Ok(Permitted::Done(reply)) => Ok(reply_json(&reply)),
+            Ok(Permitted::NeedsPermission) => Err(self.needs_permission(&account)),
+            Err(err) => Err(err),
+        }
+    }
+
+    /// Reads the reply Gmail holds first, so the question shows the reply
+    /// as it will stand once the call's fields are laid over it.
+    async fn set_vacation<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        if let Some(answer) = self.unavailable(&account, Missing::AutoReply) {
+            return Ok(Plan::without_asking(async move { Ok(answer) }));
+        }
+        let account_id = account.id;
+        let loaded = {
+            let settings = Arc::clone(&settings);
+            self.call(async move { settings.automatic_reply(account_id).await })
+                .await
+        };
+        let mut reply = match loaded {
+            Ok(Permitted::Done(reply)) => reply,
+            Ok(Permitted::NeedsPermission) => return Err(self.needs_permission(&account)),
+            Err(err) => return Err(err),
+        };
+        let day = |key: &str| -> Result<Option<i64>, String> {
+            match text(input, key) {
+                None => Ok(None),
+                Some(value) => {
+                    let date = NaiveDate::parse_from_str(&value, "%Y-%m-%d")
+                        .map_err(|_| format!("Could not read the date {value}; use YYYY-MM-DD."))?;
+                    Ok(date
+                        .and_hms_opt(0, 0, 0)
+                        .and_then(|t| Local.from_local_datetime(&t).earliest())
+                        .map(|t| t.timestamp_millis()))
+                }
+            }
+        };
+        reply.enabled = flag(input, "enabled").unwrap_or(true);
+        if let Some(subject) = text(input, "subject") {
+            reply.subject = subject;
+        }
+        if let Some(message) = input.get("message").and_then(Value::as_str) {
+            reply.body = message.to_string();
+        }
+        if let Some(contacts) = flag(input, "contacts_only") {
+            reply.contacts_only = contacts;
+        }
+        reply.first_day = day("first_day")?;
+        reply.last_day = day("last_day")?;
+        if reply.enabled && reply.subject.trim().is_empty() {
+            reply.subject = "Out of office".into();
+        }
+        let summary = if reply.enabled {
+            let day = |t: Option<i64>| {
+                t.and_then(crate::format::local).map(|d| {
+                    d.format_localized(&gettext("%a %-d %b"), date_locale())
+                        .to_string()
+                })
+            };
+            let dates = match (day(reply.first_day), day(reply.last_day)) {
+                (Some(first), Some(last)) => fill(
+                    &gettext(" from {first} to {last}"),
+                    &[("first", &first), ("last", &last)],
+                ),
+                (None, Some(last)) => fill(&gettext(" until {last}"), &[("last", &last)]),
+                (Some(first), None) => fill(&gettext(" from {first}"), &[("first", &first)]),
+                (None, None) => String::new(),
+            };
+            let preview: String = reply.body.chars().take(160).collect();
+            fill(
+                &gettext(
+                    "Turn on the automatic reply for {account}{dates}?\n\n“{subject}”\n{body}",
+                ),
+                &[
+                    ("account", &account.email),
+                    ("dates", &dates),
+                    ("subject", &reply.subject),
+                    ("body", &preview),
+                ],
+            )
+        } else {
+            fill(
+                &gettext("Turn off the automatic reply for {account}?"),
+                &[("account", &account.email)],
+            )
+        };
+        Ok(Plan::ask(summary, async move {
+            let saved = reply.clone();
+            let stored = self
+                .call(async move { settings.set_automatic_reply(account_id, &saved).await })
+                .await;
+            match stored {
+                Ok(Permitted::Done(())) => Ok(reply_json(&reply)),
+                Ok(Permitted::NeedsPermission) => Err(self.needs_permission(&account)),
+                Err(err) => Err(err),
+            }
+        }))
+    }
+
+    async fn list_rules(&self, input: &Value) -> ToolResult {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        if let Some(answer) = self.unavailable(&account, Missing::Rules) {
+            return Ok(answer);
+        }
+        let labels = self.labels_of(account.id);
+        let account_id = account.id;
+        let listed = self
+            .call(async move { settings.rule_list(account_id).await })
+            .await;
+        match listed {
+            Ok(Permitted::Done(list)) => Ok(json!({
+                "runs": match list.place {
+                    mailrs_sync::RulesPlace::Server => "server",
+                    mailrs_sync::RulesPlace::ThisComputer => "this_computer",
+                },
+                "rules": list.rules.iter().map(|f| json!({
+                    "id": f.id,
+                    "when": describe_criteria(&f.criteria),
+                    "then": describe_action(&f.action, |id| {
+                        labels.iter().find(|l| l.id == id).map(|l| l.name.clone())
+                    }),
+                })).collect::<Vec<_>>(),
+            })),
+            Ok(Permitted::NeedsPermission) => Err(self.needs_permission(&account)),
+            Err(err) => Err(err),
+        }
+    }
+
+    /// The mail set the label `id` of `account_id` stands for, as the
+    /// account's mail service reads it. An account that is not syncing
+    /// has no service to ask, and its label is a mailbox.
+    fn set_of(&self, account_id: AccountId, id: &str) -> MailSet {
+        match self.modules.accounts.services(account_id) {
+            Some(services) => services.mail.set_of(id),
+            None => MailSet::Mailbox(id.to_string()),
+        }
+    }
+
+    fn labels_of(&self, account_id: AccountId) -> Vec<Label> {
+        self.desk
+            .labels()
+            .get(&account_id)
+            .cloned()
+            .unwrap_or_default()
+    }
+
+    async fn create_rule<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        if let Some(answer) = self.unavailable(&account, Missing::Rules) {
+            return Ok(Plan::without_asking(async move { Ok(answer) }));
+        }
+        let labels = self.labels_of(account.id);
+        // A label the account lacks is made only once the user says yes, so
+        // a declined rule leaves nothing behind. Until then the rule names
+        // it by a stand-in id the question reads as the label's name.
+        let wanted = text(input, "label");
+        let existing = wanted.as_ref().and_then(|name| {
+            labels
+                .iter()
+                .find(|l| l.name.to_lowercase() == name.to_lowercase())
+                .map(|l| l.id.clone())
+        });
+        let form = RuleForm {
+            from: text(input, "from").unwrap_or_default(),
+            to: text(input, "to").unwrap_or_default(),
+            subject: text(input, "subject").unwrap_or_default(),
+            has_words: text(input, "has_words").unwrap_or_default(),
+            not_words: text(input, "not_words").unwrap_or_default(),
+            has_attachment: flag(input, "has_attachment").unwrap_or(false),
+            skip_inbox: flag(input, "skip_inbox").unwrap_or(false),
+            mark_read: flag(input, "mark_read").unwrap_or(false),
+            star: flag(input, "star").unwrap_or(false),
+            label: wanted
+                .as_ref()
+                .map(|_| existing.clone().unwrap_or_else(|| NEW_LABEL.into())),
+            never_spam: flag(input, "never_spam").unwrap_or(false),
+            trash: flag(input, "delete").unwrap_or(false),
+        };
+        let mut filter = form.filter().map_err(str::to_string)?;
+        let name = |id: &str| match id {
+            NEW_LABEL => wanted.clone(),
+            id => labels.iter().find(|l| l.id == id).map(|l| l.name.clone()),
+        };
+        let summary = fill(
+            &gettext("Create a rule for {account}: {when} → {then}?"),
+            &[
+                ("account", &account.email),
+                ("when", &describe_criteria(&filter.criteria)),
+                (
+                    "then",
+                    &describe_action(&filter.action, name).to_lowercase(),
+                ),
+            ],
+        );
+        Ok(Plan::ask(summary, async move {
+            let account_id = account.id;
+            if let (Some(name), None) = (wanted, existing) {
+                let mail = Arc::clone(&self.modules.mail);
+                let wanted = name.clone();
+                let id = self
+                    .call(async move { mail.label_id(account_id, &wanted, true).await })
+                    .await
+                    .map_err(|e| format!("Could not create the label {name}: {e}"))?;
+                for set in &mut filter.action.add {
+                    if *set == MailSet::Mailbox(NEW_LABEL.into()) {
+                        *set = MailSet::Mailbox(id.clone());
+                    }
+                }
+            }
+            let added = self
+                .call(async move { settings.add_rule(account_id, filter).await })
+                .await;
+            match added {
+                Ok(Permitted::Done(created)) => Ok(json!({"created": created.id})),
+                Ok(Permitted::NeedsPermission) => Err(self.needs_permission(&account)),
+                Err(err) => Err(err),
+            }
+        }))
+    }
+
+    async fn delete_rule<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        if let Some(answer) = self.unavailable(&account, Missing::Rules) {
+            return Ok(Plan::without_asking(async move { Ok(answer) }));
+        }
+        let id = required(input, "id")?;
+        let question = fill(
+            &gettext("Delete a rule from {account}?"),
+            &[("account", &account.email)],
+        );
+        Ok(Plan::ask(question, async move {
+            let account_id = account.id;
+            let deleted = self
+                .call(async move { settings.delete_rule(account_id, &id).await })
+                .await;
+            match deleted {
+                Ok(Permitted::Done(())) => Ok(json!({"deleted": true})),
+                Ok(Permitted::NeedsPermission) => Err(self.needs_permission(&account)),
+                Err(err) => Err(err),
+            }
+        }))
+    }
+
+    // ---- App settings ----------------------------------------------------
+
+    fn settings_json(&self) -> Value {
+        let settings = self.desk.settings();
+        let current: serde_json::Map<String, Value> = Setting::ALL
+            .iter()
+            .map(|s| (s.name().to_string(), s.value(&settings)))
+            .collect();
+        json!({
+            "settings": current,
+            "choices": {
+                "mark_read": choices::<MarkRead>(),
+                "remote_images": choices::<RemoteImages>(),
+                "text_size": choices::<TextSize>(),
+                "color_scheme": choices::<ColorScheme>(),
+                "undo_send": choices::<UndoSend>(),
+                "threading": "true groups mail into conversations",
+                "default_account": "an account address, or null for the first",
+            },
+        })
+    }
+
+    fn change_setting(&self, input: &Value) -> ToolResult {
+        let name = required(input, "name")?;
+        let setting = Setting::named(&name)
+            .ok_or_else(|| format!("{name} is not a setting the assistant can change."))?;
+        let value = input.get("value").cloned().unwrap_or(Value::Null);
+        let change = setting
+            .change(&value)
+            .map_err(|e| format!("{value} is not a valid value for {name}: {e}"))?;
+        self.effects.change_settings(change)?;
+        Ok(json!({"changed": name, "value": value}))
+    }
+
+    fn signature(&self, input: &Value) -> ToolResult {
+        let account = self.account_named(&required(input, "account")?)?;
+        let text = input
+            .get("text")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        self.effects.change_settings(Change::Signature {
+            email: account.email.clone(),
+            text,
+        })?;
+        Ok(json!({"signature_set_for": account.email}))
+    }
+
+    fn vip(&self, input: &Value) -> ToolResult {
+        let email = required(input, "email")?.to_lowercase();
+        let add = flag(input, "add").unwrap_or(true);
+        let name = text(input, "name").unwrap_or_default();
+        self.effects.change_settings(Change::SetVip {
+            email: email.clone(),
+            name,
+            add,
+        })?;
+        Ok(json!({"email": email, "vip": add}))
+    }
+
+    fn smart(&self, input: &Value) -> ToolResult {
+        let conditions: Vec<Condition> =
+            serde_json::from_value(input.get("conditions").cloned().unwrap_or(Value::Null))
+                .map_err(|e| format!("Could not read the conditions: {e}"))?;
+        let account = match text(input, "account") {
+            Some(email) => Some(self.account_named(&email)?.email),
+            None => None,
+        };
+        let mailbox = SmartMailbox {
+            id: format!("smart-{}", mailrs_gmail::random_token(6)),
+            name: required(input, "name")?,
+            account,
+            match_all: flag(input, "match_all").unwrap_or(true),
+            conditions,
+        };
+        let native_search = self.native_search(mailbox.account.as_deref());
+        let query = mailbox
+            .query()
+            .map(|query| manage::query_words(&query, native_search))
+            .ok_or("Give at least one condition with a value.")?;
+        let name = mailbox.name.clone();
+        self.effects
+            .change_settings(Change::SaveSmartMailbox(Box::new(mailbox)))?;
+        Ok(json!({"created": name, "query": query}))
+    }
+
+    fn open(&self, input: &Value) -> ToolResult {
+        let account = self.account_named(&required(input, "account")?)?;
+        let thread_id = required(input, "thread_id")?;
+        self.effects.show_thread(ThreadSummary {
+            account_id: account.id,
+            id: thread_id,
+            message_count: 1,
+            ..ThreadSummary::default()
+        });
+        Ok(json!({"opened": true}))
+    }
+
+    // ---- Senders, follow-ups, and hidden addresses ------------------------
+
+    async fn categorize<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
+        let account = self.account_named(&required(input, "account")?)?;
+        // The move comes with a rule for the sender's future mail, so the
+        // account needs both.
+        let lacking = self
+            .unavailable(&account, Missing::Categories)
+            .or_else(|| self.unavailable(&account, Missing::Rules));
+        if let Some(answer) = lacking {
+            return Ok(Plan::without_asking(async move { Ok(answer) }));
+        }
+        let email = required(input, "email")?;
+        let key = required(input, "category")?;
+        let category = named_category(&key)?;
+        let who = text(input, "name").unwrap_or_else(|| email.clone());
+        let question = categorize_question(&who, &category.name(), &account);
+        Ok(Plan::ask(question, async move {
+            let mail = Arc::clone(&self.modules.mail);
+            let (account_id, asked) = (account.id, email.clone());
+            let Categorized { moved, sorted } = self
+                .away(async move {
+                    mail.categorize_sender(account_id, &asked, None, category)
+                        .await
+                })
+                .await?;
+            self.effects.categories_moved();
+            let count = moved.done.len();
+            // The model reads this, so it stays in English like every
+            // other tool result.
+            let said = format!(
+                "Moved {count} conversation{} from {email} to {key}",
+                if count == 1 { "" } else { "s" }
+            );
+            match sorted {
+                Ok(Permitted::Done(())) => {
+                    let mut done = json!({"sender": email, "category": key, "moved": count});
+                    if let Some(error) = moved.first_error() {
+                        done["failed"] = json!(error);
+                    }
+                    Ok(done)
+                }
+                Ok(Permitted::NeedsPermission) => Err(format!(
+                    "{said}, but the rule for their future mail {}",
+                    self.needs_permission(&account)
+                )),
+                Err(err) => Err(format!(
+                    "{said}, but could not add the rule for their future mail: {err}"
+                )),
+            }
+        }))
+    }
+
+    async fn dismiss_follow_up(&self, input: &Value) -> ToolResult {
+        let account = self.account_named(&required(input, "account")?)?;
+        let thread_id = required(input, "thread_id")?;
+        let target = Target::thread(account.id, &thread_id);
+        let outcome = self.act(vec![target], MailAction::DismissFollowUp).await;
+        if let Some(error) = outcome.first_error() {
+            return Err(error.to_string());
+        }
+        Ok(json!({"dismissed": thread_id}))
+    }
+
+    /// Every hidden address already made, across every account. The tool
+    /// names no account and needs no `unavailable` gate: a hidden address
+    /// exists only where `create_hidden_address` made one, which already
+    /// refuses an account without rules.
+    fn hidden_list(&self) -> Value {
+        json!({
+            "addresses": self.desk.settings().hidden_addresses.iter().map(|h| json!({
+                "address": h.address,
+                "account": h.account,
+                "note": h.note,
+                "active": h.active,
+            })).collect::<Vec<_>>(),
+        })
+    }
+
+    async fn hidden_create(&self, input: &Value) -> ToolResult {
+        let (account, settings) = self.settings_for(&required(input, "account")?)?;
+        if let Some(answer) = self.unavailable(&account, Missing::Rules) {
+            return Ok(answer);
+        }
+        if !crate::offered::hides_addresses(self.offers(account.id)) {
+            return Ok(json!({"unavailable": gettext("Hide My Email works with Gmail accounts.")}));
+        }
+        let note = text(input, "note").unwrap_or_default();
+        let taken = self.desk.settings().hidden_addresses;
+        let (account_id, email) = (account.id, account.email.clone());
+        let made = self
+            .call(async move {
+                settings
+                    .create_hidden_address(account_id, &email, &note, &taken)
+                    .await
+            })
+            .await?;
+        let Permitted::Done(hidden) = made else {
+            return Err(self.needs_permission(&account));
+        };
+        let address = hidden.address.clone();
+        self.effects
+            .change_settings(Change::SaveHiddenAddress(hidden))?;
+        self.effects.copy(&address);
+        Ok(json!({"address": address, "copied": true}))
+    }
+
+    async fn hidden_set(&self, input: &Value) -> ToolResult {
+        let address = required(input, "address")?;
+        let active = flag(input, "active").ok_or("`active` is missing")?;
+        let kept = self.desk.settings().hidden_addresses;
+        let hidden = mailrs_sync::hidden::find(&kept, &address)
+            .cloned()
+            .ok_or_else(|| format!("{address} is not a Hide My Email address."))?;
+        let (account, settings) = self.settings_for(&hidden.account)?;
+        if let Some(answer) = self.unavailable(&account, Missing::Rules) {
+            return Ok(answer);
+        }
+        if !crate::offered::hides_addresses(self.offers(account.id)) {
+            return Ok(json!({"unavailable": gettext("Hide My Email works with Gmail accounts.")}));
+        }
+        let account_id = account.id;
+        let changed = self
+            .call(async move {
+                settings
+                    .set_hidden_address_active(account_id, &hidden, active)
+                    .await
+            })
+            .await?;
+        let Permitted::Done(changed) = changed else {
+            return Err(self.needs_permission(&account));
+        };
+        self.effects
+            .change_settings(Change::SaveHiddenAddress(changed))?;
+        Ok(json!({"address": address, "active": active}))
+    }
+}
+
+/// A moment a tool was given, in the forms the tool specs promise: local
+/// time as `YYYY-MM-DDTHH:MM`, with seconds or without, or RFC 3339 with an
+/// offset of its own.
+fn instant(text: &str) -> Result<EpochMillis, String> {
+    let text = text.trim();
+    if let Ok(at) = DateTime::parse_from_rfc3339(text) {
+        return Ok(at.timestamp_millis());
+    }
+    let naive = ["%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M"]
+        .iter()
+        .find_map(|shape| NaiveDateTime::parse_from_str(text, shape).ok())
+        .ok_or_else(|| format!("Could not read the time {text}; use YYYY-MM-DDTHH:MM."))?;
+    Local
+        .from_local_datetime(&naive)
+        .earliest()
+        .map(|at| at.timestamp_millis())
+        .ok_or_else(|| "That time does not exist here.".to_string())
+}
+
+/// As [`instant`], for a time something is to happen at.
+fn future_instant(text: &str) -> Result<EpochMillis, String> {
+    let at = instant(text)?;
+    if at <= Local::now().timestamp_millis() {
+        return Err("That time is in the past.".into());
+    }
+    Ok(at)
+}
+
+/// A moment as the tools write one back: local time, `YYYY-MM-DDTHH:MM`,
+/// the shape they take it in.
+fn local_text(at: EpochMillis) -> String {
+    crate::format::local(at)
+        .map(|at| at.format("%Y-%m-%dT%H:%M").to_string())
+        .unwrap_or_default()
+}
+
+fn reply_json(reply: &AutomaticReply) -> Value {
+    let day = |t: Option<i64>| {
+        t.and_then(crate::format::local)
+            .map(|d| d.format("%Y-%m-%d").to_string())
+    };
+    json!({
+        "enabled": reply.enabled,
+        "subject": reply.subject,
+        "message": reply.body,
+        "contacts_only": reply.contacts_only,
+        "first_day": day(reply.first_day),
+        "last_day": day(reply.last_day),
+    })
+}
+
+/// What the model hears about a mail action: how many targets changed, and
+/// which failed and why. An error when nothing changed.
+fn report(outcome: &Outcome) -> ToolResult {
+    if let (true, Some(error)) = (outcome.done.is_empty(), outcome.first_error()) {
+        return Err(error.to_string());
+    }
+    let mut result = json!({
+        "done": outcome.done.len(),
+        "undo": "The user can press Ctrl+Z to undo this.",
+    });
+    if !outcome.failed.is_empty() {
+        result["failed"] = outcome
+            .failed
+            .iter()
+            .map(|f| {
+                json!({
+                    "thread_id": f.target.thread_id,
+                    "message_id": f.target.message_id,
+                    "error": f.error,
+                })
+            })
+            .collect();
+    }
+    Ok(result)
+}
+
+/// The question before the assistant moves `sender`'s mail into
+/// `category` in `account` and adds a rule on the account's server for
+/// the mail still to come. Microsoft keeps no rule for it: Focused and
+/// Other follow a per-sender override, so its question says where the
+/// future mail goes.
+fn categorize_question(sender: &str, category: &str, account: &Account) -> String {
+    if account.provider == mailrs_domain::Provider::Microsoft {
+        return fill(
+            &gettext(
+                "Move mail from {sender} to {category} in {account}, and send their future \
+                 mail there too?",
+            ),
+            &[
+                ("sender", sender),
+                ("category", category),
+                ("account", &account.email),
+            ],
+        );
+    }
+    fill(
+        &gettext(
+            "Move mail from {sender} to {category} in {account}, and add a {provider} \
+             rule for their future mail?",
+        ),
+        &[
+            ("sender", sender),
+            ("category", category),
+            ("account", &account.email),
+            ("provider", account.provider_name()),
+        ],
+    )
+}

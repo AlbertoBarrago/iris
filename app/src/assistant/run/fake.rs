@@ -1,0 +1,823 @@
+//! Penguin Mail with no window: a store, sync's in-memory Gmail behind the
+//! modules, and fake adapters in front of both ports. Building one costs a
+//! tempdir and a tokio runtime, so the whole tool loop runs under
+//! `cargo test`. Where the window hands an effect to a sync module, as with
+//! Categorize Sender, unsubscribing and Hide My Email, the fake calls the
+//! same module, so the tests see what Gmail and the store end up holding.
+
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::future::Future;
+use std::pin::Pin;
+use std::rc::Rc;
+use std::sync::Arc;
+
+use mailrs_domain::{
+    Account, AccountId, AccountState, Address, ChangeEvent, EpochMillis, Label, LabelKind,
+    MessageMeta, ThreadSummary,
+};
+use mailrs_gmail::RemoteLabel;
+use mailrs_store::{Db, accounts, messages};
+use mailrs_sync::calendar_copy::CalendarCopy;
+use mailrs_sync::fake::{FakeGmail, FakeImap, FakeOneClick, FakeSmtp, fill_store};
+use mailrs_sync::{
+    AccountServices, AccountSettings, AccountSync, Accounts, Calendar, ContactBook, Invitations,
+    MailAction, MailActions, Mailboxes, OneClick, Outcome, View,
+};
+use serde_json::Value;
+
+use base64::Engine as _;
+use base64::engine::general_purpose::STANDARD;
+
+use super::{Answer, Background, Desk, Effects, Modules, OnScreen, Permission, Tools};
+use crate::compose::{self, Draft};
+use crate::protection::{self, Held, Standard};
+use crate::settings::{Change, Settings};
+use crate::ui::unsubscribe::{ListLine, Way, line_text};
+use crate::unsubscribe::RequestSent;
+use crate::unsubscribe_page::fake::FakeBrowser;
+use crate::unsubscribe_page::{Adviser, Browser, PageForm, Plan};
+
+/// The address every fixture account belongs to.
+pub const ME: &str = "dana@example.com";
+
+/// The address of the second account `Harness::with_second` connects.
+pub const YOU: &str = "sam@example.com";
+
+/// The clock the fixture mailbox searches by, 2026-01-02 at noon UTC. The
+/// fixture mail sits a few days before it, inside the window a first sync
+/// stores.
+pub const NOW: EpochMillis = 1_767_355_200_000;
+
+/// The accounts a test connects, by id.
+pub struct Connected(HashMap<AccountId, Arc<AccountSync>>);
+
+impl Accounts for Connected {
+    fn account(&self, account_id: AccountId) -> Option<Arc<AccountSync>> {
+        self.0.get(&account_id).cloned()
+    }
+}
+
+// ---- The ports -----------------------------------------------------------
+
+/// What the fake window has on screen. A test writes to it directly.
+pub struct Screen {
+    pub settings: Settings,
+    pub accounts: Vec<Account>,
+    pub labels: HashMap<AccountId, Vec<Label>>,
+    pub view: View,
+    pub on_screen: OnScreen,
+    pub default_account: Option<AccountId>,
+    /// The folder `export_mail` writes to when the user names none, a
+    /// fresh one inside the test's temp dir.
+    pub downloads: std::path::PathBuf,
+}
+
+pub struct FakeDesk(pub RefCell<Screen>);
+
+impl Desk for FakeDesk {
+    fn settings(&self) -> Settings {
+        self.0.borrow().settings.clone()
+    }
+
+    fn accounts(&self) -> Vec<Account> {
+        self.0.borrow().accounts.clone()
+    }
+
+    fn labels(&self) -> HashMap<AccountId, Vec<Label>> {
+        self.0.borrow().labels.clone()
+    }
+
+    fn view(&self) -> View {
+        self.0.borrow().view.clone()
+    }
+
+    fn on_screen(&self) -> OnScreen {
+        self.0.borrow().on_screen.clone()
+    }
+
+    fn default_account(&self) -> Option<AccountId> {
+        self.0.borrow().default_account
+    }
+
+    fn downloads(&self) -> std::path::PathBuf {
+        self.0.borrow().downloads.clone()
+    }
+}
+
+/// Every effect the tools asked for, and the answers waiting for them.
+#[derive(Default)]
+pub struct Asked {
+    /// The approval questions, oldest first.
+    pub questions: Vec<String>,
+    /// What the user answers next.
+    pub approves: bool,
+    pub changes: Vec<Change>,
+    pub composed: Vec<Draft>,
+    pub sent: Vec<Draft>,
+    pub opened: Vec<ThreadSummary>,
+    pub copied: Vec<String>,
+    /// Accounts offered a permission, and which.
+    pub permission_asked: Vec<(AccountId, Permission)>,
+    /// The switched-off APIs the window was asked to explain.
+    pub api_off: Vec<(String, String)>,
+    /// Messages handed to Send Later, with their times.
+    pub scheduled: Vec<(Draft, EpochMillis)>,
+    /// Request mail sent to leave a list: the account, the address it
+    /// goes from, the address it goes to, the subject and the body.
+    pub requests: Vec<(AccountId, String, String, String, String)>,
+    /// What the outbox answers a request with. Nothing set is sent.
+    pub request_answer: Option<Result<RequestSent, String>>,
+    /// Unsubscribe pages opened in the person's browser.
+    pub pages_opened: Vec<String>,
+    /// The conversations whose lists were left, by account and thread.
+    pub lists_left: Vec<(AccountId, String)>,
+    /// How often the rows were redrawn after mail moved between
+    /// categories.
+    pub categories_moved: usize,
+    /// What each unsubscribe dialog was asked about: one string per
+    /// line, the list's name and the words under it once its page had
+    /// settled.
+    pub lists_asked: Vec<Vec<String>>,
+    /// Whether the person ticks every line and presses Unsubscribe. The
+    /// dialog is that tool's only question, so this stands apart from
+    /// `approves`, which answers the pane's card.
+    pub approves_lists: bool,
+    pub mail_changed: Vec<(MailAction, Outcome)>,
+    pub relisted: usize,
+    /// Messages whose only copy was opened in a composer, marked unsaved.
+    pub reopened: Vec<Draft>,
+    /// How often the queue's lists were asked to read again.
+    pub queue_changed: usize,
+    /// What each undo put back.
+    pub undone: Vec<Outcome>,
+    /// How often a tool told the window to read the image senders again.
+    pub image_senders_changed: usize,
+    /// The addresses gpg holds a key for, or `None` for a computer with no
+    /// gpg. The fake has no gpgsm.
+    pub keys: Option<Vec<String>>,
+    /// Drafts saved back into Gmail, as the window's Save Draft saves them.
+    pub saved_drafts: Vec<Draft>,
+}
+
+/// The window's effects, recorded. The tools do their own mail and Gmail
+/// work through the modules, so nothing here stands in for sync; settings
+/// changes land on the fake desk, as the app's settings reach the window.
+pub struct FakeEffects {
+    pub asked: RefCell<Asked>,
+    /// The pages the hidden view serves, and the page a submission lands
+    /// on. A test fills these in before the call; the run takes one
+    /// browser built from them, which stays here to be read afterwards.
+    pub pages: RefCell<HashMap<String, PageForm>>,
+    pub after: RefCell<PageForm>,
+    pub browser: RefCell<Option<Rc<FakeBrowser>>>,
+    desk: Rc<FakeDesk>,
+    /// Where `save_draft` puts a draft, as the composer's Save Draft
+    /// reaches Gmail through the core.
+    connected: Arc<Connected>,
+}
+
+impl Effects for FakeEffects {
+    fn confirm(&self, question: String) -> Answer<'_, bool> {
+        let mut asked = self.asked.borrow_mut();
+        asked.questions.push(question);
+        let answer = asked.approves;
+        Box::pin(async move { answer })
+    }
+
+    fn ask_permission(&self, account_id: AccountId, permission: Permission) {
+        self.asked
+            .borrow_mut()
+            .permission_asked
+            .push((account_id, permission));
+    }
+
+    fn explain_api_off(&self, service: &str, enable_url: &str) {
+        self.asked
+            .borrow_mut()
+            .api_off
+            .push((service.to_string(), enable_url.to_string()));
+    }
+
+    fn send_later(&self, draft: Draft, at: EpochMillis) -> Result<(), String> {
+        self.asked.borrow_mut().scheduled.push((draft, at));
+        Ok(())
+    }
+
+    fn send_request(
+        &self,
+        account_id: AccountId,
+        from: String,
+        to: String,
+        subject: String,
+        body: String,
+    ) -> Answer<'_, Result<RequestSent, String>> {
+        let mut asked = self.asked.borrow_mut();
+        asked.requests.push((account_id, from, to, subject, body));
+        let answer = asked
+            .request_answer
+            .clone()
+            .unwrap_or(Ok(RequestSent::Sent));
+        Box::pin(async move { answer })
+    }
+
+    fn open_page(&self, url: &str) {
+        self.asked.borrow_mut().pages_opened.push(url.to_string());
+    }
+
+    fn left_list(&self, account_id: AccountId, thread_id: &str) {
+        self.asked
+            .borrow_mut()
+            .lists_left
+            .push((account_id, thread_id.to_string()));
+    }
+
+    fn page_adviser(&self) -> Option<Box<dyn Adviser>> {
+        None
+    }
+
+    fn page_browser(&self) -> Rc<dyn Browser> {
+        let browser = Rc::new(FakeBrowser {
+            pages: self.pages.borrow().clone(),
+            after: self.after.borrow().clone(),
+            later: None,
+            submitted: RefCell::new(Vec::new()),
+            typed: RefCell::new(Vec::new()),
+            fail: None,
+            standing: RefCell::new(String::new()),
+        });
+        *self.browser.borrow_mut() = Some(Rc::clone(&browser));
+        browser
+    }
+
+    fn confirm_unsubscribe(
+        &self,
+        lines: Vec<ListLine>,
+        updates: async_channel::Receiver<(usize, Way)>,
+    ) -> Answer<'_, Option<Vec<(usize, Way)>>> {
+        Box::pin(async move {
+            let mut names: Vec<String> = Vec::with_capacity(lines.len());
+            let mut ways: Vec<Way> = Vec::with_capacity(lines.len());
+            for line in lines {
+                names.push(line.name);
+                ways.push(line.way);
+            }
+            // The dialog cannot be answered while a line is still being
+            // read, so this waits for the same thing. A run that
+            // submitted before a page settled fails a test here rather
+            // than passing quietly.
+            while let Ok((at, way)) = updates.recv().await {
+                if let Some(held) = ways.get_mut(at) {
+                    *held = way;
+                }
+            }
+            let mut asked = self.asked.borrow_mut();
+            asked.lists_asked.push(
+                names
+                    .iter()
+                    .zip(&ways)
+                    .map(|(name, way)| format!("{name}: {}", line_text(way)))
+                    .collect(),
+            );
+            asked
+                .approves_lists
+                .then(|| ways.into_iter().enumerate().collect())
+        })
+    }
+
+    fn change_settings(&self, change: Change) -> Result<(), String> {
+        self.asked.borrow_mut().changes.push(change.clone());
+        change.apply_to(&mut self.desk.0.borrow_mut().settings);
+        Ok(())
+    }
+
+    fn new_draft(&self, account_id: AccountId) -> Result<Draft, String> {
+        Ok(Draft::new(
+            account_id,
+            Address {
+                name: Some("Dana".into()),
+                email: ME.into(),
+            },
+        ))
+    }
+
+    fn compose(&self, draft: Draft) -> Result<(), String> {
+        self.asked.borrow_mut().composed.push(draft);
+        Ok(())
+    }
+
+    fn send(&self, draft: Draft) -> Result<(), String> {
+        self.asked.borrow_mut().sent.push(draft);
+        Ok(())
+    }
+
+    fn show_thread(&self, summary: ThreadSummary) {
+        self.asked.borrow_mut().opened.push(summary);
+    }
+
+    fn copy(&self, text: &str) {
+        self.asked.borrow_mut().copied.push(text.to_string());
+    }
+
+    fn mail_changed(&self, action: &MailAction, outcome: &Outcome) {
+        self.asked
+            .borrow_mut()
+            .mail_changed
+            .push((action.clone(), outcome.clone()));
+    }
+
+    fn relist(&self) {
+        self.asked.borrow_mut().relisted += 1;
+    }
+
+    fn categories_moved(&self) {
+        self.asked.borrow_mut().categories_moved += 1;
+    }
+
+    fn reopen_unsent(&self, draft: Draft) -> Result<(), String> {
+        self.asked.borrow_mut().reopened.push(draft);
+        Ok(())
+    }
+
+    fn queue_changed(&self) {
+        self.asked.borrow_mut().queue_changed += 1;
+    }
+
+    fn undone(&self, outcome: &Outcome) {
+        self.asked.borrow_mut().undone.push(outcome.clone());
+    }
+
+    fn image_senders_changed(&self) {
+        self.asked.borrow_mut().image_senders_changed += 1;
+    }
+
+    // The engines and Gmail's Drafts. The fake gpg holds the keys a test
+    // lists, and "encrypts" a draft by wrapping its body in base64 under
+    // the header an encrypted draft carries, so a draft saved encrypted
+    // reopens through the same `protection::draft` code the window's does.
+
+    fn keys(&self, addresses: Vec<String>) -> Answer<'_, Held> {
+        let held = self.asked.borrow().keys.clone().map(|keys| {
+            addresses
+                .iter()
+                .map(|address| mailrs_pgp::Recipient {
+                    address: address.clone(),
+                    key: keys.contains(address).then(|| mailrs_pgp::Key {
+                        fingerprint: "F".repeat(40),
+                        user_id: format!("<{address}>"),
+                        trust: mailrs_pgp::Trust::Unknown,
+                    }),
+                })
+                .collect()
+        });
+        Box::pin(async move {
+            Held {
+                pgp: held,
+                smime: None,
+            }
+        })
+    }
+
+    fn signing_standard(&self, _from: String) -> Answer<'_, Standard> {
+        Box::pin(async { Standard::Pgp })
+    }
+
+    fn reopen_draft(&self, raw: Vec<u8>, draft: Draft) -> Answer<'_, Result<Draft, String>> {
+        Box::pin(async move {
+            let mut draft = draft;
+            match protection::draft::standard_of(&raw) {
+                None => protection::draft::reopen_plain(&raw, &mut draft),
+                Some(standard) => {
+                    let blank = protection::find(&raw, b"\r\n\r\n").ok_or("no body")? + 4;
+                    let wrapped: String = String::from_utf8_lossy(&raw[blank..])
+                        .split_whitespace()
+                        .collect();
+                    let part = STANDARD.decode(wrapped).map_err(|e| e.to_string())?;
+                    let (body, files) = protection::opened_body(&part);
+                    let read = protection::Read {
+                        mark: protection::Mark {
+                            title: "Encrypted".into(),
+                            detail: None,
+                            tone: protection::Tone::Good,
+                        },
+                        body: Some(body),
+                        files,
+                        sealed: true,
+                        revocation_unchecked: false,
+                    };
+                    protection::draft::reopen(&raw, standard, read, &mut draft)?;
+                }
+            }
+            Ok(draft)
+        })
+    }
+
+    fn save_draft(&self, draft: Draft) -> Answer<'_, Result<(), String>> {
+        Box::pin(async move {
+            let id = compose::new_message_id(&draft.from.email);
+            let raw = match draft.encrypt {
+                false => compose::build_mime(&draft, NOW / 1000, &id)?,
+                true => {
+                    let part = compose::build_body_part(&draft)?;
+                    let entity = format!(
+                        "Content-Type: multipart/encrypted; protocol=\"application/pgp-encrypted\"; boundary=\"fake\"\r\n\r\n{}\r\n",
+                        STANDARD.encode(part)
+                    );
+                    protection::draft::build(&draft, NOW / 1000, &id, entity.into_bytes())?
+                }
+            };
+            let account = self
+                .connected
+                .account(draft.account_id)
+                .ok_or("that account is not connected")?;
+            account
+                .save_draft(raw, draft.thread_id.clone(), draft.draft_id.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            self.asked.borrow_mut().saved_drafts.push(draft);
+            Ok(())
+        })
+    }
+}
+
+/// Runs the modules' futures on the test's own tokio runtime.
+struct Runtime;
+
+impl Background for Runtime {
+    fn start(&self, task: Pin<Box<dyn Future<Output = ()> + Send>>) {
+        tokio::spawn(task);
+    }
+}
+
+// ---- The harness ---------------------------------------------------------
+
+pub struct Harness {
+    pub tools: Tools<Connected>,
+    pub gmail: Arc<FakeGmail>,
+    pub one_click: Arc<FakeOneClick>,
+    pub db: Db,
+    pub desk: Rc<FakeDesk>,
+    pub effects: Rc<FakeEffects>,
+    pub account_id: AccountId,
+    /// The same copy the tools' `Calendar` module reads and writes, for a
+    /// test to read into as the app's own timer does a minute after start.
+    pub copy: Arc<CalendarCopy<Connected>>,
+    /// The second account and its Gmail, when the test connected one.
+    pub second: Option<(AccountId, Arc<FakeGmail>)>,
+    /// Held so the engine's change events have somewhere to go.
+    _heard: async_channel::Receiver<ChangeEvent>,
+    _dir: tempfile::TempDir,
+}
+
+/// A message for the one fixture account.
+pub fn meta(id: &str, thread: &str, from: &str, subject: &str, at: EpochMillis) -> MessageMeta {
+    MessageMeta {
+        account_id: 1,
+        id: id.into(),
+        thread_id: thread.into(),
+        rfc822_msgid: Some(format!("<{id}@example.com>")),
+        from: Some(Address {
+            name: Some(from.split('@').next().unwrap_or(from).to_string()),
+            email: from.into(),
+        }),
+        to: vec![Address {
+            name: None,
+            email: ME.into(),
+        }],
+        cc: vec![],
+        subject: subject.into(),
+        date: at,
+        snippet: format!("about {subject}"),
+        size: 100,
+        has_attachments: false,
+        held: mailrs_domain::Memberships::read(),
+        roles: vec![],
+        list_unsubscribe: None,
+        one_click: false,
+    }
+}
+
+/// The message with those labels on it.
+pub fn labelled(mut message: MessageMeta, labels: &[&str]) -> MessageMeta {
+    let labels: Vec<String> = labels.iter().map(|l| l.to_string()).collect();
+    mailrs_gmail::labels::set_label_ids(&mut message, &labels);
+    message
+}
+
+impl Harness {
+    /// A Gmail holding `mail`, and a store filled from it by a first sync,
+    /// with one account connected.
+    pub async fn with(mail: Vec<MessageMeta>) -> Harness {
+        Harness::connect(mail, None, |_, _| {}, |_, _| {}).await
+    }
+
+    /// As [`Harness::with`], plus a second account, [`YOU`], whose Gmail
+    /// holds `second` and no labels of its own.
+    pub async fn with_second(mail: Vec<MessageMeta>, second: Vec<MessageMeta>) -> Harness {
+        Harness::connect(mail, Some(second), |_, _| {}, |_, _| {}).await
+    }
+
+    /// As [`Harness::with_second`], with the second account's services
+    /// changed by `edit_second` before it connects, as
+    /// [`Harness::with_services`] changes the first's.
+    pub async fn with_second_services(
+        mail: Vec<MessageMeta>,
+        second: Vec<MessageMeta>,
+        edit_second: impl FnOnce(&Arc<FakeGmail>, &mut AccountServices),
+    ) -> Harness {
+        Harness::connect(mail, Some(second), |_, _| {}, edit_second).await
+    }
+
+    /// One account with no mail, whose services `edit` changes before it
+    /// connects, for a tool test against a server that offers less than
+    /// Gmail's fake. `edit` takes the `FakeGmail` the services wrap, so it
+    /// can build `AccountServices::fake_with_capabilities` over the same
+    /// one, and the `AccountServices` `AccountSync::new` is about to take.
+    pub async fn with_services(
+        edit: impl FnOnce(&Arc<FakeGmail>, &mut AccountServices),
+    ) -> Harness {
+        Harness::connect(Vec::new(), None, edit, |_, _| {}).await
+    }
+
+    /// One account on `imap`, a server that files mail in folders, loaded
+    /// as a first sync loads it. Its folders reach the desk's labels only
+    /// when the test puts them there.
+    pub async fn on_imap(imap: Arc<FakeImap>) -> Harness {
+        Harness::with_services(|_, services| {
+            *services = AccountServices::fake_imap(imap, Arc::new(FakeSmtp::default()));
+        })
+        .await
+    }
+
+    /// The sync handle of the fixture account.
+    pub fn sync(&self) -> Arc<AccountSync> {
+        self.effects
+            .connected
+            .account(self.account_id)
+            .expect("the fixture account is connected")
+    }
+
+    async fn connect(
+        mail: Vec<MessageMeta>,
+        second: Option<Vec<MessageMeta>>,
+        edit: impl FnOnce(&Arc<FakeGmail>, &mut AccountServices),
+        edit_second: impl FnOnce(&Arc<FakeGmail>, &mut AccountServices),
+    ) -> Harness {
+        let dir = tempfile::tempdir().expect("a temp dir");
+        let db = Db::open(&dir.path().join("mail.db")).expect("an empty store");
+        let account_id = db
+            .write(|c| accounts::insert_account(c, ME, 0))
+            .await
+            .expect("the account goes in");
+        assert_eq!(account_id, 1, "fixture mail belongs to account 1");
+        let known = vec![Label {
+            account_id,
+            id: "Label_kites".into(),
+            name: "Kites".into(),
+            kind: LabelKind::User,
+            color: None,
+        }];
+        let gmail = Arc::new(FakeGmail::new());
+        gmail.with(|s| {
+            s.email = ME.into();
+            s.display_name = Some("Dana".into());
+            s.clock = Some(NOW);
+            // One page holds any search, as the assistant sees it.
+            s.page_size = 1000;
+            // Every Google account has a primary calendar under its own
+            // address, which the copy reads before the first calendar
+            // tool answers.
+            s.calendars = vec![mailrs_domain::calendar::Calendar {
+                id: ME.into(),
+                name: ME.into(),
+                access: mailrs_domain::calendar::Access::Owner,
+                zone: "UTC".into(),
+                primary: true,
+                shown: true,
+                ..mailrs_domain::calendar::Calendar::default()
+            }];
+            // Gmail's own labels, and the person's one label.
+            s.labels.retain(|l| l.kind.as_deref() == Some("system"));
+            s.labels.push(RemoteLabel {
+                id: "Label_kites".into(),
+                name: "Kites".into(),
+                kind: Some("user".into()),
+                color: None,
+            });
+        });
+        for message in mail {
+            gmail.seed(message);
+        }
+        gmail.keep_sent_copies(account_id);
+        let (events, heard) = async_channel::unbounded();
+        let mut services = AccountServices::google(Arc::clone(&gmail));
+        edit(&gmail, &mut services);
+        let sync = Arc::new(AccountSync::new(
+            account_id,
+            services,
+            db.clone(),
+            events.clone(),
+        ));
+        fill_store(&sync).await.expect("the first sync runs");
+        let mut syncing = HashMap::from([(account_id, sync)]);
+        let mut listed = vec![Account {
+            id: account_id,
+            email: ME.into(),
+            state: AccountState::Ok,
+            provider: mailrs_domain::Provider::Gmail,
+            provider_name: None,
+        }];
+        let mut labels = HashMap::from([(account_id, known)]);
+        let mut other = None;
+        if let Some(second) = second {
+            let id = db
+                .write(|c| accounts::insert_account(c, YOU, 0))
+                .await
+                .expect("the second account goes in");
+            let gmail = Arc::new(FakeGmail::new());
+            gmail.with(|s| {
+                s.email = YOU.into();
+                s.clock = Some(NOW);
+                s.page_size = 1000;
+            });
+            for message in second {
+                gmail.seed(MessageMeta {
+                    account_id: id,
+                    ..message
+                });
+            }
+            let mut services = AccountServices::google(Arc::clone(&gmail));
+            edit_second(&gmail, &mut services);
+            let sync = Arc::new(AccountSync::new(
+                id,
+                services,
+                db.clone(),
+                events.clone(),
+            ));
+            fill_store(&sync).await.expect("the second sync runs");
+            syncing.insert(id, sync);
+            listed.push(Account {
+                id,
+                email: YOU.into(),
+                state: AccountState::Ok,
+                provider: mailrs_domain::Provider::Gmail,
+                provider_name: None,
+            });
+            labels.insert(id, vec![]);
+            other = Some((id, gmail));
+        }
+        let connected = Arc::new(Connected(syncing));
+        let one_click = Arc::new(FakeOneClick::default());
+        let mail = Arc::new(MailActions::new(
+            Arc::clone(&connected),
+            db.clone(),
+            OneClick::Fake(Arc::clone(&one_click)),
+        ));
+        let settings = Arc::new(AccountSettings::new(Arc::clone(&connected), db.clone()));
+        let calendar_copy = Arc::new(CalendarCopy::new(Arc::clone(&connected), db.clone()));
+        let copy = Arc::clone(&calendar_copy);
+        let modules = Modules {
+            mail: Arc::clone(&mail),
+            lists: Arc::new(Mailboxes::new(Arc::clone(&connected), db.clone())),
+            gmail: Arc::clone(&settings),
+            calendar: Arc::new(Calendar::new(Arc::clone(&connected), db.clone(), Arc::clone(&calendar_copy))),
+            invitations: Arc::new(Invitations::new(Arc::clone(&connected), db.clone(), calendar_copy)),
+            contacts: Arc::new(ContactBook::new(
+                Arc::clone(&connected),
+                db.clone(),
+                dir.path().join("photos"),
+            )),
+            accounts: connected,
+            db: db.clone(),
+        };
+        let desk = Rc::new(FakeDesk(RefCell::new(Screen {
+            settings: Settings::default(),
+            accounts: listed,
+            labels,
+            view: View::default(),
+            on_screen: OnScreen::default(),
+            default_account: Some(account_id),
+            downloads: {
+                let downloads = dir.path().join("Downloads");
+                std::fs::create_dir(&downloads).expect("a downloads folder");
+                downloads
+            },
+        })));
+        let effects = Rc::new(FakeEffects {
+            asked: RefCell::new(Asked {
+                approves: true,
+                approves_lists: true,
+                ..Asked::default()
+            }),
+            pages: RefCell::new(HashMap::new()),
+            after: RefCell::new(PageForm {
+                text: "Thanks!".to_string(),
+                ..PageForm::default()
+            }),
+            browser: RefCell::new(None),
+            desk: Rc::clone(&desk),
+            connected: Arc::clone(&modules.accounts),
+        });
+        let tools = Tools::new(
+            modules,
+            Rc::new(Runtime),
+            Rc::clone(&desk) as Rc<dyn Desk>,
+            Rc::clone(&effects) as Rc<dyn Effects>,
+        );
+        Harness {
+            tools,
+            gmail,
+            one_click,
+            db,
+            desk,
+            effects,
+            account_id,
+            copy,
+            second: other,
+            _heard: heard,
+            _dir: dir,
+        }
+    }
+
+    /// Puts `calendars` on the first account's Google calendar and reads
+    /// them into the copy, as the app's timer does a minute after start.
+    pub async fn read_calendars(&self, calendars: Vec<mailrs_domain::calendar::Calendar>) {
+        self.gmail.with(|s| s.calendars = calendars);
+        let read = self
+            .copy
+            .refresh(self.account_id, mailrs_sync::now_millis())
+            .await
+            .expect("the calendars read");
+        assert!(matches!(read, mailrs_sync::Permitted::Done(_)));
+    }
+
+    /// Runs one tool call and gives back its JSON, or its error message.
+    pub async fn run(&self, name: &str, input: Value) -> Result<Value, String> {
+        match self.tools.run(name, input).await {
+            mailrs_ai::ToolOutcome::Ok(value) => Ok(value),
+            mailrs_ai::ToolOutcome::Err(message) => Err(message),
+        }
+    }
+
+    /// Runs a call that is meant to work.
+    pub async fn ok(&self, name: &str, input: Value) -> Value {
+        self.run(name, input)
+            .await
+            .unwrap_or_else(|err| panic!("{name} failed: {err}"))
+    }
+
+    pub fn asked(&self) -> std::cell::Ref<'_, Asked> {
+        self.effects.asked.borrow()
+    }
+
+    // ---- The hidden view the unsubscribe tool loads pages in -----------
+
+    /// Serves `page` at `url`, the way a sender's unsubscribe page
+    /// answers.
+    pub fn serve(&self, url: &str, page: PageForm) {
+        self.effects
+            .pages
+            .borrow_mut()
+            .insert(url.to_string(), page);
+    }
+
+    /// What the page a submission lands on says.
+    pub fn after_submitting(&self, text: &str) {
+        self.effects.after.borrow_mut().text = text.to_string();
+    }
+
+    /// Every plan the run submitted, oldest first, and the addresses it
+    /// typed. Empty until a tool has asked for a browser.
+    pub fn submissions(&self) -> Vec<Plan> {
+        match &*self.effects.browser.borrow() {
+            Some(browser) => browser.submissions(),
+            None => Vec::new(),
+        }
+    }
+
+    pub fn typed(&self) -> Vec<String> {
+        match &*self.effects.browser.borrow() {
+            Some(browser) => browser.typed.borrow().clone(),
+            None => Vec::new(),
+        }
+    }
+
+    /// The labels on a stored message.
+    pub async fn labels_of(&self, id: &str) -> Vec<String> {
+        self.labels_in(self.account_id, id).await
+    }
+
+    /// The labels on a stored message of `account_id`.
+    pub async fn labels_in(&self, account_id: AccountId, id: &str) -> Vec<String> {
+        let id = id.to_string();
+        let held = self
+            .db
+            .read(move |c| messages::memberships_of(c, account_id, std::slice::from_ref(&id)))
+            .await
+            .expect("the store reads");
+        held.values()
+            .next()
+            .map(mailrs_gmail::labels::labels)
+            .expect("the message is stored")
+    }
+}

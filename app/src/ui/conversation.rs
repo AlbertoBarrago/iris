@@ -1,0 +1,2163 @@
+//! The right pane: the whole thread in one WebView.
+//!
+//! Page JavaScript is off (`enable-javascript-markup` is false), so email
+//! cannot run scripts. The app still runs a few tiny scripts of its own
+//! through the WebKit API: collapsing a message, scrolling to one,
+//! [`MENU_SCRIPT`], which asks for the menu of the message under the
+//! pointer, [`READY_SCRIPT`], which says the page is parsed, and
+//! [`PATCH_SCRIPT`], which replaces the articles a change touched. Finding
+//! text is WebKit's own, through [`FindBar`].
+//!
+//! The pictures an HTML body names by `cid:` never enter the page. It asks
+//! for each at an address of the `mailrs-cid` scheme, which every view in
+//! the process answers through one handler, from its own open thread. A
+//! request that comes before the pictures arrive waits for them, so the
+//! text goes on screen first and the pictures fill in where they belong.
+//!
+//! The open thread decides what the page needs, in `OpenThread::page`:
+//! the whole document, or new HTML for some of its articles. A whole
+//! document goes to `load_html`. A patch waits until the latest document
+//! is parsed, since a script run before then reaches the page that was
+//! there before it, and then replaces the articles in place, which keeps
+//! the reader where they were.
+
+use std::cell::{Cell, RefCell};
+use std::collections::HashMap;
+use std::rc::{Rc, Weak};
+
+use adw::prelude::*;
+use gtk::{gdk, gio, glib};
+use mailrs_domain::translate::{fill, fill_plural, gettext};
+use mailrs_domain::{Category, FlagColor, Folder, MessageMeta, Target};
+use webkit::prelude::*;
+
+use super::card_place::Host as CardHost;
+use super::find::FindBar;
+use super::invitation::{self, EventCard, Showing};
+use super::pgp::PgpCard;
+use super::queued::QueuedCard;
+use super::toolbar::{self, Holds};
+use super::translation::TranslationCard;
+use super::{name, name_with_shortcut};
+use crate::compose::ReplyKind;
+use crate::offered::Filing;
+use crate::open_thread::inline::{self, Address};
+use crate::open_thread::run::{Fetched, InlinePictures};
+use crate::open_thread::{Article, OpenThread, Page, Served, Unsent};
+use crate::protection::run::{Claimed, Installed};
+use crate::protection::{self};
+use crate::render::{FOLD_MS, Theme};
+use crate::translation::Translation;
+
+pub enum Action {
+    /// The event card asked for something: an answer, or a hand-off to the
+    /// desktop calendar.
+    Invitation(invitation::Action),
+    /// The Summarize pill above the thread: ask the assistant to sum up
+    /// the conversation on screen.
+    Summarize,
+    Reply(ReplyKind),
+    EditDraft,
+    Archive,
+    Trash,
+    Junk,
+    ToggleStar,
+    ToggleRead,
+    LoadImages,
+    Unsubscribe,
+    SaveAttachment {
+        message_id: String,
+        index: usize,
+    },
+    /// Show one attachment without leaving the window.
+    PreviewAttachment {
+        message_id: String,
+        index: usize,
+    },
+    /// Write every attachment of one message into a folder.
+    SaveAllAttachments {
+        message_id: String,
+    },
+    Mailto(String),
+    /// The card for one sender, asked for by clicking their name.
+    ShowContact(String),
+    /// The menu for one message of the thread, asked for by a right click
+    /// or the Menu key. The point is where the pointer was, in the web
+    /// view's own coordinates.
+    MessageMenu {
+        message_id: String,
+        x: f64,
+        y: f64,
+    },
+    /// The translation card's button: translate the open message, or turn
+    /// the translation it already has over.
+    Translate,
+}
+
+/// The one script the page carries of its own accord. WebKit injects it
+/// after each load, so it outlives the redraws a thread goes through.
+///
+/// It exists because the app cannot tell which message the pointer is
+/// over: WebKit's own `context-menu` signal arrives with a hit test and no
+/// way to run JavaScript, and the message bodies sit inside shadow roots
+/// where the signal's node says little. The script reads the message under
+/// the pointer and asks for its menu through the `mailrs:` scheme the app
+/// already intercepts, by clicking a link the way the page's own links are
+/// clicked.
+///
+/// A right click over selected words keeps WebKit's own menu, so Copy
+/// still works on a quotation the reader picked out.
+const MENU_SCRIPT: &str = r#"(function () {
+  var asked = 0;
+  var ask = function (article, x, y) {
+    var id = article.id.substring(2);
+    var link = document.createElement('a');
+    link.href = 'mailrs:menu/' + id + '/' + Math.round(x) + '/' + Math.round(y) +
+      '/' + (++asked);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+  var messageAt = function (node) {
+    return node && node.closest ? node.closest('.message') : null;
+  };
+  document.addEventListener('contextmenu', function (event) {
+    if (String(window.getSelection())) return;
+    var article = messageAt(event.target);
+    if (!article) return;
+    event.preventDefault();
+    ask(article, event.clientX, event.clientY);
+  }, true);
+  window.mailrsMenuKey = function () {
+    var article = messageAt(document.activeElement) ||
+      document.querySelector('.message.expanded');
+    if (!article) return;
+    var box = article.getBoundingClientRect();
+    ask(article, box.left + 16, box.top + 16);
+  };
+})()"#;
+
+/// Tells the view the page is parsed, with the number of the load it came
+/// from, so a patch meant for it is not run against the page before. It
+/// runs when the document is parsed, before its pictures arrive.
+const READY_SCRIPT: &str = "window.webkit.messageHandlers.mailrsReady.postMessage(\
+     document.documentElement.getAttribute('data-load') || '')";
+
+/// Replaces articles, each by the `id` of its message, with new HTML that
+/// holds its body in a declarative shadow root. Only `setHTMLUnsafe` reads
+/// those roots out of a string, so a WebKit without it answers `whole` and
+/// the view loads the page instead. The first article still on screen
+/// keeps its place, since WebKit does no scroll anchoring of its own and
+/// an article above the reader that grew would push them down.
+const PATCH_SCRIPT: [&str; 2] = [
+    r#"(function (patches) {
+  var holder = document.createElement('template');
+  if (typeof holder.setHTMLUnsafe !== 'function') return 'whole';
+  var anchor = null;
+  var messages = document.querySelectorAll('article.message');
+  for (var i = 0; i < messages.length; i++) {
+    if (messages[i].getBoundingClientRect().bottom > 0) { anchor = messages[i].id; break; }
+  }
+  var before = anchor ? document.getElementById(anchor).getBoundingClientRect().top : 0;
+  var missed = 0;
+  patches.forEach(function (patch) {
+    var old = document.getElementById('m-' + patch[0]);
+    holder.setHTMLUnsafe(patch[1]);
+    var fresh = holder.content.firstElementChild;
+    if (old && fresh) old.replaceWith(fresh); else missed++;
+  });
+  if (anchor) {
+    var now = document.getElementById(anchor);
+    if (now) window.scrollBy(0, now.getBoundingClientRect().top - before);
+  }
+  return missed ? 'whole' : 'done';
+})("#,
+    ")",
+];
+
+/// Asks the page for the menu of the message holding the focus, as the Menu
+/// key or Shift+F10 does. The app sends the keys here instead of letting the
+/// page see them: WebKit keeps an empty text field inside the view, and GTK
+/// gives that field the same two keys for its Cut and Paste menu, which then
+/// opens in the window's corner and leaves no room for the message's own.
+const MENU_KEY_SCRIPT: &str = "window.mailrsMenuKey && window.mailrsMenuKey()";
+
+struct Buttons {
+    archive: gtk::Button,
+    trash: gtk::Button,
+    junk: gtk::Button,
+    read: gtk::Button,
+    star: adw::SplitButton,
+    reply: gtk::Button,
+    reply_all: gtk::Button,
+    forward: gtk::Button,
+    edit: gtk::Button,
+    more: gtk::MenuButton,
+}
+
+/// The widget behind one slot of the header bar.
+fn slot_widget(
+    buttons: &Buttons,
+    labels: &adw::SplitButton,
+    tags: &gtk::MenuButton,
+    slot: toolbar::Slot,
+) -> gtk::Widget {
+    use toolbar::Slot;
+    match slot {
+        Slot::Reply => buttons.reply.clone().upcast(),
+        Slot::ReplyAll => buttons.reply_all.clone().upcast(),
+        Slot::Forward => buttons.forward.clone().upcast(),
+        Slot::Edit => buttons.edit.clone().upcast(),
+        Slot::Archive => buttons.archive.clone().upcast(),
+        Slot::Trash => buttons.trash.clone().upcast(),
+        Slot::Junk => buttons.junk.clone().upcast(),
+        Slot::Read => buttons.read.clone().upcast(),
+        Slot::Flag => buttons.star.clone().upcast(),
+        Slot::Labels => labels.clone().upcast(),
+        Slot::Tags => tags.clone().upcast(),
+    }
+}
+
+/// Fills `menu` with one Categorize Sender item for each of `set`. The key
+/// is the provider's own name for the category and stays as it is.
+fn fill_categorize(menu: &gio::Menu, set: &[Category]) {
+    for category in set {
+        let item = gio::MenuItem::new(Some(&category.name()), None);
+        item.set_action_and_target_value(
+            Some("win.categorize-sender"),
+            Some(&category.key().to_variant()),
+        );
+        menu.append_item(&item);
+    }
+}
+
+pub struct ConversationView {
+    pub page: adw::NavigationPage,
+    /// Applies or removes labels; the window fills its popover. A split
+    /// button like the flag's beside it, whose two parts both open the
+    /// labels.
+    pub label_button: adw::SplitButton,
+    /// Applies or removes tags on an account that keeps them; the window
+    /// fills its popover each time it opens. Shown only where
+    /// `toolbar::shows` says, beside the Labels button.
+    pub tag_button: gtk::MenuButton,
+    /// Opens or closes the assistant beside the mail. The window wires
+    /// it to the assistant panel's own toggle path (R12) and hides it
+    /// with `set_detached`, since a conversation of its own has no
+    /// assistant panel to open.
+    pub assistant_toggle: gtk::ToggleButton,
+    /// The bar of buttons above the conversation, the widest part the
+    /// pane cannot shrink.
+    header: adw::HeaderBar,
+    many: adw::StatusPage,
+    many_read: gtk::Button,
+    many_star: gtk::Button,
+    many_mute: gtk::Button,
+    many_junk: gtk::Button,
+    many_trash: gtk::Button,
+    stack: gtk::Stack,
+    webview: webkit::WebView,
+    content: webkit::UserContentManager,
+    banner: adw::Banner,
+    /// The event card, shown inside the message that carries an
+    /// invitation.
+    pub card: Rc<EventCard>,
+    /// Lays the card over its place in the page.
+    card_host: Rc<CardHost>,
+    /// The card above that, shown when gpg has something to say about the
+    /// message.
+    seal: Rc<PgpCard>,
+    /// The card above the message, shown when the message is in a
+    /// language the interface is not in.
+    pub translate: Rc<TranslationCard>,
+    /// The card at the top, shown for a queued message: when it goes, or
+    /// why it has not gone, and what the person can do about it.
+    queued: QueuedCard,
+    /// Ctrl+F over the message. WebKit finds the text; the bar says where
+    /// in the matches the reader is.
+    find: Rc<FindBar>,
+    /// The messages the find bar opened, kept so they close again when it
+    /// goes away.
+    find_closed: RefCell<Vec<String>>,
+    list_banner: adw::Banner,
+    /// The menu section whose first item adds or removes the sender as a VIP.
+    sender_menu: gio::Menu,
+    /// The Categorize Sender submenu, last in the sender section while
+    /// the account can sort a sender's mail.
+    categorize_menu: gio::Menu,
+    /// The menu section holding Mute, whose wording follows the thread.
+    mark_menu: gio::Menu,
+    /// The menu section holding Archive, Trash and Junk, whose wording
+    /// follows the mailbox.
+    filing_menu: gio::Menu,
+    /// Everything that can be done to the conversations on screen. More
+    /// Actions shows it, and so does a right click in the list.
+    thread_menu: gio::Menu,
+    /// Remind Me times, recomputed whenever a conversation opens.
+    remind: gio::Menu,
+    buttons: Buttons,
+    /// One linked box per capsule of the header bar, in the order of
+    /// `toolbar::CAPSULES`.
+    capsules: Vec<gtk::Box>,
+    /// The menu for one message. One popover serves the whole thread: the
+    /// model changes with the message the menu was asked for.
+    menu: gtk::PopoverMenu,
+    /// Where that menu last opened, in the web view's coordinates, so a
+    /// popover an item leads to comes up in the same place.
+    menu_at: Cell<(i32, i32)>,
+    /// The popover an item led to, such as the label list. Held so the one
+    /// before it lets go of the view.
+    menu_popover: RefCell<Option<gtk::Popover>>,
+    filter: RefCell<Option<webkit::UserContentFilter>>,
+    open: RefCell<Option<OpenThread>>,
+    /// Counts the threads asked for, so a store read that answers after a
+    /// later click can tell it lost.
+    loading: Cell<u64>,
+    scroll_to: RefCell<Option<String>>,
+    /// The message the page scrolled to once parsed. Pictures arriving
+    /// later can push it down, so it is scrolled to again when the load
+    /// finishes, unless the reader has moved.
+    scrolled: RefCell<Option<String>>,
+    /// The number of the latest whole page given to WebKit.
+    loads: Cell<u64>,
+    /// The number of the latest page WebKit has parsed.
+    ready: Cell<u64>,
+    /// Articles waiting for the latest page to be parsed.
+    waiting: RefCell<Vec<Article>>,
+    /// The page's requests for pictures that have not arrived yet.
+    held: RefCell<Vec<(Address, webkit::URISchemeRequest)>>,
+    compact: Cell<bool>,
+    detached: Cell<bool>,
+    /// The mail the header acts on comes from one account that keeps tags.
+    tags: Cell<bool>,
+    /// Whether the head of the page offers Summarize.
+    summarize: Cell<bool>,
+    /// This view, for the answers WebKit gives later.
+    this: Weak<ConversationView>,
+}
+
+impl ConversationView {
+    pub fn new(on_action: impl Fn(Action) + 'static) -> Rc<ConversationView> {
+        let on_action: Rc<dyn Fn(Action)> = Rc::new(on_action);
+        let content = webkit::UserContentManager::new();
+        for script in [MENU_SCRIPT, READY_SCRIPT] {
+            content.add_script(&webkit::UserScript::new(
+                script,
+                webkit::UserContentInjectedFrames::TopFrame,
+                webkit::UserScriptInjectionTime::End,
+                &[],
+                &[],
+            ));
+        }
+        content.register_script_message_handler("mailrsReady", None);
+        let settings = webkit::Settings::new();
+        settings.set_enable_javascript(true);
+        settings.set_enable_javascript_markup(false);
+        settings.set_javascript_can_open_windows_automatically(false);
+        settings.set_enable_developer_extras(false);
+        settings.set_enable_html5_local_storage(false);
+        settings.set_enable_html5_database(false);
+        settings.set_enable_page_cache(false);
+        settings.set_enable_media(false);
+        settings.set_enable_mediasource(false);
+        settings.set_enable_encrypted_media(false);
+        settings.set_enable_webaudio(false);
+        settings.set_enable_webgl(false);
+        settings.set_enable_webrtc(false);
+        settings.set_enable_fullscreen(false);
+        settings.set_enable_back_forward_navigation_gestures(false);
+        settings.set_allow_file_access_from_file_urls(false);
+        settings.set_enable_smooth_scrolling(true);
+        settings.set_auto_load_images(true);
+        let session = network_session();
+        let webview = webkit::WebView::builder()
+            .network_session(&session)
+            .user_content_manager(&content)
+            .settings(&settings)
+            .build();
+        webview.set_vexpand(true);
+        webview.set_hexpand(true);
+        keep_key_text_out_of_tab(&webview);
+        webview.connect_realize(keep_key_text_out_of_tab);
+
+        let empty = adw::StatusPage::builder()
+            .icon_name("penguin-mail-mark-symbolic")
+            .title(gettext("No Conversation Selected"))
+            .build();
+        // libadwaita dims a status page's icon itself; the title stays at
+        // full strength, like the empty list's title beside it.
+        let banner = adw::Banner::builder()
+            .title(gettext("Remote images are hidden to protect your privacy"))
+            .button_label(gettext("Load Images"))
+            .revealed(false)
+            .build();
+        let list_banner = adw::Banner::builder()
+            .title(gettext("This message is from a mailing list"))
+            .button_label(gettext("Unsubscribe"))
+            .revealed(false)
+            .build();
+        let bulk = adw::WrapBox::builder()
+            .child_spacing(10)
+            .line_spacing(10)
+            .align(0.5)
+            .build();
+        let (mut many_read, mut many_star, mut many_mute, mut many_junk, mut many_trash) =
+            (None, None, None, None, None);
+        for (label, action) in [
+            (gettext("Archive"), "win.archive"),
+            (gettext("Mark as Read"), "win.toggle-read"),
+            (gettext("Flag"), "win.toggle-star"),
+            (gettext("Mute"), "win.mute"),
+            (gettext("Junk"), "win.junk"),
+            (gettext("Move to Trash"), "win.trash"),
+        ] {
+            let pill = gtk::Button::builder()
+                .label(label)
+                .action_name(action)
+                .css_classes(["pill"])
+                .build();
+            match action {
+                "win.archive" => pill.add_css_class("suggested-action"),
+                "win.toggle-read" => many_read = Some(pill.clone()),
+                "win.toggle-star" => many_star = Some(pill.clone()),
+                "win.mute" => many_mute = Some(pill.clone()),
+                "win.junk" => many_junk = Some(pill.clone()),
+                "win.trash" => many_trash = Some(pill.clone()),
+                _ => {}
+            }
+            bulk.append(&pill);
+        }
+        let (many_read, many_star, many_mute, many_junk, many_trash) = (
+            many_read.expect("the bulk actions include read"),
+            many_star.expect("the bulk actions include star"),
+            many_mute.expect("the bulk actions include mute"),
+            many_junk.expect("the bulk actions include junk"),
+            many_trash.expect("the bulk actions include trash"),
+        );
+        let many = adw::StatusPage::builder()
+            .icon_name("penguin-mail-inbox-symbolic")
+            .title(gettext("Several Conversations Selected"))
+            .description(gettext(
+                "Actions and shortcuts apply to all of them. Esc clears the selection.",
+            ))
+            .child(&bulk)
+            .build();
+        let card = {
+            let on_action = Rc::clone(&on_action);
+            EventCard::new(move |action| on_action(Action::Invitation(action)))
+        };
+        let seal = PgpCard::new();
+        let translate = {
+            let on_action = Rc::clone(&on_action);
+            TranslationCard::new(move || on_action(Action::Translate))
+        };
+        let queued = QueuedCard::new();
+        let web_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
+        web_box.append(&queued.widget);
+        web_box.append(&list_banner);
+        web_box.append(&banner);
+        web_box.append(&seal.widget);
+        web_box.append(&translate.widget);
+        // The event card sits inside the message that carries the
+        // invitation, laid over the place the page keeps for it.
+        let card_host = CardHost::new(&webview, &content, &card.widget);
+        web_box.append(&card_host.overlay);
+        let stack = gtk::Stack::builder()
+            .transition_type(gtk::StackTransitionType::Crossfade)
+            .build();
+        stack.add_named(&empty, Some("empty"));
+        stack.add_named(&web_box, Some("thread"));
+        stack.add_named(&many, Some("many"));
+
+        let button = |icon: &str, tip: String| {
+            let button = gtk::Button::builder()
+                .icon_name(icon)
+                .tooltip_text(&tip)
+                .build();
+            name_with_shortcut(&button, &tip);
+            button
+        };
+        let buttons = Buttons {
+            archive: button(
+                "penguin-mail-archive-symbolic",
+                gettext("Archive (E or Ctrl+Alt+A)"),
+            ),
+            trash: button("user-trash-symbolic", gettext("Move to Trash (Delete)")),
+            junk: button("mail-mark-junk-symbolic", gettext("Junk (Ctrl+Shift+J)")),
+            read: button(
+                "mail-unread-symbolic",
+                gettext("Mark as Unread (Ctrl+Shift+U)"),
+            ),
+            star: {
+                let star = adw::SplitButton::builder()
+                    .icon_name("penguin-mail-flag-outline-symbolic")
+                    .tooltip_text(gettext("Flag (Ctrl+Shift+L)"))
+                    .dropdown_tooltip(gettext("Choose Flag Color"))
+                    .popover(&flag_colors())
+                    .build();
+                name_with_shortcut(&star, &gettext("Flag (Ctrl+Shift+L)"));
+                name_arrow(
+                    &star,
+                    &gettext("Choose Flag Color"),
+                    &gettext("Flags it in the color you chose last, or takes the flag off"),
+                );
+                star
+            },
+            reply: button("mail-reply-sender-symbolic", gettext("Reply (Ctrl+R)")),
+            reply_all: button(
+                "mail-reply-all-symbolic",
+                gettext("Reply All (Ctrl+Shift+R)"),
+            ),
+            forward: button("mail-forward-symbolic", gettext("Forward (Ctrl+Shift+F)")),
+            edit: gtk::Button::builder()
+                .label(gettext("Edit Draft"))
+                .css_classes(["suggested-action"])
+                .visible(false)
+                .build(),
+            more: {
+                let more = gtk::MenuButton::builder()
+                    .icon_name("view-more-symbolic")
+                    .tooltip_text(gettext("More Actions"))
+                    .visible(false)
+                    .build();
+                name(&more, &gettext("More Actions"));
+                super::name_menu_items_of(&more);
+                more
+            },
+        };
+        // The window binds this to the assistant panel's own open state
+        // (R12); a conversation of its own has none, so it starts hidden
+        // and stays that way (set_detached).
+        let assistant_toggle = gtk::ToggleButton::builder()
+            .icon_name("penguin-mail-sparkle-symbolic")
+            .tooltip_text(gettext("Assistant (Ctrl+J)"))
+            .css_classes(["flat", "assistant-toggle"])
+            .visible(false)
+            .build();
+        name_with_shortcut(&assistant_toggle, &gettext("Assistant (Ctrl+J)"));
+        let more = gio::Menu::new();
+        // Only the Outbox turns these three on, and GTK leaves an item whose
+        // action is off out of the menu rather than greying it.
+        let waiting = gio::Menu::new();
+        for (text, action) in [
+            (gettext("Edit…"), "win.outbox-edit"),
+            (gettext("Send Now"), "win.outbox-send"),
+            (gettext("Delete"), "win.outbox-delete"),
+        ] {
+            let item = gio::MenuItem::new(Some(&text), Some(action));
+            item.set_attribute_value("hidden-when", Some(&"action-disabled".to_variant()));
+            waiting.append_item(&item);
+        }
+        more.append_section(None, &waiting);
+        let replies = gio::Menu::new();
+        replies.append(Some(&gettext("Reply")), Some("win.reply"));
+        replies.append(Some(&gettext("Reply All")), Some("win.reply-all"));
+        replies.append(Some(&gettext("Forward")), Some("win.forward"));
+        more.append_section(None, &replies);
+        // set_folder words the last two for the mailbox on screen.
+        let filing = gio::Menu::new();
+        filing.append(Some(&gettext("Archive")), Some("win.archive"));
+        filing.append(Some(&gettext("Move to Trash")), Some("win.trash"));
+        filing.append(Some(&gettext("Junk")), Some("win.junk"));
+        more.append_section(None, &filing);
+        let marks = gio::Menu::new();
+        marks.append(Some(&gettext("Flag or Unflag")), Some("win.toggle-star"));
+        marks.append(
+            Some(&gettext("Mark Read or Unread")),
+            Some("win.toggle-read"),
+        );
+        marks.append(Some(&gettext("Mute")), Some("win.mute"));
+        // set_filing words this one for how the accounts file mail.
+        marks.append(Some(&Filing::Labels.menu_item()), Some("win.label"));
+        // Only an account that keeps tags has this; the item is hidden
+        // while the window disables the action.
+        let tags_item = gio::MenuItem::new(Some(&gettext("Tags…")), Some("win.tag"));
+        tags_item.set_attribute_value("hidden-when", Some(&"action-disabled".to_variant()));
+        marks.append_item(&tags_item);
+        let remind_menu = gio::Menu::new();
+        marks.append_submenu(Some(&gettext("Remind Me")), &remind_menu);
+        more.append_section(None, &marks);
+        let views = gio::Menu::new();
+        views.append(
+            Some(&gettext("Open in New Window")),
+            Some("win.open-window"),
+        );
+        views.append(Some(&gettext("Print…")), Some("win.print"));
+        views.append(Some(&gettext("View Source")), Some("win.view-source"));
+        views.append(Some(&gettext("Export…")), Some("win.export"));
+        more.append_section(None, &views);
+        let sender = gio::Menu::new();
+        sender.append(Some(&gettext("Add Sender to VIPs")), Some("win.toggle-vip"));
+        sender.append(Some(&gettext("Unsubscribe…")), Some("win.unsubscribe"));
+        sender.append(
+            Some(&gettext("Always Load Images…")),
+            Some("win.always-load-images"),
+        );
+        // Both sender items leave a rule on the server, so an account
+        // without rules turns them off, and the menu leaves them out.
+        let block = gio::MenuItem::new(Some(&gettext("Block Sender…")), Some("win.block-sender"));
+        block.set_attribute_value("hidden-when", Some(&"action-disabled".to_variant()));
+        sender.append_item(&block);
+        let categories = gio::Menu::new();
+        fill_categorize(&categories, &crate::offered::categorize_choices(mailrs_sync::Offers::EVERYTHING));
+        sender.append_submenu(Some(&gettext("Categorize Sender")), &categories);
+        more.append_section(None, &sender);
+        buttons.more.set_menu_model(Some(&more));
+        let sender_menu = sender.clone();
+        let categorize_menu = categories.clone();
+        let mark_menu = marks.clone();
+        let filing_menu = filing.clone();
+        let thread_menu = more.clone();
+        let remind = remind_menu.clone();
+        let header = adw::HeaderBar::builder()
+            .title_widget(&gtk::Label::new(None))
+            .css_classes(["conversation-header"])
+            .build();
+        let label_button = adw::SplitButton::builder()
+            .icon_name(Filing::Labels.icon())
+            .tooltip_text(Filing::Labels.tooltip())
+            .dropdown_tooltip(Filing::Labels.arrow())
+            .build();
+        name_with_shortcut(&label_button, &Filing::Labels.tooltip());
+        name_arrow(&label_button, &Filing::Labels.arrow(), "");
+        // The labels have no one-press action of their own, so the icon
+        // opens the same list as the arrow, as the whole button did
+        // before it took the flag's shape.
+        label_button.connect_clicked(|button| button.popup());
+        // The window fills the popover each time it opens, so it lists the
+        // tags and ticks of the mail the button reaches then.
+        let tag_button = gtk::MenuButton::builder()
+            .icon_name("penguin-mail-tag-symbolic")
+            .tooltip_text(gettext("Tags"))
+            .build();
+        name(&tag_button, &gettext("Tags"));
+        // The capsules run from the start of the bar in the order the
+        // mockup gives them; More stays a round button at the end.
+        let capsules: Vec<gtk::Box> = toolbar::CAPSULES
+            .iter()
+            .enumerate()
+            .map(|(index, slots)| {
+                let draft = slots.contains(&toolbar::Slot::Edit);
+                // GTK's own "linked" box style gives grouped buttons a
+                // background of its own, which fights the capsule's flat
+                // buttons over one pill; the capsule draws its pill and
+                // its separators itself, so it skips "linked".
+                let capsule = gtk::Box::builder()
+                    .css_classes([if draft { "draft-capsule" } else { "toolbar-capsule" }])
+                    .valign(gtk::Align::Center)
+                    .build();
+                for &slot in slots.iter() {
+                    let widget = slot_widget(&buttons, &label_button, &tag_button, slot);
+                    // Edit Draft keeps its suggested look; the rest sit
+                    // flat inside the capsule's one pill.
+                    if !draft {
+                        widget.add_css_class("flat");
+                    }
+                    capsule.append(&widget);
+                }
+                // The header bar already spaces its packed children 6 px
+                // apart (style.css's note on button.new-event), so the
+                // margins here make up the rest of the mockup's 16 px
+                // from the pane's start and 10 px between capsules.
+                if index == 0 {
+                    capsule.set_margin_start(10);
+                }
+                capsule.set_margin_end(4);
+                header.pack_start(&capsule);
+                capsule
+            })
+            .collect();
+        header.pack_end(&buttons.more);
+        header.pack_end(&assistant_toggle);
+        let menu_popover = gtk::PopoverMenu::from_model(None::<&gio::Menu>);
+        super::name_menu_items(&menu_popover);
+        menu_popover.set_has_arrow(false);
+        menu_popover.set_halign(gtk::Align::Start);
+        menu_popover.set_parent(&webview);
+        let find = FindBar::new(&webview);
+        let toolbar = adw::ToolbarView::new();
+        toolbar.add_top_bar(&header);
+        toolbar.add_top_bar(&find.widget);
+        toolbar.set_content(Some(&stack));
+        let page = adw::NavigationPage::builder()
+            .title(gettext("Conversation"))
+            .tag("thread")
+            .child(&toolbar)
+            .build();
+
+        let wire = |widget: &gtk::Button, make: fn() -> Action| {
+            let on_action = Rc::clone(&on_action);
+            widget.connect_clicked(move |_| on_action(make()));
+        };
+        wire(&buttons.archive, || Action::Archive);
+        wire(&buttons.junk, || Action::Junk);
+        wire(&buttons.trash, || Action::Trash);
+        wire(&buttons.read, || Action::ToggleRead);
+        {
+            let on_action = Rc::clone(&on_action);
+            buttons
+                .star
+                .connect_clicked(move |_| on_action(Action::ToggleStar));
+        }
+        wire(&buttons.reply, || Action::Reply(ReplyKind::Reply));
+        wire(&buttons.reply_all, || Action::Reply(ReplyKind::ReplyAll));
+        wire(&buttons.forward, || Action::Reply(ReplyKind::Forward));
+        wire(&buttons.edit, || Action::EditDraft);
+        {
+            let on_action = Rc::clone(&on_action);
+            banner.connect_button_clicked(move |_| on_action(Action::LoadImages));
+        }
+        {
+            let on_action = Rc::clone(&on_action);
+            list_banner.connect_button_clicked(move |_| on_action(Action::Unsubscribe));
+        }
+
+        let view = Rc::new_cyclic(|this| ConversationView {
+            page,
+            label_button,
+            tag_button,
+            assistant_toggle,
+            header: header.clone(),
+            many,
+            many_read,
+            many_star,
+            many_mute,
+            many_junk,
+            many_trash,
+            stack,
+            webview,
+            content,
+            banner,
+            card,
+            card_host,
+            seal,
+            translate,
+            queued,
+            find,
+            find_closed: RefCell::new(Vec::new()),
+            list_banner,
+            sender_menu,
+            categorize_menu,
+            mark_menu,
+            filing_menu,
+            thread_menu,
+            remind,
+            buttons,
+            capsules,
+            menu: menu_popover,
+            menu_at: Cell::new((0, 0)),
+            menu_popover: RefCell::new(None),
+            filter: RefCell::new(None),
+            open: RefCell::new(None),
+            loading: Cell::new(0),
+            scroll_to: RefCell::new(None),
+            scrolled: RefCell::new(None),
+            loads: Cell::new(0),
+            ready: Cell::new(0),
+            waiting: RefCell::new(Vec::new()),
+            held: RefCell::new(Vec::new()),
+            compact: Cell::new(false),
+            detached: Cell::new(false),
+            tags: Cell::new(false),
+            summarize: Cell::new(false),
+            this: this.clone(),
+        });
+
+        view.apply_toolbar(Holds::Nothing);
+        VIEWS.with(|views| {
+            let mut views = views.borrow_mut();
+            views.retain(|view| view.strong_count() > 0);
+            views.push(Rc::downgrade(&view));
+        });
+        serve_pictures();
+        // A popover parented on a widget has to let go of it before the
+        // widget goes, or GTK finalizes a widget that still has a parent.
+        let weak = Rc::downgrade(&view);
+        view.webview.connect_destroy(move |_| {
+            let Some(view) = weak.upgrade() else { return };
+            view.menu.unparent();
+            if let Some(popover) = view.menu_popover.take() {
+                popover.unparent();
+            }
+        });
+        let weak = Rc::downgrade(&view);
+        let actions = Rc::clone(&on_action);
+        view.webview
+            .connect_decide_policy(move |_, decision, kind| {
+                use webkit::PolicyDecisionType as Kind;
+                if !matches!(kind, Kind::NavigationAction | Kind::NewWindowAction) {
+                    return false;
+                }
+                let Some(navigation) = decision.downcast_ref::<webkit::NavigationPolicyDecision>()
+                else {
+                    return false;
+                };
+                let uri = navigation
+                    .navigation_action()
+                    .and_then(|action| action.request())
+                    .and_then(|request| request.uri())
+                    .map(|uri| uri.to_string())
+                    .unwrap_or_default();
+                if kind == Kind::NavigationAction && uri == "about:blank" {
+                    decision.use_();
+                    return true;
+                }
+                decision.ignore();
+                if let Some(view) = weak.upgrade() {
+                    view.follow(&uri, &actions);
+                }
+                true
+            });
+        let weak = Rc::downgrade(&view);
+        view.content
+            .connect_script_message_received(Some("mailrsReady"), move |_, value| {
+                if let (Some(view), Ok(load)) = (weak.upgrade(), value.to_str().parse()) {
+                    view.page_ready(load);
+                }
+            });
+        let weak = Rc::downgrade(&view);
+        view.webview.connect_load_changed(move |webview, event| {
+            if event != webkit::LoadEvent::Finished {
+                return;
+            }
+            let Some(view) = weak.upgrade() else { return };
+            // The pictures above the message have come in by now and may
+            // have pushed it down. A reader who scrolled meanwhile stays.
+            if let Some(id) = view.scrolled.take() {
+                run_script(
+                    webview,
+                    &format!(
+                        "(function(){{var m=document.getElementById('m-{id}');\
+                         if(m&&window.mailrsAt===window.scrollY){{m.scrollIntoView({{block:'start'}});\
+                         window.mailrsAt=window.scrollY;}}}})()"
+                    ),
+                );
+            }
+        });
+        let weak = Rc::downgrade(&view);
+        view.webview.connect_web_process_terminated(move |_, _| {
+            // Whatever the page held went with the process, so the next
+            // change draws the whole page rather than patching nothing.
+            if let Some(view) = weak.upgrade() {
+                view.change(OpenThread::page_lost);
+            }
+        });
+        view.webview.connect_context_menu(|webview, menu, _| {
+            use webkit::ContextMenuAction as Item;
+            for item in menu.items() {
+                if !matches!(
+                    item.stock_action(),
+                    Item::Copy
+                        | Item::CopyLinkToClipboard
+                        | Item::CopyImageToClipboard
+                        | Item::SelectAll
+                ) {
+                    menu.remove(&item);
+                }
+            }
+            if menu.items().is_empty() {
+                return true;
+            }
+            // WebKit builds this menu as a popover of the web view once
+            // the signal returns, and its items carry no names.
+            let webview = webview.clone();
+            glib::idle_add_local_once(move || super::name_menu_items_under(&webview));
+            false
+        });
+        let weak = Rc::downgrade(&view);
+        adw::StyleManager::default().connect_dark_notify(move |_| {
+            if let Some(view) = weak.upgrade() {
+                view.render(false);
+            }
+        });
+        let weak = Rc::downgrade(&view);
+        view.find.on_running(move |running| {
+            let Some(view) = weak.upgrade() else { return };
+            match running {
+                true => *view.find_closed.borrow_mut() = view.open_every_message(),
+                false => {
+                    let closed = view.find_closed.take();
+                    view.close_messages(&closed);
+                }
+            }
+        });
+        // Escape takes the bar down wherever the focus is in the
+        // conversation, and before the window makes Escape its own. The
+        // menu keys are caught here too, before WebKit's text field inside
+        // the view can answer them with a menu of its own.
+        let keys = gtk::EventControllerKey::new();
+        keys.set_propagation_phase(gtk::PropagationPhase::Capture);
+        let weak = Rc::downgrade(&view);
+        keys.connect_key_pressed(move |_, key, _, state| {
+            let Some(view) = weak.upgrade() else {
+                return glib::Propagation::Proceed;
+            };
+            let menu_key = key == gdk::Key::Menu
+                || (key == gdk::Key::F10 && state.contains(gdk::ModifierType::SHIFT_MASK));
+            if menu_key
+                && view
+                    .webview
+                    .state_flags()
+                    .contains(gtk::StateFlags::FOCUS_WITHIN)
+            {
+                run_script(&view.webview, MENU_KEY_SCRIPT);
+                return glib::Propagation::Stop;
+            }
+            if key != gdk::Key::Escape || !view.find.is_open() {
+                return glib::Propagation::Proceed;
+            }
+            view.find.close();
+            glib::Propagation::Stop
+        });
+        view.page.add_controller(keys);
+        view
+    }
+
+    /// Words the VIP menu item for whether the sender is one already.
+    pub fn set_sender_vip(&self, vip: bool) {
+        self.sender_menu.remove(0);
+        self.sender_menu.insert(
+            0,
+            Some(&if vip {
+                gettext("Remove Sender from VIPs")
+            } else {
+                gettext("Add Sender to VIPs")
+            }),
+            Some("win.toggle-vip"),
+        );
+    }
+
+    /// Keeps Categorize Sender in the menu only while `offered`. GTK shows
+    /// a submenu whose items are all off, where it leaves out a single
+    /// item that is off, so the submenu comes and goes from the end of
+    /// the sender section.
+    pub fn offer_categorize_sender(&self, offered: bool) {
+        let last = self.sender_menu.n_items() - 1;
+        let shown = self
+            .sender_menu
+            .item_link(last, gio::MENU_LINK_SUBMENU)
+            .is_some();
+        if shown && !offered {
+            self.sender_menu.remove(last);
+        } else if offered && !shown {
+            self.sender_menu
+                .append_submenu(Some(&gettext("Categorize Sender")), &self.categorize_menu);
+        }
+    }
+
+    /// Words the Mute menu item for whether the thread is muted already.
+    /// It sits third in the section, after the two mark items.
+    pub fn set_muted(&self, muted: bool) {
+        self.mark_menu.remove(2);
+        self.mark_menu.insert(
+            2,
+            Some(&if muted {
+                gettext("Unmute")
+            } else {
+                gettext("Mute")
+            }),
+            Some("win.mute"),
+        );
+    }
+
+    /// The arrow half of the Labels button, which asks the window for a
+    /// fresh list of labels each time it opens. libadwaita builds a split
+    /// button from a plain button and a menu button.
+    pub fn label_arrow(&self) -> Option<gtk::MenuButton> {
+        arrow_of(&self.label_button)
+    }
+
+    /// The narrowest the pane can go, its bar of buttons, without and
+    /// then with the window's buttons (`ui::header_least`). The message
+    /// itself reflows to any width.
+    pub fn least_width(&self) -> (i32, i32) {
+        crate::ui::header_least(&self.header)
+    }
+
+    /// Words the Labels button and its menu item for how the accounts in
+    /// reach file mail. The item sits fourth in the section, after Mute.
+    pub fn set_filing(&self, filing: Filing) {
+        let tip = filing.tooltip();
+        self.label_button.set_tooltip_text(Some(&tip));
+        self.label_button.set_dropdown_tooltip(&filing.arrow());
+        self.label_button.set_icon_name(filing.icon());
+        name_with_shortcut(&self.label_button, &tip);
+        name_arrow(&self.label_button, &filing.arrow(), "");
+        self.mark_menu.remove(3);
+        self.mark_menu
+            .insert(3, Some(&filing.menu_item()), Some("win.label"));
+    }
+
+    /// Opens `model` as the menu for one message, at the point the reader
+    /// asked from. The page measures in CSS pixels and the widget in its
+    /// own, so the zoom level stands between the two.
+    pub fn popup_message_menu(&self, model: &gio::Menu, x: f64, y: f64) {
+        let zoom = self.webview.zoom_level();
+        let at = ((x * zoom) as i32, (y * zoom) as i32);
+        self.menu_at.set(at);
+        self.menu.set_menu_model(Some(model));
+        self.menu
+            .set_pointing_to(Some(&gdk::Rectangle::new(at.0, at.1, 1, 1)));
+        self.menu.popup();
+    }
+
+    /// Puts `popover` where the message menu was, for an item that leads
+    /// to a popover of its own, such as the label list.
+    pub fn popup_where_menu_was(&self, popover: &gtk::Popover) {
+        if let Some(before) = self.menu_popover.replace(Some(popover.clone())) {
+            before.unparent();
+        }
+        let (x, y) = self.menu_at.get();
+        popover.set_has_arrow(false);
+        popover.set_halign(gtk::Align::Start);
+        popover.set_parent(&self.webview);
+        popover.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 1, 1)));
+        popover.popup();
+    }
+
+    /// The screenshot hook's way in: asks for the menu of the message at
+    /// `position`, counting from one, as a right click on it would. It
+    /// goes through the page rather than around it, so a screenshot shows
+    /// what a reader's own click shows.
+    pub fn ask_message_menu(&self, position: usize) {
+        run_script(
+            &self.webview,
+            &format!(
+                "(function(){{var m=document.querySelectorAll('.message')[{}];if(!m)return;\
+                 var b=m.getBoundingClientRect();\
+                 m.dispatchEvent(new MouseEvent('contextmenu',{{bubbles:true,cancelable:true,\
+                 clientX:b.left+140,clientY:b.top+14}}));}})()",
+                position.saturating_sub(1)
+            ),
+        );
+    }
+
+    /// Opens the print dialog for the conversation on screen.
+    pub fn print(&self) {
+        if self.open.borrow().is_none() {
+            return;
+        }
+        let window = self.page.root().and_downcast::<gtk::Window>();
+        webkit::PrintOperation::new(&self.webview).run_dialog(window.as_ref());
+    }
+
+    /// For a conversation in its own window: labels stay in the main window.
+    pub fn set_detached(&self) {
+        self.label_button.set_visible(false);
+        self.tag_button.set_visible(false);
+        self.assistant_toggle.set_visible(false);
+        self.detached.set(true);
+    }
+
+    /// Whether this conversation is in a window of its own, which has no
+    /// thread list and so no row selection to act on.
+    pub fn detached(&self) -> bool {
+        self.detached.get()
+    }
+
+    /// Offers Summarize above the thread, or takes it away. The head of
+    /// the page changes, so the page loads again.
+    pub fn offer_summary(&self, offered: bool) {
+        if self.summarize.replace(offered) != offered {
+            self.render(false);
+        }
+    }
+
+    /// The window this conversation is in, which a dialog raised from it
+    /// sits over.
+    pub fn window(&self) -> Option<gtk::Window> {
+        self.page.root().and_downcast::<gtk::Window>()
+    }
+
+    /// Closes the window a detached conversation lives in. The main
+    /// window's conversation stays where it is.
+    pub fn close_detached(&self) {
+        if self.detached.get()
+            && let Some(window) = self.window()
+        {
+            window.close();
+        }
+    }
+
+    /// Installs the compiled filter that blocks remote content.
+    pub fn set_filter(&self, filter: webkit::UserContentFilter) {
+        self.content.add_filter(&filter);
+        *self.filter.borrow_mut() = Some(filter);
+    }
+
+    /// Adjusts the trash and junk buttons to the folder on screen: in the
+    /// Trash, trash erases the mail; in Junk, junk marks it as not junk.
+    /// A Trash whose server cannot erase mail, as `erases` says, has no
+    /// trash button or item, since there is nowhere further to move it.
+    pub fn set_folder(&self, folder: Option<Folder>, erases: bool) {
+        let shown = erases || folder != Some(Folder::Trash);
+        self.buttons.trash.set_visible(shown);
+        self.many_trash.set_visible(shown);
+        let (trash_icon, trash_tip) = match folder {
+            Some(Folder::Trash) => ("edit-delete-symbolic", gettext("Delete Forever (Delete)")),
+            _ => ("user-trash-symbolic", gettext("Move to Trash (Delete)")),
+        };
+        self.buttons.trash.set_icon_name(trash_icon);
+        self.buttons.trash.set_tooltip_text(Some(&trash_tip));
+        name_with_shortcut(&self.buttons.trash, &trash_tip);
+        let (junk_icon, junk_tip) = match folder {
+            Some(Folder::Junk) => (
+                "mail-mark-notjunk-symbolic",
+                gettext("Not Junk (Ctrl+Shift+J)"),
+            ),
+            _ => ("mail-mark-junk-symbolic", gettext("Junk (Ctrl+Shift+J)")),
+        };
+        self.buttons.junk.set_icon_name(junk_icon);
+        self.buttons.junk.set_tooltip_text(Some(&junk_tip));
+        name_with_shortcut(&self.buttons.junk, &junk_tip);
+        let trash = match folder {
+            Some(Folder::Trash) => gettext("Delete Forever"),
+            _ => gettext("Move to Trash"),
+        };
+        self.many_trash.set_label(&trash);
+        let junk = match folder {
+            Some(Folder::Junk) => gettext("Not Junk"),
+            _ => gettext("Junk"),
+        };
+        self.many_junk.set_label(&junk);
+        // The section is built again rather than edited in place, because
+        // the trash item comes and goes and would move the junk item.
+        self.filing_menu.remove_all();
+        self.filing_menu
+            .append(Some(&gettext("Archive")), Some("win.archive"));
+        if shown {
+            self.filing_menu.append(Some(&trash), Some("win.trash"));
+        }
+        self.filing_menu.append(Some(&junk), Some("win.junk"));
+    }
+
+    /// Says what the trash button and its menu item do in a mailbox where
+    /// they do not move mail to the Trash. `tip` is the button's tooltip,
+    /// with its key.
+    pub fn set_trash_words(&self, word: &str, tip: &str) {
+        self.many_trash.set_label(word);
+        self.buttons.trash.set_tooltip_text(Some(tip));
+        name_with_shortcut(&self.buttons.trash, tip);
+        self.set_filing_word(1, word, "win.trash");
+    }
+
+    /// Words the item at `index` of the Archive, Trash and Junk section.
+    fn set_filing_word(&self, index: i32, word: &str, action: &str) {
+        self.filing_menu.remove(index);
+        self.filing_menu.insert(index, Some(word), Some(action));
+    }
+
+    /// Everything that can be done to the conversations on screen, for a
+    /// menu somewhere other than the header to show.
+    pub fn thread_menu(&self) -> gio::MenuModel {
+        self.thread_menu.clone().upcast()
+    }
+
+    pub fn showing_many(&self) -> bool {
+        self.stack.visible_child_name().as_deref() == Some("many")
+    }
+
+    /// The page for a multiple selection. `any_unread`, `all_starred`, and
+    /// `all_muted` decide what the read, star, and mute buttons do.
+    pub fn show_many(
+        &self,
+        count: usize,
+        threaded: bool,
+        any_unread: bool,
+        all_starred: bool,
+        all_muted: bool,
+    ) {
+        self.many_read.set_label(&if any_unread {
+            gettext("Mark as Read")
+        } else {
+            gettext("Mark as Unread")
+        });
+        self.many_star.set_label(&if all_starred {
+            gettext("Unflag")
+        } else {
+            gettext("Flag")
+        });
+        self.many_mute.set_label(&if all_muted {
+            gettext("Unmute")
+        } else {
+            gettext("Mute")
+        });
+        self.find.close();
+        *self.open.borrow_mut() = None;
+        self.refuse_held();
+        let values = [("count", count.to_string())];
+        let values: Vec<(&str, &str)> = values.iter().map(|(k, v)| (*k, v.as_str())).collect();
+        self.many.set_title(&match threaded {
+            true => fill_plural(
+                "{count} Conversation Selected",
+                "{count} Conversations Selected",
+                count,
+                &values,
+            ),
+            false => fill_plural(
+                "{count} Message Selected",
+                "{count} Messages Selected",
+                count,
+                &values,
+            ),
+        });
+        self.stack.set_visible_child_name("many");
+        self.banner.set_revealed(false);
+        self.list_banner.set_revealed(false);
+        self.show_invitation(None);
+        self.seal.hide();
+        self.translate.hide();
+        self.queued.hide();
+        self.apply_toolbar(Holds::Many);
+    }
+
+    /// Stops the WebKit process that draws mail. It holds about 80 MB, and
+    /// a closed window has no use for it. WebKit starts a new one when this
+    /// view loads its next message.
+    pub fn stop_rendering(&self) {
+        self.clear();
+        self.webview.terminate_web_process();
+    }
+
+    /// Puts the find bar over the message and the cursor in it. Nothing
+    /// happens when no message is on screen.
+    pub fn open_find(&self) {
+        if self.stack.visible_child_name().as_deref() == Some("thread") {
+            self.find.open();
+        }
+    }
+
+    /// Whether the focus is in this conversation: the message itself, or
+    /// the find bar over it. Ctrl+F asks, so that the mailbox search
+    /// keeps the key everywhere else.
+    pub fn has_focus(&self) -> bool {
+        let Some(window) = self.page.root().and_downcast::<gtk::Window>() else {
+            return false;
+        };
+        GtkWindowExt::focus(&window)
+            .is_some_and(|focus| focus.is_ancestor(self.page.upcast_ref::<gtk::Widget>()))
+    }
+
+    /// Clears the view and drops the thread on its way into it. Use this
+    /// when the reader leaves the mail on screen for other mail, such as
+    /// another mailbox or category: a thread clicked just before would
+    /// otherwise land there once its store read answers.
+    pub fn leave(&self) {
+        self.stop_loading();
+        self.clear();
+    }
+
+    pub fn clear(&self) {
+        self.find.close();
+        *self.open.borrow_mut() = None;
+        self.refuse_held();
+        self.stack.set_visible_child_name("empty");
+        self.apply_toolbar(Holds::Nothing);
+        self.banner.set_revealed(false);
+        self.list_banner.set_revealed(false);
+        self.show_invitation(None);
+        self.seal.hide();
+        self.translate.hide();
+        self.queued.hide();
+    }
+
+    /// Puts an invitation on the card, inside the message that carries it,
+    /// or takes the card away when the thread carries none. The page keeps
+    /// the card's place in that message, so it is patched too.
+    pub fn show_invitation(&self, showing: Option<Showing>) {
+        let at = showing.as_ref().map(|showing| showing.message_id.clone());
+        match showing {
+            Some(showing) => self.card.show(showing),
+            None => self.card.hide(),
+        }
+        if self
+            .change(|open| open.take_invitation_place(at))
+            .is_some()
+        {
+            self.render(false);
+        }
+    }
+
+    /// What else the user has on while the event on the card runs. The
+    /// card keeps it only while it still shows the invitation `uid` names.
+    pub fn clashes(&self, uid: &str, busy: &[String]) {
+        self.card.set_busy(uid, busy);
+    }
+
+    /// The calendars a file's events can go on, for the card's picker.
+    pub fn add_targets_known(&self, uid: &str, targets: Vec<crate::ui::invitation::AddTo>) {
+        self.card.set_targets(uid, targets);
+    }
+
+    /// Says the events of the file on the card went on `calendar`.
+    pub fn events_added(&self, uid: &str, calendar: &str, spots: &[mailrs_sync::Spot]) {
+        self.card.set_added(uid, calendar, spots);
+    }
+
+    /// How the series behind the invitation `uid` runs, in words.
+    pub fn series_known(&self, uid: &str, line: String) {
+        self.card.set_series(uid, line);
+    }
+
+    /// Where the event on the card sits on the calendar, which puts Show
+    /// in Calendar on the card. The card keeps it only while it still
+    /// shows the invitation `uid` names.
+    pub fn found_on_calendar(&self, uid: &str, spot: mailrs_sync::Spot) {
+        self.card.set_on_calendar(uid, spot);
+    }
+
+    /// The hours around the event on the card, from the calendar's copy.
+    /// The card keeps them only while it still shows the invitation `uid`
+    /// names.
+    pub fn strip_arrived(&self, uid: &str, strip: &crate::ui::invitation::strip::Strip) {
+        self.card.set_strip(uid, strip);
+    }
+
+    /// Offers Grant Access for the calendar on the card.
+    pub fn offer_calendar_access(&self) {
+        self.card.offer_calendar_access();
+    }
+
+    /// The answer the card shows for the invitation `uid`: the one that
+    /// went, or the one from before an answer that did not.
+    pub fn invitation_answered(
+        &self,
+        uid: &str,
+        answer: Option<mailrs_domain::invitation::Answer>,
+    ) {
+        self.card.set_answer(uid, answer);
+    }
+
+    /// Where the last answer or proposal for the invitation `uid` went.
+    pub fn invitation_went(&self, uid: &str, went: Option<String>) {
+        self.card.set_went(uid, went);
+    }
+
+    /// Whether an answer on the card covers one occurrence or the series.
+    pub fn invitation_scope(&self) -> mailrs_domain::invitation::Scope {
+        self.card.scope()
+    }
+
+    /// Reads what the card shows. `None` means no invitation is on screen.
+    pub fn with_invitation<R>(&self, f: impl FnOnce(&Showing) -> R) -> Option<R> {
+        self.card.with_showing(f)
+    }
+
+    /// Whether `row` is what the view shows now.
+    pub fn is_showing_row(&self, row: &mailrs_domain::ThreadSummary) -> bool {
+        self.is_showing(&Target::from_row(row))
+    }
+
+    pub fn set_zoom(&self, zoom: f64) {
+        self.webview.set_zoom_level(zoom);
+    }
+
+    /// Starts loading a thread into this view and returns its ticket. Two
+    /// quick clicks can have their store reads answer out of order; only
+    /// the thread holding the latest ticket may be shown.
+    pub fn start_loading(&self) -> u64 {
+        let ticket = self.loading.get() + 1;
+        self.loading.set(ticket);
+        ticket
+    }
+
+    /// Whether `ticket` is still the latest thread asked for.
+    pub fn still_loading(&self, ticket: u64) -> bool {
+        self.loading.get() == ticket
+    }
+
+    /// Drops the thread on its way into this view, so a store read that
+    /// answers after the reader left its mailbox shows nothing.
+    pub fn stop_loading(&self) {
+        self.loading.set(self.loading.get() + 1);
+    }
+
+    /// Whether `target` is what the view shows now: the same account and
+    /// thread, and the same one message when it shows one.
+    pub fn is_showing(&self, target: &Target) -> bool {
+        self.open
+            .borrow()
+            .as_ref()
+            .is_some_and(|o| o.target() == *target)
+    }
+
+    /// Reads the open thread. `None` means no conversation is on screen.
+    pub fn read<R>(&self, f: impl FnOnce(&OpenThread) -> R) -> Option<R> {
+        self.open.borrow().as_ref().map(f)
+    }
+
+    /// Reads the open thread for something it may not hold, such as one
+    /// message's body. `None` covers both: no conversation on screen, and
+    /// nothing there to read.
+    pub fn find<R>(&self, f: impl FnOnce(&OpenThread) -> Option<R>) -> Option<R> {
+        self.open.borrow().as_ref().and_then(f)
+    }
+
+    /// The one way the thread changes. Each named change below goes
+    /// through here and then redraws whatever its own change touched, so
+    /// no caller has to know which of the fields the page is drawn from.
+    fn change<R>(&self, f: impl FnOnce(&mut OpenThread) -> R) -> Option<R> {
+        self.open.borrow_mut().as_mut().map(f)
+    }
+
+    /// The thread's messages as the store now has them. One that arrived
+    /// unread opens, since the reader has not seen it. Gives back the ids
+    /// whose bodies are still missing. With some missing nothing is
+    /// redrawn: those bodies are what the caller fetches next, and they
+    /// bring a redraw with them. With none missing the page takes whatever
+    /// changed, which is often nothing at all.
+    pub fn messages_arrived(&self, fresh: &[MessageMeta]) -> Vec<String> {
+        let Some(missing) = self.change(|open| open.take_messages(fresh)) else {
+            return Vec::new();
+        };
+        if missing.is_empty() {
+            self.render(false);
+        }
+        missing
+    }
+
+    /// Replaces the messages after the store changed under the thread, and
+    /// answers whether the ids differ from what was on screen. Nothing is
+    /// redrawn: that answer is what decides between a redraw and a fetch.
+    pub fn replace_messages(&self, fresh: Vec<MessageMeta>) -> bool {
+        self.change(|open| open.replace_messages(fresh))
+            .unwrap_or(false)
+    }
+
+    /// Bodies as they come back from Gmail with their HTML cleaned, and the
+    /// redraw that puts them on screen. The pictures they name come later.
+    pub fn bodies_arrived(&self, fetched: Fetched) {
+        self.change(|open| open.take_bodies(fetched.bodies, fetched.cleaned));
+        self.render(false);
+    }
+
+    /// The pictures the bodies name, which the page has been waiting for.
+    /// They change no article: the requests waiting for them are answered,
+    /// and WebKit draws each where it belongs.
+    pub fn images_arrived(&self, found: InlinePictures) {
+        self.change(|open| open.take_images(found));
+        self.release_held();
+    }
+
+    /// The pictures for the attachment rows, and the redraw that shows
+    /// them.
+    pub fn thumbnails_arrived(&self, found: HashMap<String, String>) {
+        self.change(|open| open.thumbnails.extend(found));
+        self.render(false);
+    }
+
+    /// The senders' photos, and the redraw that puts them in the message
+    /// headers.
+    pub fn set_photos(&self, photos: HashMap<String, String>) {
+        self.change(|open| open.photos = photos);
+        self.render(false);
+    }
+
+    /// What the outbox now says about the queued message on screen. Only
+    /// the card changes; the message is the one the writer queued.
+    pub fn unsent_changed(&self, unsent: Unsent) {
+        self.change(|open| open.take_unsent(unsent));
+        self.render_buttons();
+    }
+
+    /// The colour this thread is flagged in. The page says nothing about
+    /// it, so only the header buttons are drawn again.
+    pub fn set_flag_color(&self, color: Option<FlagColor>) {
+        self.change(|open| open.flag_color = color);
+        self.render_buttons();
+    }
+
+    /// Lets this thread load remote images, and draws it again without the
+    /// filter that was blocking them.
+    pub fn allow_images(&self) {
+        self.change(|open| open.images_allowed = true);
+        self.render(false);
+    }
+
+    /// Notes that the list has been unsubscribed from, which takes its
+    /// banner down. The message itself does not change.
+    pub fn mark_unsubscribed(&self) {
+        self.change(|open| open.unsubscribed = true);
+        self.render_buttons();
+    }
+
+    /// The thread's protected messages, claimed for one engine run. See
+    /// [`OpenThread::take_protected`] for the once-per-message rule.
+    pub fn take_protected(&self, installed: Installed) -> Vec<Claimed> {
+        self.change(|open| open.take_protected(installed))
+            .unwrap_or_default()
+    }
+
+    /// What the engine made of that message: the mark for the card, and,
+    /// when it opened one, the body and the files that were inside. Those
+    /// go no further than this window, since Gmail holds the ciphertext
+    /// and nothing else. The message on screen may now be the opened one,
+    /// so the thread is drawn again. Returns whether the engine opened a
+    /// body, since whatever was read from the ciphertext, such as an
+    /// invitation or the language, has to be read again from it.
+    pub fn engine_answered(&self, message_id: String, read: protection::Read) -> bool {
+        let opened = self
+            .change(|open| open.take_engine_answer(message_id, read))
+            .unwrap_or(false);
+        // The opened body's pictures come under new addresses, and a request
+        // for one of the old ones reaches nothing now.
+        self.release_held();
+        self.render(false);
+        opened
+    }
+
+    /// One message's translation, the card that says where it came from,
+    /// and the redraw that puts the translated words in the page.
+    pub fn translated(&self, message_id: String, translation: Translation) {
+        let (from, cut) = (translation.from, translation.cut);
+        let kept = self.change(|open| {
+            open.translations.insert(message_id, translation);
+        });
+        if kept.is_none() {
+            return;
+        }
+        self.translate.done(from, cut, true);
+        self.render(false);
+    }
+
+    /// Turns the message over: the translation, or what arrived, whichever
+    /// is not on screen. Both are kept, so this costs no second request.
+    /// `false` when the message has no translation to turn.
+    pub fn turn_translation(&self, message_id: &str) -> bool {
+        let turned = self
+            .change(|open| open.turn_translation(message_id))
+            .flatten();
+        let Some((from, cut, shown)) = turned else {
+            return false;
+        };
+        self.translate.done(from, cut, shown);
+        self.render(false);
+        true
+    }
+
+    /// Shows a thread. `scroll` jumps to the first expanded message.
+    pub fn show(&self, thread: OpenThread, scroll: bool) {
+        // Before the thread changes, so the old search stops colouring
+        // the new message and the old messages close again.
+        self.find.close();
+        // The card belongs to the thread that is leaving.
+        self.translate.hide();
+        *self.open.borrow_mut() = Some(thread);
+        // What the page before asked for belongs to the thread before.
+        self.refuse_held();
+        self.stack.set_visible_child_name("thread");
+        self.render(scroll);
+    }
+
+    /// Brings the page up to date with the open thread, for example after
+    /// its bodies arrive: a whole load when the open thread asks for one,
+    /// and otherwise the articles that changed, in place.
+    pub fn render(&self, scroll: bool) {
+        let mut open = self.open.borrow_mut();
+        let Some(open) = open.as_mut() else { return };
+        let manager = &self.content;
+        manager.remove_all_filters();
+        if !open.images_allowed
+            && let Some(filter) = self.filter.borrow().as_ref()
+        {
+            manager.add_filter(filter);
+        }
+        let style = adw::StyleManager::default();
+        let theme = Theme {
+            dark: style.is_dark(),
+            accent: style.accent_color_rgba().to_str().to_string(),
+            accent_text: style
+                .accent_color()
+                .to_standalone_rgba(style.is_dark())
+                .to_str()
+                .to_string(),
+            // A conversation in its own window has no assistant beside it.
+            summarize: self.summarize.get() && !self.detached.get(),
+            font: gtk::Settings::default()
+                .and_then(|settings| settings.gtk_font_name())
+                .map(|name| crate::render::css_family(&name))
+                .unwrap_or_default(),
+        };
+        let page = open.page(&theme);
+        let background = if theme.dark {
+            // #1e1e21, the view colour style.css sets for dark windows.
+            gdk::RGBA::new(30.0 / 255.0, 30.0 / 255.0, 33.0 / 255.0, 1.0)
+        } else {
+            gdk::RGBA::WHITE
+        };
+        self.webview.set_background_color(&background);
+        match page {
+            Page::Whole(document) => {
+                if scroll && open.messages.len() > 2 {
+                    *self.scroll_to.borrow_mut() = open
+                        .messages
+                        .iter()
+                        .find(|m| open.expanded.contains(&m.id))
+                        .map(|m| script_safe(&m.id));
+                }
+                // The new page holds everything a waiting patch would put
+                // in it.
+                self.waiting.borrow_mut().clear();
+                let load = self.loads.get() + 1;
+                self.loads.set(load);
+                let html = document.html(&format!(
+                    " data-load=\"{load}\"{}",
+                    self.card_host.root_style()
+                ));
+                self.webview.load_html(&html, None);
+            }
+            Page::Patch(patch) if patch.is_empty() => {}
+            Page::Patch(patch) => match self.ready.get() == self.loads.get() {
+                true => self.patch(patch),
+                false => self.waiting.borrow_mut().extend(patch),
+            },
+        }
+        match open.card() {
+            Some(mark) => self.seal.show(mark),
+            None => self.seal.hide(),
+        }
+        self.banner
+            .set_revealed(!open.images_allowed && open.has_remote_images());
+        self.update_buttons(open);
+    }
+
+    /// The page from load number `load` is parsed. What waited for it goes
+    /// in now, then the view scrolls to the message it was asked to and
+    /// finds again what the find bar holds. A page an older load parsed is
+    /// on its way out, so nothing waits on it.
+    fn page_ready(&self, load: u64) {
+        if load != self.loads.get() {
+            return;
+        }
+        self.ready.set(load);
+        let waiting = self.waiting.take();
+        if !waiting.is_empty() {
+            self.patch(waiting);
+        }
+        if let Some(id) = self.scroll_to.take() {
+            run_script(
+                &self.webview,
+                &format!(
+                    "(function(){{var m=document.getElementById('m-{id}');\
+                     if(m){{m.scrollIntoView({{block:'start'}});window.mailrsAt=window.scrollY;}}}})()"
+                ),
+            );
+            *self.scrolled.borrow_mut() = Some(id);
+        }
+        self.find.refresh();
+    }
+
+    /// Puts each article in place of the one with the same message id, on
+    /// the page that is parsed now. A page that cannot take it, or that
+    /// lacks one of them, is loaded whole instead.
+    fn patch(&self, patch: Vec<Article>) {
+        let pairs: Vec<(&str, &str)> = patch
+            .iter()
+            .map(|article| (article.message_id.as_str(), article.html.as_str()))
+            .collect();
+        let Ok(json) = serde_json::to_string(&pairs) else {
+            return;
+        };
+        let script = [PATCH_SCRIPT[0], &json, PATCH_SCRIPT[1]].concat();
+        let load = self.loads.get();
+        let this = self.this.clone();
+        self.webview.evaluate_javascript(
+            &script,
+            None,
+            None,
+            gio::Cancellable::NONE,
+            move |done| {
+                let Some(view) = this.upgrade() else { return };
+                let whole = match done {
+                    Ok(value) => value.to_str() == "whole",
+                    Err(err) => {
+                        tracing::warn!(error = %err, "could not patch the conversation");
+                        true
+                    }
+                };
+                // A later load already holds everything this carried.
+                if whole && load == view.loads.get() {
+                    view.change(OpenThread::page_lost);
+                    view.render(false);
+                }
+            },
+        );
+        // The find bar's highlights in the other articles stay. The count
+        // may have changed with the words.
+        self.find.recount();
+    }
+
+    /// Answers the page's request for an inline picture, or holds it until
+    /// the thread's pictures arrive. A request for another account, or for
+    /// a message or version no longer on screen, reaches nothing.
+    fn serve(&self, request: &webkit::URISchemeRequest) {
+        let Some(address) = request.uri().and_then(|uri| Address::parse(&uri)) else {
+            return refuse(request);
+        };
+        match self.served(&address) {
+            Served::Waiting => self.held.borrow_mut().push((address, request.clone())),
+            served => answer(request, served),
+        }
+    }
+
+    fn served(&self, address: &Address) -> Served {
+        self.find(|open| {
+            (open.account_id == address.account_id)
+                .then(|| open.picture(&address.message_id, address.version, &address.cid))
+        })
+        .unwrap_or(Served::Gone)
+    }
+
+    /// Answers the requests that were waiting, now that the thread holds
+    /// more, and keeps the ones still waiting.
+    fn release_held(&self) {
+        let held = self.held.take();
+        let mut waiting = Vec::new();
+        for (address, request) in held {
+            match self.served(&address) {
+                Served::Waiting => waiting.push((address, request)),
+                served => answer(&request, served),
+            }
+        }
+        self.held.borrow_mut().extend(waiting);
+    }
+
+    /// Turns away every request still waiting, when the thread they asked
+    /// about leaves the view.
+    fn refuse_held(&self) {
+        for (_, request) in self.held.take() {
+            refuse(&request);
+        }
+    }
+
+    /// Updates the header buttons after label changes, without redrawing.
+    pub fn render_buttons(&self) {
+        if let Some(open) = self.open.borrow().as_ref() {
+            self.update_buttons(open);
+        }
+    }
+
+    /// Fills Remind Me with times that make sense now.
+    fn refresh_remind_menu(&self) {
+        self.remind.remove_all();
+        let presets = gio::Menu::new();
+        for (label, at) in crate::format::remind_presets(chrono::Local::now()) {
+            let item = gio::MenuItem::new(Some(&label), None);
+            item.set_action_and_target_value(Some("win.remind-at"), Some(&at.to_variant()));
+            presets.append_item(&item);
+        }
+        self.remind.append_section(None, &presets);
+        let custom = gio::Menu::new();
+        custom.append(Some(&gettext("Choose a Time…")), Some("win.remind-custom"));
+        self.remind.append_section(None, &custom);
+    }
+
+    fn update_buttons(&self, open: &OpenThread) {
+        // A queued message is not in Gmail yet, so the mail buttons have
+        // nothing to act on. The card above it carries what does.
+        if let Some(unsent) = &open.queued {
+            self.apply_toolbar(Holds::Nothing);
+            self.list_banner.set_revealed(false);
+            self.queued.show(unsent);
+            return;
+        }
+        self.queued.hide();
+        self.refresh_remind_menu();
+        self.apply_toolbar(if open.is_draft() {
+            Holds::Draft
+        } else {
+            Holds::Message
+        });
+        self.list_banner
+            .set_revealed(!open.unsubscribed && open.list_unsubscribe().is_some());
+        let starred = open.starred();
+        let star = &self.buttons.star;
+        star.set_icon_name(if starred {
+            "penguin-mail-flag-symbolic"
+        } else {
+            "penguin-mail-flag-outline-symbolic"
+        });
+        for color in FlagColor::ALL {
+            star.remove_css_class(&format!("flag-{}", color.as_str()));
+        }
+        if starred {
+            star.add_css_class(&format!(
+                "flag-{}",
+                open.flag_color.unwrap_or(FlagColor::Red).as_str()
+            ));
+        }
+        let said = match starred {
+            true => gettext("Unflag (Ctrl+Shift+L)"),
+            false => gettext("Flag (Ctrl+Shift+L)"),
+        };
+        star.set_tooltip_text(Some(&said));
+        name_with_shortcut(star, &said);
+        self.set_muted(open.muted());
+        let unread = open.unread();
+        self.buttons.read.set_icon_name(if unread {
+            "mail-read-symbolic"
+        } else {
+            "mail-unread-symbolic"
+        });
+        let said = match unread {
+            true => gettext("Mark as Read (U)"),
+            false => gettext("Mark as Unread (U)"),
+        };
+        self.buttons.read.set_tooltip_text(Some(&said));
+        name_with_shortcut(&self.buttons.read, &said);
+    }
+
+    /// Shows the Tags button when the mail the header acts on comes from
+    /// one account that keeps tags, and hides it otherwise.
+    pub fn set_tags_on(&self, on: bool) {
+        if self.tags.replace(on) != on {
+            self.follow_holds();
+        }
+    }
+
+    /// Rebuilds Categorize Sender for the slices the account offers:
+    /// Gmail's four, or Focused and Other.
+    pub fn set_categorize_choices(&self, set: &[Category]) {
+        self.categorize_menu.remove_all();
+        fill_categorize(&self.categorize_menu, set);
+    }
+
+    /// On phone widths, secondary actions move into the "more" menu.
+    pub fn set_compact(&self, compact: bool) {
+        self.compact.set(compact);
+        self.follow_holds();
+    }
+
+    /// Shows the header buttons for what the pane holds now.
+    fn follow_holds(&self) {
+        if self.showing_many() {
+            return self.apply_toolbar(Holds::Many);
+        }
+        let open = self.open.borrow();
+        match open.as_ref() {
+            Some(open) => self.update_buttons(open),
+            None => self.apply_toolbar(Holds::Nothing),
+        }
+    }
+
+    /// Shows the header buttons `holds` calls for, and each capsule while
+    /// it holds a button that shows.
+    fn apply_toolbar(&self, holds: Holds) {
+        let on = toolbar::On {
+            holds,
+            compact: self.compact.get(),
+            detached: self.detached.get(),
+            tags: self.tags.get(),
+        };
+        for slot in toolbar::Slot::ALL {
+            slot_widget(&self.buttons, &self.label_button, &self.tag_button, slot)
+                .set_visible(toolbar::shows(slot, on));
+        }
+        for (capsule, slots) in self.capsules.iter().zip(toolbar::CAPSULES) {
+            capsule.set_visible(slots.iter().any(|&slot| toolbar::shows(slot, on)));
+        }
+        // A capsule shown here always agrees with toolbar::groups, which
+        // decides the same thing in the abstract and is what the tests
+        // check; this catches the two falling out of step. `get_visible`
+        // reads each capsule's own flag: `is_visible` would read false
+        // while the header or a parent is hidden and fail inside a signal
+        // handler, which cannot unwind.
+        debug_assert_eq!(
+            self.capsules.iter().filter(|c| c.get_visible()).count(),
+            toolbar::groups(on).len()
+        );
+        self.buttons.more.set_visible(toolbar::more_shows(on));
+    }
+
+    fn follow(&self, uri: &str, actions: &Rc<dyn Fn(Action)>) {
+        if let Some(id) = uri.strip_prefix("mailrs:toggle/") {
+            self.toggle(id);
+        } else if let Some(rest) = uri.strip_prefix("mailrs:attachment/") {
+            if let Some((message_id, index)) = rest.rsplit_once('/')
+                && let Ok(index) = index.parse()
+            {
+                actions(Action::SaveAttachment {
+                    message_id: message_id.to_string(),
+                    index,
+                });
+            }
+        } else if let Some(rest) = uri.strip_prefix("mailrs:preview/") {
+            if let Some((message_id, index)) = rest.rsplit_once('/')
+                && let Ok(index) = index.parse()
+            {
+                actions(Action::PreviewAttachment {
+                    message_id: message_id.to_string(),
+                    index,
+                });
+            }
+        } else if let Some(message_id) = uri.strip_prefix("mailrs:attachments/") {
+            actions(Action::SaveAllAttachments {
+                message_id: message_id.to_string(),
+            });
+        } else if let Some(rest) = uri.strip_prefix("mailrs:menu/") {
+            let mut parts = rest.split('/');
+            if let (Some(id), Some(x), Some(y)) = (parts.next(), parts.next(), parts.next())
+                && id == script_safe(id)
+                && let (Ok(x), Ok(y)) = (x.parse(), y.parse())
+            {
+                actions(Action::MessageMenu {
+                    message_id: id.to_string(),
+                    x,
+                    y,
+                });
+            }
+        } else if let Some(address) = uri.strip_prefix("mailrs:contact/") {
+            actions(Action::ShowContact(address.to_string()));
+        } else if uri == "mailrs:summarize" {
+            actions(Action::Summarize);
+        } else if let Some(address) = uri.strip_prefix("mailto:") {
+            actions(Action::Mailto(
+                address.split('?').next().unwrap_or(address).to_string(),
+            ));
+        } else if uri.starts_with("https://") || uri.starts_with("http://") {
+            let window = self.page.root().and_downcast::<gtk::Window>();
+            gtk::UriLauncher::new(uri).launch(window.as_ref(), gio::Cancellable::NONE, |_| {});
+        }
+    }
+
+    fn toggle(&self, id: &str) {
+        if let Some(expanded) = self.change(|open| open.toggle(id)) {
+            self.show_message(id, expanded);
+        }
+    }
+
+    /// Opens every message of the thread and answers the ones that were
+    /// closed, so the find bar can close them again. The stylesheet hides
+    /// a closed message's body, and WebKit finds nothing in it.
+    fn open_every_message(&self) -> Vec<String> {
+        let closed = self
+            .change(OpenThread::open_every_message)
+            .unwrap_or_default();
+        for id in &closed {
+            self.show_message(id, true);
+        }
+        closed
+    }
+
+    /// Closes the messages the find bar opened.
+    fn close_messages(&self, ids: &[String]) {
+        self.change(|open| open.close_messages(ids));
+        for id in ids {
+            self.show_message(id, false);
+        }
+    }
+
+    /// Opens or closes one message in the page itself. Redrawing would do
+    /// it too, and would throw away the find highlight and the place the
+    /// reader had scrolled to. The page's own stylesheet grows and shrinks
+    /// the fold: its row goes from no height to the content's, which needs
+    /// no measuring here and follows a body that grows later, as a picture
+    /// loading does. A second click turns the movement around from
+    /// wherever it had reached.
+    ///
+    /// A closed message is shut once the fold has stopped moving, which
+    /// takes its body out of layout. Shutting it at once would leave the
+    /// fold no height to close from.
+    fn show_message(&self, id: &str, expanded: bool) {
+        let id = script_safe(id);
+        let (add, remove) = match expanded {
+            true => ("expanded", "'collapsed','shut'"),
+            false => ("collapsed", "'expanded'"),
+        };
+        run_script(
+            &self.webview,
+            &format!(
+                "(function(){{var m=document.getElementById('m-{id}');\
+                   if(m){{m.classList.add('{add}');m.classList.remove({remove});}}}})()"
+            ),
+        );
+        if expanded {
+            return;
+        }
+        let webview = self.webview.downgrade();
+        let settled = std::time::Duration::from_millis(u64::from(FOLD_MS) + 40);
+        glib::timeout_add_local_once(settled, move || {
+            if let Some(webview) = webview.upgrade() {
+                run_script(
+                    &webview,
+                    &format!(
+                        "(function(){{var m=document.getElementById('m-{id}');\
+                         if(m&&m.classList.contains('collapsed'))m.classList.add('shut');}})()"
+                    ),
+                );
+            }
+        });
+    }
+}
+
+/// The flag button's menu: seven colours in a row, then Clear Flag.
+/// The arrow half of a split button, a menu button among its children.
+fn arrow_of(split: &adw::SplitButton) -> Option<gtk::MenuButton> {
+    let mut child = split.first_child();
+    while let Some(widget) = child {
+        if let Ok(arrow) = widget.clone().downcast::<gtk::MenuButton>() {
+            return Some(arrow);
+        }
+        child = widget.next_sibling();
+    }
+    None
+}
+
+/// Names a split button's arrow `said`, and gives the main half the
+/// description `main` in place of the arrow's words, which libadwaita
+/// copies onto it. A screen reader then says each half once: "Flag" and
+/// "Choose Flag Color", not "Flag, Flag Color" and "Flag Color".
+fn name_arrow(split: &adw::SplitButton, said: &str, main: &str) {
+    let mut child = split.first_child();
+    while let Some(widget) = child {
+        if widget.is::<gtk::MenuButton>() {
+            name(&widget, said);
+        } else if widget.is::<gtk::Button>() {
+            // libadwaita points the main half's DescribedBy at the arrow,
+            // and GTK reads that relation before the property.
+            widget.reset_relation(gtk::AccessibleRelation::DescribedBy);
+            widget.update_property(&[gtk::accessible::Property::Description(main)]);
+        }
+        child = widget.next_sibling();
+    }
+}
+
+fn flag_colors() -> gtk::Popover {
+    let row = gtk::Box::builder().spacing(2).build();
+    for color in FlagColor::ALL {
+        let tip = fill(
+            &gettext("{color} (Ctrl+Alt+{number})"),
+            &[
+                ("color", &color.name()),
+                ("number", &(color_index(color) + 1).to_string()),
+            ],
+        );
+        let button = gtk::Button::builder()
+            .icon_name("penguin-mail-flag-symbolic")
+            .tooltip_text(&tip)
+            .action_name("win.flag-color")
+            .action_target(&color.as_str().to_variant())
+            .css_classes(["flat", "flag-swatch", &format!("flag-{}", color.as_str())])
+            .build();
+        name_with_shortcut(&button, &tip);
+        row.append(&button);
+    }
+    let clear = gtk::Button::builder()
+        .label(gettext("Clear Flag"))
+        .action_name("win.flag-color")
+        .action_target(&"none".to_variant())
+        .css_classes(["flat"])
+        .build();
+    let content = gtk::Box::builder()
+        .orientation(gtk::Orientation::Vertical)
+        .spacing(4)
+        .build();
+    content.append(&row);
+    content.append(&gtk::Separator::new(gtk::Orientation::Horizontal));
+    content.append(&clear);
+    let popover = gtk::Popover::builder().child(&content).build();
+    // Picking a colour closes the menu.
+    let pop = popover.clone();
+    let mut child = row.first_child();
+    while let Some(widget) = child {
+        child = widget.next_sibling();
+        if let Some(button) = widget.downcast_ref::<gtk::Button>() {
+            let pop = pop.clone();
+            button.connect_clicked(move |_| pop.popdown());
+        }
+    }
+    clear.connect_clicked(move |_| pop.popdown());
+    popover
+}
+
+fn color_index(color: FlagColor) -> usize {
+    FlagColor::ALL.iter().position(|c| *c == color).unwrap_or(0)
+}
+
+thread_local! {
+    /// The views alive on this thread, so the one handler WebKit takes for
+    /// a scheme can find the view a request came from.
+    static VIEWS: RefCell<Vec<Weak<ConversationView>>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Registers the `mailrs-cid` scheme with WebKit, once: a second handler
+/// for the same scheme is refused.
+fn serve_pictures() {
+    thread_local! {
+        static REGISTERED: Cell<bool> = const { Cell::new(false) };
+    }
+    if REGISTERED.replace(true) {
+        return;
+    }
+    let Some(context) = webkit::WebContext::default() else {
+        return;
+    };
+    context.register_uri_scheme(inline::SCHEME, |request| {
+        let asking = request.web_view();
+        let view = VIEWS.with(|views| {
+            views
+                .borrow()
+                .iter()
+                .filter_map(Weak::upgrade)
+                .find(|view| asking.as_ref() == Some(&view.webview))
+        });
+        match view {
+            Some(view) => view.serve(request),
+            None => refuse(request),
+        }
+    });
+}
+
+/// Gives the page a picture, or says there is none.
+fn answer(request: &webkit::URISchemeRequest, served: Served) {
+    let Served::Ready(picture) = served else {
+        return refuse(request);
+    };
+    let bytes = glib::Bytes::from_owned(picture.bytes);
+    let length = i64::try_from(bytes.len()).unwrap_or(-1);
+    let stream = gio::MemoryInputStream::from_bytes(&bytes);
+    request.finish(&stream, length, Some(&picture.mime));
+}
+
+fn refuse(request: &webkit::URISchemeRequest) {
+    let mut error = glib::Error::new(gio::IOErrorEnum::NotFound, "no such picture");
+    request.finish_error(&mut error);
+}
+
+/// WebKit keeps a `gtk::TextView` of its own inside the web view, at no
+/// size, to turn key bindings such as Ctrl+C into editing commands. It
+/// was focusable, so Tab moved into it from the page and stayed there:
+/// focus sat on nothing a person could see, the page stopped getting the
+/// keys, and the window took single-letter shortcuts for typing. The
+/// bindings reach it without the focus, so it gives the focus up.
+pub(crate) fn keep_key_text_out_of_tab(webview: &webkit::WebView) {
+    let mut stack: Vec<gtk::Widget> = webview.first_child().into_iter().collect();
+    while let Some(widget) = stack.pop() {
+        if widget.is::<gtk::TextView>() {
+            widget.set_focusable(false);
+        }
+        stack.extend(widget.next_sibling());
+        stack.extend(widget.first_child());
+    }
+}
+
+fn run_script(webview: &webkit::WebView, script: &str) {
+    webview.evaluate_javascript(script, None, None, gio::Cancellable::NONE, |_| {});
+}
+
+/// Keeps only characters that are safe inside a quoted script string.
+fn script_safe(id: &str) -> String {
+    id.chars()
+        .filter(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_'))
+        .collect()
+}
+
+/// One network session for every conversation view. Each session runs its
+/// own WebKit network process, and a detached window needs no second one.
+/// Ephemeral keeps cookies and caches in memory, so nothing lands on disk.
+pub(crate) fn network_session() -> webkit::NetworkSession {
+    thread_local! {
+        static SESSION: webkit::NetworkSession = webkit::NetworkSession::new_ephemeral();
+    }
+    SESSION.with(|s| s.clone())
+}

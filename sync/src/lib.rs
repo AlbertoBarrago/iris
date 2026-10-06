@@ -1,0 +1,103 @@
+//! Keeps the local store in step with Gmail, one loop per account.
+
+mod account;
+mod actions;
+mod api;
+mod backoff;
+pub mod calendar;
+pub mod calendar_copy;
+pub mod calendar_reach;
+pub mod config;
+mod connect;
+pub mod contacts;
+mod engine;
+mod error;
+pub mod export;
+pub mod hidden;
+pub mod invitations;
+pub mod lock;
+pub mod mailbox;
+pub mod newsletters;
+mod one_click;
+mod ops;
+pub mod outbox;
+pub mod passwords;
+pub mod raw_cache;
+pub mod rules;
+pub mod sign_in;
+pub mod services;
+mod settings;
+mod triage;
+pub mod unsubscribe;
+
+/// An in-memory Gmail. Sync's own tests always have it; anyone else asks
+/// for the `fake` feature, as `penguin-mail` does for `--demo`.
+#[cfg(any(test, feature = "fake"))]
+pub mod fake;
+#[cfg(test)]
+mod tests;
+
+/// How long one mail action waits on a Gmail that keeps saying it is busy
+/// before it stops and reports what did not go through. Gmail's own
+/// `Retry-After` runs to a second or two, so a minute covers a long run of
+/// them; past that the user deserves to hear rather than keep waiting.
+pub const WAIT_CEILING: std::time::Duration = std::time::Duration::from_secs(60);
+
+/// The stack each thread of a runtime that runs `SyncEngine` gets. An
+/// account's sync nests dozens of async functions without spawning, and a
+/// debug build polling it against a real IMAP server overflowed Tokio's
+/// 2 MiB default but ran in 4 MiB. The stack is reserved address space;
+/// only the pages a thread touches take memory.
+pub const WORKER_STACK: usize = 8 << 20;
+
+pub use account::{
+    AccountSync, DEFAULT_BODY_CACHE_BYTES, DEFAULT_WINDOW_DAYS, FETCH_CONCURRENCY, Searched,
+};
+pub use actions::{
+    Accounts, Categorized, Failure, History, MailAction, MailActions, NewLabels, Outcome, Returned,
+    Undone,
+};
+pub use api::{AccountClient, DraftRef, GmailApi, SavedDraft};
+pub use backoff::{MOST_TRIES, backoff_delay, poll_offset, retry_delay, with_jitter};
+pub use calendar::{Added, Calendar};
+pub use connect::{
+    Clients, Connected, Connector, KEYRING, Lacks, connect_account, connect_imap, connect_microsoft, connect_microsoft_at, connect_pop3, pop3_servers_for,
+    server_of, servers_for,
+};
+pub use contacts::{Card, ContactBook, Refreshed};
+pub use engine::{EngineConfig, SyncEngine};
+pub use error::{BackendError, SyncError};
+pub use hidden::HiddenAddress;
+pub use invitations::{Change, Invitations, Opened, Sent, Spot, Told, Waiting};
+pub use mailbox::{
+    Changed, Counts, Empty, Listing, Loaded, Mailbox, Mailboxes, PAGE, Scope, Stop, View, outbox_id,
+    outbox_row, summarize_search, waiting_line,
+};
+pub use newsletters::Newsletters;
+pub use one_click::OneClick;
+pub use ops::{MailOp, MovedFrom};
+pub use outbox::{Cancelled, Drained, Outbox, Posted};
+pub use services::{
+    AccountServices, AnyAutoReply, AnyDav, AnyGmail, AnyGraph, AnyImap, AnyPop3, AnySieve, AnySmtp, Backfill, Found, ID_PAGE_SIZE, LIST_PAGE_SIZE, RawMessage,
+    RemoteRef, SearchQuery, Want, AnyCalendar, AnyContacts, AnyIdentities, AnyMail, AnyRules,
+    AutoReplyService, CalendarService, ContactsService, Google, GraphApi, Imap, ImapApi, ImapSettings,
+    IdentityService, KeywordsOf, KeywordsPage, MailBackend, MailCapabilities, Microsoft, MicrosoftSettings, Missing, Offers, Pop3, Pop3Settings, Refused,
+    Priority, Relocated, RemoteChange,
+    RulesService, SendAsAddress, SyncState, Unapplied, Changes, RAW_LIMIT, Submit, Withheld,
+    background, withheld_by_grant, CalDav, CardDav, LocalRules, RulesPlace, SieveRules,
+};
+pub use settings::{
+    AccountSettings, AutomaticReply, HIDE_MY_EMAIL_LABEL, Permitted, Replaced, RuleList, SentRules,
+};
+pub use triage::TriageAction;
+pub use unsubscribe::{Leave, Unsubscribe};
+
+use mailrs_domain::EpochMillis;
+
+/// Wall-clock time in Gmail's unit.
+pub fn now_millis() -> EpochMillis {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as EpochMillis)
+        .unwrap_or(0)
+}

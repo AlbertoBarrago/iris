@@ -1,0 +1,1320 @@
+//! What the window and the assistant offer for each account, read from
+//! the account's services, and the words for what an account lacks.
+
+use mailrs_domain::translate::{fill, gettext};
+use mailrs_domain::{Account, AccountId, Category, Provider, RemoveSetting};
+use mailrs_store::pop3::{FailReason, Failing};
+use mailrs_store::services::Miss;
+use mailrs_sync::{AccountServices, Mailbox, Missing, Offers, Withheld};
+
+/// What an account offers. An account that is not running yet has no
+/// services to ask, and the window assumes it offers everything until it
+/// starts, so nothing flickers away.
+pub fn offers_for(services: Option<&AccountServices>) -> Offers {
+    services.map_or(Offers::EVERYTHING, AccountServices::offers)
+}
+
+/// What an account's own consent left withheld. An account that is not
+/// running yet has no services to ask, and nothing is withheld until a
+/// read of its grants says otherwise.
+pub fn withheld_for(services: Option<&AccountServices>) -> Withheld {
+    services.map_or(Withheld::NONE, AccountServices::withheld)
+}
+
+/// Whether the sidebar offers the Mail / Calendar switch. `started` holds
+/// what each running account offers; `waiting` says some account has not
+/// started yet. Once one running account offers a calendar the switch
+/// shows. Until the accounts have started nobody knows, so the switch
+/// follows the space the window opened on last, which keeps it from
+/// blinking away and back for someone who uses the calendar.
+pub fn shows_space_switch(
+    started: &[Offers],
+    waiting: bool,
+    remembered: crate::settings::Space,
+) -> bool {
+    started.iter().any(|offers| offers.calendar)
+        || (waiting && remembered == crate::settings::Space::Calendar)
+}
+
+/// Whether the category bar shows over `mailbox`: the person has
+/// categories on, the mailbox is an inbox, and an account it lists sorts
+/// its inbox into categories. In the unified inbox one such account is
+/// enough; mail from the others counts as Primary.
+pub fn shows_categories(
+    on: bool,
+    mailbox: &Mailbox,
+    accounts: &[AccountId],
+    offers: impl Fn(AccountId) -> Offers,
+) -> bool {
+    on && mailbox.takes_categories()
+        && match mailbox.account() {
+            Some(id) => offers(id).categories,
+            None => accounts.iter().any(|id| offers(*id).categories),
+        }
+}
+
+/// The switcher above an inbox: Gmail's categories, or Focused Inbox's two
+/// tabs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InboxBar {
+    Categories,
+    Focus,
+}
+
+/// Which switcher shows over `mailbox`, if any. Gmail's categories win
+/// wherever they apply, the unified inbox included; Focused and Other
+/// show over one account's inbox when that account sorts it so. The
+/// person's inbox categories preference (`on`) turns both off.
+pub fn inbox_bar(
+    on: bool,
+    mailbox: &Mailbox,
+    accounts: &[AccountId],
+    offers: impl Fn(AccountId) -> Offers,
+) -> Option<InboxBar> {
+    if shows_categories(on, mailbox, accounts, &offers) {
+        return Some(InboxBar::Categories);
+    }
+    let focus = on
+        && mailbox.takes_categories()
+        && mailbox.account().is_some_and(|id| offers(id).focused);
+    focus.then_some(InboxBar::Focus)
+}
+
+/// The slice to list once `bar` shows: the one on screen when the bar has
+/// it, else Focused for the tabs and `default` for Gmail's categories.
+pub fn category_after(bar: InboxBar, current: Category, default: Category) -> Category {
+    let focus = Category::FOCUS.contains(&current);
+    match (bar, focus) {
+        (InboxBar::Focus, true) | (InboxBar::Categories, false) => current,
+        (InboxBar::Focus, false) => Category::Focused,
+        (InboxBar::Categories, true) => default,
+    }
+}
+
+/// Whether Tags… is on: the mail reached comes from one account, and it
+/// keeps tags.
+pub fn tags_on(reached: &[AccountId], offers: impl Fn(AccountId) -> Offers) -> bool {
+    let mut accounts = reached.to_vec();
+    accounts.sort_unstable();
+    accounts.dedup();
+    matches!(accounts.as_slice(), [one] if offers(*one).tags)
+}
+
+/// The slices Categorize Sender offers for an account: Focused and Other
+/// where the inbox splits that way, else Gmail's four.
+pub fn categorize_choices(offers: Offers) -> Vec<Category> {
+    match offers.focused {
+        true => Category::FOCUS.to_vec(),
+        false => Category::ALL
+            .into_iter()
+            .filter(|c| *c != Category::All)
+            .collect(),
+    }
+}
+
+/// Whether the sender's own actions are on for an account that `offers`
+/// what it offers. Blocking a sender and sorting its mail into a category
+/// both leave a rule on the server for the mail still to come, so both
+/// need rules. A Microsoft account sorts senders into Focused and Other.
+pub fn sender_actions(offers: Offers) -> [(&'static str, bool); 2] {
+    [
+        ("block-sender", offers.rules),
+        ("categorize-sender", (offers.categories || offers.focused) && offers.rules),
+    ]
+}
+
+/// The window's actions that need rules or an automatic reply, and
+/// whether each is on for accounts that offer `offers`: on while one of
+/// them can do it. Each account action also turns away an account that
+/// cannot, through [`account_action_on`], since one action serves every
+/// account's menu.
+pub fn account_actions(offers: &[Offers]) -> [(&'static str, bool); 4] {
+    let rules = offers.iter().any(|o| o.rules);
+    let hides = offers.iter().any(|o| hides_addresses(*o));
+    let auto_reply = offers.iter().any(|o| o.auto_reply);
+    [
+        ("hide-my-email", hides),
+        ("account-rules", rules),
+        ("account-hide-my-email", hides),
+        ("account-vacation", auto_reply),
+    ]
+}
+
+/// Whether the account action `name` runs for an account that offers
+/// `offers`. An account's menu reaches these through its own actions
+/// ([`account_menu_actions`]), which are off where the account lacks what
+/// they open, but the demo's script activates the `win.` action with any
+/// account's id. Hide My Email needs rules and labels
+/// ([`hides_addresses`]).
+pub fn account_action_on(name: &str, offers: Offers) -> bool {
+    match name {
+        "account-rules" => offers.rules,
+        "account-hide-my-email" => hides_addresses(offers),
+        "account-vacation" => offers.auto_reply,
+        _ => true,
+    }
+}
+
+/// The actions an account's own menu holds under the `account` prefix,
+/// and whether each is on for an account that offers `offers`. A
+/// parameterized `win.` action serves every account, so it cannot be off
+/// for one; these belong to one account's row, so each is off where that
+/// account lacks what it opens. Hide My Email writes a rule for each
+/// address, so it needs rules.
+pub fn account_menu_actions(offers: Offers) -> [(&'static str, bool); 3] {
+    [
+        ("vacation", offers.auto_reply),
+        ("rules", offers.rules),
+        ("hide-my-email", hides_addresses(offers)),
+    ]
+}
+
+/// Whether Hide My Email works for an account: each hidden address is a
+/// plus address with a rule behind it, and only Gmail keeps both a label
+/// for it and plus addressing everywhere.
+pub fn hides_addresses(offers: Offers) -> bool {
+    offers.rules && offers.labels
+}
+
+/// How the accounts on screen file mail: with labels, several at once, or
+/// in folders, one at a time.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Filing {
+    Labels,
+    Folders,
+}
+
+impl Filing {
+    /// Folders when every account in question files in folders, labels
+    /// otherwise, including when there is no account in question.
+    pub fn of(offers: impl IntoIterator<Item = Offers>) -> Filing {
+        let mut any = false;
+        for offer in offers {
+            if offer.labels {
+                return Filing::Labels;
+            }
+            any = true;
+        }
+        if any { Filing::Folders } else { Filing::Labels }
+    }
+
+    /// How mail from several accounts can be filed at once: by label
+    /// name when every account files with labels. Adding a label on a
+    /// folder account copies the mail into the folder and leaves it where
+    /// it was, so one folder account makes it folders, and the picker asks
+    /// for mail from one account instead.
+    pub fn across(offers: impl IntoIterator<Item = Offers>) -> Filing {
+        match offers.into_iter().all(|offer| offer.labels) {
+            true => Filing::Labels,
+            false => Filing::Folders,
+        }
+    }
+
+    /// How the Labels button words itself, which is how the picker it
+    /// opens words itself. `reached` are the accounts of the mail it acts
+    /// on, one entry per row; `shown` the accounts the mailbox on screen
+    /// lists. With nothing reached the mailbox's accounts decide, as the
+    /// picker's "Open or select mail" line does; mail from several
+    /// accounts reads as it files across them.
+    pub fn picker(
+        reached: &[AccountId],
+        shown: &[AccountId],
+        offers: impl Fn(AccountId) -> Offers,
+    ) -> Filing {
+        let mut accounts = reached.to_vec();
+        accounts.sort_unstable();
+        accounts.dedup();
+        match accounts.as_slice() {
+            [] => Filing::of(shown.iter().map(|id| offers(*id))),
+            [one] => Filing::of([offers(*one)]),
+            many => Filing::across(many.iter().map(|id| offers(*id))),
+        }
+    }
+
+    /// The Keyboard Shortcuts line for the key that opens the picker.
+    pub fn shortcut_line(self) -> String {
+        match self {
+            Filing::Labels => gettext("Labels"),
+            Filing::Folders => gettext("Move to folder"),
+        }
+    }
+
+    pub fn menu_item(self) -> String {
+        match self {
+            Filing::Labels => gettext("Labels…"),
+            Filing::Folders => gettext("Move to Folder…"),
+        }
+    }
+
+    /// The name and tooltip of the arrow beside the header button. It
+    /// differs from the button's own, so a screen reader does not say
+    /// "Labels" twice.
+    pub fn arrow(self) -> String {
+        match self {
+            Filing::Labels => gettext("Choose Labels"),
+            Filing::Folders => gettext("Choose a Folder"),
+        }
+    }
+
+    /// The header button's tooltip, with its key.
+    pub fn tooltip(self) -> String {
+        match self {
+            Filing::Labels => gettext("Labels (L)"),
+            Filing::Folders => gettext("Move to Folder (L)"),
+        }
+    }
+
+    /// The header button's icon: the tag Gmail's labels wear, since mail
+    /// there can carry several at once, or the plain folder icon once
+    /// every account in question keeps mail in one place at a time.
+    /// `ui::sidebar::label_icon` draws the same choice for a sidebar row.
+    pub fn icon(self) -> &'static str {
+        match self {
+            Filing::Labels => "penguin-mail-tag-symbolic",
+            Filing::Folders => "folder-symbolic",
+        }
+    }
+
+    pub fn new_item(self) -> String {
+        match self {
+            Filing::Labels => gettext("New Label…"),
+            Filing::Folders => gettext("New Folder…"),
+        }
+    }
+
+    /// The menu item that opens that dialog with this one's name and a
+    /// slash already typed, so the new one nests under it.
+    pub fn new_inside_item(self) -> String {
+        match self {
+            Filing::Labels => gettext("New Label Inside…"),
+            Filing::Folders => gettext("New Folder Inside…"),
+        }
+    }
+
+    /// What the button at the end of a sidebar row says out loud.
+    pub fn options_name(self, name: &str) -> String {
+        match self {
+            Filing::Labels => fill(&gettext("Label Options for {name}"), &[("name", name)]),
+            Filing::Folders => fill(&gettext("Folder Options for {name}"), &[("name", name)]),
+        }
+    }
+
+    /// That button's tooltip.
+    pub fn options_tooltip(self) -> String {
+        match self {
+            Filing::Labels => gettext("Label options"),
+            Filing::Folders => gettext("Folder options"),
+        }
+    }
+
+    /// Why one dragged into its own subtree stays put.
+    pub fn inside_itself(self) -> String {
+        match self {
+            Filing::Labels => gettext("A label cannot go inside a label nested under it"),
+            Filing::Folders => gettext("A folder cannot go inside a folder nested under it"),
+        }
+    }
+
+    /// Why one dragged beside or into a namesake stays put.
+    pub fn name_taken(self, name: &str) -> String {
+        let name = name.replace('/', " › ");
+        match self {
+            Filing::Labels => fill(&gettext("There is a label called “{name}” already"), &[("name", &name)]),
+            Filing::Folders => {
+                fill(&gettext("There is a folder called “{name}” already"), &[("name", &name)])
+            }
+        }
+    }
+
+    /// The heading of the dialog that asks for a new one's name.
+    pub fn new_heading(self) -> String {
+        match self {
+            Filing::Labels => gettext("New Label"),
+            Filing::Folders => gettext("New Folder"),
+        }
+    }
+
+    /// What that dialog says when the server refuses, with `{reason}`
+    /// still to fill.
+    pub fn create_failed(self) -> String {
+        match self {
+            Filing::Labels => gettext("Could not create the label: {reason}"),
+            Filing::Folders => gettext("Could not create the folder: {reason}"),
+        }
+    }
+
+    /// What the picker says when no mail is open or selected.
+    pub fn nothing_picked(self) -> String {
+        match self {
+            Filing::Labels => gettext("Open or select mail to label it."),
+            Filing::Folders => gettext("Open or select mail to move it."),
+        }
+    }
+
+    /// What the picker says for mail from several accounts that it cannot
+    /// file in one go.
+    pub fn one_account_only(self) -> String {
+        match self {
+            Filing::Labels => gettext("Select mail from one account to label it."),
+            Filing::Folders => gettext("Select mail from one account to move it."),
+        }
+    }
+
+    pub fn rename_heading(self) -> String {
+        match self {
+            Filing::Labels => gettext("Rename Label"),
+            Filing::Folders => gettext("Rename Folder"),
+        }
+    }
+
+    pub fn rename_body(self) -> String {
+        match self {
+            Filing::Labels => gettext("Labels nested under it move along."),
+            Filing::Folders => gettext("Folders nested under it move along."),
+        }
+    }
+
+    /// What renaming says when the server refuses, with `{reason}` still
+    /// to fill.
+    pub fn rename_failed(self) -> String {
+        match self {
+            Filing::Labels => gettext("Could not rename the label: {reason}"),
+            Filing::Folders => gettext("Could not rename the folder: {reason}"),
+        }
+    }
+
+    /// What deleting one does to its mail. A label comes off the mail and
+    /// the mail stays; a folder holds the only copy, and its mail goes
+    /// with it.
+    pub fn delete_body(self) -> String {
+        match self {
+            Filing::Labels => {
+                gettext("Its mail stays in Gmail, without the label. Nested labels stay too.")
+            }
+            Filing::Folders => gettext("The mail in the folder is deleted with it."),
+        }
+    }
+
+    /// What deleting says when the server refuses, with `{reason}` still
+    /// to fill.
+    pub fn delete_failed(self) -> String {
+        match self {
+            Filing::Labels => gettext("Could not delete the label: {reason}"),
+            Filing::Folders => gettext("Could not delete the folder: {reason}"),
+        }
+    }
+
+    /// What the picker says when the account has nothing to file in yet.
+    pub fn none_yet(self) -> String {
+        match self {
+            Filing::Labels => gettext("This account has no labels yet."),
+            Filing::Folders => gettext("This account has no folders yet."),
+        }
+    }
+}
+
+/// One line saying why `account` lacks `missing`, naming who serves it.
+/// `missed` is why the last search found no calendar or contacts server
+/// for an IMAP or POP3 account, when the store kept a reason.
+pub fn reason(account: &Account, missing: Missing, missed: Option<Miss>) -> String {
+    let template = match (account.provider, missing) {
+        // IMAP carries mail; a calendar and contacts come from CalDAV and
+        // CardDAV servers the app looks for, and Preferences says where
+        // it looked. Rules always have a place, on the server or here.
+        // A Microsoft account offers every service; one it lacks is one
+        // its organization refused (`Refused`).
+        (Provider::Microsoft, Missing::Calendar) => {
+            gettext("Your organization does not allow Penguin Mail to use this calendar.")
+        }
+        (Provider::Microsoft, Missing::Contacts) => {
+            gettext("Your organization does not allow Penguin Mail to read these contacts.")
+        }
+        (Provider::Microsoft, Missing::Rules) => {
+            gettext("Your organization does not allow Penguin Mail to change these rules.")
+        }
+        (Provider::Microsoft, Missing::AutoReply) => {
+            gettext("Your organization does not allow Penguin Mail to change the automatic reply.")
+        }
+        (Provider::Imap | Provider::Pop3, Missing::Calendar) => match missed {
+            Some(Miss::Refused) => gettext(
+                "{provider} refused the password for calendars. Some providers need an app \
+                 password with access to calendars and contacts.",
+            ),
+            Some(Miss::Unreachable) => {
+                gettext("Penguin Mail could not reach the calendar server for {provider}.")
+            }
+            Some(Miss::NotFound) | None => {
+                gettext("Penguin Mail found no calendar server for {provider}.")
+            }
+        },
+        (Provider::Imap | Provider::Pop3, Missing::Contacts) => match missed {
+            Some(Miss::Refused) => gettext(
+                "{provider} refused the password for contacts. Some providers need an app \
+                 password with access to calendars and contacts.",
+            ),
+            Some(Miss::Unreachable) => {
+                gettext("Penguin Mail could not reach the contacts server for {provider}.")
+            }
+            Some(Miss::NotFound) | None => {
+                gettext("Penguin Mail found no contacts server for {provider}.")
+            }
+        },
+        (Provider::Pop3, Missing::AutoReply) => {
+            gettext("{provider} cannot send automatic replies over POP3.")
+        }
+        (Provider::Imap, Missing::AutoReply) => {
+            gettext("{provider} cannot send automatic replies.")
+        }
+        (_, Missing::Calendar) => gettext("{provider} has no calendar that other apps can reach."),
+        (_, Missing::Contacts) => {
+            gettext("{provider} keeps no contacts that other apps can reach.")
+        }
+        (_, Missing::Rules) => gettext("{provider} has no rules that other apps can change."),
+        (_, Missing::AutoReply) => {
+            gettext("{provider} has no automatic reply that other apps can change.")
+        }
+        (_, Missing::DeleteForever) => {
+            gettext("{provider} cannot delete mail for good. Delete moves it to the Trash.")
+        }
+        (_, Missing::Categories) => gettext("{provider} does not sort the inbox into categories."),
+    };
+    let provider = mailrs_discover::resolved_provider_name(account.provider_name());
+    fill(&template, &[("provider", &provider)])
+}
+
+/// The rows Preferences shows under Not Available: one for each account
+/// that lacks something, as its address and one reason for each thing it
+/// lacks. The category bar needs no reason because it is not there.
+/// `missed` says why the search for an account's calendar or contacts
+/// server failed, where the store kept a reason.
+pub fn missing_lines(
+    accounts: &[(Account, Offers)],
+    missed: impl Fn(AccountId, Missing) -> Option<Miss>,
+) -> Vec<(String, Vec<String>)> {
+    accounts
+        .iter()
+        .filter_map(|(account, offers)| {
+            let mut reasons: Vec<String> = offers
+                .missing()
+                .into_iter()
+                .filter(|m| *m != Missing::Categories)
+                .map(|m| reason(account, m, missed(account.id, m)))
+                .collect();
+            reasons.dedup();
+            (!reasons.is_empty()).then(|| (account.email.clone(), reasons))
+        })
+        .collect()
+}
+
+/// What a screen reader calls a Not Available row: the account's address
+/// and every reason under it.
+pub fn missing_name(address: &str, reasons: &[String]) -> String {
+    fill(
+        &gettext("{address}: {reason}"),
+        &[("address", address), ("reason", &reasons.join(" "))],
+    )
+}
+
+/// One line per message a POP3 server would not hand over after three
+/// tries: its subject and sender where a `TOP` read them, else its place
+/// in the list, then why, in the server's own words for a refusal.
+pub fn failing_lines(failing: &[Failing]) -> Vec<String> {
+    failing
+        .iter()
+        .enumerate()
+        .map(|(n, failed)| {
+            let words = match failed.reason {
+                FailReason::Refused if !failed.words.is_empty() => failed.words.clone(),
+                FailReason::Refused => gettext("The server would not hand it over."),
+                FailReason::TooLarge => {
+                    gettext("The message is larger than Penguin Mail downloads.")
+                }
+                FailReason::Unreadable => {
+                    gettext("Penguin Mail could not read the server's answer.")
+                }
+                FailReason::Dropped => {
+                    gettext("The connection closed while the message downloaded.")
+                }
+            };
+            let number = (n + 1).to_string();
+            match (failed.subject.as_deref(), failed.sender.as_deref()) {
+                (Some(subject), Some(sender)) => fill(
+                    &gettext("“{subject}” from {sender}: {words}"),
+                    &[("subject", subject), ("sender", sender), ("words", &words)],
+                ),
+                (Some(subject), None) => fill(
+                    &gettext("“{subject}”: {words}"),
+                    &[("subject", subject), ("words", &words)],
+                ),
+                (None, Some(sender)) => fill(
+                    &gettext("A message from {sender}: {words}"),
+                    &[("sender", sender), ("words", &words)],
+                ),
+                (None, None) => fill(
+                    &gettext("Message {number}: {words}"),
+                    &[("number", &number), ("words", &words)],
+                ),
+            }
+        })
+        .collect()
+}
+
+/// What Remove Account's confirmation says happens to `account`'s mail.
+/// `remove` is a POP3 account's removal setting. Under one that removes
+/// mail from the server, the server has let go of what came down, so
+/// removing the account loses it.
+pub fn remove_account_body(account: &Account, remove: RemoveSetting) -> String {
+    match (account.provider, remove) {
+        (Provider::Pop3, RemoveSetting::Never) => gettext(
+            "Removing the account deletes this computer's copy of its mail and the \
+             saved sign-in. Mail still on the server stays there.",
+        ),
+        (Provider::Pop3, _) => gettext(
+            "Mail already removed from the server exists only on this computer, \
+             and removing the account deletes it with the saved sign-in. Mail \
+             still on the server stays there.",
+        ),
+        _ => fill(
+            &gettext(
+                "Its downloaded mail and saved sign-in are deleted from this computer. \
+                 Nothing changes in {provider}.",
+            ),
+            &[("provider", account.provider_name())],
+        ),
+    }
+}
+
+/// About's line for each account whose mail lives only in the store.
+pub fn kept_here_lines(accounts: &[Account]) -> Vec<String> {
+    accounts
+        .iter()
+        .filter(|account| account.provider == Provider::Pop3)
+        .map(|account| {
+            fill(
+                &gettext(
+                    "Mail from {address} is kept only on this computer. To keep a copy, quit Penguin Mail, then back up this file.",
+                ),
+                &[("address", &account.email)],
+            )
+        })
+        .collect()
+}
+
+/// Whether the app asks the server which addresses `account` sends as.
+/// Gmail keeps send-as addresses with their names. An IMAP server keeps
+/// neither, and asking it would replace the name the person typed when
+/// adding the account with none.
+pub fn reads_send_as(account: &Account) -> bool {
+    account.provider == Provider::Gmail
+}
+
+#[cfg(test)]
+mod tests {
+    use mailrs_domain::{Account, AccountState, Provider, RemoveSetting};
+    use mailrs_store::pop3::{FailReason, Failing};
+    use mailrs_store::services::Miss;
+    use mailrs_sync::{Missing, Offers};
+
+    use super::{
+        failing_lines, hides_addresses, kept_here_lines, offers_for, reason, remove_account_body,
+        shows_space_switch,
+        withheld_for,
+    };
+    use crate::settings::Space;
+
+    const NO_CALENDAR: Offers = Offers {
+        calendar: false,
+        ..Offers::EVERYTHING
+    };
+
+    fn pop3_account() -> Account {
+        Account {
+            id: 5,
+            email: "dana@example.org".into(),
+            state: AccountState::Ok,
+            provider: Provider::Pop3,
+            provider_name: Some("example.org".into()),
+        }
+    }
+
+    #[test]
+    fn a_pop3_account_says_why_it_has_no_automatic_reply() {
+        assert_eq!(
+            reason(&pop3_account(), Missing::AutoReply, None),
+            "example.org cannot send automatic replies over POP3."
+        );
+        assert_eq!(
+            reason(&pop3_account(), Missing::Calendar, None),
+            "Penguin Mail found no calendar server for example.org."
+        );
+    }
+
+    fn failed(reason: FailReason, words: &str, sender: Option<&str>, subject: Option<&str>) -> Failing {
+        Failing {
+            uidl: "u1".into(),
+            reason,
+            words: words.into(),
+            sender: sender.map(Into::into),
+            subject: subject.map(Into::into),
+        }
+    }
+
+    #[test]
+    fn each_message_that_will_not_download_reads_with_its_name_and_reason() {
+        let failing = [
+            failed(FailReason::Refused, "no such message", Some("Ana Lima"), Some("Photos")),
+            failed(FailReason::TooLarge, "", None, Some("Scans")),
+            failed(FailReason::Dropped, "", Some("Bo"), None),
+            failed(FailReason::Unreadable, "", None, None),
+            failed(FailReason::Refused, "", None, None),
+        ];
+        assert_eq!(
+            failing_lines(&failing),
+            [
+                "“Photos” from Ana Lima: no such message",
+                "“Scans”: The message is larger than Penguin Mail downloads.",
+                "A message from Bo: The connection closed while the message downloaded.",
+                "Message 4: Penguin Mail could not read the server's answer.",
+                "Message 5: The server would not hand it over.",
+            ]
+        );
+    }
+
+    #[test]
+    fn removing_a_pop3_account_says_what_its_removal_setting_left_on_the_server() {
+        let kept = "Removing the account deletes this computer's copy of its mail and the \
+                    saved sign-in. Mail still on the server stays there.";
+        let only_here = "Mail already removed from the server exists only on this computer, \
+                         and removing the account deletes it with the saved sign-in. Mail \
+                         still on the server stays there.";
+        let account = pop3_account();
+        assert_eq!(remove_account_body(&account, RemoveSetting::Never), kept);
+        assert_eq!(remove_account_body(&account, RemoveSetting::Downloaded), only_here);
+        assert_eq!(remove_account_body(&account, RemoveSetting::Days(30)), only_here);
+    }
+
+    #[test]
+    fn removing_another_account_names_its_own_service() {
+        let named = |provider, name: Option<&str>| Account {
+            provider,
+            provider_name: name.map(Into::into),
+            ..pop3_account()
+        };
+        for (account, service) in [
+            (named(Provider::Gmail, None), "Gmail"),
+            (named(Provider::Imap, Some("Fastmail")), "Fastmail"),
+            (named(Provider::Microsoft, Some("Outlook.com")), "Outlook.com"),
+        ] {
+            assert_eq!(
+                remove_account_body(&account, RemoveSetting::Never),
+                format!(
+                    "Its downloaded mail and saved sign-in are deleted from this computer. \
+                     Nothing changes in {service}."
+                )
+            );
+        }
+    }
+
+    #[test]
+    fn about_says_which_accounts_keep_their_mail_here_alone() {
+        let imap = Account {
+            provider: Provider::Imap,
+            email: "ana@fastmail.com".into(),
+            ..pop3_account()
+        };
+        assert_eq!(
+            kept_here_lines(&[imap, pop3_account()]),
+            ["Mail from dana@example.org is kept only on this computer. To keep a copy, quit Penguin Mail, then back up this file."]
+        );
+    }
+
+    #[test]
+    fn the_switch_shows_once_a_started_account_offers_a_calendar() {
+        assert!(shows_space_switch(&[NO_CALENDAR, Offers::EVERYTHING], false, Space::Mail));
+    }
+
+    #[test]
+    fn the_switch_hides_when_no_started_account_offers_a_calendar() {
+        assert!(!shows_space_switch(&[NO_CALENDAR], false, Space::Calendar));
+        assert!(!shows_space_switch(&[], false, Space::Calendar));
+    }
+
+    #[test]
+    fn before_the_accounts_start_the_switch_follows_the_last_space() {
+        assert!(shows_space_switch(&[NO_CALENDAR], true, Space::Calendar));
+        assert!(!shows_space_switch(&[], true, Space::Mail));
+    }
+
+    fn gmail() -> Account {
+        Account {
+            id: 1,
+            email: "me@gmail.com".into(),
+            state: AccountState::Ok,
+            provider: Provider::Gmail,
+            provider_name: None,
+        }
+    }
+
+    fn fastmail() -> Account {
+        Account {
+            id: 2,
+            email: "dana@fastmail.com".into(),
+            state: AccountState::Ok,
+            provider: Provider::Imap,
+            provider_name: Some("Fastmail".into()),
+        }
+    }
+
+    #[test]
+    fn each_missing_service_says_why_and_names_the_provider() {
+        for missing in [
+            Missing::Calendar,
+            Missing::Contacts,
+            Missing::Rules,
+            Missing::AutoReply,
+            Missing::DeleteForever,
+            Missing::Categories,
+        ] {
+            let said = reason(&gmail(), missing, None);
+            assert!(said.starts_with("Gmail "), "{said}");
+            assert!(said.ends_with('.'), "{said}");
+        }
+    }
+
+    #[test]
+    fn an_imap_account_without_a_calendar_server_says_none_was_found() {
+        assert_eq!(
+            reason(&fastmail(), Missing::Calendar, None),
+            "Penguin Mail found no calendar server for Fastmail."
+        );
+        assert_eq!(
+            reason(&fastmail(), Missing::Contacts, None),
+            "Penguin Mail found no contacts server for Fastmail."
+        );
+    }
+
+    #[test]
+    fn a_refused_login_says_so_and_names_the_app_password() {
+        assert_eq!(
+            reason(&fastmail(), Missing::Calendar, Some(Miss::Refused)),
+            "Fastmail refused the password for calendars. Some providers need an app \
+             password with access to calendars and contacts."
+        );
+        assert_eq!(
+            reason(&fastmail(), Missing::Contacts, Some(Miss::Refused)),
+            "Fastmail refused the password for contacts. Some providers need an app \
+             password with access to calendars and contacts."
+        );
+    }
+
+    #[test]
+    fn no_answer_says_the_server_could_not_be_reached() {
+        assert_eq!(
+            reason(&fastmail(), Missing::Calendar, Some(Miss::Unreachable)),
+            "Penguin Mail could not reach the calendar server for Fastmail."
+        );
+        assert_eq!(
+            reason(&fastmail(), Missing::Contacts, Some(Miss::Unreachable)),
+            "Penguin Mail could not reach the contacts server for Fastmail."
+        );
+        assert_eq!(
+            reason(&fastmail(), Missing::Contacts, Some(Miss::NotFound)),
+            "Penguin Mail found no contacts server for Fastmail."
+        );
+    }
+
+    #[test]
+    fn preferences_words_each_line_by_why_the_search_failed() {
+        let imap = Offers { calendar: false, contacts: false, ..Offers::EVERYTHING };
+        let lines = missing_lines(&[(fastmail(), imap)], |_, missing| {
+            (missing == Missing::Calendar).then_some(Miss::Refused)
+        });
+        let reasons = &lines[0].1;
+        assert!(reasons[0].starts_with("Fastmail refused the password for calendars."), "{lines:?}");
+        assert_eq!(reasons[1], "Penguin Mail found no contacts server for Fastmail.");
+    }
+
+    #[test]
+    fn a_refusal_on_a_microsoft_account_names_the_organization() {
+        let account = Account {
+            provider: Provider::Microsoft,
+            provider_name: Some("Microsoft 365".into()),
+            ..gmail()
+        };
+        assert_eq!(
+            reason(&account, Missing::Calendar, None),
+            "Your organization does not allow Penguin Mail to use this calendar."
+        );
+        assert_eq!(
+            reason(&account, Missing::Contacts, None),
+            "Your organization does not allow Penguin Mail to read these contacts."
+        );
+        assert_eq!(
+            reason(&account, Missing::Rules, None),
+            "Your organization does not allow Penguin Mail to change these rules."
+        );
+        assert_eq!(
+            reason(&account, Missing::AutoReply, None),
+            "Your organization does not allow Penguin Mail to change the automatic reply."
+        );
+    }
+
+    #[test]
+    fn an_imap_account_without_sieve_cannot_send_automatic_replies() {
+        assert_eq!(
+            reason(&fastmail(), Missing::AutoReply, None),
+            "Fastmail cannot send automatic replies."
+        );
+    }
+
+    #[test]
+    fn hide_my_email_needs_rules_and_labels() {
+        let folders = Offers { labels: false, ..Offers::EVERYTHING };
+        assert!(hides_addresses(Offers::EVERYTHING));
+        assert!(!hides_addresses(folders));
+        assert_eq!(account_menu_actions(folders)[2], ("hide-my-email", false));
+        assert!(!account_action_on("account-hide-my-email", folders));
+        assert!(account_action_on("account-rules", folders), "rules stay on for a folder account");
+        assert_eq!(account_actions(&[folders])[0], ("hide-my-email", false));
+    }
+
+    #[test]
+    fn an_account_that_is_not_running_yet_hides_nothing() {
+        assert_eq!(offers_for(None), Offers::EVERYTHING);
+    }
+
+    #[test]
+    fn an_account_that_is_not_running_yet_withholds_nothing() {
+        assert_eq!(withheld_for(None), mailrs_sync::Withheld::NONE);
+    }
+
+    use mailrs_sync::Mailbox;
+    use mailrs_sync::mailbox::Standard;
+
+    use super::shows_categories;
+
+    fn without_categories() -> Offers {
+        Offers {
+            categories: false,
+            ..Offers::EVERYTHING
+        }
+    }
+
+    #[test]
+    fn a_gmail_inbox_shows_its_categories() {
+        let inbox = Mailbox::Standard { account_id: 1, which: Standard::Inbox };
+        assert!(shows_categories(true, &inbox, &[1], |_| Offers::EVERYTHING));
+        assert!(!shows_categories(false, &inbox, &[1], |_| Offers::EVERYTHING));
+    }
+
+    #[test]
+    fn an_inbox_whose_server_has_no_categories_hides_the_bar() {
+        let inbox = Mailbox::Standard { account_id: 2, which: Standard::Inbox };
+        assert!(!shows_categories(true, &inbox, &[2], |_| without_categories()));
+    }
+
+    #[test]
+    fn the_unified_inbox_shows_the_bar_when_one_account_sorts() {
+        let all = Mailbox::Unified(Standard::Inbox);
+        let offers = |id| if id == 1 { Offers::EVERYTHING } else { without_categories() };
+        assert!(shows_categories(true, &all, &[1, 2], offers));
+        assert!(!shows_categories(true, &all, &[2], offers));
+    }
+
+    use super::Filing;
+
+    fn folders() -> Offers {
+        Offers {
+            labels: false,
+            ..Offers::EVERYTHING
+        }
+    }
+
+    #[test]
+    fn filing_reads_folders_only_when_every_account_files_in_folders() {
+        assert_eq!(Filing::of([Offers::EVERYTHING]), Filing::Labels);
+        assert_eq!(Filing::of([folders()]), Filing::Folders);
+        assert_eq!(Filing::of([folders(), Offers::EVERYTHING]), Filing::Labels);
+        assert_eq!(Filing::of([]), Filing::Labels);
+        assert_eq!(Filing::Labels.menu_item(), "Labels…");
+        assert_eq!(Filing::Folders.menu_item(), "Move to Folder…");
+    }
+
+    #[test]
+    fn the_labels_button_says_what_its_picker_says() {
+        let offers = |id| if id == 2 { folders() } else { Offers::EVERYTHING };
+        // Nothing picked: the accounts the mailbox lists decide.
+        assert_eq!(Filing::picker(&[], &[2], offers), Filing::Folders);
+        assert_eq!(Filing::picker(&[], &[1, 2], offers), Filing::Labels);
+        // One account decides for itself, however many of its rows.
+        assert_eq!(Filing::picker(&[1, 1], &[2], offers), Filing::Labels);
+        assert_eq!(Filing::picker(&[2], &[1], offers), Filing::Folders);
+        // Mail from a label account and a folder account files the way
+        // folders do, one account at a time.
+        assert_eq!(Filing::picker(&[1, 2], &[1, 2], offers), Filing::Folders);
+        assert_eq!(Filing::picker(&[1, 3], &[1, 3], offers), Filing::Labels);
+    }
+
+    #[test]
+    fn the_arrow_beside_the_labels_button_has_a_name_of_its_own() {
+        assert_eq!(Filing::Labels.arrow(), "Choose Labels");
+        assert_eq!(Filing::Folders.arrow(), "Choose a Folder");
+    }
+
+    #[test]
+    fn the_shortcut_line_follows_filing() {
+        assert_eq!(Filing::Labels.shortcut_line(), "Labels");
+        assert_eq!(Filing::Folders.shortcut_line(), "Move to folder");
+    }
+
+    #[test]
+    fn the_new_folder_dialog_says_folder_where_the_new_label_one_says_label() {
+        assert_eq!(Filing::Labels.new_heading(), "New Label");
+        assert_eq!(Filing::Folders.new_heading(), "New Folder");
+        assert_eq!(
+            Filing::Labels.create_failed(),
+            "Could not create the label: {reason}"
+        );
+        assert_eq!(
+            Filing::Folders.create_failed(),
+            "Could not create the folder: {reason}"
+        );
+    }
+
+    use super::sender_actions;
+
+    #[test]
+    fn blocking_a_sender_needs_rules() {
+        let no_rules = Offers {
+            rules: false,
+            ..Offers::EVERYTHING
+        };
+        assert_eq!(
+            sender_actions(Offers::EVERYTHING),
+            [("block-sender", true), ("categorize-sender", true)]
+        );
+        assert_eq!(
+            sender_actions(no_rules),
+            [("block-sender", false), ("categorize-sender", false)]
+        );
+    }
+
+    #[test]
+    fn categorizing_a_sender_needs_categories_and_rules() {
+        assert_eq!(
+            sender_actions(without_categories()),
+            [("block-sender", true), ("categorize-sender", false)]
+        );
+    }
+
+    use super::{account_action_on, account_actions};
+
+    #[test]
+    fn an_account_action_is_on_while_one_account_can_do_it() {
+        let bare = Offers {
+            rules: false,
+            auto_reply: false,
+            auto_reply_subject: false,
+            auto_reply_contacts_only: false,
+            ..Offers::EVERYTHING
+        };
+        assert_eq!(
+            account_actions(&[bare, Offers::EVERYTHING]),
+            [
+                ("hide-my-email", true),
+                ("account-rules", true),
+                ("account-hide-my-email", true),
+                ("account-vacation", true),
+            ]
+        );
+        assert_eq!(
+            account_actions(&[bare]),
+            [
+                ("hide-my-email", false),
+                ("account-rules", false),
+                ("account-hide-my-email", false),
+                ("account-vacation", false),
+            ]
+        );
+    }
+
+    #[test]
+    fn an_account_action_turns_away_an_account_that_lacks_it() {
+        let bare = Offers {
+            rules: false,
+            auto_reply: false,
+            auto_reply_subject: false,
+            auto_reply_contacts_only: false,
+            ..Offers::EVERYTHING
+        };
+        assert!(!account_action_on("account-rules", bare));
+        assert!(!account_action_on("account-hide-my-email", bare));
+        assert!(!account_action_on("account-vacation", bare));
+        assert!(account_action_on("account-signature", bare));
+        assert!(account_action_on("account-rules", Offers::EVERYTHING));
+    }
+
+    use super::account_menu_actions;
+
+    #[test]
+    fn an_accounts_own_rules_action_is_off_when_its_server_has_no_rules() {
+        let imap = Offers {
+            labels: false,
+            categories: false,
+            calendar: false,
+            contacts: false,
+            rules: false,
+            auto_reply: false,
+            auto_reply_subject: false,
+            auto_reply_contacts_only: false,
+            ..Offers::EVERYTHING
+        };
+        assert_eq!(
+            account_menu_actions(imap),
+            [("vacation", false), ("rules", false), ("hide-my-email", false)]
+        );
+        assert_eq!(
+            account_menu_actions(Offers::EVERYTHING),
+            [("vacation", true), ("rules", true), ("hide-my-email", true)]
+        );
+        let replies_only = Offers {
+            rules: false,
+            ..Offers::EVERYTHING
+        };
+        assert_eq!(
+            account_menu_actions(replies_only),
+            [("vacation", true), ("rules", false), ("hide-my-email", false)],
+            "Hide My Email needs rules, the automatic reply does not"
+        );
+    }
+
+    #[test]
+    fn mail_from_several_accounts_takes_labels_only_when_every_one_has_them() {
+        assert_eq!(
+            Filing::across([Offers::EVERYTHING, Offers::EVERYTHING]),
+            Filing::Labels
+        );
+        assert_eq!(
+            Filing::across([Offers::EVERYTHING, folders()]),
+            Filing::Folders
+        );
+    }
+
+    #[test]
+    fn the_picker_asks_for_mail_in_the_words_of_the_filing() {
+        assert_eq!(
+            Filing::Labels.nothing_picked(),
+            "Open or select mail to label it."
+        );
+        assert_eq!(
+            Filing::Folders.nothing_picked(),
+            "Open or select mail to move it."
+        );
+        assert_eq!(
+            Filing::Labels.one_account_only(),
+            "Select mail from one account to label it."
+        );
+        assert_eq!(
+            Filing::Folders.one_account_only(),
+            "Select mail from one account to move it."
+        );
+    }
+
+    #[test]
+    fn renaming_and_deleting_keep_the_gmail_words_for_labels() {
+        assert_eq!(Filing::Labels.rename_heading(), "Rename Label");
+        assert_eq!(
+            Filing::Labels.rename_body(),
+            "Labels nested under it move along."
+        );
+        assert_eq!(
+            Filing::Labels.rename_failed(),
+            "Could not rename the label: {reason}"
+        );
+        assert_eq!(
+            Filing::Labels.delete_body(),
+            "Its mail stays in Gmail, without the label. Nested labels stay too."
+        );
+        assert_eq!(
+            Filing::Labels.delete_failed(),
+            "Could not delete the label: {reason}"
+        );
+    }
+
+    #[test]
+    fn deleting_a_folder_says_its_mail_goes_with_it() {
+        assert_eq!(Filing::Folders.rename_heading(), "Rename Folder");
+        assert_eq!(
+            Filing::Folders.rename_body(),
+            "Folders nested under it move along."
+        );
+        assert_eq!(
+            Filing::Folders.rename_failed(),
+            "Could not rename the folder: {reason}"
+        );
+        assert_eq!(
+            Filing::Folders.delete_body(),
+            "The mail in the folder is deleted with it."
+        );
+        assert_eq!(
+            Filing::Folders.delete_failed(),
+            "Could not delete the folder: {reason}"
+        );
+    }
+
+    use super::missing_lines;
+
+    #[test]
+    fn preferences_names_what_each_account_lacks_and_nothing_for_gmail() {
+        let bare = Account {
+            id: 2,
+            email: "me@example.com".into(),
+            ..gmail()
+        };
+        let lacking = Offers {
+            rules: false,
+            auto_reply: false,
+            auto_reply_subject: false,
+            auto_reply_contacts_only: false,
+            ..Offers::EVERYTHING
+        };
+        let lines = missing_lines(&[(gmail(), Offers::EVERYTHING), (bare.clone(), lacking)], |_, _| None);
+        assert_eq!(
+            lines,
+            [(
+                "me@example.com".to_string(),
+                vec![
+                    reason(&bare, Missing::Rules, None),
+                    reason(&bare, Missing::AutoReply, None),
+                ],
+            )]
+        );
+    }
+
+    #[test]
+    fn preferences_gives_each_account_one_entry_whatever_it_lacks() {
+        let pop3 = Account {
+            id: 3,
+            email: "dana@reyes-home.example".into(),
+            provider: Provider::Pop3,
+            provider_name: Some("reyes-home.example".into()),
+            ..gmail()
+        };
+        let lacking = Offers {
+            calendar: false,
+            contacts: false,
+            auto_reply: false,
+            auto_reply_subject: false,
+            auto_reply_contacts_only: false,
+            ..Offers::EVERYTHING
+        };
+        let lines = missing_lines(&[(fastmail(), lacking), (pop3, lacking)], |_, _| None);
+        let addresses: Vec<&str> = lines.iter().map(|(address, _)| address.as_str()).collect();
+        assert_eq!(addresses, ["dana@fastmail.com", "dana@reyes-home.example"]);
+        assert_eq!(lines[1].1.len(), 3, "{lines:?}");
+    }
+
+    #[test]
+    fn preferences_lists_what_an_imap_account_lacks_once_each() {
+        let imap = Offers {
+            labels: false,
+            categories: false,
+            calendar: false,
+            contacts: false,
+            auto_reply: false,
+            auto_reply_subject: false,
+            auto_reply_contacts_only: false,
+            ..Offers::EVERYTHING
+        };
+        let lines = missing_lines(&[(fastmail(), imap)], |_, _| None);
+        assert_eq!(
+            lines[0].1,
+            [
+                "Penguin Mail found no calendar server for Fastmail.",
+                "Penguin Mail found no contacts server for Fastmail.",
+                "Fastmail cannot send automatic replies.",
+            ]
+        );
+    }
+
+    #[test]
+    fn each_not_available_row_is_named_for_its_account_and_every_reason() {
+        assert_eq!(
+            super::missing_name(
+                "dana@fastmail.example",
+                &[
+                    "Penguin Mail found no calendar server for Fastmail.".to_string(),
+                    "Fastmail cannot send automatic replies.".to_string(),
+                ]
+            ),
+            "dana@fastmail.example: Penguin Mail found no calendar server for Fastmail. \
+             Fastmail cannot send automatic replies."
+        );
+    }
+
+    use super::reads_send_as;
+
+    #[test]
+    fn only_gmail_is_asked_which_addresses_it_sends_as() {
+        assert!(reads_send_as(&gmail()));
+        assert!(!reads_send_as(&fastmail()));
+    }
+
+    #[test]
+    fn a_mailbox_that_is_not_an_inbox_never_shows_the_bar() {
+        let sent = Mailbox::Unified(Standard::Sent);
+        assert!(!shows_categories(true, &sent, &[1], |_| Offers::EVERYTHING));
+    }
+
+    fn microsoft() -> Offers {
+        Offers {
+            labels: false,
+            categories: false,
+            tags: true,
+            focused: true,
+            ..Offers::EVERYTHING
+        }
+    }
+
+    use super::{InboxBar, categorize_choices, category_after, inbox_bar, tags_on};
+    use mailrs_domain::{AccountId, Category};
+
+    #[test]
+    fn one_microsoft_inbox_shows_focused_and_other() {
+        let offers = |id: AccountId| if id == 2 { microsoft() } else { Offers::EVERYTHING };
+        let outlook = Mailbox::Standard { account_id: 2, which: Standard::Inbox };
+        assert_eq!(inbox_bar(true, &outlook, &[1, 2], offers), Some(InboxBar::Focus));
+        assert_eq!(inbox_bar(false, &outlook, &[1, 2], offers), None, "the categories preference turns both off");
+        let gmail = Mailbox::Standard { account_id: 1, which: Standard::Inbox };
+        assert_eq!(inbox_bar(true, &gmail, &[1, 2], offers), Some(InboxBar::Categories));
+        // The unified inbox keeps Gmail's categories; Outlook mail there
+        // counts as Primary.
+        assert_eq!(inbox_bar(true, &Mailbox::Unified(Standard::Inbox), &[1, 2], offers), Some(InboxBar::Categories));
+        assert_eq!(inbox_bar(true, &Mailbox::Unified(Standard::Inbox), &[2], offers), None);
+    }
+
+    #[test]
+    fn switching_bars_moves_the_slice_to_one_the_bar_has() {
+        assert_eq!(category_after(InboxBar::Focus, Category::Social, Category::Primary), Category::Focused);
+        assert_eq!(category_after(InboxBar::Focus, Category::Other, Category::Primary), Category::Other);
+        assert_eq!(category_after(InboxBar::Categories, Category::Other, Category::Primary), Category::Primary);
+        assert_eq!(category_after(InboxBar::Categories, Category::Social, Category::Primary), Category::Social);
+    }
+
+    #[test]
+    fn tags_show_for_mail_from_one_account_that_keeps_them() {
+        let offers = |id: AccountId| if id == 2 { microsoft() } else { Offers::EVERYTHING };
+        assert!(tags_on(&[2, 2], offers));
+        assert!(!tags_on(&[1], offers));
+        assert!(!tags_on(&[1, 2], offers), "tags belong to one account");
+        assert!(!tags_on(&[], offers));
+    }
+
+    #[test]
+    fn categorize_sender_offers_focus_on_a_microsoft_account() {
+        assert_eq!(categorize_choices(microsoft()), [Category::Focused, Category::Other]);
+        assert_eq!(categorize_choices(Offers::EVERYTHING), [Category::Primary, Category::Updates, Category::Promotions, Category::Social]);
+        let on = sender_actions(microsoft());
+        assert!(on.contains(&("categorize-sender", true)));
+    }
+}

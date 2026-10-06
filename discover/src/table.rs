@@ -1,0 +1,662 @@
+//! The built-in provider table, `providers.toml`, compiled in.
+
+use std::sync::LazyLock;
+
+use serde::Deserialize;
+
+use crate::{Found, PasswordKind, ProviderInfo, Server, Source, Unreachable, Verdict, pairs};
+
+static BUILT_IN: LazyLock<Table> = LazyLock::new(|| {
+    Table::parse(include_str!("../providers.toml")).unwrap_or_else(|error| {
+        // The table's own test parses this file, so this runs only on a
+        // build that skipped the tests. Discovery then goes to the network.
+        tracing::error!("the built-in provider table does not parse: {error}");
+        Table::default()
+    })
+});
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct Table {
+    #[serde(rename = "provider")]
+    pub(crate) entries: Vec<Entry>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct Entry {
+    pub(crate) id: String,
+    pub(crate) name: String,
+    pub(crate) kind: Kind,
+    #[serde(default)]
+    pub(crate) domains: Vec<String>,
+    #[serde(default)]
+    pub(crate) mx: Vec<String>,
+    pub(crate) imap: Option<Server>,
+    #[serde(default)]
+    pub(crate) smtp: Vec<Server>,
+    pub(crate) custom_domain_imap: Option<Server>,
+    #[serde(default)]
+    pub(crate) custom_domain_smtp: Vec<Server>,
+    pub(crate) pop3: Option<Server>,
+    pub(crate) password: Option<PasswordKind>,
+    pub(crate) app_password_url: Option<String>,
+    pub(crate) enable_imap_url: Option<String>,
+    pub(crate) documentation_url: Option<String>,
+    #[serde(default)]
+    pub(crate) files_sent_mail: bool,
+    pub(crate) caldav: Option<String>,
+    pub(crate) carddav: Option<String>,
+    pub(crate) sieve: Option<SieveEntry>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct SieveEntry {
+    pub(crate) host: String,
+    pub(crate) port: u16,
+}
+
+/// Where a provider's calendar, contacts and Sieve servers are, as the
+/// table knows them.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct ProviderServices {
+    pub caldav: Option<String>,
+    pub carddav: Option<String>,
+    pub sieve: Option<(String, u16)>,
+}
+
+/// The table's servers beside mail for the account whose IMAP or POP3
+/// server is `imap_host`: the entry whose IMAP host it is, or whose domain list
+/// holds it. The host tells GMX's two families and each Zoho data center
+/// apart, which the provider's name cannot. A host the table does not
+/// know gets nothing, and the caller asks the domain instead.
+pub fn services_of(imap_host: &str) -> ProviderServices {
+    let host = imap_host.trim_end_matches('.').to_ascii_lowercase();
+    Table::built_in()
+        .entries
+        .iter()
+        .find(|entry| {
+            entry.kind == Kind::Imap
+                && (entry
+                    .imap
+                    .as_ref()
+                    .is_some_and(|server| server.host == host)
+                    || entry
+                        .pop3
+                        .as_ref()
+                        .is_some_and(|server| server.host == host)
+                    || entry.domains.contains(&host))
+        })
+        .map(|entry| ProviderServices {
+            caldav: entry.caldav.clone(),
+            carddav: entry.carddav.clone(),
+            sieve: entry.sieve.as_ref().map(|s| (s.host.clone(), s.port)),
+        })
+        .unwrap_or_default()
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum Kind {
+    Imap,
+    NoImap,
+    NotYet,
+    Google,
+    Microsoft,
+}
+
+impl Table {
+    pub(crate) fn parse(text: &str) -> Result<Table, toml::de::Error> {
+        toml::from_str(text)
+    }
+
+    pub(crate) fn built_in() -> &'static Table {
+        &BUILT_IN
+    }
+
+    /// The entry that lists `domain` among its domains.
+    pub(crate) fn by_domain(&self, domain: &str) -> Option<&Entry> {
+        self.entries
+            .iter()
+            .find(|entry| entry.domains.iter().any(|d| d == domain))
+    }
+
+    /// The first IMAP entry whose display name is `name`. Zoho's data
+    /// centers and GMX's two families share a name; a test holds entries
+    /// that share one to the same sent-copy rule and password, so the
+    /// first answers for all.
+    pub(crate) fn by_name(&self, name: &str) -> Option<&Entry> {
+        self.entries
+            .iter()
+            .find(|entry| entry.kind == Kind::Imap && entry.name == name)
+    }
+
+    /// The entry the first of `hosts` that any entry knows belongs to.
+    /// `hosts` come best first, as MX preference orders them.
+    pub(crate) fn by_mx(&self, hosts: &[String]) -> Option<&Entry> {
+        hosts.iter().find_map(|host| self.by_mx_host(host))
+    }
+
+    /// An exact host wins over every pattern, and a longer suffix over a
+    /// shorter one, so AOL's own exchanger beats Yahoo's `*.gm0.yahoodns.net`
+    /// whatever order the entries sit in.
+    fn by_mx_host(&self, host: &str) -> Option<&Entry> {
+        let host = host.to_ascii_lowercase();
+        let host = host.strip_suffix('.').unwrap_or(&host);
+        let exact = self
+            .entries
+            .iter()
+            .find(|entry| entry.mx.iter().any(|pattern| pattern == host));
+        exact.or_else(|| {
+            self.entries
+                .iter()
+                .flat_map(|entry| {
+                    entry.mx.iter().filter_map(move |pattern| {
+                        let suffix = pattern.strip_prefix('*')?;
+                        host.ends_with(suffix).then_some((suffix.len(), entry))
+                    })
+                })
+                .max_by_key(|(length, _)| *length)
+                .map(|(_, entry)| entry)
+        })
+    }
+}
+
+/// The built-in table's facts about the IMAP provider whose display name
+/// is `name`, such as `"Fastmail"`, or `None` when the table lists no IMAP
+/// provider by that name. An account stores the name; reading the rest
+/// here at each start lets a corrected table reach accounts added before
+/// the correction.
+pub fn provider_named(name: &str) -> Option<ProviderInfo> {
+    Table::built_in().by_name(name).map(Entry::info)
+}
+
+/// The table's name for `provider_name`: itself, when the table already
+/// names an entry `provider_name` or lists no entry that matches it at
+/// all; an entry's own name, when `provider_name` is instead one of the
+/// domains that entry lists, as "Set up manually" saved an account
+/// before it consulted the table. An account saved that way then shows
+/// its real provider from here on, with no migration needed.
+pub fn resolved_provider_name(provider_name: &str) -> String {
+    let table = Table::built_in();
+    if table.by_name(provider_name).is_some() {
+        return provider_name.to_string();
+    }
+    table
+        .by_domain(provider_name)
+        .filter(|entry| entry.kind == Kind::Imap)
+        .map(|entry| entry.name.clone())
+        .unwrap_or_else(|| provider_name.to_string())
+}
+
+/// Every address domain the built-in table lists, in the table's order,
+/// which puts a provider's main domain before its regional ones.
+pub fn listed_domains() -> impl Iterator<Item = &'static str> {
+    Table::built_in()
+        .entries
+        .iter()
+        .flat_map(|entry| entry.domains.iter().map(String::as_str))
+}
+
+impl Entry {
+    /// The provider's name, password kind, links and sent-copy rule.
+    pub(crate) fn info(&self) -> ProviderInfo {
+        ProviderInfo {
+            name: self.name.clone(),
+            password: self.password.unwrap_or(PasswordKind::AccountPassword),
+            app_password_url: self.app_password_url.clone(),
+            enable_imap_url: self.enable_imap_url.clone(),
+            documentation_url: self.documentation_url.clone(),
+            files_sent_mail: self.files_sent_mail,
+        }
+    }
+
+    /// What this entry says about an address. `custom_domain` is true when
+    /// the entry was found by MX rather than by the address's own domain.
+    pub(crate) fn found(&self, source: Source, custom_domain: bool) -> Found {
+        tracing::debug!(provider = %self.id, ?source, "the provider table answered");
+        let unreachable = |reason| Found {
+            verdict: Verdict::Unreachable {
+                provider: self.name.clone(),
+                reason,
+            },
+            candidates: Vec::new(),
+        };
+        let verdict_only = |verdict| Found {
+            verdict,
+            candidates: Vec::new(),
+        };
+        match self.kind {
+            Kind::NoImap => unreachable(Unreachable::NoImap),
+            Kind::NotYet => unreachable(Unreachable::NotYet),
+            Kind::Google => verdict_only(Verdict::Google),
+            Kind::Microsoft => verdict_only(Verdict::Microsoft),
+            Kind::Imap => {
+                let (imap, smtp) = match (&self.custom_domain_imap, custom_domain) {
+                    (Some(imap), true) => (imap, &self.custom_domain_smtp),
+                    _ => match &self.imap {
+                        Some(imap) => (imap, &self.smtp),
+                        None => return Found::nothing(),
+                    },
+                };
+                let provider = self.info();
+                Found::servers(pairs(
+                    source,
+                    Some(&provider),
+                    std::slice::from_ref(imap),
+                    smtp,
+                    self.pop3.as_ref(),
+                    false,
+                ))
+                .unwrap_or_else(Found::nothing)
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashSet;
+
+    use super::*;
+    use crate::name::host;
+    use crate::{Security, UserName};
+
+    fn table() -> Table {
+        Table::parse(include_str!("../providers.toml")).expect("providers.toml parses")
+    }
+
+    fn servers_of(entry: &Entry) -> Vec<&Server> {
+        entry
+            .imap
+            .iter()
+            .chain(&entry.smtp)
+            .chain(&entry.custom_domain_imap)
+            .chain(&entry.custom_domain_smtp)
+            .chain(&entry.pop3)
+            .collect()
+    }
+
+    #[test]
+    fn every_id_and_domain_appears_once() {
+        let table = table();
+        let mut ids = HashSet::new();
+        let mut domains = HashSet::new();
+        for entry in &table.entries {
+            assert!(ids.insert(&entry.id), "id {} twice", entry.id);
+            for domain in &entry.domains {
+                assert!(domains.insert(domain), "domain {domain} twice");
+            }
+        }
+    }
+
+    #[test]
+    fn every_name_in_the_table_is_well_formed() {
+        for entry in &table().entries {
+            for domain in &entry.domains {
+                assert_eq!(
+                    host(domain).as_ref(),
+                    Some(domain),
+                    "{}: {domain}",
+                    entry.id
+                );
+            }
+            assert!(!entry.mx.is_empty(), "{} has no MX pattern", entry.id);
+            for pattern in &entry.mx {
+                let name = pattern.strip_prefix("*.").unwrap_or(pattern);
+                assert_eq!(host(name).as_deref(), Some(name), "{}: {pattern}", entry.id);
+            }
+            for server in servers_of(entry) {
+                assert_eq!(
+                    host(&server.host).as_ref(),
+                    Some(&server.host),
+                    "{}",
+                    entry.id
+                );
+                assert_ne!(server.port, 0, "{}", entry.id);
+            }
+            for url in [
+                &entry.app_password_url,
+                &entry.enable_imap_url,
+                &entry.documentation_url,
+            ]
+            .into_iter()
+            .flatten()
+            {
+                assert!(url.starts_with("https://"), "{}: {url}", entry.id);
+            }
+        }
+    }
+
+    #[test]
+    fn an_imap_entry_has_servers_and_the_others_have_none() {
+        for entry in &table().entries {
+            if entry.kind == Kind::Imap {
+                assert!(entry.imap.is_some(), "{}", entry.id);
+                assert!(!entry.smtp.is_empty(), "{}", entry.id);
+                assert!(entry.password.is_some(), "{}", entry.id);
+                assert_eq!(
+                    entry.custom_domain_imap.is_some(),
+                    !entry.custom_domain_smtp.is_empty(),
+                    "{}",
+                    entry.id
+                );
+            } else {
+                assert!(servers_of(entry).is_empty(), "{}", entry.id);
+                assert!(entry.password.is_none(), "{}", entry.id);
+            }
+        }
+    }
+
+    #[test]
+    fn imap_always_starts_with_tls() {
+        for entry in &table().entries {
+            for imap in entry.imap.iter().chain(&entry.custom_domain_imap) {
+                assert_eq!(imap.security, Security::Tls, "{}", entry.id);
+                assert_eq!(imap.port, 993, "{}", entry.id);
+            }
+        }
+    }
+
+    fn verdict_for(domain: &str) -> Verdict {
+        table()
+            .by_domain(domain)
+            .unwrap_or_else(|| panic!("{domain} is in the table"))
+            .found(Source::Table, false)
+            .verdict
+    }
+
+    #[test]
+    fn every_provider_the_app_serves_answers_by_domain() {
+        for (domain, name) in [
+            ("fastmail.com", "Fastmail"),
+            ("icloud.com", "iCloud Mail"),
+            ("yahoo.com", "Yahoo Mail"),
+            ("aol.com", "AOL Mail"),
+            ("zohomail.eu", "Zoho Mail"),
+            ("gmx.de", "GMX"),
+            ("gmx.com", "GMX"),
+            ("web.de", "WEB.DE"),
+            ("mail.com", "mail.com"),
+            ("yandex.ru", "Yandex Mail"),
+            ("mailbox.org", "mailbox.org"),
+            ("posteo.de", "Posteo"),
+        ] {
+            let found = table()
+                .by_domain(domain)
+                .map(|e| e.found(Source::Table, false));
+            let found = found.unwrap_or_else(|| panic!("{domain} is in the table"));
+            assert_eq!(found.verdict, Verdict::Servers, "{domain}");
+            let first = &found.candidates[0];
+            assert_eq!(first.source, Source::Table);
+            assert!(!first.confirm);
+            assert_eq!(first.provider.as_ref().map(|p| p.name.as_str()), Some(name));
+        }
+    }
+
+    #[test]
+    fn providers_without_imap_say_so() {
+        let unreachable = |provider: &str, reason| Verdict::Unreachable {
+            provider: provider.into(),
+            reason,
+        };
+        assert_eq!(
+            verdict_for("tuta.com"),
+            unreachable("Tuta", Unreachable::NoImap)
+        );
+        assert_eq!(
+            verdict_for("hey.com"),
+            unreachable("HEY", Unreachable::NoImap)
+        );
+        assert_eq!(
+            verdict_for("proton.me"),
+            unreachable("Proton Mail", Unreachable::NotYet)
+        );
+    }
+
+    #[test]
+    fn google_and_microsoft_domains_go_to_their_own_sign_in() {
+        assert_eq!(verdict_for("gmail.com"), Verdict::Google);
+        assert_eq!(verdict_for("outlook.com"), Verdict::Microsoft);
+        assert_eq!(verdict_for("hotmail.co.uk"), Verdict::Microsoft);
+    }
+
+    #[test]
+    fn fastmail_offers_465_then_587_with_an_app_password() {
+        let found = table()
+            .by_domain("fastmail.com")
+            .unwrap()
+            .found(Source::Table, false);
+        let ports: Vec<(u16, Security)> = found
+            .candidates
+            .iter()
+            .map(|c| (c.smtp.port, c.smtp.security))
+            .collect();
+        assert_eq!(ports, [(465, Security::Tls), (587, Security::StartTls)]);
+        let provider = found.candidates[0].provider.clone().unwrap();
+        assert_eq!(provider.password, PasswordKind::AppPassword);
+        assert!(provider.app_password_url.is_some());
+    }
+
+    #[test]
+    fn icloud_tries_the_local_part_first_for_imap() {
+        let found = table()
+            .by_domain("me.com")
+            .unwrap()
+            .found(Source::Table, false);
+        assert_eq!(found.candidates[0].imap.as_ref().unwrap().user_name, UserName::LocalPartFirst);
+        assert_eq!(found.candidates[0].smtp.user_name, UserName::Address);
+    }
+
+    // A bare local part at Apple could be someone else's iCloud name, so
+    // an address on a custom domain signs in as itself.
+    #[test]
+    fn a_custom_domain_on_icloud_signs_in_with_the_whole_address() {
+        let table = table();
+        let icloud = table.by_mx(&["mx01.mail.icloud.com".to_string()]).unwrap();
+        let found = icloud.found(Source::Mx, true);
+        assert_eq!(found.candidates[0].imap.as_ref().unwrap().host, "imap.mail.me.com");
+        assert_eq!(found.candidates[0].imap.as_ref().unwrap().user_name, UserName::Address);
+        assert_eq!(found.candidates[0].smtp.host, "smtp.mail.me.com");
+        assert_eq!(found.candidates[0].smtp.user_name, UserName::Address);
+    }
+
+    fn by_mx(host: &str) -> Option<String> {
+        table()
+            .by_mx(&[host.to_string()])
+            .map(|entry| entry.id.clone())
+    }
+
+    #[test]
+    fn mx_hosts_name_their_provider() {
+        for (host, id) in [
+            ("in1-smtp.messagingengine.com", "fastmail"),
+            ("mx01.mail.icloud.com", "icloud"),
+            ("mta6.am0.yahoodns.net", "yahoo"),
+            ("mx-aol.mail.gm0.yahoodns.net", "aol"),
+            ("mx-apac.mail.gm0.yahoodns.net", "yahoo"),
+            ("mx.zoho.eu", "zoho-eu"),
+            ("mx2.zoho.com", "zoho-com"),
+            ("mx.zoho.com.au", "zoho-com-au"),
+            ("mx00.emig.gmx.net", "gmx-net"),
+            ("mx01.gmx.net", "gmx-com"),
+            ("mxext1.mailbox.org", "mailbox-org"),
+            ("mail.protonmail.ch", "proton"),
+            ("mail.tutanota.de", "tuta"),
+            ("work-mx.app.hey.com", "hey"),
+            ("smtp.google.com", "google"),
+            ("alt2.aspmx.l.google.com", "google"),
+            ("contoso-com.mail.protection.outlook.com", "microsoft"),
+            ("contoso-com.b-v1.mx.microsoft", "microsoft"),
+            ("MX01.Mail.iCloud.com.", "icloud"),
+        ] {
+            assert_eq!(by_mx(host).as_deref(), Some(id), "{host}");
+        }
+    }
+
+    #[test]
+    fn an_unknown_or_look_alike_mx_matches_nothing() {
+        for host in [
+            "mx.example.net",
+            "messagingengine.com.evil.example",
+            "zoho.com",
+            "evilzoho.com",
+        ] {
+            assert_eq!(by_mx(host), None, "{host}");
+        }
+    }
+
+    #[test]
+    fn the_first_mx_host_any_entry_knows_decides() {
+        let hosts = [
+            "backup.example.net".to_string(),
+            "mx01.mail.icloud.com".to_string(),
+        ];
+        assert_eq!(table().by_mx(&hosts).map(|e| e.id.as_str()), Some("icloud"));
+    }
+
+    #[test]
+    fn a_custom_domain_on_zoho_uses_the_pro_hosts() {
+        let table = table();
+        for center in ["com", "eu", "in", "com.au", "jp", "sa", "uk", "com.cn"] {
+            let zoho = table
+                .by_mx(&[format!("mx.zoho.{center}")])
+                .unwrap_or_else(|| panic!("mx.zoho.{center} is Zoho's"));
+            let found = zoho.found(Source::Mx, true);
+            assert_eq!(
+                found.candidates[0].imap.as_ref().unwrap().host,
+                format!("imappro.zoho.{center}")
+            );
+            assert_eq!(
+                found.candidates[0].smtp.host,
+                format!("smtppro.zoho.{center}")
+            );
+            assert_eq!(found.candidates[0].source, Source::Mx);
+            let own = zoho.found(Source::Table, false);
+            assert_eq!(own.candidates[0].imap.as_ref().unwrap().host, format!("imap.zoho.{center}"));
+        }
+    }
+
+    #[test]
+    fn zohos_saudi_and_chinese_addresses_answer_by_domain() {
+        for (domain, host) in [
+            ("zohomail.sa", "imap.zoho.sa"),
+            ("zoho.com.cn", "imap.zoho.com.cn"),
+        ] {
+            let found = table()
+                .by_domain(domain)
+                .unwrap_or_else(|| panic!("{domain} is in the table"))
+                .found(Source::Table, false);
+            assert_eq!(found.candidates[0].imap.as_ref().unwrap().host, host, "{domain}");
+        }
+    }
+
+    /// Each of these hosts answers 404, 501, a web page or a redirect at its
+    /// root and asks for the login only further in, at the place its
+    /// well-known URL leads (checked 2026-10-05 without a login).
+    #[test]
+    fn a_dav_context_url_is_the_place_that_asks_for_the_login() {
+        for (imap, caldav, carddav) in [
+            ("imap.fastmail.com", "https://caldav.fastmail.com/dav/calendars", "https://carddav.fastmail.com/dav/addressbooks"),
+            ("imap.gmx.net", "https://caldav.gmx.net/begenda/dav/users", "https://carddav.gmx.net/CardDavProxy/carddav"),
+            ("imap.gmx.com", "https://caldav.gmx.com/begenda/dav/users", "https://carddav.gmx.com/CardDavProxy/carddav"),
+            ("imap.web.de", "https://caldav.web.de/begenda/dav/users", "https://carddav.web.de/CardDavProxy/carddav"),
+            ("imap.mail.com", "https://caldav.mail.com/begenda/dav/users", "https://carddav.mail.com/CardDavProxy/carddav"),
+            ("imap.zoho.com", "https://calendar.zoho.com/.well-known/caldav", "https://contacts.zoho.com/carddav"),
+            ("imap.zoho.eu", "https://calendar.zoho.eu/.well-known/caldav", "https://contacts.zoho.eu/carddav"),
+            ("imap.zoho.in", "https://calendar.zoho.in/.well-known/caldav", "https://contacts.zoho.in/carddav"),
+            ("imap.zoho.com.au", "https://calendar.zoho.com.au/.well-known/caldav", "https://contacts.zoho.com.au/carddav"),
+            ("imap.zoho.jp", "https://calendar.zoho.jp/.well-known/caldav", "https://contacts.zoho.jp/carddav"),
+            ("imap.zohocloud.ca", "https://calendar.zohocloud.ca/.well-known/caldav", "https://contacts.zohocloud.ca/carddav"),
+            ("imap.zoho.sa", "https://calendar.zoho.sa/.well-known/caldav", "https://contacts.zoho.sa/carddav"),
+            ("imap.zoho.uk", "https://calendar.zoho.uk/.well-known/caldav", "https://contacts.zoho.uk/carddav"),
+            ("imap.zoho.com.cn", "https://calendar.zoho.com.cn/.well-known/caldav", "https://contacts.zoho.com.cn/carddav"),
+        ] {
+            let found = services_of(imap);
+            assert_eq!(found.caldav.as_deref(), Some(caldav), "{imap}");
+            assert_eq!(found.carddav.as_deref(), Some(carddav), "{imap}");
+        }
+    }
+
+    #[test]
+    fn every_provider_with_imap_says_where_its_calendar_is_or_that_it_has_none() {
+        let fastmail = services_of("imap.fastmail.com");
+        assert!(fastmail.caldav.is_some());
+        assert_eq!(fastmail.sieve, None);
+        assert_eq!(
+            services_of("imap.mailbox.org").sieve,
+            Some(("imap.mailbox.org".to_string(), 4190))
+        );
+        assert_eq!(
+            services_of("imap.mail.me.com").carddav.as_deref(),
+            Some("https://contacts.icloud.com/")
+        );
+        assert_eq!(
+            services_of("imap.aol.com").caldav.as_deref(),
+            Some("https://caldav.aol.com/")
+        );
+        assert_eq!(services_of("imap.example.org"), ProviderServices::default());
+    }
+
+    #[test]
+    fn the_imap_host_picks_the_family_and_the_data_center() {
+        let net = services_of("imap.gmx.net");
+        let com = services_of("imap.gmx.com");
+        assert!(net.caldav.as_deref().is_some_and(|url| url.starts_with("https://caldav.gmx.net/")));
+        assert!(com.caldav.as_deref().is_some_and(|url| url.starts_with("https://caldav.gmx.com/")));
+        assert!(services_of("imap.zoho.com.au").caldav.as_deref().is_some_and(|url| url.starts_with("https://calendar.zoho.com.au/")));
+        // A listed domain counts too, and a name the table lacks counts for nothing.
+        assert_eq!(
+            services_of("fastmail.com"),
+            services_of("imap.fastmail.com")
+        );
+        assert_eq!(services_of("Fastmail"), ProviderServices::default());
+    }
+
+    #[test]
+    fn the_built_in_table_is_the_file() {
+        assert_eq!(Table::built_in().entries.len(), table().entries.len());
+    }
+
+    #[test]
+    fn a_provider_is_found_again_by_its_name() {
+        let fastmail = provider_named("Fastmail").expect("Fastmail is in the table");
+        assert_eq!(fastmail.password, PasswordKind::AppPassword);
+        assert!(fastmail.app_password_url.is_some());
+        assert!(!fastmail.files_sent_mail);
+        for name in ["Zoho Mail", "Yahoo Mail", "AOL Mail"] {
+            let provider = provider_named(name).unwrap_or_else(|| panic!("{name}"));
+            assert!(provider.files_sent_mail, "{name} files its own Sent copy");
+        }
+        for name in ["Tuta", "Proton Mail", "Google", "fastmail", "Example"] {
+            assert_eq!(provider_named(name), None, "{name}");
+        }
+    }
+
+    #[test]
+    fn a_domain_saved_as_the_provider_name_resolves_to_the_real_one() {
+        assert_eq!(resolved_provider_name("fastmail.com"), "Fastmail");
+        assert_eq!(resolved_provider_name("Fastmail"), "Fastmail");
+        assert_eq!(resolved_provider_name("example.com"), "example.com");
+        // Gmail's own domain is in the table under a non-IMAP kind, so it
+        // must never resolve to a name here.
+        assert_eq!(resolved_provider_name("gmail.com"), "gmail.com");
+    }
+
+    /// Zoho's data centers and GMX's two families share a name, and an
+    /// account keeps only the name. Whichever entry answers must file sent
+    /// mail the same way and take the same password. GMX's two families
+    /// link to different help pages; the first family's pages answer for
+    /// both.
+    #[test]
+    fn entries_that_share_a_name_agree_on_the_sent_copy_and_the_password() {
+        let table = table();
+        for entry in table.entries.iter().filter(|e| e.kind == Kind::Imap) {
+            let first = table.by_name(&entry.name).expect("the entry itself").info();
+            let own = entry.info();
+            assert_eq!(first.files_sent_mail, own.files_sent_mail, "{}", entry.id);
+            assert_eq!(first.password, own.password, "{}", entry.id);
+        }
+    }
+}

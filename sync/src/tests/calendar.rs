@@ -1,0 +1,878 @@
+//! The assistant's calendar calls, through the local copy, against the
+//! in-memory Gmail.
+
+use std::collections::HashMap;
+use std::sync::Arc;
+
+use mailrs_domain::calendar::{Access, Calendar as Cal, Event as Ev, EventEdit};
+use mailrs_gmail::GmailError;
+
+use super::{Connected, Harness, harness};
+use crate::CalendarService;
+use crate::Permitted;
+use crate::SyncError;
+use crate::calendar::{Calendar, NoPick, free_slots, writable_named};
+use crate::calendar_copy::CalendarCopy;
+
+const HOUR: i64 = 60 * 60 * 1000;
+const MINUTE: i64 = 60 * 1000;
+
+/// 2026-03-10 at 09:00 UTC.
+const NINE: i64 = 1_773_133_200_000;
+
+/// A `Calendar` and the `CalendarCopy` behind it, over the same
+/// `Connected` accounts and store, as `copy()` does for `CalendarCopy`'s
+/// own tests. A test that never calls `copy.refresh` leaves the first
+/// read to the first call.
+fn calendar_with_copy(h: &Harness) -> (Calendar<Connected>, Arc<CalendarCopy<Connected>>) {
+    let connected = Arc::new(Connected(HashMap::from([(h.account_id, Arc::clone(&h.sync))])));
+    let copy = Arc::new(CalendarCopy::new(Arc::clone(&connected), h.db.clone()));
+    (Calendar::new(connected, h.db.clone(), Arc::clone(&copy)), copy)
+}
+
+/// A `Calendar` over an account whose Google calendar holds the primary
+/// calendar alone, as every Google account's does, and whose copy has
+/// never read it.
+fn calendar(h: &Harness) -> Calendar<Connected> {
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    let connected = Arc::new(Connected(HashMap::from([(h.account_id, Arc::clone(&h.sync))])));
+    let copy = Arc::new(CalendarCopy::new(Arc::clone(&connected), h.db.clone()));
+    Calendar::new(connected, h.db.clone(), copy)
+}
+
+fn event(title: &str, from: i64, to: i64) -> EventEdit {
+    EventEdit {
+        title: Some(title.into()),
+        start: Some(from),
+        end: Some(to),
+        all_day: Some(false),
+        ..EventEdit::default()
+    }
+}
+
+#[test]
+fn free_time_is_what_no_busy_span_touches_inside_the_windows() {
+    let day = (NINE, NINE + 8 * HOUR);
+    let busy = [
+        (NINE + HOUR, NINE + 2 * HOUR),
+        // Overlaps the one before and runs on past it.
+        (NINE + HOUR + 30 * MINUTE, NINE + 3 * HOUR),
+        // Leaves a gap too short for the meeting.
+        (NINE + 3 * HOUR + 20 * MINUTE, NINE + 4 * HOUR),
+        // Runs past the end of the day.
+        (NINE + 7 * HOUR, NINE + 10 * HOUR),
+    ];
+    assert_eq!(
+        free_slots(&busy, &[day], 30 * MINUTE),
+        vec![(NINE, NINE + HOUR), (NINE + 4 * HOUR, NINE + 7 * HOUR)]
+    );
+    assert_eq!(
+        free_slots(&[], &[day, (NINE + 24 * HOUR, NINE + 25 * HOUR)], HOUR),
+        vec![day, (NINE + 24 * HOUR, NINE + 25 * HOUR)],
+        "an empty calendar leaves every window whole"
+    );
+    assert!(free_slots(&busy, &[day], 5 * HOUR).is_empty());
+}
+
+#[tokio::test]
+async fn an_event_is_made_listed_moved_and_deleted() {
+    let h = harness().await;
+    let calendar = calendar(&h);
+
+    let made = calendar
+        .create(h.account_id, None, &event("Kite day", NINE, NINE + HOUR))
+        .await
+        .unwrap()
+        .done()
+        .expect("the permission is there");
+    assert_eq!(made.title, "Kite day");
+
+    let listed = calendar
+        .events(h.account_id, NINE - HOUR, NINE + 2 * HOUR)
+        .await
+        .unwrap()
+        .done()
+        .unwrap();
+    assert_eq!(listed.len(), 1);
+    // The send `create` started may land first and add Google's etag, so
+    // the row is compared by what the person made.
+    assert_eq!((listed[0].event.id.as_str(), listed[0].event.title.as_str()), (made.id.as_str(), "Kite day"));
+    let later = calendar
+        .events(h.account_id, NINE + 2 * HOUR, NINE + 3 * HOUR)
+        .await
+        .unwrap()
+        .done()
+        .unwrap();
+    assert!(later.is_empty(), "the event ends before the window opens");
+
+    let moved = calendar
+        .update(
+            h.account_id,
+            &made.id,
+            &EventEdit {
+                start: Some(NINE + 2 * HOUR),
+                end: Some(NINE + 3 * HOUR),
+                guests: Some(vec!["ann@example.com".into()]),
+                ..EventEdit::default()
+            },
+        )
+        .await
+        .unwrap()
+        .done()
+        .unwrap();
+    assert_eq!(
+        moved.title, "Kite day",
+        "what the change left alone stays"
+    );
+    assert_eq!(moved.start, NINE + 2 * HOUR);
+    assert_eq!(moved.guests[0].email, "ann@example.com");
+
+    assert_eq!(
+        calendar.delete(h.account_id, &made.id).await.unwrap(),
+        Permitted::Done(())
+    );
+    let gone = calendar.events(h.account_id, NINE, NINE + 4 * HOUR).await.unwrap().done().unwrap();
+    assert!(gone.is_empty());
+    assert!(
+        matches!(
+            calendar.delete(h.account_id, &made.id).await,
+            Err(SyncError::Backend(crate::BackendError::NotFound))
+        ),
+        "a second delete finds nothing"
+    );
+}
+
+#[tokio::test]
+async fn free_time_reads_the_copy_and_asks_google_nothing() {
+    let h = harness().await;
+    let calendar = calendar(&h);
+    calendar
+        .create(
+            h.account_id,
+            None,
+            &event("Design crit", NINE + HOUR, NINE + 2 * HOUR),
+        )
+        .await
+        .unwrap();
+    h.fake.reset_usage();
+
+    let windows = [
+        (NINE, NINE + 3 * HOUR),
+        (NINE + 24 * HOUR, NINE + 25 * HOUR),
+    ];
+    let free = calendar
+        .free(h.account_id, &windows, HOUR)
+        .await
+        .unwrap()
+        .done()
+        .unwrap();
+    assert_eq!(
+        free,
+        vec![
+            (NINE, NINE + HOUR),
+            (NINE + 2 * HOUR, NINE + 3 * HOUR),
+            (NINE + 24 * HOUR, NINE + 25 * HOUR),
+        ]
+    );
+    assert_eq!(h.fake.usage().calls_to("calendar.events.list"), 0);
+}
+
+#[tokio::test]
+async fn a_missing_permission_is_an_answer() {
+    let h = harness().await;
+    let calendar = calendar(&h);
+    h.fake.withhold(mailrs_gmail::CALENDAR_SCOPE);
+    assert_eq!(
+        calendar.events(h.account_id, NINE, NINE + HOUR).await.unwrap(),
+        Permitted::NeedsPermission
+    );
+    assert_eq!(
+        calendar.free(h.account_id, &[(NINE, NINE + HOUR)], HOUR).await.unwrap(),
+        Permitted::NeedsPermission
+    );
+}
+
+#[tokio::test]
+async fn a_switched_off_api_is_an_error_and_queues_nothing() {
+    let h = harness().await;
+    let calendar = calendar(&h);
+    h.fake.fail_next(GmailError::ApiDisabled {
+        service: "Google Calendar API".into(),
+        enable_url: "https://console.example/calendar".into(),
+    });
+    let err = calendar
+        .create(h.account_id, None, &event("Kite day", NINE, NINE + HOUR))
+        .await
+        .unwrap_err();
+    assert!(
+        matches!(err, crate::SyncError::Backend(crate::BackendError::ApiDisabled { .. })),
+        "{err}"
+    );
+    let account = h.account_id;
+    let queued = h.db.read(move |c| mailrs_store::calendar::queued(c, account)).await.unwrap();
+    assert!(queued.is_empty());
+}
+
+fn primary() -> Cal {
+    Cal {
+        id: "primary".into(),
+        name: "Personal".into(),
+        color: "#e8660c".into(),
+        access: Access::Owner,
+        zone: "UTC".into(),
+        primary: true,
+        shown: true,
+        hidden: false,
+        reminders: Vec::new(),
+    }
+}
+
+#[tokio::test]
+async fn once_the_copy_is_read_listing_events_asks_google_nothing() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(Ev {
+        calendar: "primary".into(),
+        id: "a".into(),
+        title: "Lunch".into(),
+        zone: "UTC".into(),
+        start: 1_790_000_000_000,
+        end: 1_790_003_600_000,
+        busy: true,
+        ..Ev::default()
+    });
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, 1_790_000_000_000).await.unwrap();
+    let before = h.fake.usage().calls_to("calendar.events.list");
+    let found = calendar
+        .events(h.account_id, 1_789_990_000_000, 1_790_010_000_000)
+        .await
+        .unwrap();
+    assert!(matches!(found, Permitted::Done(ref list) if list.len() == 1 && list[0].event.title == "Lunch"));
+    assert_eq!(h.fake.usage().calls_to("calendar.events.list"), before);
+}
+
+#[tokio::test]
+async fn an_event_the_assistant_makes_waits_in_the_queue() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, 1_790_000_000_000).await.unwrap();
+    let made = calendar
+        .create(
+            h.account_id,
+            None,
+            &event("Dentist", 1_790_000_000_000, 1_790_003_600_000),
+        )
+        .await
+        .unwrap();
+    assert!(matches!(made, Permitted::Done(ref e) if e.pending));
+    assert!(
+        h.fake.with(|s| s.calendar_events.is_empty()),
+        "nothing reached Google before the send"
+    );
+}
+
+/// ADR 0001: a change queued here goes out right after the edit that
+/// queued it. The assistant's new event reaches Google with no tick and
+/// no send from the test.
+#[tokio::test]
+async fn an_event_the_assistant_makes_reaches_google_without_a_tick() {
+    let h = harness().await;
+    let calendar = calendar(&h);
+    calendar.create(h.account_id, None, &event("Dentist", NINE, NINE + HOUR)).await.unwrap().done().unwrap();
+    assert!(
+        super::eventually(|| h.fake.with(|s| s.calendar_events.iter().any(|e| e.title == "Dentist"))).await,
+        "Google has the event"
+    );
+}
+
+#[tokio::test]
+async fn the_fake_hands_back_changes_since_a_token() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(Ev {
+        calendar: "primary".into(),
+        id: "a".into(),
+        title: "One".into(),
+        zone: "UTC".into(),
+        ..Ev::default()
+    });
+    let calendar = h.sync.services().calendar.clone().unwrap();
+    let first = calendar.event_changes("primary", None, None, 0).await.unwrap();
+    assert_eq!(first.events.len(), 1);
+    let token = first.next_sync.unwrap();
+    h.fake.put_calendar_event(Ev {
+        calendar: "primary".into(),
+        id: "b".into(),
+        title: "Two".into(),
+        zone: "UTC".into(),
+        ..Ev::default()
+    });
+    h.fake.drop_calendar_event("primary", "a");
+    let next = calendar.event_changes("primary", Some(&token), None, 0).await.unwrap();
+    assert_eq!(next.events.iter().map(|e| e.id.as_str()).collect::<Vec<_>>(), vec!["b"]);
+    assert_eq!(next.removed, vec!["a".to_string()]);
+}
+
+#[tokio::test]
+async fn the_calendar_list_needs_the_list_permission() {
+    let h = harness().await;
+    h.fake.withhold(mailrs_gmail::CALENDAR_LIST_SCOPE);
+    let calendar = h.sync.services().calendar.clone().unwrap();
+    assert!(matches!(calendar.calendars().await, Err(crate::BackendError::NeedsPermission)));
+}
+
+#[tokio::test]
+async fn the_fake_refuses_a_write_against_an_old_version() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(Ev { calendar: "primary".into(), id: "a".into(), zone: "UTC".into(), ..Ev::default() });
+    let calendar = h.sync.services().calendar.clone().unwrap();
+    let stale = Ev { calendar: "primary".into(), id: "a".into(), zone: "UTC".into(), ..Ev::default() };
+    let err = calendar.put_event(&stale, Some("\"0\""), false, mailrs_domain::calendar::Notify::Guests).await.unwrap_err();
+    assert!(matches!(err, crate::BackendError::Changed), "{err}");
+}
+
+/// Monday 19 October 2026, 00:00 UTC.
+const MONDAY: i64 = 1_792_368_000_000;
+const DAY: i64 = 24 * HOUR;
+
+/// A daily stand-up at 09:00 UTC, Monday to Friday of that week, on
+/// Google and read into the copy.
+async fn synced_standup(h: &Harness) -> (Calendar<Connected>, Arc<CalendarCopy<Connected>>) {
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(Ev {
+        calendar: "primary".into(),
+        id: "standup".into(),
+        uid: "standup@google.com".into(),
+        title: "Stand-up".into(),
+        zone: "UTC".into(),
+        start: MONDAY + 9 * HOUR,
+        end: MONDAY + 9 * HOUR + 15 * MINUTE,
+        busy: true,
+        rules: vec!["RRULE:FREQ=DAILY;COUNT=5".into()],
+        ..Ev::default()
+    });
+    let (calendar, copy) = calendar_with_copy(h);
+    copy.refresh(h.account_id, MONDAY).await.unwrap();
+    (calendar, copy)
+}
+
+async fn week_starts(calendar: &Calendar<Connected>, h: &Harness) -> Vec<i64> {
+    let week = calendar.events(h.account_id, MONDAY, MONDAY + 5 * DAY).await.unwrap().done().unwrap();
+    week.iter().map(|o| o.start).collect()
+}
+
+async fn thursday_id(calendar: &Calendar<Connected>, h: &Harness) -> String {
+    let week = calendar.events(h.account_id, MONDAY, MONDAY + 5 * DAY).await.unwrap().done().unwrap();
+    week.iter().find(|o| o.start == MONDAY + 3 * DAY + 9 * HOUR).expect("Thursday's stand-up").id()
+}
+
+/// Google's own copy of the series, which a change to one occurrence
+/// must leave as it was.
+fn series_on_google(h: &Harness) -> Ev {
+    h.fake.with(|s| s.calendar_events.iter().find(|e| e.id == "standup").cloned()).expect("the series")
+}
+
+#[tokio::test]
+async fn moving_one_occurrence_of_a_series_moves_only_that_one() {
+    let h = harness().await;
+    let (calendar, copy) = synced_standup(&h).await;
+    let before = series_on_google(&h);
+    let thursday = thursday_id(&calendar, &h).await;
+    assert_eq!(thursday, "standup_20261022T090000Z");
+
+    let ten = MONDAY + 3 * DAY + 10 * HOUR;
+    calendar.update(h.account_id, &thursday, &event("Stand-up", ten, ten + 15 * MINUTE)).await.unwrap().done().unwrap();
+    assert!(copy.send(h.account_id).await.unwrap().is_empty());
+
+    assert_eq!(
+        week_starts(&calendar, &h).await,
+        vec![MONDAY + 9 * HOUR, MONDAY + DAY + 9 * HOUR, MONDAY + 2 * DAY + 9 * HOUR, ten, MONDAY + 4 * DAY + 9 * HOUR]
+    );
+    assert_eq!(series_on_google(&h), before, "the series itself is untouched");
+    let moved = h.fake.with(|s| s.calendar_events.iter().find(|e| e.id == thursday).cloned()).expect("an exception");
+    assert_eq!((moved.series.as_deref(), moved.start), (Some("standup"), ten));
+}
+
+#[tokio::test]
+async fn cancelling_one_occurrence_of_a_series_cancels_only_that_one() {
+    let h = harness().await;
+    let (calendar, copy) = synced_standup(&h).await;
+    let before = series_on_google(&h);
+    let thursday = thursday_id(&calendar, &h).await;
+
+    calendar.delete(h.account_id, &thursday).await.unwrap().done().unwrap();
+    assert!(copy.send(h.account_id).await.unwrap().is_empty());
+
+    assert_eq!(
+        week_starts(&calendar, &h).await,
+        vec![MONDAY + 9 * HOUR, MONDAY + DAY + 9 * HOUR, MONDAY + 2 * DAY + 9 * HOUR, MONDAY + 4 * DAY + 9 * HOUR]
+    );
+    assert_eq!(series_on_google(&h), before, "the series itself is untouched");
+}
+
+/// Moving one date of a series with the network down waits in the queue
+/// like any other change, shows at once, and reaches Google once the
+/// network is back.
+#[tokio::test]
+async fn an_occurrence_edited_offline_goes_out_when_the_network_returns() {
+    let h = harness().await;
+    let (calendar, copy) = synced_standup(&h).await;
+    let thursday = thursday_id(&calendar, &h).await;
+    h.fake.with(|s| s.offline = true);
+
+    let ten = MONDAY + 3 * DAY + 10 * HOUR;
+    let moved = calendar.update(h.account_id, &thursday, &event("Stand-up", ten, ten + 15 * MINUTE)).await;
+    let moved = moved.unwrap().done().unwrap();
+    assert!(moved.pending);
+    assert!(week_starts(&calendar, &h).await.contains(&ten), "the copy shows it at once");
+    let cancelled = calendar.delete(h.account_id, "standup_20261023T090000Z").await;
+    cancelled.unwrap().done().unwrap();
+    assert!(copy.send(h.account_id).await.is_err(), "still offline");
+
+    h.fake.with(|s| s.offline = false);
+    assert!(copy.send(h.account_id).await.unwrap().is_empty());
+    let on_google = |id: &str| h.fake.with(|s| s.calendar_events.iter().find(|e| e.id == id).cloned());
+    assert_eq!(on_google(&thursday).map(|e| e.start), Some(ten));
+    let friday = on_google("standup_20261023T090000Z").expect("a cancelled occurrence");
+    assert_eq!(friday.status, mailrs_domain::calendar::Status::Cancelled);
+}
+
+/// Free time counts what the clash line counts: an event the account
+/// declined, one marked free and an all-day one leave the time open, as
+/// the live path did before the copy.
+#[tokio::test]
+async fn free_time_from_the_copy_leaves_declined_free_and_all_day_events_open() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    let at = |id: &str, from: i64, to: i64| Ev {
+        calendar: "primary".into(),
+        id: id.into(),
+        title: id.into(),
+        zone: "UTC".into(),
+        start: from,
+        end: to,
+        busy: true,
+        ..Ev::default()
+    };
+    h.fake.put_calendar_event(Ev { my_answer: Some(mailrs_domain::invitation::Answer::No), ..at("declined", NINE, NINE + HOUR) });
+    h.fake.put_calendar_event(Ev { busy: false, ..at("free", NINE + HOUR, NINE + 2 * HOUR) });
+    let midnight = NINE - 9 * HOUR;
+    h.fake.put_calendar_event(Ev { all_day: true, ..at("holiday", midnight, midnight + 24 * HOUR) });
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, NINE).await.unwrap();
+
+    let free = calendar.free(h.account_id, &[(NINE, NINE + 3 * HOUR)], HOUR).await.unwrap().done().unwrap();
+
+    assert_eq!(free, vec![(NINE, NINE + 3 * HOUR)]);
+}
+
+/// Without the list permission the copy cannot know the primary
+/// calendar's zone, so a new event names none and Google writes it in
+/// the calendar's own, rather than in UTC, where a repeat added later in
+/// Google would drift an hour at the clock change.
+#[tokio::test]
+async fn a_new_event_on_a_calendar_of_unknown_zone_names_no_zone() {
+    let h = harness().await;
+    h.fake.withhold(mailrs_gmail::CALENDAR_LIST_SCOPE);
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, NINE).await.unwrap();
+    calendar.create(h.account_id, None, &event("Dentist", NINE, NINE + HOUR)).await.unwrap().done().unwrap();
+    copy.send(h.account_id).await.unwrap();
+    let sent = h.fake.with(|s| s.calendar_events.iter().find(|e| e.title == "Dentist").cloned()).expect("sent");
+    assert_eq!(sent.zone, "");
+}
+
+/// Moving a meeting by its start alone keeps its length, rather than
+/// queuing an end before the start that Google refuses after the
+/// assistant already said the change is on its way.
+#[tokio::test]
+async fn moving_an_event_by_its_start_alone_keeps_its_length() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(Ev {
+        calendar: "primary".into(),
+        id: "a".into(),
+        title: "Review".into(),
+        zone: "UTC".into(),
+        start: NINE + HOUR,
+        end: NINE + 2 * HOUR,
+        busy: true,
+        ..Ev::default()
+    });
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, NINE).await.unwrap();
+    let only_start = EventEdit { start: Some(NINE + 5 * HOUR), ..EventEdit::default() };
+    let moved = calendar.update(h.account_id, "a", &only_start).await.unwrap().done().unwrap();
+    assert_eq!((moved.start, moved.end), (NINE + 5 * HOUR, NINE + 6 * HOUR));
+}
+
+fn cal(id: &str, name: &str, access: Access) -> Cal {
+    Cal {
+        id: id.into(),
+        name: name.into(),
+        color: "#3584e4".into(),
+        access,
+        zone: "UTC".into(),
+        primary: id == "primary",
+        shown: true,
+        hidden: false,
+        reminders: Vec::new(),
+    }
+}
+
+fn family() -> Vec<Cal> {
+    vec![
+        cal("primary", "Personal", Access::Owner),
+        cal("family", "Family", Access::Writer),
+        cal("holidays", "Holidays in Portugal", Access::Reader),
+    ]
+}
+
+fn recital() -> EventEdit {
+    event("Piano recital", 1_790_000_000_000, 1_790_003_600_000)
+}
+
+#[test]
+fn a_calendar_is_named_in_any_case_or_by_its_id() {
+    let list = family();
+    assert_eq!(writable_named(&list, "family").map(|c| c.id.as_str()), Ok("family"));
+    assert_eq!(writable_named(&list, "  FAMILY ").map(|c| c.id.as_str()), Ok("family"));
+    assert_eq!(writable_named(&list, "primary").map(|c| c.id.as_str()), Ok("primary"));
+}
+
+#[test]
+fn a_read_only_or_unknown_calendar_is_no_pick() {
+    let list = family();
+    assert_eq!(
+        writable_named(&list, "holidays in portugal"),
+        Err(NoPick::ReadOnly("Holidays in Portugal".into()))
+    );
+    assert_eq!(writable_named(&list, "holidays"), Err(NoPick::ReadOnly("Holidays in Portugal".into())));
+    assert_eq!(writable_named(&list, "Work"), Err(NoPick::Unknown));
+}
+
+#[test]
+fn two_calendars_with_one_name_want_the_id() {
+    let mut list = family();
+    list.push(cal("family2", "family", Access::Owner));
+    assert_eq!(writable_named(&list, "Family"), Err(NoPick::Several));
+    assert_eq!(writable_named(&list, "family2").map(|c| c.id.as_str()), Ok("family2"));
+}
+
+#[tokio::test]
+async fn the_calendar_list_comes_from_the_copy_once_it_is_read() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = family());
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, 1_790_000_000_000).await.unwrap();
+    // Google forgets them; the copy still has them.
+    h.fake.with(|s| s.calendars.clear());
+    let listed = calendar.calendars(h.account_id).await.unwrap();
+    assert!(matches!(listed, Permitted::Done(ref list) if list.len() == 3));
+}
+
+#[tokio::test]
+async fn a_copy_never_read_is_read_before_the_list() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = family());
+    let (calendar, _copy) = calendar_with_copy(&h);
+    let listed = calendar.calendars(h.account_id).await.unwrap();
+    assert!(matches!(listed, Permitted::Done(ref list) if list.len() == 3));
+}
+
+/// Without the list permission the copy holds the primary calendar
+/// alone, which would read as every calendar the account has; the list
+/// asks for the permission instead, whether or not the copy was read.
+#[tokio::test]
+async fn without_the_list_permission_the_list_says_so() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = family());
+    h.fake.withhold(mailrs_gmail::CALENDAR_LIST_SCOPE);
+    let (calendar, copy) = calendar_with_copy(&h);
+    assert!(matches!(calendar.calendars(h.account_id).await.unwrap(), Permitted::NeedsPermission));
+    copy.refresh(h.account_id, NINE).await.unwrap();
+    assert!(matches!(calendar.calendars(h.account_id).await.unwrap(), Permitted::NeedsPermission));
+}
+
+#[tokio::test]
+async fn without_the_calendar_permission_the_list_says_so() {
+    let h = harness().await;
+    h.fake.withhold(mailrs_gmail::CALENDAR_SCOPE);
+    let (calendar, _copy) = calendar_with_copy(&h);
+    assert!(matches!(calendar.calendars(h.account_id).await.unwrap(), Permitted::NeedsPermission));
+}
+
+#[tokio::test]
+async fn a_new_event_lands_on_the_calendar_named() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = family());
+    let (calendar, _copy) = calendar_with_copy(&h);
+    // The copy has never been read; naming a calendar reads it first.
+    let made = calendar.create(h.account_id, Some("family"), &recital()).await.unwrap();
+    let Permitted::Done(made) = made else { panic!("the permission is there") };
+    assert_eq!(made.calendar, "family");
+    assert!(made.pending, "it waits in the queue");
+}
+
+#[tokio::test]
+async fn a_read_only_calendar_takes_no_new_event() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = family());
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, 1_790_000_000_000).await.unwrap();
+    let refused = calendar.create(h.account_id, Some("holidays"), &recital()).await;
+    assert!(matches!(refused, Err(SyncError::NoCalendar(ref id)) if id == "holidays"));
+}
+
+/// An assistant asked to delete an invitation removes the account's own
+/// copy as the window's Remove does: quiet, with no cancellation sent to
+/// the other guests of a meeting someone else runs.
+#[tokio::test]
+async fn the_assistant_removes_an_invitation_quietly() {
+    use mailrs_domain::calendar::{Guest, Notify};
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(Ev {
+        calendar: primary().id,
+        id: "review".into(),
+        start: 1_790_000_000_000,
+        end: 1_790_003_600_000,
+        zone: "UTC".into(),
+        guests: vec![
+            Guest { email: "rita@example.com".into(), organizer: true, ..Guest::default() },
+            Guest { email: "me@example.com".into(), me: true, ..Guest::default() },
+        ],
+        ..Ev::default()
+    });
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, 1_790_000_000_000).await.unwrap();
+    calendar.delete(h.account_id, "review").await.unwrap();
+    copy.send(h.account_id).await.unwrap();
+    assert_eq!(h.fake.with(|s| s.calendar_notices.clone()), [("review".to_string(), Notify::Nobody)]);
+}
+
+/// A birthday on the primary calendar, as Google makes one from a
+/// contact.
+fn birthday() -> Ev {
+    Ev {
+        calendar: "primary".into(),
+        id: "bday".into(),
+        title: "Ana's birthday".into(),
+        zone: "UTC".into(),
+        start: 1_790_035_200_000,
+        end: 1_790_121_600_000,
+        all_day: true,
+        kind: mailrs_domain::calendar::Kind::Birthday,
+        ..Ev::default()
+    }
+}
+
+#[tokio::test]
+async fn the_assistant_cannot_change_or_delete_a_birthday() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(birthday());
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, 1_790_000_000_000).await.unwrap();
+    let rename = EventEdit { title: Some("Party".into()), ..EventEdit::default() };
+    let changed = calendar.update(h.account_id, "bday", &rename).await;
+    assert!(matches!(changed, Err(SyncError::MadeInGoogle(ref title)) if title == "Ana's birthday"), "{changed:?}");
+    let deleted = calendar.delete(h.account_id, "bday").await;
+    assert!(matches!(deleted, Err(SyncError::MadeInGoogle(_))), "{deleted:?}");
+    let account = h.account_id;
+    let queued = h.db.read(move |c| mailrs_store::calendar::queued(c, account)).await.unwrap();
+    assert!(queued.is_empty(), "nothing waits to go to Google");
+}
+
+fn ticket(uid: &str, title: &str) -> mailrs_domain::invitation::Invitation {
+    let text = format!(
+        "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nMETHOD:PUBLISH\r\nBEGIN:VEVENT\r\nUID:{uid}\r\n\
+         DTSTART:20260310T090000Z\r\nDTEND:20260310T110000Z\r\nSUMMARY:{title}\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n"
+    );
+    mailrs_domain::invitation::read(&text).expect("an event")
+}
+
+fn held(h: &Harness, uid: &str) -> Vec<Ev> {
+    h.fake.with(|s| s.calendar_events.iter().filter(|e| e.uid == uid).cloned().collect())
+}
+
+/// Adding the same file twice, or reopening it after an edit to the
+/// event, keeps one event: the UID is what the import matches on.
+#[tokio::test]
+async fn a_file_added_twice_is_one_event() {
+    let h = harness().await;
+    h.fake.with(|s| s.calendars = vec![cal("primary", "Personal", Access::Owner)]);
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, NINE).await.unwrap();
+    let file = [ticket("t-1@rail", "Coach 4")];
+
+    let first = calendar.import(h.account_id, None, &file).await.unwrap().done().unwrap();
+    let again = calendar.import(h.account_id, None, &file).await.unwrap().done().unwrap();
+
+    assert_eq!(held(&h, "t-1@rail").len(), 1);
+    assert_eq!(first.calendar, "Personal");
+    assert_eq!(first.spots.len(), 1);
+    assert_eq!(first.spots[0].id, again.spots[0].id);
+    assert_eq!(first.spots[0].start, NINE);
+}
+
+#[tokio::test]
+async fn a_file_with_two_events_adds_both_to_the_calendar_picked() {
+    let h = harness().await;
+    h.fake.with(|s| {
+        s.calendars = vec![cal("primary", "Personal", Access::Owner), cal("trips", "Trips", Access::Owner)];
+    });
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, NINE).await.unwrap();
+
+    let added = calendar
+        .import(h.account_id, Some("trips"), &[ticket("a@x", "Outbound"), ticket("b@x", "Return")])
+        .await
+        .unwrap()
+        .done()
+        .unwrap();
+
+    assert_eq!(added.calendar, "Trips");
+    assert_eq!(added.spots.len(), 2);
+    assert!(held(&h, "a@x").iter().chain(&held(&h, "b@x")).all(|e| e.calendar == "trips"));
+    // The copy holds them at once, so Show in Calendar works without
+    // waiting for the next read.
+    let listed = calendar.events(h.account_id, NINE - HOUR, NINE + 3 * HOUR).await.unwrap().done().unwrap();
+    assert_eq!(listed.len(), 2);
+}
+
+#[tokio::test]
+async fn a_calendar_the_account_only_reads_takes_no_import() {
+    let h = harness().await;
+    h.fake.with(|s| {
+        s.calendars = vec![cal("primary", "Personal", Access::Owner), cal("holidays", "Holidays", Access::Reader)];
+    });
+    let (calendar, copy) = calendar_with_copy(&h);
+    copy.refresh(h.account_id, NINE).await.unwrap();
+
+    let refused = calendar.import(h.account_id, Some("holidays"), &[ticket("a@x", "Outbound")]).await;
+
+    assert!(matches!(refused, Err(SyncError::NoCalendar(_))));
+    assert!(held(&h, "a@x").is_empty());
+}
+
+#[tokio::test]
+async fn an_import_without_the_calendar_permission_asks_for_it() {
+    let h = harness().await;
+    h.fake.withhold(mailrs_gmail::CALENDAR_SCOPE);
+    let refused = calendar(&h).import(h.account_id, None, &[ticket("a@x", "Outbound")]).await.unwrap();
+    assert!(matches!(refused, Permitted::NeedsPermission));
+}
+
+// ---- Who hears of the assistant's changes ---------------------------------
+
+/// A meeting this account organizes, with Ann invited.
+fn meeting() -> Ev {
+    use mailrs_domain::calendar::Guest;
+    Ev {
+        calendar: primary().id,
+        id: "review".into(),
+        title: "Review".into(),
+        start: 1_790_000_000_000,
+        end: 1_790_003_600_000,
+        zone: "UTC".into(),
+        guests: vec![
+            Guest { email: "me@example.com".into(), me: true, organizer: true, ..Guest::default() },
+            Guest { email: "ann@example.com".into(), ..Guest::default() },
+        ],
+        ..Ev::default()
+    }
+}
+
+/// Rita organizes the review and this account is only a guest.
+fn invited() -> Ev {
+    use mailrs_domain::calendar::Guest;
+    Ev {
+        guests: vec![
+            Guest { email: "rita@example.com".into(), organizer: true, ..Guest::default() },
+            Guest { email: "me@example.com".into(), me: true, ..Guest::default() },
+        ],
+        organizer: Some("rita@example.com".into()),
+        ..meeting()
+    }
+}
+
+async fn read_into_copy(h: &Harness, event: Ev) -> (Calendar<Connected>, Arc<CalendarCopy<Connected>>) {
+    h.fake.with(|s| s.calendars = vec![primary()]);
+    h.fake.put_calendar_event(event);
+    let (calendar, copy) = calendar_with_copy(h);
+    copy.refresh(h.account_id, 1_790_000_000_000).await.unwrap();
+    (calendar, copy)
+}
+
+fn notices(h: &Harness) -> Vec<(String, mailrs_domain::calendar::Notify)> {
+    h.fake.with(|s| s.calendar_notices.clone())
+}
+
+fn titled(title: &str) -> EventEdit {
+    EventEdit { title: Some(title.into()), ..EventEdit::default() }
+}
+
+#[tokio::test]
+async fn the_assistant_tells_the_guests_of_a_change_they_see() {
+    use mailrs_domain::calendar::Notify;
+    let h = harness().await;
+    let (calendar, copy) = read_into_copy(&h, meeting()).await;
+    calendar.update(h.account_id, "review", &titled("Design review")).await.unwrap().done().unwrap();
+    copy.send(h.account_id).await.unwrap();
+    assert_eq!(notices(&h), [("review".to_string(), Notify::Guests)]);
+}
+
+/// The window sends nobody mail about an edit the guests would not see,
+/// and the assistant now follows the same rule.
+#[tokio::test]
+async fn the_assistant_mails_nobody_about_a_change_the_guests_would_not_see() {
+    use mailrs_domain::calendar::Notify;
+    let h = harness().await;
+    let (calendar, copy) = read_into_copy(&h, meeting()).await;
+    calendar.update(h.account_id, "review", &titled("Review")).await.unwrap().done().unwrap();
+    copy.send(h.account_id).await.unwrap();
+    assert_eq!(notices(&h), [("review".to_string(), Notify::Nobody)]);
+}
+
+/// A guest's change reaches only their own copy, so the organizer and the
+/// other guests get no mail of it.
+#[tokio::test]
+async fn the_assistant_changes_a_guests_own_copy_quietly() {
+    use mailrs_domain::calendar::Notify;
+    let h = harness().await;
+    let (calendar, copy) = read_into_copy(&h, invited()).await;
+    calendar.update(h.account_id, "review", &titled("Rita's review")).await.unwrap().done().unwrap();
+    copy.send(h.account_id).await.unwrap();
+    assert_eq!(notices(&h), [("review".to_string(), Notify::Nobody)]);
+}
+
+#[tokio::test]
+async fn the_assistants_confirmation_hears_who_gets_mail_from_the_same_rule() {
+    let h = harness().await;
+    let (calendar, _copy) = read_into_copy(&h, meeting()).await;
+    let removal = calendar.question(h.account_id, "review", None).await.unwrap();
+    assert!(removal.ask_guests, "{removal:?}");
+    let invite = EventEdit {
+        guests: Some(vec!["ann@example.com".into(), "bo@example.com".into()]),
+        ..EventEdit::default()
+    };
+    let adding = calendar.question(h.account_id, "review", Some(&invite)).await.unwrap();
+    assert!(adding.told && !adding.ask_guests, "{adding:?}");
+    let same = calendar.question(h.account_id, "review", Some(&titled("Review"))).await.unwrap();
+    assert!(!same.ask_guests && !same.told && !same.mailed, "{same:?}");
+}
+
+#[tokio::test]
+async fn the_assistants_confirmation_promises_no_mail_for_a_guests_own_copy() {
+    let h = harness().await;
+    let (calendar, _copy) = read_into_copy(&h, invited()).await;
+    let removal = calendar.question(h.account_id, "review", None).await.unwrap();
+    let renamed = calendar.question(h.account_id, "review", Some(&titled("Mine"))).await.unwrap();
+    for q in [removal, renamed] {
+        assert!(!q.ask_guests && !q.told && !q.mailed, "{q:?}");
+    }
+}

@@ -1,0 +1,281 @@
+//! Sync for one account: window loading, history replay, thread and body
+//! fetches, and triage. Each file adds methods to `AccountSync`.
+
+mod fetch;
+mod history;
+mod labels;
+mod listed;
+mod muted;
+mod outbox;
+mod pop3;
+mod refs;
+mod threads;
+mod window;
+mod writes;
+
+pub use listed::Searched;
+
+use std::collections::BTreeSet;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, Mutex, PoisonError};
+use std::time::{Duration, Instant};
+
+use mailrs_domain::{AccountId, AccountState, ChangeEvent, EpochMillis, MessageMeta};
+use mailrs_store::{Db, accounts, messages};
+
+use crate::raw_cache::{RAW_CACHE_BYTES, RawCache};
+use crate::{AccountServices, BackendError, MailBackend, RAW_LIMIT, SyncError};
+
+/// Metadata requests in flight per account.
+pub const FETCH_CONCURRENCY: usize = 10;
+pub const DEFAULT_WINDOW_DAYS: i64 = 30;
+pub const DEFAULT_BODY_CACHE_BYTES: i64 = 1 << 30;
+
+pub struct AccountSync {
+    account_id: AccountId,
+    services: AccountServices,
+    db: Db,
+    events: async_channel::Sender<ChangeEvent>,
+    window_days: i64,
+    body_cache_bytes: i64,
+    retry_max: Duration,
+    wait_ceiling: Duration,
+    /// Cached bodies read since the last write of their access times.
+    touched: Arc<Mutex<Vec<(String, EpochMillis)>>>,
+    /// Body bytes stored since the last eviction pass, `None` before the
+    /// first one.
+    unswept: Mutex<Option<i64>>,
+    /// When the last history replay left the store up to date. Opening a
+    /// thread within [`FRESH_FOR`] of it trusts the store and asks Gmail
+    /// nothing.
+    caught_up: Arc<Mutex<Option<Instant>>>,
+    /// Whole threads a Gmail search fetched, by thread id, kept so opening
+    /// one stores it without asking Gmail again.
+    listed: Mutex<std::collections::HashMap<String, listed::Listed>>,
+    /// The messages each thread had among a search's hits, kept so Delete
+    /// Forever on a row the store lacks knows what to erase.
+    hits: Mutex<std::collections::HashMap<String, listed::Hits>>,
+    /// The last small messages fetched whole, so a file opened right
+    /// after its message costs no second fetch.
+    raw: Arc<Mutex<RawCache>>,
+    /// Taken on a folder server by a write from its first server command
+    /// to the moment its moved messages' refs are recorded, and by every
+    /// look that can delete mail. A look in between would read a moved
+    /// message's old place as expunged and delete it.
+    moving: tokio::sync::Mutex<()>,
+    /// Held for a POP3 account's whole check. Most POP3 servers lock the
+    /// maildrop for one session, so a second check started meanwhile, by
+    /// the timer or by Check for Mail, waits here rather than meeting the
+    /// lock and failing. It keeps what the last clean check found, so a
+    /// check that finds the server as it was can stop at `STAT`.
+    pop3_checking: tokio::sync::Mutex<Option<pop3::Quiet>>,
+    /// Counts the changes to this account's mail, so a search kept to
+    /// list a folder can tell it no longer says what the folder holds.
+    mail_changes: AtomicU64,
+}
+
+/// How long a finished history replay speaks for the whole mailbox. The
+/// engine replays every 30 seconds, so this still covers one missed tick.
+pub const FRESH_FOR: Duration = Duration::from_secs(75);
+
+impl AccountSync {
+    pub fn new(
+        account_id: AccountId,
+        services: AccountServices,
+        db: Db,
+        events: async_channel::Sender<ChangeEvent>,
+    ) -> Self {
+        AccountSync {
+            account_id,
+            services,
+            db,
+            events,
+            window_days: DEFAULT_WINDOW_DAYS,
+            body_cache_bytes: DEFAULT_BODY_CACHE_BYTES,
+            retry_max: Duration::from_secs(8),
+            wait_ceiling: crate::WAIT_CEILING,
+            touched: Arc::default(),
+            unswept: Mutex::default(),
+            caught_up: Arc::default(),
+            listed: Mutex::default(),
+            hits: Mutex::default(),
+            raw: Arc::new(Mutex::new(RawCache::new(RAW_CACHE_BYTES))),
+            moving: tokio::sync::Mutex::new(()),
+            pop3_checking: tokio::sync::Mutex::new(None),
+            mail_changes: AtomicU64::new(0),
+        }
+    }
+
+    pub fn with_limits(mut self, window_days: i64, body_cache_bytes: i64) -> Self {
+        self.window_days = window_days;
+        self.body_cache_bytes = body_cache_bytes;
+        self
+    }
+
+    /// Caps the wait between retries of a triage write.
+    pub fn with_retry_max(mut self, retry_max: Duration) -> Self {
+        self.retry_max = retry_max;
+        self
+    }
+
+    /// Caps how long one mail action waits on a busy Gmail in total before
+    /// it stops and reports what did not go through.
+    pub fn with_wait_ceiling(mut self, ceiling: Duration) -> Self {
+        self.wait_ceiling = ceiling;
+        self
+    }
+
+    /// The message as the server holds it, from the raw cache or from one
+    /// fetch by the server's current name for it, which fills the cache
+    /// when the message is under the limit by its bytes or by the size the
+    /// store holds for it.
+    pub(crate) async fn raw(&self, message_id: &str) -> Result<Arc<Vec<u8>>, SyncError> {
+        if let Some(bytes) = self.cached_raw(message_id) {
+            return Ok(bytes);
+        }
+        let name = self.remote(message_id).await?;
+        let fetched = self
+            .services
+            .mail
+            .fetch_raw(&[name])
+            .await?
+            .into_iter()
+            .next()
+            .ok_or(BackendError::NotFound)?;
+        let bytes = Arc::new(fetched.bytes);
+        // View Source and a signature check fetch a large message raw too;
+        // keeping it would push out the small ones the cache is for. A
+        // message `small` sends down the raw path is kept whatever its
+        // real length: Gmail's size estimate can put it under the limit
+        // while its bytes come to more, and its files are read from these
+        // bytes next.
+        if (bytes.len() as i64) < RAW_LIMIT || self.small(message_id).await? {
+            self.raw
+                .lock()
+                .unwrap_or_else(PoisonError::into_inner)
+                .put(message_id.to_string(), Arc::clone(&bytes));
+        }
+        Ok(bytes)
+    }
+
+    /// The message's raw bytes when the raw cache holds them.
+    pub(crate) fn cached_raw(&self, message_id: &str) -> Option<Arc<Vec<u8>>> {
+        self.raw
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .get(message_id)
+    }
+
+    /// Whether `message_id` goes by the raw path: a stored message whose
+    /// reported size is known and under the limit. Anything else goes by
+    /// its structure, so an unknown size never downloads a large file.
+    pub(crate) async fn small(&self, message_id: &str) -> Result<bool, SyncError> {
+        let (account_id, key) = (self.account_id, message_id.to_string());
+        let size = self
+            .db
+            .read(move |c| messages::size_of(c, account_id, &key))
+            .await?;
+        Ok(size.is_some_and(|s| s > 0 && s < RAW_LIMIT))
+    }
+
+    /// On a folder server, waits for any write still moving mail and keeps
+    /// others out until the guard drops. A label server names a message
+    /// the same wherever it sits, so nothing there waits.
+    pub(super) async fn hold_moves(&self) -> Option<tokio::sync::MutexGuard<'_, ()>> {
+        match self.renames() {
+            true => Some(self.moving.lock().await),
+            false => None,
+        }
+    }
+
+    /// Records that history replay left the store up to date.
+    pub(crate) fn mark_caught_up(&self) {
+        *self.caught_up.lock().expect("caught up") = Some(Instant::now());
+    }
+
+    pub fn account_id(&self) -> AccountId {
+        self.account_id
+    }
+
+    /// The services this account is served by.
+    pub fn services(&self) -> &AccountServices {
+        &self.services
+    }
+
+    /// Whether a user action is waiting on this account's server. The
+    /// engine reads it between backfill pages and gives way.
+    pub(crate) fn foreground_waiting(&self) -> bool {
+        self.services.mail.person_waiting()
+    }
+
+    pub async fn set_state(&self, state: AccountState) -> Result<(), SyncError> {
+        let account_id = self.account_id;
+        self.db
+            .write(move |c| accounts::set_state(c, account_id, state))
+            .await?;
+        self.emit(ChangeEvent::AccountStateChanged { account_id, state });
+        Ok(())
+    }
+
+    /// When the engine last pruned this account and checked its inbox.
+    pub async fn checked_at(&self) -> Option<EpochMillis> {
+        let account_id = self.account_id;
+        self.db
+            .read(move |c| accounts::checked_at(c, account_id))
+            .await
+            .unwrap_or_else(|err| {
+                tracing::warn!(account = account_id, error = %err, "could not read the last inbox check");
+                None
+            })
+    }
+
+    pub async fn set_checked_at(&self, at: EpochMillis) -> Result<(), SyncError> {
+        let account_id = self.account_id;
+        self.db
+            .write(move |c| accounts::set_checked_at(c, account_id, at))
+            .await?;
+        Ok(())
+    }
+
+    /// How many times this account's mail has changed. Only the count
+    /// moving matters: a listing taken at one count is out of date at the
+    /// next.
+    pub fn mail_changes(&self) -> u64 {
+        self.mail_changes.load(Ordering::Acquire)
+    }
+
+    /// Marks the account's mail changed. Every event that names changed or
+    /// new mail does this, and so does a write once the server has it,
+    /// since a search the server answered between the two missed it.
+    fn mail_changed(&self) {
+        self.mail_changes.fetch_add(1, Ordering::AcqRel);
+    }
+
+    fn emit(&self, event: ChangeEvent) {
+        if matches!(
+            event,
+            ChangeEvent::ThreadsChanged { .. } | ChangeEvent::NewMail { .. }
+        ) {
+            self.mail_changed();
+        }
+        // The channel is unbounded, so this only fails when nobody listens.
+        let _ = self.events.try_send(event);
+    }
+
+    fn emit_threads(&self, thread_ids: BTreeSet<String>) {
+        if !thread_ids.is_empty() {
+            self.emit(ChangeEvent::ThreadsChanged {
+                account_id: self.account_id,
+                thread_ids: thread_ids.into_iter().collect(),
+            });
+        }
+    }
+
+    /// Metadata for `ids`, whose threads the caller does not know, a
+    /// `messages.get` each. Messages deleted since they were listed are
+    /// skipped.
+    pub async fn fetch_metadata(&self, ids: &[String]) -> Result<Vec<MessageMeta>, SyncError> {
+        let wants = ids.iter().map(crate::Want::message).collect();
+        Ok(self.fetch(wants).await?.metas)
+    }
+}

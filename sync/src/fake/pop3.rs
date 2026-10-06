@@ -1,0 +1,516 @@
+//! An in-memory POP3 server behind `Pop3Api`, for the downloader's tests.
+//! It keeps sessions as a real server does: `connect` numbers the
+//! messages for the session and locks the maildrop, `dele` marks one, and
+//! only a clean `quit` deletes what was marked. A test seeds mail, scripts
+//! failures, and reads back what the downloader asked for.
+
+use std::collections::{BTreeMap, BTreeSet};
+use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
+use std::time::Duration;
+
+use mailrs_pop3::{Capabilities, ListItem, Pop3Api, Pop3Error, Stat, Uidl, UidlListing};
+use tokio::sync::Notify;
+
+/// A small message, the `n`th of a test.
+pub fn pop3_mail(n: u32) -> Vec<u8> {
+    format!(
+        "From: Ana <ana@example.org>\r\nTo: me@example.org\r\nSubject: Hello {n}\r\n\
+         Message-ID: <m{n}@example.org>\r\nDate: Mon, 4 Jan 2021 09:00:00 +0000\r\n\r\nBody {n}\r\n"
+    )
+    .into_bytes()
+}
+
+pub struct FakePop3 {
+    inner: Mutex<Inner>,
+}
+
+struct Inner {
+    /// The maildrop: each message's UIDL and bytes, oldest first.
+    /// Shared with the session's numbering, so a session costs no copy.
+    messages: Vec<(String, Arc<[u8]>)>,
+    /// Sizes `LIST` reports in place of a message's real length.
+    claimed: BTreeMap<String, u64>,
+    /// This session's numbering: message `n` is `numbered[n - 1]`, with
+    /// its own bytes, so a UIDL listed twice answers two messages.
+    numbered: Vec<(String, Arc<[u8]>)>,
+    marked: BTreeSet<u32>,
+    in_session: bool,
+    capabilities: Capabilities,
+    refuse_sign_in: bool,
+    failing: BTreeSet<String>,
+    /// `retr` of these fails without `-ERR`, and the session ends, as the
+    /// real client ends it on an answer it cannot read to the end.
+    broken: BTreeMap<String, Pop3Error>,
+    /// `top` of these fails with the error kept, and the session ends.
+    broken_top: BTreeMap<String, Pop3Error>,
+    /// Messages whose `UIDL` line does not read, so the listing leaves
+    /// them out and counts them.
+    garbled: BTreeSet<String>,
+    /// Every `quit` fails as a dropped connection would.
+    drop_before_quit: bool,
+    /// After this many answered `retr`s, the next one fails as a dropped
+    /// connection would, and the server stays out of reach.
+    drop_after_retrs: Option<usize>,
+    /// Every `connect` fails as an unreachable server's would.
+    gone: bool,
+    retr_calls: Vec<u32>,
+    deleted: Vec<u32>,
+    /// Every command a session sent after signing in, by its POP3 name.
+    commands: Vec<&'static str>,
+    connects: usize,
+    in_flight: usize,
+    most_in_flight: usize,
+    /// Taken by the first `retr`, which waits until it is notified.
+    hold: Option<Arc<Notify>>,
+    /// Runs at each `dele`, before the fake marks the message.
+    on_dele: Option<Box<dyn Fn() + Send>>,
+    /// How long the server takes to notice a client that went away in the
+    /// middle of a held `retr`; until then the maildrop stays locked.
+    close_delay: Duration,
+    /// `connect`s refused because another session held the maildrop.
+    in_use_refusals: usize,
+}
+
+impl Default for FakePop3 {
+    fn default() -> Self {
+        FakePop3 {
+            inner: Mutex::new(Inner {
+                messages: Vec::new(),
+                claimed: BTreeMap::new(),
+                numbered: Vec::new(),
+                marked: BTreeSet::new(),
+                in_session: false,
+                capabilities: Capabilities { uidl: true, stls: false, sasl_plain: true, top: true },
+                refuse_sign_in: false,
+                failing: BTreeSet::new(),
+                broken: BTreeMap::new(),
+                broken_top: BTreeMap::new(),
+                garbled: BTreeSet::new(),
+                drop_before_quit: false,
+                drop_after_retrs: None,
+                gone: false,
+                retr_calls: Vec::new(),
+                deleted: Vec::new(),
+                commands: Vec::new(),
+                connects: 0,
+                in_flight: 0,
+                most_in_flight: 0,
+                hold: None,
+                on_dele: None,
+                close_delay: Duration::ZERO,
+                in_use_refusals: 0,
+            }),
+        }
+    }
+}
+
+/// Lets a `retr` held by [`FakePop3::holding_retr`] go on.
+pub struct Release(Arc<Notify>);
+
+impl Release {
+    pub fn release(&self) {
+        self.0.notify_one();
+    }
+}
+
+impl FakePop3 {
+    fn lock(&self) -> MutexGuard<'_, Inner> {
+        self.inner.lock().unwrap_or_else(PoisonError::into_inner)
+    }
+
+    pub fn with_message(self, uidl: &str, raw: &[u8]) -> Self {
+        self.add(uidl, raw);
+        self
+    }
+
+    /// Puts a message on the server now, as mail arriving between checks.
+    pub fn add(&self, uidl: &str, raw: &[u8]) {
+        self.lock().messages.push((uidl.to_string(), Arc::from(raw)));
+    }
+
+    /// Takes a message off the server, as another client's DELE and QUIT
+    /// would.
+    pub fn take(&self, uidl: &str) {
+        self.lock().messages.retain(|(held, _)| held != uidl);
+    }
+
+    /// `retr` of this message answers `-ERR`.
+    pub fn failing_retr(self, uidl: &str) -> Self {
+        self.lock().failing.insert(uidl.to_string());
+        self
+    }
+
+    /// `retr` of this message fails with `err`, which is not `-ERR`, and
+    /// the session ends: an answer longer than `LIST` claimed
+    /// (`TooLarge`), a garbled one (`Protocol`), or a connection that
+    /// drops on this message (`Network`).
+    pub fn breaking_retr(self, uidl: &str, err: Pop3Error) -> Self {
+        self.lock().broken.insert(uidl.to_string(), err);
+        self
+    }
+
+    /// `top` of this message fails with `err`, which is not `-ERR`, and the
+    /// session ends.
+    pub fn breaking_top(self, uidl: &str, err: Pop3Error) -> Self {
+        self.lock().broken_top.insert(uidl.to_string(), err);
+        self
+    }
+
+    /// The `UIDL` line of this message does not read, so the listing
+    /// leaves it out and counts it as unreadable.
+    pub fn garbling_uidl(&self, uidl: &str) {
+        self.lock().garbled.insert(uidl.to_string());
+    }
+
+    /// `LIST` reports `octets` for this message.
+    pub fn claiming_size(self, uidl: &str, octets: u64) -> Self {
+        self.lock().claimed.insert(uidl.to_string(), octets);
+        self
+    }
+
+    pub fn refusing_sign_in(self) -> Self {
+        self.lock().refuse_sign_in = true;
+        self
+    }
+
+    pub fn without_uidl(self) -> Self {
+        self.lock().capabilities.uidl = false;
+        self
+    }
+
+    /// Every `quit` fails as a dropped connection would, for the fake's
+    /// whole life, so nothing `dele` marked is deleted.
+    pub fn dropping_before_quit(self) -> Self {
+        self.lock().drop_before_quit = true;
+        self
+    }
+
+    /// Once `answered` `retr`s have gone through, the next one fails as a
+    /// dropped connection would, the session ends, and the server cannot
+    /// be reached again.
+    pub fn going_away_after_retrs(self, answered: usize) -> Self {
+        self.lock().drop_after_retrs = Some(answered);
+        self
+    }
+
+    /// Runs `look` at each `dele`, as the server receives it, so a test
+    /// can see what the client had done by then.
+    pub fn on_dele(self, look: impl Fn() + Send + 'static) -> Self {
+        self.lock().on_dele = Some(Box::new(look));
+        self
+    }
+
+    /// A client that goes away in the middle of a held `retr` keeps the
+    /// maildrop locked for `delay`, as a server that takes a moment to see
+    /// the connection close.
+    pub fn closing_slowly(self, delay: Duration) -> Self {
+        self.lock().close_delay = delay;
+        self
+    }
+
+    /// How many `connect`s met another session's lock.
+    pub fn in_use_refusals(&self) -> usize {
+        self.lock().in_use_refusals
+    }
+
+    /// The first `retr` waits until the [`Release`] says go.
+    pub fn holding_retr(self) -> (Self, Release) {
+        let notify = Arc::new(Notify::new());
+        self.lock().hold = Some(Arc::clone(&notify));
+        (self, Release(notify))
+    }
+
+    /// Every message number `retr` was asked for, in order.
+    pub fn retr_calls(&self) -> Vec<u32> {
+        self.lock().retr_calls.clone()
+    }
+
+    /// Every message number `dele` was asked for, in order.
+    pub fn deleted(&self) -> Vec<u32> {
+        self.lock().deleted.clone()
+    }
+
+    /// Every command sent after signing in, by its POP3 name, in order,
+    /// since the fake was made or the last [`FakePop3::clear_commands`].
+    pub fn commands(&self) -> Vec<&'static str> {
+        self.lock().commands.clone()
+    }
+
+    pub fn clear_commands(&self) {
+        self.lock().commands.clear();
+    }
+
+    pub fn connects(&self) -> usize {
+        self.lock().connects
+    }
+
+    /// Sessions open now.
+    pub fn in_flight(&self) -> usize {
+        self.lock().in_flight
+    }
+
+    /// The most sessions ever open at once.
+    pub fn most_in_flight(&self) -> usize {
+        self.lock().most_in_flight
+    }
+
+    /// The UIDLs the server holds now.
+    pub fn held(&self) -> Vec<String> {
+        self.lock().messages.iter().map(|(uidl, _)| uidl.clone()).collect()
+    }
+}
+
+/// Ends the session when a held `retr` is dropped before its answer, as
+/// the server does once it sees the client's connection close.
+struct Abandoned<'a> {
+    fake: &'a FakePop3,
+    waiting: bool,
+}
+
+impl Drop for Abandoned<'_> {
+    fn drop(&mut self) {
+        if self.waiting {
+            let delay = self.fake.lock().close_delay;
+            std::thread::sleep(delay);
+            self.fake.lock().end_session();
+        }
+    }
+}
+
+impl Inner {
+    fn session(&self) -> Result<(), Pop3Error> {
+        match self.in_session {
+            true => Ok(()),
+            false => Err(Pop3Error::Protocol("no POP3 session is open".into())),
+        }
+    }
+
+    /// The UIDL message `id` names this session, unless `dele` marked it.
+    fn uidl_of(&self, id: u32) -> Result<String, Pop3Error> {
+        self.session()?;
+        let index = usize::try_from(id).ok().and_then(|n| n.checked_sub(1));
+        match index.and_then(|i| self.numbered.get(i)) {
+            Some((uidl, _)) if !self.marked.contains(&id) => Ok(uidl.clone()),
+            _ => Err(Pop3Error::Refused(format!("no such message {id}"))),
+        }
+    }
+
+    /// The bytes of message `id` this session.
+    fn raw_at(&self, id: u32) -> Vec<u8> {
+        self.numbered.get(id as usize - 1).map(|(_, raw)| raw.to_vec()).unwrap_or_default()
+    }
+
+    fn live(&self) -> impl Iterator<Item = (u32, &String, &Arc<[u8]>)> {
+        self.numbered
+            .iter()
+            .enumerate()
+            .map(|(i, (uidl, raw))| (i as u32 + 1, uidl, raw))
+            .filter(|(id, _, _)| !self.marked.contains(id))
+    }
+
+    fn end_session(&mut self) {
+        self.in_session = false;
+        self.in_flight = self.in_flight.saturating_sub(1);
+        self.numbered.clear();
+        self.marked.clear();
+    }
+}
+
+impl Pop3Api for FakePop3 {
+    async fn connect(&self) -> Result<Capabilities, Pop3Error> {
+        let mut inner = self.lock();
+        inner.connects += 1;
+        if inner.gone {
+            return Err(Pop3Error::Network("the server cannot be reached".into()));
+        }
+        if inner.refuse_sign_in {
+            return Err(Pop3Error::Auth { text: "invalid login".into() });
+        }
+        if !inner.capabilities.uidl {
+            return Err(Pop3Error::Unsupported("UIDL"));
+        }
+        if inner.in_session {
+            inner.in_use_refusals += 1;
+            return Err(Pop3Error::InUse("[IN-USE] the maildrop is locked".into()));
+        }
+        inner.in_session = true;
+        inner.in_flight += 1;
+        inner.most_in_flight = inner.most_in_flight.max(inner.in_flight);
+        inner.numbered = inner.messages.clone();
+        Ok(inner.capabilities)
+    }
+
+    async fn stat(&self) -> Result<Stat, Pop3Error> {
+        let mut inner = self.lock();
+        inner.commands.push("STAT");
+        inner.session()?;
+        let live: Vec<u64> = inner.live().map(|(_, _, raw)| raw.len() as u64).collect();
+        Ok(Stat { count: live.len() as u32, octets: live.iter().sum() })
+    }
+
+    async fn uidl(&self) -> Result<UidlListing, Pop3Error> {
+        let mut inner = self.lock();
+        inner.commands.push("UIDL");
+        inner.session()?;
+        let (garbled, messages): (Vec<Uidl>, Vec<Uidl>) = inner
+            .live()
+            .map(|(id, uidl, _)| Uidl { id, uidl: uidl.clone() })
+            .partition(|u| inner.garbled.contains(&u.uidl));
+        Ok(UidlListing { messages, unreadable: garbled.len() })
+    }
+
+    async fn list(&self) -> Result<Vec<ListItem>, Pop3Error> {
+        let mut inner = self.lock();
+        inner.commands.push("LIST");
+        inner.session()?;
+        Ok(inner
+            .live()
+            .map(|(id, uidl, raw)| ListItem {
+                id,
+                octets: inner.claimed.get(uidl).copied().unwrap_or(raw.len() as u64),
+            })
+            .collect())
+    }
+
+    async fn retr(&self, id: u32, _octets: u64) -> Result<Vec<u8>, Pop3Error> {
+        let hold = {
+            let mut inner = self.lock();
+            inner.commands.push("RETR");
+            inner.session()?;
+            inner.retr_calls.push(id);
+            inner.hold.take()
+        };
+        if let Some(hold) = hold {
+            let mut gone = Abandoned { fake: self, waiting: true };
+            hold.notified().await;
+            gone.waiting = false;
+        }
+        let mut inner = self.lock();
+        if inner.drop_after_retrs.is_some_and(|n| inner.retr_calls.len() > n) {
+            inner.end_session();
+            inner.gone = true;
+            return Err(Pop3Error::Network("the connection dropped".into()));
+        }
+        let uidl = inner.uidl_of(id)?;
+        if let Some(err) = inner.broken.get(&uidl).cloned() {
+            inner.end_session();
+            return Err(err);
+        }
+        if inner.failing.contains(&uidl) {
+            return Err(Pop3Error::Refused(format!("message {id} cannot be read")));
+        }
+        Ok(inner.raw_at(id))
+    }
+
+    async fn top(&self, id: u32, lines: u32) -> Result<Vec<u8>, Pop3Error> {
+        let mut inner = self.lock();
+        inner.commands.push("TOP");
+        let uidl = inner.uidl_of(id)?;
+        if let Some(err) = inner.broken_top.get(&uidl).cloned() {
+            inner.end_session();
+            return Err(err);
+        }
+        let raw = inner.raw_at(id);
+        let split = raw.windows(4).position(|w| w == b"\r\n\r\n").map_or(raw.len(), |p| p + 4);
+        let (head, body) = raw.split_at(split);
+        let mut out = head.to_vec();
+        for line in body.split_inclusive(|b| *b == b'\n').take(lines as usize) {
+            out.extend_from_slice(line);
+        }
+        Ok(out)
+    }
+
+    async fn dele(&self, id: u32) -> Result<(), Pop3Error> {
+        let mut inner = self.lock();
+        inner.commands.push("DELE");
+        inner.uidl_of(id)?;
+        if let Some(look) = &inner.on_dele {
+            look();
+        }
+        inner.marked.insert(id);
+        inner.deleted.push(id);
+        Ok(())
+    }
+
+    async fn quit(&self) -> Result<(), Pop3Error> {
+        let mut inner = self.lock();
+        inner.commands.push("QUIT");
+        inner.session()?;
+        if inner.drop_before_quit {
+            inner.end_session();
+            return Err(Pop3Error::Network("the connection dropped".into()));
+        }
+        // Messages are numbered in the order they were added, and tests add
+        // none during a session, so a marked number is a place in the list.
+        let marked = std::mem::take(&mut inner.marked);
+        let mut place = 0;
+        inner.messages.retain(|_| {
+            place += 1;
+            !marked.contains(&place)
+        });
+        inner.end_session();
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn seeded_messages_answer_within_a_session() {
+        let fake = FakePop3::default().with_message("u1", b"Subject: hi\r\n\r\nbody\r\n");
+        assert!(matches!(fake.uidl().await, Err(Pop3Error::Protocol(_))), "no session yet");
+        fake.connect().await.unwrap();
+        assert_eq!(fake.uidl().await.unwrap().messages, [Uidl { id: 1, uidl: "u1".into() }]);
+        assert_eq!(fake.list().await.unwrap(), [ListItem { id: 1, octets: 21 }]);
+        assert_eq!(fake.retr(1, 21).await.unwrap(), b"Subject: hi\r\n\r\nbody\r\n");
+        assert_eq!(fake.retr_calls(), [1]);
+        fake.quit().await.unwrap();
+        assert_eq!((fake.connects(), fake.in_flight()), (1, 0));
+    }
+
+    #[tokio::test]
+    async fn dele_takes_effect_only_at_a_clean_quit() {
+        let fake = FakePop3::default().with_message("u1", &pop3_mail(1)).with_message("u2", &pop3_mail(2));
+        fake.connect().await.unwrap();
+        fake.dele(1).await.unwrap();
+        assert_eq!(fake.uidl().await.unwrap().messages, [Uidl { id: 2, uidl: "u2".into() }], "numbers hold for the session");
+        fake.quit().await.unwrap();
+        assert_eq!(fake.held(), ["u2"]);
+
+        let dropping = FakePop3::default().with_message("u1", &pop3_mail(1)).dropping_before_quit();
+        dropping.connect().await.unwrap();
+        dropping.dele(1).await.unwrap();
+        assert!(matches!(dropping.quit().await, Err(Pop3Error::Network(_))));
+        assert_eq!(dropping.held(), ["u1"], "a dropped session deletes nothing");
+        assert_eq!(dropping.deleted(), [1]);
+    }
+
+    #[tokio::test]
+    async fn a_second_session_meets_the_lock_and_scripted_failures_answer() {
+        let fake = FakePop3::default().with_message("u1", &pop3_mail(1)).failing_retr("u1").claiming_size("u1", 1 << 40);
+        fake.connect().await.unwrap();
+        assert!(matches!(fake.connect().await, Err(Pop3Error::InUse(_))));
+        assert_eq!(fake.most_in_flight(), 1);
+        assert!(matches!(fake.retr(1, 0).await, Err(Pop3Error::Refused(_))));
+        assert_eq!(fake.list().await.unwrap()[0].octets, 1 << 40);
+        assert!(matches!(FakePop3::default().refusing_sign_in().connect().await, Err(Pop3Error::Auth { .. })));
+        assert_eq!(FakePop3::default().without_uidl().connect().await, Err(Pop3Error::Unsupported("UIDL")));
+    }
+
+    #[tokio::test]
+    async fn a_held_retr_waits_for_its_release() {
+        let (fake, release) = FakePop3::default().with_message("u1", &pop3_mail(1)).holding_retr();
+        let fake = Arc::new(fake);
+        fake.connect().await.unwrap();
+        let waiting = tokio::spawn({
+            let fake = Arc::clone(&fake);
+            async move { fake.retr(1, 0).await }
+        });
+        tokio::task::yield_now().await;
+        assert!(!waiting.is_finished());
+        release.release();
+        assert_eq!(waiting.await.unwrap().unwrap(), pop3_mail(1));
+    }
+}

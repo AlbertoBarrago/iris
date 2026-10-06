@@ -1,0 +1,951 @@
+//! The thread run with no window: the thread on screen in memory behind
+//! both ports, an answer waiting for each call that takes time, and a log
+//! of what the run asked for, in order.
+//!
+//! The named changes go through the same [`OpenThread`] methods the
+//! conversation view uses, and a change the view redraws for draws the
+//! page through the same [`OpenThread::page`], so the thread under test
+//! changes and reads the way the one on screen does. Nothing here starts a
+//! widget or talks to Gmail.
+
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
+
+use futures::channel::oneshot;
+use mailrs_domain::invitation::Invitation;
+use mailrs_domain::{
+    AccountId, Address, EpochMillis, FlagColor, Memberships, MessageBody, MessageMeta, Target,
+    ThreadSummary,
+};
+use mailrs_store::outbox::Queued;
+use mailrs_sync::{Opened, Spot};
+
+use super::{Answer, Card, Desk, Effects, Fetched, InlinePictures, Stored, ThreadRun};
+use crate::open_thread::{Document, InlineImage, OpenThread, Page, ToClean, Unsent};
+use crate::protection::Read;
+use crate::render::Theme;
+use crate::translation::{self, Language, Prose, Translation};
+use crate::ui::invitation::{AddTo, Showing};
+use crate::ui::invitation::strip::{Strip, Verdict};
+use crate::wanted::Screen as OnScreen;
+
+/// The account and thread every fixture belongs to.
+pub const ACCOUNT: AccountId = 1;
+pub const THREAD: &str = "t1";
+/// The thread the reader opens instead, mid-run.
+pub const ELSEWHERE: &str = "t2";
+
+/// One thing the run asked the window for.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Step {
+    Stored,
+    Show,
+    Ensure,
+    Messages,
+    MessagesArrived,
+    Bodies,
+    BodiesArrived,
+    Images,
+    ImagesArrived,
+    Replace,
+    Buttons,
+    Clear,
+    Thumbnails,
+    ThumbnailsArrived,
+    OpenInvitation,
+    ShowInvitation,
+    OfferCalendarAccess,
+    Busy,
+    Clashes,
+    Series,
+    SeriesKnown,
+    AddTargets,
+    AddTargetsKnown,
+    OnCalendar,
+    OnCalendarKnown,
+    Strip,
+    StripKnown,
+    Engines,
+    Card,
+    Sleep,
+    MarkRead,
+    Translate,
+    Translated,
+    Turn,
+    EngineAnswered,
+    FlagColor,
+    SetFlag,
+    Queued,
+    Unsent,
+}
+
+/// The window the run reads and writes.
+pub struct Screen {
+    /// The thread on screen, or `None` with nothing open.
+    pub open: Option<OpenThread>,
+    /// The latest thread asked for.
+    pub ticket: u64,
+    /// What the store holds, by thread id.
+    pub stored: HashMap<String, Stored>,
+    /// Holds the store's answer for a thread until the test lets go.
+    pub holds: HashMap<String, oneshot::Receiver<()>>,
+    /// What the store lists for the thread after Gmail answered.
+    pub messages: Vec<MessageMeta>,
+    /// What Gmail hands back, by message id.
+    pub gmail: HashMap<String, MessageBody>,
+    /// The pictures Gmail has for each message's `cid:` names.
+    pub pictures: InlinePictures,
+    pub thumbnails: HashMap<String, String>,
+    pub invitation: Result<Option<Opened>, String>,
+    pub busy: Result<Vec<String>, String>,
+    /// What the calendar says about the series, in words.
+    pub series: Result<Option<String>, String>,
+    /// The series lines put on the card.
+    pub series_lines: Vec<String>,
+    /// The calendars the account offers a file's events.
+    pub add_targets: Result<Vec<AddTo>, String>,
+    /// The calendars put on the card, with the UID each list was for.
+    pub targets_shown: Vec<(String, Vec<AddTo>)>,
+    /// What the calendar's copy says about the invitation's event.
+    pub on_calendar: Result<Option<Spot>, String>,
+    /// The spots put on the card, with the UID each was for.
+    pub spots: Vec<(String, Spot)>,
+    /// What the calendar's copy gives for the hours around the invitation.
+    pub strip: Result<Option<Strip>, String>,
+    /// The start each strip was asked around, when a spot gave one.
+    pub strip_asked: Vec<Option<EpochMillis>>,
+    /// The strips put on the card, with the UID each was for.
+    pub strips: Vec<(String, Strip)>,
+    /// The invitation on the card while it offers no Show in Calendar.
+    pub off_calendar: Option<Invitation>,
+    pub flag_color: Option<FlagColor>,
+    /// What the outbox holds, by row id.
+    pub queued: HashMap<i64, Queued>,
+    pub translation: Result<Vec<Option<String>>, String>,
+    /// The Mark as Read setting.
+    pub delay: Option<u32>,
+    pub interface: Option<Language>,
+    pub destination: Result<String, String>,
+    /// The step the reader opens something else during.
+    pub moves_on: Option<Step>,
+    /// What opening something else does to the thread on screen. Another
+    /// thread, unless a test says otherwise.
+    pub moving: fn(&mut OpenThread),
+    /// What the run asked for, oldest first.
+    pub steps: Vec<Step>,
+    /// The threads that went on screen, in order.
+    pub shown: Vec<String>,
+    pub cards: Vec<Card>,
+    /// The invitations put on the card, by UID, and `None` for the card
+    /// taken down.
+    pub invitations: Vec<Option<String>>,
+    pub marked: Vec<Target>,
+    pub toasts: Vec<String>,
+    /// Every whole page the window loaded, oldest first.
+    pub loads: Vec<String>,
+    /// The messages each patch replaced, oldest first.
+    pub patches: Vec<Vec<String>>,
+    /// The page on screen, with every patch applied.
+    pub document: Option<Document>,
+}
+
+pub struct FakeWindow(pub RefCell<Screen>);
+
+/// A message of the fixture thread from Ann.
+pub fn meta(id: &str, unread: bool) -> MessageMeta {
+    MessageMeta {
+        account_id: ACCOUNT,
+        id: id.to_string(),
+        thread_id: THREAD.to_string(),
+        rfc822_msgid: None,
+        from: Some(Address {
+            name: Some("Ann".to_string()),
+            email: "ann@example.com".to_string(),
+        }),
+        to: Vec::new(),
+        cc: Vec::new(),
+        subject: "Kite plans".to_string(),
+        date: 0,
+        snippet: String::new(),
+        size: 0,
+        has_attachments: false,
+        held: match unread {
+            true => Memberships::default(),
+            false => Memberships::read(),
+        },
+        roles: vec![],
+        list_unsubscribe: None,
+        one_click: false,
+    }
+}
+
+/// A body in English, which the interface is in too.
+pub fn body(text: &str) -> MessageBody {
+    MessageBody {
+        text: Some(text.to_string()),
+        ..MessageBody::default()
+    }
+}
+
+/// A body with an HTML part and no text part.
+pub fn html_body(html: &str) -> MessageBody {
+    MessageBody {
+        html: Some(html.to_string()),
+        ..MessageBody::default()
+    }
+}
+
+/// A body in European Portuguese, which the card offers to translate.
+pub fn portuguese() -> MessageBody {
+    body(
+        "Olá Ana, a reunião de amanhã fica para as dez horas. Não te esqueças de \
+         trazer os documentos que eu te pedi, para podermos ver tudo com calma \
+         antes de falar com o banco. Um abraço e até amanhã.",
+    )
+}
+
+/// A body carrying an invitation to a meeting nobody has answered yet.
+pub fn invited() -> MessageBody {
+    MessageBody {
+        calendar: Some(ics()),
+        ..body("You are invited.")
+    }
+}
+
+pub fn ics() -> String {
+    [
+        "BEGIN:VCALENDAR",
+        "METHOD:REQUEST",
+        "BEGIN:VEVENT",
+        "UID:kites@example.com",
+        "SEQUENCE:0",
+        "SUMMARY:Kite flying",
+        "DTSTART:20300310T090000Z",
+        "DTEND:20300310T100000Z",
+        "ORGANIZER;CN=Ann:mailto:ann@example.com",
+        "END:VEVENT",
+        "END:VCALENDAR",
+        "",
+    ]
+    .join("\r\n")
+}
+
+/// What reading that invitation gives back.
+pub fn opened_invitation() -> Opened {
+    Opened {
+        invitation: mailrs_domain::invitation::read(&ics()).expect("the fixture reads"),
+        also: Vec::new(),
+        change: None,
+        answer: None,
+    }
+}
+
+/// What reading an invitation to one Tuesday of a weekly event gives
+/// back. It carries no rule of its own.
+pub fn opened_occurrence() -> Opened {
+    let ics = ics().replace("SEQUENCE:0", "SEQUENCE:0\r\nRECURRENCE-ID:20300310T090000Z");
+    Opened {
+        invitation: mailrs_domain::invitation::read(&ics).expect("the fixture reads"),
+        also: Vec::new(),
+        change: None,
+        answer: None,
+    }
+}
+
+/// A ticket the fixture's sender published: no request, no answer.
+pub fn opened_publish() -> Opened {
+    let ics = ics().replace("METHOD:REQUEST", "METHOD:PUBLISH");
+    Opened {
+        invitation: mailrs_domain::invitation::read(&ics).expect("the fixture reads"),
+        also: Vec::new(),
+        change: None,
+        answer: None,
+    }
+}
+
+/// The account's own calendar, which a file's events go on.
+pub fn personal() -> AddTo {
+    AddTo {
+        account_id: ACCOUNT,
+        calendar: "primary".to_string(),
+        label: "Personal".to_string(),
+        primary: true,
+    }
+}
+
+/// Where the fixture meeting sits on the calendar.
+pub fn spot() -> Spot {
+    Spot {
+        account_id: ACCOUNT,
+        calendar: "primary".to_string(),
+        id: "kites".to_string(),
+        start: 1_899_363_600_000,
+    }
+}
+
+/// The hours around the fixture meeting, with nothing else on.
+pub fn strip() -> Strip {
+    Strip {
+        heading: "Your morning".to_string(),
+        hours: Vec::new(),
+        blocks: Vec::new(),
+        lanes: 1,
+        verdict: Verdict::Free,
+    }
+}
+
+/// What reading a cancellation of the fixture meeting gives back.
+pub fn opened_cancellation() -> Opened {
+    let ics = ics().replace("METHOD:REQUEST", "METHOD:CANCEL");
+    Opened {
+        invitation: mailrs_domain::invitation::read(&ics).expect("the fixture reads"),
+        also: Vec::new(),
+        change: None,
+        answer: None,
+    }
+}
+
+/// A body whose HTML shows a picture by `cid:`.
+pub fn with_inline_picture() -> MessageBody {
+    MessageBody {
+        attachments: vec![mailrs_domain::Attachment {
+            part_id: "2".to_string(),
+            filename: "logo.png".to_string(),
+            mime_type: "image/png".to_string(),
+            size: 3,
+            attachment_id: Some("a9".to_string()),
+            content_id: Some("logo@kites".to_string()),
+        }],
+        ..html_body("<p>Our logo</p><img src=\"cid:logo@kites\">")
+    }
+}
+
+/// A body with a picture attached, which wants a thumbnail.
+pub fn with_picture() -> MessageBody {
+    MessageBody {
+        attachments: vec![mailrs_domain::Attachment {
+            part_id: "2".to_string(),
+            filename: "kite.png".to_string(),
+            mime_type: "image/png".to_string(),
+            size: 10,
+            attachment_id: Some("a1".to_string()),
+            content_id: None,
+        }],
+        ..body("A picture of the kite.")
+    }
+}
+
+/// The row a reader clicks to open the fixture thread.
+pub fn row(thread_id: &str) -> ThreadSummary {
+    ThreadSummary {
+        account_id: ACCOUNT,
+        id: thread_id.to_string(),
+        subject: "Kite plans".to_string(),
+        from_email: "ann@example.com".to_string(),
+        ..ThreadSummary::default()
+    }
+}
+
+/// A message the outbox holds under row 7: to Ann, and stuck when
+/// `problem` says why.
+pub fn queued(problem: Option<&str>) -> Queued {
+    let draft = crate::open_thread::queued::draft_to(ACCOUNT, "ann@example.com", "See you.");
+    Queued {
+        id: 7,
+        account_id: ACCOUNT,
+        subject: draft.subject.clone(),
+        recipients: "ann@example.com".to_string(),
+        composer: serde_json::to_string(&draft).expect("a draft writes"),
+        problem: problem.map(str::to_string),
+        attempts: 1,
+        ..Queued::default()
+    }
+}
+
+/// The English interface.
+pub fn english() -> Language {
+    translation::interface_language("", "en", &[]).expect("English is known")
+}
+
+impl FakeWindow {
+    /// A window with nothing open, where the store holds the fixture
+    /// thread with one unread message and no body, and Gmail has that
+    /// body.
+    pub fn new() -> Rc<FakeWindow> {
+        let stored = Stored {
+            messages: vec![meta("m1", true)],
+            bodies: HashMap::new(),
+            cleaned: HashMap::new(),
+            left: false,
+        };
+        Rc::new(FakeWindow(RefCell::new(Screen {
+            open: None,
+            ticket: 0,
+            stored: HashMap::from([(THREAD.to_string(), stored)]),
+            holds: HashMap::new(),
+            messages: vec![meta("m1", true)],
+            gmail: HashMap::from([("m1".to_string(), body("Hello"))]),
+            pictures: HashMap::from([(
+                "m1".to_string(),
+                HashMap::from([(
+                    "logo@kites".to_string(),
+                    InlineImage {
+                        mime: "image/png".to_string(),
+                        bytes: vec![1, 2, 3].into(),
+                    },
+                )]),
+            )]),
+            thumbnails: HashMap::from([("a1".to_string(), "data:image/png;base64,".to_string())]),
+            invitation: Ok(Some(opened_invitation())),
+            busy: Ok(vec!["Design crit".to_string()]),
+            series: Ok(Some("Every Tuesday, 6 left".to_string())),
+            series_lines: Vec::new(),
+            add_targets: Ok(vec![personal()]),
+            targets_shown: Vec::new(),
+            on_calendar: Ok(None),
+            spots: Vec::new(),
+            strip: Ok(None),
+            strip_asked: Vec::new(),
+            strips: Vec::new(),
+            off_calendar: None,
+            flag_color: Some(FlagColor::Orange),
+            queued: HashMap::new(),
+            translation: Ok(vec![Some("Hello Ana".to_string())]),
+            delay: Some(2),
+            interface: Some(english()),
+            destination: Ok("The message goes to a model on this computer.".to_string()),
+            moves_on: None,
+            moving: |open| open.thread_id = ELSEWHERE.to_string(),
+            steps: Vec::new(),
+            shown: Vec::new(),
+            cards: Vec::new(),
+            invitations: Vec::new(),
+            marked: Vec::new(),
+            toasts: Vec::new(),
+            loads: Vec::new(),
+            patches: Vec::new(),
+            document: None,
+        })))
+    }
+
+    /// A window where Gmail and the store both hold `body` for m1.
+    pub fn with_body(body: MessageBody) -> Rc<FakeWindow> {
+        let window = FakeWindow::new();
+        window.with(|screen| {
+            screen.gmail.insert("m1".to_string(), body);
+        });
+        window
+    }
+
+    pub fn with<R>(&self, change: impl FnOnce(&mut Screen) -> R) -> R {
+        change(&mut self.0.borrow_mut())
+    }
+
+    /// The run, with this window behind both ports.
+    pub fn run(self: &Rc<Self>) -> ThreadRun {
+        ThreadRun::new(
+            Rc::clone(self) as Rc<dyn Desk>,
+            Rc::clone(self) as Rc<dyn Effects>,
+        )
+    }
+
+    pub fn steps(&self) -> Vec<Step> {
+        self.0.borrow().steps.clone()
+    }
+
+    pub fn took(&self, step: Step) -> bool {
+        self.0.borrow().steps.contains(&step)
+    }
+
+    /// The thread on screen, read.
+    pub fn open<R>(&self, read: impl FnOnce(&OpenThread) -> R) -> Option<R> {
+        self.0.borrow().open.as_ref().map(read)
+    }
+
+    /// Notes a step, and moves the reader on when the test asked for that
+    /// to happen during this one.
+    fn reached(&self, step: Step) {
+        self.with(|screen| {
+            screen.steps.push(step);
+            if screen.moves_on == Some(step)
+                && let Some(open) = screen.open.as_mut()
+            {
+                (screen.moving)(open);
+            }
+        });
+    }
+
+    /// Changes the thread on screen, as a named change on the view does.
+    fn change<R: Default>(&self, step: Step, change: impl FnOnce(&mut OpenThread) -> R) -> R {
+        self.reached(step);
+        self.with(|screen| screen.open.as_mut().map(change).unwrap_or_default())
+    }
+
+    fn read<R: Default>(&self, read: impl FnOnce(&OpenThread) -> R) -> R {
+        self.open(read).unwrap_or_default()
+    }
+
+    /// Draws the thread on screen, as the view does after a change it
+    /// redraws for: a whole page loads, and a patch replaces articles in
+    /// the one loaded before.
+    fn draw(&self) {
+        let theme = Theme {
+            dark: false,
+            accent: "#3584e4".to_string(),
+            accent_text: "#1a5fb4".to_string(),
+            summarize: false,
+            font: String::new(),
+        };
+        self.with(
+            |screen| match screen.open.as_mut().map(|open| open.page(&theme)) {
+                Some(Page::Whole(document)) => {
+                    screen.loads.push(document.html(""));
+                    screen.document = Some(document);
+                }
+                Some(Page::Patch(patch)) if !patch.is_empty() => {
+                    screen
+                        .patches
+                        .push(patch.iter().map(|a| a.message_id.clone()).collect());
+                    if let Some(document) = screen.document.as_mut() {
+                        document.patch(&patch);
+                    }
+                }
+                _ => {}
+            },
+        );
+    }
+
+    /// The page on screen now, as HTML.
+    pub fn page(&self) -> String {
+        self.with(|screen| {
+            screen
+                .document
+                .as_ref()
+                .map(|document| document.html(""))
+                .unwrap_or_default()
+        })
+    }
+}
+
+impl OnScreen for FakeWindow {
+    fn is_showing(&self, target: &Target) -> bool {
+        self.read(|open| open.target() == *target)
+    }
+}
+
+impl Desk for FakeWindow {
+    fn target(&self) -> Option<Target> {
+        self.open(OpenThread::target)
+    }
+
+    fn start_loading(&self) -> u64 {
+        self.with(|screen| {
+            screen.ticket += 1;
+            screen.ticket
+        })
+    }
+
+    fn still_loading(&self, ticket: u64) -> bool {
+        self.with(|screen| screen.ticket == ticket)
+    }
+
+    fn me(&self, _account_id: AccountId) -> Vec<String> {
+        vec!["me@example.com".to_string()]
+    }
+
+    fn images_allowed(&self, _senders: &[String]) -> bool {
+        false
+    }
+
+    fn photos(&self, _senders: &[String]) -> HashMap<String, String> {
+        HashMap::new()
+    }
+
+    fn is_vip(&self, email: &str) -> bool {
+        email == "ann@example.com"
+    }
+
+    fn mark_read_delay(&self) -> Option<u32> {
+        self.with(|screen| screen.delay)
+    }
+
+    fn unread(&self) -> bool {
+        self.read(OpenThread::unread)
+    }
+
+    fn invitation_off_calendar(&self) -> Option<Invitation> {
+        self.with(|screen| screen.off_calendar.clone())
+    }
+
+    fn invitation(&self) -> Option<(String, String)> {
+        self.open(|open| {
+            open.invitation()
+                .map(|(meta, ics)| (meta.id.clone(), ics.to_string()))
+        })
+        .flatten()
+    }
+
+    fn wanting_thumbnails(&self) -> Vec<(String, MessageBody)> {
+        self.read(OpenThread::wanting_thumbnails)
+    }
+
+    fn wanting_images(&self) -> Vec<(String, MessageBody)> {
+        self.read(OpenThread::wanting_images)
+    }
+
+    fn prose(&self) -> Option<(String, Prose)> {
+        self.open(OpenThread::prose).flatten()
+    }
+
+    fn same_writer(&self, message_id: &str) -> String {
+        self.read(|open| open.same_writer(message_id))
+    }
+
+    fn translation_of(&self, message_id: &str) -> Option<(Option<Language>, bool, bool)> {
+        self.open(|open| open.translation_of(message_id)).flatten()
+    }
+
+    fn arrived(&self, message_id: &str) -> Option<(MessageBody, String)> {
+        self.open(|open| open.arrived(message_id)).flatten()
+    }
+
+    fn interface_language(&self) -> Option<Language> {
+        self.with(|screen| screen.interface)
+    }
+
+    fn translation_destination(&self) -> Result<String, String> {
+        self.with(|screen| screen.destination.clone())
+    }
+}
+
+impl Effects for FakeWindow {
+    fn stored(
+        &self,
+        _account_id: AccountId,
+        thread_id: String,
+    ) -> Answer<'_, Result<Stored, String>> {
+        self.reached(Step::Stored);
+        let (held, stored) = self.with(|screen| {
+            (
+                screen.holds.remove(&thread_id),
+                screen.stored.get(&thread_id).cloned().unwrap_or_default(),
+            )
+        });
+        Box::pin(async move {
+            if let Some(held) = held {
+                let _ = held.await;
+            }
+            Ok(stored)
+        })
+    }
+
+    fn ensure_thread(
+        &self,
+        _account_id: AccountId,
+        _thread_id: String,
+    ) -> Answer<'_, Result<(), String>> {
+        self.reached(Step::Ensure);
+        Box::pin(async { Ok(()) })
+    }
+
+    fn thread_messages(
+        &self,
+        _account_id: AccountId,
+        _thread_id: String,
+    ) -> Answer<'_, Result<Vec<MessageMeta>, String>> {
+        self.reached(Step::Messages);
+        let messages = self.with(|screen| screen.messages.clone());
+        Box::pin(async move { Ok(messages) })
+    }
+
+    fn bodies(&self, _account_id: AccountId, message_ids: Vec<String>) -> Answer<'_, Fetched> {
+        self.reached(Step::Bodies);
+        let bodies: Vec<(String, Result<MessageBody, String>)> = self.with(|screen| {
+            message_ids
+                .into_iter()
+                .map(|id| {
+                    let body = screen.gmail.get(&id).cloned().ok_or("gone".to_string());
+                    (id, body)
+                })
+                .collect()
+        });
+        // The window cleans on a worker thread; here it is done at once.
+        let arrived = bodies
+            .iter()
+            .filter_map(|(id, body)| Some((id, body.as_ref().ok()?)));
+        let cleaned = ToClean::of(ACCOUNT, arrived).clean();
+        Box::pin(async move { Fetched { bodies, cleaned } })
+    }
+
+    fn inline_images(
+        &self,
+        _account_id: AccountId,
+        bodies: Vec<(String, MessageBody)>,
+    ) -> Answer<'_, InlinePictures> {
+        self.reached(Step::Images);
+        let found = self.with(|screen| {
+            bodies
+                .into_iter()
+                .map(|(id, _)| {
+                    let pictures = screen.pictures.get(&id).cloned().unwrap_or_default();
+                    (id, pictures)
+                })
+                .collect()
+        });
+        Box::pin(async move { found })
+    }
+
+    fn thumbnails(
+        &self,
+        _account_id: AccountId,
+        _bodies: Vec<(String, MessageBody)>,
+    ) -> Answer<'_, HashMap<String, String>> {
+        self.reached(Step::Thumbnails);
+        let found = self.with(|screen| screen.thumbnails.clone());
+        Box::pin(async move { found })
+    }
+
+    fn open_invitation(
+        &self,
+        _account_id: AccountId,
+        _message_id: String,
+        _ics: String,
+    ) -> Answer<'_, Result<Option<Opened>, String>> {
+        self.reached(Step::OpenInvitation);
+        let opened = self.with(|screen| screen.invitation.clone());
+        Box::pin(async move { opened })
+    }
+
+    fn busy(
+        &self,
+        _account_id: AccountId,
+        _invitation: Invitation,
+    ) -> Answer<'_, Result<Vec<String>, String>> {
+        self.reached(Step::Busy);
+        let busy = self.with(|screen| screen.busy.clone());
+        Box::pin(async move { busy })
+    }
+
+    fn series(
+        &self,
+        _account_id: AccountId,
+        _invitation: Invitation,
+    ) -> Answer<'_, Result<Option<String>, String>> {
+        self.reached(Step::Series);
+        let series = self.with(|screen| screen.series.clone());
+        Box::pin(async move { series })
+    }
+
+    fn add_targets(&self, _account_id: AccountId) -> Answer<'_, Result<Vec<AddTo>, String>> {
+        self.reached(Step::AddTargets);
+        let found = self.with(|screen| screen.add_targets.clone());
+        Box::pin(async move { found })
+    }
+
+    fn on_calendar(
+        &self,
+        _account_id: AccountId,
+        _invitation: Invitation,
+    ) -> Answer<'_, Result<Option<Spot>, String>> {
+        self.reached(Step::OnCalendar);
+        let found = self.with(|screen| screen.on_calendar.clone());
+        Box::pin(async move { found })
+    }
+
+    fn strip(
+        &self,
+        _account_id: AccountId,
+        _invitation: Invitation,
+        at: Option<EpochMillis>,
+    ) -> Answer<'_, Result<Option<Strip>, String>> {
+        self.reached(Step::Strip);
+        let found = self.with(|screen| {
+            screen.strip_asked.push(at);
+            screen.strip.clone()
+        });
+        Box::pin(async move { found })
+    }
+
+    fn flag_color(
+        &self,
+        _account_id: AccountId,
+        _thread_id: String,
+    ) -> Answer<'_, Result<Option<FlagColor>, String>> {
+        self.reached(Step::FlagColor);
+        let color = self.with(|screen| screen.flag_color);
+        Box::pin(async move { Ok(color) })
+    }
+
+    fn translate(
+        &self,
+        _into: Language,
+        _pieces: Vec<String>,
+    ) -> Answer<'_, Result<Vec<Option<String>>, String>> {
+        self.reached(Step::Translate);
+        let said = self.with(|screen| screen.translation.clone());
+        Box::pin(async move { said })
+    }
+
+    fn sleep(&self, _seconds: u32) -> Answer<'_, ()> {
+        self.reached(Step::Sleep);
+        Box::pin(async {})
+    }
+
+    fn show(&self, thread: OpenThread) {
+        self.reached(Step::Show);
+        self.with(|screen| {
+            screen.shown.push(thread.thread_id.clone());
+            screen.open = Some(thread);
+        });
+        self.draw();
+    }
+
+    fn queued(&self, id: i64) -> Answer<'_, Result<Option<Queued>, String>> {
+        self.reached(Step::Queued);
+        let found = self.with(|screen| screen.queued.get(&id).cloned());
+        Box::pin(async move { Ok(found) })
+    }
+
+    fn sender_vip(&self, _vip: bool) {}
+
+    fn messages_arrived(&self, fresh: Vec<MessageMeta>) -> Vec<String> {
+        let missing = self.change(Step::MessagesArrived, |open| open.take_messages(&fresh));
+        if missing.is_empty() {
+            self.draw();
+        }
+        missing
+    }
+
+    fn replace_messages(&self, fresh: Vec<MessageMeta>) -> bool {
+        self.change(Step::Replace, |open| open.replace_messages(fresh))
+    }
+
+    fn bodies_arrived(&self, fetched: Fetched) {
+        self.change(Step::BodiesArrived, |open| {
+            open.take_bodies(fetched.bodies, fetched.cleaned)
+        });
+        self.draw();
+    }
+
+    fn images_arrived(&self, found: InlinePictures) {
+        self.change(Step::ImagesArrived, |open| open.take_images(found));
+        self.draw();
+    }
+
+    fn thumbnails_arrived(&self, found: HashMap<String, String>) {
+        self.change(Step::ThumbnailsArrived, |open| {
+            open.thumbnails.extend(found)
+        });
+        self.draw();
+    }
+
+    fn render_buttons(&self) {
+        self.reached(Step::Buttons);
+    }
+
+    fn clear(&self) {
+        self.reached(Step::Clear);
+        self.with(|screen| screen.open = None);
+    }
+
+    fn show_invitation(&self, showing: Option<Showing>) {
+        let at = showing.as_ref().map(|showing| showing.message_id.clone());
+        self.change(Step::ShowInvitation, |open| open.take_invitation_place(at));
+        self.draw();
+        self.with(|screen| {
+            screen
+                .invitations
+                .push(showing.as_ref().map(|showing| showing.invitation.uid.clone()));
+            screen.off_calendar = showing.map(|showing| showing.invitation);
+        });
+    }
+
+    fn offer_calendar_access(&self, _account_id: AccountId) {
+        self.reached(Step::OfferCalendarAccess);
+    }
+
+    fn clashes(&self, _uid: String, _busy: Vec<String>) {
+        self.reached(Step::Clashes);
+    }
+
+    fn series_known(&self, _uid: String, line: String) {
+        self.reached(Step::SeriesKnown);
+        self.with(|screen| screen.series_lines.push(line));
+    }
+
+    fn add_targets_known(&self, uid: String, targets: Vec<AddTo>) {
+        self.reached(Step::AddTargetsKnown);
+        self.with(|screen| screen.targets_shown.push((uid, targets)));
+    }
+
+    fn on_calendar_known(&self, uid: String, spot: Spot) {
+        self.reached(Step::OnCalendarKnown);
+        self.with(|screen| {
+            screen.spots.push((uid, spot));
+            screen.off_calendar = None;
+        });
+    }
+
+    fn strip_known(&self, uid: String, strip: Strip) {
+        self.reached(Step::StripKnown);
+        self.with(|screen| screen.strips.push((uid, strip)));
+    }
+
+    fn start_engines(&self) {
+        self.reached(Step::Engines);
+    }
+
+    fn translation_card(&self, card: Card) {
+        self.reached(Step::Card);
+        self.with(|screen| screen.cards.push(card));
+    }
+
+    fn translated(&self, message_id: String, translation: Translation) {
+        let card = Card::Done {
+            from: translation.from,
+            cut: translation.cut,
+            shown: true,
+        };
+        self.change(Step::Translated, |open| {
+            open.translations.insert(message_id, translation);
+        });
+        self.with(|screen| screen.cards.push(card));
+        self.draw();
+    }
+
+    fn turn_translation(&self, message_id: &str) -> bool {
+        let turned = self.change(Step::Turn, |open| open.turn_translation(message_id));
+        let Some((from, cut, shown)) = turned else {
+            return false;
+        };
+        self.with(|screen| screen.cards.push(Card::Done { from, cut, shown }));
+        self.draw();
+        true
+    }
+
+    fn engine_answered(&self, message_id: String, read: Read) -> bool {
+        let opened = self.change(Step::EngineAnswered, |open| {
+            open.take_engine_answer(message_id, read)
+        });
+        self.draw();
+        opened
+    }
+
+    fn set_flag_color(&self, color: Option<FlagColor>) {
+        self.change(Step::SetFlag, |open| open.flag_color = color);
+    }
+
+    fn unsent_changed(&self, unsent: Unsent) {
+        self.change(Step::Unsent, |open| open.take_unsent(unsent));
+    }
+
+    fn mark_read(&self, target: Target) {
+        self.reached(Step::MarkRead);
+        self.with(|screen| screen.marked.push(target));
+    }
+
+    fn toast(&self, text: String) {
+        self.with(|screen| screen.toasts.push(text));
+    }
+}

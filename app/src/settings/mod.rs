@@ -1,0 +1,1409 @@
+//! App preferences, kept in `~/.config/penguin-mail/settings.toml`. Sync options
+//! stay in `config.toml`, which the command-line tool reads too.
+
+use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
+
+use mailrs_domain::Category;
+use mailrs_domain::calendar::week::WeekStart;
+use mailrs_domain::translate::{fill_plural, gettext, pgettext};
+use serde::{Deserialize, Serialize};
+
+mod change;
+mod file;
+pub mod mcp;
+
+pub use change::{AiChange, Change, Effect, Effects, Setting};
+pub use file::{Opened, Saver};
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Settings {
+    /// Group replies into conversations instead of listing each message.
+    pub threading: bool,
+    pub mark_read: MarkRead,
+    pub remote_images: RemoteImages,
+    pub text_size: TextSize,
+    pub color_scheme: ColorScheme,
+    /// The locale the interface speaks, such as `pt_PT`. Empty follows the
+    /// desktop. Read once at startup, since GTK reads its own locale then
+    /// and never again.
+    pub language: String,
+    pub notifications: bool,
+    /// Show sender and subject in notifications, not just a count.
+    pub notification_previews: bool,
+    /// Address new messages come from; the first account when unset.
+    pub default_account: Option<String>,
+    /// Markdown signature per account address.
+    pub signatures: BTreeMap<String, String>,
+    /// How long Undo stays available after Send.
+    pub undo_send: UndoSend,
+    /// The colour a new flag gets: the last one chosen.
+    pub flag_color: mailrs_domain::FlagColor,
+    /// Very important people: lower-case address to display name.
+    pub vips: BTreeMap<String, String>,
+    /// Notify only about mail from VIPs.
+    pub notify_vips_only: bool,
+    /// The buttons a new-mail notification carries, in the order it shows
+    /// them. Empty leaves a notification with nothing but its body to click.
+    pub notification_buttons: Vec<crate::notify::Button>,
+    /// Put up a notification before calendar events, at the times each
+    /// event or its calendar sets.
+    pub event_reminders: bool,
+    pub smart_mailboxes: Vec<mailrs_domain::SmartMailbox>,
+    /// Account addresses in sidebar order; accounts not listed follow.
+    pub account_order: Vec<String>,
+    /// A colour from the palette per account address.
+    pub account_colors: BTreeMap<String, usize>,
+    /// A name shown instead of the address in the sidebar.
+    pub account_names: BTreeMap<String, String>,
+    /// MCP servers whose tools the assistant may use, in the order the AI
+    /// page lists them.
+    pub mcp_servers: Vec<mcp::McpServer>,
+    pub ai: AiSettings,
+    /// Open the assistant's thinking and tool rows as they appear, rather
+    /// than folded to one line each.
+    pub assistant_details_expanded: bool,
+    /// Tools from outside sources the person answered Always Allow for, as
+    /// `source/tool`, such as `mcp:github/github__list_issues`. A skill's
+    /// command is kept whole, as `shell:skill/command`.
+    #[serde(deserialize_with = "allowed_tools")]
+    pub assistant_allowed_tools: Vec<String>,
+    /// What the person turned on for each skill, keyed by skill id such as
+    /// `claude-code/pdf`. A skill with no entry is off.
+    pub assistant_skills: BTreeMap<String, SkillSettings>,
+    /// Plus addresses made with Hide My Email, oldest first.
+    pub hidden_addresses: Vec<mailrs_sync::hidden::HiddenAddress>,
+    /// Split inboxes into Primary, Updates, Promotions, and Social, from
+    /// Gmail's category labels.
+    pub inbox_categories: bool,
+    /// The category the window opens on. All shows the whole inbox, which
+    /// is what a mail client does when nobody has asked it to hide
+    /// anything.
+    pub default_category: Category,
+    /// Show Follow Up for sent mail nobody has answered.
+    pub suggest_follow_ups: bool,
+    /// Dictionary languages per account address, such as `["en_US",
+    /// "pt_PT"]`. Empty follows the desktop's locale.
+    pub spell_languages: BTreeMap<String, Vec<String>>,
+    /// Words Add to Dictionary kept, lower case.
+    pub spell_words: Vec<String>,
+    /// The send-as address each account last sent from, so the composer
+    /// opens where the writer left it.
+    pub last_sender: BTreeMap<String, String>,
+    /// Every address each account may send as, as Gmail last reported them,
+    /// keyed by the account's own address. Kept here so the composer opens
+    /// without waiting on the network; the app refreshes it in the
+    /// background.
+    pub send_as: BTreeMap<String, Vec<crate::compose::SendAsAddress>>,
+    /// When Gmail last reported each account's send-as addresses, in
+    /// milliseconds since the epoch, keyed as `send_as` is. The app asks
+    /// again once a day, so a restart does not cost a call per account.
+    pub send_as_checked: BTreeMap<String, i64>,
+    /// What a new message starts as: styled text, or Markdown source.
+    pub compose_format: ComposeFormat,
+    /// Ask before sending a message that promises a file and carries none.
+    pub check_attachments: bool,
+    /// Open the composer with Sign on. It does nothing without a gpg.
+    pub sign_by_default: bool,
+    /// Turn Encrypt on as soon as gpg holds a key for every recipient.
+    pub encrypt_when_possible: bool,
+    /// Ask GitHub once a day whether a newer release is out.
+    pub check_for_updates: bool,
+    /// When the last timed check ran, in seconds since the Unix epoch. The
+    /// app restarts itself after its window closes, so without this it
+    /// would check on every start.
+    pub last_update_check: Option<i64>,
+    /// The newest release already announced in a notification, so each one
+    /// is announced once.
+    pub announced_update: Option<String>,
+    /// Which space the window opened on last: mail or the calendar.
+    pub space: Space,
+    /// The view the calendar shows: a day, a week, a month or the agenda.
+    pub calendar_view: CalendarView,
+    /// Show events the person said No to, faded and struck through,
+    /// rather than leaving them out.
+    pub show_declined_events: bool,
+    /// The hours meetings usually run in, and the days they run on: the
+    /// Day and Week grid shades what falls outside them, Month shades a
+    /// day that is not one of them, and the assistant's free-time tool
+    /// defaults to them. Defaults to 09:00 to 18:00, Monday to Friday.
+    pub working_hours: mailrs_domain::calendar::hours::WorkingHours,
+    /// Which day the Week grid, the Month grid and the mini month start
+    /// on: the locale's own first weekday, or a fixed weekday. Defaults
+    /// to Automatic.
+    pub week_start: WeekStart,
+    /// The address of the account the last new event went on. A new
+    /// event goes on that account's primary calendar.
+    pub last_calendar_account: Option<String>,
+    /// The accounts, by lower-case address, whose calendars the calendar
+    /// sidebar keeps folded under their heading.
+    pub folded_calendar_accounts: Vec<String>,
+    /// Before contacts were chosen per account, one switch for all of them.
+    /// True folds into `contact_accounts` as every account the first time
+    /// the accounts load, and goes back to false.
+    pub contacts: bool,
+    /// The accounts whose Google contacts Penguin Mail reads, for names,
+    /// photos, and recipient suggestions, by lower-case address. Each is off
+    /// until the owner turns it on, because each asks Google for more
+    /// access.
+    pub contact_accounts: Vec<String>,
+}
+
+/// One skill's switches on the AI page. Both start off: a skill is text
+/// the model follows, and scripts reaching the internet is a second choice
+/// on top of that.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct SkillSettings {
+    pub enabled: bool,
+    /// Lets this skill's commands reach the network from the sandbox.
+    pub allow_network: bool,
+}
+
+/// A connection: where a model runs. `Off` is no connection, which turns a
+/// feature off.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum AiProvider {
+    Off,
+    /// A local or self-hosted server with OpenAI's API: LM Studio, Ollama,
+    /// Unsloth, llama.cpp, vLLM, or OpenAI itself.
+    Local,
+    Anthropic,
+    /// The user's Claude subscription, through Claude Code.
+    ClaudeCode,
+}
+
+impl Choice for AiProvider {
+    const ALL: &'static [Self] = &[
+        AiProvider::Off,
+        AiProvider::Local,
+        AiProvider::Anthropic,
+        AiProvider::ClaudeCode,
+    ];
+    fn label(self) -> String {
+        match self {
+            AiProvider::Off => gettext("Off"),
+            AiProvider::Local => gettext("Local Server"),
+            AiProvider::Anthropic => gettext("Anthropic API"),
+            AiProvider::ClaudeCode => gettext("Claude Subscription"),
+        }
+    }
+}
+
+/// Something in the app that sends words to a model. Each one has a row
+/// under Used For on the AI page, and each can run on a model of its own.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Feature {
+    Assistant,
+    Translation,
+    Unsubscribe,
+}
+
+impl Feature {
+    /// In the order the AI page lists them.
+    pub const ALL: [Feature; 3] = [
+        Feature::Assistant,
+        Feature::Translation,
+        Feature::Unsubscribe,
+    ];
+
+    pub fn label(self) -> String {
+        match self {
+            Feature::Assistant => gettext("Assistant"),
+            Feature::Translation => gettext("Translation"),
+            // The assistant's running label says "Unsubscribing" too, and
+            // means the act rather than the feature, which Portuguese
+            // words differently.
+            Feature::Unsubscribe => pgettext("ai feature", "Unsubscribing"),
+        }
+    }
+
+    pub fn description(self) -> String {
+        match self {
+            Feature::Assistant => gettext("Answers questions and acts on your mail"),
+            Feature::Translation => gettext("Translates a message when you ask"),
+            Feature::Unsubscribe => {
+                gettext("Reads a newsletter's unsubscribe page when the rules cannot")
+            }
+        }
+    }
+
+    /// What this feature's row offers, in order. `SameAsAssistant` comes
+    /// first for every feature but the assistant, which has no one else to
+    /// follow. The model in each `Use::Model` is left empty: the row fills
+    /// it in.
+    pub fn choices(self) -> Vec<Use> {
+        let follow = (self != Feature::Assistant).then_some(Use::SameAsAssistant);
+        follow
+            .into_iter()
+            .chain(AiProvider::ALL.iter().map(|&connection| Use::Model {
+                connection,
+                model: String::new(),
+            }))
+            .collect()
+    }
+}
+
+/// Which model a feature uses.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "kebab-case")]
+pub enum Use {
+    /// Whatever the assistant uses, including nothing when it is off.
+    SameAsAssistant,
+    /// A model on one connection. `AiProvider::Off` turns the feature off.
+    Model {
+        connection: AiProvider,
+        model: String,
+    },
+}
+
+impl Use {
+    /// The label a feature's row shows for this choice.
+    pub fn label(&self) -> String {
+        match self {
+            Use::SameAsAssistant => gettext("Same as the Assistant"),
+            Use::Model { connection, .. } => connection.label(),
+        }
+    }
+
+    /// Whether two uses are the same row in the drop-down, whatever model
+    /// each names.
+    pub fn same_choice(&self, other: &Use) -> bool {
+        match (self, other) {
+            (Use::SameAsAssistant, Use::SameAsAssistant) => true,
+            (Use::Model { connection: a, .. }, Use::Model { connection: b, .. }) => a == b,
+            _ => false,
+        }
+    }
+}
+
+/// The AI features' models and how careful the assistant is. API keys live
+/// in the keyring, not here.
+///
+/// The assistant's choice stays in the fields it always had: `provider` and
+/// one model per connection. An old settings file therefore loads with the
+/// assistant where it was and every other feature following it, and a file
+/// written now still reads the same way to an older version. Other features
+/// that pick a model of their own keep it in `uses`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct AiSettings {
+    /// The assistant's connection.
+    pub provider: AiProvider,
+    /// The local server's API address, ending in `/v1`.
+    pub base_url: String,
+    /// The assistant's model on a local server, and the one another feature
+    /// starts from when it moves there.
+    pub local_model: String,
+    /// The same, with Anthropic's API.
+    pub anthropic_model: String,
+    /// The same, as a Claude Code model alias such as `sonnet`; empty uses
+    /// its default.
+    pub claude_model: String,
+    /// The `claude` command; empty finds it automatically.
+    pub claude_command: String,
+    /// Ask before the assistant sends mail or changes Gmail settings.
+    pub confirm_actions: bool,
+    /// Features other than the assistant that do not follow it. A feature
+    /// missing here uses the assistant's model.
+    pub uses: BTreeMap<Feature, Use>,
+    /// How the assistant searches the web and reads pages.
+    pub web_search: WebSearch,
+    /// The SearXNG server web search asks, such as `http://localhost:8080`.
+    pub searxng_url: String,
+}
+
+impl Default for AiSettings {
+    fn default() -> Self {
+        AiSettings {
+            provider: AiProvider::Off,
+            base_url: "http://localhost:1234/v1".into(),
+            local_model: String::new(),
+            anthropic_model: "claude-opus-5".into(),
+            claude_model: String::new(),
+            claude_command: String::new(),
+            confirm_actions: true,
+            uses: BTreeMap::new(),
+            web_search: WebSearch::Claude,
+            searxng_url: String::new(),
+        }
+    }
+}
+
+/// How the assistant reaches the web. Claude, through the API or a
+/// subscription, always uses Anthropic's own search once this is on; the
+/// engines are for a local model, which has no search of its own.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum WebSearch {
+    /// No web tools for any model.
+    Off,
+    /// Claude searches with Anthropic's tools. A local model can read a
+    /// page it is given but has nothing to search with.
+    Claude,
+    /// A local model searches with the Brave Search API.
+    Brave,
+    /// A local model searches with a SearXNG server.
+    Searxng,
+}
+
+impl Choice for WebSearch {
+    const ALL: &'static [Self] = &[
+        WebSearch::Off,
+        WebSearch::Claude,
+        WebSearch::Brave,
+        WebSearch::Searxng,
+    ];
+    fn label(self) -> String {
+        match self {
+            WebSearch::Off => gettext("Off"),
+            WebSearch::Claude => gettext("Claude's own only"),
+            WebSearch::Brave => gettext("Brave Search"),
+            WebSearch::Searxng => gettext("SearXNG"),
+        }
+    }
+}
+
+impl AiSettings {
+    /// The assistant's model on one connection.
+    pub fn model_on(&self, connection: AiProvider) -> &str {
+        match connection {
+            AiProvider::Off => "",
+            AiProvider::Local => &self.local_model,
+            AiProvider::Anthropic => &self.anthropic_model,
+            AiProvider::ClaudeCode => &self.claude_model,
+        }
+    }
+
+    /// What a feature's row shows: the assistant's connection and model,
+    /// or another feature's own choice.
+    pub fn use_for(&self, feature: Feature) -> Use {
+        match feature {
+            Feature::Assistant => Use::Model {
+                connection: self.provider,
+                model: self.model_on(self.provider).to_string(),
+            },
+            _ => self
+                .uses
+                .get(&feature)
+                .cloned()
+                .unwrap_or(Use::SameAsAssistant),
+        }
+    }
+
+    /// The connection and model a feature runs on, following the assistant
+    /// where the feature says to.
+    pub fn resolved(&self, feature: Feature) -> (AiProvider, String) {
+        match self.use_for(feature) {
+            Use::SameAsAssistant => (self.provider, self.model_on(self.provider).to_string()),
+            Use::Model { connection, model } => (connection, model),
+        }
+    }
+
+    /// Chooses a feature's model. The assistant cannot follow itself, so
+    /// `SameAsAssistant` leaves it as it was.
+    pub fn set_use(&mut self, feature: Feature, choice: Use) {
+        match (feature, choice) {
+            (Feature::Assistant, Use::SameAsAssistant) => {}
+            (Feature::Assistant, Use::Model { connection, model }) => {
+                self.provider = connection;
+                match connection {
+                    AiProvider::Off => {}
+                    AiProvider::Local => self.local_model = model,
+                    AiProvider::Anthropic => self.anthropic_model = model,
+                    AiProvider::ClaudeCode => self.claude_model = model,
+                }
+            }
+            // Following the assistant is what a missing entry means, so the
+            // file keeps no line for it.
+            (feature, Use::SameAsAssistant) => {
+                self.uses.remove(&feature);
+            }
+            (feature, choice) => {
+                self.uses.insert(feature, choice);
+            }
+        }
+    }
+}
+
+impl Default for Settings {
+    fn default() -> Self {
+        Settings {
+            threading: true,
+            mark_read: MarkRead::Immediately,
+            remote_images: RemoteImages::Ask,
+            text_size: TextSize::Normal,
+            color_scheme: ColorScheme::System,
+            language: String::new(),
+            notifications: true,
+            notification_previews: true,
+            default_account: None,
+            signatures: BTreeMap::new(),
+            undo_send: UndoSend::Ten,
+            flag_color: mailrs_domain::FlagColor::Red,
+            vips: BTreeMap::new(),
+            notify_vips_only: false,
+            notification_buttons: crate::notify::Button::ALL.to_vec(),
+            event_reminders: true,
+            smart_mailboxes: Vec::new(),
+            account_order: Vec::new(),
+            account_colors: BTreeMap::new(),
+            account_names: BTreeMap::new(),
+            mcp_servers: Vec::new(),
+            ai: AiSettings::default(),
+            assistant_details_expanded: false,
+            assistant_allowed_tools: Vec::new(),
+            assistant_skills: BTreeMap::new(),
+            hidden_addresses: Vec::new(),
+            inbox_categories: true,
+            default_category: Category::All,
+            suggest_follow_ups: true,
+            spell_languages: BTreeMap::new(),
+            spell_words: Vec::new(),
+            last_sender: BTreeMap::new(),
+            send_as: BTreeMap::new(),
+            send_as_checked: BTreeMap::new(),
+            compose_format: ComposeFormat::Rich,
+            check_attachments: true,
+            sign_by_default: false,
+            encrypt_when_possible: false,
+            contacts: false,
+            contact_accounts: Vec::new(),
+            check_for_updates: true,
+            last_update_check: None,
+            announced_update: None,
+            space: Space::Mail,
+            calendar_view: CalendarView::Week,
+            show_declined_events: false,
+            working_hours: mailrs_domain::calendar::hours::WorkingHours::default(),
+            week_start: WeekStart::default(),
+            last_calendar_account: None,
+            folded_calendar_accounts: Vec::new(),
+        }
+    }
+}
+
+/// How the composer holds a message while it is being written.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ComposeFormat {
+    /// Bold shows as bold: the formatting bar styles the text itself.
+    Rich,
+    /// The writer types Markdown and sees its marks.
+    Markdown,
+}
+
+impl Choice for ComposeFormat {
+    const ALL: &'static [Self] = &[ComposeFormat::Rich, ComposeFormat::Markdown];
+    fn label(self) -> String {
+        match self {
+            ComposeFormat::Rich => gettext("Rich text"),
+            ComposeFormat::Markdown => gettext("Markdown"),
+        }
+    }
+}
+
+/// The inbox category a fresh window opens on. The name is the one the
+/// category bar shows, so it reads the same in both places.
+impl Choice for Category {
+    const ALL: &'static [Self] = &Category::ALL;
+    fn label(self) -> String {
+        self.name()
+    }
+}
+
+/// The "Week Starts On" row in Preferences.
+impl Choice for WeekStart {
+    const ALL: &'static [Self] = &[WeekStart::Automatic, WeekStart::Monday, WeekStart::Sunday];
+    fn label(self) -> String {
+        match self {
+            WeekStart::Automatic => gettext("Automatic"),
+            WeekStart::Monday => gettext("Monday"),
+            WeekStart::Sunday => gettext("Sunday"),
+        }
+    }
+}
+
+/// A preference with a fixed set of choices, shown as a combo row.
+pub trait Choice: Sized + Copy + PartialEq + 'static {
+    const ALL: &'static [Self];
+    fn label(self) -> String;
+
+    fn index(self) -> u32 {
+        Self::ALL.iter().position(|c| *c == self).unwrap_or(0) as u32
+    }
+
+    fn from_index(index: u32) -> Self {
+        Self::ALL
+            .get(index as usize)
+            .copied()
+            .unwrap_or(Self::ALL[0])
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum MarkRead {
+    Immediately,
+    AfterDelay,
+    Manually,
+}
+
+impl Choice for MarkRead {
+    const ALL: &'static [Self] = &[
+        MarkRead::Immediately,
+        MarkRead::AfterDelay,
+        MarkRead::Manually,
+    ];
+    fn label(self) -> String {
+        match self {
+            MarkRead::Immediately => gettext("When opened"),
+            MarkRead::AfterDelay => gettext("After 2 seconds"),
+            MarkRead::Manually => gettext("Only when I choose"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum RemoteImages {
+    Ask,
+    Always,
+}
+
+impl Choice for RemoteImages {
+    const ALL: &'static [Self] = &[RemoteImages::Ask, RemoteImages::Always];
+    fn label(self) -> String {
+        match self {
+            RemoteImages::Ask => gettext("Ask each time"),
+            RemoteImages::Always => gettext("Always load"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum TextSize {
+    Small,
+    Normal,
+    Large,
+    Larger,
+}
+
+impl TextSize {
+    pub fn zoom(self) -> f64 {
+        match self {
+            TextSize::Small => 0.9,
+            TextSize::Normal => 1.0,
+            TextSize::Large => 1.15,
+            TextSize::Larger => 1.3,
+        }
+    }
+}
+
+impl Choice for TextSize {
+    const ALL: &'static [Self] = &[
+        TextSize::Small,
+        TextSize::Normal,
+        TextSize::Large,
+        TextSize::Larger,
+    ];
+    fn label(self) -> String {
+        match self {
+            TextSize::Small => gettext("Small"),
+            TextSize::Normal => gettext("Default"),
+            TextSize::Large => gettext("Large"),
+            TextSize::Larger => gettext("Larger"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum UndoSend {
+    Off,
+    Five,
+    Ten,
+    Twenty,
+    Thirty,
+}
+
+impl UndoSend {
+    pub fn seconds(self) -> u32 {
+        match self {
+            UndoSend::Off => 0,
+            UndoSend::Five => 5,
+            UndoSend::Ten => 10,
+            UndoSend::Twenty => 20,
+            UndoSend::Thirty => 30,
+        }
+    }
+}
+
+impl Choice for UndoSend {
+    const ALL: &'static [Self] = &[
+        UndoSend::Off,
+        UndoSend::Five,
+        UndoSend::Ten,
+        UndoSend::Twenty,
+        UndoSend::Thirty,
+    ];
+    fn label(self) -> String {
+        match self {
+            UndoSend::Off => gettext("Off"),
+            UndoSend::Five => gettext("5 seconds"),
+            UndoSend::Ten => gettext("10 seconds"),
+            UndoSend::Twenty => gettext("20 seconds"),
+            UndoSend::Thirty => gettext("30 seconds"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ColorScheme {
+    System,
+    Light,
+    Dark,
+}
+
+impl Choice for ColorScheme {
+    const ALL: &'static [Self] = &[ColorScheme::System, ColorScheme::Light, ColorScheme::Dark];
+    fn label(self) -> String {
+        match self {
+            ColorScheme::System => gettext("Follow system"),
+            ColorScheme::Light => gettext("Light"),
+            ColorScheme::Dark => gettext("Dark"),
+        }
+    }
+}
+
+/// What the window shows beside the sidebar: the mail or the calendar.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Space {
+    #[default]
+    Mail,
+    Calendar,
+}
+
+/// Which grid the calendar page shows. Lives here, not in `ui`, because
+/// settings imports nothing from it; `ui::calendar::range` uses this type
+/// as its `ViewKind`.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum CalendarView {
+    Day,
+    #[default]
+    Week,
+    Month,
+    /// The upcoming days as a list, which a narrow window shows for Week
+    /// and Month as well.
+    Agenda,
+}
+
+/// How often each account checks Gmail, in seconds. These say "every so
+/// often" the way an event's repeat rule does, and share its words.
+pub fn poll_choices() -> Vec<(i64, String)> {
+    let seconds = |count: usize| {
+        fill_plural(
+            "Every second",
+            "Every {count} seconds",
+            count,
+            &[("count", &count.to_string())],
+        )
+    };
+    let minutes = |count: usize| {
+        fill_plural(
+            "Every minute",
+            "Every {count} minutes",
+            count,
+            &[("count", &count.to_string())],
+        )
+    };
+    vec![
+        (30, seconds(30)),
+        (60, minutes(1)),
+        (300, minutes(5)),
+        (900, minutes(15)),
+    ]
+}
+
+/// How many days of mail stay on this computer.
+pub fn window_choices() -> Vec<(i64, String)> {
+    vec![
+        (14, gettext("2 weeks")),
+        (30, gettext("30 days")),
+        (90, gettext("90 days")),
+        (365, gettext("1 year")),
+    ]
+}
+
+/// Body cache limit in megabytes.
+pub fn cache_choices() -> Vec<(i64, String)> {
+    vec![
+        (256, gettext("256 MB")),
+        (1024, gettext("1 GB")),
+        (4096, gettext("4 GB")),
+    ]
+}
+
+/// The index of the choice closest to `value`.
+pub fn nearest<T: Copy + Into<i64>>(choices: &[(T, String)], value: T) -> u32 {
+    let value: i64 = value.into();
+    choices
+        .iter()
+        .enumerate()
+        .min_by_key(|(_, (c, _))| ((*c).into() - value).abs())
+        .map_or(0, |(i, _)| i as u32)
+}
+
+/// A day, in the milliseconds the settings keep times in.
+pub const DAY_MILLIS: i64 = 24 * 60 * 60 * 1000;
+
+/// Reads the Always Allow answers and drops `shell/run_command`. Earlier
+/// versions stored that one key for every command a skill could run, while
+/// the assistant promises to ask about each command.
+fn allowed_tools<'de, D: serde::Deserializer<'de>>(read: D) -> Result<Vec<String>, D::Error> {
+    let mut keys = Vec::<String>::deserialize(read)?;
+    keys.retain(|key| key != "shell/run_command");
+    Ok(keys)
+}
+
+impl Settings {
+    /// Whether Penguin Mail reads this account's Google contacts.
+    pub fn reads_contacts(&self, email: &str) -> bool {
+        let email = email.to_lowercase();
+        self.contact_accounts.contains(&email)
+    }
+
+    /// The switches for one skill, off when the file has no entry for it.
+    pub fn skill(&self, id: &str) -> SkillSettings {
+        self.assistant_skills.get(id).copied().unwrap_or_default()
+    }
+
+    /// Reads the file, falling back to defaults when it is missing or
+    /// invalid, and leaves the file as it is. The app opens it with
+    /// [`Settings::open`] instead, which keeps a broken file safe.
+    pub fn load(path: &Path) -> Settings {
+        match std::fs::read_to_string(path) {
+            Ok(text) => toml::from_str(&text).unwrap_or_else(|err| {
+                tracing::warn!(path = %path.display(), error = %err, "ignoring unreadable settings");
+                Settings::default()
+            }),
+            Err(_) => Settings::default(),
+        }
+    }
+
+    /// Reads the file for the app: a file that does not parse moves aside
+    /// so the next save cannot overwrite it, and the answer says where.
+    pub fn open(path: &Path) -> Opened {
+        file::open(path)
+    }
+
+    /// Writes the file whole or not at all. The app saves through a
+    /// [`Saver`], which calls this off the main thread.
+    pub fn save(&self, path: &Path) -> std::io::Result<()> {
+        let text = toml::to_string(self).map_err(std::io::Error::other)?;
+        file::write_atomic(path, &text)
+    }
+
+    /// `$MAILRS_SETTINGS`, else next to `config.toml`.
+    pub fn default_path() -> PathBuf {
+        if let Some(path) = std::env::var_os("MAILRS_SETTINGS") {
+            return PathBuf::from(path);
+        }
+        mailrs_sync::config::config_path()
+            .ok()
+            .and_then(|p| p.parent().map(Path::to_path_buf))
+            .unwrap_or_else(std::env::temp_dir)
+            .join("settings.toml")
+    }
+
+    pub fn signature(&self, email: &str) -> &str {
+        self.signatures
+            .get(&email.to_lowercase())
+            .map_or("", String::as_str)
+    }
+
+    /// `emails` in the order the user chose; unlisted ones keep theirs, last.
+    pub fn ordered<'a>(&self, emails: &[&'a str]) -> Vec<&'a str> {
+        let rank = |email: &str| {
+            self.account_order
+                .iter()
+                .position(|e| e.eq_ignore_ascii_case(email))
+                .unwrap_or(usize::MAX)
+        };
+        let mut sorted = emails.to_vec();
+        sorted.sort_by_key(|e| rank(e));
+        sorted
+    }
+
+    /// Moves `email` one place up (`-1`) or down (`1`) among `emails`.
+    pub fn move_account(&mut self, emails: &[&str], email: &str, step: isize) {
+        let mut order: Vec<String> = self.ordered(emails).iter().map(|e| e.to_string()).collect();
+        let Some(at) = order.iter().position(|e| e.eq_ignore_ascii_case(email)) else {
+            return;
+        };
+        let to = at as isize + step;
+        if to < 0 || to as usize >= order.len() {
+            return;
+        }
+        order.swap(at, to as usize);
+        self.account_order = order;
+    }
+
+    /// Moves smart mailbox `id` one place up or down.
+    pub fn move_smart(&mut self, id: &str, step: isize) {
+        let Some(at) = self.smart_mailboxes.iter().position(|m| m.id == id) else {
+            return;
+        };
+        let to = at as isize + step;
+        if to >= 0 && (to as usize) < self.smart_mailboxes.len() {
+            self.smart_mailboxes.swap(at, to as usize);
+        }
+    }
+
+    pub fn is_vip(&self, email: &str) -> bool {
+        self.vips.contains_key(&email.to_lowercase())
+    }
+
+    /// Adds or removes a VIP. Returns whether the address is a VIP now.
+    pub fn toggle_vip(&mut self, email: &str, name: &str) -> bool {
+        let key = email.trim().to_lowercase();
+        if self.vips.remove(&key).is_some() {
+            return false;
+        }
+        let name = if name.trim().is_empty() {
+            email.trim()
+        } else {
+            name.trim()
+        };
+        self.vips.insert(key, name.to_string());
+        true
+    }
+
+    /// Puts `button` on new-mail notifications, or takes it off. The
+    /// buttons stay in `Button::ALL` order however they were turned on.
+    pub fn show_notification_button(&mut self, button: crate::notify::Button, show: bool) {
+        self.notification_buttons = crate::notify::Button::ALL
+            .into_iter()
+            .filter(|b| {
+                if *b == button {
+                    show
+                } else {
+                    self.notification_buttons.contains(b)
+                }
+            })
+            .collect();
+    }
+
+    /// What goes below a message sent from `email`. A signature written here
+    /// wins; failing that, the one Gmail keeps for that send-as address.
+    pub fn signature_for(&self, account: &str, email: &str) -> &str {
+        let written = self.signature(email);
+        if !written.is_empty() {
+            return written;
+        }
+        self.send_as
+            .get(&account.to_lowercase())
+            .into_iter()
+            .flatten()
+            .find(|a| a.email.eq_ignore_ascii_case(email))
+            .map_or("", |a| a.signature.as_str())
+    }
+
+    /// Whether the account's send-as addresses are a day old or were
+    /// never read.
+    pub fn send_as_due(&self, account: &str, now: i64) -> bool {
+        self.send_as_checked
+            .get(&account.to_lowercase())
+            .is_none_or(|at| now.saturating_sub(*at) >= DAY_MILLIS || *at > now)
+    }
+
+    /// The name the account sends as from its own address, as Gmail last
+    /// reported it. The app shows this without asking Gmail at start.
+    pub fn display_name(&self, account: &str) -> Option<String> {
+        self.send_as
+            .get(&account.to_lowercase())?
+            .iter()
+            .find(|a| a.email.eq_ignore_ascii_case(account))?
+            .name
+            .clone()
+            .filter(|n| !n.trim().is_empty())
+    }
+
+    /// Every address `account` may send from, its own address first when
+    /// Gmail reported nothing. Gmail's default comes before the rest.
+    pub fn senders(&self, account: &str) -> Vec<crate::compose::SendAsAddress> {
+        let stored = self.send_as.get(&account.to_lowercase());
+        let mut addresses: Vec<crate::compose::SendAsAddress> = stored.cloned().unwrap_or_default();
+        if !addresses
+            .iter()
+            .any(|a| a.email.eq_ignore_ascii_case(account))
+        {
+            addresses.insert(
+                0,
+                crate::compose::SendAsAddress {
+                    email: account.to_string(),
+                    default: addresses.is_empty(),
+                    ..Default::default()
+                },
+            );
+        }
+        addresses.sort_by_key(|a| !a.default);
+        addresses
+    }
+
+    pub fn set_signature(&mut self, email: &str, signature: &str) {
+        let key = email.to_lowercase();
+        if signature.trim().is_empty() {
+            self.signatures.remove(&key);
+        } else {
+            self.signatures
+                .insert(key, signature.trim_end().to_string());
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    // The category bar itself cannot be tested here: the harness gives
+    // every test its own thread, GTK refuses a second init from a
+    // different one, and `richbuffer` already spends this binary's one
+    // GTK test. So what is tested is the setting the bar is built from.
+    #[test]
+    fn the_inbox_opens_on_everything_until_somebody_says_otherwise() {
+        assert_eq!(Settings::default().default_category, Category::All);
+    }
+
+    #[test]
+    fn choosing_a_category_survives_the_settings_file() {
+        for category in Category::ALL {
+            let mut settings = Settings::default();
+            Change::DefaultCategory(category).apply(&mut settings);
+            let written = serde_json::to_string(&settings).expect("settings serialise");
+            let read: Settings = serde_json::from_str(&written).expect("and come back");
+            assert_eq!(read.default_category, category, "{category:?}");
+        }
+    }
+
+    #[test]
+    fn a_file_from_before_the_calendar_opens_on_mail_and_the_week() {
+        let read: Settings = toml::from_str("threading = false\n").expect("an old file reads");
+        assert_eq!(
+            (read.space, read.calendar_view, read.show_declined_events),
+            (Space::Mail, CalendarView::Week, false)
+        );
+    }
+
+    #[test]
+    fn a_file_that_remembers_the_gnome_offer_reads_and_forgets_it() {
+        // The event card no longer offers GNOME Online Accounts, so the
+        // accounts it asked about need no remembering.
+        let old = "threading = false\noffered_to_gnome = [\"dana@example.com\"]\n";
+        let read: Settings = toml::from_str(old).expect("an old file reads");
+        assert!(!read.threading);
+        let written = toml::to_string(&read).expect("settings serialise");
+        assert!(!written.contains("offered_to_gnome"), "{written}");
+    }
+
+    #[test]
+    fn the_calendar_choices_survive_the_settings_file() {
+        let mut settings = Settings::default();
+        Change::Space(Space::Calendar).apply(&mut settings);
+        Change::CalendarView(CalendarView::Agenda).apply(&mut settings);
+        Change::ShowDeclinedEvents(true).apply(&mut settings);
+        let written = toml::to_string(&settings).expect("settings serialise");
+        assert!(written.contains("space = \"calendar\""), "{written}");
+        let read: Settings = toml::from_str(&written).expect("and come back");
+        assert_eq!(
+            (read.space, read.calendar_view, read.show_declined_events),
+            (Space::Calendar, CalendarView::Agenda, true)
+        );
+    }
+
+    #[test]
+    fn the_categories_redraw_when_the_one_they_open_on_changes() {
+        let before = Settings::default();
+        let mut after = before.clone();
+        after.default_category = Category::Promotions;
+        assert!(Effects::between(&before, &after).has(Effect::Categories));
+    }
+
+    use super::*;
+
+    #[test]
+    fn a_missing_file_gives_defaults() {
+        let settings = Settings::load(Path::new("/nonexistent/settings.toml"));
+        assert_eq!(settings, Settings::default());
+        assert!(settings.threading);
+    }
+
+    #[test]
+    fn settings_round_trip_and_tolerate_missing_keys() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        let mut settings = Settings {
+            threading: false,
+            text_size: TextSize::Large,
+            ..Settings::default()
+        };
+        settings.set_signature("Me@Example.com", "Dana\n\n");
+        settings.save(&path).unwrap();
+        let loaded = Settings::load(&path);
+        assert_eq!(loaded, settings);
+        assert_eq!(loaded.signature("me@example.com"), "Dana");
+        std::fs::write(&path, "threading = false\nmark_read = \"after-delay\"\n").unwrap();
+        let partial = Settings::load(&path);
+        assert!(!partial.threading);
+        assert_eq!(partial.mark_read, MarkRead::AfterDelay);
+        assert!(partial.notifications, "missing keys take their defaults");
+    }
+
+    #[test]
+    fn event_reminders_are_on_unless_the_file_says_otherwise() {
+        assert!(Settings::default().event_reminders);
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        std::fs::write(&path, "threading = false\n").unwrap();
+        assert!(Settings::load(&path).event_reminders, "a file from before this change");
+        std::fs::write(&path, "event_reminders = false\n").unwrap();
+        assert!(!Settings::load(&path).event_reminders);
+    }
+
+    #[test]
+    fn an_always_answer_for_every_skill_command_is_dropped_on_reading() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        std::fs::write(
+            &path,
+            "assistant_allowed_tools = [\"shell/run_command\", \"mcp:files/files__read\"]\n",
+        )
+        .unwrap();
+        assert_eq!(
+            Settings::load(&path).assistant_allowed_tools,
+            ["mcp:files/files__read"]
+        );
+        assert_eq!(
+            Settings::open(&path).settings.assistant_allowed_tools,
+            ["mcp:files/files__read"]
+        );
+    }
+
+    #[test]
+    fn a_file_from_before_models_per_feature_keeps_every_feature_where_it_was() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        std::fs::write(
+            &path,
+            "[ai]\nprovider = \"local\"\nbase_url = \"http://127.0.0.1:1234/v1\"\n\
+             local_model = \"qwen3\"\nanthropic_model = \"claude-opus-5\"\n\
+             confirm_actions = false\n",
+        )
+        .unwrap();
+        let ai = Settings::load(&path).ai;
+        assert_eq!(
+            ai.use_for(Feature::Assistant),
+            Use::Model {
+                connection: AiProvider::Local,
+                model: "qwen3".into()
+            }
+        );
+        assert_eq!(ai.use_for(Feature::Translation), Use::SameAsAssistant);
+        assert_eq!(
+            ai.resolved(Feature::Translation),
+            (AiProvider::Local, "qwen3".to_string())
+        );
+        // Web search came later, and an older file starts on Claude's own.
+        assert_eq!(ai.web_search, WebSearch::Claude);
+        assert!(!ai.confirm_actions, "the rest of the section survives");
+    }
+
+    #[test]
+    fn a_feature_with_its_own_model_survives_the_settings_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        let mut settings = Settings::default();
+        settings.ai.set_use(
+            Feature::Assistant,
+            Use::Model {
+                connection: AiProvider::ClaudeCode,
+                model: "sonnet".into(),
+            },
+        );
+        settings.ai.set_use(
+            Feature::Translation,
+            Use::Model {
+                connection: AiProvider::Local,
+                model: "gemma-3".into(),
+            },
+        );
+        settings.save(&path).unwrap();
+        assert_eq!(Settings::load(&path), settings);
+    }
+
+    #[test]
+    fn every_feature_has_a_row_offering_every_connection() {
+        // The AI page draws one row per entry in Feature::ALL. This match
+        // stops compiling when a feature is added, until it is listed.
+        for feature in Feature::ALL {
+            match feature {
+                Feature::Assistant | Feature::Translation | Feature::Unsubscribe => {}
+            }
+        }
+        assert_eq!(Feature::ALL.len(), 3);
+        for feature in Feature::ALL {
+            assert!(!feature.label().is_empty());
+            assert!(!feature.description().is_empty());
+            let choices = feature.choices();
+            for connection in AiProvider::ALL {
+                assert!(
+                    choices.iter().any(|choice| matches!(
+                        choice,
+                        Use::Model { connection: c, .. } if c == connection
+                    )),
+                    "{feature:?} offers {connection:?}"
+                );
+            }
+            // Only the assistant has no one to follow.
+            assert_eq!(
+                choices.first() == Some(&Use::SameAsAssistant),
+                feature != Feature::Assistant,
+                "{feature:?}"
+            );
+            // The row shows the choice the settings hold.
+            let current = Settings::default().ai.use_for(feature);
+            assert!(choices.iter().any(|c| c.same_choice(&current)));
+        }
+    }
+
+    #[test]
+    fn send_as_is_asked_again_only_once_a_day() {
+        let mut settings = Settings::default();
+        let now = 100 * DAY_MILLIS;
+        assert!(settings.send_as_due("Me@example.com", now));
+        Change::SendAsAddresses {
+            account: "Me@example.com".into(),
+            addresses: vec![crate::compose::SendAsAddress {
+                email: "me@example.com".into(),
+                name: Some("Dana Reis".into()),
+                default: true,
+                ..Default::default()
+            }],
+            at: now - DAY_MILLIS / 2,
+        }
+        .apply_to(&mut settings);
+        assert!(!settings.send_as_due("me@example.com", now));
+        assert!(settings.send_as_due("me@example.com", now + DAY_MILLIS));
+        assert_eq!(
+            settings.display_name("ME@example.com").as_deref(),
+            Some("Dana Reis")
+        );
+        assert_eq!(settings.display_name("you@example.com"), None);
+    }
+
+    #[test]
+    fn signing_in_again_asks_for_send_as_at_once_and_keeps_the_old_list_meanwhile() {
+        let mut settings = Settings::default();
+        let now = 100 * DAY_MILLIS;
+        Change::SendAsAddresses {
+            account: "me@example.com".into(),
+            addresses: vec![crate::compose::SendAsAddress {
+                email: "me@example.com".into(),
+                name: Some("Dana Reis".into()),
+                default: true,
+                ..Default::default()
+            }],
+            at: now - 60_000,
+        }
+        .apply_to(&mut settings);
+        assert!(!settings.send_as_due("me@example.com", now));
+        Change::SignedInAgain {
+            account: "Me@Example.com".into(),
+        }
+        .apply_to(&mut settings);
+        assert!(settings.send_as_due("me@example.com", now));
+        // Composers open on the old addresses until Gmail answers.
+        assert_eq!(
+            settings.display_name("me@example.com").as_deref(),
+            Some("Dana Reis")
+        );
+    }
+
+    #[test]
+    fn a_broken_file_is_ignored() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        std::fs::write(&path, "threading = maybe").unwrap();
+        assert_eq!(Settings::load(&path), Settings::default());
+    }
+
+    #[test]
+    fn choices_map_to_and_from_rows() {
+        assert_eq!(
+            TextSize::from_index(TextSize::Larger.index()),
+            TextSize::Larger
+        );
+        assert_eq!(MarkRead::from_index(99), MarkRead::Immediately);
+        assert_eq!(nearest(&poll_choices(), 45), 0);
+        assert_eq!(nearest(&window_choices(), 100), 2);
+    }
+
+    #[test]
+    fn notification_buttons_keep_their_order_however_they_come_on() {
+        use crate::notify::Button;
+        let mut settings = Settings::default();
+        for button in Button::ALL {
+            settings.show_notification_button(button, false);
+        }
+        assert!(settings.notification_buttons.is_empty());
+        settings.show_notification_button(Button::Reply, true);
+        settings.show_notification_button(Button::Archive, true);
+        assert_eq!(
+            settings.notification_buttons,
+            [Button::Archive, Button::Reply]
+        );
+        settings.show_notification_button(Button::Archive, true);
+        assert_eq!(
+            settings.notification_buttons.len(),
+            2,
+            "turning one on twice lists it once"
+        );
+    }
+
+    #[test]
+    fn accounts_move_within_the_chosen_order() {
+        let mut settings = Settings::default();
+        let emails = ["a@x.com", "b@x.com", "c@x.com"];
+        settings.move_account(&emails, "c@x.com", -1);
+        assert_eq!(settings.ordered(&emails), ["a@x.com", "c@x.com", "b@x.com"]);
+        settings.move_account(&emails, "a@x.com", -1);
+        assert_eq!(settings.ordered(&emails), ["a@x.com", "c@x.com", "b@x.com"]);
+        // An account added later goes last.
+        assert_eq!(
+            settings.ordered(&["d@x.com", "b@x.com", "a@x.com", "c@x.com"]),
+            ["a@x.com", "c@x.com", "b@x.com", "d@x.com"]
+        );
+    }
+
+    #[test]
+    fn vips_toggle_by_address_in_any_case() {
+        let mut settings = Settings::default();
+        assert!(settings.toggle_vip("Ann@Example.com", "Ann Lee"));
+        assert!(settings.is_vip("ann@example.com"));
+        assert_eq!(settings.vips["ann@example.com"], "Ann Lee");
+        assert!(!settings.toggle_vip("ANN@example.com", ""));
+        assert!(settings.vips.is_empty());
+    }
+
+    #[test]
+    fn hidden_addresses_round_trip() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        let settings = Settings {
+            hidden_addresses: vec![mailrs_sync::hidden::HiddenAddress {
+                account: "dana@gmail.com".into(),
+                address: "dana+kite.fern482@gmail.com".into(),
+                note: "Bike shop".into(),
+                created: 1_758_000_000_000,
+                active: false,
+                label_filter: Some("f1".into()),
+                trash_filter: Some("f2".into()),
+            }],
+            ..Settings::default()
+        };
+        settings.save(&path).unwrap();
+        assert_eq!(Settings::load(&path), settings);
+    }
+
+    #[test]
+    fn hidden_addresses_fill_in_missing_fields() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        std::fs::write(
+            &path,
+            "[[hidden_addresses]]\naccount = \"a@x.com\"\naddress = \"a+b.c123@x.com\"\ncreated = 5\n",
+        )
+        .unwrap();
+        let loaded = Settings::load(&path);
+        let [hidden] = loaded.hidden_addresses.as_slice() else {
+            panic!("one address");
+        };
+        assert!(hidden.active);
+        assert_eq!(hidden.note, "");
+        assert_eq!(hidden.label_filter, None);
+        assert!(Settings::default().hidden_addresses.is_empty());
+    }
+
+    #[test]
+    fn a_stored_alias_survives_a_save_and_load() {
+        let dir = tempfile::tempdir().expect("a temp dir");
+        let path = dir.path().join("settings.toml");
+        let mut settings = Settings::default();
+        settings.send_as.insert(
+            "dana@example.com".into(),
+            vec![
+                crate::compose::SendAsAddress {
+                    email: "dana@example.com".into(),
+                    name: Some("Dana".into()),
+                    signature: "Dana".into(),
+                    default: true,
+                },
+                crate::compose::SendAsAddress {
+                    email: "sales@example.com".into(),
+                    name: Some("Sales".into()),
+                    signature: "The Sales Desk".into(),
+                    default: false,
+                },
+            ],
+        );
+        settings
+            .last_sender
+            .insert("dana@example.com".into(), "sales@example.com".into());
+        settings.save(&path).expect("settings save");
+        assert_eq!(Settings::load(&path), settings);
+    }
+
+    #[test]
+    fn an_account_always_offers_its_own_address_with_gmails_first() {
+        let settings = Settings::default();
+        let senders = settings.senders("dana@example.com");
+        assert_eq!(senders.len(), 1);
+        assert_eq!(senders[0].email, "dana@example.com");
+        assert!(senders[0].default);
+    }
+
+    #[test]
+    fn a_written_signature_beats_the_one_gmail_keeps() {
+        let mut settings = Settings::default();
+        settings.send_as.insert(
+            "dana@example.com".into(),
+            vec![crate::compose::SendAsAddress {
+                email: "sales@example.com".into(),
+                signature: "The Sales Desk".into(),
+                ..Default::default()
+            }],
+        );
+        assert_eq!(
+            settings.signature_for("dana@example.com", "SALES@example.com"),
+            "The Sales Desk"
+        );
+        settings.set_signature("sales@example.com", "Dana, Sales");
+        assert_eq!(
+            settings.signature_for("dana@example.com", "sales@example.com"),
+            "Dana, Sales"
+        );
+    }
+
+    #[test]
+    fn blank_signatures_are_removed() {
+        let mut settings = Settings::default();
+        settings.set_signature("a@example.com", "Ann");
+        settings.set_signature("a@example.com", "   ");
+        assert!(settings.signatures.is_empty());
+    }
+}
