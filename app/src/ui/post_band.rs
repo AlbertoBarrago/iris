@@ -1,13 +1,13 @@
-//! The taupe band at the top of Add Account and of the first-run window:
-//! the tuxedo envelope in one pose per state, and an overlay that draws
+//! The night-violet band at the top of Add Account and of the first-run
+//! window: the winged envelope in one pose per state, and an overlay that draws
 //! what moves on it. `crate::add_account::post` decides which pose and
 //! which stamp; this draws them.
 //!
 //! Each pose is an SVG in the resource bundle, shown by a `gtk::Picture`
 //! in a crossfading stack. `Marks`, laid over the stack, draws the stamp,
 //! the warning badge, the walking dots, the gliding letters and the
-//! blink in `snapshot`, from the envelope's geometry in each pose, the
-//! numbers `mockups_d1c.py` draws the art with.
+//! glint on the wing in `snapshot`, from the envelope's geometry in each
+//! pose, the numbers `scripts/iris-art.py` draws the art with.
 
 use std::cell::{Cell, RefCell};
 use std::f32::consts::PI;
@@ -24,12 +24,10 @@ pub const ART_W: f32 = 440.0;
 pub const ART_H: f32 = 196.0;
 
 const PAPER: (u8, u8, u8) = (0xfb, 0xf7, 0xf0);
-const INK: (u8, u8, u8) = (0x2a, 0x26, 0x23);
+const INK: (u8, u8, u8) = (0x1d, 0x15, 0x47);
 const AMBER: (u8, u8, u8) = (0xf5, 0xc2, 0x11);
 /// The letter on a provider's tile.
 const CREAM: (u8, u8, u8) = (0xfb, 0xf1, 0xc7);
-/// The face just above the eyes, where its gradient has got to.
-const FACE: (u8, u8, u8) = (0xfd, 0xfa, 0xf6);
 
 fn rgba((r, g, b): (u8, u8, u8), alpha: f32) -> gdk::RGBA {
     gdk::RGBA::new(
@@ -49,24 +47,27 @@ fn hex(colour: &str) -> gdk::RGBA {
     }
 }
 
-/// The envelope in one pose: icon C's geometry at width `w`, top-left at
-/// (`x`, `top`), with the pupils nudged by `look`.
+/// The envelope in one pose: its geometry at width `w`, top-left at
+/// (`x`, `top`), as `scripts/iris-art.py` draws it.
 #[derive(Debug, Clone, Copy)]
 struct Env {
     x: f32,
     top: f32,
     w: f32,
-    look: (f32, f32),
 }
+
+/// How far the resting wing is raised, and the degrees between its
+/// feathers, as `scripts/iris-art.py` draws the idle pose.
+const IDLE_LIFT: f32 = 14.0;
+const FEATHER_SPREAD: f32 = 9.0;
 
 impl Env {
     fn of(band: Band) -> Env {
         match band {
-            Band::Idle => Env { x: 20.0, top: 66.0, w: 124.0, look: (0.0, 0.0) },
-            Band::Stamped | Band::Error => Env { x: 150.0, top: 62.0, w: 140.0, look: (0.0, 1.0) },
-            Band::Browser | Band::Lookup => Env { x: 52.0, top: 66.0, w: 124.0, look: (4.0, -1.0) },
-            Band::Unreachable => Env { x: 52.0, top: 66.0, w: 124.0, look: (0.0, 1.0) },
-            Band::Success => Env { x: 154.0, top: 92.0, w: 132.0, look: (0.0, 0.0) },
+            Band::Idle => Env { x: 60.0, top: 66.0, w: 124.0 },
+            Band::Stamped | Band::Error => Env { x: 150.0, top: 62.0, w: 140.0 },
+            Band::Browser | Band::Lookup | Band::Unreachable => Env { x: 52.0, top: 66.0, w: 124.0 },
+            Band::Success => Env { x: 154.0, top: 92.0, w: 132.0 },
         }
     }
 
@@ -81,13 +82,14 @@ impl Env {
         (self.x + self.w - sw * 0.42, self.top + sh * 0.12, sw, sh)
     }
 
-    /// The eyes' middles and their radius.
-    fn eyes(self) -> ([(f32, f32); 2], f32) {
-        let (dx, dy) = self.look;
-        let cx = self.x + self.w / 2.0;
-        let y = self.top + self.h() * 0.66 + dy;
-        let ex = self.w * 0.2;
-        ([(cx - ex + dx, y), (cx + ex + dx, y)], self.w * 0.04)
+    /// The tip of the wing's longest feather at rest, where the glint
+    /// shows: the root behind the envelope's top-left corner, the feather
+    /// 0.76 of the envelope's width long.
+    fn wing_tip(self) -> Point {
+        let (root_x, root_y) = (self.x + 0.12 * self.w, self.top + 0.18 * self.h());
+        let angle = (IDLE_LIFT + 4.0 * FEATHER_SPREAD).to_radians();
+        let length = 0.76 * self.w;
+        (root_x - length * angle.cos(), root_y - length * angle.sin())
     }
 }
 
@@ -153,20 +155,20 @@ mod imp {
         /// Where the looping dots or letters are, 0 to 1, or `None`
         /// while nothing loops: animations off, or the band hidden.
         pub phase: Cell<Option<f64>>,
-        /// 0 to 1 through a blink.
-        pub blink: Cell<f64>,
+        /// 0 to 1 through a glint on the wing.
+        pub glint: Cell<f64>,
         /// The lower lookup line has something to ask: MX answered.
         pub lower: Cell<bool>,
         /// Whether the success letters still come: the first sync runs.
         pub letters: Cell<bool>,
         /// How much larger than the art's own size the band draws it.
         pub scale: Cell<f32>,
-        /// The loops and the blink, stopped when the band leaves the
+        /// The loops and the glint, stopped when the band leaves the
         /// screen or changes pose.
         pub loops: RefCell<Vec<adw::Animation>>,
         /// One-off moves: the stamp's flight, its swap, the badge.
         pub moves: RefCell<Vec<adw::Animation>>,
-        pub blink_timer: RefCell<Option<glib::SourceId>>,
+        pub glint_timer: RefCell<Option<glib::SourceId>>,
     }
 
     #[glib::object_subclass]
@@ -221,7 +223,7 @@ mod imp {
             snapshot.scale(scale, scale);
             let env = Env::of(band);
             match band {
-                Band::Idle => self.draw_blink(snapshot, env),
+                Band::Idle => self.draw_glint(snapshot, env),
                 Band::Browser => {
                     if let Some(phase) = self.phase.get() {
                         draw_walking_dots(snapshot, phase as f32);
@@ -275,25 +277,28 @@ mod imp {
             }
         }
 
-        fn draw_blink(&self, snapshot: &gtk::Snapshot, env: Env) {
-            let closed = (self.blink.get() as f32 * PI).sin();
-            if closed <= 0.0 {
+        /// A four-pointed sparkle that swells and fades on the wing's tip,
+        /// turning a little as it does.
+        fn draw_glint(&self, snapshot: &gtk::Snapshot, env: Env) {
+            let t = self.glint.get() as f32;
+            let strength = (t * PI).sin();
+            if strength <= 0.0 {
                 return;
             }
-            let (eyes, r) = env.eyes();
-            for (cx, cy) in eyes {
-                let cover = gsk::PathBuilder::new();
-                cover.add_circle(&graphene::Point::new(cx, cy), r + 0.9);
-                snapshot.append_fill(&cover.to_path(), gsk::FillRule::Winding, &rgba(FACE, 1.0));
-                // The eye closes to a line, as a lid comes down.
-                let lid = gsk::PathBuilder::new();
-                let ry = (r * (1.0 - closed)).max(0.7);
-                lid.add_rounded_rect(&gsk::RoundedRect::from_rect(
-                    graphene::Rect::new(cx - r, cy - ry, 2.0 * r, 2.0 * ry),
-                    ry,
-                ));
-                snapshot.append_fill(&lid.to_path(), gsk::FillRule::Winding, &rgba(INK, 1.0));
-            }
+            let (cx, cy) = env.wing_tip();
+            let (long, short) = (9.0 * strength, 2.2 * strength);
+            snapshot.save();
+            snapshot.translate(&graphene::Point::new(cx, cy));
+            snapshot.rotate(45.0 * t);
+            let star = gsk::PathBuilder::new();
+            star.move_to(0.0, -long);
+            star.quad_to(short * 0.4, -short * 0.4, long, 0.0);
+            star.quad_to(short * 0.4, short * 0.4, 0.0, long);
+            star.quad_to(-short * 0.4, short * 0.4, -long, 0.0);
+            star.quad_to(-short * 0.4, -short * 0.4, 0.0, -long);
+            star.close();
+            snapshot.append_fill(&star.to_path(), gsk::FillRule::Winding, &rgba(PAPER, strength));
+            snapshot.restore();
         }
 
         fn draw_letters(&self, snapshot: &gtk::Snapshot) {
@@ -628,11 +633,11 @@ impl Marks {
         for animation in running {
             animation.skip();
         }
-        if let Some(timer) = imp.blink_timer.borrow_mut().take() {
+        if let Some(timer) = imp.glint_timer.borrow_mut().take() {
             timer.remove();
         }
         imp.phase.set(None);
-        imp.blink.set(0.0);
+        imp.glint.set(0.0);
         self.queue_draw();
     }
 
@@ -648,7 +653,7 @@ impl Marks {
             return;
         };
         let (period, easing) = match band {
-            Band::Idle => return self.schedule_blink(),
+            Band::Idle => return self.schedule_glint(),
             Band::Browser => (1600, adw::Easing::Linear),
             // The dots ease in and out themselves, since two run on one
             // line half a cycle apart.
@@ -672,32 +677,32 @@ impl Marks {
         self.keep(looping);
     }
 
-    /// Blinks once in 6 to 9 seconds, 160 ms each time.
-    fn schedule_blink(&self) {
+    /// Glints once in 6 to 9 seconds, 700 ms each time.
+    fn schedule_glint(&self) {
         let wait = 6000 + u64::from(glib::random_int_range(0, 3000) as u32);
         let weak = self.downgrade();
         let timer = glib::timeout_add_local_once(Duration::from_millis(wait), move || {
             let Some(marks) = weak.upgrade() else {
                 return;
             };
-            marks.imp().blink_timer.replace(None);
-            let target = marks.animate(|imp, value| imp.blink.set(value));
-            let blink = adw::TimedAnimation::builder()
+            marks.imp().glint_timer.replace(None);
+            let target = marks.animate(|imp, value| imp.glint.set(value));
+            let glint = adw::TimedAnimation::builder()
                 .widget(&marks)
                 .value_from(0.0)
                 .value_to(1.0)
-                .duration(160)
-                .easing(adw::Easing::Linear)
+                .duration(700)
+                .easing(adw::Easing::EaseInOutSine)
                 .target(&target)
                 .build();
-            marks.keep(blink);
-            marks.schedule_blink();
+            marks.keep(glint);
+            marks.schedule_glint();
         });
-        self.imp().blink_timer.replace(Some(timer));
+        self.imp().glint_timer.replace(Some(timer));
     }
 }
 
-/// The band: a taupe strip with the envelope's pose in the middle and the
+/// The band: a night-violet strip with the envelope's pose in the middle and the
 /// marks over it. The whole band is one picture to a screen reader, named
 /// for the state it shows.
 pub struct PostBand {

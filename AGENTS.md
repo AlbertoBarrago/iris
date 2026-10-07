@@ -181,14 +181,15 @@ stopping to ask: build a complete, good-looking client. Ask only for
 decisions that are theirs, such as the licence or anything outward
 facing.
 
-The app icon is an envelope that is also a penguin, drawn in GNOME's
-style: front view, a darker bottom edge for thickness, no drop shadow.
-The ink frame (`#2a2623`) is the hood, the flap's V is the widow's peak,
-the paper (`#fbf7f0`) is the face, and an orange beak (`#e8660c`) sits
-where a seal would. A 16 px copy is drawn on whole pixels, and the
-symbolic icon is the same shape in one colour. New icons follow this
-idiom. The logo files and their usage rules live in `docs/brand/` on the
-owner's machine only; it is gitignored, like `docs/superpowers/`.
+The app icon is a winged envelope: a cream envelope (`#fbf7f0` paper, a
+night-violet frame from `#33267a` to `#1d1547`) with an iridescent wing of
+five feathers rising from behind its top-left corner, cyan `#5ad1e8` to
+violet `#8b6cf0` to pink `#f07ab8` to amber `#f5c46b`. The app icon sets it
+on a macOS squircle shaded from `#5b3fd1` to `#1b1340`; the symbolic icon is
+the same shape in one colour. The Add Account poses are the same envelope
+with the wing raised, spread or drooped. `scripts/iris-art.py` draws all of
+them from the geometry `app/src/ui/post_band.rs` uses, so change the two
+together and regenerate rather than editing the SVGs by hand.
 
 ## Agent skills
 

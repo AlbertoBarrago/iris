@@ -1,4 +1,4 @@
-//! The Add Account band: the tuxedo envelope at the top of the dialog and
+//! The Add Account band: the winged envelope at the top of the dialog and
 //! of the first-run window. Which pose each step of a flow shows, the
 //! stamp a provider gets on the envelope, the provider tiles, and the
 //! advice the built-in list gives for an address before anything leaves
@@ -17,15 +17,15 @@ pub enum Band {
     Idle,
     /// A provider is chosen or matched, and its stamp is on the corner.
     Stamped,
-    /// The flap lifts and the penguin watches a browser window.
+    /// The wing lifts toward a browser window.
     Browser,
-    /// The penguin watches the mail servers while the lookup asks.
+    /// The wing lifts toward the mail servers while the lookup asks.
     Lookup,
-    /// The flap closes and a badge sits on the corner.
+    /// The wing folds and a badge sits on the corner.
     Error,
-    /// As `Error`, with the line to the server broken halfway.
+    /// The wing droops, with the line to the server broken halfway.
     Unreachable,
-    /// The flap opens on a checked letter.
+    /// The flap opens on a checked letter and the wing spreads.
     Success,
 }
 

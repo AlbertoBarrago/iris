@@ -1444,29 +1444,29 @@ popover.event-popover button.popover-more {
 .add-calendar { margin-left: -6px; }
 .add-calendar > button { padding: 2px 6px; min-height: 0; }
 
-/* Add Account and the first-run window (the "Penguin Post" mockups,
-   d1c). The band is taupe in both themes: the ink frame and the paper
-   wordmark measure against it, not against the window. The page colours
+/* Add Account and the first-run window. The band is night violet in both
+   themes: the envelope's frame, the iridescent wing and the paper wordmark
+   measure against it, not against the window. The page colours
    are the mockup's, set on the dialog so its rows and cards take them. */
 .post-band {
   background-image:
-    linear-gradient(to bottom, alpha(#fbf7f0, 0.18), alpha(#fbf7f0, 0) 10%, alpha(#000000, 0) 85%, alpha(#000000, 0.12)),
-    linear-gradient(to bottom, #8b7d71, #7c6f64);
+    linear-gradient(to bottom, alpha(#fbf7f0, 0.14), alpha(#fbf7f0, 0) 10%, alpha(#000000, 0) 85%, alpha(#000000, 0.16)),
+    linear-gradient(to bottom, #4a36b0, #2c2070);
 }
 headerbar.post-band-header { background: none; box-shadow: none; color: #fbf7f0; }
 headerbar.post-band-header > windowhandle > box > widget > box > button:not(.suggested-action),
 headerbar.post-band-header button.back { color: #fbf7f0; }
 headerbar.post-band-header windowcontrols > button > image {
-  background-color: #5e544c; color: #fbf7f0;
+  background-color: #3b2c8c; color: #fbf7f0;
 }
-headerbar.post-band-header windowcontrols > button:hover > image { background-color: #6b6057; }
+headerbar.post-band-header windowcontrols > button:hover > image { background-color: #4a3aa6; }
 
 .post-dialog, .post-first {
   --post-dim: #5f5f67;
   --post-faint: #8a8a93;
   --post-line: #e6e6ea;
   --post-pill: #e6e6ea;
-  --post-acc: #a84000;
+  --post-acc: #5b3fd1;
   --post-code: #f0f0f3;
   --post-err: #b3121f;
   --post-err-bg: #fbe9ea;
@@ -1478,7 +1478,7 @@ headerbar.post-band-header windowcontrols > button:hover > image { background-co
   --post-faint: #8e8e98;
   --post-line: #3d3d44;
   --post-pill: #46464d;
-  --post-acc: #ffa35c;
+  --post-acc: #b8a6ff;
   --post-code: #242428;
   --post-err: #ff8a8a;
   --post-err-bg: #4a2a2e;
@@ -1550,8 +1550,8 @@ button.post-tile {
   background-color: var(--card-bg-color);
   box-shadow: 0 0 0 1px var(--post-line);
 }
-button.post-tile:focus-visible { outline: 2px solid #e8660c; outline-offset: 1px; }
-.app-dark button.post-tile:focus-visible { outline-color: #ff7a1a; }
+button.post-tile:focus-visible { outline: 2px solid #6c4ce0; outline-offset: 1px; }
+.app-dark button.post-tile:focus-visible { outline-color: #a58cff; }
 button.post-tile:hover { background-image: linear-gradient(alpha(currentColor, 0.04), alpha(currentColor, 0.04)); }
 .post-tile-name { font-size: 15px; font-weight: 800; margin-top: 9px; }
 .post-tile-sub { font-size: 12px; color: var(--post-dim); margin-top: 1px; }
@@ -1575,8 +1575,8 @@ list.post-field > row { min-height: 51px; }
 
 .post-card { padding: 13px 16px 8px; border-radius: 12px; margin-top: 16px; }
 .post-fields > .post-card.post-first-card { margin-top: 17px; margin-bottom: 37px; }
-.post-card.advice { background-color: alpha(#a84000, 0.12); }
-.app-dark .post-card.advice { background-color: alpha(#ffa35c, 0.22); }
+.post-card.advice { background-color: alpha(#5b3fd1, 0.12); }
+.app-dark .post-card.advice { background-color: alpha(#b8a6ff, 0.22); }
 .post-card.trouble { background-color: var(--post-err-bg); }
 .post-card > .post-mark { margin-right: 12px; margin-top: 3px; }
 .post-card > .post-card-icon { margin-right: 10px; }
@@ -1625,8 +1625,8 @@ button.post-mid-pill:not(.suggested-action) { background-color: var(--post-pill)
 button.post-header-action { padding: 0 19px; font-weight: 700; }
 button.post-header-action:disabled { opacity: 1; filter: none; background-color: #e3ab8a; color: alpha(#ffffff, 0.85); }
 .app-dark button.post-header-action:disabled { background-color: #71391a; color: alpha(#ffffff, 0.6); }
-list.post-field > row:focus-within { outline-color: #e8660c; outline-width: 2px; }
-.app-dark list.post-field > row:focus-within { outline-color: #ff7a1a; }
+list.post-field > row:focus-within { outline-color: #6c4ce0; outline-width: 2px; }
+.app-dark list.post-field > row:focus-within { outline-color: #a58cff; }
 list.post-field > row:focus-within label.subtitle { color: var(--post-acc); }
 .post-ring { min-width: 16px; min-height: 16px; border-radius: 50%; border: 1.6px solid var(--post-line); }
 .post-ring.not-listed { border: 1.6px dashed var(--post-faint); }
@@ -1642,9 +1642,9 @@ list.post-field > row:focus-within label.subtitle { color: var(--post-acc); }
 .post-step-number {
   min-width: 22px; min-height: 22px; border-radius: 11px;
   font-size: 12.5px; font-weight: 800; color: var(--post-acc);
-  background-color: alpha(#a84000, 0.2);
+  background-color: alpha(#5b3fd1, 0.2);
 }
-.app-dark .post-step-number { background-color: alpha(#ffa35c, 0.3); }
+.app-dark .post-step-number { background-color: alpha(#b8a6ff, 0.3); }
 .post-step-text { font-size: 14px; line-height: 1.05; }
 .post-waiting separator.post-rule { margin-top: 0; margin-bottom: 15px; }
 .post-wait-title { font-size: 14.5px; font-weight: 700; }
