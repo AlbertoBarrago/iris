@@ -30,7 +30,8 @@ fn icon(category: Category) -> &'static str {
         Category::Promotions => "iris-tag-symbolic",
         Category::Social => "system-users-symbolic",
         Category::Focused => "starred-symbolic",
-        Category::Other => "mail-archive-symbolic",
+        // No icon theme has mail-archive-symbolic; the app carries its own.
+        Category::Other => "iris-archive-symbolic",
     }
 }
 
