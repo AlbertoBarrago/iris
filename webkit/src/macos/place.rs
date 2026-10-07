@@ -54,8 +54,8 @@ pub(crate) struct Placement {
     pub(crate) full: graphene::Rect,
     /// The part of it that shows: the widget cut by every ancestor.
     pub(crate) visible: graphene::Rect,
-    /// Rectangles inside `visible` that GTK draws over, each with the
-    /// radius of its corners.
+    /// The widgets GTK draws over the page, whole, each with the radius of
+    /// its corners. Parts of them may lie outside `visible`.
     pub(crate) holes: Vec<Hole>,
 }
 
@@ -78,16 +78,20 @@ pub(crate) fn measure(widget: &gtk::Widget) -> Option<Placement> {
         if STACKING.contains(&parent.type_().name()) {
             let mut later = child.next_sibling();
             while let Some(above) = later {
+                // The whole widget, not just the part over the page: a
+                // toast that also spans the list beside the page must keep
+                // its rounded ends where they are, not grow new ones at the
+                // page's edge. The clip cuts the rest away.
                 if above.is_drawable()
                     && let Some(bounds) = above.compute_bounds(native)
-                    && let Some(cut) = bounds.intersection(&full)
+                    && bounds.intersection(&full).is_some()
                 {
                     holes.push(Hole {
                         rect: rect(
-                            f64::from(cut.x()),
-                            f64::from(cut.y()),
-                            f64::from(cut.width()),
-                            f64::from(cut.height()),
+                            f64::from(bounds.x()),
+                            f64::from(bounds.y()),
+                            f64::from(bounds.width()),
+                            f64::from(bounds.height()),
                         ),
                         radius: corner_radius(&above, &bounds),
                     });
