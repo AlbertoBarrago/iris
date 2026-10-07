@@ -423,7 +423,11 @@ impl App {
         if open == 0 {
             self.core.set_window_open(false);
         }
-        if open > 0 || self.core.demo {
+        // On macOS the app lives in the Dock, not in a tray, and a copy that
+        // restarted itself in the background is one Launch Services did not
+        // start: it never comes to the front, and the Dock's click that
+        // should reopen the window is spent on its skipped first activate.
+        if open > 0 || self.core.demo || cfg!(target_os = "macos") {
             return;
         }
         let generation = self.shed_generation.get() + 1;
@@ -1496,7 +1500,8 @@ impl App {
     /// Counts each account's unread mail for the tray, once per burst of
     /// changes rather than once per change.
     fn update_tray(self: &Rc<Self>) {
-        let shown = self.tray.lock().expect("tray slot poisoned").is_some();
+        // macOS has no tray; the same count goes to the Dock's badge.
+        let shown = self.tray.lock().expect("tray slot poisoned").is_some() || cfg!(target_os = "macos");
         if !shown || !self.tray_recount.claim() {
             return;
         }
@@ -1508,9 +1513,10 @@ impl App {
     }
 
     fn count_for_tray(self: &Rc<Self>) {
-        let Some(handle) = self.tray.lock().expect("tray slot poisoned").clone() else {
+        let handle = self.tray.lock().expect("tray slot poisoned").clone();
+        if handle.is_none() && cfg!(not(target_os = "macos")) {
             return;
-        };
+        }
         let accounts = self.accounts.borrow().clone();
         let this = Rc::clone(self);
         glib::spawn_future_local(async move {
@@ -1533,6 +1539,9 @@ impl App {
                 })
                 .await;
             let Ok(counts) = counts else { return };
+            #[cfg(target_os = "macos")]
+            crate::dock::set_badge(counts.iter().map(|a| a.unread).sum());
+            let Some(handle) = handle else { return };
             this.core.spawn(async move {
                 handle
                     .update(move |tray: &mut MailTray| {

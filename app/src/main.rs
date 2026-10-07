@@ -15,6 +15,8 @@ mod contacts;
 mod core;
 mod demo;
 mod diff;
+#[cfg(target_os = "macos")]
+mod dock;
 mod event_reminders;
 mod exe;
 mod format;
@@ -22,6 +24,8 @@ mod goa;
 mod images;
 mod keyring_plug;
 mod language;
+#[cfg(target_os = "macos")]
+mod macos_menu;
 mod language_names;
 mod locale_time;
 mod logging;
@@ -165,15 +169,22 @@ fn main() -> glib::ExitCode {
     } else {
         APP_ID
     }));
+    let app_id = if demo {
+        "io.github.AlbertoBarrago.Iris.Demo"
+    } else {
+        APP_ID
+    };
     // A plain GApplication: GTK starts only when a window is first needed,
     // so a process running in the tray never loads the graphics stack.
-    let gio_app = gio::Application::builder()
-        .application_id(if demo {
-            "io.github.AlbertoBarrago.Iris.Demo"
-        } else {
-            APP_ID
-        })
-        .build();
+    #[cfg(not(target_os = "macos"))]
+    let gio_app = gio::Application::builder().application_id(app_id).build();
+    // macOS has no tray to keep small, and only a GtkApplication gets the
+    // menu bar and the Dock's click to reopen the window.
+    #[cfg(target_os = "macos")]
+    let gio_app: gio::Application = gtk::Application::builder()
+        .application_id(app_id)
+        .build()
+        .upcast();
     // A second launch with --compose or a calendar file hands the request
     // to the running copy; the check waits until the handlers below are
     // connected, since registering emits `startup` for a copy that turns
@@ -193,8 +204,10 @@ fn main() -> glib::ExitCode {
             .expect("the resources are built into the binary");
         match core::Core::open(demo) {
             Ok(core) => {
-                *started.borrow_mut() =
-                    Some(app::App::new(gio_app, core, background, compose.clone(), file.clone()))
+                let app = app::App::new(gio_app, core, background, compose.clone(), file.clone());
+                #[cfg(target_os = "macos")]
+                macos_menu::install(&app, gio_app);
+                *started.borrow_mut() = Some(app)
             }
             Err(err) => {
                 let report = err.downcast_ref::<core::StoreNotUpdated>().is_some();
@@ -272,10 +285,17 @@ fn mailto_recipient(rest: &str) -> String {
 /// Starts GTK and libadwaita and loads the app's icons and stylesheet.
 /// Safe to call more than once.
 pub fn ensure_gtk() {
-    if gtk::is_initialized_main_thread() {
+    thread_local! {
+        static STYLED: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    }
+    // GTK may already be up without the rest: on macOS the app is a
+    // GtkApplication, which starts GTK itself before any window is asked for.
+    if STYLED.with(|styled| styled.replace(true)) {
         return;
     }
-    gtk::init().expect("GTK starts on this display");
+    if !gtk::is_initialized_main_thread() {
+        gtk::init().expect("GTK starts on this display");
+    }
     adw::init().expect("libadwaita starts");
     if let Some(display) = gdk::Display::default() {
         gtk::IconTheme::for_display(&display)
