@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["domain", "mime", "gmail", "graph", "discover", "imap", "dav", "sieve", "pop3", "store", "sync", "pgp", "smime", "ai", "cli", "app", "testmail"]
+members = ["domain", "mime", "gmail", "graph", "discover", "imap", "dav", "sieve", "pop3", "store", "sync", "pgp", "smime", "ai", "cli", "app", "testmail", "webkit"]
 
 [workspace.package]
 version = "1.0.0"
@@ -93,5 +93,5 @@ toml = "1.1.6"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 url = "2.5.8"
-webkit = { package = "webkit6", version = "0.6.1", features = ["v2_50"] }
+webkit6 = { package = "webkit6", version = "0.6.1", features = ["v2_50"] }
 wiremock = "0.6.5"
