@@ -21,10 +21,11 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, Bool, NSObject, ProtocolObject};
-use objc2::{DefinedClass, MainThreadMarker, MainThreadOnly, define_class, msg_send};
+use objc2::runtime::Sel;
+use objc2::{DefinedClass, MainThreadMarker, MainThreadOnly, define_class, msg_send, sel};
 use objc2_app_kit::{NSColor, NSView, NSWindow};
 use objc2_foundation::{
-    NSError, NSObjectProtocol, NSString, NSURL, NSURLAuthenticationChallenge, NSURLCredential, NSURLRequest,
+    NSError, NSObjectProtocol, NSString, NSURL, NSURLAuthenticationChallenge, NSURLCredential, NSURLProtectionSpace, NSURLRequest,
     NSURLSessionAuthChallengeDisposition,
 };
 use objc2_web_kit::{
@@ -585,6 +586,9 @@ impl WebView {
             let controller = WKUserContentController::new(mtm);
             let content = imp.content.borrow_mut().get_or_insert_with(UserContentManager::new).clone();
             content.fill(&controller);
+            if cfg!(debug_assertions) {
+                debug_probe().fill(&controller);
+            }
             config.setUserContentController(&controller);
             let scripts = imp.settings.borrow().as_ref().is_none_or(Settings::page_scripts);
             config.defaultWebpagePreferences().setAllowsContentJavaScript(scripts);
@@ -668,16 +672,19 @@ impl WebView {
         if page.frame() != inner {
             page.setFrame(inner);
         }
+        // The holes come in the window's coordinates; the clip wants its own.
+        let (vx, vy) = (f64::from(visible.x()), f64::from(visible.y()));
         let holes = placement
             .holes
             .iter()
-            .map(|hole| {
-                place::rect(
-                    f64::from(hole.x() - visible.x()),
-                    f64::from(hole.y() - visible.y()),
-                    f64::from(hole.width()),
-                    f64::from(hole.height()),
-                )
+            .map(|hole| place::Hole {
+                rect: place::rect(
+                    hole.rect.origin.x - vx,
+                    hole.rect.origin.y - vy,
+                    hole.rect.size.width,
+                    hole.rect.size.height,
+                ),
+                radius: hole.radius,
             })
             .collect();
         clip.set_holes(holes);
@@ -764,6 +771,11 @@ impl WebView {
         request.allowed()
     }
 
+    /// Whether anyone handles password requests on this view.
+    fn asks_for_passwords(&self) -> bool {
+        !self.imp().authenticate.borrow().is_empty()
+    }
+
     /// Whether a handler turned a password request down. With no handler
     /// the system decides, which with no saved password is no.
     fn refuses_password(&self) -> bool {
@@ -776,6 +788,67 @@ impl WebView {
         }
         request.cancelled()
     }
+}
+
+/// What a debug build's pages report: content the page's policy blocked and
+/// pictures that did not load, with their addresses. WKWebView keeps its
+/// console to itself unless the Web Inspector is attached, so the page says
+/// these through a message handler instead, and they land in the log.
+const PROBE: &str = r#"(function () {
+  var say = function (what) {
+    try { window.webkit.messageHandlers.mailrsProbe.postMessage(what); } catch (e) {}
+  };
+  document.addEventListener('securitypolicyviolation', function (e) {
+    say('blocked by ' + e.violatedDirective + ': ' + e.blockedURI);
+  }, true);
+  window.addEventListener('load', function () {
+    var roots = [document];
+    document.querySelectorAll('*').forEach(function (el) { if (el.shadowRoot) roots.push(el.shadowRoot); });
+    roots.forEach(function (root) {
+      root.querySelectorAll('img').forEach(function (img) {
+        if (img.complete && img.naturalWidth === 0 && img.currentSrc) say('picture did not load: ' + img.currentSrc);
+      });
+    });
+  });
+})()"#;
+
+/// The probe's scripts and handler, shared by every page of a debug build.
+fn debug_probe() -> UserContentManager {
+    thread_local! {
+        static PROBE_CONTENT: UserContentManager = {
+            let content = UserContentManager::new();
+            content.add_script(&super::content::UserScript::new(
+                PROBE,
+                super::content::UserContentInjectedFrames::TopFrame,
+                super::content::UserScriptInjectionTime::Start,
+                &[],
+                &[],
+            ));
+            content.register_script_message_handler("mailrsProbe", None);
+            content.connect_script_message_received(Some("mailrsProbe"), |_, said| {
+                tracing::warn!(page = %said.to_str(), "web view");
+            });
+            content
+        };
+    }
+    PROBE_CONTENT.with(Clone::clone)
+}
+
+/// Whether `challenge` is the server's certificate being checked, which is
+/// the system's to decide, rather than a site asking for a password.
+///
+/// WebKit hands the delegate a WKNSURLAuthenticationChallenge, a proxy that
+/// forwards each message to the real challenge. objc2's debug check looks
+/// `protectionSpace` up on the proxy's own class, finds nothing and aborts,
+/// so that one message goes out through `objc_msgSend` itself, which the
+/// forwarding answers. The protection space that comes back is a real one.
+fn is_server_trust(challenge: &NSURLAuthenticationChallenge) -> bool {
+    type Getter = unsafe extern "C-unwind" fn(*const NSURLAuthenticationChallenge, Sel) -> *mut NSURLProtectionSpace;
+    let space = unsafe {
+        let send: Getter = std::mem::transmute(objc2::ffi::objc_msgSend as unsafe extern "C-unwind" fn());
+        Retained::retain(send(challenge, sel!(protectionSpace)))
+    };
+    space.is_some_and(|space| space.authenticationMethod().to_string() == "NSURLAuthenticationMethodServerTrust")
 }
 
 /// Whether `responder` is a view somewhere inside `page`. WKWebView hands
@@ -970,9 +1043,15 @@ define_class!(
                 dyn Fn(NSURLSessionAuthChallengeDisposition, *mut NSURLCredential),
             >,
         ) {
-            let method = challenge.protectionSpace().authenticationMethod().to_string();
-            let refuse = method != "NSURLAuthenticationMethodServerTrust"
-                && self.ivars().owner.upgrade().is_none_or(|owner| owner.refuses_password());
+            // Only a view with password handlers looks at the challenge at
+            // all; the mail views leave every challenge to the system.
+            let refuse = match self.ivars().owner.upgrade() {
+                Some(owner) if owner.asks_for_passwords() => {
+                    !is_server_trust(challenge) && owner.refuses_password()
+                }
+                Some(_) => false,
+                None => true,
+            };
             let disposition = match refuse {
                 true => NSURLSessionAuthChallengeDisposition::CancelAuthenticationChallenge,
                 false => NSURLSessionAuthChallengeDisposition::PerformDefaultHandling,
