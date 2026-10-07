@@ -82,7 +82,35 @@ fn usage() -> String {
     )
 }
 
+/// Puts the folders that hold GTK's icon themes and GSettings schemas in
+/// front of `XDG_DATA_DIRS`. GLib reads them from there, and a value the
+/// launching terminal set replaces its own default rather than adding to it,
+/// so the Adwaita icons go missing. A bundle's own `Resources/share` comes
+/// first, then Homebrew's.
+#[cfg(target_os = "macos")]
+fn macos_data_dirs() {
+    let mut dirs: Vec<std::path::PathBuf> = Vec::new();
+    if let Ok(exe) = std::env::current_exe()
+        && let Some(contents) = exe.parent().and_then(std::path::Path::parent)
+    {
+        dirs.push(contents.join("Resources/share"));
+    }
+    dirs.push("/opt/homebrew/share".into());
+    dirs.push("/usr/local/share".into());
+    let current = std::env::var_os("XDG_DATA_DIRS").unwrap_or_else(|| "/usr/local/share:/usr/share".into());
+    dirs.extend(std::env::split_paths(&current));
+    let mut seen = std::collections::HashSet::new();
+    dirs.retain(|dir| dir.is_dir() && seen.insert(dir.clone()));
+    if let Ok(joined) = std::env::join_paths(dirs) {
+        // SAFETY: called first thing in `main`, before any other thread
+        // exists to read the environment.
+        unsafe { std::env::set_var("XDG_DATA_DIRS", joined) };
+    }
+}
+
 fn main() -> glib::ExitCode {
+    #[cfg(target_os = "macos")]
+    macos_data_dirs();
     // async-imap logs passwords and mail at trace level; `quiet` drops
     // those lines whatever RUST_LOG says.
     tracing_subscriber::util::SubscriberInitExt::init(mailrs_imap::quiet(
