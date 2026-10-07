@@ -1,4 +1,4 @@
-//! The macOS menu bar.
+//! The macOS menu bar, and the Dock's click that reopens the window.
 //!
 //! GTK builds the Iris menu itself (About, Preferences, Services, Hide,
 //! Quit) from the `app.about`, `app.preferences` and `app.quit` actions,
@@ -12,8 +12,9 @@ use std::rc::Rc;
 use adw::prelude::*;
 use gtk::{gio, glib};
 use mailrs_domain::translate::gettext;
-use objc2::runtime::Sel;
-use objc2::{MainThreadMarker, sel};
+use objc2::rc::Retained;
+use objc2::runtime::{AnyObject, NSObject, Sel};
+use objc2::{DefinedClass, MainThreadMarker, MainThreadOnly, class, define_class, msg_send, sel};
 use objc2_app_kit::NSApplication;
 
 use crate::app::App;
@@ -107,6 +108,72 @@ pub fn install(app: &Rc<App>, gio: &gio::Application) {
     bar.append_submenu(Some(&gettext("Edit")), &edit_menu);
     bar.append_submenu(Some(&gettext("Window")), &window);
     gtk_app.set_menubar(Some(&bar));
+
+    listen_for_reopen(gio);
+}
+
+/// The Apple event a click on the Dock icon, or a second launch from
+/// Launchpad or Finder, sends a running app: class 'aevt', id 'rapp'.
+const CORE_EVENT_CLASS: u32 = u32::from_be_bytes(*b"aevt");
+const REOPEN_APPLICATION: u32 = u32::from_be_bytes(*b"rapp");
+
+thread_local! {
+    /// The handler, kept for the life of the app: the event manager does
+    /// not retain it.
+    static REOPEN: std::cell::RefCell<Option<Retained<Reopener>>> = const { std::cell::RefCell::new(None) };
+}
+
+/// Answers the reopen event with GApplication's activate, which shows the
+/// window, making a new one when the red button closed the last. GTK's
+/// own answer counts only the windows a GtkApplication was told about, and
+/// Iris's are plain windows, so it did nothing.
+fn listen_for_reopen(gio: &gio::Application) {
+    let Some(mtm) = MainThreadMarker::new() else {
+        tracing::warn!("the reopen handler was set up off the main thread");
+        return;
+    };
+    let reopener = Reopener::new(mtm, gio);
+    unsafe {
+        let manager: Retained<AnyObject> = msg_send![class!(NSAppleEventManager), sharedAppleEventManager];
+        let _: () = msg_send![
+            &*manager,
+            setEventHandler: &*reopener,
+            andSelector: sel!(handleReopen:withReplyEvent:),
+            forEventClass: CORE_EVENT_CLASS,
+            andEventID: REOPEN_APPLICATION
+        ];
+    }
+    REOPEN.with(|kept| kept.replace(Some(reopener)));
+}
+
+pub(crate) struct ReopenerIvars {
+    app: glib::WeakRef<gio::Application>,
+}
+
+define_class!(
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    #[name = "IrisReopener"]
+    #[ivars = ReopenerIvars]
+    pub(crate) struct Reopener;
+
+    impl Reopener {
+        #[unsafe(method(handleReopen:withReplyEvent:))]
+        fn handle_reopen(&self, _event: &AnyObject, _reply: &AnyObject) {
+            if let Some(app) = self.ivars().app.upgrade() {
+                app.activate();
+            }
+        }
+    }
+);
+
+impl Reopener {
+    fn new(mtm: MainThreadMarker, gio: &gio::Application) -> Retained<Reopener> {
+        let app = glib::WeakRef::new();
+        app.set(Some(gio));
+        let this = Reopener::alloc(mtm).set_ivars(ReopenerIvars { app });
+        unsafe { msg_send![super(this), init] }
+    }
 }
 
 /// Runs an Edit item. The mail page is a WKWebView, which takes AppKit's
