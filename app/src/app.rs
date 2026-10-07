@@ -195,7 +195,9 @@ impl App {
                 window.calendar.commit_all_now();
             }
         });
-        if !app.core.demo {
+        // The tray is a StatusNotifierItem on the session bus, which macOS
+        // has no session bus for; watching for its host there panics in gio.
+        if !app.core.demo && cfg!(not(target_os = "macos")) {
             app.watch_for_tray_host();
         }
         let weak = Rc::downgrade(&app);
