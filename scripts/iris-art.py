@@ -206,14 +206,26 @@ def icon(size_attr):
     )
 
 
-SYMBOLIC = """<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-<g fill="#241f31">
-<path d="M6.5 7H14a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 14 15H6.5A1.5 1.5 0 0 1 5 13.5v-5A1.5 1.5 0 0 1 6.5 7Zm0 1.3 3.75 2.9 3.75-2.9Z" fill-rule="evenodd"/>
-<path d="M6 7.5C4.2 7 2.4 5.6 1.2 3.4 3.4 3.6 5.2 4.8 6.6 6.6Z"/>
-<path d="M6.6 6.4C5.6 4.8 5 2.9 5.3 0.8 6.9 2.2 7.6 4 7.6 6Z"/>
-</g>
-</svg>
-"""
+def symbolic():
+    """The winged envelope in one colour at 16 px: the envelope with its flap
+    cut out, and three feathers fanned up and left behind its corner."""
+    feathers = []
+    for length, lift in ((5.0, 16.0), (6.1, 40.0), (6.6, 64.0)):
+        w = 1.35
+        leaf = (
+            f"M0 0C{f(length * 0.25)} {f(-w)} {f(length * 0.8)} {f(-w * 0.8)} {f(length)} 0"
+            f"C{f(length * 0.75)} {f(w * 0.45)} {f(length * 0.3)} {f(w * 0.5)} 0 0Z"
+        )
+        feathers.append(f'<path transform="translate(6.4 7.6) rotate({f(180 + lift)})" d="{leaf}"/>')
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">\n'
+        '<g fill="#241f31">\n'
+        '<path d="M6.5 7H14a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 14 15H6.5A1.5 1.5 0 0 1 5 13.5v-5A1.5 1.5 0 0 1 6.5 7Zm0 1.3 3.75 2.9 3.75-2.9Z" fill-rule="evenodd"/>\n'
+        + "\n".join(feathers)
+        + "\n</g>\n</svg>\n"
+    )
+
+
 
 
 def main():
@@ -225,8 +237,11 @@ def main():
         out.write(icon('width="128" height="128"'))
     with open(os.path.join(ICONS, f"16x16/apps/{app}.svg"), "w") as out:
         out.write(icon('width="16" height="16"'))
-    with open(os.path.join(ICONS, f"scalable/apps/{app}-symbolic.svg"), "w") as out:
-        out.write(SYMBOLIC)
+    # The app's symbolic icon, and the same mark where the app shows its
+    # brand inside a window, such as the empty conversation pane.
+    for path in (f"scalable/apps/{app}-symbolic.svg", "scalable/actions/iris-mark-symbolic.svg"):
+        with open(os.path.join(ICONS, path), "w") as out:
+            out.write(symbolic())
     # The glint's spot for post_band.rs: the longest feather's tip at rest.
     x, top, w, lift = POSES["idle"]
     ax, ay = wing_anchor(x, top, w)
