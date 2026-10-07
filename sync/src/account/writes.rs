@@ -330,6 +330,7 @@ impl AccountSync {
                         }
                     }
                     let held = messages::memberships_of(c, account_id, &ids)?;
+                    let asked = ids.len();
                     let ids = drop_protected(
                         ids,
                         &whole_thread,
@@ -346,6 +347,14 @@ impl AccountSync {
                             local_changes(id, held.get(id).unwrap_or(&none), &ops, &roles, &tags)
                         })
                         .collect();
+                    tracing::debug!(
+                        account = account_id,
+                        ?ops,
+                        asked,
+                        kept = ids.len(),
+                        changes = changes.len(),
+                        "store write for a mail action"
+                    );
                     let applied = messages::apply(c, account_id, &changes)?.applied;
                     for keyword in &kept_here {
                         messages::mark_local(c, account_id, &ids, keyword)?;
@@ -376,6 +385,13 @@ impl AccountSync {
         let written = self
             .write_ops(&mut budget, &ids, &names, &writing, &to_server, &mut progress)
             .await;
+        tracing::debug!(
+            account = account_id,
+            ?to_server,
+            messages = ids.len(),
+            ok = written.is_ok(),
+            "server write for a mail action"
+        );
         // What the server moved before any refusal has moved, so its refs
         // follow whatever else happened. A failure here still lets the
         // rollback below run for the messages the server never took.

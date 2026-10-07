@@ -1148,7 +1148,10 @@ impl Sidebar {
                     });
                     true
                 }
-                (None, Some(DRAG_MAIL)) => mail.clone().is_some_and(|mailbox| on_drop(mailbox)),
+                (None, Some(DRAG_MAIL)) => {
+                    tracing::debug!(mailbox = ?mail, y, "mail dropped on a label row");
+                    mail.clone().is_some_and(|mailbox| on_drop(mailbox))
+                }
                 _ => false,
             }
         });
@@ -1207,7 +1210,8 @@ impl Sidebar {
                 false => gdk::DragAction::MOVE,
             });
             let (on_drop, dest) = (Rc::clone(&self.on_drop), mailbox.clone());
-            target.connect_drop(move |_, value, _, _| {
+            target.connect_drop(move |_, value, x, y| {
+                tracing::debug!(mailbox = ?dest, x, y, "mail dropped on a sidebar row");
                 value.get::<String>().is_ok_and(|v| v == DRAG_MAIL) && on_drop(dest.clone())
             });
             row.add_controller(target);
