@@ -27,8 +27,8 @@ Iris is a fork of [Penguin Mail](https://github.com/c9dev/penguin-mail)
   `CHANGELOG.md` before the fork, `docs/privacy-policy.md` and the
   `Maintainer:` lines in packaging (they name upstream's publisher,
   Pivotd), and the apt signing key in `packaging/apt/`.
-- The icon and the add-account artwork are still the penguin; AGENTS.md's
-  icon section describes upstream's brand, not Iris's.
+- Iris has its own identity, the winged envelope (see AGENTS.md's icon
+  section and `scripts/iris-art.py`); the penguin is upstream's.
 
 ## Workflow overrides
 
@@ -48,6 +48,7 @@ The workspace needs Rust 1.98. If the default toolchain is older, use
 `cargo +1.98`.
 
 ```sh
+scripts/dev-macos.sh [--demo]                       # macOS: build, quit the old copy, run
 cargo test --workspace                              # full suite (Linux)
 cargo test --workspace --exclude mailrs             # macOS today: everything but the GTK app
 cargo test -p mailrs-sync some_test_name            # one test, by crate and name filter
