@@ -66,9 +66,13 @@ its own yet.
 Platform-specific code is confined to the `app` crate and two secret
 stores; the other crates build and test on macOS as they are.
 
-- `webkit6` (WebKitGTK 6.0) renders mail HTML in `app/src/ui/conversation.rs`,
-  the composer, find and card views. It must come from Homebrew's
-  `webkitgtk`; this is the port's main risk.
+- The app names `webkit` only through the facade crate `webkit/`
+  (`mailrs-webkit`): webkit6 re-exported on Linux, and on macOS the same
+  API over a WKWebView laid on the GTK window (`webkit/src/macos/`).
+  WebKitGTK does not run on macOS; Homebrew's `webkitgtk` is a Linux-only
+  GTK 3 build. When the app starts calling a webkit6 method the shim
+  lacks, add it there with webkit6's exact signature rather than a `cfg`
+  in the app.
 - `ksni` (`app/src/tray.rs`) is a D-Bus StatusNotifierItem: no macOS
   equivalent, gate it out first, menu bar item later.
 - `app/src/autostart.rs` writes an XDG autostart `.desktop` file; macOS
@@ -76,8 +80,12 @@ stores; the other crates build and test on macOS as they are.
 - `app/src/update/` installs through apt, `pkexec` and tarballs; disable
   on macOS.
 - Secrets go through `keyring` in `gmail/src/token_store.rs` and
-  `sync/src/passwords.rs`; macOS needs its `apple-native` feature. `oo7`
-  and the Secret portal are Flatpak only (`packaging-flatpak` feature).
+  `sync/src/passwords.rs`; its default features already use the macOS
+  Keychain. `oo7` and the Secret portal are Flatpak only
+  (`packaging-flatpak` feature).
+- macOS development needs `brew install gtk4 libadwaita
+  adwaita-icon-theme pkgconf`. Low on disk, build with
+  `CARGO_PROFILE_DEV_DEBUG=line-tables-only CARGO_INCREMENTAL=0`.
 - `app/src/packaging.rs` says which Linux package a build is for; macOS
   needs its own case.
 
