@@ -48,13 +48,24 @@ impl About {
         name.set_wrap(true);
         content.append(&name);
 
-        // A link, so the name opens the studio's site as the rows below
+        // A link, so the name opens the author's page as the rows below
         // open theirs.
         let developer = gtk::Label::builder()
-            .label(r#"<a href="https://pivotd.com">Pivotd</a>"#)
+            .label(r#"<a href="https://github.com/AlbertoBarrago">Alberto Barrago (albz)</a>"#)
             .use_markup(true)
             .build();
         content.append(&developer);
+
+        // Iris is a modified Penguin Mail, which the GPL asks a copy to say.
+        let upstream = gtk::Label::builder()
+            .label(fill(
+                &gettext("Based on {app}"),
+                &[("app", r#"<a href="https://github.com/c9dev/penguin-mail">Penguin Mail</a>"#)],
+            ))
+            .use_markup(true)
+            .css_classes(["dim-label", "caption"])
+            .build();
+        content.append(&upstream);
 
         let version = gtk::Label::new(Some(&fill(
             &gettext("Version {version}"),

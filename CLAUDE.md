@@ -23,10 +23,10 @@ Iris is a fork of [Penguin Mail](https://github.com/c9dev/penguin-mail)
   `penguin_fold` and `penguin_notes_text`, and the historical IDs
   `dev.penguinmail.PenguinMail` and `dev.mailrs.Mailrs` used by the
   migrations in `app/src/old_id.rs` and `scripts/install-files.sh`.
-- Left as upstream's and not to be rewritten mechanically:
-  `CHANGELOG.md` before the fork, `docs/privacy-policy.md` and the
-  `Maintainer:` lines in packaging (they name upstream's publisher,
-  Pivotd), and the apt signing key in `packaging/apt/`.
+- Left as upstream's: `CHANGELOG.md` before the fork and the apt signing
+  key in `packaging/apt/`. Iris is published by Alberto Barrago (albz,
+  albertobarrago@gmail.com); the About window and the README credit
+  Penguin Mail, as the GPL asks of a modified copy.
 - Iris has its own identity, the winged envelope (see AGENTS.md's icon
   section and `scripts/iris-art.py`); the penguin is upstream's.
 

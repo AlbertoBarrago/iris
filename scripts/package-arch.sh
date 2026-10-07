@@ -37,7 +37,7 @@ scripts/stage.sh "$tree"
 build="$work/build"
 mkdir -p "$build"
 cat > "$build/PKGBUILD" <<PKGBUILD
-# Maintainer: Pivotd <support@penguin-mail.com>
+# Maintainer: Alberto Barrago <albertobarrago@gmail.com>
 pkgname=iris
 pkgver=$version
 pkgrel=1

@@ -10945,3 +10945,7 @@ msgstr "Mover para {folder}"
 #~ msgstr ""
 #~ "Adicione esta conta às Contas Online do GNOME e o Calendário passa a "
 #~ "mostrar também estes eventos."
+
+#: app/src/ui/about.rs
+msgid "Based on {app}"
+msgstr "Baseado em {app}"

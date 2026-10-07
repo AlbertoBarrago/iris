@@ -72,7 +72,7 @@ cat > "$root/DEBIAN/control" <<CONTROL
 Package: iris
 Version: $version
 Architecture: amd64
-Maintainer: Pivotd <support@penguin-mail.com>
+Maintainer: Alberto Barrago <albertobarrago@gmail.com>
 Installed-Size: $size
 Depends: $depends, gpgv
 Recommends: gnupg, gpgsm, gnome-shell-extension-appindicator

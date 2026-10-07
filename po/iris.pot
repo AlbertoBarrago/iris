@@ -9891,3 +9891,7 @@ msgstr ""
 #: sync/src/triage.rs:70
 msgid "Move to {folder}"
 msgstr ""
+
+#: app/src/ui/about.rs
+msgid "Based on {app}"
+msgstr ""
