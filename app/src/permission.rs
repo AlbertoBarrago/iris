@@ -79,7 +79,7 @@ fn settings_of(provider: Provider) -> &'static str {
 /// gone.
 pub fn settings_needed(provider: Provider) -> String {
     fill(
-        &gettext("Penguin Mail needs permission to change {service} settings"),
+        &gettext("Iris needs permission to change {service} settings"),
         &[("service", settings_of(provider))],
     )
 }
@@ -96,7 +96,7 @@ impl Permission {
         Permission::Drive,
     ];
 
-    /// What the permission lets Penguin Mail do, to finish "needs
+    /// What the permission lets Iris do, to finish "needs
     /// permission to" in what the assistant tells the model. The model
     /// reads English, so this is not translated.
     pub fn purpose(self) -> &'static str {
@@ -122,19 +122,19 @@ impl Permission {
                     &[("service", settings_of(provider))],
                 ),
                 gettext(
-                    "Penguin Mail needs permission to change {service} settings for {account}. \
+                    "Iris needs permission to change {service} settings for {account}. \
                      {company} asks you to confirm in your browser.",
                 ),
             ),
             (Permission::Delete, _) => (
-                gettext("Allow Penguin Mail to Delete Mail"),
+                gettext("Allow Iris to Delete Mail"),
                 gettext(
                     "Deleting mail for good needs one more permission for {account}. \
                      {company} asks you to confirm in your browser.",
                 ),
             ),
             (Permission::Contacts, _) => (
-                gettext("Allow Penguin Mail to Read Your Contacts"),
+                gettext("Allow Iris to Read Your Contacts"),
                 gettext(
                     "Reading the contacts of {account} needs one more permission. {company} \
                      asks you to confirm in your browser. Names and photos stay on this \
@@ -142,21 +142,21 @@ impl Permission {
                 ),
             ),
             (Permission::ChangeContacts, _) => (
-                gettext("Allow Penguin Mail to Change Your Contacts"),
+                gettext("Allow Iris to Change Your Contacts"),
                 gettext(
                     "The assistant needs permission to add and change the contacts of \
                      {account}. {company} asks you to confirm in your browser.",
                 ),
             ),
             (Permission::Calendar, Occasion::Needed) => (
-                gettext("Allow Penguin Mail to Use Your Calendar"),
+                gettext("Allow Iris to Use Your Calendar"),
                 gettext(
                     "The assistant needs permission to read and change events on the \
                      calendar for {account}. {company} asks you to confirm in your browser.",
                 ),
             ),
             (Permission::Calendar, Occasion::Offer) => (
-                gettext("Allow Penguin Mail to Use Your Calendar"),
+                gettext("Allow Iris to Use Your Calendar"),
                 gettext(
                     "Your reply went to the organizer as mail. With permission to change \
                      events on the calendar for {account}, the meeting is marked on your \
@@ -164,7 +164,7 @@ impl Permission {
                 ),
             ),
             (Permission::ManageCalendars, _) => (
-                gettext("Allow Penguin Mail to Manage Your Calendars"),
+                gettext("Allow Iris to Manage Your Calendars"),
                 gettext(
                     "Making, renaming and deleting calendars, and subscribing to one, needs \
                      one more permission for {account}. {company} asks you to confirm in your \
@@ -172,10 +172,10 @@ impl Permission {
                 ),
             ),
             (Permission::Drive, _) => (
-                gettext("Allow Penguin Mail to Add Files to Google Drive"),
+                gettext("Allow Iris to Add Files to Google Drive"),
                 gettext(
                     "Attaching a file from this computer to an event puts it in Google Drive for \
-                     {account}. Penguin Mail can reach only the files it adds there. Google asks \
+                     {account}. Iris can reach only the files it adds there. Google asks \
                      you to confirm in your browser.",
                 ),
             ),
@@ -238,8 +238,8 @@ pub fn withheld_permissions(withheld: Withheld) -> Vec<Permission> {
 }
 
 impl Permission {
-    /// What the permission lets Penguin Mail do, in words that finish
-    /// "has not allowed Penguin Mail to".
+    /// What the permission lets Iris do, in words that finish
+    /// "has not allowed Iris to".
     fn allows(self, provider: Provider) -> String {
         match self {
             Permission::Settings => fill(
@@ -305,9 +305,9 @@ impl Permission {
         match self {
             Permission::Settings => "emblem-system-symbolic",
             Permission::Delete => "user-trash-symbolic",
-            Permission::Contacts | Permission::ChangeContacts => "penguin-mail-people-symbolic",
+            Permission::Contacts | Permission::ChangeContacts => "iris-people-symbolic",
             Permission::Calendar | Permission::ManageCalendars => {
-                "penguin-mail-calendar-symbolic"
+                "iris-calendar-symbolic"
             }
             Permission::Drive => "folder-documents-symbolic",
         }
@@ -320,7 +320,7 @@ pub fn grant_bar_title(account: &str, missing: &[Permission], provider: Provider
     let allows: Vec<String> = missing.iter().map(|p| p.allows(provider)).collect();
     let allows: Vec<&str> = allows.iter().map(String::as_str).collect();
     fill(
-        &gettext("{account} has not allowed Penguin Mail to {missing}"),
+        &gettext("{account} has not allowed Iris to {missing}"),
         &[("account", account), ("missing", &crate::protection::joined(&allows))],
     )
 }
@@ -388,7 +388,7 @@ mod tests {
                 &[Permission::Settings, Permission::Delete, Permission::Calendar],
                 Provider::Gmail
             ),
-            "d.reyes@uni.example has not allowed Penguin Mail to change Gmail settings, \
+            "d.reyes@uni.example has not allowed Iris to change Gmail settings, \
              delete mail for good and use the calendar"
         );
     }
@@ -397,7 +397,7 @@ mod tests {
     fn the_grant_bar_names_one_missing_feature_alone() {
         assert_eq!(
             grant_bar_title("a@example.com", &[Permission::Contacts], Provider::Gmail),
-            "a@example.com has not allowed Penguin Mail to read contacts"
+            "a@example.com has not allowed Iris to read contacts"
         );
     }
 
@@ -441,14 +441,14 @@ mod tests {
                 &[Permission::Settings, Permission::Calendar],
                 Provider::Microsoft
             ),
-            "d@outlook.com has not allowed Penguin Mail to change Outlook settings and use the calendar"
+            "d@outlook.com has not allowed Iris to change Outlook settings and use the calendar"
         );
     }
 
     #[test]
     fn the_settings_toast_names_the_providers_settings() {
-        assert_eq!(settings_needed(Provider::Gmail), "Penguin Mail needs permission to change Gmail settings");
-        assert_eq!(settings_needed(Provider::Microsoft), "Penguin Mail needs permission to change Outlook settings");
+        assert_eq!(settings_needed(Provider::Gmail), "Iris needs permission to change Gmail settings");
+        assert_eq!(settings_needed(Provider::Microsoft), "Iris needs permission to change Outlook settings");
     }
 
     #[test]
@@ -571,7 +571,7 @@ mod tests {
         assert_eq!(withheld_permissions(withheld), [Permission::ManageCalendars, Permission::Drive]);
         assert_eq!(
             grant_bar_title("ana@example.com", &withheld_permissions(withheld), Provider::Gmail),
-            "ana@example.com has not allowed Penguin Mail to manage calendars and add files to Google Drive"
+            "ana@example.com has not allowed Iris to manage calendars and add files to Google Drive"
         );
     }
 
@@ -607,11 +607,11 @@ mod tests {
     #[test]
     fn asking_for_drive_says_what_it_reaches() {
         let wording = Permission::Drive.wording(Occasion::Needed, "ana@example.com", Provider::Gmail);
-        assert_eq!(wording.heading, "Allow Penguin Mail to Add Files to Google Drive");
+        assert_eq!(wording.heading, "Allow Iris to Add Files to Google Drive");
         assert_eq!(
             wording.body,
             "Attaching a file from this computer to an event puts it in Google Drive for ana@example.com. \
-             Penguin Mail can reach only the files it adds there. Google asks you to confirm in your browser."
+             Iris can reach only the files it adds there. Google asks you to confirm in your browser."
         );
     }
 

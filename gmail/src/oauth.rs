@@ -342,13 +342,13 @@ pub fn client_from(id: Option<&str>, secret: Option<&str>) -> Option<OAuthClient
 }
 
 /// The project's own Google client, compiled in from
-/// `PENGUIN_MAIL_GOOGLE_CLIENT_ID` and `PENGUIN_MAIL_GOOGLE_CLIENT_SECRET`.
+/// `IRIS_GOOGLE_CLIENT_ID` and `IRIS_GOOGLE_CLIENT_SECRET`.
 /// Cargo rebuilds this crate when either changes. Google treats a desktop
 /// client's secret as public, but the values still stay out of logs.
 pub fn built_in_client() -> Option<OAuthClient> {
     client_from(
-        option_env!("PENGUIN_MAIL_GOOGLE_CLIENT_ID"),
-        option_env!("PENGUIN_MAIL_GOOGLE_CLIENT_SECRET"),
+        option_env!("IRIS_GOOGLE_CLIENT_ID"),
+        option_env!("IRIS_GOOGLE_CLIENT_SECRET"),
     )
 }
 

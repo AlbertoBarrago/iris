@@ -29,8 +29,8 @@ use super::{Read, Standard, find, param, unfolded};
 use crate::compose::{self, Draft, OutgoingAttachment};
 use crate::core::Core;
 
-/// The header that marks a draft Penguin Mail saved encrypted.
-pub const HEADER: &str = "X-Penguin-Mail-Draft";
+/// The header that marks a draft Iris saved encrypted.
+pub const HEADER: &str = "X-Iris-Draft";
 
 /// What [`HEADER`] says: that the message goes out encrypted, and signed
 /// as well when the writer asked for it.

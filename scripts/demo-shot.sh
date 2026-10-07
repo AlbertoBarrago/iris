@@ -73,14 +73,14 @@ chmod 700 "$XDG_RUNTIME_DIR"
 export GNUPGHOME="$sandbox/gnupg"
 mkdir -m 700 "$GNUPGHOME"
 export GSETTINGS_BACKEND=memory
-export PENGUIN_MAIL_LOCALE_DIR="$PWD/target/locale"
+export IRIS_LOCALE_DIR="$PWD/target/locale"
 
 if ! bwrap --ro-bind / / true 2>/dev/null; then
     export WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
 fi
 # The paths reach the hidden session as variables, quoted where it uses
 # them, so a space or a `;` in a file name stays part of the name.
-export DEMO_LAUNCHER=$launcher DEMO_REGISTRY=$registry DEMO_APP=$PWD/target/debug/penguin-mail
+export DEMO_LAUNCHER=$launcher DEMO_REGISTRY=$registry DEMO_APP=$PWD/target/debug/iris
 export DEMO_LOG=$sandbox/app.log DEMO_WAIT=$wait DEMO_RUN=$run DEMO_OUT=$out
 # shellcheck disable=SC2016 # The variables expand in the inner shell.
 inside='

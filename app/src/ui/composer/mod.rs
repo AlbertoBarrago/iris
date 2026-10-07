@@ -1574,7 +1574,7 @@ impl Composer {
             if let Some(at) = super::when::pick_time(
                 &this.window,
                 &gettext("Send Later"),
-                &gettext("Penguin Mail sends it at this time while it runs, even in the tray."),
+                &gettext("Iris sends it at this time while it runs, even in the tray."),
                 &gettext("Schedule"),
             )
             .await
@@ -1810,7 +1810,7 @@ impl Composer {
         let weak = Rc::downgrade(self);
         button(
             &blocks,
-            "penguin-mail-link-symbolic",
+            "iris-link-symbolic",
             gettext("Link (Ctrl+K)"),
         )
         .connect_clicked(move |_| {

@@ -14,7 +14,7 @@ use mailrs_domain::translate::DOMAIN;
 include!(concat!(env!("OUT_DIR"), "/languages.rs"));
 
 /// Where to read the translations from, when the usual places are wrong.
-const LOCALE_DIR: &str = "PENGUIN_MAIL_LOCALE_DIR";
+const LOCALE_DIR: &str = "IRIS_LOCALE_DIR";
 
 /// One language the Language preference offers.
 pub struct Language {
@@ -32,8 +32,8 @@ pub fn locale_dir() -> PathBuf {
     if let Some(named) = std::env::var_os(LOCALE_DIR) {
         return PathBuf::from(named);
     }
-    // `<prefix>/bin/penguin-mail` once installed, `target/<profile>/
-    // penguin-mail` in the build tree: both sit two directories below the
+    // `<prefix>/bin/iris` once installed, `target/<profile>/
+    // iris` in the build tree: both sit two directories below the
     // one that holds the catalogues.
     let above = crate::exe::path()
         .ok()

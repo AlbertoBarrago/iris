@@ -1,18 +1,18 @@
 [Desktop Entry]
 Type=Application
-Name=Penguin Mail
+Name=Iris
 GenericName=Mail
 Comment=Mail and calendar for Linux
-Exec=penguin-mail %u
-Icon=io.github.c9dev.PenguinMail
+Exec=iris %u
+Icon=io.github.AlbertoBarrago.Iris
 Terminal=false
 Categories=Network;Email;Calendar;GTK;GNOME;
 Keywords=mail;email;gmail;imap;inbox;calendar;contacts;
 MimeType=x-scheme-handler/mailto;text/calendar;application/ics;
 StartupNotify=true
-StartupWMClass=io.github.c9dev.PenguinMail
+StartupWMClass=io.github.AlbertoBarrago.Iris
 Actions=compose;
 
 [Desktop Action compose]
 Name=New Message
-Exec=penguin-mail --compose
+Exec=iris --compose

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Records the Penguin Mail demo video: a tour of the demo accounts in a
+# Records the Iris demo video: a tour of the demo accounts in a
 # real GNOME Shell, with captions and title cards.
 #
-#   scripts/demo-video.sh          target/demo-video/penguin-mail.mp4 and .webm
+#   scripts/demo-video.sh          target/demo-video/iris.mp4 and .webm
 #   scripts/demo-video.sh probe    dump the accessible tree at each stop
 #
 # GNOME Shell runs headless in a throwaway session with its own home,
@@ -29,7 +29,7 @@ for tool in gnome-shell pipewire wireplumber gst-launch-1.0 ffmpeg rsvg-convert 
 done
 
 cargo build --quiet --release -p mailrs
-app=$PWD/target/release/penguin-mail
+app=$PWD/target/release/iris
 out=$PWD/target/demo-video
 mkdir -p "$out"
 
@@ -51,7 +51,7 @@ export HOME="$sandbox/home"
 export XDG_RUNTIME_DIR="$sandbox/run"
 share=$HOME/.local/share
 mkdir -p "$XDG_RUNTIME_DIR" "$share/applications" "$share/icons/hicolor/scalable/apps" \
-    "$share/gnome-shell/extensions/tour@penguinmail.dev" "$share/backgrounds"
+    "$share/gnome-shell/extensions/tour@iris.dev" "$share/backgrounds"
 chmod 700 "$XDG_RUNTIME_DIR"
 # A GnuPG home of the run's own. With only HOME moved, gpg still takes
 # $HOME/.gnupg for the default home and talks to the agent already running
@@ -59,12 +59,12 @@ chmod 700 "$XDG_RUNTIME_DIR"
 # their keyring. A home by another name gets an agent of its own.
 export GNUPGHOME="$sandbox/gnupg"
 mkdir -m 700 "$GNUPGHOME"
-cp "$here"/extension/* "$share/gnome-shell/extensions/tour@penguinmail.dev/"
+cp "$here"/extension/* "$share/gnome-shell/extensions/tour@iris.dev/"
 cp app/data/icons/scalable/apps/*.svg "$share/icons/hicolor/scalable/apps/"
 # The dock and the overview match a window to its app by these files. The
 # demo runs under its own app ID, so it gets one too.
-for id in io.github.c9dev.PenguinMail io.github.c9dev.PenguinMail.Demo; do
-    sed "s|^Exec=.*|Exec=$app --demo|" app/data/io.github.c9dev.PenguinMail.desktop \
+for id in io.github.AlbertoBarrago.Iris io.github.AlbertoBarrago.Iris.Demo; do
+    sed "s|^Exec=.*|Exec=$app --demo|" app/data/io.github.AlbertoBarrago.Iris.desktop \
         >"$share/applications/$id.desktop"
 done
 for variant in light dark; do
@@ -72,17 +72,17 @@ for variant in light dark; do
 done
 unset WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS PIPEWIRE_REMOTE
 export XDG_SESSION_TYPE=wayland XDG_CURRENT_DESKTOP=GNOME
-export PENGUIN_MAIL_LOCALE_DIR="$PWD/target/locale"
+export IRIS_LOCALE_DIR="$PWD/target/locale"
 # The video is in English whatever the machine speaks.
 export LANG=en_US.UTF-8 LANGUAGE=en_US LC_ALL=en_US.UTF-8
 
 # The demo runs under its own app ID, so the dock and the window match it.
-app_id=io.github.c9dev.PenguinMail.Demo
+app_id=io.github.AlbertoBarrago.Iris.Demo
 
 inside="
 set -e
 gsettings set org.gnome.shell disable-user-extensions false
-gsettings set org.gnome.shell enabled-extensions \"['tour@penguinmail.dev']\"
+gsettings set org.gnome.shell enabled-extensions \"['tour@iris.dev']\"
 gsettings set org.gnome.shell welcome-dialog-last-shown-version '999'
 gsettings set org.gnome.shell favorite-apps \"['org.gnome.Nautilus.desktop', '$app_id.desktop', 'org.gnome.Calendar.desktop']\"
 gsettings set org.gnome.desktop.interface color-scheme 'default'
@@ -97,8 +97,8 @@ sleep 1
 wireplumber >'$out/wireplumber.log' 2>&1 &
 gnome-shell --headless --wayland --virtual-monitor 1920x1080 >'$out/shell.log' 2>&1 &
 for _ in \$(seq 120); do
-    gdbus introspect --session --dest org.gnome.Shell --object-path /dev/penguinmail/Tour 2>/dev/null |
-        grep -qF 'interface dev.penguinmail.Tour' && break
+    gdbus introspect --session --dest org.gnome.Shell --object-path /dev/iris/Tour 2>/dev/null |
+        grep -qF 'interface dev.iris.Tour' && break
     sleep 0.5
 done
 export WAYLAND_DISPLAY=wayland-0

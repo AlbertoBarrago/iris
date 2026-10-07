@@ -59,7 +59,7 @@ fn servers(app: &Rc<App>, accounts: &[(Account, Offers)]) -> Option<adw::Prefere
     }
     let group = adw::PreferencesGroup::builder()
         .title(gettext("Calendar, Contacts and Rules Servers"))
-        .description(gettext("Penguin Mail looks for these when you add an account. The login is the account's own."))
+        .description(gettext("Iris looks for these when you add an account. The login is the account's own."))
         .build();
     for account in found_for {
         let row = adw::ExpanderRow::builder().use_markup(false).title(&account.email).build();
@@ -176,7 +176,7 @@ fn contacts(
     let group = adw::PreferencesGroup::builder()
         .title(gettext("Contacts"))
         .description(gettext(
-            "Penguin Mail can read an account's contacts: names, email addresses, photos, \
+            "Iris can read an account's contacts: names, email addresses, photos, \
              organizations, and phone numbers. It uses them to suggest recipients, to show \
              faces beside mail, and to fill the card behind a sender's name. What it reads \
              stays on this computer, and turning an account off deletes its contacts.",
@@ -270,7 +270,7 @@ fn calendar(
     let group = adw::PreferencesGroup::builder()
         .title(gettext("Calendar"))
         .description(gettext(
-            "Penguin Mail shows each account's meetings and reminds you before they start.",
+            "Iris shows each account's meetings and reminds you before they start.",
         ))
         .build();
     let online = adw::PreferencesGroup::builder()

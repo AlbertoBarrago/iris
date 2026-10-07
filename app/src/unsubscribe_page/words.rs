@@ -2,7 +2,7 @@
 //! owner's mail comes in.
 //!
 //! These lists stay out of the po files, and a translator must not be
-//! sent them. `gettext` turns what Penguin Mail says into the language
+//! sent them. `gettext` turns what Iris says into the language
 //! the person reads; these match what a sender's page says, which is the
 //! sender's language and no business of the interface's. A person
 //! reading the app in English gets Portuguese newsletters, so the app

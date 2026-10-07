@@ -1,4 +1,4 @@
-//! vCards read into the fields Penguin Mail shows, and patched with only
+//! vCards read into the fields Iris shows, and patched with only
 //! the fields it edits.
 
 use mailrs_dav::vcard::{CardFields, Photo, new_card, patch_card, read_card};

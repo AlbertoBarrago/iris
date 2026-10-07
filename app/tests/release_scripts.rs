@@ -6,7 +6,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 
-const ID: &str = "io.github.c9dev.PenguinMail";
+const ID: &str = "io.github.AlbertoBarrago.Iris";
 
 fn scripts() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../scripts")
@@ -30,7 +30,7 @@ fn mime_types(entry: &str) -> Vec<&str> {
         .unwrap_or_default()
 }
 
-/// Files offers Penguin Mail for an `.ics` file only when the launcher
+/// Files offers Iris for an `.ics` file only when the launcher
 /// names `text/calendar`, and for a link to a mail address only with the
 /// `mailto` handler. The launcher passes the file as `%u`, which the
 /// app's command line reads.
@@ -43,7 +43,7 @@ fn the_launcher_opens_calendar_files_and_mail_links() {
     let types = mime_types(&entry);
     assert!(types.contains(&"text/calendar"), "{entry}");
     assert!(types.contains(&"x-scheme-handler/mailto"), "{entry}");
-    assert!(entry.contains("\nExec=penguin-mail %u\n"), "{entry}");
+    assert!(entry.contains("\nExec=iris %u\n"), "{entry}");
 }
 
 const CHANGELOG: &str = "# Changelog
@@ -117,12 +117,12 @@ fn a_staged_tree_installs_from_the_tarball_folder() {
     let dir = tempfile::tempdir().unwrap();
     let target = dir.path().join("target");
     std::fs::create_dir_all(target.join("release")).unwrap();
-    for name in ["penguin-mail", "penguin-mail-cli"] {
+    for name in ["iris", "iris-cli"] {
         let binary = target.join("release").join(name);
         std::fs::write(&binary, format!("#!/bin/sh\necho {name}\n")).unwrap();
         std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
     }
-    let folder = dir.path().join("penguin-mail-9.9.9-x86_64");
+    let folder = dir.path().join("iris-9.9.9-x86_64");
     succeeded(
         &Command::new(scripts().join("stage.sh"))
             .arg(&folder)
@@ -154,7 +154,7 @@ fn a_staged_tree_installs_from_the_tarball_folder() {
             .unwrap(),
     );
 
-    for name in ["penguin-mail", "penguin-mail-cli"] {
+    for name in ["iris", "iris-cli"] {
         let installed = prefix.join("bin").join(name);
         assert_eq!(
             std::fs::read_to_string(&installed).unwrap(),
@@ -173,14 +173,14 @@ fn a_staged_tree_installs_from_the_tarball_folder() {
 
     // The launcher starts the installed file, since ~/.local/bin is not on
     // the PATH a desktop session starts with.
-    let exe = format!("\"{}\"", prefix.join("bin/penguin-mail").display());
+    let exe = format!("\"{}\"", prefix.join("bin/iris").display());
     let launcher =
         std::fs::read_to_string(prefix.join(format!("share/applications/{ID}.desktop"))).unwrap();
     assert!(
         launcher.contains(&format!("\nExec={exe} %u\n")),
         "{launcher}"
     );
-    assert!(!launcher.contains("Exec=penguin-mail"), "{launcher}");
+    assert!(!launcher.contains("Exec=iris"), "{launcher}");
     assert!(mime_types(&launcher).contains(&"text/calendar"), "{launcher}");
     let login =
         std::fs::read_to_string(home.join(format!(".config/autostart/{ID}.desktop"))).unwrap();
@@ -194,7 +194,7 @@ fn a_staged_tree_installs_from_the_tarball_folder() {
     if has_msgfmt {
         assert!(
             prefix
-                .join("share/locale/pt_PT/LC_MESSAGES/penguin-mail.mo")
+                .join("share/locale/pt_PT/LC_MESSAGES/iris.mo")
                 .is_file()
         );
         assert!(launcher.contains("Name[pt_PT]="), "{launcher}");

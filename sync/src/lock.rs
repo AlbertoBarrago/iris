@@ -1,4 +1,4 @@
-//! One process syncs a store at a time. The app and `penguin-mail-cli sync`
+//! One process syncs a store at a time. The app and `iris-cli sync`
 //! both run a sync engine over the same SQLite file, and two engines would
 //! replay the same history and fetch the same mail twice, each moving the
 //! cursor under the other. Each takes an advisory lock on a file beside the
@@ -23,7 +23,7 @@ pub struct SyncLock {
 #[derive(Debug, thiserror::Error)]
 pub enum LockError {
     /// Another process syncs this store.
-    #[error("another Penguin Mail is syncing this mail")]
+    #[error("another Iris is syncing this mail")]
     Held,
     #[error("could not open {LOCK_FILE}: {0}")]
     Io(#[from] io::Error),

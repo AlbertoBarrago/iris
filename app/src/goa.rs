@@ -2,7 +2,7 @@
 //!
 //! GNOME Online Accounts signs an address in once and hands it to the rest
 //! of the desktop, which is how GNOME Calendar gets the user's meetings
-//! and the shell clock lists them. Penguin Mail signs in for its own mail
+//! and the shell clock lists them. Iris signs in for its own mail
 //! and tells GNOME nothing, so an address added here alone leaves the
 //! calendar empty however many invitations the inbox holds.
 //!

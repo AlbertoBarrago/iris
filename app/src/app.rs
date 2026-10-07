@@ -370,7 +370,7 @@ impl App {
                 .unwrap_or_default();
             window.notice(Notice::Toast(fill(
                 &gettext(
-                    "Your preferences could not be read, so Penguin Mail started from the defaults. The old file is kept as {file}.",
+                    "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}.",
                 ),
                 &[("file", &name)],
             )));
@@ -1075,7 +1075,7 @@ impl App {
     }
 
     /// Application actions, also reachable over D-Bus, for example:
-    /// `gdbus call --session --dest io.github.c9dev.PenguinMail --object-path /io/github/c9dev/PenguinMail
+    /// `gdbus call --session --dest io.github.AlbertoBarrago.Iris --object-path /io/github/AlbertoBarrago/Iris
     /// --method org.gtk.Actions.Activate hide-window [] {}`
     fn install_actions(self: &Rc<Self>) {
         let add = |name: &str, run: AppAction| {
@@ -1133,7 +1133,7 @@ impl App {
         self.gio.quit();
     }
 
-    /// Starts Penguin Mail again the way it was started, and quits this
+    /// Starts Iris again the way it was started, and quits this
     /// copy. The Language preference needs it: GTK and gettext both read
     /// the locale as the process starts.
     pub fn restart(&self) {
@@ -1425,7 +1425,7 @@ impl App {
 
     /// Registers the tray icon whenever a tray host appears on the session
     /// bus. On Ubuntu that host is the AppIndicators extension, so enabling
-    /// it later shows the icon without restarting Penguin Mail.
+    /// it later shows the icon without restarting Iris.
     fn watch_for_tray_host(self: &Rc<Self>) {
         let weak = Rc::downgrade(self);
         // The watch lasts for the life of the process; the id is not needed.

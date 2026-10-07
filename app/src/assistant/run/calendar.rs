@@ -383,7 +383,7 @@ impl<A: Accounts> Tools<A> {
                         listed.push(json!({
                             "account": account.email,
                             "calendars": [],
-                            "note": "Penguin Mail lacks the calendar permission for this account. Call list_calendars with the account to ask the user for it.",
+                            "note": "Iris lacks the calendar permission for this account. Call list_calendars with the account to ask the user for it.",
                         }));
                         continue;
                     }
@@ -705,7 +705,7 @@ impl<A: Accounts> Tools<A> {
             self.effects
                 .ask_permission(account.id, Permission::Calendar);
             result["note"] = json!(
-                "The user's own calendar was not marked, since Penguin Mail lacks the calendar permission. The user was asked to grant it."
+                "The user's own calendar was not marked, since Iris lacks the calendar permission. The user was asked to grant it."
             );
         }
         if let Some(off) = &sent.api_off {

@@ -202,7 +202,7 @@ impl ThreadList {
         let popover = row_popover.clone();
         scroller.connect_destroy(move |_| popover.unparent());
         let empty = adw::StatusPage::builder()
-            .icon_name("penguin-mail-inbox-symbolic")
+            .icon_name("iris-inbox-symbolic")
             .title(gettext("No Mail"))
             .build();
         empty.add_css_class("compact");

@@ -1,6 +1,6 @@
 //! Rules and the automatic reply on a server that runs Sieve, through
-//! ManageSieve. Both live in the one script Penguin Mail keeps there,
-//! `penguin-mail`, which every change reads, edits and writes whole. A
+//! ManageSieve. Both live in the one script Iris keeps there,
+//! `iris`, which every change reads, edits and writes whole. A
 //! script the person already runs is included where the server can
 //! include; otherwise the first write answers `WouldReplace` until the
 //! person says yes. Folder names go to the server in UTF-8, decoded from
@@ -92,7 +92,7 @@ impl<M: ManageSieveApi> SieveRules<M> {
             SieveError::Refused(words) => BackendError::Refused(words),
             SieveError::NoStartTls => BackendError::Refused(fill(
                 &gettext(
-                    "{provider} offers no encrypted connection for rules, so Penguin Mail does not send your password there.",
+                    "{provider} offers no encrypted connection for rules, so Iris does not send your password there.",
                 ),
                 &[("provider", &self.provider)],
             )),
@@ -189,7 +189,7 @@ impl<M: ManageSieveApi> SieveRules<M> {
         Ok(())
     }
 
-    /// The script holds only rules of Penguin Mail's own, so it cannot
+    /// The script holds only rules of Iris's own, so it cannot
     /// keep one the app marked read-only.
     fn refuse_read_only(filter: &Filter) -> Result<(), BackendError> {
         if filter.read_only {

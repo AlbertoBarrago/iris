@@ -33,7 +33,7 @@ pub enum CalendarReach {
     /// The person left the calendar scope unticked, or has never been
     /// asked: no calendars, a line saying so, and Grant Access.
     Withheld,
-    /// The provider keeps no calendar Penguin Mail can reach, with the
+    /// The provider keeps no calendar Iris can reach, with the
     /// reason from `offered::reason`.
     NotOffered(String),
 }
@@ -915,7 +915,7 @@ impl CalendarSidebar {
                 }
                 CalendarReach::Withheld => {
                     body.append(&dim_line(&gettext(
-                        "Penguin Mail cannot see this account's calendars",
+                        "Iris cannot see this account's calendars",
                     )));
                     body.append(&self.grant_row(
                         account.id,
@@ -1052,7 +1052,7 @@ impl CalendarSidebar {
         row.append(&check);
         row.append(&label);
         if !calendar.access.can_write() {
-            let lock = gtk::Image::from_icon_name("penguin-mail-lock-symbolic");
+            let lock = gtk::Image::from_icon_name("iris-lock-symbolic");
             lock.add_css_class("calendar-lock");
             lock.set_pixel_size(12);
             row.append(&lock);

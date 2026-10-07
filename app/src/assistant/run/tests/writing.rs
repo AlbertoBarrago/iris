@@ -320,7 +320,7 @@ fn keys_and_settings_stay_on_this_computer() {
     assert!(!refused("/media/dana/USB/photo.jpg"));
     assert!(refused("/home/dana/.ssh/id_ed25519"));
     assert!(refused("/home/dana/.gnupg/private-keys-v1.d/key"));
-    assert!(refused("/home/dana/.local/share/penguin-mail/mail.db"));
+    assert!(refused("/home/dana/.local/share/iris/mail.db"));
     assert!(refused("/home/dana/Documents/.secret/notes.txt"));
     assert!(refused("/etc/shadow"));
     assert!(refused("/proc/self/environ"));

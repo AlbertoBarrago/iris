@@ -101,9 +101,9 @@ jobs:
       # add a Google account, and says so when someone tries.
       - name: Build
         env:
-          PENGUIN_MAIL_GOOGLE_CLIENT_ID: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_ID }}
-          PENGUIN_MAIL_GOOGLE_CLIENT_SECRET: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_SECRET }}
-          PENGUIN_MAIL_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_ID: ${{ secrets.IRIS_GOOGLE_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_SECRET: ${{ secrets.IRIS_GOOGLE_CLIENT_SECRET }}
+          IRIS_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
         run: cargo build --release -p mailrs -p mailrs-cli
       - name: Pack
         run: |
@@ -114,7 +114,7 @@ jobs:
         run: scripts/changelog.sh section "$VERSION" > dist/notes.md
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: penguin-mail-${{ needs.version.outputs.version }}
+          name: iris-${{ needs.version.outputs.version }}
           path: dist/
           if-no-files-found: error
 
@@ -153,9 +153,9 @@ jobs:
         env:
           APT_SIGNING_KEY: ${{ secrets.APT_SIGNING_KEY }}
           EVENT: ${{ github.event_name }}
-          PENGUIN_MAIL_GOOGLE_CLIENT_ID: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_ID }}
-          PENGUIN_MAIL_GOOGLE_CLIENT_SECRET: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_SECRET }}
-          PENGUIN_MAIL_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_ID: ${{ secrets.IRIS_GOOGLE_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_SECRET: ${{ secrets.IRIS_GOOGLE_CLIENT_SECRET }}
+          IRIS_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
         run: |
           if [ -z "$APT_SIGNING_KEY" ]; then
             if [ "$EVENT" = push ]; then
@@ -177,15 +177,15 @@ jobs:
       - name: Install and start it
         run: |
           if [ "${RPM_SIGNED:-}" = 1 ]; then
-            rpm --import packaging/apt/penguin-mail-archive-keyring.asc
-            rpm -K "dist/penguin-mail-$VERSION-1.x86_64.rpm"
+            rpm --import packaging/apt/iris-archive-keyring.asc
+            rpm -K "dist/iris-$VERSION-1.x86_64.rpm"
           fi
-          dnf install -y "./dist/penguin-mail-$VERSION-1.x86_64.rpm"
-          penguin-mail --version
-          scripts/smoke-start.sh /usr/bin/penguin-mail
+          dnf install -y "./dist/iris-$VERSION-1.x86_64.rpm"
+          iris --version
+          scripts/smoke-start.sh /usr/bin/iris
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: penguin-mail-${{ needs.version.outputs.version }}-rpm
+          name: iris-${{ needs.version.outputs.version }}-rpm
           path: dist/*.rpm
           if-no-files-found: error
 
@@ -217,20 +217,20 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
       - name: Build and pack
         env:
-          PENGUIN_MAIL_GOOGLE_CLIENT_ID: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_ID }}
-          PENGUIN_MAIL_GOOGLE_CLIENT_SECRET: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_SECRET }}
-          PENGUIN_MAIL_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_ID: ${{ secrets.IRIS_GOOGLE_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_SECRET: ${{ secrets.IRIS_GOOGLE_CLIENT_SECRET }}
+          IRIS_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
         run: scripts/package-arch.sh "$VERSION" dist
       # Installs the package the way a person would and starts it on a
       # virtual display, which catches a Depends the PKGBUILD forgot.
       - name: Install and start it
         run: |
-          pacman -U --noconfirm "dist/penguin-mail-$VERSION-1-x86_64.pkg.tar.zst"
-          penguin-mail --version
-          scripts/smoke-start.sh /usr/bin/penguin-mail
+          pacman -U --noconfirm "dist/iris-$VERSION-1-x86_64.pkg.tar.zst"
+          iris --version
+          scripts/smoke-start.sh /usr/bin/iris
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: penguin-mail-${{ needs.version.outputs.version }}-arch
+          name: iris-${{ needs.version.outputs.version }}-arch
           path: dist/*.pkg.tar.zst
           if-no-files-found: error
 
@@ -248,15 +248,15 @@ jobs:
       # cannot sign in to Google or Microsoft.
       - name: Put the Google and Microsoft clients into the recipe
         env:
-          PENGUIN_MAIL_GOOGLE_CLIENT_ID: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_ID }}
-          PENGUIN_MAIL_GOOGLE_CLIENT_SECRET: ${{ secrets.PENGUIN_MAIL_GOOGLE_CLIENT_SECRET }}
-          PENGUIN_MAIL_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_ID: ${{ secrets.IRIS_GOOGLE_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_SECRET: ${{ secrets.IRIS_GOOGLE_CLIENT_SECRET }}
+          IRIS_MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
         run: |
           python3 - <<'PY'
           import json, os
           path = "snap/snapcraft.yaml"
           recipe = open(path).read()
-          for name in ("PENGUIN_MAIL_GOOGLE_CLIENT_ID", "PENGUIN_MAIL_GOOGLE_CLIENT_SECRET", "PENGUIN_MAIL_MICROSOFT_CLIENT_ID"):
+          for name in ("IRIS_GOOGLE_CLIENT_ID", "IRIS_GOOGLE_CLIENT_SECRET", "IRIS_MICROSOFT_CLIENT_ID"):
               empty = f'{name}: ""'
               if recipe.count(empty) != 1:
                   raise SystemExit(f"snap/snapcraft.yaml has no single empty {name}")
@@ -278,7 +278,7 @@ jobs:
         run: |
           sudo snap install core26 mesa-2604
           sudo snap install --dangerous "$SNAP_FILE"
-          sudo scripts/smoke-start.sh snap run penguin-mail
+          sudo scripts/smoke-start.sh snap run iris
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: snap-${{ needs.version.outputs.version }}
@@ -302,7 +302,7 @@ jobs:
           sparse-checkout: packaging/apt
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          pattern: penguin-mail-${{ needs.version.outputs.version }}*
+          pattern: iris-${{ needs.version.outputs.version }}*
           merge-multiple: true
           path: dist
       # Each package comes from its own job, so the sums are written once
@@ -330,11 +330,11 @@ jobs:
               --local-user FE3C3B6E699AF939DC4670DCF3A853035C3E2B8E \
               --armor --detach-sign --output SHA256SUMS.asc SHA256SUMS
           gpgv --homedir "$signing" \
-              --keyring "$GITHUB_WORKSPACE/packaging/apt/penguin-mail-archive-keyring.gpg" \
+              --keyring "$GITHUB_WORKSPACE/packaging/apt/iris-archive-keyring.gpg" \
               SHA256SUMS.asc SHA256SUMS
       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
-          name: Penguin Mail ${{ needs.version.outputs.version }}
+          name: Iris ${{ needs.version.outputs.version }}
           body_path: dist/notes.md
           make_latest: "true"
           fail_on_unmatched_files: true

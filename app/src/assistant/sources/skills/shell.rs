@@ -70,11 +70,11 @@ impl Shell {
 /// Where each conversation's scratch folder goes.
 fn scratch_root() -> PathBuf {
     gtk::glib::user_cache_dir()
-        .join("penguin-mail")
+        .join("iris")
         .join("skill-work")
 }
 
-/// Removes scratch folders a crash or a kill left behind. Penguin Mail runs
+/// Removes scratch folders a crash or a kill left behind. Iris runs
 /// one copy at a time and no conversation outlives it, so any folder here
 /// when it starts belongs to nobody.
 pub fn clear_leftovers() {

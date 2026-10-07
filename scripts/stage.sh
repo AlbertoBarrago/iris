@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Lays out a built Penguin Mail as the tree it installs as, under <dir>:
+# Lays out a built Iris as the tree it installs as, under <dir>:
 # bin/, share/applications/, share/icons/, share/locale/, share/metainfo/.
 # The binaries come from target/release, so build first. install-files.sh
 # copies the tree into a prefix, and the package scripts pack it for a
@@ -12,11 +12,11 @@ umask 022
 
 cd "$(dirname "$0")/.."
 dir=${1:?usage: scripts/stage.sh <dir>}
-id=io.github.c9dev.PenguinMail
+id=io.github.AlbertoBarrago.Iris
 bin=${CARGO_TARGET_DIR:-target}/release
 
-install -Dm755 "$bin/penguin-mail" "$dir/bin/penguin-mail"
-install -Dm755 "$bin/penguin-mail-cli" "$dir/bin/penguin-mail-cli"
+install -Dm755 "$bin/iris" "$dir/bin/iris"
+install -Dm755 "$bin/iris-cli" "$dir/bin/iris-cli"
 install -Dm644 "app/data/icons/scalable/apps/$id.svg" \
     "$dir/share/icons/hicolor/scalable/apps/$id.svg"
 install -Dm644 "app/data/icons/scalable/apps/$id-symbolic.svg" \
@@ -34,7 +34,7 @@ if command -v msgfmt >/dev/null; then
     for po in po/*.po; do
         lang=$(basename "$po" .po)
         mkdir -p "$dir/share/locale/$lang/LC_MESSAGES"
-        msgfmt -o "$dir/share/locale/$lang/LC_MESSAGES/penguin-mail.mo" "$po"
+        msgfmt -o "$dir/share/locale/$lang/LC_MESSAGES/iris.mo" "$po"
     done
     msgfmt --desktop --template="app/data/$id.desktop" -d po \
         -o "$dir/share/applications/$id.desktop"
@@ -46,7 +46,7 @@ if command -v msgfmt >/dev/null; then
     fi
     chmod 644 "$metainfo"
 else
-    echo "msgfmt is missing, so Penguin Mail will speak English only."
+    echo "msgfmt is missing, so Iris will speak English only."
     echo "Install gettext and run this again for the other languages."
     install -Dm644 "app/data/$id.desktop" "$dir/share/applications/$id.desktop"
     install -Dm644 "app/data/$id.metainfo.xml" "$metainfo"

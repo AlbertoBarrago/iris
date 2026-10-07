@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds Penguin Mail for Fedora and packs it into an rpm that installs
+# Builds Iris for Fedora and packs it into an rpm that installs
 # under /usr. Run it on the oldest Fedora the rpm should install on: rpm
 # reads the libraries the binaries link against and requires each one, so
 # they must be Fedora's own.
@@ -31,18 +31,18 @@ tree="$work/tree"
 scripts/stage.sh "$tree"
 
 mkdir -p "$work/SPECS" "$work/RPMS" "$work/BUILD"
-cat > "$work/SPECS/penguin-mail.spec" <<SPEC
+cat > "$work/SPECS/iris.spec" <<SPEC
 # The binaries arrive built, so there is nothing to compile and no
 # debug information to split out.
 %global debug_package %{nil}
 %global _build_id_links none
 
-Name:           penguin-mail
+Name:           iris
 Version:        $version
 Release:        1
 Summary:        Mail and calendar for Linux
 License:        GPL-3.0-or-later
-URL:            https://github.com/c9dev/penguin-mail
+URL:            https://github.com/AlbertoBarrago/iris
 ExclusiveArch:  x86_64
 
 Requires:       gtk4 >= 4.20
@@ -60,33 +60,33 @@ sync from the system tray, and signs and encrypts with OpenPGP or S/MIME.
 %install
 mkdir -p %{buildroot}/usr
 cp -r $tree/. %{buildroot}/usr/
-install -Dm644 $here/packaging/apt/penguin-mail-archive-keyring.asc \\
-    %{buildroot}/etc/pki/rpm-gpg/RPM-GPG-KEY-penguin-mail
-install -Dm644 $here/packaging/rpm/penguin-mail.repo \\
-    %{buildroot}/etc/yum.repos.d/penguin-mail.repo
-install -Dm644 $here/LICENSE %{buildroot}/usr/share/licenses/penguin-mail/LICENSE
+install -Dm644 $here/packaging/apt/iris-archive-keyring.asc \\
+    %{buildroot}/etc/pki/rpm-gpg/RPM-GPG-KEY-iris
+install -Dm644 $here/packaging/rpm/iris.repo \\
+    %{buildroot}/etc/yum.repos.d/iris.repo
+install -Dm644 $here/LICENSE %{buildroot}/usr/share/licenses/iris/LICENSE
 
 %files
-%license /usr/share/licenses/penguin-mail/LICENSE
-/usr/bin/penguin-mail
-/usr/bin/penguin-mail-cli
-/usr/share/applications/io.github.c9dev.PenguinMail.desktop
-/usr/share/metainfo/io.github.c9dev.PenguinMail.metainfo.xml
-/usr/share/icons/hicolor/scalable/apps/io.github.c9dev.PenguinMail.svg
-/usr/share/icons/hicolor/symbolic/apps/io.github.c9dev.PenguinMail-symbolic.svg
-/usr/share/icons/hicolor/16x16/apps/io.github.c9dev.PenguinMail.svg
-/usr/share/locale/*/LC_MESSAGES/penguin-mail.mo
-/etc/pki/rpm-gpg/RPM-GPG-KEY-penguin-mail
+%license /usr/share/licenses/iris/LICENSE
+/usr/bin/iris
+/usr/bin/iris-cli
+/usr/share/applications/io.github.AlbertoBarrago.Iris.desktop
+/usr/share/metainfo/io.github.AlbertoBarrago.Iris.metainfo.xml
+/usr/share/icons/hicolor/scalable/apps/io.github.AlbertoBarrago.Iris.svg
+/usr/share/icons/hicolor/symbolic/apps/io.github.AlbertoBarrago.Iris-symbolic.svg
+/usr/share/icons/hicolor/16x16/apps/io.github.AlbertoBarrago.Iris.svg
+/usr/share/locale/*/LC_MESSAGES/iris.mo
+/etc/pki/rpm-gpg/RPM-GPG-KEY-iris
 # dnf keeps a .repo file the person edited or removed, as dpkg keeps a
 # conffile.
-%config(noreplace) /etc/yum.repos.d/penguin-mail.repo
+%config(noreplace) /etc/yum.repos.d/iris.repo
 SPEC
 
 rpmbuild --quiet -bb \
     --define "_topdir $work" \
     --define "_rpmdir $work/RPMS" \
-    "$work/SPECS/penguin-mail.spec"
-rpm="penguin-mail-$version-1.x86_64.rpm"
+    "$work/SPECS/iris.spec"
+rpm="iris-$version-1.x86_64.rpm"
 mv "$work/RPMS/x86_64/$rpm" "$out/$rpm"
 
 if [ -n "${RPM_SIGN_KEY:-}" ]; then

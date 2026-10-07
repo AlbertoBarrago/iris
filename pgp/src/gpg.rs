@@ -7,7 +7,7 @@ use crate::error::PgpError;
 use crate::gnupg::{Pinentry, Program, Run, named};
 
 /// The person's own GnuPG: their keys, their agent, their pinentry, their
-/// trust database. Penguin Mail never holds a key or a passphrase itself.
+/// trust database. Iris never holds a key or a passphrase itself.
 #[derive(Debug, Clone)]
 pub struct Pgp {
     program: Program,

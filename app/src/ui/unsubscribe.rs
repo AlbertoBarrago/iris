@@ -1,4 +1,4 @@
-//! The one dialog that asks before Penguin Mail leaves a mailing list.
+//! The one dialog that asks before Iris leaves a mailing list.
 //!
 //! It takes one line or twenty, so the Unsubscribe button and the
 //! assistant ask the same question in the same words. Each line names a
@@ -277,7 +277,7 @@ fn site(url: &str) -> String {
 
 /// The address a newsletter was sent to: the first of `to_and_cc` the
 /// account may send mail as, and the account's own address when none of
-/// them is. It is the only text Penguin Mail types into a page, so it
+/// them is. It is the only text Iris types into a page, so it
 /// has to be one of the person's own addresses rather than whatever the
 /// message happens to name.
 pub fn sent_to(to_and_cc: &[String], send_as: &[String], account: &str) -> String {

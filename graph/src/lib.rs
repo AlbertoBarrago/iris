@@ -1,4 +1,4 @@
-//! Microsoft Graph as Penguin Mail uses it: the HTTP core that talks only
+//! Microsoft Graph as Iris uses it: the HTTP core that talks only
 //! to graph.microsoft.com, Microsoft's sign-in, and (from Task 7) the
 //! models and calls the Microsoft adapter in `mailrs-sync` makes.
 

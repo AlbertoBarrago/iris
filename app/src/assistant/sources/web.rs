@@ -162,9 +162,9 @@ fn client(local: bool) -> reqwest::Client {
         .connect_timeout(Duration::from_secs(10))
         .redirect(policy)
         .user_agent(concat!(
-            "PenguinMail/",
+            "Iris/",
             env!("CARGO_PKG_VERSION"),
-            " (+https://github.com/c9dev/penguin-mail)"
+            " (+https://github.com/AlbertoBarrago/iris)"
         ))
         .build()
         .unwrap_or_default()
@@ -264,7 +264,7 @@ impl Source for Web {
 /// Runs one search for the Test button on the AI page and gives back the
 /// first result's title.
 pub async fn test(engine: SearchEngine) -> Result<String, String> {
-    let hits = search(&client(false), &engine, "Penguin Mail", 1).await?;
+    let hits = search(&client(false), &engine, "Iris", 1).await?;
     hits.into_iter()
         .next()
         .map(|hit| hit.title)

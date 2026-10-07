@@ -1,4 +1,4 @@
-//! What the person said when Penguin Mail offered to save a message's new
+//! What the person said when Iris offered to save a message's new
 //! recipients to the sending account's contacts. An address they turned
 //! down, or one already saved, is not offered again for that account.
 

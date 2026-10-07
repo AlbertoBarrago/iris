@@ -1,4 +1,4 @@
-# Penguin Mail
+# Iris
 
 Mail and calendar for Linux, in Rust: GTK4, libadwaita, WebKitGTK 6, a tray
 icon, several accounts synced into SQLite. Targets Ubuntu 26.04 and Rust
@@ -32,7 +32,7 @@ scripts/a11y-names.sh             # only when you touched the UI; exits 1 on an 
 ```
 
 Any edit to a file holding translatable strings moves line numbers in
-`po/penguin-mail.pot`, so `--check` goes stale from edits that change no
+`po/iris.pot`, so `--check` goes stale from edits that change no
 words. Run it last.
 
 Read exit statuses from the command itself. `cargo test | tail` reports
@@ -58,7 +58,7 @@ Installing for the owner: `NO_AUTOSTART=1 scripts/install.sh`.
   than calling `gdk::Texture::from_bytes` or gdk-pixbuf on the GTK
   thread, and build test pictures from `gdk::MemoryTexture`.
 - **GnuPG tests** build a throwaway keyring and skip when `gpg` or
-  `gpgsm` is missing. `PENGUIN_MAIL_REQUIRE_CRYPTO=1` turns the skip into
+  `gpgsm` is missing. `IRIS_REQUIRE_CRYPTO=1` turns the skip into
   a failure. Fixtures write `pinentry-program /bin/false` into
   `gpg-agent.conf`; keep that in any new fixture, or each run puts a
   trust dialog on the owner's screen. In product code, every `gpg` and
@@ -70,10 +70,10 @@ Installing for the owner: `NO_AUTOSTART=1 scripts/install.sh`.
   (`smime/tests/import.rs`), so nobody is asked.
 - **Sandbox tests** for skill scripts run real `bwrap` and skip when it
   is missing or cannot start, as in an unprivileged container.
-  `PENGUIN_MAIL_REQUIRE_SANDBOX=1` turns the skip into a failure.
+  `IRIS_REQUIRE_SANDBOX=1` turns the skip into a failure.
 - **Docker tests** (`testmail/`, `imap/tests/dovecot*.rs`,
   `sync/tests/dovecot.rs`) start Dovecot and Mailpit and skip when Docker
-  is missing or cannot start. `PENGUIN_MAIL_REQUIRE_IMAP=1` turns the skip
+  is missing or cannot start. `IRIS_REQUIRE_IMAP=1` turns the skip
   into a failure; CI's `imap` job sets it and the gate does not. The tests
   never pull an image (`docker create --pull never`); run
   `scripts/test-images.sh` once on a new computer. Radicale serves the
@@ -84,7 +84,7 @@ Installing for the owner: `NO_AUTOSTART=1 scripts/install.sh`.
   runtime built with `mailrs_sync::WORKER_STACK`, as the app does, so a
   stack too small for a debug build fails there. Containers
   go by id when a test ends; one left by a killed run carries the label
-  `io.github.c9dev.penguin-mail.test`. Remove it by its id.
+  `io.github.AlbertoBarrago.iris.test`. Remove it by its id.
 - **Migrations** live in one ordered array in `store/src/schema.rs`,
   numbered by position and tracked with `PRAGMA user_version`. Append
   only. Two branches that each add one collide on the number: renumber
@@ -194,7 +194,7 @@ owner's machine only; it is gitignored, like `docs/superpowers/`.
 
 ### Issue tracker
 
-Issues live in GitHub Issues for c9dev/penguin-mail, through the `gh` CLI. Anyone can open one, through the forms in `.github/ISSUE_TEMPLATE/`.
+Issues live in GitHub Issues for AlbertoBarrago/iris, through the `gh` CLI. Anyone can open one, through the forms in `.github/ISSUE_TEMPLATE/`.
 
 ### Triage labels
 

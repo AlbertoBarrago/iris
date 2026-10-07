@@ -380,7 +380,7 @@ impl<A: Accounts> Tools<A> {
             },
             Kind::Other => {
                 result["note"] = json!(format!(
-                    "Penguin Mail cannot read {} files as text. The user can open it from the conversation.",
+                    "Iris cannot read {} files as text. The user can open it from the conversation.",
                     file.mime_type
                 ));
                 None

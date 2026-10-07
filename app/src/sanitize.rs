@@ -728,7 +728,7 @@ mod tests {
     /// cleaner dropped the tag and kept its text.
     #[test]
     fn a_title_s_words_stay_out_of_the_message() {
-        let html = "<html><head><title>[c9dev/penguin-mail] Run failed</title></head>\
+        let html = "<html><head><title>[AlbertoBarrago/iris] Run failed</title></head>\
                     <body><p>Body</p></body></html>";
         let clean = sanitize_html(html, None);
         assert!(!clean.contains("Run failed"), "{clean}");

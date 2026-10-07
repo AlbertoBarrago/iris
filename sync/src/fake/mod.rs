@@ -1,4 +1,4 @@
-//! In-memory servers for sync's tests and `penguin-mail --demo`: a Gmail
+//! In-memory servers for sync's tests and `iris --demo`: a Gmail
 //! here, and an IMAP server and SMTP sink in [`FakeImap`] and [`FakeSmtp`].
 //! Seed a mailbox, hand the fake to an `AccountSync`, and every read and
 //! write the app makes goes through the same code the real client does.

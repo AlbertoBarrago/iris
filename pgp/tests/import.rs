@@ -174,9 +174,9 @@ fn permit_owner_only(path: &Path) {
 fn permit_owner_only(_path: &Path) {}
 
 fn require_crypto() {
-    if std::env::var_os("PENGUIN_MAIL_REQUIRE_CRYPTO").is_some() {
+    if std::env::var_os("IRIS_REQUIRE_CRYPTO").is_some() {
         panic!(
-            "PENGUIN_MAIL_REQUIRE_CRYPTO is set and GnuPG is not on PATH, \
+            "IRIS_REQUIRE_CRYPTO is set and GnuPG is not on PATH, \
              so these tests would have proved nothing"
         );
     }

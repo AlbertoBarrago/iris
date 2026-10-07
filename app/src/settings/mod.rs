@@ -1,4 +1,4 @@
-//! App preferences, kept in `~/.config/penguin-mail/settings.toml`. Sync options
+//! App preferences, kept in `~/.config/iris/settings.toml`. Sync options
 //! stay in `config.toml`, which the command-line tool reads too.
 
 use std::collections::BTreeMap;
@@ -143,7 +143,7 @@ pub struct Settings {
     /// True folds into `contact_accounts` as every account the first time
     /// the accounts load, and goes back to false.
     pub contacts: bool,
-    /// The accounts whose Google contacts Penguin Mail reads, for names,
+    /// The accounts whose Google contacts Iris reads, for names,
     /// photos, and recipient suggestions, by lower-case address. Each is off
     /// until the owner turns it on, because each asks Google for more
     /// access.
@@ -774,7 +774,7 @@ fn allowed_tools<'de, D: serde::Deserializer<'de>>(read: D) -> Result<Vec<String
 }
 
 impl Settings {
-    /// Whether Penguin Mail reads this account's Google contacts.
+    /// Whether Iris reads this account's Google contacts.
     pub fn reads_contacts(&self, email: &str) -> bool {
         let email = email.to_lowercase();
         self.contact_accounts.contains(&email)

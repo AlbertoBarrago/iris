@@ -1,4 +1,4 @@
-//! Every call Penguin Mail makes to Graph. The client talks to one host,
+//! Every call Iris makes to Graph. The client talks to one host,
 //! the base it was built with, and follows a link Graph hands back only
 //! when the link names that same scheme, host and port: a token is worth
 //! the whole mailbox, and a link is only text a server sent. Every call

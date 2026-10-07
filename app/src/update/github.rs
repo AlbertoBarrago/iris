@@ -11,12 +11,12 @@ use super::version::{Asset, Release, Version};
 /// Tries per address before moving on to the next one.
 const TRIES: u32 = 3;
 
-const LATEST: &str = "https://api.github.com/repos/c9dev/penguin-mail/releases/latest";
+const LATEST: &str = "https://api.github.com/repos/AlbertoBarrago/iris/releases/latest";
 
 /// GitHub refuses API calls without a User-Agent.
 pub fn client() -> reqwest::Client {
     reqwest::Client::builder()
-        .user_agent(format!("penguin-mail/{}", env!("CARGO_PKG_VERSION")))
+        .user_agent(format!("iris/{}", env!("CARGO_PKG_VERSION")))
         .timeout(Duration::from_secs(120))
         .build()
         .expect("a reqwest client builds with a user agent and a timeout")
@@ -26,7 +26,7 @@ pub fn client() -> reqwest::Client {
 pub async fn latest(client: &reqwest::Client) -> anyhow::Result<Option<Release>> {
     // A test release server can stand in for GitHub, as MAILRS_SHED_AFTER
     // stands in for the minute before the memory restart.
-    let url = std::env::var("PENGUIN_MAIL_RELEASES_URL").unwrap_or_else(|_| LATEST.into());
+    let url = std::env::var("IRIS_RELEASES_URL").unwrap_or_else(|_| LATEST.into());
     let response = client
         .get(url)
         .header("Accept", "application/vnd.github+json")
@@ -159,10 +159,10 @@ mod tests {
     #[test]
     fn a_release_reads_from_the_api_answer() {
         let json = r#"{"tag_name":"v0.2.0",
-            "html_url":"https://github.com/c9dev/penguin-mail/releases/tag/v0.2.0",
+            "html_url":"https://github.com/AlbertoBarrago/iris/releases/tag/v0.2.0",
             "draft":false,"prerelease":false,"body":"- Things",
             "assets":[{"name":"SHA256SUMS","size":290,
-              "browser_download_url":"https://github.com/c9dev/penguin-mail/releases/download/v0.2.0/SHA256SUMS"}]}"#;
+              "browser_download_url":"https://github.com/AlbertoBarrago/iris/releases/download/v0.2.0/SHA256SUMS"}]}"#;
         let release = parse(json).unwrap().unwrap();
         assert_eq!(release.version.to_string(), "0.2.0");
         assert_eq!(release.assets[0].name, "SHA256SUMS");
@@ -173,8 +173,8 @@ mod tests {
     #[test]
     fn a_file_comes_through_the_api_first_and_the_download_link_after() {
         let json = r#"{"tag_name":"v0.2.0","html_url":"x","assets":[{"name":"SHA256SUMS",
-            "url":"https://api.github.com/repos/c9dev/penguin-mail/releases/assets/7",
-            "browser_download_url":"https://github.com/c9dev/penguin-mail/releases/download/v0.2.0/SHA256SUMS"}]}"#;
+            "url":"https://api.github.com/repos/AlbertoBarrago/iris/releases/assets/7",
+            "browser_download_url":"https://github.com/AlbertoBarrago/iris/releases/download/v0.2.0/SHA256SUMS"}]}"#;
         let release = parse(json).unwrap().unwrap();
         let routes = super::routes(&release.assets[0]);
         assert_eq!(routes.len(), 2);

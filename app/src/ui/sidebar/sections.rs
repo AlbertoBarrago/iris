@@ -81,7 +81,7 @@ pub const LAYOUT: [(Section, &[Place]); 2] = [
 /// wrong.
 pub fn outbox_icon(stuck: i64) -> &'static str {
     match stuck {
-        ..=0 => "penguin-mail-outgoing-symbolic",
+        ..=0 => "iris-outgoing-symbolic",
         _ => "dialog-warning-symbolic",
     }
 }
@@ -99,7 +99,7 @@ mod tests {
 
     #[test]
     fn an_outbox_with_nothing_stuck_shows_its_tray() {
-        assert_eq!(outbox_icon(0), "penguin-mail-outgoing-symbolic");
+        assert_eq!(outbox_icon(0), "iris-outgoing-symbolic");
     }
 
     #[test]

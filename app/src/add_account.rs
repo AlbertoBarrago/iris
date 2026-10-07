@@ -283,7 +283,7 @@ pub fn removal_of(setting: RemoveSetting) -> (Removal, u32) {
 /// What Add Account says for a Microsoft address in a build without
 /// Microsoft's client.
 pub fn no_microsoft_line() -> String {
-    gettext("This copy of Penguin Mail was built without Microsoft sign-in.")
+    gettext("This copy of Iris was built without Microsoft sign-in.")
 }
 
 /// Where discovery's answer for `address` leads. The best candidate comes
@@ -310,7 +310,7 @@ pub fn after_discovery(found: Found, address: &Address, microsoft: bool) -> Next
             provider,
             reason: Unreachable::NotYet,
         } => Next::Closed(fill(
-            &gettext("Penguin Mail cannot reach {provider} yet."),
+            &gettext("Iris cannot reach {provider} yet."),
             &[("provider", &provider)],
         )),
         Verdict::Google => Next::Google,
@@ -445,7 +445,7 @@ fn nothing_found(address: &Address) -> Next {
     Next::Manual {
         proposal: guess(address),
         line: fill(
-            &gettext("Penguin Mail found no mail servers for {domain}. Enter them below."),
+            &gettext("Iris found no mail servers for {domain}. Enter them below."),
             &[("domain", &address.domain)],
         ),
     }
@@ -494,7 +494,7 @@ pub fn password_title(proposal: &Proposal) -> String {
 }
 
 /// Whether Sign In can go: there is a password, the person said yes
-/// to servers Penguin Mail guessed, and no sign-in is on its way.
+/// to servers Iris guessed, and no sign-in is on its way.
 pub fn can_sign_in(password: &str, proposal: &Proposal, confirmed: bool, running: bool) -> bool {
     !running && !password.is_empty() && (confirmed || !proposal.confirm)
 }
@@ -571,7 +571,7 @@ pub fn servers_summary(proposal: &Proposal) -> String {
 pub fn found_line(proposal: &Proposal) -> String {
     match proposal.source {
         Some(Source::Table) => gettext(
-            "Penguin Mail's own list knows this provider. Nothing has left this computer.",
+            "Iris's own list knows this provider. Nothing has left this computer.",
         ),
         Some(Source::Mx) => gettext("Found by its mail servers. Nothing else was asked."),
         Some(Source::Autoconfig | Source::MxAutoconfig | Source::WellKnown) => {
@@ -871,8 +871,8 @@ pub fn keyring_unplugged(err: &anyhow::Error, plug: Plug) -> Option<Failure> {
     }
     let command = crate::keyring_plug::COMMAND;
     let body = gettext(
-        "Penguin Mail cannot save your sign-in until the snap can reach your keyring. \
-         Run this command in a terminal, restart Penguin Mail, then add the account again.",
+        "Iris cannot save your sign-in until the snap can reach your keyring. \
+         Run this command in a terminal, restart Iris, then add the account again.",
     );
     Some(Failure {
         line: format!("{body} {command}"),
@@ -1255,8 +1255,8 @@ pub fn grant_lede(provider: Provider, missing: usize, done: bool) -> String {
     let count = [("count", spoken.as_str())];
     let left = if provider == Provider::Microsoft {
         fill_plural(
-            "Your organization did not allow one of the permissions Penguin Mail asked for, so this feature stays off:",
-            "Your organization did not allow {count} of the permissions Penguin Mail asked for, so these features stay off:",
+            "Your organization did not allow one of the permissions Iris asked for, so this feature stays off:",
+            "Your organization did not allow {count} of the permissions Iris asked for, so these features stay off:",
             missing,
             &count,
         )
@@ -1291,7 +1291,7 @@ pub fn added_page(
             false => gettext(
                 "Newest mail comes first. Older mail keeps coming in the background, even with the window closed.",
             ),
-            true => gettext("Penguin Mail keeps checking for new mail, even with the window closed."),
+            true => gettext("Iris keeps checking for new mail, even with the window closed."),
         };
         return AddedPage {
             lede: ready_lede(backfill_done),
@@ -1301,14 +1301,14 @@ pub fn added_page(
     }
     let note = match remove {
         RemoveSetting::Never => gettext(
-            "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server.",
+            "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server.",
         ),
         RemoveSetting::Downloaded => gettext(
-            "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it.",
+            "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it.",
         ),
         RemoveSetting::Days(days) => fill_plural(
-            "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it.",
-            "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it.",
+            "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it.",
+            "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it.",
             days as usize,
             &[("days", &days.to_string())],
         ),
@@ -1323,7 +1323,7 @@ pub fn added_page(
 /// What step 2 says above the password for an account signing in again.
 pub fn again_line(account: &Account) -> String {
     fill(
-        &gettext("Penguin Mail needs the password for {address} again."),
+        &gettext("Iris needs the password for {address} again."),
         &[("address", &account.email)],
     )
 }
@@ -1601,7 +1601,7 @@ mod tests {
         });
         assert_eq!(
             after_discovery(proton, &dana(), true),
-            Next::Closed("Penguin Mail cannot reach Proton Mail yet.".into())
+            Next::Closed("Iris cannot reach Proton Mail yet.".into())
         );
     }
 
@@ -1613,7 +1613,7 @@ mod tests {
         );
         assert_eq!(
             after_discovery(verdict(Verdict::Microsoft), &dana(), false),
-            Next::Closed("This copy of Penguin Mail was built without Microsoft sign-in.".into())
+            Next::Closed("This copy of Iris was built without Microsoft sign-in.".into())
         );
         assert_eq!(
             after_discovery(verdict(Verdict::Google), &dana(), true),
@@ -1621,7 +1621,7 @@ mod tests {
         );
         assert_eq!(
             no_microsoft_line(),
-            "This copy of Penguin Mail was built without Microsoft sign-in."
+            "This copy of Iris was built without Microsoft sign-in."
         );
     }
 
@@ -1671,7 +1671,7 @@ mod tests {
         assert_eq!(proposal.smtp, server("smtp.example.org", 465));
         assert_eq!(
             line,
-            "Penguin Mail found no mail servers for example.org. Enter them below."
+            "Iris found no mail servers for example.org. Enter them below."
         );
     }
 
@@ -1937,7 +1937,7 @@ mod tests {
         assert!(!proposal.confirm);
         assert_eq!(
             again_line(&account),
-            "Penguin Mail needs the password for dana@icloud.com again."
+            "Iris needs the password for dana@icloud.com again."
         );
     }
 
@@ -2366,7 +2366,7 @@ mod tests {
         );
         assert_eq!(
             found_line(&by(Source::Table)),
-            "Penguin Mail's own list knows this provider. Nothing has left this computer."
+            "Iris's own list knows this provider. Nothing has left this computer."
         );
         assert_eq!(
             found_line(&by(Source::Ispdb)),
@@ -2434,7 +2434,7 @@ mod tests {
             let done = added_page(provider, RemoveSetting::Never, true, false).note;
             assert_eq!(
                 done,
-                "Penguin Mail keeps checking for new mail, even with the window closed.",
+                "Iris keeps checking for new mail, even with the window closed.",
                 "{provider:?}"
             );
         }
@@ -2479,11 +2479,11 @@ mod tests {
         // Microsoft account lacks is one its organization refused.
         assert_eq!(
             grant_lede(Provider::Microsoft, 3, true),
-            "Your mail is here. Your organization did not allow three of the permissions Penguin Mail asked for, so these features stay off:"
+            "Your mail is here. Your organization did not allow three of the permissions Iris asked for, so these features stay off:"
         );
         assert_eq!(
             grant_lede(Provider::Microsoft, 1, false),
-            "Mail is downloading. Your organization did not allow one of the permissions Penguin Mail asked for, so this feature stays off:"
+            "Mail is downloading. Your organization did not allow one of the permissions Iris asked for, so this feature stays off:"
         );
     }
 

@@ -76,7 +76,7 @@ cat >"$HOME/.config/glib-2.0/settings/keyfile" <<'KEYFILE'
 color-scheme='default'
 accent-color='purple'
 KEYFILE
-export PENGUIN_MAIL_LOCALE_DIR="$PWD/target/locale"
+export IRIS_LOCALE_DIR="$PWD/target/locale"
 # The screenshots are in English whatever the machine speaks.
 export LANG=en_US.UTF-8 LANGUAGE=en_US LC_ALL=en_US.UTF-8
 
@@ -96,7 +96,7 @@ fi
 export DEMO_CLOCK_OFFSET=$offset DEMO_CLOCK_PRELOAD=$preload
 
 driver=$PWD/scripts/screenshots.py
-app=$PWD/target/debug/penguin-mail
+app=$PWD/target/debug/iris
 out=${OUT:-$PWD/docs/screenshots}
 inside="
 $launcher --launch-immediately &

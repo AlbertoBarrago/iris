@@ -1,6 +1,6 @@
 # Translations
 
-`penguin-mail.pot` holds every word a person reads, pulled out of the
+`iris.pot` holds every word a person reads, pulled out of the
 source. Each `<locale>.po` beside it is one language.
 
 ## English
@@ -19,7 +19,7 @@ is behind the template.
    translating into:
 
    ```
-   msginit --locale=fr_FR --input=po/penguin-mail.pot --output=po/fr_FR.po
+   msginit --locale=fr_FR --input=po/iris.pot --output=po/fr_FR.po
    ```
 
 2. Add one line to its header, the language's name written in that
@@ -42,7 +42,7 @@ is behind the template.
    scripts/install.sh       # installs into <prefix>/share/locale
    ```
 
-   Penguin Mail offers a language in Preferences only once its catalogue
+   Iris offers a language in Preferences only once its catalogue
    is installed, and reads the choice as it starts, so pick one and
    restart.
 
@@ -74,7 +74,7 @@ search syntax such as `has:attachment`, MIME types, header names, CSS, and
 anything else that goes to Gmail rather than to a reader.
 
 Two more stay in English on purpose. The `---------- Forwarded message
-----------` line is the marker every mail client writes, and Penguin Mail
+----------` line is the marker every mail client writes, and Iris
 looks for it again when it reopens a saved draft. The `From:`, `Date:`,
 `Subject:`, `To:` and `Cc:` names in a forwarded block are read back the
 same way.

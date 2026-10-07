@@ -1,4 +1,4 @@
-//! One VCALENDAR resource and Penguin Mail's events. A resource holds one
+//! One VCALENDAR resource and Iris's events. A resource holds one
 //! event, or a series with its changed occurrences, and each VEVENT maps
 //! to one neutral [`Event`]. A write changes only the properties whose
 //! value the edit changed, on the one VEVENT it names, and leaves every
@@ -22,7 +22,7 @@ use crate::zones::Zones;
 use crate::{DavError, MOST_RESOURCE_BYTES};
 
 const DAY: EpochMillis = 24 * 60 * 60 * 1000;
-const PRODID: &str = "-//Penguin Mail//EN";
+const PRODID: &str = "-//Iris//EN";
 
 /// A resource as events.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -333,7 +333,7 @@ fn fresh() -> Result<ICalendar, DavError> {
 /// index: its UID, and for a changed occurrence its RECURRENCE-ID in the
 /// shape of the master's DTSTART.
 fn add_vevent(ical: &mut ICalendar, event: &Event, master: Option<&Event>) -> Result<usize, DavError> {
-    let uid = if event.uid.is_empty() { format!("{}@penguin-mail", event.id) } else { event.uid.clone() };
+    let uid = if event.uid.is_empty() { format!("{}@iris", event.id) } else { event.uid.clone() };
     let mut lines = vec![format!("UID:{uid}")];
     if let (Some(original), Some(master)) = (event.original_start, master) {
         lines.push(time_line("RECURRENCE-ID", original, &master.zone, master.all_day));
@@ -484,7 +484,7 @@ fn find_again(ical: &ICalendar, before: &Event) -> Result<usize, DavError> {
 /// Adds and removes ATTENDEE lines as the guest list changed, keeping each
 /// remaining guest's own line with its parameters, and sets the account's
 /// own PARTSTAT, with SCHEDULE-AGENT=CLIENT so a server that schedules
-/// does not send its own reply beside the one Penguin Mail mails.
+/// does not send its own reply beside the one Iris mails.
 fn patch_guests(ical: &mut ICalendar, at: usize, before: &Event, event: &Event, me: &[String]) -> Result<bool, DavError> {
     let emails = |e: &Event| -> Vec<String> { e.guests.iter().map(|g| g.email.to_ascii_lowercase()).collect() };
     let mut changed = false;

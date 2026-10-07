@@ -10,7 +10,7 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-const PREFIX: &str = "penguin-mail-demo-";
+const PREFIX: &str = "iris-demo-";
 
 /// Tells apart the folders of cores opened one after another in one
 /// process, as the tests do.
@@ -51,9 +51,9 @@ impl Drop for DemoFolder {
 }
 
 /// Removes the demo folders and settings files in `base` whose process
-/// no longer runs. Older builds named them `penguin-mail-demo-<pid>` and
-/// `penguin-mail-demo-<pid>-settings.toml`; this build uses
-/// `penguin-mail-demo-<pid>-<n>`. All three start with the process id.
+/// no longer runs. Older builds named them `iris-demo-<pid>` and
+/// `iris-demo-<pid>-settings.toml`; this build uses
+/// `iris-demo-<pid>-<n>`. All three start with the process id.
 fn sweep(base: &Path) {
     let Ok(entries) = std::fs::read_dir(base) else {
         return;
@@ -125,7 +125,7 @@ mod tests {
         let dead_old = base.path().join(format!("{PREFIX}{DEAD}"));
         let dead_settings = base.path().join(format!("{PREFIX}{DEAD}-settings.toml"));
         let live = base.path().join(format!("{PREFIX}{}-other", std::process::id()));
-        let unrelated = base.path().join("penguin-mail-demonstration");
+        let unrelated = base.path().join("iris-demonstration");
         for dir in [&dead_new, &dead_old, &live, &unrelated] {
             std::fs::create_dir_all(dir).unwrap();
             std::fs::write(dir.join("mailrs.db"), b"").unwrap();

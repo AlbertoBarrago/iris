@@ -874,7 +874,7 @@ fn load_poses(poses: &gtk::Stack, scale: f32, factor: i32) {
     glib::spawn_future_local(async move {
         let drawn = super::texture::off_thread(super::texture::WAIT, move || {
             Band::ALL.map(|band| {
-                let path = format!("/io/github/c9dev/PenguinMail/band/{}.svg", band.name());
+                let path = format!("/io/github/AlbertoBarrago/Iris/band/{}.svg", band.name());
                 match gtk::gdk_pixbuf::Pixbuf::from_resource_at_scale(&path, width, height, true)
                 {
                     #[allow(deprecated)]

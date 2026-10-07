@@ -1341,7 +1341,7 @@ mod tests {
     #[test]
     fn a_skill_keeps_an_entry_only_while_a_switch_is_on() {
         let mut settings = Settings::default();
-        let id = "penguin-mail/receipts".to_string();
+        let id = "iris/receipts".to_string();
         assert_eq!(settings.skill(&id), super::super::SkillSettings::default());
         Change::SkillEnabled {
             id: id.clone(),

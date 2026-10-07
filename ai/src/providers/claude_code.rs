@@ -178,13 +178,13 @@ fn default_work_dir() -> PathBuf {
         .map(PathBuf::from)
         .filter(|p| p.is_dir())
         .unwrap_or_else(std::env::temp_dir);
-    base.join("penguin-mail")
+    base.join("iris")
 }
 
 /// The program Claude Code starts as the MCP server: this app, unless
-/// `PENGUIN_MAIL_BRIDGE_COMMAND` names another.
+/// `IRIS_BRIDGE_COMMAND` names another.
 fn default_bridge_command() -> std::io::Result<PathBuf> {
-    match std::env::var_os("PENGUIN_MAIL_BRIDGE_COMMAND") {
+    match std::env::var_os("IRIS_BRIDGE_COMMAND") {
         Some(command) if !command.is_empty() => Ok(PathBuf::from(command)),
         _ => std::env::current_exe(),
     }
@@ -477,7 +477,7 @@ fn content_blocks(message: &Value) -> impl Iterator<Item = &Value> {
         .flatten()
 }
 
-/// The app's tool name, without Claude Code's `mcp__penguin-mail__` prefix.
+/// The app's tool name, without Claude Code's `mcp__iris__` prefix.
 fn tool_name(name: &str) -> String {
     let prefix = format!("mcp__{SERVER_NAME}__");
     name.strip_prefix(&prefix).unwrap_or(name).to_string()

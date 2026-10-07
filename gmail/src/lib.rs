@@ -1,4 +1,4 @@
-//! Gmail REST client: OAuth, quota limiting, and conversion to Penguin Mail domain types.
+//! Gmail REST client: OAuth, quota limiting, and conversion to Iris domain types.
 
 pub mod calendar;
 mod calendar_list;

@@ -257,7 +257,7 @@ impl MainWindow {
             .with_invitation(|showing| file_name(&showing.invitation.summary))
             .unwrap_or_else(|| "invitation.ics".to_string());
         let dir = glib::user_cache_dir()
-            .join("penguin-mail")
+            .join("iris")
             .join("invitations");
         let path = dir.join(&name);
         if let Err(err) = std::fs::create_dir_all(&dir).and_then(|()| std::fs::write(&path, &ics)) {

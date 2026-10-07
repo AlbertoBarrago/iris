@@ -185,7 +185,7 @@ fn show(
         let target = target.filter(|_| takes_actions());
         let mut notification = notify_rust::Notification::new();
         notification
-            .appname("Penguin Mail")
+            .appname("Iris")
             .summary(&summary)
             .body(&escape(&body))
             .icon(APP_ID)

@@ -270,7 +270,7 @@ impl Filing {
     /// `ui::sidebar::label_icon` draws the same choice for a sidebar row.
     pub fn icon(self) -> &'static str {
         match self {
-            Filing::Labels => "penguin-mail-tag-symbolic",
+            Filing::Labels => "iris-tag-symbolic",
             Filing::Folders => "folder-symbolic",
         }
     }
@@ -424,16 +424,16 @@ pub fn reason(account: &Account, missing: Missing, missed: Option<Miss>) -> Stri
         // A Microsoft account offers every service; one it lacks is one
         // its organization refused (`Refused`).
         (Provider::Microsoft, Missing::Calendar) => {
-            gettext("Your organization does not allow Penguin Mail to use this calendar.")
+            gettext("Your organization does not allow Iris to use this calendar.")
         }
         (Provider::Microsoft, Missing::Contacts) => {
-            gettext("Your organization does not allow Penguin Mail to read these contacts.")
+            gettext("Your organization does not allow Iris to read these contacts.")
         }
         (Provider::Microsoft, Missing::Rules) => {
-            gettext("Your organization does not allow Penguin Mail to change these rules.")
+            gettext("Your organization does not allow Iris to change these rules.")
         }
         (Provider::Microsoft, Missing::AutoReply) => {
-            gettext("Your organization does not allow Penguin Mail to change the automatic reply.")
+            gettext("Your organization does not allow Iris to change the automatic reply.")
         }
         (Provider::Imap | Provider::Pop3, Missing::Calendar) => match missed {
             Some(Miss::Refused) => gettext(
@@ -441,10 +441,10 @@ pub fn reason(account: &Account, missing: Missing, missed: Option<Miss>) -> Stri
                  password with access to calendars and contacts.",
             ),
             Some(Miss::Unreachable) => {
-                gettext("Penguin Mail could not reach the calendar server for {provider}.")
+                gettext("Iris could not reach the calendar server for {provider}.")
             }
             Some(Miss::NotFound) | None => {
-                gettext("Penguin Mail found no calendar server for {provider}.")
+                gettext("Iris found no calendar server for {provider}.")
             }
         },
         (Provider::Imap | Provider::Pop3, Missing::Contacts) => match missed {
@@ -453,10 +453,10 @@ pub fn reason(account: &Account, missing: Missing, missed: Option<Miss>) -> Stri
                  password with access to calendars and contacts.",
             ),
             Some(Miss::Unreachable) => {
-                gettext("Penguin Mail could not reach the contacts server for {provider}.")
+                gettext("Iris could not reach the contacts server for {provider}.")
             }
             Some(Miss::NotFound) | None => {
-                gettext("Penguin Mail found no contacts server for {provider}.")
+                gettext("Iris found no contacts server for {provider}.")
             }
         },
         (Provider::Pop3, Missing::AutoReply) => {
@@ -527,10 +527,10 @@ pub fn failing_lines(failing: &[Failing]) -> Vec<String> {
                 FailReason::Refused if !failed.words.is_empty() => failed.words.clone(),
                 FailReason::Refused => gettext("The server would not hand it over."),
                 FailReason::TooLarge => {
-                    gettext("The message is larger than Penguin Mail downloads.")
+                    gettext("The message is larger than Iris downloads.")
                 }
                 FailReason::Unreadable => {
-                    gettext("Penguin Mail could not read the server's answer.")
+                    gettext("Iris could not read the server's answer.")
                 }
                 FailReason::Dropped => {
                     gettext("The connection closed while the message downloaded.")
@@ -592,7 +592,7 @@ pub fn kept_here_lines(accounts: &[Account]) -> Vec<String> {
         .map(|account| {
             fill(
                 &gettext(
-                    "Mail from {address} is kept only on this computer. To keep a copy, quit Penguin Mail, then back up this file.",
+                    "Mail from {address} is kept only on this computer. To keep a copy, quit Iris, then back up this file.",
                 ),
                 &[("address", &account.email)],
             )
@@ -645,7 +645,7 @@ mod tests {
         );
         assert_eq!(
             reason(&pop3_account(), Missing::Calendar, None),
-            "Penguin Mail found no calendar server for example.org."
+            "Iris found no calendar server for example.org."
         );
     }
 
@@ -672,9 +672,9 @@ mod tests {
             failing_lines(&failing),
             [
                 "“Photos” from Ana Lima: no such message",
-                "“Scans”: The message is larger than Penguin Mail downloads.",
+                "“Scans”: The message is larger than Iris downloads.",
                 "A message from Bo: The connection closed while the message downloaded.",
-                "Message 4: Penguin Mail could not read the server's answer.",
+                "Message 4: Iris could not read the server's answer.",
                 "Message 5: The server would not hand it over.",
             ]
         );
@@ -724,7 +724,7 @@ mod tests {
         };
         assert_eq!(
             kept_here_lines(&[imap, pop3_account()]),
-            ["Mail from dana@example.org is kept only on this computer. To keep a copy, quit Penguin Mail, then back up this file."]
+            ["Mail from dana@example.org is kept only on this computer. To keep a copy, quit Iris, then back up this file."]
         );
     }
 
@@ -785,11 +785,11 @@ mod tests {
     fn an_imap_account_without_a_calendar_server_says_none_was_found() {
         assert_eq!(
             reason(&fastmail(), Missing::Calendar, None),
-            "Penguin Mail found no calendar server for Fastmail."
+            "Iris found no calendar server for Fastmail."
         );
         assert_eq!(
             reason(&fastmail(), Missing::Contacts, None),
-            "Penguin Mail found no contacts server for Fastmail."
+            "Iris found no contacts server for Fastmail."
         );
     }
 
@@ -811,15 +811,15 @@ mod tests {
     fn no_answer_says_the_server_could_not_be_reached() {
         assert_eq!(
             reason(&fastmail(), Missing::Calendar, Some(Miss::Unreachable)),
-            "Penguin Mail could not reach the calendar server for Fastmail."
+            "Iris could not reach the calendar server for Fastmail."
         );
         assert_eq!(
             reason(&fastmail(), Missing::Contacts, Some(Miss::Unreachable)),
-            "Penguin Mail could not reach the contacts server for Fastmail."
+            "Iris could not reach the contacts server for Fastmail."
         );
         assert_eq!(
             reason(&fastmail(), Missing::Contacts, Some(Miss::NotFound)),
-            "Penguin Mail found no contacts server for Fastmail."
+            "Iris found no contacts server for Fastmail."
         );
     }
 
@@ -831,7 +831,7 @@ mod tests {
         });
         let reasons = &lines[0].1;
         assert!(reasons[0].starts_with("Fastmail refused the password for calendars."), "{lines:?}");
-        assert_eq!(reasons[1], "Penguin Mail found no contacts server for Fastmail.");
+        assert_eq!(reasons[1], "Iris found no contacts server for Fastmail.");
     }
 
     #[test]
@@ -843,19 +843,19 @@ mod tests {
         };
         assert_eq!(
             reason(&account, Missing::Calendar, None),
-            "Your organization does not allow Penguin Mail to use this calendar."
+            "Your organization does not allow Iris to use this calendar."
         );
         assert_eq!(
             reason(&account, Missing::Contacts, None),
-            "Your organization does not allow Penguin Mail to read these contacts."
+            "Your organization does not allow Iris to read these contacts."
         );
         assert_eq!(
             reason(&account, Missing::Rules, None),
-            "Your organization does not allow Penguin Mail to change these rules."
+            "Your organization does not allow Iris to change these rules."
         );
         assert_eq!(
             reason(&account, Missing::AutoReply, None),
-            "Your organization does not allow Penguin Mail to change the automatic reply."
+            "Your organization does not allow Iris to change the automatic reply."
         );
     }
 
@@ -1230,8 +1230,8 @@ mod tests {
         assert_eq!(
             lines[0].1,
             [
-                "Penguin Mail found no calendar server for Fastmail.",
-                "Penguin Mail found no contacts server for Fastmail.",
+                "Iris found no calendar server for Fastmail.",
+                "Iris found no contacts server for Fastmail.",
                 "Fastmail cannot send automatic replies.",
             ]
         );
@@ -1243,11 +1243,11 @@ mod tests {
             super::missing_name(
                 "dana@fastmail.example",
                 &[
-                    "Penguin Mail found no calendar server for Fastmail.".to_string(),
+                    "Iris found no calendar server for Fastmail.".to_string(),
                     "Fastmail cannot send automatic replies.".to_string(),
                 ]
             ),
-            "dana@fastmail.example: Penguin Mail found no calendar server for Fastmail. \
+            "dana@fastmail.example: Iris found no calendar server for Fastmail. \
              Fastmail cannot send automatic replies."
         );
     }

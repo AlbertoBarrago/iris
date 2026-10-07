@@ -384,7 +384,7 @@ impl CalendarView {
         // (R12); it starts hidden until the window says the assistant is
         // on.
         let assistant_toggle = gtk::ToggleButton::builder()
-            .icon_name("penguin-mail-sparkle-symbolic")
+            .icon_name("iris-sparkle-symbolic")
             .tooltip_text(gettext("Assistant (Ctrl+J)"))
             .css_classes(["flat", "assistant-toggle"])
             .visible(false)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds Penguin Mail for Arch Linux and packs it into a .pkg.tar.zst that
+# Builds Iris for Arch Linux and packs it into a .pkg.tar.zst that
 # installs under /usr. makepkg reads pacman's own database to work out
 # what a build needs, so run this on Arch, or in an archlinux container.
 #
@@ -38,12 +38,12 @@ build="$work/build"
 mkdir -p "$build"
 cat > "$build/PKGBUILD" <<PKGBUILD
 # Maintainer: Pivotd <support@penguin-mail.com>
-pkgname=penguin-mail
+pkgname=iris
 pkgver=$version
 pkgrel=1
 pkgdesc="Mail and calendar for Linux"
 arch=('x86_64')
-url="https://github.com/c9dev/penguin-mail"
+url="https://github.com/AlbertoBarrago/iris"
 license=('GPL-3.0-or-later')
 depends=('gtk4' 'libadwaita' 'webkitgtk-6.0' 'gnupg' 'hicolor-icon-theme')
 optdepends=('gnome-shell-extension-appindicator: tray icon on GNOME Shell'

@@ -270,7 +270,7 @@ impl Rules {
             let group = adw::PreferencesGroup::builder()
                 .title(gettext("Rules Written Elsewhere"))
                 .description(gettext(
-                    "Penguin Mail keeps these as they are. Change them where they were written.",
+                    "Iris keeps these as they are. Change them where they were written.",
                 ))
                 .build();
             for block in &list.elsewhere {
@@ -573,7 +573,7 @@ impl Rules {
         });
     }
 
-    /// Asks before Penguin Mail's rules take the place of the script the
+    /// Asks before Iris's rules take the place of the script the
     /// person runs on a server that runs one script and cannot include
     /// another. `retry` repeats the save that was refused, after the
     /// takeover. Cancel changes nothing on the server.
@@ -610,7 +610,7 @@ impl Rules {
     }
 }
 
-/// The question before Penguin Mail's rules take the place of `script`,
+/// The question before Iris's rules take the place of `script`,
 /// the person's own, on `account`'s server, which runs one script and
 /// cannot include another. "replace" is the answer that goes ahead.
 pub fn replace_question(account: &Account, script: &str) -> adw::AlertDialog {
@@ -618,7 +618,7 @@ pub fn replace_question(account: &Account, script: &str) -> adw::AlertDialog {
     let dialog = adw::AlertDialog::builder()
         .heading(fill(&gettext("Replace “{script}”?"), &[("script", script)]))
         .body(fill(
-            &gettext("{provider} runs one set of rules at a time, and it runs “{script}” now. Penguin Mail's rules would take its place; “{script}” stays on the server, switched off."),
+            &gettext("{provider} runs one set of rules at a time, and it runs “{script}” now. Iris's rules would take its place; “{script}” stays on the server, switched off."),
             &[("provider", &provider), ("script", script)],
         ))
         .build();

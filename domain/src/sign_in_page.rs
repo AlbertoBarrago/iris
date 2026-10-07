@@ -6,9 +6,9 @@ use crate::translate::gettext;
 /// The app's own icon, drawn at the top of the page the browser shows
 /// when sign-in hands back. It is inline, so the page loads nothing.
 const APP_ICON: &str =
-    include_str!("../../app/data/icons/scalable/apps/io.github.c9dev.PenguinMail.svg");
+    include_str!("../../app/data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg");
 
-/// "Penguin Mail" in Manrope Bold, as outlines, so the page shows the
+/// "Iris" in Manrope Bold, as outlines, so the page shows the
 /// brand's lettering without loading or bundling the font. It takes its
 /// colour from the page.
 const WORDMARK: &str = include_str!("wordmark.svg");
@@ -33,22 +33,22 @@ pub fn page(outcome: Finished) -> (&'static str, String) {
         Finished::Signed => (
             "200 OK",
             "ok",
-            gettext("Signed in to Penguin Mail"),
-            gettext("You can close this tab and go back to Penguin Mail."),
+            gettext("Signed in to Iris"),
+            gettext("You can close this tab and go back to Iris."),
         ),
         Finished::Denied => (
             "400 Bad Request",
             "no",
             gettext("You didn't allow access"),
             gettext(
-                "Penguin Mail has not been signed in. To try again, go back to Penguin Mail and press Grant Access.",
+                "Iris has not been signed in. To try again, go back to Iris and press Grant Access.",
             ),
         ),
         Finished::Failed => (
             "400 Bad Request",
             "no",
             gettext("Sign-in didn't finish"),
-            gettext("Go back to Penguin Mail to see why and try again. You can close this tab."),
+            gettext("Go back to Iris to see why and try again. You can close this tab."),
         ),
         Finished::Nothing => (
             "404 Not Found",
@@ -130,7 +130,7 @@ mod tests {
     fn a_granted_sign_in_says_it_worked_and_what_to_do_next() {
         let (status, html) = page(Finished::Signed);
         assert_eq!(status, "200 OK");
-        assert!(html.contains("Signed in to Penguin Mail"), "{html}");
+        assert!(html.contains("Signed in to Iris"), "{html}");
         assert!(html.contains("close this tab"), "{html}");
         assert!(
             html.contains("<svg"),

@@ -489,7 +489,7 @@ pub fn google_event(calendar: &str, item: &Value, me: Option<&str>, calendar_zon
         series: item.get("recurringEventId").and_then(Value::as_str).map(str::to_string),
         original_start: item.get("originalStartTime").map(|t| when(Some(t), calendar_zone).0),
         pending: false,
-        // A Meet request is something Penguin Mail asks for on a write;
+        // A Meet request is something Iris asks for on a write;
         // Google's answer never needs to say one is still pending here.
         meet_request: None,
         kind: kind_of(item),
@@ -668,7 +668,7 @@ fn keep_held_fields(body: &mut Value, held: &Value) {
     }
 }
 
-/// What Penguin Mail writes on an event. Fields the model does not hold
+/// What Iris writes on an event. Fields the model does not hold
 /// are left out, so a patch keeps whatever Google has for them.
 fn event_json(event: &calendar::Event, create: bool) -> Value {
     if !create && event.limited() {

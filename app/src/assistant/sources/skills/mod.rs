@@ -2,7 +2,7 @@
 //! task, and the sandboxed shell their scripts run in.
 //!
 //! A skill is a folder holding a `SKILL.md` whose front matter gives a name
-//! and a description. Penguin Mail reads them from its own folder and from
+//! and a description. Iris reads them from its own folder and from
 //! Claude Code's, so skills the person already wrote for Claude Code work
 //! here too. Each one is off until the person turns it on. The skills
 //! source lists the enabled ones in the system prompt and hands the model a
@@ -41,7 +41,7 @@ const SCRIPT_EXTENSIONS: &[&str] = &[
 /// Where a skill was found.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Origin {
-    PenguinMail,
+    Iris,
     ClaudeCode,
 }
 
@@ -49,14 +49,14 @@ impl Origin {
     /// The first half of a skill's id, stable across languages.
     pub fn key(self) -> &'static str {
         match self {
-            Origin::PenguinMail => "penguin-mail",
+            Origin::Iris => "iris",
             Origin::ClaudeCode => "claude-code",
         }
     }
 
     pub fn label(self) -> String {
         match self {
-            Origin::PenguinMail => gettext("Penguin Mail"),
+            Origin::Iris => gettext("Iris"),
             Origin::ClaudeCode => gettext("Claude Code"),
         }
     }
@@ -78,17 +78,17 @@ pub struct Skill {
     pub has_scripts: bool,
 }
 
-/// Penguin Mail's own skills folder, which Open Folder creates.
+/// Iris's own skills folder, which Open Folder creates.
 pub fn own_folder() -> PathBuf {
     gtk::glib::user_config_dir()
-        .join("penguin-mail")
+        .join("iris")
         .join("skills")
 }
 
-/// The folders skills are read from, Penguin Mail's first.
+/// The folders skills are read from, Iris's first.
 pub fn roots() -> Vec<(Origin, PathBuf)> {
     vec![
-        (Origin::PenguinMail, own_folder()),
+        (Origin::Iris, own_folder()),
         (
             Origin::ClaudeCode,
             gtk::glib::home_dir().join(".claude").join("skills"),

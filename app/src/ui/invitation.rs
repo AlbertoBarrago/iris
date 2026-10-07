@@ -367,7 +367,7 @@ impl EventCard {
         let add = gtk::Button::builder()
             .child(
                 &adw::ButtonContent::builder()
-                    .icon_name("penguin-mail-calendar-symbolic")
+                    .icon_name("iris-calendar-symbolic")
                     .label(gettext("Add to Calendar"))
                     .build(),
             )
@@ -395,7 +395,7 @@ impl EventCard {
         let show_in_calendar = gtk::Button::builder()
             .child(
                 &adw::ButtonContent::builder()
-                    .icon_name("penguin-mail-calendar-symbolic")
+                    .icon_name("iris-calendar-symbolic")
                     .label(gettext("Show in Calendar"))
                     .build(),
             )
@@ -455,7 +455,7 @@ impl EventCard {
             .wrap(true)
             .hexpand(true)
             .css_classes(["invitation-meta"])
-            .label(gettext("Penguin Mail needs permission to show this event in Calendar."))
+            .label(gettext("Iris needs permission to show this event in Calendar."))
             .build();
         let grant = gtk::Button::builder()
             .label(gettext("Grant Access"))

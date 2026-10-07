@@ -148,7 +148,7 @@ impl AssistantPane {
             .build();
 
         let entry = gtk::Entry::builder()
-            .placeholder_text(gettext("Ask Penguin Mail…"))
+            .placeholder_text(gettext("Ask Iris…"))
             .hexpand(true)
             .build();
         let send = gtk::Button::builder()
@@ -156,7 +156,7 @@ impl AssistantPane {
             .tooltip_text(gettext("Send"))
             .css_classes(["circular", "suggested-action"])
             .build();
-        crate::ui::name(&entry, &gettext("Ask Penguin Mail"));
+        crate::ui::name(&entry, &gettext("Ask Iris"));
         crate::ui::name(&send, &gettext("Send"));
         let input = gtk::Box::builder()
             .spacing(6)
@@ -177,7 +177,7 @@ impl AssistantPane {
             .css_classes(["pill", "suggested-action"])
             .build();
         let setup = adw::StatusPage::builder()
-            .icon_name("penguin-mail-sparkle-symbolic")
+            .icon_name("iris-sparkle-symbolic")
             .title(gettext("Set Up the Assistant"))
             .description(gettext(
                 "Use a local model from LM Studio, Ollama, or any server with OpenAI's \
@@ -784,7 +784,7 @@ impl Detail {
                 );
                 return;
             }
-            Mark::Thought => "penguin-mail-sparkle-symbolic",
+            Mark::Thought => "iris-sparkle-symbolic",
             Mark::Done => "object-select-symbolic",
             Mark::Failed => "dialog-warning-symbolic",
         };

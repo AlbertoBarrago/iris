@@ -24,7 +24,7 @@ jobs:
     env:
       CARGO_TERM_COLOR: always
       # A build machine must not pass the crypto tests by skipping them.
-      PENGUIN_MAIL_REQUIRE_CRYPTO: "1"
+      IRIS_REQUIRE_CRYPTO: "1"
     steps:
       - name: Install git
         run: apt-get update && apt-get install -y --no-install-recommends git ca-certificates
@@ -53,8 +53,8 @@ jobs:
       # branch that adds one would fail here until it merged.
       - name: Store listing and desktop entry are valid
         run: |
-          appstreamcli validate --strict --no-net app/data/io.github.c9dev.PenguinMail.metainfo.xml
-          desktop-file-validate app/data/io.github.c9dev.PenguinMail.desktop
+          appstreamcli validate --strict --no-net app/data/io.github.AlbertoBarrago.Iris.metainfo.xml
+          desktop-file-validate app/data/io.github.AlbertoBarrago.Iris.desktop
           scripts/metainfo.sh --check
       - name: Every package build gets the Microsoft client id
         run: scripts/check-secrets.sh
@@ -72,7 +72,7 @@ jobs:
       CARGO_TERM_COLOR: always
       # A pass here must mean the servers ran, not that the suite skipped
       # for want of Docker.
-      PENGUIN_MAIL_REQUIRE_IMAP: "1"
+      IRIS_REQUIRE_IMAP: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install Rust
@@ -115,8 +115,8 @@ jobs:
       # a Cargo.lock change without scripts/flatpak-sources.sh fails here.
       - uses: flatpak/flatpak-github-actions/flatpak-builder@79327416609af08178ad73b352877e51450790b3 # v6.8
         with:
-          bundle: penguin-mail.flatpak
-          manifest-path: packaging/flatpak/io.github.c9dev.PenguinMail.yml
+          bundle: iris.flatpak
+          manifest-path: packaging/flatpak/io.github.AlbertoBarrago.Iris.yml
           cache-key: flatpak-builder-${{ hashFiles('Cargo.lock') }}
       # Starting the app with the manifest's permissions catches one it
       # needs and lacks before Flathub's reviewers or a user do. It starts
@@ -126,5 +126,5 @@ jobs:
       - name: Start it
         run: |
           command -v Xvfb dbus-run-session || dnf install -y xorg-x11-server-Xvfb dbus-tools
-          flatpak install --noninteractive -y --bundle penguin-mail.flatpak
-          scripts/smoke-start.sh flatpak run io.github.c9dev.PenguinMail
+          flatpak install --noninteractive -y --bundle iris.flatpak
+          scripts/smoke-start.sh flatpak run io.github.AlbertoBarrago.Iris

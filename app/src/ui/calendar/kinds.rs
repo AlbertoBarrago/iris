@@ -35,8 +35,8 @@ impl Look {
     /// The icon before the title.
     pub fn icon(self) -> Option<&'static str> {
         match self {
-            Look::Focus => Some("penguin-mail-focus-symbolic"),
-            Look::Birthday => Some("penguin-mail-cake-symbolic"),
+            Look::Focus => Some("iris-focus-symbolic"),
+            Look::Birthday => Some("iris-cake-symbolic"),
             Look::Plain | Look::Away => None,
         }
     }
@@ -188,8 +188,8 @@ mod tests {
     fn out_of_office_is_striped_and_the_other_two_carry_an_icon() {
         assert_eq!(Look::Away.css_class(), Some("away"));
         assert_eq!(Look::Away.icon(), None);
-        assert_eq!(Look::Focus.icon(), Some("penguin-mail-focus-symbolic"));
-        assert_eq!(Look::Birthday.icon(), Some("penguin-mail-cake-symbolic"));
+        assert_eq!(Look::Focus.icon(), Some("iris-focus-symbolic"));
+        assert_eq!(Look::Birthday.icon(), Some("iris-cake-symbolic"));
         assert_eq!(Look::Plain.css_class(), None);
     }
 

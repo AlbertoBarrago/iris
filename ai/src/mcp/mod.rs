@@ -166,7 +166,7 @@ fn answer_server_request(id: Value, method: &str) -> Value {
         _ => json!({
             "jsonrpc": "2.0",
             "id": id,
-            "error": {"code": -32601, "message": format!("Penguin Mail does not offer {method}")},
+            "error": {"code": -32601, "message": format!("Iris does not offer {method}")},
         }),
     }
 }
@@ -560,7 +560,7 @@ async fn follow_changes(inner: &Arc<Inner>) -> Option<JoinHandle<()>> {
 }
 
 fn client_info() -> Value {
-    json!({"name": "penguin-mail", "version": env!("CARGO_PKG_VERSION")})
+    json!({"name": "iris", "version": env!("CARGO_PKG_VERSION")})
 }
 
 /// Puts the per-request fields of the 2026-07-28 revision into `_meta`.
@@ -696,7 +696,7 @@ pub(crate) fn outcome(result: &Value) -> ToolOutcome {
         None | Some("complete") => {}
         Some("input_required") => {
             return ToolOutcome::Err(
-                "The server asked for input Penguin Mail cannot give, such as a form or a \
+                "The server asked for input Iris cannot give, such as a form or a \
                  model's help."
                     .into(),
             );

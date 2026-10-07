@@ -1712,7 +1712,7 @@ impl Editor {
                 .await;
             let Some(this) = weak.upgrade() else { return };
             let (Some(path), Ok(info)) = (file.path(), info) else {
-                this.say_file_problem(&gettext("Penguin Mail can attach only a file saved on this computer."));
+                this.say_file_problem(&gettext("Iris can attach only a file saved on this computer."));
                 return;
             };
             let mime = info

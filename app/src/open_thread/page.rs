@@ -754,8 +754,8 @@ mod tests {
         assert!(open.html[history].contains("Lunch?"));
     }
 
-    /// A reply's quoted history is grey text with a border, as Penguin
-    /// Mail and Gmail both write it. That is a note, not a newsletter, so
+    /// A reply's quoted history is grey text with a border, as Iris
+    /// and Gmail both write it. That is a note, not a newsletter, so
     /// it keeps the window's colours in the dark.
     #[test]
     fn a_quote_s_own_grey_does_not_make_mail_paint_itself() {

@@ -22,8 +22,8 @@ use tokio::task::{JoinHandle, JoinSet};
 use crate::{ToolHost, ToolOutcome, ToolSpec};
 
 /// The MCP server name Claude Code sees. Its tools appear to the model as
-/// `mcp__penguin-mail__<tool>`.
-pub const SERVER_NAME: &str = "penguin-mail";
+/// `mcp__iris__<tool>`.
+pub const SERVER_NAME: &str = "iris";
 
 /// A running socket server. Dropping it stops serving and removes the socket.
 pub struct Bridge {

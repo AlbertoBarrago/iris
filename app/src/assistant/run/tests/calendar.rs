@@ -291,7 +291,7 @@ async fn a_missing_calendar_permission_is_asked_for() {
     assert_eq!(
         answer,
         Err(format!(
-            "Penguin Mail needs permission to use the calendar for {ME}. \
+            "Iris needs permission to use the calendar for {ME}. \
              The user was asked to grant it; try again once they have."
         ))
     );
@@ -672,7 +672,7 @@ async fn an_account_without_the_calendar_list_is_noted_and_asked_about_only_when
     assert_eq!(
         h.run("list_calendars", json!({"account": ME})).await,
         Err(format!(
-            "Penguin Mail needs permission to use the calendar for {ME}. \
+            "Iris needs permission to use the calendar for {ME}. \
              The user was asked to grant it; try again once they have."
         ))
     );

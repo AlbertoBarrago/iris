@@ -435,7 +435,7 @@ async fn writing_a_contact_asks_for_the_permission_it_lacks() {
     assert_eq!(
         answer,
         Err(format!(
-            "Penguin Mail needs permission to add and change contacts for {ME}. \
+            "Iris needs permission to add and change contacts for {ME}. \
              The user was asked to grant it; try again once they have."
         ))
     );

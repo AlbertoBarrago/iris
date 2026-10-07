@@ -1,4 +1,4 @@
-//! How fast Penguin Mail may call Gmail, and whose call goes first.
+//! How fast Iris may call Gmail, and whose call goes first.
 
 use std::collections::HashMap;
 use std::future::Future;

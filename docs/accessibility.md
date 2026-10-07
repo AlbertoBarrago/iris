@@ -1,6 +1,6 @@
 # Accessibility
 
-What a screen reader gets from Penguin Mail, how to check it, and what is
+What a screen reader gets from Iris, how to check it, and what is
 still out of a keyboard's reach.
 
 ## Names

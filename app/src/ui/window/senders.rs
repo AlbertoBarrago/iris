@@ -52,7 +52,7 @@ impl MainWindow {
                 .map(|a| a.email.clone())
                 .collect::<Vec<String>>();
             // `list_unsubscribe` answers only a message this finds a way
-            // out of, so a link Penguin Mail cannot use never gets here.
+            // out of, so a link Iris cannot use never gets here.
             let method = choose_with_body(
                 body.list_unsubscribe.as_deref(),
                 body.one_click_unsubscribe,

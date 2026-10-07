@@ -1060,8 +1060,8 @@ fn migration_52_turns_stored_over_size_words_into_a_reason() {
         "INSERT INTO accounts (id, email, added_at, provider, provider_name) VALUES
              (2, 'me@example.org', 0, 'pop3', 'Example');
          INSERT INTO pop3_failures (account_id, uidl, failures, last_error) VALUES
-             (2, 'big', 3, 'The message is larger than Penguin Mail downloads.'),
-             (2, 'grande', 3, 'A mensagem é maior do que o Penguin Mail transfere.'),
+             (2, 'big', 3, 'The message is larger than Iris downloads.'),
+             (2, 'grande', 3, 'A mensagem é maior do que o Iris transfere.'),
              (2, 'locked', 3, 'mailbox locked');",
     )
     .unwrap();

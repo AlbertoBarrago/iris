@@ -26,12 +26,12 @@ fn the_client_keeps_a_script_on_dovecot() {
         let client = ManageSieveClient::new("localhost", port, Login::new(USER, &password));
         let caps = client.capabilities().await.expect("capabilities after STARTTLS");
         assert!(caps.sieve.usable() && caps.sieve.has("include") && caps.sieve.has("body"), "{caps:?}");
-        client.put("penguin-mail", "require \"fileinto\";\nfileinto \"Archive\";\n").await.expect("PUTSCRIPT");
-        client.activate("penguin-mail").await.expect("SETACTIVE");
+        client.put("iris", "require \"fileinto\";\nfileinto \"Archive\";\n").await.expect("PUTSCRIPT");
+        client.activate("iris").await.expect("SETACTIVE");
         let listed = client.scripts().await.expect("LISTSCRIPTS");
-        assert!(listed.iter().any(|l| l.name == "penguin-mail" && l.active), "{listed:?}");
-        assert!(client.get("penguin-mail").await.expect("GETSCRIPT").contains("fileinto \"Archive\""));
-        let refused = client.put("penguin-mail", "fileintoo \"x\";\n").await.expect_err("a script that does not compile");
+        assert!(listed.iter().any(|l| l.name == "iris" && l.active), "{listed:?}");
+        assert!(client.get("iris").await.expect("GETSCRIPT").contains("fileinto \"Archive\""));
+        let refused = client.put("iris", "fileintoo \"x\";\n").await.expect_err("a script that does not compile");
         assert!(matches!(refused, SieveError::Refused(ref words) if !words.is_empty()), "{refused:?}");
         let wrong = ManageSieveClient::new("localhost", port, Login::new(USER, "wrong"));
         assert!(matches!(wrong.scripts().await, Err(SieveError::Auth(_))));

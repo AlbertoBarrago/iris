@@ -1,4 +1,4 @@
-//! What Penguin Mail spends at Gmail, counted rather than guessed. The
+//! What Iris spends at Gmail, counted rather than guessed. The
 //! in-memory Gmail prices every call from Gmail's usage-limits table, so
 //! these tests read as a bill: calls made and quota units charged for a
 //! bulk delete, an idle minute, and a first sync.

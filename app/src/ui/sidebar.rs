@@ -936,7 +936,7 @@ impl Sidebar {
                     label_id: tag.id.clone(),
                     name: tag.name.clone(),
                 };
-                let row = self.add_mailbox(mailbox, &tag.name, "penguin-mail-tag-symbolic", 1);
+                let row = self.add_mailbox(mailbox, &tag.name, "iris-tag-symbolic", 1);
                 if let Some(color) = tag.color.as_deref().and_then(css_hex)
                     && let Some(icon) = row.child().and_then(|c| c.first_child())
                 {
@@ -1004,7 +1004,7 @@ impl Sidebar {
                     let row = self.add_mailbox(
                         Mailbox::Flag(color),
                         &color.name(),
-                        "penguin-mail-flag-symbolic",
+                        "iris-flag-symbolic",
                         1,
                     );
                     if let Some(icon) = row.child().and_then(|c| c.first_child()) {
@@ -1022,7 +1022,7 @@ impl Sidebar {
                 self.add_mailbox(
                     Mailbox::Scheduled,
                     &gettext("Send Later"),
-                    "penguin-mail-outbox-symbolic",
+                    "iris-outbox-symbolic",
                     0,
                 );
             }
@@ -1516,7 +1516,7 @@ pub(super) fn tag_dot(color: Option<&str>) -> gtk::DrawingArea {
 /// place at a time.
 fn label_icon(offers: Offers) -> &'static str {
     if offers.labels {
-        "penguin-mail-tag-symbolic"
+        "iris-tag-symbolic"
     } else {
         "folder-symbolic"
     }
@@ -1907,7 +1907,7 @@ fn status_of(account: &Account) -> Option<(&'static str, String)> {
         }
         AccountState::Stopped => Some((
             "dialog-warning-symbolic",
-            gettext("Syncing stopped after an error; restart Penguin Mail to try again"),
+            gettext("Syncing stopped after an error; restart Iris to try again"),
         )),
         AccountState::Ok => None,
     }
@@ -1950,7 +1950,7 @@ mod tests {
     fn a_label_account_opens_a_folder_row_under_a_tag() {
         assert_eq!(
             label_icon(Offers { labels: true, ..Offers::EVERYTHING }),
-            "penguin-mail-tag-symbolic"
+            "iris-tag-symbolic"
         );
     }
 

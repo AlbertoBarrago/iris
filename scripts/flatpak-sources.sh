@@ -6,11 +6,11 @@
 #   scripts/flatpak-sources.sh                 rewrite cargo-sources.json
 #   scripts/flatpak-sources.sh --check         say whether it matches Cargo.lock
 #   scripts/flatpak-sources.sh --flathub vX.Y.Z <dir>
-#       also write the files for the flathub/io.github.c9dev.PenguinMail
+#       also write the files for the flathub/io.github.AlbertoBarrago.Iris
 #       repository into <dir>: the manifest building that tag, and the
 #       two files beside it. The manifest gets the Google client from
-#       PENGUIN_MAIL_GOOGLE_CLIENT_ID and _SECRET, and the Microsoft
-#       client from PENGUIN_MAIL_MICROSOFT_CLIENT_ID, read from the
+#       IRIS_GOOGLE_CLIENT_ID and _SECRET, and the Microsoft
+#       client from IRIS_MICROSOFT_CLIENT_ID, read from the
 #       environment or from the gitignored packaging/secrets.env. A
 #       manifest without the Microsoft id builds a Flatpak that hides
 #       Microsoft in Add Account; the script does not fail without it.
@@ -22,11 +22,11 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 flatpak=packaging/flatpak
-manifest=$flatpak/io.github.c9dev.PenguinMail.yml
+manifest=$flatpak/io.github.AlbertoBarrago.Iris.yml
 tools_commit=41c20aa10819cdb2a4f3ca171758a96d1955c018
 mode=${1:-}
 
-cache=${XDG_CACHE_HOME:-$HOME/.cache}/penguin-mail/flatpak-cargo-generator
+cache=${XDG_CACHE_HOME:-$HOME/.cache}/iris/flatpak-cargo-generator
 generator=$cache/flatpak-cargo-generator-$tools_commit.py
 if [ ! -e "$generator" ]; then
     python3 -m venv "$cache/venv"
@@ -59,23 +59,23 @@ case $mode in
     # the open. Google
     # treats a desktop app's client secret as public, and the .deb holds
     # both values already. The manifest in this repository stays empty.
-    if { [ -z "${PENGUIN_MAIL_GOOGLE_CLIENT_ID:-}" ] || [ -z "${PENGUIN_MAIL_GOOGLE_CLIENT_SECRET:-}" ] ||
-        [ -z "${PENGUIN_MAIL_MICROSOFT_CLIENT_ID:-}" ]; } &&
+    if { [ -z "${IRIS_GOOGLE_CLIENT_ID:-}" ] || [ -z "${IRIS_GOOGLE_CLIENT_SECRET:-}" ] ||
+        [ -z "${IRIS_MICROSOFT_CLIENT_ID:-}" ]; } &&
         [ -f packaging/secrets.env ]; then
         set -a
         # shellcheck source=/dev/null
         . packaging/secrets.env
         set +a
     fi
-    if [ -z "${PENGUIN_MAIL_GOOGLE_CLIENT_ID:-}" ] || [ -z "${PENGUIN_MAIL_GOOGLE_CLIENT_SECRET:-}" ]; then
-        echo "The Flathub manifest needs PENGUIN_MAIL_GOOGLE_CLIENT_ID and" >&2
-        echo "PENGUIN_MAIL_GOOGLE_CLIENT_SECRET, in the environment or in" >&2
+    if [ -z "${IRIS_GOOGLE_CLIENT_ID:-}" ] || [ -z "${IRIS_GOOGLE_CLIENT_SECRET:-}" ]; then
+        echo "The Flathub manifest needs IRIS_GOOGLE_CLIENT_ID and" >&2
+        echo "IRIS_GOOGLE_CLIENT_SECRET, in the environment or in" >&2
         echo "packaging/secrets.env; without them Flathub's build cannot sign in to Google." >&2
         exit 1
     fi
     # Microsoft is optional in a build, so an unset id becomes an empty one.
-    PENGUIN_MAIL_MICROSOFT_CLIENT_ID=${PENGUIN_MAIL_MICROSOFT_CLIENT_ID:-}
-    export PENGUIN_MAIL_GOOGLE_CLIENT_ID PENGUIN_MAIL_GOOGLE_CLIENT_SECRET PENGUIN_MAIL_MICROSOFT_CLIENT_ID
+    IRIS_MICROSOFT_CLIENT_ID=${IRIS_MICROSOFT_CLIENT_ID:-}
+    export IRIS_GOOGLE_CLIENT_ID IRIS_GOOGLE_CLIENT_SECRET IRIS_MICROSOFT_CLIENT_ID
     # Cargo.lock at the tag is what Flathub builds, so its crates are the
     # ones to list.
     git show "$tag:Cargo.lock" > "$work/Cargo.lock"
@@ -87,7 +87,7 @@ case $mode in
     # not cargo-sources.json, and a release that changed Cargo.lock would
     # then fail to build. Each release runs this script and opens the pull
     # request by hand instead.
-    python3 - "$manifest" "$out/io.github.c9dev.PenguinMail.yml" "$tag" "$commit" <<'PY'
+    python3 - "$manifest" "$out/io.github.AlbertoBarrago.Iris.yml" "$tag" "$commit" <<'PY'
 import json
 import os
 import sys
@@ -95,9 +95,9 @@ import sys
 source, target, tag, commit = sys.argv[1:]
 text = open(source, encoding="utf-8").read()
 for name in (
-    "PENGUIN_MAIL_GOOGLE_CLIENT_ID",
-    "PENGUIN_MAIL_GOOGLE_CLIENT_SECRET",
-    "PENGUIN_MAIL_MICROSOFT_CLIENT_ID",
+    "IRIS_GOOGLE_CLIENT_ID",
+    "IRIS_GOOGLE_CLIENT_SECRET",
+    "IRIS_MICROSOFT_CLIENT_ID",
 ):
     empty = f'{name}: ""'
     if text.count(empty) != 1:
@@ -107,14 +107,14 @@ for name in (
 start = text.index("      - type: dir\n")
 git = (
     "      - type: git\n"
-    "        url: https://github.com/c9dev/penguin-mail.git\n"
+    "        url: https://github.com/AlbertoBarrago/iris.git\n"
     f"        tag: {tag}\n"
     f"        commit: {commit}\n"
 )
 header_end = text.index("id: ")
 header = (
-    "# Penguin Mail on Flathub. Written by scripts/flatpak-sources.sh --flathub\n"
-    "# in https://github.com/c9dev/penguin-mail from the manifest there.\n"
+    "# Iris on Flathub. Written by scripts/flatpak-sources.sh --flathub\n"
+    "# in https://github.com/AlbertoBarrago/iris from the manifest there.\n"
 )
 open(target, "w", encoding="utf-8").write(header + text[header_end:start] + git)
 PY

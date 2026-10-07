@@ -1,6 +1,6 @@
 # Contributing
 
-Penguin Mail is one person's mail client, published so others can use it
+Iris is one person's mail client, published so others can use it
 and learn from it. It does not take pull requests: GitHub lets only
 collaborators open them here. This file is for anyone who wants to report
 a problem, build the app, or read how it works.
@@ -8,8 +8,8 @@ a problem, build the app, or read how it works.
 ## Reporting a problem
 
 Bug reports and ideas are welcome in
-[Issues](https://github.com/c9dev/penguin-mail/issues). A useful bug
-report says which version you run (`penguin-mail --version`), what you did,
+[Issues](https://github.com/AlbertoBarrago/iris/issues). A useful bug
+report says which version you run (`iris --version`), what you did,
 what you expected, and what happened instead. Leave out message content
 and addresses you would not post in public.
 
@@ -34,19 +34,19 @@ no client needed.
 
 ### The Flatpak
 
-Penguin Mail is not on Flathub. To build and install the Flatpak from
+Iris is not on Flathub. To build and install the Flatpak from
 this repository:
 
 ```sh
 flatpak-builder --user --install --force-clean build-dir \
-  packaging/flatpak/io.github.c9dev.PenguinMail.yml
+  packaging/flatpak/io.github.AlbertoBarrago.Iris.yml
 ```
 
 The manifest here carries no Google client, so this Flatpak cannot sign in
-to Gmail; `flatpak run io.github.c9dev.PenguinMail --demo` shows the app on
+to Gmail; `flatpak run io.github.AlbertoBarrago.Iris --demo` shows the app on
 sample data. It reads and writes `~/.gnupg` and reaches your gpg-agent, so
 signing and encryption use your own keys, and it keeps its mail and
-settings under `~/.var/app/io.github.c9dev.PenguinMail`.
+settings under `~/.var/app/io.github.AlbertoBarrago.Iris`.
 
 ## How it is built
 
@@ -65,7 +65,7 @@ sync/     one sync loop per account: bootstrap, history replay, backfill,
 pgp/      OpenPGP mail through the person's own gpg
 smime/    S/MIME mail through their gpgsm
 ai/       model providers, tool calls, the Claude Code bridge
-cli/      penguin-mail-cli
+cli/      iris-cli
 app/      the GTK 4 and libadwaita app, with the calendar view in
           app/src/ui/calendar/
 ```
@@ -95,13 +95,13 @@ CI runs those four on every push, in an Ubuntu 26.04 container set up by
 `scripts/ci-deps.sh`, validates the AppStream metainfo and the desktop
 entry, and builds and starts the Flatpak. The OpenPGP and S/MIME tests
 build a throwaway GnuPG keyring and skip when `gpg` or `gpgsm` is missing.
-`PENGUIN_MAIL_REQUIRE_CRYPTO=1`, which CI sets, turns that skip into a
+`IRIS_REQUIRE_CRYPTO=1`, which CI sets, turns that skip into a
 failure. The IMAP and SMTP tests start Dovecot and Mailpit in Docker and
 skip without it; a separate CI job runs them on the runner with
-`PENGUIN_MAIL_REQUIRE_IMAP=1`.
+`IRIS_REQUIRE_IMAP=1`.
 
 Release builds mask email addresses in the log, as `d…@example.com`.
-Debug builds keep them whole, and `PENGUIN_MAIL_LOG_DETAILS=1` does the
+Debug builds keep them whole, and `IRIS_LOG_DETAILS=1` does the
 same for an installed copy while you look into a problem.
 
 ## Screenshots and the demo video
@@ -140,7 +140,7 @@ The tag starts the release workflow:
 - It builds the snap and sends it to the Snap Store's edge channel once the
   `SNAPCRAFT_STORE_CREDENTIALS` secret exists.
 - Every package gets the Google client from the
-  `PENGUIN_MAIL_GOOGLE_CLIENT_ID` and `PENGUIN_MAIL_GOOGLE_CLIENT_SECRET`
+  `IRIS_GOOGLE_CLIENT_ID` and `IRIS_GOOGLE_CLIENT_SECRET`
   secrets. For the snap, the workflow writes them into
   `snap/snapcraft.yaml` before it builds.
 
@@ -149,8 +149,8 @@ and dnf repositories on GitHub Pages from the five newest releases with
 `scripts/apt-repo.sh` and `scripts/rpm-repo.sh`. Run it from the Actions
 tab to publish again without a release.
 
-Flathub, once Penguin Mail is there, builds from its own repository,
-flathub/io.github.c9dev.PenguinMail. `scripts/flatpak-sources.sh --flathub
+Flathub, once Iris is there, builds from its own repository,
+flathub/io.github.AlbertoBarrago.Iris. `scripts/flatpak-sources.sh --flathub
 vX.Y.Z <dir>` writes the manifest, `cargo-sources.json` and `flathub.json`
 for a pull request there, with the Google client from
 `packaging/secrets.env`.

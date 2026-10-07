@@ -1,7 +1,7 @@
 //! Putting a file from this computer in the account's Google Drive, so an
 //! event can link to it, and letting the event's guests open it. Sign-in
 //! asks for [`crate::DRIVE_FILE_SCOPE`], which reaches only the files
-//! Penguin Mail itself puts there, and lets it share those.
+//! Iris itself puts there, and lets it share those.
 //!
 //! A file of 5 MB or less goes up as one `multipart/related` request: the
 //! metadata as JSON, then the bytes. Drive's guide names that upload type
@@ -110,7 +110,7 @@ impl GmailClient {
         size: u64,
         sent: &Arc<AtomicU64>,
     ) -> Result<Value, GmailError> {
-        let boundary = format!("penguin-mail-{}", crate::random_token(24));
+        let boundary = format!("iris-{}", crate::random_token(24));
         let metadata = json!({"name": name, "mimeType": mime_type});
         let head = format!(
             "--{boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{metadata}\r\n\

@@ -1,4 +1,4 @@
-//! A vCard, 3.0 or 4.0, and the fields Penguin Mail keeps for a contact:
+//! A vCard, 3.0 or 4.0, and the fields Iris keeps for a contact:
 //! the name, addresses with the preferred one first, phone numbers, the
 //! organization and a photo. A patch replaces only the fields it names,
 //! and a field is replaced only when its value changed, so Apple's
@@ -163,7 +163,7 @@ fn lines_for(fields: &CardFields) -> Vec<(VCardProperty, Vec<String>)> {
 }
 
 pub fn new_card(uid: &str, fields: &CardFields) -> String {
-    let mut text = format!("BEGIN:VCARD\r\nVERSION:3.0\r\nPRODID:-//Penguin Mail//EN\r\nUID:{uid}\r\n");
+    let mut text = format!("BEGIN:VCARD\r\nVERSION:3.0\r\nPRODID:-//Iris//EN\r\nUID:{uid}\r\n");
     if fields.name.is_none() {
         // FN is required in every vCard version.
         let fallback = fields.emails.as_ref().and_then(|e| e.first()).cloned().unwrap_or_default();

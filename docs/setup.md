@@ -1,6 +1,6 @@
-# Setting up Penguin Mail
+# Setting up Iris
 
-Penguin Mail works with Google accounts and with any mail provider that
+Iris works with Google accounts and with any mail provider that
 offers IMAP and SMTP, such as Fastmail, iCloud or Yahoo. Add each account in
 the app, or from the command line.
 
@@ -8,18 +8,18 @@ the app, or from the command line.
 
 The first window shows the providers you can add. For each account after the
 first, open the main menu and choose **Add Account**. From a terminal,
-`penguin-mail-cli account add` does the same for a Google account.
+`iris-cli account add` does the same for a Google account.
 
 ### Google
 
 Choose **Google**. Your browser opens Google's sign-in page; sign in and allow
-the permissions Penguin Mail asks for, then come back to the app. Until Google
+the permissions Iris asks for, then come back to the app. Until Google
 finishes verifying the app, the page warns that Google has not verified it.
 Choose **Advanced**, then continue.
 
 ### Other providers
 
-Choose your provider, or **Other**, and type your address. Penguin Mail finds
+Choose your provider, or **Other**, and type your address. Iris finds
 the server settings for you and says what the provider needs, such as an app
 password for iCloud, Fastmail or Yahoo, with a link to the page where you make
 one. If it can't find them, **Enter Server Settings** lets you type the
@@ -30,7 +30,7 @@ The account appears in the sidebar and starts downloading.
 
 ### Calendars, contacts and rules on other providers
 
-Penguin Mail looks for an IMAP account's calendar (CalDAV), contacts
+Iris looks for an IMAP account's calendar (CalDAV), contacts
 (CardDAV) and rules server (ManageSieve) when you add the account, with
 the same password. Fastmail, iCloud, Yahoo, Zoho, GMX, WEB.DE, mail.com,
 Yandex, mailbox.org and Posteo are known; for another server it asks the
@@ -39,9 +39,9 @@ Calendar** lists what it found under **Calendar, Contacts and Rules
 Servers**, with **Find Again**, and **Edit** to type a CalDAV or CardDAV
 address yourself. A server outside your address's domain waits there for
 you to press **Use It** before your password goes to it. Where the server
-runs no rules, Penguin Mail runs them on this computer while it is open.
+runs no rules, Iris runs them on this computer while it is open.
 
-Adding a Google account asks for every permission Penguin Mail uses in that one
+Adding a Google account asks for every permission Iris uses in that one
 visit, so you never see a second consent screen for automatic replies and
 Rules, contacts, the calendar and its list of calendars, Google Drive
 files, or Delete Forever. Leave a box unticked and
@@ -53,15 +53,15 @@ names what it lacks, until you go through Google's screen once more. Mail
 keeps syncing throughout.
 
 Accounts you added through the old setup page signed in with a Google Cloud
-client of your own, kept in `~/.config/penguin-mail/config.toml`. They keep
+client of your own, kept in `~/.config/iris/config.toml`. They keep
 working. The next time one of them signs in again, it moves to the app's own
 client, and the `[oauth]` section can go once none of them uses it.
 
 ## The config file
 
-Penguin Mail needs no config file. To change how often it checks for mail,
+Iris needs no config file. To change how often it checks for mail,
 how many days of mail it keeps, or how much message text it caches, write
-`~/.config/penguin-mail/config.toml`:
+`~/.config/iris/config.toml`:
 
 ```toml
 # These are the defaults.
@@ -71,7 +71,7 @@ window_days = 30
 body_cache_mb = 1024
 ```
 
-Penguin Mail keeps your refresh tokens in the GNOME keyring, not in this
+Iris keeps your refresh tokens in the GNOME keyring, not in this
 file. The Flatpak keeps them in its own store instead, through the Secret
 portal; see "Which package" below.
 
@@ -80,12 +80,12 @@ portal; see "Which package" below.
 A build signs in to Google or Microsoft only when it was compiled with the
 project's client, from these variables:
 
-- `PENGUIN_MAIL_GOOGLE_CLIENT_ID`
-- `PENGUIN_MAIL_GOOGLE_CLIENT_SECRET`
-- `PENGUIN_MAIL_MICROSOFT_CLIENT_ID`
+- `IRIS_GOOGLE_CLIENT_ID`
+- `IRIS_GOOGLE_CLIENT_SECRET`
+- `IRIS_MICROSOFT_CLIENT_ID`
 
 The release workflow takes them from the secrets
-`PENGUIN_MAIL_GOOGLE_CLIENT_ID`, `PENGUIN_MAIL_GOOGLE_CLIENT_SECRET` and
+`IRIS_GOOGLE_CLIENT_ID`, `IRIS_GOOGLE_CLIENT_SECRET` and
 `MICROSOFT_CLIENT_ID`. `scripts/install.sh` reads them from
 `packaging/secrets.env` when that file exists. A copy built without them
 works in every other way and says so when you try to add a Google account.
@@ -95,7 +95,7 @@ To build with a client of your own instead, make one in a Google Cloud
 project:
 
 1. Enable the Gmail, People, Calendar and Drive APIs.
-2. Under Branding, set the app name to `Penguin Mail` and your own address as
+2. Under Branding, set the app name to `Iris` and your own address as
    the support and developer contact. Leave the logo out for personal use:
    uploading one sends the app toward Google's verification.
 3. Under Audience, choose **External** and publish the app. Don't submit it
@@ -117,8 +117,8 @@ project:
 Put its ID and secret in `packaging/secrets.env`:
 
 ```sh
-PENGUIN_MAIL_GOOGLE_CLIENT_ID=1234567890-abc.apps.googleusercontent.com
-PENGUIN_MAIL_GOOGLE_CLIENT_SECRET=GOCSPX-...
+IRIS_GOOGLE_CLIENT_ID=1234567890-abc.apps.googleusercontent.com
+IRIS_GOOGLE_CLIENT_SECRET=GOCSPX-...
 ```
 
 Google issues a desktop client secret to identify the app, and anyone who
@@ -131,7 +131,7 @@ Microsoft accounts", with the platform "Mobile and desktop applications" and
 the redirect `http://localhost`. Put its id in `packaging/secrets.env`:
 
 ```sh
-PENGUIN_MAIL_MICROSOFT_CLIENT_ID=...
+IRIS_MICROSOFT_CLIENT_ID=...
 ```
 
 ## The command line
@@ -175,17 +175,17 @@ decides where updates come from and whether skills run.
   handle passphrases. It also talks to the tray and the notification
   daemon, and writes to Downloads; the manifest says why for each. The
   snap's `gpg` and `gpgsm` use a keyring of their own inside the snap, in
-  `~/snap/penguin-mail/current/.gnupg`, so the OpenPGP keys and S/MIME
+  `~/snap/iris/current/.gnupg`, so the OpenPGP keys and S/MIME
   certificates in `~/.gnupg` do not appear there. The app has no way yet
   to import them, so signing and decrypting with your existing keys and
   certificates does not work in the snap yet.
 - **Secrets.** Outside a sandbox, Google's refresh tokens, an IMAP
   password, and the assistant's API keys and MCP tokens sit in the
-  desktop's keyring, service `mailrs` or `penguin-mail-imap`. The
+  desktop's keyring, service `mailrs` or `iris-imap`. The
   Flatpak keeps them in its own encrypted file instead, through the
   Secret portal, so no other app on the desktop can read them; the snap
   still uses the desktop's keyring, the same as the .deb. The snap reaches
-  it only once you run `snap connect penguin-mail:password-manager-service`
+  it only once you run `snap connect iris:password-manager-service`
   and restart the app. Until then it cannot save a sign-in, and a bar
   across the top of the window says so and gives the command.
 - **Skills.** A skill's scripts run under bubblewrap, which cannot start
@@ -204,8 +204,8 @@ decides where updates come from and whether skills run.
 
 | What | Where | Override |
 |---|---|---|
-| Config | `~/.config/penguin-mail/config.toml` | `MAILRS_CONFIG` |
-| Mail cache | `~/.local/share/penguin-mail/mailrs.db` | `MAILRS_DATA_DIR` |
+| Config | `~/.config/iris/config.toml` | `MAILRS_CONFIG` |
+| Mail cache | `~/.local/share/iris/mailrs.db` | `MAILRS_DATA_DIR` |
 | Refresh tokens | GNOME keyring, service `mailrs`, one entry per address | |
 
 The keyring service keeps the app's old name, mailrs, so accounts added
@@ -217,13 +217,13 @@ its accounts ask you to sign in again once, and any IMAP password or AI
 key needs typing in again too.
 
 The Flatpak keeps its config and mail under
-`~/.var/app/io.github.c9dev.PenguinMail/`, in `config/penguin-mail` and
-`data/penguin-mail`, and the snap under `~/snap/penguin-mail/current/`, in
-`.config/penguin-mail` and `.local/share/penguin-mail`. Moving from the
+`~/.var/app/io.github.AlbertoBarrago.Iris/`, in `config/iris` and
+`data/iris`, and the snap under `~/snap/iris/current/`, in
+`.config/iris` and `.local/share/iris`. Moving from the
 .deb to one of them starts with an empty store; copy `config.toml` across
 to keep your sync settings, then add each account again, since the list
 of accounts lives in the store.
 
-`penguin-mail-cli account remove you@gmail.com` deletes an account's local mail and
+`iris-cli account remove you@gmail.com` deletes an account's local mail and
 its keyring entry. To revoke access on Google's side as well, use
 <https://myaccount.google.com/permissions>.

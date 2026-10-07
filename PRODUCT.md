@@ -6,7 +6,7 @@
 
 web
 
-Penguin Mail is a native Linux desktop app in Rust with GTK 4 and libadwaita, not a web app. The schema has no
+Iris is a native Linux desktop app in Rust with GTK 4 and libadwaita, not a web app. The schema has no
 value for a GTK desktop app, so this records the nearest one. Its styling is GTK CSS (`app/data/style.css`), and
 the GNOME Human Interface Guidelines and libadwaita's own patterns govern the design, not web conventions.
 

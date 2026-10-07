@@ -28,23 +28,23 @@ cp -r "$tree/." "$root/usr/"
 # The apt repository's key and entry, so a person who installs this .deb
 # once gets later versions from `apt upgrade`. The entry sits under /etc,
 # so it is a conffile: dpkg keeps it if the person edits or removes it.
-install -Dm644 "packaging/apt/penguin-mail-archive-keyring.gpg" \
-    "$root/usr/share/keyrings/penguin-mail-archive-keyring.gpg"
-install -Dm644 "packaging/apt/penguin-mail.sources" \
-    "$root/etc/apt/sources.list.d/penguin-mail.sources"
-echo /etc/apt/sources.list.d/penguin-mail.sources > "$root/DEBIAN/conffiles"
+install -Dm644 "packaging/apt/iris-archive-keyring.gpg" \
+    "$root/usr/share/keyrings/iris-archive-keyring.gpg"
+install -Dm644 "packaging/apt/iris.sources" \
+    "$root/etc/apt/sources.list.d/iris.sources"
+echo /etc/apt/sources.list.d/iris.sources > "$root/DEBIAN/conffiles"
 # A binary package's control file has no License field. Debian keeps the
 # licence in the copyright file under /usr/share/doc instead, and lintian
 # and the package managers look for it there.
-install -d "$root/usr/share/doc/penguin-mail"
-cat > "$root/usr/share/doc/penguin-mail/copyright" <<COPYRIGHT
+install -d "$root/usr/share/doc/iris"
+cat > "$root/usr/share/doc/iris/copyright" <<COPYRIGHT
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Penguin Mail
-Upstream-Contact: https://github.com/c9dev/penguin-mail/issues
-Source: https://github.com/c9dev/penguin-mail
+Upstream-Name: Iris
+Upstream-Contact: https://github.com/AlbertoBarrago/iris/issues
+Source: https://github.com/AlbertoBarrago/iris
 
 Files: *
-Copyright: 2026 The Penguin Mail authors
+Copyright: 2026 The Iris authors
 License: GPL-3.0+
 
 License: GPL-3.0+
@@ -62,14 +62,14 @@ License: GPL-3.0+
  3 can be found in /usr/share/common-licenses/GPL-3.
 COPYRIGHT
 mkdir -p "$work/shlibs/debian"
-printf 'Source: penguin-mail\n\nPackage: penguin-mail\nArchitecture: amd64\n' \
+printf 'Source: iris\n\nPackage: iris\nArchitecture: amd64\n' \
     > "$work/shlibs/debian/control"
 depends=$(cd "$work/shlibs" && dpkg-shlibdeps -O \
-    "$root/usr/bin/penguin-mail" "$root/usr/bin/penguin-mail-cli" \
+    "$root/usr/bin/iris" "$root/usr/bin/iris-cli" \
     | sed -n 's/^shlibs:Depends=//p')
 size=$(du -sk --exclude=DEBIAN "$root" | cut -f1)
 cat > "$root/DEBIAN/control" <<CONTROL
-Package: penguin-mail
+Package: iris
 Version: $version
 Architecture: amd64
 Maintainer: Pivotd <support@penguin-mail.com>
@@ -78,7 +78,7 @@ Depends: $depends, gpgv
 Recommends: gnupg, gpgsm, gnome-shell-extension-appindicator
 Section: mail
 Priority: optional
-Homepage: https://github.com/c9dev/penguin-mail
+Homepage: https://github.com/AlbertoBarrago/iris
 Description: Mail and calendar for Linux
  Reads, sorts and sends mail for Gmail, Outlook.com and Microsoft 365, and
  any IMAP or POP3 account, with their calendars and contacts. Keeps every
@@ -87,7 +87,7 @@ Description: Mail and calendar for Linux
 CONTROL
 # dpkg drops the files an earlier .deb shipped under the old app ID. The
 # rm catches the same names when something else left them, such as
-# install-files.sh run with PREFIX=/usr, so the menu shows one Penguin Mail.
+# install-files.sh run with PREFIX=/usr, so the menu shows one Iris.
 cat > "$root/DEBIAN/postinst" <<'POSTINST'
 #!/bin/sh
 set -e
@@ -108,17 +108,17 @@ if [ "$1" = remove ]; then
 fi
 POSTRM
 chmod 755 "$root/DEBIAN/postinst" "$root/DEBIAN/postrm"
-deb="penguin-mail_${version}_amd64.deb"
+deb="iris_${version}_amd64.deb"
 dpkg-deb --root-owner-group -Zxz --build "$root" "$out/$deb" >/dev/null
 
 # The tarball and the zip hold the same folder: the tree, the script that
 # installs it, and the licence.
-name="penguin-mail-$version-x86_64"
+name="iris-$version-x86_64"
 mkdir -p "$work/$name"
 cp -r "$tree/." "$work/$name/"
 cp scripts/install-files.sh LICENSE "$work/$name/"
 cat > "$work/$name/README" <<README
-Penguin Mail $version
+Iris $version
 
 Install for your user under ~/.local:
     ./install-files.sh .

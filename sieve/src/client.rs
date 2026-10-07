@@ -28,11 +28,11 @@ pub enum SieveError {
     Refused(String),
     #[error("no such script")]
     NotFound,
-    #[error("the server said something Penguin Mail cannot read: {0}")]
+    #[error("the server said something Iris cannot read: {0}")]
     Protocol(String),
-    #[error("the script is larger than Penguin Mail reads")]
+    #[error("the script is larger than Iris reads")]
     TooLarge,
-    #[error("the server offers no STARTTLS, so Penguin Mail will not send the password")]
+    #[error("the server offers no STARTTLS, so Iris will not send the password")]
     NoStartTls,
 }
 

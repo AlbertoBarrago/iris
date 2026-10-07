@@ -1,5 +1,5 @@
 #!/bin/sh
-# Starts Penguin Mail inside the snap with its libraries' data found in the
+# Starts Iris inside the snap with its libraries' data found in the
 # snap rather than in the base, which has no GTK. snapcraft.yaml runs this
 # before the app.
 arch=x86_64-linux-gnu

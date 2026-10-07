@@ -89,7 +89,7 @@ fn describe(criteria: &FilterCriteria) -> String {
     if criteria.has_attachment {
         parts.push("with attachments".into());
     }
-    format!("Penguin Mail: {}", parts.join(", "))
+    format!("Iris: {}", parts.join(", "))
 }
 
 fn cannot() -> BackendError {

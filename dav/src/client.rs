@@ -1,4 +1,4 @@
-//! The DAV calls Penguin Mail makes, typed, behind [`DavApi`], so tests
+//! The DAV calls Iris makes, typed, behind [`DavApi`], so tests
 //! and the demo hand the adapters [`crate::fake::FakeDav`] in place of a
 //! server. [`DavClient`] makes them over HTTPS with reqwest. The password
 //! goes only to the context URL's own registrable domain: a redirect or a
@@ -160,7 +160,7 @@ fn http_client(https_only: bool) -> Result<reqwest::Client, DavError> {
         // where `same_site` allows.
         .redirect(reqwest::redirect::Policy::none())
         .timeout(REQUEST_LIMIT)
-        .user_agent(concat!("Penguin Mail/", env!("CARGO_PKG_VERSION")))
+        .user_agent(concat!("Iris/", env!("CARGO_PKG_VERSION")))
         .build()
         .map_err(|err| DavError::Network(err.to_string()))
 }
@@ -169,7 +169,7 @@ impl DavClient {
     pub fn new(context: &str, kind: Kind, login: Login) -> Result<DavClient, DavError> {
         let base = Url::parse(context).map_err(|err| DavError::Parse(err.to_string()))?;
         if base.scheme() != "https" {
-            return Err(DavError::Forbidden("Penguin Mail reaches calendar and contact servers over HTTPS only".into()));
+            return Err(DavError::Forbidden("Iris reaches calendar and contact servers over HTTPS only".into()));
         }
         Ok(DavClient { base, kind, login, http: http_client(true)? })
     }

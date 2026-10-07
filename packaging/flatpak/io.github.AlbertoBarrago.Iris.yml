@@ -1,11 +1,11 @@
-# Builds Penguin Mail as a Flatpak from this checkout:
+# Builds Iris as a Flatpak from this checkout:
 #   flatpak-builder --user --install --force-clean build-dir \
-#       packaging/flatpak/io.github.c9dev.PenguinMail.yml
+#       packaging/flatpak/io.github.AlbertoBarrago.Iris.yml
 # Flathub builds from a released tag instead; scripts/flatpak-sources.sh
 # --flathub writes that copy of this file. Flathub allows no network during
 # a build, so cargo reads every crate from cargo-sources.json, which the
 # same script writes from Cargo.lock.
-id: io.github.c9dev.PenguinMail
+id: io.github.AlbertoBarrago.Iris
 runtime: org.gnome.Platform
 # GNOME 50 has GTK 4.22, past the 4.20 the app needs, libadwaita 1.8 or
 # newer, and WebKitGTK 6.0.
@@ -13,7 +13,7 @@ runtime-version: '50'
 sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
-command: penguin-mail
+command: iris
 # Past the window and the network, the sandbox lets the app reach two
 # D-Bus services (the tray's watcher and notifications) and three places
 # on disk (Downloads, ~/.gnupg, and gpg-agent's socket folder). Each is
@@ -41,8 +41,8 @@ finish-args:
   # OpenPGP and S/MIME run the runtime's gpg and gpgsm on the person's
   # own keyring in ~/.gnupg. Reading signed mail needs it writable:
   # verifying an S/MIME signature has gpgsm file away every certificate
-  # the signature carries, with no option to turn that off, and Penguin
-  # Mail relies on it to decide later which certificate an address's
+  # the signature carries, with no option to turn that off, and Iris
+  #  relies on it to decide later which certificate an address's
   # mail should encrypt to. OpenPGP verification asks for no such write
   # (mailrs_pgp turns off gpg's own auto-import), but the two engines
   # share this one keyring.
@@ -54,10 +54,10 @@ finish-args:
 build-options:
   append-path: /usr/lib/sdk/rust-stable/bin
   env:
-    CARGO_HOME: /run/build/penguin-mail/cargo
+    CARGO_HOME: /run/build/iris/cargo
     CARGO_NET_OFFLINE: 'true'
 modules:
-  - name: penguin-mail
+  - name: iris
     buildsystem: simple
     build-options:
       env:
@@ -67,9 +67,9 @@ modules:
         # A build from this file says it cannot sign in to Google or
         # Microsoft, where a stand-in value would send people to a sign-in
         # Google refuses.
-        PENGUIN_MAIL_GOOGLE_CLIENT_ID: ""
-        PENGUIN_MAIL_GOOGLE_CLIENT_SECRET: ""
-        PENGUIN_MAIL_MICROSOFT_CLIENT_ID: ""
+        IRIS_GOOGLE_CLIENT_ID: ""
+        IRIS_GOOGLE_CLIENT_SECRET: ""
+        IRIS_MICROSOFT_CLIENT_ID: ""
     build-commands:
       - cargo --offline build --release --locked -p mailrs -p mailrs-cli
         --features mailrs/packaging-flatpak,mailrs-cli/packaging-flatpak

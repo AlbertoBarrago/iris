@@ -63,7 +63,7 @@ impl Band {
     pub fn described(self, provider: Option<&str>) -> String {
         let state = match self {
             // A brand, so it is not translated.
-            Band::Idle => "Penguin Mail".to_string(),
+            Band::Idle => "Iris".to_string(),
             Band::Stamped => gettext("Ready to sign in"),
             Band::Browser => gettext("Waiting for your browser"),
             Band::Lookup => gettext("Looking for your mail servers"),
@@ -143,7 +143,7 @@ pub const ANY_SERVER: Stamp = Stamp {
 /// without a tile of its own takes its initial on the neutral colour.
 /// Yahoo and Fastmail keep the initial: Yahoo approves each use of its
 /// logo in advance, and Fastmail's guidelines forbid redistributing it.
-/// The iCloud cloud is Penguin Mail's own drawing, not Apple's logo.
+/// The iCloud cloud is Iris's own drawing, not Apple's logo.
 pub fn stamp_for(provider: &str) -> Stamp {
     let colour = match provider {
         "Google" => "#076678",
@@ -233,7 +233,7 @@ impl BrowserWords for Browser {
                 fill(&gettext("Choose your {provider} account."), &named),
                 fill(
                     &gettext(
-                        "If {provider} says it has not verified the app, choose Advanced, then Go to Penguin Mail.",
+                        "If {provider} says it has not verified the app, choose Advanced, then Go to Iris.",
                     ),
                     &named,
                 ),
@@ -241,7 +241,7 @@ impl BrowserWords for Browser {
             ],
             Browser::Microsoft => vec![
                 gettext("Choose or type your Microsoft account."),
-                gettext("Read what Penguin Mail asks for and choose Accept."),
+                gettext("Read what Iris asks for and choose Accept."),
             ],
         }
     }
@@ -378,7 +378,7 @@ pub struct Advice {
 
 /// The line under every piece of advice: what it came from.
 pub fn advice_source() -> String {
-    gettext("Penguin Mail's own list knows this address. Nothing has left this computer.")
+    gettext("Iris's own list knows this address. Nothing has left this computer.")
 }
 
 /// The list's advice for an address at `domain`, or `None` when the list
@@ -409,9 +409,9 @@ pub fn advice(domain: &str, microsoft: bool) -> Option<Advice> {
                     ),
                 ),
                 Unreachable::NotYet => (
-                    gettext("Penguin Mail cannot reach {provider} yet"),
+                    gettext("Iris cannot reach {provider} yet"),
                     gettext(
-                        "{provider} lets other mail apps in only through an app of its own, which Penguin Mail does not support yet. Use another address instead.",
+                        "{provider} lets other mail apps in only through an app of its own, which Iris does not support yet. Use another address instead.",
                     ),
                 ),
             };
@@ -543,7 +543,7 @@ mod tests {
 
     #[test]
     fn a_screen_reader_hears_what_the_band_shows() {
-        assert_eq!(Band::Idle.described(None), "Penguin Mail");
+        assert_eq!(Band::Idle.described(None), "Iris");
         assert_eq!(
             Band::Lookup.described(None),
             "Looking for your mail servers"
@@ -595,7 +595,7 @@ mod tests {
             Browser::Google.steps(),
             [
                 "Choose your Google account.",
-                "If Google says it has not verified the app, choose Advanced, then Go to Penguin Mail.",
+                "If Google says it has not verified the app, choose Advanced, then Go to Iris.",
                 "Leave every box ticked and choose Continue.",
             ]
         );
@@ -603,7 +603,7 @@ mod tests {
             Browser::Microsoft.steps(),
             [
                 "Choose or type your Microsoft account.",
-                "Read what Penguin Mail asks for and choose Accept.",
+                "Read what Iris asks for and choose Accept.",
             ]
         );
     }
@@ -619,7 +619,7 @@ mod tests {
         assert_eq!(closed.title, "This copy cannot sign in to Microsoft");
         assert_eq!(
             closed.body,
-            "This copy of Penguin Mail was built without Microsoft sign-in."
+            "This copy of Iris was built without Microsoft sign-in."
         );
         assert_eq!(
             tile_advice(Tile::Microsoft).map(|a| a.title),
@@ -693,7 +693,7 @@ mod tests {
 
     #[test]
     fn every_logo_a_stamp_names_ships_in_the_resources() {
-        let manifest = include_str!("../../data/penguin-mail.gresource.xml");
+        let manifest = include_str!("../../data/iris.gresource.xml");
         for name in ["Google", "Microsoft", "iCloud Mail"] {
             let logo = stamp_for(name).logo.expect(name);
             let listed = manifest

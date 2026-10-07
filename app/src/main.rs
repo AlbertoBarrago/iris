@@ -1,4 +1,4 @@
-//! Penguin Mail: mail and calendar for Linux.
+//! Iris: mail and calendar for Linux.
 
 #[cfg(test)]
 mod accent_contrast;
@@ -63,11 +63,11 @@ use mailrs_domain::translate::{fill, gettext};
 
 use settings::Settings;
 
-pub const APP_ID: &str = "io.github.c9dev.PenguinMail";
+pub const APP_ID: &str = "io.github.AlbertoBarrago.Iris";
 
 fn usage() -> String {
     gettext(
-        "Usage: penguin-mail [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]
+        "Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]
 
   --version      print the version and quit
   --background   start in the tray without opening a window
@@ -88,7 +88,7 @@ fn main() -> glib::ExitCode {
             })
             .with_env_filter(
                 tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| {
-                    tracing_subscriber::EnvFilter::new("warn,penguin_mail=info,mailrs_sync=info")
+                    tracing_subscriber::EnvFilter::new("warn,iris=info,mailrs_sync=info")
                 }),
             )
             .finish(),
@@ -131,14 +131,14 @@ fn main() -> glib::ExitCode {
         return glib::ExitCode::SUCCESS;
     }
     if args.iter().any(|a| a == "--version") {
-        println!("penguin-mail {}", env!("CARGO_PKG_VERSION"));
+        println!("iris {}", env!("CARGO_PKG_VERSION"));
         return glib::ExitCode::SUCCESS;
     }
     if let Some(unknown) = args.iter().skip(1).find(|a| {
         a.starts_with('-') && !matches!(a.as_str(), "--background" | "--demo" | "--compose")
     }) {
         let line = fill(
-            &gettext("penguin-mail: unknown option {option}"),
+            &gettext("iris: unknown option {option}"),
             &[("option", unknown)],
         );
         eprintln!("{line}\n\n{}", usage());
@@ -161,7 +161,7 @@ fn main() -> glib::ExitCode {
     // Wayland and X11 name the window after the program; matching the
     // desktop entry lets the dock show the right icon.
     glib::set_prgname(Some(if demo {
-        "io.github.c9dev.PenguinMail.Demo"
+        "io.github.AlbertoBarrago.Iris.Demo"
     } else {
         APP_ID
     }));
@@ -169,7 +169,7 @@ fn main() -> glib::ExitCode {
     // so a process running in the tray never loads the graphics stack.
     let gio_app = gio::Application::builder()
         .application_id(if demo {
-            "io.github.c9dev.PenguinMail.Demo"
+            "io.github.AlbertoBarrago.Iris.Demo"
         } else {
             APP_ID
         })
@@ -189,7 +189,7 @@ fn main() -> glib::ExitCode {
     let started = Rc::clone(&state);
     let finished = Rc::clone(&state);
     gio_app.connect_startup(move |gio_app| {
-        gio::resources_register_include!("penguin-mail.gresource")
+        gio::resources_register_include!("iris.gresource")
             .expect("the resources are built into the binary");
         match core::Core::open(demo) {
             Ok(core) => {
@@ -279,9 +279,9 @@ pub fn ensure_gtk() {
     adw::init().expect("libadwaita starts");
     if let Some(display) = gdk::Display::default() {
         gtk::IconTheme::for_display(&display)
-            .add_resource_path("/io/github/c9dev/PenguinMail/icons");
+            .add_resource_path("/io/github/AlbertoBarrago/Iris/icons");
         let css = gtk::CssProvider::new();
-        css.load_from_resource("/io/github/c9dev/PenguinMail/style.css");
+        css.load_from_resource("/io/github/AlbertoBarrago/Iris/style.css");
         gtk::style_context_add_provider_for_display(
             &display,
             &css,
@@ -291,14 +291,14 @@ pub fn ensure_gtk() {
     gtk::Window::set_default_icon_name(APP_ID);
 }
 
-/// A window that explains why Penguin Mail could not start. With `report`,
+/// A window that explains why Iris could not start. With `report`,
 /// it links to the page where a problem is reported.
 fn show_fatal(gio_app: &gio::Application, message: &str, report: bool) {
     ensure_gtk();
     let hold = gio_app.hold();
     let page = adw::StatusPage::builder()
         .icon_name("dialog-warning-symbolic")
-        .title(gettext("Penguin Mail Could Not Start"))
+        .title(gettext("Iris Could Not Start"))
         .description(glib::markup_escape_text(message).as_str())
         .build();
     if report {
@@ -334,7 +334,7 @@ mod tests {
     use super::{calendar_file, mailto_recipient, path_from_variant};
 
     fn args(list: &[&str]) -> Vec<OsString> {
-        std::iter::once("penguin-mail").chain(list.iter().copied()).map(OsString::from).collect()
+        std::iter::once("iris").chain(list.iter().copied()).map(OsString::from).collect()
     }
 
     /// The folder the launch was typed in.

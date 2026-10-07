@@ -1,4 +1,4 @@
-//! Every rule Penguin Mail can make goes into the script and comes back
+//! Every rule Iris can make goes into the script and comes back
 //! out the same; a block edited by hand comes back as written elsewhere.
 
 use mailrs_domain::{Filter, FilterAction, FilterCriteria, MailSet, Role, Vacation};

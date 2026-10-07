@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Rebuilds po/penguin-mail.pot from the source, brings every po/*.po up to
+# Rebuilds po/iris.pot from the source, brings every po/*.po up to
 # it, and compiles the catalogues into target/locale so a build-tree copy
 # of the app shows them.
 #   scripts/update-po.sh              rebuild the template and the .po files
@@ -9,7 +9,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-pot=po/penguin-mail.pot
+pot=po/iris.pot
 version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
 
 # `gettext`, `ngettext` and `pgettext` are what the C library offers;
@@ -43,31 +43,31 @@ done <<< "$listed"
 # reads the metainfo through the ITS rules AppStream installs, which leave
 # out the release notes marked translate="no".
 xgettext --from-code=UTF-8 -L Desktop \
-    -o "$work/2-desktop.pot" app/data/io.github.c9dev.PenguinMail.desktop
+    -o "$work/2-desktop.pot" app/data/io.github.AlbertoBarrago.Iris.desktop
 xgettext --from-code=UTF-8 \
-    -o "$work/3-metainfo.pot" app/data/io.github.c9dev.PenguinMail.metainfo.xml
+    -o "$work/3-metainfo.pot" app/data/io.github.AlbertoBarrago.Iris.metainfo.xml
 
 msgcat --use-first --sort-by-file -o "$work/joined.pot" "$work"/[123]-*.pot
 # msgcat needs a header on its inputs; ours replaces it, so drop theirs.
 sed '1,/^$/d' "$work/joined.pot" > "$work/merged.pot"
 cat > "$work/header.pot" <<HEADER
-# Penguin Mail, mail and calendar for Linux.
-# This file is distributed under the same licence as Penguin Mail.
+# Iris, mail and calendar for Linux.
+# This file is distributed under the same licence as Iris.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: penguin-mail $version\\n"
-"Report-Msgid-Bugs-To: https://github.com/c9dev/penguin-mail/issues\\n"
+"Project-Id-Version: iris $version\\n"
+"Report-Msgid-Bugs-To: https://github.com/AlbertoBarrago/iris/issues\\n"
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\\n"
 
 HEADER
-cat "$work/header.pot" "$work/merged.pot" > "$work/penguin-mail.pot"
+cat "$work/header.pot" "$work/merged.pot" > "$work/iris.pot"
 
 if [ "${1:-}" = --check ]; then
-    if ! diff -q "$pot" "$work/penguin-mail.pot" >/dev/null; then
+    if ! diff -q "$pot" "$work/iris.pot" >/dev/null; then
         echo "$pot is stale; run scripts/update-po.sh" >&2
         exit 1
     fi
@@ -82,7 +82,7 @@ if [ "${1:-}" = --check ]; then
     exit 0
 fi
 
-mv "$work/penguin-mail.pot" "$pot"
+mv "$work/iris.pot" "$pot"
 # British English comes from the template and the spelling rules in
 # scripts/en-gb.py, never by hand, so every string has it.
 python3 scripts/en-gb.py "$pot" po/en_GB.po
@@ -114,8 +114,8 @@ for po in po/*.po; do
     if [ "$lang" != en_GB ]; then
         msgmerge --quiet --update --backup=none --previous "$po" "$pot"
     fi
-    install -Dm644 /dev/null "target/locale/$lang/LC_MESSAGES/penguin-mail.mo"
-    msgfmt --check --statistics -o "target/locale/$lang/LC_MESSAGES/penguin-mail.mo" "$po"
+    install -Dm644 /dev/null "target/locale/$lang/LC_MESSAGES/iris.mo"
+    msgfmt --check --statistics -o "target/locale/$lang/LC_MESSAGES/iris.mo" "$po"
 done
 
 echo "Wrote $pot and compiled po/*.po into target/locale."

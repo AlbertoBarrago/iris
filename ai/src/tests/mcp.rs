@@ -15,7 +15,7 @@ use crate::mcp::{
 };
 
 /// Set on the child process to make it the fake server, naming its era.
-const FAKE: &str = "PENGUIN_MAIL_FAKE_MCP";
+const FAKE: &str = "IRIS_FAKE_MCP";
 
 /// The test binary, asked to run only [`fake_mcp_server`], as a server of
 /// the given era.

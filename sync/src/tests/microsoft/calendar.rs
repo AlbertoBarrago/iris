@@ -100,7 +100,7 @@ fn millis(text: &str) -> i64 {
 }
 
 /// The owner's series from 2026-10-05: "test event", Monday to Friday,
-/// 08:00 to 09:00 UTC, made in Penguin Mail.
+/// 08:00 to 09:00 UTC, made in Iris.
 fn weekday_series() -> GraphEvent {
     GraphEvent {
         id: "w1".into(),

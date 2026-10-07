@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/io/github/AlbertoBarrago/Iris">
+    <file>icons/scalable/actions/iris-inbox-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-archive-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-all-mail-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-outbox-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-outgoing-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-tag-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-link-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-sparkle-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-calendar-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-people-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-lock-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-flag-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-flag-outline-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-focus-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-cake-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-globe-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-waiting-symbolic.svg</file>
+    <file>icons/scalable/actions/iris-mark-symbolic.svg</file>
+    <file>icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg</file>
+    <file>icons/scalable/apps/io.github.AlbertoBarrago.Iris-symbolic.svg</file>
+    <file>icons/16x16/apps/io.github.AlbertoBarrago.Iris.svg</file>
+    <file>style.css</file>
+    <file>logos/google.png</file>
+    <file>logos/microsoft.svg</file>
+    <file>logos/icloud.svg</file>
+    <file>band/idle.svg</file>
+    <file>band/stamped.svg</file>
+    <file>band/browser.svg</file>
+    <file>band/lookup.svg</file>
+    <file>band/error.svg</file>
+    <file>band/unreachable.svg</file>
+    <file>band/success.svg</file>
+  </gresource>
+</gresources>

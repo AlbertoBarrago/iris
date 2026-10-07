@@ -73,7 +73,7 @@ pub fn open(app: &Rc<App>, path: &Path) -> adw::Window {
         Ok(events) if !events.is_empty() => show_events(app, &window, &toasts, path, events),
         Ok(_) => toasts.set_child(Some(&status(
             &gettext("No Events in This File"),
-            &gettext("Penguin Mail found no event to add in it."),
+            &gettext("Iris found no event to add in it."),
         ))),
         Err(why) => toasts.set_child(Some(&status(&gettext("Could Not Open This File"), &why))),
     }
@@ -83,7 +83,7 @@ pub fn open(app: &Rc<App>, path: &Path) -> adw::Window {
 
 fn status(title: &str, description: &str) -> adw::StatusPage {
     adw::StatusPage::builder()
-        .icon_name("penguin-mail-calendar-symbolic")
+        .icon_name("iris-calendar-symbolic")
         .title(glib::markup_escape_text(title).as_str())
         .description(glib::markup_escape_text(description).as_str())
         .build()
@@ -186,7 +186,7 @@ fn show_events(
         card.cannot_add();
         let note = gtk::Label::builder()
             .label(gettext(
-                "No account here has a calendar Penguin Mail can add to. Add an account with \
+                "No account here has a calendar Iris can add to. Add an account with \
                  a calendar, or turn one on in Preferences, under Contacts & Calendar, then \
                  open the file again.",
             ))
@@ -268,7 +268,7 @@ fn import(
                 }
             }
             Ok(Permitted::NeedsPermission) => say(&gettext(
-                "Penguin Mail has no permission to use this calendar. Allow it in Preferences.",
+                "Iris has no permission to use this calendar. Allow it in Preferences.",
             )),
             Err(err) => say(&fill(
                 &gettext("Could not add to your calendar: {reason}"),

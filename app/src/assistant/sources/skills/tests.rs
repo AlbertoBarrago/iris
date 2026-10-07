@@ -101,7 +101,7 @@ fn discovery_keeps_good_skills_and_skips_broken_ones() {
     write(&claude.join("helper/tool.py"), "print('hi')\n");
 
     let skills = discover(&[
-        (Origin::PenguinMail, own.clone()),
+        (Origin::Iris, own.clone()),
         (Origin::ClaudeCode, claude.clone()),
         (Origin::ClaudeCode, home.path().join("missing")),
     ]);
@@ -112,8 +112,8 @@ fn discovery_keeps_good_skills_and_skips_broken_ones() {
     assert_eq!(
         summary,
         [
-            ("penguin-mail/notes", "notes", false),
-            ("penguin-mail/receipts", "receipts", true),
+            ("iris/notes", "notes", false),
+            ("iris/receipts", "receipts", true),
             ("claude-code/helper", "helper", true),
             ("claude-code/linked", "linked", true),
         ]
@@ -128,8 +128,8 @@ fn discovery_keeps_good_skills_and_skips_broken_ones() {
 
 fn skill_at(folder: &Path, name: &str, has_scripts: bool) -> Skill {
     Skill {
-        id: format!("penguin-mail/{name}"),
-        origin: Origin::PenguinMail,
+        id: format!("iris/{name}"),
+        origin: Origin::Iris,
         name: name.into(),
         description: format!("The {name} skill."),
         folder: folder.canonicalize().expect("canonical"),
@@ -229,8 +229,8 @@ fn bwrap() -> Option<PathBuf> {
         Ok(path) => Some(path),
         Err(reason) => {
             eprintln!("skipping the sandbox test: {reason}");
-            if std::env::var_os("PENGUIN_MAIL_REQUIRE_SANDBOX").is_some() {
-                panic!("PENGUIN_MAIL_REQUIRE_SANDBOX is set and the sandbox does not work");
+            if std::env::var_os("IRIS_REQUIRE_SANDBOX").is_some() {
+                panic!("IRIS_REQUIRE_SANDBOX is set and the sandbox does not work");
             }
             None
         }

@@ -215,7 +215,7 @@ impl EventPopover {
         head.append(&delete_button);
 
         let calendar_label = gtk::Label::builder().xalign(0.0).build();
-        let calendar_row = icon_row("penguin-mail-calendar-symbolic", &calendar_label);
+        let calendar_row = icon_row("iris-calendar-symbolic", &calendar_label);
         // Under the calendar, level with the rows' own text, as the notes
         // sit.
         let kind_label = gtk::Label::builder()
@@ -277,7 +277,7 @@ impl EventPopover {
             .xalign(0.0)
             .wrap(true)
             .build();
-        let people_row = icon_row("penguin-mail-people-symbolic", &people_label);
+        let people_row = icon_row("iris-people-symbolic", &people_label);
         // Each row carries its own answer icon, level with the people
         // row's own, so the list needs no extra indent of its own.
         let guests_box = gtk::Box::builder()
@@ -339,7 +339,7 @@ impl EventPopover {
             .label(gettext("Propose New Time"))
             .build();
         let propose_row = gtk::Button::builder()
-            .child(&row_with_icon("penguin-mail-calendar-symbolic", &propose_label, false))
+            .child(&row_with_icon("iris-calendar-symbolic", &propose_label, false))
             .css_classes(["flat", "popover-open-mail"])
             .visible(false)
             .build();

@@ -50,7 +50,7 @@ async fn runs_claude_headless_and_maps_its_stream() {
         bin.join("out-0"),
         lines(&[
             json!({"type": "system", "subtype": "init", "session_id": "sess-1",
-                "tools": ["mcp__penguin-mail__search_mail"], "mcp_servers": [{"name": "penguin-mail", "status": "connected"}]}),
+                "tools": ["mcp__iris__search_mail"], "mcp_servers": [{"name": "iris", "status": "connected"}]}),
             // Recorded from `claude -p --output-format stream-json`: a
             // thinking block comes whole, with its signature.
             json!({"type": "assistant", "session_id": "sess-1", "message": {"role": "assistant", "content": [
@@ -59,7 +59,7 @@ async fn runs_claude_headless_and_maps_its_stream() {
             json!({"type": "assistant", "session_id": "sess-1", "message": {"role": "assistant", "content": [
                 {"type": "thinking", "thinking": "", "signature": "EqoBCkgIBxAC"},
                 {"type": "text", "text": "Looking."},
-                {"type": "tool_use", "id": "tu_1", "name": "mcp__penguin-mail__search_mail", "input": {"query": "x"}},
+                {"type": "tool_use", "id": "tu_1", "name": "mcp__iris__search_mail", "input": {"query": "x"}},
             ]}}),
             json!({"type": "user", "session_id": "sess-1", "message": {"role": "user", "content": [
                 {"type": "tool_result", "tool_use_id": "tu_1", "content": [{"type": "text", "text": "{\"hits\":2}"}]},
@@ -82,7 +82,7 @@ async fn runs_claude_headless_and_maps_its_stream() {
     .unwrap();
 
     let work = dir.path().join("work");
-    let bridge_command = dir.path().join("penguin-mail");
+    let bridge_command = dir.path().join("iris");
     let mut chat = ClaudeCodeChat::new(script, Some("sonnet".into()), "You sort mail.".into())
         .with_paths(work.clone(), bridge_command.clone());
     let (tx, rx) = async_channel::unbounded();
@@ -117,7 +117,7 @@ async fn runs_claude_headless_and_maps_its_stream() {
     assert!(args.contains(&"--verbose".to_string()));
     assert!(args.contains(&"--strict-mcp-config".to_string()));
     assert_eq!(flag(&args, "--tools"), Some(""));
-    assert_eq!(flag(&args, "--allowedTools"), Some("mcp__penguin-mail"));
+    assert_eq!(flag(&args, "--allowedTools"), Some("mcp__iris"));
     assert_eq!(flag(&args, "--permission-mode"), Some("dontAsk"));
     assert_eq!(flag(&args, "--system-prompt"), Some("You sort mail."));
     assert_eq!(flag(&args, "--model"), Some("sonnet"));
@@ -132,7 +132,7 @@ async fn runs_claude_headless_and_maps_its_stream() {
     );
 
     let config: Value = serde_json::from_str(flag(&args, "--mcp-config").unwrap()).unwrap();
-    let server = &config["mcpServers"]["penguin-mail"];
+    let server = &config["mcpServers"]["iris"];
     assert_eq!(server["type"], json!("stdio"));
     assert_eq!(server["command"], json!(bridge_command));
     assert_eq!(server["args"][0], json!("--mcp-bridge"));
@@ -169,14 +169,14 @@ async fn web_search_turns_on_claude_codes_own_web_tools() {
     assert_eq!(flag(&args, "--tools"), Some("WebSearch,WebFetch"));
     assert_eq!(
         flag(&args, "--allowedTools"),
-        Some("mcp__penguin-mail,WebSearch,WebFetch")
+        Some("mcp__iris,WebSearch,WebFetch")
     );
     // Turned off, the next run has no built-in tools again.
     chat.web = false;
     chat.send("again".into(), host, &tx).await.unwrap();
     let args = argv(&bin, 1);
     assert_eq!(flag(&args, "--tools"), Some(""));
-    assert_eq!(flag(&args, "--allowedTools"), Some("mcp__penguin-mail"));
+    assert_eq!(flag(&args, "--allowedTools"), Some("mcp__iris"));
 }
 
 #[tokio::test]

@@ -710,7 +710,7 @@ async fn gmail_settings_ask_for_the_permission_instead_of_failing() {
     assert_eq!(
         answer,
         Err(format!(
-            "Penguin Mail needs permission to change the account's mail settings for {ME}. \
+            "Iris needs permission to change the account's mail settings for {ME}. \
              The user was asked to grant it; try again once they have."
         ))
     );

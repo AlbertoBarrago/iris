@@ -1,6 +1,6 @@
 //! WebDAV, CalDAV and CardDAV for an IMAP account's calendars and
 //! contacts: the XML the protocols speak, a client on reqwest behind
-//! `DavApi`, and the iCalendar and vCard mapping onto Penguin Mail's own
+//! `DavApi`, and the iCalendar and vCard mapping onto Iris's own
 //! events and contacts through calcard. It knows nothing of the store or
 //! the window.
 

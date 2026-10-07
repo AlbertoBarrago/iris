@@ -9,7 +9,7 @@
 //! as it does for a person, and nothing in the client changes for a test.
 //!
 //! Without Docker or openssl, or when a container cannot start, a start
-//! function returns `None` and the test skips. `PENGUIN_MAIL_REQUIRE_IMAP`
+//! function returns `None` and the test skips. `IRIS_REQUIRE_IMAP`
 //! turns the skip into a failure, for a build machine that must not report
 //! a suite it never ran.
 //!
@@ -33,11 +33,11 @@ pub const DOVECOT_IMAGE: &str =
 pub const MAILPIT_IMAGE: &str = "axllent/mailpit:v1.31.2@sha256:74d609a42ec279aa63c6b4622a6fa9b5408d1ad5b1d76a1c4be40a265ce0863d";
 
 /// Set on a build machine, it makes a missing Docker fail the run.
-pub const REQUIRE: &str = "PENGUIN_MAIL_REQUIRE_IMAP";
+pub const REQUIRE: &str = "IRIS_REQUIRE_IMAP";
 
 /// Every container a test starts carries this label, so one that a killed
 /// run left behind shows in `docker ps -a --filter label=...`.
-pub const LABEL: &str = "io.github.c9dev.penguin-mail.test";
+pub const LABEL: &str = "io.github.AlbertoBarrago.iris.test";
 
 /// How long a server gets to answer once its container starts. The images
 /// are on the computer already, from scripts/test-images.sh, so this clock
@@ -225,7 +225,7 @@ fn root_args(name: &str) -> Vec<String> {
     ]
     .map(String::from)
     .to_vec();
-    args.push(format!("/CN=Penguin Mail test {name}"));
+    args.push(format!("/CN=Iris test {name}"));
     args.extend([
         "-keyout".to_string(),
         format!("{name}.key"),

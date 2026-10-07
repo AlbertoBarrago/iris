@@ -150,6 +150,6 @@ fn address(who: &Address) -> MimeAddress<'static> {
 fn message_id(from_email: &str) -> String {
     let domain = from_email
         .rsplit_once('@')
-        .map_or("penguin-mail.local", |(_, domain)| domain);
+        .map_or("iris.local", |(_, domain)| domain);
     format!("{}.itip@{domain}", mailrs_gmail::random_token(12))
 }

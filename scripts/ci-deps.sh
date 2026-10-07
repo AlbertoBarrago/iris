@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs what building, testing and packaging Penguin Mail needs on a bare
+# Installs what building, testing and packaging Iris needs on a bare
 # Ubuntu 26.04 or Fedora, such as the containers the GitHub workflows run
 # in. Run as root. Rust comes from rustup at the version Cargo.toml asks
 # for. xtr, which scripts/update-po.sh needs, is left to the workflow: it

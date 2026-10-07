@@ -968,7 +968,7 @@ pub(super) fn catalog<A: Accounts>() -> Vec<MailTool<A>> {
         MailTool {
             name: "unsubscribe",
             label: || gettext("Unsubscribing"),
-            description: "Leaves the mailing lists 1 to 20 conversations came from, as list_newsletters gives them: a one-click request, an email to the list, or the sender's own unsubscribe page, which Penguin Mail loads out of sight, fills in and submits. It opens one dialog naming every list and what will be pressed, and does nothing the user does not tick there. A page takes up to 45 seconds, so a long list can take minutes; wait for the answer rather than calling again. Each list comes back as done, unclear (submitted, page said nothing), waiting (the request mail sits in the Outbox until the account's server takes it), failed with a reason, opened (the page needed the user and opened in their browser), or declined.",
+            description: "Leaves the mailing lists 1 to 20 conversations came from, as list_newsletters gives them: a one-click request, an email to the list, or the sender's own unsubscribe page, which Iris loads out of sight, fills in and submits. It opens one dialog naming every list and what will be pressed, and does nothing the user does not tick there. A page takes up to 45 seconds, so a long list can take minutes; wait for the answer rather than calling again. Each list comes back as done, unclear (submitted, page said nothing), waiting (the request mail sits in the Outbox until the account's server takes it), failed with a reason, opened (the page needed the user and opened in their browser), or declined.",
             input: || {
                 json!({
                     "conversations": {
@@ -1013,7 +1013,7 @@ pub(super) fn catalog<A: Accounts>() -> Vec<MailTool<A>> {
         MailTool {
             name: "find_contact",
             label: || gettext("Looking up a contact"),
-            description: "Looks people up by name, address, or organization: first in the address books Penguin Mail keeps from each account's contacts, then among the people in stored mail.",
+            description: "Looks people up by name, address, or organization: first in the address books Iris keeps from each account's contacts, then among the people in stored mail.",
             input: || json!({"query": {"type": "string", "description": "Words to find, such as \"priya\" or \"fernwood\"."}}),
             required: &["query"],
             run: Run::Now(|t, input| Box::pin(t.find_contact(input))),

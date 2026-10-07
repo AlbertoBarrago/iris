@@ -252,7 +252,7 @@ impl MainWindow {
 fn cancelled_line(in_drafts: usize, reopened: usize, kept: usize) -> String {
     match (in_drafts, reopened, kept) {
         (_, _, 1..) => gettext(
-            "Gmail is out of reach and Penguin Mail cannot reopen a message, so it stays in Send Later.",
+            "Gmail is out of reach and Iris cannot reopen a message, so it stays in Send Later.",
         ),
         (0, 1, 0) => {
             gettext("Won't be sent. Gmail is out of reach, so the message is open for you to save.")

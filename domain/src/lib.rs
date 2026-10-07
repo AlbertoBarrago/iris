@@ -1,4 +1,4 @@
-//! Types shared by every Penguin Mail crate. Conversions only, no I/O.
+//! Types shared by every Iris crate. Conversions only, no I/O.
 
 use std::fmt;
 use std::str::FromStr;
@@ -544,7 +544,7 @@ pub struct Filter {
     #[serde(default)]
     pub action: FilterAction,
     /// The server holds a rule this shape cannot say, such as an Outlook
-    /// rule with an exception or an action Penguin Mail has no word for.
+    /// rule with an exception or an action Iris has no word for.
     /// The Rules dialog lists it and never rewrites or deletes it.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub read_only: bool,

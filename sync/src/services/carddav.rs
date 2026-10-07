@@ -176,7 +176,7 @@ impl<D: DavApi> ContactsService for CardDav<D> {
             .filter_map(|f| match vcard::read_card(&f.body) {
                 Ok(card) => Some(person(&f.href, card)),
                 Err(err) => {
-                    tracing::warn!(href = %f.href, %err, "skipped a vCard Penguin Mail cannot read");
+                    tracing::warn!(href = %f.href, %err, "skipped a vCard Iris cannot read");
                     None
                 }
             })

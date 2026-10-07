@@ -1,4 +1,4 @@
-//! The one Sieve script Penguin Mail keeps on a server: its rules and the
+//! The one Sieve script Iris keeps on a server: its rules and the
 //! automatic reply, each a block under a comment that names the neutral
 //! rule as JSON and hashes the statement it wrote. Reading the script
 //! back trusts a block whose statement still hashes the same and keeps
@@ -10,11 +10,11 @@ use std::collections::BTreeSet;
 use chrono::{Local, TimeZone};
 use mailrs_domain::{Filter, MailSet, Role, Vacation};
 
-const HEADER: &str = "# Penguin Mail keeps this script and writes it whole when a rule or the\n\
+const HEADER: &str = "# Iris keeps this script and writes it whole when a rule or the\n\
 # automatic reply changes. Blocks edited or added by hand are kept as they\n\
-# are, and show in Penguin Mail as rules written elsewhere.\n";
-const RULE: &str = "# penguin-mail rule ";
-const VACATION: &str = "# penguin-mail vacation ";
+# are, and show in Iris as rules written elsewhere.\n";
+const RULE: &str = "# iris rule ";
+const VACATION: &str = "# iris vacation ";
 const OFF: &str = "off";
 
 /// The Sieve extensions a server offers, from ManageSieve's `SIEVE`.
@@ -35,7 +35,7 @@ impl Extensions {
         self.0.contains(name)
     }
 
-    /// What Penguin Mail needs before it keeps rules on the server.
+    /// What Iris needs before it keeps rules on the server.
     pub fn usable(&self) -> bool {
         self.has("fileinto") && self.has("vacation")
     }
@@ -397,7 +397,7 @@ pub fn read(text: &str) -> Script {
                 let own_comments: Vec<&String> = piece
                     .comments
                     .iter()
-                    .filter(|c| !c.starts_with("# Penguin Mail keeps") && !c.starts_with("# automatic reply") && !c.starts_with("# are, and show"))
+                    .filter(|c| !c.starts_with("# Iris keeps") && !c.starts_with("# automatic reply") && !c.starts_with("# are, and show"))
                     .filter(|c| !c.starts_with(RULE) && !c.starts_with(VACATION))
                     .collect();
                 let mut block = own_comments.iter().map(|c| format!("{c}\n")).collect::<String>();

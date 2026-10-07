@@ -327,7 +327,7 @@ impl<A: Accounts> Tools<A> {
                 name,
                 email,
                 State::Failed(
-                    "That conversation has no unsubscribe link Penguin Mail can use.".into(),
+                    "That conversation has no unsubscribe link Iris can use.".into(),
                 ),
             ),
             Err(why) => (thread_id.clone(), String::new(), State::Failed(why)),
@@ -343,7 +343,7 @@ impl<A: Accounts> Tools<A> {
 
     /// Who wrote the conversation, by name and address, and how their
     /// list lets go. The
-    /// stored headers answer for mail synced since Penguin Mail started
+    /// stored headers answer for mail synced since Iris started
     /// keeping them, so only a conversation they say nothing about costs
     /// a body, which is also the one place a link in the body can be
     /// found.
@@ -497,7 +497,7 @@ impl<A: Accounts> Tools<A> {
                 (
                     "opened",
                     Some(format!(
-                        "Penguin Mail could not read {url}, so it opened in the user's browser for them to finish."
+                        "Iris could not read {url}, so it opened in the user's browser for them to finish."
                     )),
                 )
             }

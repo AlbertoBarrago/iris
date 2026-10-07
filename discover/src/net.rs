@@ -100,7 +100,7 @@ impl RealNet {
             .redirect(reqwest::redirect::Policy::limited(3))
             .referer(false)
             .timeout(REQUEST_LIMIT)
-            .user_agent(concat!("Penguin Mail/", env!("CARGO_PKG_VERSION")))
+            .user_agent(concat!("Iris/", env!("CARGO_PKG_VERSION")))
             .build()?;
         // The provider is named here rather than read from the process
         // default, so another crate turning on a second one cannot leave

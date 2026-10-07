@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publishes a new version of Penguin Mail. Bumps the version, writes its
+# Publishes a new version of Iris. Bumps the version, writes its
 # changelog section and the store listings' release notes, brings the
 # translation template up to the new version, runs the gate, commits "Release X.Y.Z", tags vX.Y.Z,
 # and pushes. The pushed tag starts .github/workflows/release.yml, which
@@ -48,12 +48,12 @@ push_release() {
         fail "the push to origin failed, so nothing was published. main keeps the commit \"Release $version\" and v$version is not tagged; run scripts/release.sh again to retry the push."
     fi
     echo "Pushed v$version. GitHub builds and publishes it:"
-    echo "  https://github.com/c9dev/penguin-mail/actions/workflows/release.yml"
+    echo "  https://github.com/AlbertoBarrago/iris/actions/workflows/release.yml"
     echo
     echo "Flathub builds from its own repository, so update it by hand:"
     echo "  scripts/flatpak-sources.sh --flathub v$version <dir>"
     echo "then copy the three files into a checkout of"
-    echo "https://github.com/flathub/io.github.c9dev.PenguinMail and open a pull request."
+    echo "https://github.com/flathub/io.github.AlbertoBarrago.Iris and open a pull request."
 }
 
 # A commit "Release X.Y.Z" that origin lacks is a release an earlier run
@@ -84,7 +84,7 @@ esac
 git rev-parse -q --verify "refs/tags/v$version" >/dev/null && fail "v$version is already tagged"
 
 # Whatever stops the script from here on puts these files back.
-metainfo=app/data/io.github.c9dev.PenguinMail.metainfo.xml
+metainfo=app/data/io.github.AlbertoBarrago.Iris.metainfo.xml
 restore() { git checkout -q -- Cargo.toml Cargo.lock CHANGELOG.md po "$metainfo"; }
 trap restore EXIT
 
@@ -98,7 +98,7 @@ scripts/update-po.sh >/dev/null
 # it, commented out, for anything the write-up missed.
 notes=$(mktemp)
 {
-    echo "# What changed in Penguin Mail $version, for the people who use it. One"
+    echo "# What changed in Iris $version, for the people who use it. One"
     echo "# short line per change, in plain words, under ### New, ### Improved or"
     echo "# ### Fixed. Lines starting with \"# \" are dropped. With no line starting"
     echo "# \"- \" left, the release stops."

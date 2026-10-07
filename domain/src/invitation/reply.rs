@@ -20,7 +20,7 @@ use crate::{Address, EpochMillis};
 use super::{Answer, Invitation, When};
 
 /// The name a reader sees against the answer.
-const PRODUCT: &str = "-//Penguin Mail//Penguin Mail//EN";
+const PRODUCT: &str = "-//Iris//Iris//EN";
 
 /// The longest a line may be, in octets, before it is folded. RFC 5545
 /// counts the octets rather than the characters, and forbids a fold in the

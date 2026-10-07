@@ -26,7 +26,7 @@ fn stored(err: mailrs_store::StoreError) -> BackendError {
 }
 
 fn read_only() -> BackendError {
-    BackendError::Refused(gettext("This rule is read-only, so Penguin Mail leaves it as it is."))
+    BackendError::Refused(gettext("This rule is read-only, so Iris leaves it as it is."))
 }
 
 fn new_id() -> String {

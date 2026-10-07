@@ -1,4 +1,4 @@
-//! Command-line front end to the Penguin Mail core: add Gmail accounts, sync them,
+//! Command-line front end to the Iris core: add Gmail accounts, sync them,
 //! and inspect the local store.
 
 use std::collections::HashMap;
@@ -28,9 +28,9 @@ const CONSENT_TIMEOUT: Duration = Duration::from_secs(300);
 
 #[derive(Parser)]
 #[command(
-    name = "penguin-mail-cli",
+    name = "iris-cli",
     version,
-    about = "Sync Gmail accounts into the Penguin Mail store and inspect it"
+    about = "Sync Gmail accounts into the Iris store and inspect it"
 )]
 struct Cli {
     #[command(subcommand)]
@@ -190,13 +190,13 @@ async fn connect(connector: &Connector, account: &Account) -> Result<AccountServ
         Connected::Ready(services) => Ok(services),
         Connected::NeedsSignIn(lacks) => Err(match (account.provider, lacks) {
             (Provider::Gmail, Lacks::Client) => {
-                anyhow!("{email} needs to sign in again: run `penguin-mail-cli account add`")
+                anyhow!("{email} needs to sign in again: run `iris-cli account add`")
             }
             (Provider::Gmail, Lacks::Secret) => anyhow!("{email}: {}", BackendError::NeedsReauth),
             (Provider::Microsoft, Lacks::Client) => {
                 anyhow!("{email}: this build has no Microsoft client, so it cannot sync this account")
             }
-            _ => anyhow!("{email}: needs to sign in again in Penguin Mail"),
+            _ => anyhow!("{email}: needs to sign in again in Iris"),
         }),
     }
 }
@@ -204,7 +204,7 @@ async fn connect(connector: &Connector, account: &Account) -> Result<AccountServ
 async fn add_account(db: &Db) -> Result<()> {
     // Every sign-in, first or again, goes through the build's client.
     let oauth = built_in_client()
-        .ok_or_else(|| anyhow!("This copy of Penguin Mail was built without Google sign-in."))?;
+        .ok_or_else(|| anyhow!("This copy of Iris was built without Google sign-in."))?;
     let flow = authorize(&oauth, GMAIL_API_BASE, |url| {
         println!(
             "Opening your browser for Google's consent screen. If it does not open, visit:\n\n{url}\n"
@@ -229,7 +229,7 @@ async fn add_account(db: &Db) -> Result<()> {
     )
     .await?;
     println!(
-        "Added {} as account {}. Run `penguin-mail-cli sync` to download mail.",
+        "Added {} as account {}. Run `iris-cli sync` to download mail.",
         account.email, account.id
     );
     Ok(())
@@ -238,7 +238,7 @@ async fn add_account(db: &Db) -> Result<()> {
 async fn list_accounts(db: &Db) -> Result<()> {
     let all = db.read(accounts::list_accounts).await?;
     if all.is_empty() {
-        println!("No accounts. Run `penguin-mail-cli account add`.");
+        println!("No accounts. Run `iris-cli account add`.");
         return Ok(());
     }
     for account in all {
@@ -278,15 +278,15 @@ async fn run_sync(db: &Db, dir: &Path, config: &Config) -> Result<()> {
     let _lock = match SyncLock::take(dir) {
         Ok(lock) => lock,
         Err(LockError::Held) => bail!(
-            "Penguin Mail is already syncing the mail in {}; quit the app or the other \
-             `penguin-mail-cli sync` first",
+            "Iris is already syncing the mail in {}; quit the app or the other \
+             `iris-cli sync` first",
             dir.display()
         ),
         Err(err) => return Err(err.into()),
     };
     let all = db.read(accounts::list_accounts).await?;
     if all.is_empty() {
-        bail!("no accounts; run `penguin-mail-cli account add` first");
+        bail!("no accounts; run `iris-cli account add` first");
     }
     let (engine, events) = SyncEngine::new(db.clone(), config.engine_config());
     let connector = connector(db, config);
@@ -608,7 +608,7 @@ async fn find_account(db: &Db, email: &str) -> Result<Account> {
     let owned = email.to_string();
     db.read(move |c| accounts::account_by_email(c, &owned))
         .await?
-        .with_context(|| format!("no account {email}; `penguin-mail-cli account list` shows them"))
+        .with_context(|| format!("no account {email}; `iris-cli account list` shows them"))
 }
 
 fn truncate(s: &str, width: usize) -> String {

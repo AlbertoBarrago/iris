@@ -181,7 +181,7 @@ pub trait Effects {
 
     // ---- What waits: Send Later, the Outbox, and Undo --------------------
 
-    /// Opens a composer on a message whose only copy Penguin Mail holds,
+    /// Opens a composer on a message whose only copy Iris holds,
     /// marked unsaved, so closing it asks before the message is lost.
     fn reopen_unsent(&self, draft: Draft) -> Result<(), String>;
     /// Counts, the Send Later and Outbox lists, and a queued message on
@@ -260,7 +260,7 @@ fn required(input: &Value, key: &str) -> Result<String, String> {
 /// What the model hears after a tool asked the user for `permission`.
 fn asked_for(permission: Permission, account: &Account) -> String {
     format!(
-        "Penguin Mail needs permission to {} for {}. The user was asked to grant it; try again once they have.",
+        "Iris needs permission to {} for {}. The user was asked to grant it; try again once they have.",
         permission.purpose(),
         account.email
     )
@@ -702,7 +702,7 @@ impl<A: Accounts> Tools<A> {
             })) => {
                 self.effects.explain_api_off(&service, &enable_url);
                 Err(format!(
-                    "The {service} is switched off in the Google Cloud project Penguin Mail signs in with, so Google refuses the call. The user was shown where to turn it on ({enable_url}); try again once they have."
+                    "The {service} is switched off in the Google Cloud project Iris signs in with, so Google refuses the call. The user was shown where to turn it on ({enable_url}); try again once they have."
                 ))
             }
             Err(err) => Err(err.to_string()),

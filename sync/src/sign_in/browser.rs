@@ -93,12 +93,12 @@ pub enum BrowserSignInError {
 fn no_client(browser: Browser) -> String {
     match browser {
         Browser::Google => gettext(
-            "This copy of Penguin Mail was built without Google sign-in. \
-             Get a release from github.com/c9dev/penguin-mail/releases.",
+            "This copy of Iris was built without Google sign-in. \
+             Get a release from github.com/AlbertoBarrago/iris/releases.",
         ),
         Browser::Microsoft => gettext(
-            "This copy of Penguin Mail was built without Microsoft sign-in. \
-             Get a release from github.com/c9dev/penguin-mail/releases.",
+            "This copy of Iris was built without Microsoft sign-in. \
+             Get a release from github.com/AlbertoBarrago/iris/releases.",
         ),
     }
 }
@@ -116,7 +116,7 @@ fn other_address(signed_in: &str, wanted: &str) -> String {
 fn google_refused(err: &GmailError) -> String {
     match err {
         GmailError::MailNotGranted => gettext(
-            "Penguin Mail cannot work without access to your mail. Sign in \
+            "Iris cannot work without access to your mail. Sign in \
              again and leave the Gmail permission ticked.",
         ),
         err => err.to_string(),
@@ -125,12 +125,12 @@ fn google_refused(err: &GmailError) -> String {
 
 fn microsoft_refused(err: &GraphError) -> String {
     match err {
-        GraphError::AdminApproval => gettext("Your organization's administrator must approve Penguin Mail."),
+        GraphError::AdminApproval => gettext("Your organization's administrator must approve Iris."),
         GraphError::Declined | GraphError::MailNotGranted => {
-            gettext("Penguin Mail cannot work without access to your mail. Sign in again and allow it.")
+            gettext("Iris cannot work without access to your mail. Sign in again and allow it.")
         }
         GraphError::MailboxOnPremises => gettext(
-            "This mailbox is on your organization's own Exchange server, which Penguin Mail cannot reach.",
+            "This mailbox is on your organization's own Exchange server, which Iris cannot reach.",
         ),
         err => err.to_string(),
     }
@@ -140,7 +140,7 @@ fn microsoft_refused(err: &GraphError) -> String {
 /// finishes when the browser comes back. Then the account is added, or
 /// found when it is already here, its refresh token goes to the keyring
 /// in `connector`, and its services are built. Each sign-in asks for every
-/// permission Penguin Mail uses. The caller bounds the wait.
+/// permission Iris uses. The caller bounds the wait.
 pub async fn in_browser(
     connector: &Connector,
     browser: Browser,

@@ -1,4 +1,4 @@
-//! Penguin Mail's id for a calendar resource, and back. An event's id is
+//! Iris's id for a calendar resource, and back. An event's id is
 //! its resource's name without `.ics`, which is what the copy and an
 //! occurrence id (`<id>_<start>`) carry; a name without `.ics` keeps its
 //! whole self behind a `~`, so the way back is never a guess. A name that

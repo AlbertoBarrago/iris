@@ -30,7 +30,7 @@ impl Check {
     /// The row's title for an address at `domain`.
     pub fn title(self, domain: &str) -> String {
         match self {
-            Check::Table => gettext("Penguin Mail's own list"),
+            Check::Table => gettext("Iris's own list"),
             Check::Mx => gettext("Mail servers (MX)"),
             Check::Own => fill(&gettext("{domain}'s own settings"), &[("domain", domain)]),
             Check::Mozilla => gettext("Mozilla's provider list"),
@@ -202,7 +202,7 @@ mod tests {
         assert_eq!(
             titles,
             [
-                "Penguin Mail's own list",
+                "Iris's own list",
                 "Mail servers (MX)",
                 "reyes.studio's own settings",
                 "Mozilla's provider list",

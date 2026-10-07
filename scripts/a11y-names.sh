@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Walks the accessible tree of a running Penguin Mail and names every
+# Walks the accessible tree of a running Iris and names every
 # control a screen reader would announce as nothing.
 #
 #   scripts/a11y-names.sh          open the demo on a hidden display
@@ -117,18 +117,18 @@ def walk(node, path, sink=None):
     return (role in ACTS and bool(name)) or wraps
 
 
-def penguins():
+def iris_apps():
     desktop = Atspi.get_desktop(0)
     apps = [desktop.get_child_at_index(i) for i in range(desktop.get_child_count())]
     named = [(a, a.get_name() or "") for a in apps if a is not None]
-    return [a for a, name in named if name.startswith("io.github.c9dev")], [
+    return [a for a, name in named if name.startswith("io.github.AlbertoBarrago")], [
         name for _, name in named
     ]
 
 
 def controls():
     found.clear()
-    for app in penguins()[0]:
+    for app in iris_apps()[0]:
         walk(app, [])
     return len(found)
 
@@ -145,8 +145,8 @@ while waited < PATIENCE:
     time.sleep(2)
     waited += 2
 if not found:
-    print("Penguin Mail never reached the accessibility bus.", file=sys.stderr)
-    print("On it after %ds: %s" % (waited, ", ".join(penguins()[1]) or "nothing"), file=sys.stderr)
+    print("Iris never reached the accessibility bus.", file=sys.stderr)
+    print("On it after %ds: %s" % (waited, ", ".join(iris_apps()[1]) or "nothing"), file=sys.stderr)
     sys.exit(2)
 
 
@@ -166,7 +166,7 @@ def nodes(node):
 
 def showing_menus():
     try:
-        return [n for app in penguins()[0] for n in nodes(app) if n.get_role_name() == "menu"]
+        return [n for app in iris_apps()[0] for n in nodes(app) if n.get_role_name() == "menu"]
     except Exception:
         return []
 
@@ -343,7 +343,7 @@ def in_view(node, row):
 
 def rows_in_view(bounds):
     """Every row on screen, with the point at its middle."""
-    for app in penguins()[0]:
+    for app in iris_apps()[0]:
         for row in nodes(app):
             try:
                 if row.get_role_name() != "list item":
@@ -369,7 +369,7 @@ def rows_in_view(bounds):
 def open_menus():
     keys = Input()
     opened = 0
-    frame = next(n for app in penguins()[0] for n in nodes(app) if n.get_role_name() == "frame")
+    frame = next(n for app in iris_apps()[0] for n in nodes(app) if n.get_role_name() == "frame")
     bounds = frame.get_component_iface().get_extents(Atspi.CoordType.WINDOW)
     # Rows go by name: two rows that read the same, such as the Inbox of
     # two accounts, offer the same menu.
@@ -388,7 +388,7 @@ def open_menus():
             opened += visit("row %r" % name[:40], right_click, keys)
         # The rows below the fold have menus too, such as those of labels
         # and smart mailboxes.
-        for app in penguins()[0]:
+        for app in iris_apps()[0]:
             for pane in nodes(app):
                 if pane.get_role_name() == "scroll pane":
                     box = pane.get_component_iface().get_extents(Atspi.CoordType.WINDOW)
@@ -398,7 +398,7 @@ def open_menus():
     # A right click on a thread row opened its conversation, and that
     # brought the conversation's own buttons out.
     buttons = [
-        n for app in penguins()[0] for n in nodes(app)
+        n for app in iris_apps()[0] for n in nodes(app)
         if n.get_role_name() == "toggle button"
         and n.get_state_set().contains(Atspi.StateType.HAS_POPUP)
         and n.get_state_set().contains(Atspi.StateType.SHOWING)
@@ -429,7 +429,7 @@ def walk_conversation(keys):
     controls came back with no name."""
 
     def rows():
-        for app in penguins()[0]:
+        for app in iris_apps()[0]:
             for n in nodes(app):
                 try:
                     if n.get_role_name() == "list item":
@@ -438,7 +438,7 @@ def walk_conversation(keys):
                     continue
 
     def pane():
-        for app in penguins()[0]:
+        for app in iris_apps()[0]:
             for n in nodes(app):
                 try:
                     if n.get_role_name() == "grouping" and (n.get_name() or "").strip() == "Conversation":
@@ -453,7 +453,7 @@ def walk_conversation(keys):
             n.get_role_name() == "document web" for n in nodes(conversation)
         )
 
-    frame = next(n for app in penguins()[0] for n in nodes(app) if n.get_role_name() == "frame")
+    frame = next(n for app in iris_apps()[0] for n in nodes(app) if n.get_role_name() == "frame")
     bounds = frame.get_component_iface().get_extents(Atspi.CoordType.WINDOW)
     def clickable(row):
         box = row.get_component_iface().get_extents(Atspi.CoordType.WINDOW)
@@ -501,7 +501,7 @@ def walk_calendar(keys):
     mail walk's own count."""
 
     def find_first(predicate):
-        for app in penguins()[0]:
+        for app in iris_apps()[0]:
             for n in nodes(app):
                 try:
                     role = n.get_role_name()
@@ -546,7 +546,7 @@ def walk_calendar(keys):
 
     def total_nodes():
         try:
-            return sum(1 for app in penguins()[0] for _ in nodes(app))
+            return sum(1 for app in iris_apps()[0] for _ in nodes(app))
         except Exception:
             return -1
 
@@ -564,7 +564,7 @@ def walk_calendar(keys):
     calendar_found = []
 
     def walk_view(view):
-        for app in penguins()[0]:
+        for app in iris_apps()[0]:
             walk(app, [view], calendar_found)
 
     def button_named(pattern):
@@ -613,7 +613,7 @@ def walk_calendar(keys):
             # bus, so the first match is one a person can see.
             def invitations():
                 found = []
-                for app in penguins()[0]:
+                for app in iris_apps()[0]:
                     for n in nodes(app):
                         try:
                             if n.get_role_name() in ("button", "push button") and (
@@ -643,7 +643,7 @@ def walk_calendar(keys):
             if invitation is None:
                 print("No invitation on the week on screen to open.", file=sys.stderr)
                 seen = []
-                for app in penguins()[0]:
+                for app in iris_apps()[0]:
                     for n in nodes(app):
                         try:
                             name = (n.get_name() or "").strip()
@@ -804,7 +804,7 @@ def walk_calendar(keys):
         return node
 
     away_row = None
-    for app in penguins()[0]:
+    for app in iris_apps()[0]:
         for node in nodes(app):
             try:
                 if node.get_role_name() == "label" and (node.get_name() or "") == "Out of office":
@@ -857,7 +857,7 @@ def walk_composer():
 
     def named(role, name, under=None):
         for node in nodes(under) if under is not None else (
-            n for app in penguins()[0] for n in nodes(app)
+            n for app in iris_apps()[0] for n in nodes(app)
         ):
             try:
                 if node.get_role_name() == role and (node.get_name() or "").strip() == name:
@@ -867,7 +867,7 @@ def walk_composer():
         return None
 
     def frame_starting(prefix):
-        for app in penguins()[0]:
+        for app in iris_apps()[0]:
             for index in range(app.get_child_count()):
                 window = app.get_child_at_index(index)
                 try:
@@ -951,7 +951,7 @@ def walk_add_account(keys):
     came back with no name, counting as one each page that did not open."""
 
     def named(role, name):
-        for app in penguins()[0]:
+        for app in iris_apps()[0]:
             for node in nodes(app):
                 try:
                     if node.get_role_name() == role and (node.get_name() or "").strip() == name:
@@ -1089,9 +1089,9 @@ chmod 700 "$XDG_RUNTIME_DIR"
 export GNUPGHOME="$sandbox/gnupg"
 mkdir -m 700 "$GNUPGHOME"
 export GSETTINGS_BACKEND=memory
-export PENGUIN_MAIL_LOCALE_DIR="$PWD/target/locale"
+export IRIS_LOCALE_DIR="$PWD/target/locale"
 
-app=$PWD/target/debug/penguin-mail
+app=$PWD/target/debug/iris
 
 # WebKit runs its helpers, including the proxy that carries the
 # accessibility bus into a page, inside bubblewrap. An unprivileged

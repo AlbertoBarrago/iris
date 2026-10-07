@@ -57,7 +57,7 @@ struct Edits {
 /// The file a tool names at `given`, once it is a file a message may
 /// carry: an absolute path, or one under `~/`, to a readable file of at
 /// most 25 MB that [`off_limits`] allows. `home` is the user's home folder
-/// and `private` the folders Penguin Mail keeps its own data in.
+/// and `private` the folders Iris keeps its own data in.
 pub(super) fn local_file(
     given: &str,
     home: &Path,
@@ -98,7 +98,7 @@ pub(super) fn local_file(
 /// in the temporary and removable-media folders. Hidden folders such as
 /// `~/.ssh` and `~/.gnupg` hold keys, passwords and settings, and the rest
 /// of the system holds the computer's own; the folders in `private` hold
-/// Penguin Mail's mail store, settings and tokens wherever they live.
+/// Iris's mail store, settings and tokens wherever they live.
 pub(super) fn off_limits(path: &Path, home: &Path, private: &[PathBuf]) -> bool {
     if private.iter().any(|dir| path.starts_with(dir)) {
         return true;
@@ -118,7 +118,7 @@ pub(super) fn off_limits(path: &Path, home: &Path, private: &[PathBuf]) -> bool 
     }
 }
 
-/// The folders Penguin Mail keeps its own data in: the mail store, the
+/// The folders Iris keeps its own data in: the mail store, the
 /// settings and the cache, each as the system resolves it.
 fn private_dirs() -> Vec<PathBuf> {
     let name = mailrs_sync::config::DIR_NAME;

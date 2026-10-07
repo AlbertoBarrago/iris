@@ -5,7 +5,7 @@
 //! from sending can carry addresses, so a release build masks every email
 //! address on its way out: `dana.reyes@example.com` becomes
 //! `d…@example.com`. A debug build keeps them, and so does a release build
-//! started with `PENGUIN_MAIL_LOG_DETAILS=1`, for looking into a problem on
+//! started with `IRIS_LOG_DETAILS=1`, for looking into a problem on
 //! an installed copy.
 
 use std::io::{self, Write};
@@ -13,7 +13,7 @@ use std::io::{self, Write};
 use tracing_subscriber::fmt::MakeWriter;
 
 /// The variable that keeps addresses in a release build's log.
-const DETAILS: &str = "PENGUIN_MAIL_LOG_DETAILS";
+const DETAILS: &str = "IRIS_LOG_DETAILS";
 
 /// Whether this run's log keeps addresses whole.
 pub fn details() -> bool {

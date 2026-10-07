@@ -1189,7 +1189,7 @@ pub fn parse_recipients(text: &str) -> Vec<Address> {
 pub fn new_message_id(from_email: &str) -> String {
     let domain = from_email
         .rsplit_once('@')
-        .map_or("penguin-mail.local", |(_, d)| d);
+        .map_or("iris.local", |(_, d)| d);
     format!(
         "{}.{}@{domain}",
         mailrs_gmail::random_token(12),

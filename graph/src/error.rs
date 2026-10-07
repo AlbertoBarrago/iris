@@ -29,13 +29,13 @@ pub enum GraphError {
     /// Graph cannot reach.
     #[error("the mailbox is on an on-premises Exchange server")]
     MailboxOnPremises,
-    /// The organization lets no user consent to Penguin Mail on their own.
+    /// The organization lets no user consent to Iris on their own.
     #[error("the organization's administrator must approve the app")]
     AdminApproval,
     /// The person said no on Microsoft's consent page.
     #[error("the person declined Microsoft's consent")]
     Declined,
-    /// The consent came back without mail, which Penguin Mail cannot work
+    /// The consent came back without mail, which Iris cannot work
     /// without.
     #[error("the sign-in did not grant access to mail")]
     MailNotGranted,

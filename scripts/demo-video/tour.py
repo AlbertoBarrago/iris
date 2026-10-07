@@ -1,4 +1,4 @@
-"""Drives the demo through a tour of Penguin Mail while GNOME Shell records it.
+"""Drives the demo through a tour of Iris while GNOME Shell records it.
 
 Run through scripts/demo-video.sh, which starts the headless GNOME Shell,
 PipeWire and the tour extension in a throwaway session.
@@ -32,7 +32,7 @@ from gi.repository import Atspi, Gio, GLib  # noqa: E402
 APP, OUT, SANDBOX = sys.argv[1:4]
 PROBE = sys.argv[4:5] == ["probe"]
 HERE = os.path.dirname(os.path.abspath(__file__))
-APP_ID = "io.github.c9dev.PenguinMail.Demo"
+APP_ID = "io.github.AlbertoBarrago.Iris.Demo"
 
 # Where the main window sits on the 1920x1080 monitor: clear of the top
 # bar, with room below it for the captions.
@@ -45,8 +45,8 @@ def tour(method, args=None, reply=None):
     """Calls the extension."""
     result = bus.call_sync(
         "org.gnome.Shell",
-        "/dev/penguinmail/Tour",
-        "dev.penguinmail.Tour",
+        "/dev/iris/Tour",
+        "dev.iris.Tour",
         method,
         args,
         GLib.VariantType(reply) if reply else None,
@@ -157,7 +157,7 @@ def app_node():
     desktop = Atspi.get_desktop(0)
     for index in range(desktop.get_child_count()):
         child = desktop.get_child_at_index(index)
-        if child is not None and (child.get_name() or "").startswith("io.github.c9dev"):
+        if child is not None and (child.get_name() or "").startswith("io.github.AlbertoBarrago"):
             return child
     return None
 
@@ -241,7 +241,7 @@ def centre(node, dx=0.5, dy=0.5):
     """Where `node` is on the screen, at a fraction of its size."""
     e = extents(node)
     ox, oy = web_offset(node)
-    title = window_of(node) or "Penguin Mail"
+    title = window_of(node) or "Iris"
     fx, fy, _, _ = tour("Frame", GLib.Variant("(s)", (title,)), "((iiii))")[0]
     return fx + ox + e.x + e.width * dx, fy + oy + e.y + e.height * dy
 
@@ -338,7 +338,7 @@ def launch_directly(settings=""):
     return subprocess.Popen([APP, "--demo"], env=environment, stdout=log, stderr=log)
 
 
-def wait_for_window(words="Penguin Mail", patience=60):
+def wait_for_window(words="Iris", patience=60):
     deadline = time.time() + patience
     while time.time() < deadline:
         if any(words in title for title in tour("Titles", None, "(as)")[0]):
@@ -348,7 +348,7 @@ def wait_for_window(words="Penguin Mail", patience=60):
 
 
 def place_main_window():
-    tour("Place", GLib.Variant("(siiii)", ("Penguin Mail", *WINDOW)))
+    tour("Place", GLib.Variant("(siiii)", ("Iris", *WINDOW)))
     find("list item", contains="Saturday hike?", patience=60)
 
 
@@ -417,11 +417,11 @@ def set_width(width, seconds=1.4):
     """Narrows or widens the main window around its centre, in steps."""
     x, y, w, h = WINDOW
     middle = x + w / 2
-    _, _, current, _ = tour("Frame", GLib.Variant("(s)", ("Penguin Mail",)), "((iiii))")[0]
+    _, _, current, _ = tour("Frame", GLib.Variant("(s)", ("Iris",)), "((iiii))")[0]
     steps = int(seconds * 30)
     for step in range(1, steps + 1):
         now = current + (width - current) * ease(step / steps)
-        tour("Place", GLib.Variant("(siiii)", ("Penguin Mail", int(middle - now / 2), y, int(now), h)))
+        tour("Place", GLib.Variant("(siiii)", ("Iris", int(middle - now / 2), y, int(now), h)))
         time.sleep(1 / 30)
 
 
@@ -443,7 +443,7 @@ def run_tour():
     start_recording()
     hold(1.2)
 
-    mark("Penguin Mail", "Mail and calendar for Linux, written in Rust")
+    mark("Iris", "Mail and calendar for Linux, written in Rust")
     x, y, w, h = WINDOW
     glide(960, 560)
     hold(0.4)

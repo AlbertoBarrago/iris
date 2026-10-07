@@ -324,8 +324,8 @@ pub fn report(kind: Kind, outcome: Result<&[Import], Failure>) -> Report {
             &[],
         ),
         (Kind::Smime, _, false) => fill_plural(
-            "Penguin Mail can check signatures made with this certificate.",
-            "Penguin Mail can check signatures made with these certificates.",
+            "Iris can check signatures made with this certificate.",
+            "Iris can check signatures made with these certificates.",
             changed,
             &[],
         ),

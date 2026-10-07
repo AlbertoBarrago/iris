@@ -24,7 +24,7 @@ pub struct QueuedCard {
 impl QueuedCard {
     pub fn new() -> QueuedCard {
         let icon = gtk::Image::builder()
-            .icon_name("penguin-mail-outbox-symbolic")
+            .icon_name("iris-outbox-symbolic")
             .valign(gtk::Align::Start)
             .build();
         let line = |classes: &[&str]| {

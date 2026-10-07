@@ -16,8 +16,8 @@ pub fn group(app: &Rc<App>) -> adw::PreferencesGroup {
     let group = adw::PreferencesGroup::builder()
         .title(gettext("Skills"))
         .description(gettext(
-            "Instructions the assistant follows for one kind of task, found in Penguin \
-             Mail's skills folder and in Claude Code's. Each skill is off until you turn it \
+            "Instructions the assistant follows for one kind of task, found in Iris's \
+             skills folder and in Claude Code's. Each skill is off until you turn it \
              on. Scripts in a skill run in a sandbox that cannot reach your mail, keys or \
              home folder, and the assistant asks before each command.",
         ))
@@ -29,7 +29,7 @@ pub fn group(app: &Rc<App>) -> adw::PreferencesGroup {
     let open = gtk::Button::builder()
         .label(gettext("Open Folder"))
         .valign(gtk::Align::Center)
-        .tooltip_text(gettext("Open Penguin Mail's skills folder"))
+        .tooltip_text(gettext("Open Iris's skills folder"))
         .build();
     open.connect_clicked(open_folder);
     group.set_header_suffix(Some(&open));
@@ -70,7 +70,7 @@ fn off_row(sandbox: &str) -> adw::ActionRow {
         .subtitle(glib::markup_escape_text(&fill(
             &gettext(
                 "Skill scripts run in a sandbox of their own, which cannot start inside the \
-                 {sandbox} sandbox Penguin Mail runs in. The .deb and the rpm have skills.",
+                 {sandbox} sandbox Iris runs in. The .deb and the rpm have skills.",
             ),
             &[("sandbox", sandbox)],
         )))
@@ -158,7 +158,7 @@ fn skill_row(app: &Rc<App>, skill: &Skill) -> gtk::Widget {
     row.upcast()
 }
 
-/// Creates Penguin Mail's skills folder when it is missing, readable by
+/// Creates Iris's skills folder when it is missing, readable by
 /// this user alone like the rest of its folders, and shows it in Files.
 fn open_folder(button: &gtk::Button) {
     use std::os::unix::fs::DirBuilderExt;

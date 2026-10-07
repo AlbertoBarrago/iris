@@ -149,7 +149,7 @@ async fn delete_forever_asks_for_the_permission_it_lacks() {
     assert_eq!(
         answer,
         Err(format!(
-            "Penguin Mail needs permission to delete mail for good for {ME}. \
+            "Iris needs permission to delete mail for good for {ME}. \
              The user was asked to grant it; try again once they have."
         ))
     );

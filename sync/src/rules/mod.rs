@@ -1,5 +1,5 @@
 //! The local rules engine: new Inbox mail through an account's local
-//! rules, while Penguin Mail runs. It looks at the Inbox messages past
+//! rules, while Iris runs. It looks at the Inbox messages past
 //! the account's watermark, oldest first and at most [`PASS`] at a time,
 //! runs every rule over each in the order they were made, and turns a
 //! match into the same mail action the window would run, so it queues

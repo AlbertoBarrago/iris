@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Builds Penguin Mail and installs it for the current user under ~/.local.
-#   NO_AUTOSTART=1 scripts/install.sh   skips starting Penguin Mail at login
-#   PREFIX=/opt/penguin-mail scripts/install.sh   installs somewhere else
+# Builds Iris and installs it for the current user under ~/.local.
+#   NO_AUTOSTART=1 scripts/install.sh   skips starting Iris at login
+#   PREFIX=/opt/iris scripts/install.sh   installs somewhere else
 # Upgrading from mailrs removes its binaries, launcher, and icons, and carries
 # its login item over. The app moves its config and mail on first start.
 set -euo pipefail

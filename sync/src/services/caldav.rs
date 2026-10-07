@@ -196,7 +196,7 @@ impl<D: DavApi> CalDav<D> {
                     page.whole_series.extend(read.series);
                     page.events.extend(read.events);
                 }
-                Err(err) => tracing::warn!(href = %resource.href, %err, "skipped a calendar resource Penguin Mail cannot read"),
+                Err(err) => tracing::warn!(href = %resource.href, %err, "skipped a calendar resource Iris cannot read"),
             }
         }
         // A member listed and gone before the fetch has gone.
@@ -499,6 +499,6 @@ impl<D: DavApi> CalendarService for CalDav<D> {
     }
 
     async fn edit_list(&self, _calendar: &str, _edit: &model::list::ListEdit) -> Result<Option<model::Calendar>, BackendError> {
-        Err(BackendError::Refused(gettext("Penguin Mail cannot change the calendar list of a CalDAV server.")))
+        Err(BackendError::Refused(gettext("Iris cannot change the calendar list of a CalDAV server.")))
     }
 }

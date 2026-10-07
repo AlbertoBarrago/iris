@@ -95,8 +95,8 @@ impl Standard {
     /// The icon its sidebar row shows.
     pub fn icon(self) -> &'static str {
         match self {
-            Standard::Inbox => "penguin-mail-inbox-symbolic",
-            Standard::Flagged => "penguin-mail-flag-symbolic",
+            Standard::Inbox => "iris-inbox-symbolic",
+            Standard::Flagged => "iris-flag-symbolic",
             Standard::Sent => "mail-send-symbolic",
             Standard::Drafts => "document-edit-symbolic",
             Standard::Muted => "audio-volume-muted-symbolic",
@@ -316,7 +316,7 @@ impl Mailbox {
                 return empty(gettext("Nothing Scheduled"), "mail-send-symbolic");
             }
             Mailbox::Outbox => {
-                return empty(gettext("Outbox Is Empty"), "penguin-mail-outgoing-symbolic");
+                return empty(gettext("Outbox Is Empty"), "iris-outgoing-symbolic");
             }
             Mailbox::Reminders => {
                 return with(
@@ -329,7 +329,7 @@ impl Mailbox {
                 return empty(gettext("No Follow-Ups"), "mail-reply-sender-symbolic");
             }
             Mailbox::Flag(_) => {
-                return empty(gettext("No Flagged Mail"), "penguin-mail-flag-symbolic");
+                return empty(gettext("No Flagged Mail"), "iris-flag-symbolic");
             }
             Mailbox::Vips { .. } => return empty(gettext("No Mail from VIPs"), "starred-symbolic"),
             Mailbox::Smart(_) => {
@@ -346,16 +346,16 @@ impl Mailbox {
             }
         }
         match self.standard() {
-            Some(Standard::Inbox) => empty(gettext("Inbox Zero"), "penguin-mail-inbox-symbolic"),
+            Some(Standard::Inbox) => empty(gettext("Inbox Zero"), "iris-inbox-symbolic"),
             Some(Standard::Flagged) => empty(gettext("No Starred Mail"), "starred-symbolic"),
             Some(Standard::Sent) => empty(gettext("No Sent Mail"), "mail-send-symbolic"),
             Some(Standard::Drafts) => with(
                 gettext("No Drafts"),
                 "document-edit-symbolic",
-                gettext("Close a message without sending it and Penguin Mail keeps it here."),
+                gettext("Close a message without sending it and Iris keeps it here."),
             ),
             Some(Standard::Muted) => empty(gettext("No Muted Mail"), "audio-volume-muted-symbolic"),
-            None => empty(gettext("No Mail"), "penguin-mail-tag-symbolic"),
+            None => empty(gettext("No Mail"), "iris-tag-symbolic"),
         }
     }
 
@@ -401,10 +401,10 @@ pub fn folder_name(folder: Folder) -> String {
 
 pub fn folder_icon(folder: Folder) -> &'static str {
     match folder {
-        Folder::Archive => "penguin-mail-archive-symbolic",
+        Folder::Archive => "iris-archive-symbolic",
         Folder::Junk => "mail-mark-junk-symbolic",
         Folder::Trash => "user-trash-symbolic",
-        Folder::AllMail => "penguin-mail-all-mail-symbolic",
+        Folder::AllMail => "iris-all-mail-symbolic",
     }
 }
 
@@ -421,7 +421,7 @@ impl Default for Empty {
     fn default() -> Self {
         Empty {
             title: gettext("No Mail"),
-            icon: "penguin-mail-inbox-symbolic",
+            icon: "iris-inbox-symbolic",
             description: String::new(),
         }
     }
@@ -1403,7 +1403,7 @@ pub fn waiting_line(message: &outbox::Queued, now: DateTime<Local>) -> String {
             ],
         ),
         None => fill(
-            &gettext("{problem}. Penguin Mail stopped trying"),
+            &gettext("{problem}. Iris stopped trying"),
             &[("problem", problem)],
         ),
     }
@@ -1523,7 +1523,7 @@ mod tests {
 
     #[test]
     fn an_empty_outbox_shows_the_outbox_tray() {
-        assert_eq!(super::Mailbox::Outbox.empty().icon, "penguin-mail-outgoing-symbolic");
+        assert_eq!(super::Mailbox::Outbox.empty().icon, "iris-outgoing-symbolic");
     }
 
     #[test]

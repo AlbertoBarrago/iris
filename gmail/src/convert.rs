@@ -1,4 +1,4 @@
-//! Conversions from Gmail wire types to the types the rest of Penguin Mail uses.
+//! Conversions from Gmail wire types to the types the rest of Iris uses.
 
 use mailrs_domain::{AccountId, MessageMeta};
 use mailrs_mime::address::parse_address_list;

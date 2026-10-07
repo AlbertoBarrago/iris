@@ -1,4 +1,4 @@
-//! The About window: which Penguin Mail this is, who made it, where to read
+//! The About window: which Iris this is, who made it, where to read
 //! about it, and a button that checks for a newer version and installs it.
 //! libadwaita's own About dialog takes no widgets of ours, so this one draws
 //! its main page the same way and adds the button.
@@ -10,7 +10,7 @@ use mailrs_domain::translate::{fill, gettext};
 
 use crate::update::State;
 
-pub(crate) const REPOSITORY: &str = "https://github.com/c9dev/penguin-mail";
+pub(crate) const REPOSITORY: &str = "https://github.com/AlbertoBarrago/iris";
 
 pub struct About {
     pub dialog: adw::Dialog,
@@ -43,7 +43,7 @@ impl About {
         icon.set_accessible_role(gtk::AccessibleRole::Presentation);
         content.append(&icon);
 
-        let name = gtk::Label::new(Some(&gettext("Penguin Mail")));
+        let name = gtk::Label::new(Some(&gettext("Iris")));
         name.add_css_class("title-1");
         name.set_wrap(true);
         content.append(&name);
@@ -198,7 +198,7 @@ impl About {
                 .build(),
         ));
         let dialog = adw::Dialog::builder()
-            .title(gettext("About Penguin Mail"))
+            .title(gettext("About Iris"))
             .content_width(380)
             .child(&view)
             .build();
@@ -234,7 +234,7 @@ impl About {
                 Some("app.check-for-updates"),
                 false,
                 false,
-                Some(gettext("Penguin Mail is up to date")),
+                Some(gettext("Iris is up to date")),
             ),
             State::Unreachable => (
                 gettext("Check for Updates"),
@@ -315,7 +315,7 @@ impl About {
 
 /// `path` as Pango markup that lets a line break only after a "/". Each
 /// name between separators goes in a span that forbids breaks inside
-/// it, so "mailrs.db" or "penguin-mail" never splits, and the label's
+/// it, so "mailrs.db" or "iris" never splits, and the label's
 /// text, the one a selection copies, stays the path itself. The
 /// separators stay outside the spans: GTK merges touching spans that
 /// forbid breaks into one, which forbade every break in the path.
@@ -339,9 +339,9 @@ mod tests {
     #[test]
     fn a_path_may_break_only_after_a_separator() {
         assert_eq!(
-            path_markup("/tmp/penguin-mail-demo/mailrs.db"),
+            path_markup("/tmp/iris-demo/mailrs.db"),
             "/<span allow_breaks=\"false\">tmp</span>\
-             /<span allow_breaks=\"false\">penguin-mail-demo</span>\
+             /<span allow_breaks=\"false\">iris-demo</span>\
              /<span allow_breaks=\"false\">mailrs.db</span>"
         );
     }

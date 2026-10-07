@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Starts an installed Penguin Mail with --demo on a hidden display and
+# Starts an installed Iris with --demo on a hidden display and
 # checks it is still running fifteen seconds later. The package jobs run
 # it after installing what they built, so a library or a runtime
 # permission the package forgot shows up as a crash here, not on
 # someone's desktop.
 #
 #   scripts/smoke-start.sh <command...>
-#   scripts/smoke-start.sh /usr/bin/penguin-mail
-#   scripts/smoke-start.sh flatpak run io.github.c9dev.PenguinMail
+#   scripts/smoke-start.sh /usr/bin/iris
+#   scripts/smoke-start.sh flatpak run io.github.AlbertoBarrago.Iris
 #
 # Needs Xvfb and dbus-run-session.
 set -euo pipefail
@@ -26,14 +26,14 @@ done
 # Run from a desktop session, GTK would pick the session's Wayland display
 # over the hidden one, and with no WAYLAND_DISPLAY at all it tries
 # wayland-0. A name nothing listens on sends it to X11.
-export WAYLAND_DISPLAY=penguin-mail-smoke-none
+export WAYLAND_DISPLAY=iris-smoke-none
 export GDK_BACKEND=x11
 status=0
 DISPLAY=$display timeout 15 dbus-run-session -- "$@" --demo >"$log" 2>&1 || status=$?
 # timeout answers 124 when it had to stop the app, which is the pass.
 if [ "$status" -ne 124 ]; then
-    echo "Penguin Mail stopped with status $status within 15 seconds:" >&2
+    echo "Iris stopped with status $status within 15 seconds:" >&2
     cat "$log" >&2
     exit 1
 fi
-echo "Penguin Mail ran for 15 seconds on a hidden display."
+echo "Iris ran for 15 seconds on a hidden display."

@@ -145,7 +145,7 @@ pub struct Core {
     /// than the window's; a new engine, after a change to the sync
     /// settings, starts from this rather than reopening as the window.
     window_open: Cell<bool>,
-    /// Keeps `penguin-mail-cli sync` off this store while the app runs.
+    /// Keeps `iris-cli sync` off this store while the app runs.
     /// Changing the sync settings restarts the engine in this process, so
     /// the lock stays with the core rather than with one engine.
     /// The demo takes none.
@@ -205,8 +205,8 @@ impl Core {
         let sync_lock = match (!demo).then(|| SyncLock::take(&dir)).transpose() {
             Ok(lock) => lock,
             Err(LockError::Held) => bail!(gettext(
-                "Another copy of Penguin Mail, or penguin-mail-cli sync, is syncing your \
-                 mail. Stop it, then open Penguin Mail again."
+                "Another copy of Iris, or iris-cli sync, is syncing your \
+                 mail. Stop it, then open Iris again."
             )),
             Err(err) => return Err(err.into()),
         };
@@ -217,7 +217,7 @@ impl Core {
                 tracing::error!(error = %err, "the mail store could not be updated");
                 return Err(StoreNotUpdated {
                     message: gettext(
-                        "Penguin Mail could not update its mail store, and kept the old one.",
+                        "Iris could not update its mail store, and kept the old one.",
                     ),
                 }
                 .into());
@@ -701,7 +701,7 @@ impl Core {
 
     /// Runs `browser`'s sign-in, keeps the account and its refresh token,
     /// and starts syncing it. `urls` receives the page to open. Each
-    /// sign-in asks for every permission Penguin Mail uses; the provider
+    /// sign-in asks for every permission Iris uses; the provider
     /// keeps what the account already granted, so signing in again asks
     /// nothing new. Answers the account and the name the provider knows
     /// the person by. Dropping the sender behind `cancel` stops the wait

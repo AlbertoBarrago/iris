@@ -1,4 +1,4 @@
-//! The login item that starts Penguin Mail in the tray.
+//! The login item that starts Iris in the tray.
 //!
 //! Outside Flatpak the item is a desktop file in `~/.config/autostart`. In
 //! a snap the same path lands in the snap's own config folder, where snapd
@@ -13,7 +13,7 @@ use mailrs_domain::translate::gettext;
 
 use crate::packaging::{BUILT_FOR, Packaging};
 
-const FILE: &str = "io.github.c9dev.PenguinMail.desktop";
+const FILE: &str = "io.github.AlbertoBarrago.Iris.desktop";
 
 pub fn path() -> Option<PathBuf> {
     Some(dirs_config()?.join("autostart").join(FILE))
@@ -32,7 +32,7 @@ pub fn is_enabled(path: &Path) -> bool {
 
 /// Turns the login item on or off for this copy, however it was packaged.
 pub fn apply(path: &Path, enabled: bool) -> std::io::Result<()> {
-    let exe = crate::exe::launcher().unwrap_or_else(|_| "penguin-mail".into());
+    let exe = crate::exe::launcher().unwrap_or_else(|_| "iris".into());
     set_enabled(path, &exe, enabled)?;
     if BUILT_FOR == Packaging::Flatpak {
         ask_portal(enabled);
@@ -40,19 +40,19 @@ pub fn apply(path: &Path, enabled: bool) -> std::io::Result<()> {
     Ok(())
 }
 
-/// Asks the Background portal to start Penguin Mail at login, or to stop.
+/// Asks the Background portal to start Iris at login, or to stop.
 /// The desktop may ask the person first; the answer arrives as a signal
 /// nobody here waits for, because the switch already shows their choice.
 fn ask_portal(enabled: bool) {
     let options = glib::VariantDict::new(None);
     options.insert_value(
         "reason",
-        &gettext("Penguin Mail keeps syncing with no window open").to_variant(),
+        &gettext("Iris keeps syncing with no window open").to_variant(),
     );
     options.insert_value("autostart", &enabled.to_variant());
     options.insert_value(
         "commandline",
-        &vec!["penguin-mail".to_string(), "--background".to_string()].to_variant(),
+        &vec!["iris".to_string(), "--background".to_string()].to_variant(),
     );
     let parameters = glib::Variant::tuple_from_iter(["".to_variant(), options.end()]);
     glib::spawn_future_local(async move {
@@ -90,8 +90,8 @@ pub fn set_enabled(path: &Path, exe: &Path, enabled: bool) -> std::io::Result<()
     std::fs::write(
         path,
         format!(
-            "[Desktop Entry]\nType=Application\nName=Penguin Mail\nComment=Keeps Gmail in sync from the system tray\n\
-             Exec={} --background\nIcon=io.github.c9dev.PenguinMail\nNoDisplay=true\nX-GNOME-Autostart-enabled=true\n",
+            "[Desktop Entry]\nType=Application\nName=Iris\nComment=Keeps Gmail in sync from the system tray\n\
+             Exec={} --background\nIcon=io.github.AlbertoBarrago.Iris\nNoDisplay=true\nX-GNOME-Autostart-enabled=true\n",
             exec_argument(exe)
         ),
     )
@@ -137,14 +137,14 @@ mod tests {
         let path = dir
             .path()
             .join("autostart")
-            .join("io.github.c9dev.PenguinMail.desktop");
+            .join("io.github.AlbertoBarrago.Iris.desktop");
         assert!(!is_enabled(&path));
-        set_enabled(&path, Path::new("/opt/penguin-mail/bin/penguin-mail"), true).unwrap();
+        set_enabled(&path, Path::new("/opt/iris/bin/iris"), true).unwrap();
         assert!(is_enabled(&path));
         assert!(
             std::fs::read_to_string(&path)
                 .unwrap()
-                .contains("Exec=\"/opt/penguin-mail/bin/penguin-mail\" --background")
+                .contains("Exec=\"/opt/iris/bin/iris\" --background")
         );
         set_enabled(&path, Path::new("/x"), false).unwrap();
         assert!(!is_enabled(&path));
@@ -154,16 +154,16 @@ mod tests {
     #[test]
     fn a_path_with_a_space_stays_one_argument() {
         let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("io.github.c9dev.PenguinMail.desktop");
+        let path = dir.path().join("io.github.AlbertoBarrago.Iris.desktop");
         set_enabled(
             &path,
-            Path::new("/home/ann/Penguin Mail/penguin-mail"),
+            Path::new("/home/ann/Iris/iris"),
             true,
         )
         .unwrap();
         let text = std::fs::read_to_string(&path).unwrap();
         assert!(
-            text.contains("\nExec=\"/home/ann/Penguin Mail/penguin-mail\" --background\n"),
+            text.contains("\nExec=\"/home/ann/Iris/iris\" --background\n"),
             "{text}"
         );
     }

@@ -35,7 +35,7 @@ it tells you why that account cannot. On a Microsoft account it adds and
 takes off tags and moves mail between folders, and Categorize Sender sorts
 a sender into Focused or Other. Every account has rules. Gmail and
 servers that run Sieve keep them on the server; for other providers
-Penguin Mail runs them on this computer while it is open, and the
+Iris runs them on this computer while it is open, and the
 assistant says which when it lists them. It looks people up in your address book,
 by name, address or organisation, and gets back their addresses, phone
 number and organisation. It acts through the app too, so Ctrl+Z
@@ -54,7 +54,7 @@ It looks after what you keep, too: it renames, recolours and deletes
 labels, changes and deletes smart mailboxes, saves and deletes templates,
 adds and changes Google contacts, and keeps the list of senders whose
 remote images load. Adding or changing a contact needs one more Google
-permission, which Penguin Mail asks for the first time.
+permission, which Iris asks for the first time.
 
 It exports mail as a file: conversations as one mbox file, which other
 mail programs import, or one message as an .eml file. The file goes in
@@ -100,7 +100,7 @@ It attaches a file from a message you have, or a file on this computer
 that you name by its path. Before it reads a file from this computer it
 shows you the whole path and waits for you to allow it. It will not
 attach anything from a hidden folder, such as `~/.ssh` or `~/.gnupg`,
-from the system folders, or from Penguin Mail's own data. It does not
+from the system folders, or from Iris's own data. It does not
 forward an encrypted message or its files; forward those yourself from
 the conversation.
 
@@ -143,7 +143,7 @@ goes out once the connection returns.
 Signing in already asked for the calendar permission; a calendar tool
 that finds it withheld says so instead of failing silently, and the
 calendar sidebar's Grant Access button asks Google again. If the Google Cloud
-project Penguin Mail signs in with has the Calendar API switched off, a
+project Iris signs in with has the Calendar API switched off, a
 dialog says so and opens the page that turns it on.
 
 ## What it did
@@ -175,7 +175,7 @@ Open Preferences (Ctrl+,) and go to the AI page. It has two groups:
   for it to run on a model of its own, such as a small, fast local model
   while the assistant runs on Claude. Choose **Off** to turn a feature off.
 
-**Found on This Computer** lists the servers and tools Penguin Mail found,
+**Found on This Computer** lists the servers and tools Iris found,
 each with a **Use** button that sets up the connection and puts the
 assistant on it. You can also set one up by hand.
 
@@ -183,7 +183,7 @@ assistant on it. You can also set one up by hand.
 
 1. In LM Studio, load a model and start the server on the Developer tab.
    It listens on `http://localhost:1234/v1`.
-2. In Penguin Mail, choose **Local Server** for the assistant. The
+2. In Iris, choose **Local Server** for the assistant. The
    default address already points at LM Studio. Pick the model from the
    list next to the Model field.
 
@@ -208,16 +208,16 @@ same way. Any server that speaks the OpenAI chat completions API does.
 Paste a key from console.anthropic.com under **Anthropic API** in
 Connections, then choose **Anthropic API** for the assistant. The default
 model is `claude-opus-5`. If `ANTHROPIC_API_KEY` is set when
-Penguin Mail starts, the Found list offers it.
+Iris starts, the Found list offers it.
 
 ### Your Claude subscription
 
 If Claude Code is installed and signed in, the Found list shows it. Press
 **Use**, or choose **Claude Subscription**, and the assistant
-runs on your Pro or Max plan with no API key. Penguin Mail looks for
+runs on your Pro or Max plan with no API key. Iris looks for
 `claude` on your PATH and in `~/.local/bin`.
 
-Penguin Mail starts `claude -p` for each message and hands it the mail
+Iris starts `claude -p` for each message and hands it the mail
 tools over MCP. It turns off Claude Code's own tools for files and the
 shell, allows only the mail tools plus WebSearch and WebFetch while web
 search is on, and uses `--permission-mode dontAsk`, so nothing outside that
@@ -226,7 +226,7 @@ list runs. Claude Code still reads your global
 
 The model field lists what your `claude` install offers: its own default,
 the aliases with the version each points at today, and the dated ids for
-pinning one. Penguin Mail reads that list from the catalog the CLI keeps,
+pinning one. Iris reads that list from the catalog the CLI keeps,
 so it matches whatever version you have.
 
 ## Web search
@@ -243,14 +243,14 @@ message. Pick how under **Web Search** on the AI page:
   [brave.com/search/api](https://brave.com/search/api/) and paste it into
   **Brave Search API Key**. It goes into the keyring.
 - **SearXNG**: a local model searches with a SearXNG server you run or
-  trust. Enter its address, such as `http://localhost:8080`. Penguin Mail
+  trust. Enter its address, such as `http://localhost:8080`. Iris
   asks SearXNG for JSON, which a fresh install does not serve: add `json`
   under `search.formats` in its `settings.yml`.
 
 **Test** runs one search and shows the first result's title, or what went
 wrong.
 
-A local model reads a page through Penguin Mail: it downloads up to 2 MB
+A local model reads a page through Iris: it downloads up to 2 MB
 in 20 seconds and reads the text, without scripts or styles. It will not
 open an address on your computer or your home network, so a message cannot
 send the model to your router. Neither tool asks before it runs, since both
@@ -258,10 +258,10 @@ only read. The model is told that search results and pages are written by
 strangers and that it must not follow instructions in them.
 ## Add MCP servers
 
-An MCP server gives the assistant tools from outside Penguin Mail, such as
+An MCP server gives the assistant tools from outside Iris, such as
 your files or an issue tracker. Add one in Preferences, on the AI page,
 under **MCP Servers**: press **+**, give it a short name, and choose how
-Penguin Mail reaches it.
+Iris reaches it.
 
 **Command** starts a program on this computer and talks to it over its
 input and output. Type the command line the way the server's README
@@ -282,7 +282,7 @@ token if it takes one; the token goes to the keyring:
 https://mcp.example.com/mcp
 ```
 
-Penguin Mail cannot sign in to a server through a browser. A server that
+Iris cannot sign in to a server through a browser. A server that
 needs that says so when you press **Test**.
 
 **Test** connects, lists the server's tools, and says how many there are
@@ -291,13 +291,13 @@ used it.
 
 A server starts the first time the assistant needs it, stays running for
 later questions, and stops when you turn it off, remove it, or quit
-Penguin Mail. One that fails to start offers no tools, and its row says
+Iris. One that fails to start offers no tools, and its row says
 why. The assistant sees each tool as `name__tool`, such as
 `files__read_file`, and asks you before each call, showing the tool and
 what it will send. **Always Allow** stops the asking for that tool, and
 the **Always Allowed** list on the AI page takes that back.
 
-Penguin Mail speaks MCP revision 2026-07-28, and the handshake of
+Iris speaks MCP revision 2026-07-28, and the handshake of
 2025-11-25 and earlier for the servers that still use it, over a command
 or Streamable HTTP. With your Claude subscription, the tools reach Claude
 Code through the same bridge as the mail tools, and the asking holds there
@@ -332,7 +332,7 @@ By default, the assistant asks you before it:
 - lets a sender's images load, or stops them,
 - writes mail to a file, naming the file.
 
-Deleting forever needs one more Google permission, which Penguin Mail
+Deleting forever needs one more Google permission, which Iris
 asks for the first time, as the Delete Forever button does.
 
 A card appears in the chat with the details and **Allow** and **Don't
@@ -362,9 +362,9 @@ Below the second `---` go the instructions themselves. Files beside
 `SKILL.md`, such as reference notes or scripts, are for the instructions
 to point at.
 
-Penguin Mail reads skills from two folders:
+Iris reads skills from two folders:
 
-- `~/.config/penguin-mail/skills/`, its own. **Open Folder** on the AI page
+- `~/.config/iris/skills/`, its own. **Open Folder** on the AI page
   creates it and opens it.
 - `~/.claude/skills/`, where Claude Code keeps skills, so the ones you
   already have work here too. Links to skill folders elsewhere work.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Builds the signed apt repository Penguin Mail publishes on GitHub Pages.
+# Builds the signed apt repository Iris publishes on GitHub Pages.
 #   scripts/apt-repo.sh <debs> <out>
-# <debs>: a folder of penguin-mail_*.deb files, every version the
+# <debs>: a folder of iris_*.deb files, every version the
 #         repository should offer.
 # <out>:  the site to publish. It gets pool/, dists/stable/, the public key
 #         and an index page saying how to add the repository.
@@ -17,14 +17,14 @@ component=main
 arch=amd64
 
 rm -rf "$out"
-pool="$out/pool/$component/p/penguin-mail"
+pool="$out/pool/$component/p/iris"
 binary="$out/dists/$suite/$component/binary-$arch"
 mkdir -p "$pool" "$binary"
 
 shopt -s nullglob
-packages=("$debs"/penguin-mail_*_"$arch".deb)
+packages=("$debs"/iris_*_"$arch".deb)
 if [ ${#packages[@]} -eq 0 ]; then
-    echo "apt-repo.sh: no penguin-mail_*_$arch.deb in $debs" >&2
+    echo "apt-repo.sh: no iris_*_$arch.deb in $debs" >&2
     exit 1
 fi
 
@@ -36,7 +36,7 @@ for deb in "${packages[@]}"; do
     cp "$deb" "$pool/$name"
     {
         dpkg-deb -f "$deb"
-        echo "Filename: pool/$component/p/penguin-mail/$name"
+        echo "Filename: pool/$component/p/iris/$name"
         echo "Size: $(stat -c %s "$deb")"
         echo "MD5sum: $(md5sum "$deb" | cut -d' ' -f1)"
         echo "SHA256: $(sha256sum "$deb" | cut -d' ' -f1)"
@@ -49,13 +49,13 @@ gzip -9 -n -k "$binary/Packages"
 # the signature on it, then each index against it.
 release="$out/dists/$suite/Release"
 {
-    echo "Origin: Penguin Mail"
-    echo "Label: Penguin Mail"
+    echo "Origin: Iris"
+    echo "Label: Iris"
     echo "Suite: $suite"
     echo "Codename: $suite"
     echo "Architectures: $arch"
     echo "Components: $component"
-    echo "Description: Penguin Mail, mail and calendar for Linux"
+    echo "Description: Iris, mail and calendar for Linux"
     echo "Date: $(LC_ALL=C date -u '+%a, %d %b %Y %H:%M:%S UTC')"
     for sum in MD5Sum SHA256; do
         echo "$sum:"
@@ -76,9 +76,9 @@ gpg --batch --yes --pinentry-mode loopback --passphrase '' \
 gpg --batch --yes --pinentry-mode loopback --passphrase '' \
     --armor --detach-sign -o "$out/dists/$suite/Release.gpg" "$release"
 
-cp "$here/packaging/apt/penguin-mail-archive-keyring.gpg" \
-    "$here/packaging/apt/penguin-mail-archive-keyring.asc" "$out/"
-cp "$here/packaging/apt/penguin-mail.sources" "$out/"
+cp "$here/packaging/apt/iris-archive-keyring.gpg" \
+    "$here/packaging/apt/iris-archive-keyring.asc" "$out/"
+cp "$here/packaging/apt/iris.sources" "$out/"
 cp "$here/packaging/apt/index.html" "$out/"
 # Pages would otherwise run the site through Jekyll, which skips nothing
 # here but costs a build.

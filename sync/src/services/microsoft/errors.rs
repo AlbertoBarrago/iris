@@ -15,7 +15,7 @@ pub(crate) fn backend(err: GraphError) -> BackendError {
         GraphError::PreconditionFailed | GraphError::Conflict => BackendError::Changed,
         GraphError::AccessDenied { .. } => BackendError::NeedsPermission,
         GraphError::MailboxOnPremises => BackendError::Refused(gettext(
-            "This mailbox is on your organization's own Exchange server, which Penguin Mail cannot reach.",
+            "This mailbox is on your organization's own Exchange server, which Iris cannot reach.",
         )),
         other => BackendError::Refused(other.to_string()),
     }

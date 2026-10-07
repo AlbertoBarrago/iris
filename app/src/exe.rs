@@ -12,7 +12,7 @@ pub fn path() -> io::Result<PathBuf> {
     std::env::current_exe().map(replaced)
 }
 
-/// The command that starts Penguin Mail again: what a restart runs and
+/// The command that starts Iris again: what a restart runs and
 /// what the login item names. Every relaunch goes through here, so a
 /// package that starts the app some other way changes this one function.
 pub fn launcher() -> io::Result<PathBuf> {
@@ -34,16 +34,16 @@ mod tests {
     #[test]
     fn a_replaced_executable_resolves_to_the_file_that_replaced_it() {
         assert_eq!(
-            replaced(PathBuf::from("/home/ann/.local/bin/penguin-mail (deleted)")),
-            PathBuf::from("/home/ann/.local/bin/penguin-mail")
+            replaced(PathBuf::from("/home/ann/.local/bin/iris (deleted)")),
+            PathBuf::from("/home/ann/.local/bin/iris")
         );
     }
 
     #[test]
     fn an_executable_still_on_disk_keeps_its_path() {
         assert_eq!(
-            replaced(PathBuf::from("/usr/bin/penguin-mail")),
-            PathBuf::from("/usr/bin/penguin-mail")
+            replaced(PathBuf::from("/usr/bin/iris")),
+            PathBuf::from("/usr/bin/iris")
         );
     }
 }

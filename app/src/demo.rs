@@ -1,4 +1,4 @@
-//! Sample mail for `penguin-mail --demo`: four accounts and a few weeks of
+//! Sample mail for `iris --demo`: four accounts and a few weeks of
 //! conversations. Every address uses a reserved `.example` domain.
 //!
 //! Three accounts get a `FakeGmail` holding their mail, and the fourth, on
@@ -2153,7 +2153,7 @@ impl SampleAccount {
             state.email = self.email.into();
             state.personal = self.personal;
             state.display_name = Some(DISPLAY_NAME.into());
-            state.signature = Some(format!("{DISPLAY_NAME}\nSent from Penguin Mail"));
+            state.signature = Some(format!("{DISPLAY_NAME}\nSent from Iris"));
             state.send_as = self
                 .aliases
                 .iter()
@@ -2192,7 +2192,7 @@ fn stand_in(attachment_id: &str, mime_type: &str, size: i64) -> Vec<u8> {
     // The body reads each file's size off its bytes, so the file runs to
     // the size the sample gives it and the attachment row shows that.
     let mut file =
-        format!("This is {attachment_id}, a stand-in file from Penguin Mail demo mode.\n").into_bytes();
+        format!("This is {attachment_id}, a stand-in file from Iris demo mode.\n").into_bytes();
     file.resize(file.len().max(size as usize), b'\n');
     file
 }
@@ -3155,7 +3155,7 @@ mod tests {
             .map(|address| address.signature.clone());
         assert_eq!(
             signature,
-            Some(format!("{DISPLAY_NAME}\nSent from Penguin Mail"))
+            Some(format!("{DISPLAY_NAME}\nSent from Iris"))
         );
         let from: Vec<String> = api
             .send_as()

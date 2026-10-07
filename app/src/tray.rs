@@ -135,7 +135,7 @@ impl ksni::Tray for MailTray {
 
     fn title(&self) -> String {
         fill(
-            &gettext("Penguin Mail: {summary}"),
+            &gettext("Iris: {summary}"),
             &[("summary", &self.summary())],
         )
     }
@@ -152,7 +152,7 @@ impl ksni::Tray for MailTray {
     fn tool_tip(&self) -> ksni::ToolTip {
         ksni::ToolTip {
             title: fill(
-                &gettext("Penguin Mail: {summary}"),
+                &gettext("Iris: {summary}"),
                 &[("summary", &self.summary())],
             ),
             description: self
@@ -203,7 +203,7 @@ impl ksni::Tray for MailTray {
             }
             .into()
         };
-        items.push(item(&gettext("Open Penguin Mail"), || TrayCommand::Open));
+        items.push(item(&gettext("Open Iris"), || TrayCommand::Open));
         items.push(item(&gettext("New Message"), || TrayCommand::Compose));
         items.push(item(&gettext("Check for Mail"), || TrayCommand::Check));
         if let Some(version) = &self.update {

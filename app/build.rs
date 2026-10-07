@@ -8,8 +8,8 @@ fn main() {
             "--sourcedir",
             "data",
             "--target",
-            &format!("{out}/penguin-mail.gresource"),
-            "data/penguin-mail.gresource.xml",
+            &format!("{out}/iris.gresource"),
+            "data/iris.gresource.xml",
         ])
         .status()
         .expect("glib-compile-resources runs; install libglib2.0-dev-bin");

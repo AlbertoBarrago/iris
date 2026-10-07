@@ -165,7 +165,7 @@ pub enum MicrosoftSignInError {
 
 fn taken(address: &str, provider: &str) -> String {
     fill(
-        &gettext("{address} is already in Penguin Mail as a {provider} account."),
+        &gettext("{address} is already in Iris as a {provider} account."),
         &[("address", address), ("provider", provider)],
     )
 }
@@ -375,7 +375,7 @@ pub async fn check_pop3(
 }
 
 /// A POP3 failure as the IMAP error Add Account already words. A server
-/// without UIDL gets a sentence of its own, since Penguin Mail cannot
+/// without UIDL gets a sentence of its own, since Iris cannot
 /// tell which messages it already has.
 pub fn in_imap_words(err: Pop3Error) -> ImapError {
     match err {
@@ -386,7 +386,7 @@ pub fn in_imap_words(err: Pop3Error) -> ImapError {
         Pop3Error::Refused(text) => ImapError::Refused(text),
         Pop3Error::Protocol(text) => ImapError::Protocol(text),
         Pop3Error::Unsupported("UIDL") => ImapError::Refused(gettext(
-            "This server cannot tell its messages apart, so Penguin Mail cannot download from it safely.",
+            "This server cannot tell its messages apart, so Iris cannot download from it safely.",
         )),
         Pop3Error::Unsupported(what) => ImapError::Unsupported(what),
         other @ Pop3Error::TooLarge => ImapError::Protocol(other.to_string()),
@@ -647,7 +647,7 @@ mod tests {
             .expect_err("an IMAP account holds the address");
         assert_eq!(
             refused.to_string(),
-            "dana@fastmail.com is already in Penguin Mail as a Fastmail account."
+            "dana@fastmail.com is already in Iris as a Fastmail account."
         );
         let kept = db
             .read(|c| accounts::account_by_email(c, "dana@fastmail.com"))
@@ -723,7 +723,7 @@ mod tests {
         let refused = microsoft_signed_in(&db, Arc::clone(&tokens), new_microsoft("dana@contoso.com"), 0, "")
             .await
             .expect_err("Gmail holds the address");
-        assert_eq!(refused.to_string(), "dana@contoso.com is already in Penguin Mail as a Gmail account.");
+        assert_eq!(refused.to_string(), "dana@contoso.com is already in Iris as a Gmail account.");
         assert_eq!(tokens.load(1).unwrap(), None);
     }
 

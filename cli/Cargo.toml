@@ -7,13 +7,13 @@ edition.workspace = true
 rust-version.workspace = true
 
 [[bin]]
-name = "penguin-mail-cli"
+name = "iris-cli"
 path = "src/main.rs"
 
 [features]
 # Reaches secrets through the Secret portal instead of the desktop
-# keyring; the Flatpak build turns this on, since `penguin-mail-cli`
-# ships inside it beside `penguin-mail`.
+# keyring; the Flatpak build turns this on, since `iris-cli`
+# ships inside it beside `iris`.
 packaging-flatpak = ["mailrs-gmail/packaging-flatpak", "mailrs-sync/packaging-flatpak"]
 
 [dependencies]

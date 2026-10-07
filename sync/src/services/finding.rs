@@ -194,7 +194,7 @@ pub async fn keep_found(db: &Db, account_id: AccountId, found: &FoundServices) -
 pub async fn use_typed<P: ServiceProbe>(probe: &P, db: &Db, account_id: AccountId, kind: ServiceKind, url: &str, user: &str, password: &str) -> Result<FoundService, SyncError> {
     let url = url.trim();
     if url.starts_with("http://") {
-        return Err(BackendError::Refused(mailrs_domain::translate::gettext("Penguin Mail reaches calendar and contact servers over HTTPS only.")).into());
+        return Err(BackendError::Refused(mailrs_domain::translate::gettext("Iris reaches calendar and contact servers over HTTPS only.")).into());
     }
     let url = match url.contains("://") {
         true => url.to_string(),

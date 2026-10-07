@@ -1,7 +1,7 @@
 //! Times the reads the sidebar and the thread list make, on a copy of a
 //! real store, and prints the counts they answer so a run before a change
 //! and a run after it can be compared line by line. Ignored by default.
-//! Point `PENGUIN_MAIL_MEASURE_DB` at a copy, never at the live file:
+//! Point `IRIS_MEASURE_DB` at a copy, never at the live file:
 //! opening it runs any migration still pending.
 
 use std::path::Path;
@@ -30,10 +30,10 @@ fn time<T>(name: &str, mut read: impl FnMut() -> T) {
 }
 
 #[test]
-#[ignore = "needs a copy of a real store in PENGUIN_MAIL_MEASURE_DB"]
+#[ignore = "needs a copy of a real store in IRIS_MEASURE_DB"]
 fn the_sidebar_and_the_lists_on_a_real_store() {
-    let path = std::env::var("PENGUIN_MAIL_MEASURE_DB")
-        .expect("PENGUIN_MAIL_MEASURE_DB names a copy of a store");
+    let path = std::env::var("IRIS_MEASURE_DB")
+        .expect("IRIS_MEASURE_DB names a copy of a store");
     let started = Instant::now();
     let conn = mailrs_store::open_connection(Path::new(&path)).unwrap();
     println!(

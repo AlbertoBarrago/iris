@@ -119,7 +119,7 @@ mod imp {
             let clip = marker("mail-attachment-symbolic");
             let mute = marker("audio-volume-muted-symbolic");
             mute.set_tooltip_text(Some(&gettext("Muted")));
-            let star = marker("penguin-mail-flag-symbolic");
+            let star = marker("iris-flag-symbolic");
             star.add_css_class("starred");
             let date = text_label("date");
             date.set_ellipsize(pango::EllipsizeMode::None);

@@ -204,7 +204,7 @@ def app_node():
     desktop = Atspi.get_desktop(0)
     for index in range(desktop.get_child_count()):
         child = desktop.get_child_at_index(index)
-        if child is not None and (child.get_name() or "").startswith("io.github.c9dev"):
+        if child is not None and (child.get_name() or "").startswith("io.github.AlbertoBarrago"):
             return child
     return None
 
@@ -385,7 +385,7 @@ def hide_nudge():
 
 
 def main_window():
-    window = window_titled("Penguin Mail")
+    window = window_titled("Iris")
     resize(window, 1440, 900)
     # The window is on the bus a moment after it maps, and the mailboxes
     # fill a moment after that.
@@ -446,7 +446,7 @@ def welcome():
     # adds the first one. The sandboxed home holds no account, and nothing
     # presses the button, so nothing reaches Google.
     run = launch(args=())
-    window = window_titled("Penguin Mail")
+    window = window_titled("Iris")
     resize(window, 1440, 900)
     find(name="Google, Gmail, Workspace, signs in through your browser", patience=60)
     settle(3)

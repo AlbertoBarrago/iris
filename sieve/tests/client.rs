@@ -38,7 +38,7 @@ async fn a_session_logs_in_lists_reads_and_writes() {
     let (client, far) = tokio::io::duplex(1 << 16);
     let answers = vec![
         "OK \"Logged in.\"\r\n",
-        "\"penguin-mail\" ACTIVE\r\n\"old\"\r\nOK \"Listscripts completed.\"\r\n",
+        "\"iris\" ACTIVE\r\n\"old\"\r\nOK \"Listscripts completed.\"\r\n",
         "{12}\r\nkeep;\r\nstop;\r\nOK \"Getscript completed.\"\r\n",
         "OK \"Putscript completed.\"\r\n",
         "OK \"Logout completed.\"\r\n",
@@ -51,10 +51,10 @@ async fn a_session_logs_in_lists_reads_and_writes() {
     let listed = session.scripts().await.unwrap();
     assert_eq!(
         (listed[0].name.as_str(), listed[0].active),
-        ("penguin-mail", true)
+        ("iris", true)
     );
-    assert_eq!(session.get("penguin-mail").await.unwrap(), "keep;\r\nstop;");
-    session.put("penguin-mail", "keep;\n").await.unwrap();
+    assert_eq!(session.get("iris").await.unwrap(), "keep;\r\nstop;");
+    session.put("iris", "keep;\n").await.unwrap();
     session.logout().await;
     let heard = heard.await.unwrap();
     // "\0me@example.test\0pw" in base64.
@@ -62,7 +62,7 @@ async fn a_session_logs_in_lists_reads_and_writes() {
         heard[0],
         "AUTHENTICATE \"PLAIN\" \"AG1lQGV4YW1wbGUudGVzdABwdw==\"\r\n"
     );
-    assert!(heard[3].starts_with("PUTSCRIPT \"penguin-mail\" {6+}\r\nkeep;\n"));
+    assert!(heard[3].starts_with("PUTSCRIPT \"iris\" {6+}\r\nkeep;\n"));
 }
 
 #[tokio::test]
@@ -74,7 +74,7 @@ async fn a_refused_script_says_the_server_s_words() {
     ));
     let mut session = session_over(client, &Login::new("me", "pw")).await.unwrap();
     let refused = session
-        .put("penguin-mail", "fileintoo \"x\";")
+        .put("iris", "fileintoo \"x\";")
         .await
         .unwrap_err();
     assert!(

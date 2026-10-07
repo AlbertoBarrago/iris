@@ -489,7 +489,7 @@ pub fn tiles(width: i32, microsoft: bool) -> Tiles {
         top.append(&mark);
         if tile.in_browser() {
             let globe = gtk::Image::builder()
-                .icon_name("penguin-mail-globe-symbolic")
+                .icon_name("iris-globe-symbolic")
                 .hexpand(true)
                 .halign(gtk::Align::End)
                 .valign(gtk::Align::Start)
@@ -532,7 +532,7 @@ pub fn browser_legend() -> gtk::Box {
         .build();
     legend.append(
         &gtk::Image::builder()
-            .icon_name("penguin-mail-globe-symbolic")
+            .icon_name("iris-globe-symbolic")
             .accessible_role(gtk::AccessibleRole::Presentation)
             .build(),
     );
@@ -635,7 +635,7 @@ fn address_page() -> AddressPage {
     let body = &banded.body;
     body.append(&heading(&gettext("Your email address")));
     body.append(&label(
-        &gettext("Penguin Mail finds the servers for you."),
+        &gettext("Iris finds the servers for you."),
         &["post-lede-small"],
     ));
     body.append(&field);
@@ -784,7 +784,7 @@ fn browser_page() -> BrowserPage {
     waiting.append(&top);
     waiting.append(&progress);
     waiting.append(&label(
-        &gettext("Penguin Mail stops waiting after five minutes."),
+        &gettext("Iris stops waiting after five minutes."),
         &["post-note"],
     ));
     let again = icon_button(
@@ -935,7 +935,7 @@ fn password_page() -> PasswordPage {
         .title(gettext("Incoming"))
         .subtitle_selectable(true)
         .build();
-    incoming.add_prefix(&gtk::Image::from_icon_name("penguin-mail-lock-symbolic"));
+    incoming.add_prefix(&gtk::Image::from_icon_name("iris-lock-symbolic"));
     let down = adw::ActionRow::builder().activatable(true).build();
     down.add_css_class("post-down");
     let down_icon = gtk::Image::from_icon_name("network-wireless-offline-symbolic");
@@ -943,7 +943,7 @@ fn password_page() -> PasswordPage {
     down.add_prefix(&down_icon);
     down.add_suffix(&gtk::Image::from_icon_name("go-next-symbolic"));
     down.set_visible(false);
-    let outgoing = icon_row("penguin-mail-lock-symbolic", &gettext("Outgoing"), "", true);
+    let outgoing = icon_row("iris-lock-symbolic", &gettext("Outgoing"), "", true);
     // Shaped like the outgoing row: a choice one level deeper, offered
     // under the servers the password goes to.
     let pop3_offer = adw::ActionRow::builder()
@@ -953,7 +953,7 @@ fn password_page() -> PasswordPage {
         .build();
     pop3_offer.add_prefix(&gtk::Image::from_icon_name("computer-symbolic"));
     pop3_offer.add_suffix(&gtk::Image::from_icon_name("go-next-symbolic"));
-    let summary = icon_row("penguin-mail-lock-symbolic", &gettext("Servers"), "", true);
+    let summary = icon_row("iris-lock-symbolic", &gettext("Servers"), "", true);
     summary.set_visible(false);
     let confirmed = gtk::CheckButton::builder()
         .valign(gtk::Align::Center)
@@ -962,7 +962,7 @@ fn password_page() -> PasswordPage {
     let agree = adw::ActionRow::builder()
         .title(gettext("Use these servers"))
         .subtitle(gettext(
-            "Penguin Mail guessed these servers. Your password goes to them only after you check the box.",
+            "Iris guessed these servers. Your password goes to them only after you check the box.",
         ))
         .activatable_widget(&confirmed)
         .visible(false)
@@ -1100,7 +1100,7 @@ fn added_page() -> AddedPage {
         // The sidebar's own names, so each folder reads as it does there.
         (
             MailRole::Inbox,
-            "penguin-mail-inbox-symbolic",
+            "iris-inbox-symbolic",
             crate::ui::Standard::Inbox.name(),
         ),
         (
@@ -1110,7 +1110,7 @@ fn added_page() -> AddedPage {
         ),
         (
             MailRole::Archive,
-            "penguin-mail-archive-symbolic",
+            "iris-archive-symbolic",
             mailrs_domain::translate::pgettext("mailbox", "Archive"),
         ),
     ] {
@@ -1155,7 +1155,7 @@ fn added_page() -> AddedPage {
         .css_classes(["pill", "post-mid-pill"])
         .build();
     let grant = icon_button(
-        "penguin-mail-globe-symbolic",
+        "iris-globe-symbolic",
         &gettext("Grant Access"),
         &["pill", "suggested-action", "post-mid-pill"],
     );
@@ -1305,7 +1305,7 @@ impl Removals {
         let group = adw::PreferencesGroup::builder()
             .title(gettext("Mail on the Server"))
             .description(gettext(
-                "Penguin Mail keeps every message it downloads on this computer.",
+                "Iris keeps every message it downloads on this computer.",
             ))
             .visible(false)
             .build();
@@ -2218,7 +2218,7 @@ impl Dialog {
     }
 
     /// Shows both servers the password is about to go to, and asks for a
-    /// yes when Penguin Mail guessed them.
+    /// yes when Iris guessed them.
     fn show_hosts(&self, proposal: &Proposal) {
         let page = &self.password;
         page.incoming.set_title(&add_account::incoming_title(proposal));
@@ -2618,10 +2618,10 @@ impl Dialog {
         if !self.core.demo && !self.core.built_with_sign_in(browser) {
             return self.browser_failed(&match browser {
                 Browser::Google => gettext(
-                    "This copy of Penguin Mail was built without Google sign-in. Get a release from github.com/c9dev/penguin-mail/releases.",
+                    "This copy of Iris was built without Google sign-in. Get a release from github.com/AlbertoBarrago/iris/releases.",
                 ),
                 Browser::Microsoft => gettext(
-                    "This copy of Penguin Mail was built without Microsoft sign-in. Get a release from github.com/c9dev/penguin-mail/releases.",
+                    "This copy of Iris was built without Microsoft sign-in. Get a release from github.com/AlbertoBarrago/iris/releases.",
                 ),
             });
         }
@@ -3119,7 +3119,7 @@ fn preview(this: &Rc<Dialog>, stage: &str) {
                         this.password.sign_in.set_label(&gettext("Signing In…"));
                     } else {
                         let no_uidl = ImapError::Refused(gettext(
-                            "This server cannot tell its messages apart, so Penguin Mail cannot download from it safely.",
+                            "This server cannot tell its messages apart, so Iris cannot download from it safely.",
                         ));
                         // That is what `in_imap_words` makes of a server
                         // without UIDL; the app does not link the POP3

@@ -29,7 +29,7 @@ pub enum Unsubscribe {
 
 /// Words a link uses when it takes the reader off a list, in the two
 /// languages the owner reads. They match what a sender wrote, not what
-/// Penguin Mail says, so they stay here rather than in the po files.
+/// Iris says, so they stay here rather than in the po files.
 const LEAVING: [&str; 8] = [
     "unsubscribe",
     "opt out",

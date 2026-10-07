@@ -113,14 +113,14 @@ pub fn shown(state: &State) -> Shown {
         State::Idle | State::Checking | State::Current | State::Unreachable => None,
         State::Available(release) => Some(Banner {
             title: fill(
-                &gettext("Penguin Mail {version} is available"),
+                &gettext("Iris {version} is available"),
                 &[("version", &release.version.to_string())],
             ),
             button: Some((gettext("Install"), "app.install-update")),
         }),
         State::Installing(version) => Some(Banner {
             title: fill(
-                &gettext("Installing Penguin Mail {version}"),
+                &gettext("Installing Iris {version}"),
                 &[("version", &version.to_string())],
             ),
             button: None,
@@ -159,10 +159,10 @@ impl Updater {
     /// An updater for the running binary, or none when this copy does not
     /// update itself: the demo, a cargo build, and the packages dnf or a
     /// store updates (see `Packaging::updated_by`). A demo pointed at a test
-    /// release server with PENGUIN_MAIL_RELEASES_URL gets one, so the update
+    /// release server with IRIS_RELEASES_URL gets one, so the update
     /// screens can be seen and tested without a real account.
     pub fn for_this_copy(demo: bool) -> Option<Updater> {
-        if demo && std::env::var_os("PENGUIN_MAIL_RELEASES_URL").is_none() {
+        if demo && std::env::var_os("IRIS_RELEASES_URL").is_none() {
             return None;
         }
         let exe = crate::exe::path().ok()?;
@@ -201,9 +201,9 @@ pub fn announce(version: Version, install: async_channel::Sender<()>) {
     std::thread::spawn(move || {
         let mut notification = notify_rust::Notification::new();
         notification
-            .appname("Penguin Mail")
+            .appname("Iris")
             .summary(&fill(
-                &gettext("Penguin Mail {version} is available"),
+                &gettext("Iris {version} is available"),
                 &[("version", &version.to_string())],
             ))
             .body(&gettext("Install it now, or later from the tray."))
@@ -226,7 +226,7 @@ pub fn announce(version: Version, install: async_channel::Sender<()>) {
 pub fn tell(summary: String) {
     std::thread::spawn(move || {
         let shown = notify_rust::Notification::new()
-            .appname("Penguin Mail")
+            .appname("Iris")
             .summary(&summary)
             .icon(APP_ID)
             .hint(notify_rust::Hint::DesktopEntry(APP_ID.into()))
@@ -269,7 +269,7 @@ mod tests {
         assert_eq!(shown.menu.label, "Install Update 0.2.0");
         assert_eq!(shown.menu.action, Some("app.install-update"));
         let banner = shown.banner.expect("a banner");
-        assert_eq!(banner.title, "Penguin Mail 0.2.0 is available");
+        assert_eq!(banner.title, "Iris 0.2.0 is available");
         assert_eq!(
             banner.button,
             Some(("Install".to_string(), "app.install-update"))
@@ -294,7 +294,7 @@ mod tests {
         let installing = shown(&State::Installing(version("0.2.0")));
         assert_eq!(installing.menu.action, None);
         let banner = installing.banner.expect("a banner");
-        assert_eq!(banner.title, "Installing Penguin Mail 0.2.0");
+        assert_eq!(banner.title, "Installing Iris 0.2.0");
         assert_eq!(banner.button, None);
     }
 

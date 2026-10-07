@@ -277,7 +277,7 @@ pub fn forget_gone_failures(
 pub enum FailReason {
     /// The server answered `-ERR`, in the words kept beside it.
     Refused,
-    /// `LIST` or the answer itself was past what Penguin Mail reads.
+    /// `LIST` or the answer itself was past what Iris reads.
     TooLarge,
     /// The server's answer was not POP3.
     Unreadable,

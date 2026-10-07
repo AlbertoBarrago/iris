@@ -381,7 +381,7 @@ impl ConversationView {
         webview.connect_realize(keep_key_text_out_of_tab);
 
         let empty = adw::StatusPage::builder()
-            .icon_name("penguin-mail-mark-symbolic")
+            .icon_name("iris-mark-symbolic")
             .title(gettext("No Conversation Selected"))
             .build();
         // libadwaita dims a status page's icon itself; the title stays at
@@ -435,7 +435,7 @@ impl ConversationView {
             many_trash.expect("the bulk actions include trash"),
         );
         let many = adw::StatusPage::builder()
-            .icon_name("penguin-mail-inbox-symbolic")
+            .icon_name("iris-inbox-symbolic")
             .title(gettext("Several Conversations Selected"))
             .description(gettext(
                 "Actions and shortcuts apply to all of them. Esc clears the selection.",
@@ -479,7 +479,7 @@ impl ConversationView {
         };
         let buttons = Buttons {
             archive: button(
-                "penguin-mail-archive-symbolic",
+                "iris-archive-symbolic",
                 gettext("Archive (E or Ctrl+Alt+A)"),
             ),
             trash: button("user-trash-symbolic", gettext("Move to Trash (Delete)")),
@@ -490,7 +490,7 @@ impl ConversationView {
             ),
             star: {
                 let star = adw::SplitButton::builder()
-                    .icon_name("penguin-mail-flag-outline-symbolic")
+                    .icon_name("iris-flag-outline-symbolic")
                     .tooltip_text(gettext("Flag (Ctrl+Shift+L)"))
                     .dropdown_tooltip(gettext("Choose Flag Color"))
                     .popover(&flag_colors())
@@ -529,7 +529,7 @@ impl ConversationView {
         // (R12); a conversation of its own has none, so it starts hidden
         // and stays that way (set_detached).
         let assistant_toggle = gtk::ToggleButton::builder()
-            .icon_name("penguin-mail-sparkle-symbolic")
+            .icon_name("iris-sparkle-symbolic")
             .tooltip_text(gettext("Assistant (Ctrl+J)"))
             .css_classes(["flat", "assistant-toggle"])
             .visible(false)
@@ -627,7 +627,7 @@ impl ConversationView {
         // The window fills the popover each time it opens, so it lists the
         // tags and ticks of the mail the button reaches then.
         let tag_button = gtk::MenuButton::builder()
-            .icon_name("penguin-mail-tag-symbolic")
+            .icon_name("iris-tag-symbolic")
             .tooltip_text(gettext("Tags"))
             .build();
         name(&tag_button, &gettext("Tags"));
@@ -1773,9 +1773,9 @@ impl ConversationView {
         let starred = open.starred();
         let star = &self.buttons.star;
         star.set_icon_name(if starred {
-            "penguin-mail-flag-symbolic"
+            "iris-flag-symbolic"
         } else {
-            "penguin-mail-flag-outline-symbolic"
+            "iris-flag-outline-symbolic"
         });
         for color in FlagColor::ALL {
             star.remove_css_class(&format!("flag-{}", color.as_str()));
@@ -2033,7 +2033,7 @@ fn flag_colors() -> gtk::Popover {
             ],
         );
         let button = gtk::Button::builder()
-            .icon_name("penguin-mail-flag-symbolic")
+            .icon_name("iris-flag-symbolic")
             .tooltip_text(&tip)
             .action_name("win.flag-color")
             .action_target(&color.as_str().to_variant())

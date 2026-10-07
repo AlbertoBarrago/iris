@@ -1,6 +1,6 @@
 //! Spell check while writing.
 //!
-//! Penguin Mail checks the words itself rather than handing the text view to
+//! Iris checks the words itself rather than handing the text view to
 //! a spell-check widget. Two reasons. Whole stretches of a draft are not the
 //! writer's prose: a quoted reply, a code block, a list marker GTK drew, a
 //! run of inline code. And a squiggle has to be a mark on top of the text,
@@ -39,7 +39,7 @@ const SETTLE_MS: u32 = 180;
 /// How many corrections the menu offers.
 const SUGGESTIONS: usize = 6;
 
-/// Hunspell dictionaries, plus the words this person told Penguin Mail to
+/// Hunspell dictionaries, plus the words this person told Iris to
 /// accept. Every composer shares one of these, because reading a dictionary
 /// costs long enough that doing it twice would show.
 pub struct Dictionaries {

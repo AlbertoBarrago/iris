@@ -10,7 +10,7 @@ use crate::offered::Filing;
 pub fn place_line(place: RulesPlace, provider: &str) -> String {
     match place {
         RulesPlace::ThisComputer => {
-            gettext("These rules run on this computer while Penguin Mail is open.")
+            gettext("These rules run on this computer while Iris is open.")
         }
         RulesPlace::Server => fill(
             &gettext("{provider} runs these on new mail as it arrives, even when this computer is off."),
@@ -310,7 +310,7 @@ mod tests {
     fn the_rules_say_where_they_run() {
         assert_eq!(
             place_line(RulesPlace::ThisComputer, "Fastmail"),
-            "These rules run on this computer while Penguin Mail is open."
+            "These rules run on this computer while Iris is open."
         );
         assert_eq!(
             place_line(RulesPlace::Server, "mailbox.org"),

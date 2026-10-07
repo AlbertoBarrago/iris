@@ -168,4 +168,4 @@ issued, whose CRL distribution point is a port the test holds: silent,
 refusing, or serving a CRL that openssl signs with the authority's key.
 Those tests start a dirmngr for their home and stop it when they finish.
 Without openssl, the CRL tests skip, or fail under
-`PENGUIN_MAIL_REQUIRE_CRYPTO`.
+`IRIS_REQUIRE_CRYPTO`.

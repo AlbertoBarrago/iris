@@ -413,7 +413,7 @@ impl<S: Submit, P: Pop3Api> MailBackend for Pop3<S, P> {
     async fn rename_mailbox(&self, id: &str, name: &str) -> Result<RemoteMailbox, BackendError> {
         if Self::role_of(id).is_some() {
             return Err(BackendError::Refused(gettext(
-                "Penguin Mail keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive.",
+                "Iris keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive.",
             )));
         }
         let old = self.listed(id).await?;
@@ -429,7 +429,7 @@ impl<S: Submit, P: Pop3Api> MailBackend for Pop3<S, P> {
     async fn delete_mailbox(&self, id: &str) -> Result<(), BackendError> {
         if Self::role_of(id).is_some() {
             return Err(BackendError::Refused(gettext(
-                "Penguin Mail keeps Inbox, Sent, Drafts, Trash, Junk and Archive.",
+                "Iris keeps Inbox, Sent, Drafts, Trash, Junk and Archive.",
             )));
         }
         let set = MailSet::Mailbox(id.to_string());

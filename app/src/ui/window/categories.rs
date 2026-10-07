@@ -24,10 +24,10 @@ use strip::CategoryStrip;
 
 fn icon(category: Category) -> &'static str {
     match category {
-        Category::All => "penguin-mail-inbox-symbolic",
+        Category::All => "iris-inbox-symbolic",
         Category::Primary => "avatar-default-symbolic",
         Category::Updates => "preferences-system-notifications-symbolic",
-        Category::Promotions => "penguin-mail-tag-symbolic",
+        Category::Promotions => "iris-tag-symbolic",
         Category::Social => "system-users-symbolic",
         Category::Focused => "starred-symbolic",
         Category::Other => "mail-archive-symbolic",

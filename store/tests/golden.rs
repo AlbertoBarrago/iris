@@ -4,7 +4,7 @@
 //! these reads and none of their answers, so this compares every answer
 //! with the one in `golden/reads.txt`, line by line.
 //!
-//! `PENGUIN_MAIL_BLESS=1` records the answers again. Only a tree whose
+//! `IRIS_BLESS=1` records the answers again. Only a tree whose
 //! answers are known good may do that.
 
 mod common;
@@ -577,13 +577,13 @@ fn answers() -> String {
 fn every_read_answers_as_it_did_before_the_move() {
     let answers = answers();
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/golden/reads.txt");
-    if std::env::var_os("PENGUIN_MAIL_BLESS").is_some() {
+    if std::env::var_os("IRIS_BLESS").is_some() {
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         std::fs::write(&path, &answers).unwrap();
         return;
     }
     let recorded = std::fs::read_to_string(&path)
-        .expect("tests/golden/reads.txt, recorded with PENGUIN_MAIL_BLESS=1");
+        .expect("tests/golden/reads.txt, recorded with IRIS_BLESS=1");
     for (line, (now, then)) in answers.lines().zip(recorded.lines()).enumerate() {
         assert_eq!(now, then, "line {} of golden/reads.txt", line + 1);
     }

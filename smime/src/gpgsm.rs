@@ -10,7 +10,7 @@ use mailrs_pgp::gnupg::{Pinentry, Program, Run, named};
 use crate::error::SmimeError;
 
 /// The person's own GnuPG: their certificates, their agent, their pinentry,
-/// their list of roots to trust. Penguin Mail never holds a secret key or a
+/// their list of roots to trust. Iris never holds a secret key or a
 /// passphrase itself.
 #[derive(Debug, Clone)]
 pub struct Smime {

@@ -9,7 +9,7 @@ use mailrs_domain::translate::{fill, gettext};
 /// The key that signs each release's `SHA256SUMS`, which also signs the apt
 /// and dnf repositories, as the binary keyring gpgv reads.
 pub const RELEASE_KEY: &[u8] =
-    include_bytes!("../../../packaging/apt/penguin-mail-archive-keyring.gpg");
+    include_bytes!("../../../packaging/apt/iris-archive-keyring.gpg");
 
 /// The programs that can check the signature, best first. gpgv trusts the
 /// keyring it is handed and nothing else, and apt needs it, so every
@@ -28,7 +28,7 @@ pub async fn signed_sums(
 ) -> Result<String, String> {
     let Some(signature) = signature else {
         return Err(gettext(
-            "This release has no signature, so Penguin Mail will not install it.",
+            "This release has no signature, so Iris will not install it.",
         ));
     };
     check(work, sums, signature, key, &CHECKERS).await
@@ -96,7 +96,7 @@ async fn check_in(
 ) -> Result<(), String> {
     let could_not = |err: std::io::Error| {
         fill(
-            &gettext("Penguin Mail could not check the release's signature: {reason}"),
+            &gettext("Iris could not check the release's signature: {reason}"),
             &[("reason", &err.to_string())],
         )
     };
@@ -144,7 +144,7 @@ async fn check_in(
             "the release's signature did not check out"
         );
         return Err(gettext(
-            "This release is not signed with Penguin Mail's key, so Penguin Mail will not install it.",
+            "This release is not signed with Iris's key, so Iris will not install it.",
         ));
     }
     Err(gettext(
@@ -158,7 +158,7 @@ mod tests {
     use std::process::{Command, Stdio};
 
     const SUMS: &str = "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824  \
-                        penguin-mail_9.9.9_amd64.deb\n";
+                        iris_9.9.9_amd64.deb\n";
 
     /// A throwaway GnuPG home with one signing key and no passphrase.
     struct Signer {
@@ -314,7 +314,7 @@ mod tests {
         let signature = signer.sign(SUMS);
         let key = signer.key();
         let checkers = [
-            Checker::Gpgv("penguin-mail-no-such-gpgv"),
+            Checker::Gpgv("iris-no-such-gpgv"),
             Checker::Gpg("gpg"),
         ];
         let sums = check(work.path(), SUMS, &signature, &key, &checkers)
@@ -364,12 +364,12 @@ mod tests {
     }
 
     /// Stops a build machine from passing these tests by skipping them.
-    /// Setting `PENGUIN_MAIL_REQUIRE_CRYPTO` turns a missing gpg into a
+    /// Setting `IRIS_REQUIRE_CRYPTO` turns a missing gpg into a
     /// failure.
     fn require_crypto() {
-        if std::env::var_os("PENGUIN_MAIL_REQUIRE_CRYPTO").is_some() {
+        if std::env::var_os("IRIS_REQUIRE_CRYPTO").is_some() {
             panic!(
-                "PENGUIN_MAIL_REQUIRE_CRYPTO is set and gpg is not on PATH, \
+                "IRIS_REQUIRE_CRYPTO is set and gpg is not on PATH, \
                  so these tests would have proved nothing"
             );
         }

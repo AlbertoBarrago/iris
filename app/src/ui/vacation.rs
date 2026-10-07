@@ -15,7 +15,7 @@ use crate::permission::Permission;
 use crate::ui::permission;
 use mailrs_domain::translate::{fill, gettext, with_reason};
 
-/// Shows the dialog for `account`. `grant` runs when the server says Penguin Mail lacks
+/// Shows the dialog for `account`. `grant` runs when the server says Iris lacks
 /// the settings permission, to send the user through consent again. `saved`
 /// receives a confirmation to show once the reply is stored.
 pub fn present(

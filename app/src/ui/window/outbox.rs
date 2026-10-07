@@ -141,7 +141,7 @@ impl MainWindow {
             };
             let Ok(draft) = serde_json::from_str::<Draft>(&message.composer) else {
                 return this.toast(&gettext(
-                    "Penguin Mail cannot reopen this message. Send it as it is.",
+                    "Iris cannot reopen this message. Send it as it is.",
                 ));
             };
             let outbox = this.core.outbox();

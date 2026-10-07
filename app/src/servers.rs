@@ -36,7 +36,7 @@ pub fn lines(found: &[FoundService], refused_calendar: Option<&str>, refused_con
         ServerLine {
             title: gettext("Rules"),
             subtitle: match rules_here {
-                true => gettext("On this computer, while Penguin Mail is open"),
+                true => gettext("On this computer, while Iris is open"),
                 false => gettext("On the server"),
             },
             ask: None,
@@ -62,7 +62,7 @@ mod tests {
         assert_eq!(lines[0].subtitle, "caldav.fastmail.com");
         assert_eq!(lines[1].subtitle, "carddav.fastmail.com");
         assert_eq!(lines[2].title, "Rules");
-        assert_eq!(lines[2].subtitle, "On this computer, while Penguin Mail is open");
+        assert_eq!(lines[2].subtitle, "On this computer, while Iris is open");
     }
 
     #[test]

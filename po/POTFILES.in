@@ -1,5 +1,5 @@
-app/data/io.github.c9dev.PenguinMail.desktop
-app/data/io.github.c9dev.PenguinMail.metainfo.xml
+app/data/io.github.AlbertoBarrago.Iris.desktop
+app/data/io.github.AlbertoBarrago.Iris.metainfo.xml
 app/src/add_account.rs
 app/src/add_account/lookup.rs
 app/src/add_account/post.rs

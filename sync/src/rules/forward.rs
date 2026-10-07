@@ -13,7 +13,7 @@ use crate::SyncError;
 /// The header every forward carries, so a forward that comes back to the
 /// Inbox, through a list that rewrites its sender or not, is not forwarded
 /// again and again.
-pub const MARK: &str = "X-Penguin-Mail-Forwarded";
+pub const MARK: &str = "X-Iris-Forwarded";
 
 /// Whether `raw` is a forward a local rule made.
 pub fn is_forward(raw: &[u8]) -> bool {

@@ -13,7 +13,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-file=app/data/io.github.c9dev.PenguinMail.metainfo.xml
+file=app/data/io.github.AlbertoBarrago.Iris.metainfo.xml
 check=
 case ${1:-} in
 --check) check=1 ;;
@@ -30,7 +30,7 @@ import sys
 from html import escape
 
 changelog, metainfo, out = sys.argv[1:]
-REPOSITORY = "https://github.com/c9dev/penguin-mail"
+REPOSITORY = "https://github.com/AlbertoBarrago/iris"
 
 
 def inline(text):

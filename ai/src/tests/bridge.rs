@@ -59,7 +59,7 @@ async fn mcp_server_relays_tools_over_the_socket() {
         json!({
             "protocolVersion": "2025-11-25",
             "capabilities": {"tools": {}},
-            "serverInfo": {"name": "penguin-mail", "version": env!("CARGO_PKG_VERSION")},
+            "serverInfo": {"name": "iris", "version": env!("CARGO_PKG_VERSION")},
         })
     );
     let tools = replies[&2]["result"]["tools"].as_array().unwrap();

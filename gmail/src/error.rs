@@ -8,7 +8,7 @@ pub enum GmailError {
     #[error("Gmail rate limit hit")]
     RateLimited { retry_after: Option<Duration> },
     /// The account never granted a scope this call needs.
-    #[error("Penguin Mail needs more access to this account; grant it and try again")]
+    #[error("Iris needs more access to this account; grant it and try again")]
     MissingScope,
     /// The consent screen came back without [`crate::GMAIL_SCOPE`] or the
     /// wider [`crate::DELETE_SCOPE`], so the app cannot read or send mail

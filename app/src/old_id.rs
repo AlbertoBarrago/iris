@@ -1,5 +1,5 @@
-//! Carries a person's desktop choices over from the ID Penguin Mail had
-//! before `io.github.c9dev.PenguinMail`. The login item and the default mail
+//! Carries a person's desktop choices over from the ID Iris had
+//! before `io.github.AlbertoBarrago.Iris`. The login item and the default mail
 //! handler both name the desktop file, and an upgrade renames that file.
 //! install-files.sh does the same for a tarball, but a .deb upgrade runs as
 //! root and cannot reach anyone's home folder, so the app does it on start.
@@ -105,7 +105,7 @@ fn replace_file(path: &Path, contents: &str) -> std::io::Result<()> {
         .file_name()
         .ok_or_else(|| std::io::Error::other("the path names no file"))?
         .to_string_lossy();
-    let staged = target.with_file_name(format!(".{name}.penguin-mail-{}", std::process::id()));
+    let staged = target.with_file_name(format!(".{name}.iris-{}", std::process::id()));
     let written = std::fs::write(&staged, contents).and_then(|()| {
         if let Ok(meta) = std::fs::metadata(&target) {
             std::fs::set_permissions(&staged, meta.permissions())?;
@@ -122,8 +122,8 @@ fn replace_file(path: &Path, contents: &str) -> std::io::Result<()> {
 mod tests {
     use super::*;
 
-    const LOGIN_ITEM: &str = "[Desktop Entry]\nType=Application\nName=Penguin Mail\n\
-        Exec=/usr/bin/penguin-mail --background\nIcon=dev.penguinmail.PenguinMail\n\
+    const LOGIN_ITEM: &str = "[Desktop Entry]\nType=Application\nName=Iris\n\
+        Exec=/usr/bin/iris --background\nIcon=dev.penguinmail.PenguinMail\n\
         NoDisplay=true\nX-GNOME-Autostart-enabled=false\n";
 
     /// A data folder holding the new desktop file, as an installed copy has.
@@ -131,7 +131,7 @@ mod tests {
         let data = tempfile::tempdir().unwrap();
         let apps = data.path().join("applications");
         std::fs::create_dir_all(&apps).unwrap();
-        std::fs::write(apps.join("io.github.c9dev.PenguinMail.desktop"), "").unwrap();
+        std::fs::write(apps.join("io.github.AlbertoBarrago.Iris.desktop"), "").unwrap();
         data
     }
 
@@ -152,14 +152,14 @@ mod tests {
         run(config.path(), &installed());
         assert!(!folder.join("dev.penguinmail.PenguinMail.desktop").exists());
         let moved =
-            std::fs::read_to_string(folder.join("io.github.c9dev.PenguinMail.desktop")).unwrap();
+            std::fs::read_to_string(folder.join("io.github.AlbertoBarrago.Iris.desktop")).unwrap();
         assert!(
-            moved.contains("Icon=io.github.c9dev.PenguinMail\n"),
+            moved.contains("Icon=io.github.AlbertoBarrago.Iris\n"),
             "{moved}"
         );
         assert!(moved.contains("X-GNOME-Autostart-enabled=false"), "{moved}");
         assert!(
-            moved.contains("Exec=/usr/bin/penguin-mail --background"),
+            moved.contains("Exec=/usr/bin/iris --background"),
             "{moved}"
         );
     }
@@ -174,11 +174,11 @@ mod tests {
             LOGIN_ITEM,
         )
         .unwrap();
-        std::fs::write(folder.join("io.github.c9dev.PenguinMail.desktop"), "new").unwrap();
+        std::fs::write(folder.join("io.github.AlbertoBarrago.Iris.desktop"), "new").unwrap();
         run(config.path(), &installed());
         assert!(!folder.join("dev.penguinmail.PenguinMail.desktop").exists());
         assert_eq!(
-            std::fs::read_to_string(folder.join("io.github.c9dev.PenguinMail.desktop")).unwrap(),
+            std::fs::read_to_string(folder.join("io.github.AlbertoBarrago.Iris.desktop")).unwrap(),
             "new"
         );
     }
@@ -200,11 +200,11 @@ mod tests {
             std::fs::read_to_string(&list).unwrap(),
             "# Set by dev.penguinmail.PenguinMail.desktop in 2025\r\n\
             [Default Applications]\r\n\
-            x-scheme-handler/mailto=io.github.c9dev.PenguinMail.desktop\r\n\
+            x-scheme-handler/mailto=io.github.AlbertoBarrago.Iris.desktop\r\n\
             text/html=firefox.desktop\r\n\
             \r\n\
             [Added Associations]\n\
-            x-scheme-handler/mailto=io.github.c9dev.PenguinMail.desktop;thunderbird.desktop;\n"
+            x-scheme-handler/mailto=io.github.AlbertoBarrago.Iris.desktop;thunderbird.desktop;\n"
         );
         let left: Vec<_> = std::fs::read_dir(config.path())
             .unwrap()
@@ -227,12 +227,12 @@ mod tests {
         let text =
             "[Default Applications]\nx-scheme-handler/mailto=dev.penguinmail.PenguinMail.desktop\n";
         std::fs::write(&list, text).unwrap();
-        // A build tree: the data folders hold no io.github.c9dev.PenguinMail.desktop.
+        // A build tree: the data folders hold no io.github.AlbertoBarrago.Iris.desktop.
         let empty = tempfile::tempdir().unwrap();
         run(config.path(), &empty);
         assert_eq!(std::fs::read_to_string(&list).unwrap(), text);
         assert!(folder.join("dev.penguinmail.PenguinMail.desktop").exists());
-        assert!(!folder.join("io.github.c9dev.PenguinMail.desktop").exists());
+        assert!(!folder.join("io.github.AlbertoBarrago.Iris.desktop").exists());
     }
 
     #[test]
@@ -256,7 +256,7 @@ mod tests {
         );
         assert_eq!(
             std::fs::read_to_string(&real).unwrap(),
-            "[Default Applications]\nx-scheme-handler/mailto=io.github.c9dev.PenguinMail.desktop\n"
+            "[Default Applications]\nx-scheme-handler/mailto=io.github.AlbertoBarrago.Iris.desktop\n"
         );
     }
 

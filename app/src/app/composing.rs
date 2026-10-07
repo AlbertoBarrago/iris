@@ -17,7 +17,7 @@ use crate::ui::composer::{Composer, Remembered, Writing};
 /// Whether a message gets the signature of the address it comes from.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Signature {
-    /// A message Penguin Mail starts: a new one, a reply, a forward.
+    /// A message Iris starts: a new one, a reply, a forward.
     Add,
     /// A message a composer opened before, which added the signature
     /// then: a saved draft, an undone send, one back from the outbox. And

@@ -138,7 +138,7 @@ async fn the_loopback_answers_on_localhost() {
     assert!(reply.starts_with("HTTP/1.1 200"));
     // The shared, branded page Gmail ends on too, not a bare line.
     assert!(
-        reply.contains("Signed in to Penguin Mail") && reply.contains("<svg"),
+        reply.contains("Signed in to Iris") && reply.contains("<svg"),
         "{reply}"
     );
     assert_eq!(waiting.await.unwrap().unwrap(), "c1");

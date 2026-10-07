@@ -1,5 +1,5 @@
 ---
-name: Penguin Mail
+name: Iris
 description: A beautiful and functional mail and calendar client for Linux
 colors:
   accent: "#e8660c"
@@ -132,19 +132,19 @@ docs/superpowers/specs/calendar-mockup/ (mockups.py holds every value), the cale
 (2026-09-23-calendar-design.md) and the mail refresh spec (2026-09-24-mail-refresh-design.md). The calendar
 and mail refresh plans build it. Re-run /impeccable document once they ship, to record what the code does. -->
 
-# Design System: Penguin Mail
+# Design System: Iris
 
 ## Overview
 
 **Creative North Star: "The Quiet Desk, made the GNOME way"**
 
-Penguin Mail is a desk you work at all day: mail in one drawer, the calendar in the other, one switch at the top
+Iris is a desk you work at all day: mail in one drawer, the calendar in the other, one switch at the top
 of the sidebar between them. Nothing on it asks for attention it has not earned. Surfaces are quiet greys in
 layers, content is the only thing with colour, and a single accent marks where you are and what the next step is.
 
 It is made the GNOME way. The polish lives in what libadwaita already gives, done with care: exact spacing, soft
 tints instead of new ornament, capsules that group what belongs together, motion that follows the hand and stops
-when GNOME's animations are off. A person should not be able to tell where libadwaita ends and Penguin Mail begins.
+when GNOME's animations are off. A person should not be able to tell where libadwaita ends and Iris begins.
 
 The same materials build both screens. A selected conversation and a calendar event are the same object, a soft
 tinted card with a bar of colour, so moving between Mail and Calendar feels like turning to another page of the

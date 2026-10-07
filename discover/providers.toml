@@ -1,4 +1,4 @@
-# Penguin Mail's built-in provider table. Discovery reads it first, by the
+# Iris's built-in provider table. Discovery reads it first, by the
 # exact domain of the address, and then matches the domain's MX hosts
 # against the `mx` patterns, so neither step sends anything to anyone.
 #
@@ -64,7 +64,7 @@ domains = [
   "mailhaven.com", "mailingaddress.org", "mailite.com", "mailmight.com",
   "mailnew.com", "mailsent.net", "mailup.net", "mailworks.org",
   "mailzone.com", "ml1.net", "myfastmail.com", "mymacmail.com",
-  "nospammail.net", "onepost.net", "ownmail.net", "penguinmail.com",
+  "nospammail.net", "onepost.net", "ownmail.net", "iris.com",
   "permanentmail.com", "petml.com", "pobox.com", "postinbox.com",
   "postpro.net", "proinbox.com", "promessage.com", "realemail.net",
   "reallyfast.biz", "reallyfast.info", "rushpost.com", "sent.at", "sent.com",

@@ -1,4 +1,4 @@
-# Radicale for Penguin Mail's CalDAV and CardDAV tests: TLS with the
+# Radicale for Iris's CalDAV and CardDAV tests: TLS with the
 # run's own certificate, one user from a plain password file, and each
 # user's collections their own.
 [server]

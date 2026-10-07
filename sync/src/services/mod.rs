@@ -42,7 +42,7 @@ pub use sieve::SieveRules;
 pub enum RulesPlace {
     /// On the mail server, whether this computer is on or not.
     Server,
-    /// On this computer, while Penguin Mail is open.
+    /// On this computer, while Iris is open.
     ThisComputer,
 }
 
@@ -122,7 +122,7 @@ pub struct MailCapabilities {
     pub local_mailboxes: bool,
     /// The server files a muted thread's replies itself, as Gmail's own
     /// filter does. Without it the engine files each one as it arrives,
-    /// which works only while Penguin Mail runs.
+    /// which works only while Iris runs.
     pub files_muted_replies: bool,
 }
 
@@ -637,7 +637,7 @@ impl CalendarFeatures {
 }
 
 /// What the person left unticked on Google's consent screen, once per
-/// scope Penguin Mail asks for. `true` means the account never granted
+/// scope Iris asks for. `true` means the account never granted
 /// it, so the feature it serves turns off with a reason rather than
 /// failing as an error. `NONE` fits an account whose grants are not
 /// known yet, so nothing turns off before the first read says otherwise.

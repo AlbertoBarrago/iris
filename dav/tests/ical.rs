@@ -1,4 +1,4 @@
-//! A VCALENDAR resource read into Penguin Mail's events, and written back
+//! A VCALENDAR resource read into Iris's events, and written back
 //! with only the edited lines changed.
 
 use mailrs_dav::ical::{answer, answer_occurrence, answer_scheduled, cancel_occurrence, read_resource, write_event, write_event_notifying};
@@ -114,7 +114,7 @@ fn a_new_event_is_a_whole_calendar_with_its_zone() {
     let mut event = mailrs_domain::calendar::Event {
         calendar: "/cal/work/".into(),
         id: "pmabc".into(),
-        uid: "pmabc@penguin-mail".into(),
+        uid: "pmabc@iris".into(),
         start: MONDAY_0930,
         end: MONDAY_0930 + 3_600_000,
         zone: "Europe/Lisbon".into(),
@@ -126,7 +126,7 @@ fn a_new_event_is_a_whole_calendar_with_its_zone() {
     event.reminders = Some(vec![Reminder { minutes: 5, method: ReminderMethod::Notification }]);
     let written = write_event(None, &event, &me(), NOW).unwrap();
     assert!(written.starts_with("BEGIN:VCALENDAR\r\n"));
-    assert!(written.contains("PRODID:-//Penguin Mail//EN"));
+    assert!(written.contains("PRODID:-//Iris//EN"));
     assert!(written.contains("BEGIN:VTIMEZONE"), "a TZID the file names gets its VTIMEZONE");
     assert!(written.contains("DTSTART;TZID=Europe/Lisbon:20261005T093000"));
     assert!(written.contains("TRIGGER:-PT5M"));

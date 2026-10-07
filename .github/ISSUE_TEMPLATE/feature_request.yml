@@ -1,5 +1,5 @@
 name: Idea
-description: Something Penguin Mail should do and does not.
+description: Something Iris should do and does not.
 labels: [enhancement, needs-triage]
 body:
   - type: textarea
@@ -26,5 +26,5 @@ body:
     id: version
     attributes:
       label: Version
-      description: The output of `penguin-mail --version`.
-      placeholder: penguin-mail 0.1.0
+      description: The output of `iris --version`.
+      placeholder: iris 0.1.0

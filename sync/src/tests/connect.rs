@@ -590,7 +590,7 @@ fn a_pop3_failure_reads_as_the_incoming_servers() {
     assert_eq!(
         in_imap_words(Pop3Error::Unsupported("UIDL")),
         ImapError::Refused(
-            "This server cannot tell its messages apart, so Penguin Mail cannot download from it safely.".into()
+            "This server cannot tell its messages apart, so Iris cannot download from it safely.".into()
         )
     );
     assert_eq!(

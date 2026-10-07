@@ -81,8 +81,8 @@ pub struct Download<'a> {
 pub fn pick<'a>(release: &'a Release, method: &Method) -> Option<Download<'a>> {
     let v = release.version;
     let wanted = match method {
-        Method::Deb => format!("penguin-mail_{v}_amd64.deb"),
-        Method::Local { .. } => format!("penguin-mail-{v}-x86_64.tar.gz"),
+        Method::Deb => format!("iris_{v}_amd64.deb"),
+        Method::Local { .. } => format!("iris-{v}-x86_64.tar.gz"),
     };
     let find = |name: &str| release.assets.iter().find(|a| a.name == name);
     Some(Download {
@@ -137,14 +137,14 @@ mod tests {
         let r = release(
             "0.2.0",
             &[
-                "penguin-mail_0.2.0_amd64.deb",
-                "penguin-mail-0.2.0-x86_64.tar.gz",
-                "penguin-mail-0.2.0-x86_64.zip",
+                "iris_0.2.0_amd64.deb",
+                "iris-0.2.0-x86_64.tar.gz",
+                "iris-0.2.0-x86_64.zip",
                 "SHA256SUMS",
             ],
         );
         let deb = pick(&r, &Method::Deb).unwrap();
-        assert_eq!(deb.package.name, "penguin-mail_0.2.0_amd64.deb");
+        assert_eq!(deb.package.name, "iris_0.2.0_amd64.deb");
         assert_eq!(deb.sums.name, "SHA256SUMS");
         let local = pick(
             &r,
@@ -153,7 +153,7 @@ mod tests {
             },
         )
         .unwrap();
-        assert_eq!(local.package.name, "penguin-mail-0.2.0-x86_64.tar.gz");
+        assert_eq!(local.package.name, "iris-0.2.0-x86_64.tar.gz");
     }
 
     #[test]
@@ -161,7 +161,7 @@ mod tests {
         let signed = release(
             "0.2.0",
             &[
-                "penguin-mail_0.2.0_amd64.deb",
+                "iris_0.2.0_amd64.deb",
                 "SHA256SUMS",
                 "SHA256SUMS.asc",
             ],
@@ -173,13 +173,13 @@ mod tests {
         );
         // An unsigned release is still picked, so the install can say why
         // it refuses it.
-        let unsigned = release("0.2.0", &["penguin-mail_0.2.0_amd64.deb", "SHA256SUMS"]);
+        let unsigned = release("0.2.0", &["iris_0.2.0_amd64.deb", "SHA256SUMS"]);
         assert!(pick(&unsigned, &Method::Deb).unwrap().signature.is_none());
     }
 
     #[test]
     fn a_release_missing_a_file_offers_nothing() {
-        let r = release("0.2.0", &["penguin-mail_0.2.0_amd64.deb"]);
+        let r = release("0.2.0", &["iris_0.2.0_amd64.deb"]);
         assert!(pick(&r, &Method::Deb).is_none());
     }
 }

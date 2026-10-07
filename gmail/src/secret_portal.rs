@@ -97,7 +97,7 @@ mod tests {
     #[tokio::test]
     async fn a_secret_comes_back_until_it_is_deleted() {
         let keyring = empty_keyring().await;
-        let attrs = attributes("penguin-mail-imap", "7");
+        let attrs = attributes("iris-imap", "7");
 
         assert!(keyring.search_items(&attrs).await.unwrap().is_empty());
 
@@ -119,7 +119,7 @@ mod tests {
     #[tokio::test]
     async fn saving_again_replaces_the_secret_rather_than_adding_a_second_one() {
         let keyring = empty_keyring().await;
-        let attrs = attributes("penguin-mail-imap", "7");
+        let attrs = attributes("iris-imap", "7");
 
         keyring.create_item("7", &attrs, "first", true).await.unwrap();
         keyring.create_item("7", &attrs, "second", true).await.unwrap();
@@ -133,7 +133,7 @@ mod tests {
     async fn deleting_with_nothing_stored_is_not_an_error() {
         let keyring = empty_keyring().await;
         keyring
-            .delete(&attributes("penguin-mail-imap", "7"))
+            .delete(&attributes("iris-imap", "7"))
             .await
             .unwrap();
     }
@@ -142,13 +142,13 @@ mod tests {
     async fn one_account_never_sees_another_accounts_secret() {
         let keyring = empty_keyring().await;
         keyring
-            .create_item("7", &attributes("penguin-mail-imap", "7"), "seven", true)
+            .create_item("7", &attributes("iris-imap", "7"), "seven", true)
             .await
             .unwrap();
 
         assert!(
             keyring
-                .search_items(&attributes("penguin-mail-imap", "8"))
+                .search_items(&attributes("iris-imap", "8"))
                 .await
                 .unwrap()
                 .is_empty()

@@ -23,7 +23,7 @@ pub fn page(app: &Rc<App>, dialog: &adw::PreferencesDialog) -> adw::PreferencesP
     let page = adw::PreferencesPage::builder()
         .title(gettext("AI"))
         .name("assistant")
-        .icon_name("penguin-mail-sparkle-symbolic")
+        .icon_name("iris-sparkle-symbolic")
         .build();
 
     let connections = adw::PreferencesGroup::builder()

@@ -354,7 +354,7 @@ fn signed_in_toast(browser: Browser, account: &Account) -> String {
 }
 
 /// Where release builds, which carry the Google client, are published.
-const RELEASES: &str = "https://github.com/c9dev/penguin-mail/releases";
+const RELEASES: &str = "https://github.com/AlbertoBarrago/iris/releases";
 
 /// A toast's title as Pango markup. A toast reads its title as markup, so
 /// a label called "R&D" would otherwise show nothing at all.
@@ -783,9 +783,9 @@ impl MainWindow {
             toasts.set_child(Some(&content));
             let window = adw::Window::builder()
                 .title(if app.core.demo {
-                    gettext("Penguin Mail (Demo)")
+                    gettext("Iris (Demo)")
                 } else {
-                    gettext("Penguin Mail")
+                    gettext("Iris")
                 })
                 .default_width(1320)
                 .default_height(840)
@@ -1989,8 +1989,8 @@ impl MainWindow {
     }
 
     /// Sends `email` through its provider's consent again, once the person
-    /// has chosen Grant Access. Each consent asks for every scope Penguin
-    /// Mail uses, so this is the one path a permission or the banner
+    /// has chosen Grant Access. Each consent asks for every scope Iris
+    /// uses, so this is the one path a permission or the banner
     /// needs. An IMAP or POP3 account has no consent to run.
     fn grant(self: &Rc<Self>, email: String) {
         let account = self
@@ -2017,7 +2017,7 @@ impl MainWindow {
         }
     }
 
-    /// Says an API is switched off in the Google Cloud project Penguin Mail
+    /// Says an API is switched off in the Google Cloud project Iris
     /// signs in with. No permission fixes that, so this offers the page in
     /// Google Cloud that turns it on.
     pub(super) fn explain_api_off(self: &Rc<Self>, service: &str, enable_url: &str) {
@@ -2025,7 +2025,7 @@ impl MainWindow {
             &fill(&gettext("Turn On the {service}"), &[("service", service)]),
             &fill(
                 &gettext(
-                    "The Google Cloud project Penguin Mail signs in with has the {service} \
+                    "The Google Cloud project Iris signs in with has the {service} \
                      switched off, so Google refuses before it can ask for your permission. \
                      Turn it on, wait a minute, and try again.",
                 ),
@@ -2809,7 +2809,7 @@ impl MainWindow {
             return match browser {
                 Browser::Google => self.no_google_sign_in(),
                 Browser::Microsoft => self.no_sign_in(&gettext(
-                    "This copy of Penguin Mail was built without Microsoft sign-in.",
+                    "This copy of Iris was built without Microsoft sign-in.",
                 )),
             };
         }
@@ -2850,7 +2850,7 @@ impl MainWindow {
     /// releases, whose builds can.
     fn no_google_sign_in(&self) {
         self.no_sign_in(&gettext(
-            "This copy of Penguin Mail was built without Google sign-in.",
+            "This copy of Iris was built without Google sign-in.",
         ));
     }
 
@@ -3150,7 +3150,7 @@ impl MainWindow {
         let second = gio::Menu::new();
         second.append(Some(&gettext("Preferences")), Some("win.preferences"));
         second.append(Some(&gettext("Keyboard Shortcuts")), Some("win.shortcuts"));
-        second.append(Some(&gettext("About Penguin Mail")), Some("win.about"));
+        second.append(Some(&gettext("About Iris")), Some("win.about"));
         second.append(Some(&gettext("Quit")), Some("win.quit"));
         menu.append_section(None, &second);
         let button = gtk::MenuButton::builder()
@@ -3617,7 +3617,7 @@ impl MainWindow {
     fn offer_restart(self: &Rc<Self>) {
         let toast = adw::Toast::builder()
             .title(gettext(
-                "Penguin Mail shows the new language after a restart",
+                "Iris shows the new language after a restart",
             ))
             .button_label(gettext("Restart"))
             .timeout(0)
@@ -3654,7 +3654,7 @@ impl MainWindow {
             let dialog = adw::AlertDialog::builder()
                 .heading(gettext("Messages That Will Not Download"))
                 .body(fill(
-                    &gettext("Penguin Mail could not download these from {address}'s server. It tries again at each check, except for a message too large to download."),
+                    &gettext("Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."),
                     &[("address", &account.email)],
                 ))
                 .build();

@@ -145,8 +145,8 @@ def main():
                 line = '"Language-Team: English (United Kingdom)\\n"'
             elif line.startswith('"Language: '):
                 line = line + '\n"X-Language-Name: English (United Kingdom)\\n"'
-            elif line.startswith("# Penguin Mail, mail and calendar"):
-                line = "# British English for Penguin Mail, written by scripts/en-gb.py from the\n# template. Do not edit it by hand: change the rules in the script."
+            elif line.startswith("# Iris, mail and calendar"):
+                line = "# British English for Iris, written by scripts/en-gb.py from the\n# template. Do not edit it by hand: change the rules in the script."
             result.append(line)
             continue
         if in_msgstr and '"' in line:

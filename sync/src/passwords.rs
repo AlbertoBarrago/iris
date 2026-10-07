@@ -40,7 +40,7 @@ pub struct KeyringPasswords {
 impl KeyringPasswords {
     /// One service for every IMAP account, apart from Google's refresh
     /// tokens under `mailrs`, so removing one kind never touches the other.
-    pub const SERVICE: &'static str = "penguin-mail-imap";
+    pub const SERVICE: &'static str = "iris-imap";
 
     pub fn new() -> Self {
         KeyringPasswords {
@@ -52,7 +52,7 @@ impl KeyringPasswords {
     /// tokens, keyed by account id like the passwords. Both the desktop
     /// keyring and the Flatpak's Secret portal file key by service name,
     /// so this works on either.
-    pub const MICROSOFT_SERVICE: &'static str = "penguin-mail-microsoft";
+    pub const MICROSOFT_SERVICE: &'static str = "iris-microsoft";
 
     pub fn microsoft() -> Self {
         KeyringPasswords {
@@ -248,7 +248,7 @@ mod tests {
 
     #[test]
     fn every_imap_password_sits_under_one_service_by_account_id() {
-        assert_eq!(KeyringPasswords::SERVICE, "penguin-mail-imap");
+        assert_eq!(KeyringPasswords::SERVICE, "iris-imap");
         assert_eq!(user(7), "7");
     }
 

@@ -479,7 +479,7 @@ fn protection_group(
     let group = adw::PreferencesGroup::builder()
         .title(gettext("Signing and Encryption"))
         .description(gettext(
-            "Penguin Mail signs and encrypts through GnuPG, which holds your keys and \
+            "Iris signs and encrypts through GnuPG, which holds your keys and \
              asks for your passphrase itself.",
         ))
         .build();
@@ -624,9 +624,9 @@ async fn fill_protection(app: Rc<App>, rows: Rows) {
     // The verb agrees with the programs: "gpg, which holds" but "gpg and
     // gpgsm, which hold".
     filling.set_description(Some(&fill_plural(
-        "Penguin Mail signs and encrypts through {programs}, which holds your \
+        "Iris signs and encrypts through {programs}, which holds your \
          keys and asks for your passphrase itself.",
-        "Penguin Mail signs and encrypts through {programs}, which hold your \
+        "Iris signs and encrypts through {programs}, which hold your \
          keys and ask for your passphrase themselves.",
         programs.len(),
         &[("programs", &named)],
@@ -658,7 +658,7 @@ fn spelling_group(
         return adw::PreferencesGroup::builder()
             .title(gettext("Spelling"))
             .description(gettext(
-                "No dictionaries are installed, so Penguin Mail is not checking \
+                "No dictionaries are installed, so Iris is not checking \
                  spelling. Install a Hunspell dictionary, such as hunspell-en-us \
                  or hunspell-pt-pt, and reopen the composer.",
             ))
@@ -785,7 +785,7 @@ fn sync_page(app: &Rc<App>, pending: &Rc<RefCell<SyncConfig>>) -> adw::Preferenc
         .build();
     let login = adw::SwitchRow::builder()
         .title(gettext("Start in the Tray at Login"))
-        .subtitle(gettext("Penguin Mail keeps syncing with no window open"))
+        .subtitle(gettext("Iris keeps syncing with no window open"))
         .build();
     match autostart::path() {
         Some(path) if !app.core.demo => {
@@ -1176,7 +1176,7 @@ fn language_row(app: &Rc<App>, settings: &Settings) -> adw::ComboRow {
     let labels: Vec<&str> = labels.iter().map(String::as_str).collect();
     let row = adw::ComboRow::builder()
         .title(gettext("Language"))
-        .subtitle(gettext("Penguin Mail shows a new language after a restart"))
+        .subtitle(gettext("Iris shows a new language after a restart"))
         .model(&gtk::StringList::new(&labels))
         .selected(language::row_of(&languages, &settings.language))
         .build();

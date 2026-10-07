@@ -285,7 +285,7 @@ async fn a_conversation_with_no_way_out_says_so_and_stops_nothing_else() {
     assert_eq!(lists[0]["outcome"], "failed");
     assert_eq!(
         lists[0]["reason"],
-        "That conversation has no unsubscribe link Penguin Mail can use."
+        "That conversation has no unsubscribe link Iris can use."
     );
     assert_eq!(lists[1]["outcome"], "done");
     assert_eq!(

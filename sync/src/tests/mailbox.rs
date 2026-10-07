@@ -339,7 +339,7 @@ async fn a_message_the_outbox_gave_up_on_says_so_instead_of_naming_a_time() {
     let listing = list(&h, &Mailbox::Outbox, &view()).await;
     assert_eq!(
         listing.rows[0].snippet,
-        "Gmail returned HTTP 413. Penguin Mail stopped trying"
+        "Gmail returned HTTP 413. Iris stopped trying"
     );
 }
 

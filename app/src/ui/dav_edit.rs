@@ -17,7 +17,7 @@ pub fn present(app: &Rc<App>, account: &Account, calendar: &str, contacts: &str,
     let carddav = adw::EntryRow::builder().title(gettext("Contacts (CardDAV) URL")).text(contacts).build();
     let problem = gtk::Label::builder().wrap(true).xalign(0.0).css_classes(["error"]).visible(false).build();
     let group = adw::PreferencesGroup::builder()
-        .description(fill(&gettext("Penguin Mail signs in to these with {account}'s password."), &[("account", &account.email)]))
+        .description(fill(&gettext("Iris signs in to these with {account}'s password."), &[("account", &account.email)]))
         .build();
     group.add(&caldav);
     group.add(&carddav);

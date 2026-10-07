@@ -1,5 +1,5 @@
-//! The XML WebDAV, CalDAV and CardDAV speak: the request bodies Penguin
-//! Mail sends, and the multistatus answers read into [`Props`]. roxmltree
+//! The XML WebDAV, CalDAV and CardDAV speak: the request bodies Iris
+//! sends, and the multistatus answers read into [`Props`]. roxmltree
 //! refuses a document type declaration, so no answer can expand entities,
 //! and the node count is capped.
 

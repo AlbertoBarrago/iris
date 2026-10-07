@@ -867,12 +867,12 @@ mod tests {
     /// computer that cannot. The round trips skip when GnuPG is missing, so a
     /// developer without it can still run the suite; that same skip would let
     /// a build machine report a green S/MIME and OpenPGP suite having tested
-    /// nothing. Setting `PENGUIN_MAIL_REQUIRE_CRYPTO` turns the skip into a
+    /// nothing. Setting `IRIS_REQUIRE_CRYPTO` turns the skip into a
     /// failure, which is what a build machine should do.
     fn require_crypto() {
-        if std::env::var_os("PENGUIN_MAIL_REQUIRE_CRYPTO").is_some() {
+        if std::env::var_os("IRIS_REQUIRE_CRYPTO").is_some() {
             panic!(
-                "PENGUIN_MAIL_REQUIRE_CRYPTO is set and GnuPG is not on PATH, \
+                "IRIS_REQUIRE_CRYPTO is set and GnuPG is not on PATH, \
                  so these tests would have proved nothing"
             );
         }

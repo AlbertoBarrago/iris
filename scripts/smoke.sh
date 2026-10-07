@@ -12,7 +12,7 @@ if [ -f packaging/secrets.env ]; then
     set +a
 fi
 cargo build --quiet -p mailrs-cli
-cli=target/debug/penguin-mail-cli
+cli=target/debug/iris-cli
 
 echo "== accounts"
 "$cli" account list

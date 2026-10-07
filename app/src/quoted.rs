@@ -100,7 +100,7 @@ fn text_history(text: &str) -> Option<usize> {
         .then(|| starts[from].0)
 }
 
-/// Whether a line opens a forwarded message, as Gmail, Penguin Mail,
+/// Whether a line opens a forwarded message, as Gmail, Iris,
 /// Outlook and Apple Mail write it.
 fn forward_marker(text: &str) -> bool {
     let text = text.trim_start();
@@ -315,7 +315,7 @@ impl<'a> Tree<'a> {
 
     /// Where the quote at `at` ends, taking in the blockquotes that follow
     /// it as siblings with only blank text or line breaks between. Some
-    /// writers, Penguin Mail among them before, quote each paragraph in a
+    /// writers, Iris among them before, quote each paragraph in a
     /// blockquote of its own.
     fn quote_run_end(&self, at: usize) -> usize {
         let node = &self.nodes[at];
@@ -549,7 +549,7 @@ mod tests {
     }
 
     #[test]
-    fn penguin_mail_folds_its_own_reply() {
+    fn iris_folds_its_own_reply() {
         let (shown, hidden) = fold(
             "<div style=\"font-family:sans-serif\"><p style=\"margin:0 0 1em\">Monday works.</p>\
              <p style=\"margin:0 0 1em\">On Monday, 21 September 2026 at 09:00, Ann Lee \

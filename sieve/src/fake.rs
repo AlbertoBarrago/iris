@@ -138,12 +138,12 @@ mod tests {
         let sieve = FakeSieve::new("fileinto vacation");
         sieve.refuse_next_put("line 1: error");
         assert!(matches!(
-            sieve.put("penguin-mail", "keep;").await,
+            sieve.put("iris", "keep;").await,
             Err(SieveError::Refused(_))
         ));
-        sieve.put("penguin-mail", "keep;").await.unwrap();
-        sieve.activate("penguin-mail").await.unwrap();
-        assert_eq!(sieve.active().as_deref(), Some("penguin-mail"));
+        sieve.put("iris", "keep;").await.unwrap();
+        sieve.activate("iris").await.unwrap();
+        assert_eq!(sieve.active().as_deref(), Some("iris"));
         sieve.set_down(true);
         assert!(matches!(sieve.scripts().await, Err(SieveError::Network(_))));
     }

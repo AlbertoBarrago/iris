@@ -337,10 +337,10 @@ pub fn client_from(id: Option<&str>) -> Option<MicrosoftClient> {
     Some(MicrosoftClient::new(id))
 }
 
-/// The project's client, compiled in from `PENGUIN_MAIL_MICROSOFT_CLIENT_ID`,
+/// The project's client, compiled in from `IRIS_MICROSOFT_CLIENT_ID`,
 /// which the release workflow fills from the `MICROSOFT_CLIENT_ID` secret.
 pub fn built_in_client() -> Option<MicrosoftClient> {
-    client_from(option_env!("PENGUIN_MAIL_MICROSOFT_CLIENT_ID"))
+    client_from(option_env!("IRIS_MICROSOFT_CLIENT_ID"))
 }
 
 /// Receives Microsoft's redirect on `localhost` during consent. It

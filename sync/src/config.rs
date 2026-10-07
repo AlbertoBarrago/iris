@@ -1,4 +1,4 @@
-//! `config.toml` and the directories Penguin Mail uses. Both binaries read
+//! `config.toml` and the directories Iris uses. Both binaries read
 //! it; the app writes it when the sync settings change.
 
 use std::io::Write;
@@ -125,12 +125,12 @@ impl Config {
 }
 
 /// The directory name under the config, data, and cache directories.
-pub const DIR_NAME: &str = "penguin-mail";
+pub const DIR_NAME: &str = "iris";
 
 /// The name those directories had before the app was renamed.
 const OLD_DIR_NAME: &str = "mailrs";
 
-/// `$MAILRS_CONFIG`, else `~/.config/penguin-mail/config.toml`.
+/// `$MAILRS_CONFIG`, else `~/.config/iris/config.toml`.
 pub fn config_path() -> Result<PathBuf, ConfigError> {
     if let Some(path) = std::env::var_os("MAILRS_CONFIG") {
         return Ok(PathBuf::from(path));
@@ -139,7 +139,7 @@ pub fn config_path() -> Result<PathBuf, ConfigError> {
     Ok(dir.join(DIR_NAME).join("config.toml"))
 }
 
-/// `$MAILRS_DATA_DIR`, else `~/.local/share/penguin-mail`.
+/// `$MAILRS_DATA_DIR`, else `~/.local/share/iris`.
 pub fn data_dir() -> Result<PathBuf, ConfigError> {
     if let Some(path) = std::env::var_os("MAILRS_DATA_DIR") {
         return Ok(PathBuf::from(path));
@@ -157,7 +157,7 @@ pub fn private_dir(dir: &Path) -> std::io::Result<()> {
     std::fs::set_permissions(dir, std::fs::Permissions::from_mode(0o700))
 }
 
-/// Closes the folders Penguin Mail keeps anything in to other people on the
+/// Closes the folders Iris keeps anything in to other people on the
 /// computer: the config, the mail store and contact photos, and the cache.
 /// Folders made by an older copy with the default mode are closed too.
 pub fn secure_dirs() {
@@ -171,7 +171,7 @@ pub fn secure_dirs() {
 }
 
 /// Renames `~/.config/mailrs`, `~/.local/share/mailrs`, and `~/.cache/mailrs`
-/// to `penguin-mail`, so an upgrade keeps the config, settings, and mail
+/// to `iris`, so an upgrade keeps the config, settings, and mail
 /// store. Call it at startup, before reading any of them.
 pub fn migrate_old_dirs() {
     let bases = [dirs::config_dir(), dirs::data_dir(), dirs::cache_dir()];
@@ -209,7 +209,7 @@ mod tests {
     #[test]
     fn a_private_folder_is_the_owners_alone_whether_new_or_old() {
         let base = tempfile::tempdir().unwrap();
-        let fresh = base.path().join("fresh/penguin-mail");
+        let fresh = base.path().join("fresh/iris");
         super::private_dir(&fresh).unwrap();
         let mode = |p: &std::path::Path| std::fs::metadata(p).unwrap().permissions().mode() & 0o777;
         assert_eq!(mode(&fresh), 0o700);
@@ -282,7 +282,7 @@ mod tests {
     #[test]
     fn the_old_directory_moves_once() {
         let base = tempfile::tempdir().unwrap();
-        let (old, new) = (base.path().join("mailrs"), base.path().join("penguin-mail"));
+        let (old, new) = (base.path().join("mailrs"), base.path().join("iris"));
         std::fs::create_dir(&old).unwrap();
         std::fs::write(old.join("mailrs.db"), "mail").unwrap();
         assert!(move_old_dir(&old, &new).unwrap());
@@ -302,7 +302,7 @@ mod tests {
     #[test]
     fn nothing_moves_on_a_fresh_install() {
         let base = tempfile::tempdir().unwrap();
-        let new = base.path().join("penguin-mail");
+        let new = base.path().join("iris");
         assert!(!move_old_dir(&base.path().join("mailrs"), &new).unwrap());
         assert!(!new.exists());
     }

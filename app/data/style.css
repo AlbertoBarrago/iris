@@ -1519,8 +1519,8 @@ toolbarview.post-opaque { background-color: var(--dialog-bg-color); }
 /* Logos replace the letter and keep the tile: same corner, same lit top
    half, drawn over the artwork's own fill. Google asks for its G on white,
    so that tile is white in dark mode too, and so is Microsoft's. The white
-   tiles get a hairline so they show on a light card. The cloud is Penguin
-   Mail's drawing and keeps the tile's colour. */
+   tiles get a hairline so they show on a light card. The cloud is Iris's
+   drawing and keeps the tile's colour. */
 .post-mark.logo-google, .post-mark.logo-microsoft, .post-mark.logo-icloud {
   background-repeat: no-repeat; background-position: center;
 }
@@ -1530,17 +1530,17 @@ toolbarview.post-opaque { background-color: var(--dialog-bg-color); }
 }
 .post-mark.logo-google {
   background-image: linear-gradient(to bottom, alpha(#ffffff, 0.07) 50%, alpha(#ffffff, 0) 50%),
-    url("resource:///io/github/c9dev/PenguinMail/logos/google.png");
+    url("resource:///io/github/AlbertoBarrago/Iris/logos/google.png");
   background-size: 100% 100%, 60% 60%;
 }
 .post-mark.logo-microsoft {
   background-image: linear-gradient(to bottom, alpha(#ffffff, 0.07) 50%, alpha(#ffffff, 0) 50%),
-    url("resource:///io/github/c9dev/PenguinMail/logos/microsoft.svg");
+    url("resource:///io/github/AlbertoBarrago/Iris/logos/microsoft.svg");
   background-size: 100% 100%, 58% 58%;
 }
 .post-mark.logo-icloud {
   background-image: linear-gradient(to bottom, alpha(#ffffff, 0.07) 50%, alpha(#ffffff, 0) 50%),
-    url("resource:///io/github/c9dev/PenguinMail/logos/icloud.svg");
+    url("resource:///io/github/AlbertoBarrago/Iris/logos/icloud.svg");
   background-size: 100% 100%, 74% 74%;
 }
 

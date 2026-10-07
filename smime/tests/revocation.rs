@@ -431,9 +431,9 @@ fn permit_owner_only(_path: &Path) {}
 /// Stops a run meant to exercise the real thing from passing on a computer
 /// that cannot; see the same function in `gpgsm.rs`.
 fn require_crypto() {
-    if std::env::var_os("PENGUIN_MAIL_REQUIRE_CRYPTO").is_some() {
+    if std::env::var_os("IRIS_REQUIRE_CRYPTO").is_some() {
         panic!(
-            "PENGUIN_MAIL_REQUIRE_CRYPTO is set and gpgsm or openssl is not on PATH, \
+            "IRIS_REQUIRE_CRYPTO is set and gpgsm or openssl is not on PATH, \
              so these tests would have proved nothing"
         );
     }

@@ -30,7 +30,7 @@ pub enum BackendError {
     StateLost,
     /// The account has not granted a permission this call needs: Gmail's
     /// missing scope, and later a Microsoft consent error.
-    #[error("Penguin Mail needs more access to this account; grant it and try again")]
+    #[error("Iris needs more access to this account; grant it and try again")]
     NeedsPermission,
     #[error("refused: {0}")]
     Refused(String),
@@ -50,7 +50,7 @@ pub enum BackendError {
     #[error("the file is no longer at {0}")]
     FileMissing(String),
     /// The server runs a script of the person's own, cannot include it in
-    /// Penguin Mail's, and the person has not said to replace it.
+    /// Iris's, and the person has not said to replace it.
     #[error("the server runs your rules in “{script}” and cannot run two scripts")]
     WouldReplace { script: String },
     #[error(transparent)]

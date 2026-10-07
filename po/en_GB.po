@@ -1,11 +1,11 @@
-# British English for Penguin Mail, written by scripts/en-gb.py from the
+# British English for Iris, written by scripts/en-gb.py from the
 # template. Do not edit it by hand: change the rules in the script.
-# This file is distributed under the same licence as Penguin Mail.
+# This file is distributed under the same licence as Iris.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: penguin-mail 1.0.0\n"
-"Report-Msgid-Bugs-To: https://github.com/c9dev/penguin-mail/issues\n"
+"Project-Id-Version: iris 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/AlbertoBarrago/iris/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,103 +15,103 @@ msgstr ""
 "Language: en_GB\n"
 "X-Language-Name: English (United Kingdom)\n"
 
-#: app/data/io.github.c9dev.PenguinMail.desktop:5
+#: app/data/io.github.AlbertoBarrago.Iris.desktop:5
 msgid "Mail and calendar for Linux"
 msgstr "Mail and calendar for Linux"
 
-#: app/data/io.github.c9dev.PenguinMail.desktop:10
+#: app/data/io.github.AlbertoBarrago.Iris.desktop:10
 msgid "mail;email;gmail;imap;inbox;calendar;contacts;"
 msgstr "mail;email;gmail;imap;inbox;calendar;contacts;"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:15
-msgid "Penguin Mail reads Gmail, Outlook.com and Microsoft 365 accounts, and any IMAP or POP3 account with SMTP, such as Fastmail, iCloud and Yahoo, and finds the server settings for you. It syncs from the system tray, shows your accounts in one inbox or one at a time, and keeps your mail on your own computer."
-msgstr "Penguin Mail reads Gmail, Outlook.com and Microsoft 365 accounts, and any IMAP or POP3 account with SMTP, such as Fastmail, iCloud and Yahoo, and finds the server settings for you. It syncs from the system tray, shows your accounts in one inbox or one at a time, and keeps your mail on your own computer."
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:15
+msgid "Iris reads Gmail, Outlook.com and Microsoft 365 accounts, and any IMAP or POP3 account with SMTP, such as Fastmail, iCloud and Yahoo, and finds the server settings for you. It syncs from the system tray, shows your accounts in one inbox or one at a time, and keeps your mail on your own computer."
+msgstr "Iris reads Gmail, Outlook.com and Microsoft 365 accounts, and any IMAP or POP3 account with SMTP, such as Fastmail, iCloud and Yahoo, and finds the server settings for you. It syncs from the system tray, shows your accounts in one inbox or one at a time, and keeps your mail on your own computer."
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:23
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:23
 msgid "One inbox for every account, with Gmail's categories, Outlook's Focused and Other tabs, labels and search"
 msgstr "One inbox for every account, with Gmail's categories, Outlook's Focused and Other tabs, labels and search"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:24
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:24
 msgid "A calendar with Google Calendar, Outlook and any CalDAV server: Day, Week, Month and Agenda views, invitations answered in the mail, and reminders"
 msgstr "A calendar with Google Calendar, Outlook and any CalDAV server: Day, Week, Month and Agenda views, invitations answered in the mail, and reminders"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:25
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:25
 msgid "Contacts from Google, Outlook and any CardDAV server"
 msgstr "Contacts from Google, Outlook and any CardDAV server"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:26
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:26
 msgid "A composer that shows formatting as you write, with Undo Send and Send Later"
 msgstr "A composer that shows formatting as you write, with Undo Send and Send Later"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:27
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:27
 msgid "Flags in seven colors, VIPs, smart mailboxes and reminders"
 msgstr "Flags in seven colours, VIPs, smart mailboxes and reminders"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:28
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:28
 msgid "Rules and automatic replies for every account, kept on Gmail, Outlook or a Sieve server, or run by the app on its own"
 msgstr "Rules and automatic replies for every account, kept on Gmail, Outlook or a Sieve server, or run by the app on its own"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:29
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:29
 msgid "Plus addresses to give out instead of your own"
 msgstr "Plus addresses to give out instead of your own"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:30
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:30
 msgid "OpenPGP and S/MIME signing and encryption through your own GnuPG"
 msgstr "OpenPGP and S/MIME signing and encryption through your own GnuPG"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:31
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:31
 msgid "Remote images blocked until you ask for them"
 msgstr "Remote images blocked until you ask for them"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:32
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:32
 msgid "An assistant that runs on a local model or on Claude, off until you pick one"
 msgstr "An assistant that runs on a local model or on Claude, off until you pick one"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:33
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:33
 msgid "Every control named for screen readers and reachable from the keyboard, in English and European Portuguese"
 msgstr "Every control named for screen readers and reachable from the keyboard, in English and European Portuguese"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:35
-msgid "Adding a Gmail or Microsoft account takes one sign-in in your browser. Penguin Mail is built with GTK and libadwaita and fits best on GNOME, but it runs on any Linux desktop."
-msgstr "Adding a Gmail or Microsoft account takes one sign-in in your browser. Penguin Mail is built with GTK and libadwaita and fits best on GNOME, but it runs on any Linux desktop."
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:35
+msgid "Adding a Gmail or Microsoft account takes one sign-in in your browser. Iris is built with GTK and libadwaita and fits best on GNOME, but it runs on any Linux desktop."
+msgstr "Adding a Gmail or Microsoft account takes one sign-in in your browser. Iris is built with GTK and libadwaita and fits best on GNOME, but it runs on any Linux desktop."
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:53
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:53
 msgid "gmail"
 msgstr "gmail"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:54
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:54
 msgid "email"
 msgstr "email"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:55
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:55
 msgid "mail"
 msgstr "mail"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:56
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:56
 msgid "inbox"
 msgstr "inbox"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:85
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:85
 msgid "All your accounts in one inbox, with a reply open"
 msgstr "All your accounts in one inbox, with a reply open"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:89
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:89
 msgid "The same inbox in dark mode"
 msgstr "The same inbox in dark mode"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:93
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:93
 msgid "The calendar's week, with working hours and where you work"
 msgstr "The calendar's week, with working hours and where you work"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:97
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:97
 msgid "An invitation in a message, with the hours around the meeting"
 msgstr "An invitation in a message, with the hours around the meeting"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:101
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:101
 msgid "Replying, with the quoted history folded away"
 msgstr "Replying, with the quoted history folded away"
 
-#: app/data/io.github.c9dev.PenguinMail.metainfo.xml:105
+#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:105
 msgid "The assistant beside your mail"
 msgstr "The assistant beside your mail"
 
@@ -138,16 +138,16 @@ msgstr[0] "Remove After {count} Day"
 msgstr[1] "Remove After {count} Days"
 
 #: app/src/add_account.rs:286
-msgid "This copy of Penguin Mail was built without Microsoft sign-in."
-msgstr "This copy of Penguin Mail was built without Microsoft sign-in."
+msgid "This copy of Iris was built without Microsoft sign-in."
+msgstr "This copy of Iris was built without Microsoft sign-in."
 
 #: app/src/add_account.rs:306
 msgid "{provider} has no IMAP, so other mail apps cannot reach it."
 msgstr "{provider} has no IMAP, so other mail apps cannot reach it."
 
 #: app/src/add_account.rs:313
-msgid "Penguin Mail cannot reach {provider} yet."
-msgstr "Penguin Mail cannot reach {provider} yet."
+msgid "Iris cannot reach {provider} yet."
+msgstr "Iris cannot reach {provider} yet."
 
 #: app/src/add_account.rs:430
 msgid "{provider} also offers POP3"
@@ -162,8 +162,8 @@ msgid "Incoming over {protocol}"
 msgstr "Incoming over {protocol}"
 
 #: app/src/add_account.rs:448
-msgid "Penguin Mail found no mail servers for {domain}. Enter them below."
-msgstr "Penguin Mail found no mail servers for {domain}. Enter them below."
+msgid "Iris found no mail servers for {domain}. Enter them below."
+msgstr "Iris found no mail servers for {domain}. Enter them below."
 
 #: app/src/add_account.rs:473
 msgid "{provider} needs an app password."
@@ -202,8 +202,8 @@ msgid "{hosts} · {security}"
 msgstr "{hosts} · {security}"
 
 #: app/src/add_account.rs:574
-msgid "Penguin Mail's own list knows this provider. Nothing has left this computer."
-msgstr "Penguin Mail's own list knows this provider. Nothing has left this computer."
+msgid "Iris's own list knows this provider. Nothing has left this computer."
+msgstr "Iris's own list knows this provider. Nothing has left this computer."
 
 #: app/src/add_account.rs:576
 msgid "Found by its mail servers. Nothing else was asked."
@@ -340,8 +340,8 @@ msgid "This app cannot send these sign-in details to the server."
 msgstr "This app cannot send these sign-in details to the server."
 
 #: app/src/add_account.rs:874
-msgid "Penguin Mail cannot save your sign-in until the snap can reach your keyring. Run this command in a terminal, restart Penguin Mail, then add the account again."
-msgstr "Penguin Mail cannot save your sign-in until the snap can reach your keyring. Run this command in a terminal, restart Penguin Mail, then add the account again."
+msgid "Iris cannot save your sign-in until the snap can reach your keyring. Run this command in a terminal, restart Iris, then add the account again."
+msgstr "Iris cannot save your sign-in until the snap can reach your keyring. Run this command in a terminal, restart Iris, then add the account again."
 
 #: app/src/add_account.rs:879
 msgid "Connect Your Keyring"
@@ -396,10 +396,10 @@ msgid "Your mail is here."
 msgstr "Your mail is here."
 
 #: app/src/add_account.rs:1258
-msgid "Your organization did not allow one of the permissions Penguin Mail asked for, so this feature stays off:"
-msgid_plural "Your organization did not allow {count} of the permissions Penguin Mail asked for, so these features stay off:"
-msgstr[0] "Your organisation did not allow one of the permissions Penguin Mail asked for, so this feature stays off:"
-msgstr[1] "Your organisation did not allow {count} of the permissions Penguin Mail asked for, so these features stay off:"
+msgid "Your organization did not allow one of the permissions Iris asked for, so this feature stays off:"
+msgid_plural "Your organization did not allow {count} of the permissions Iris asked for, so these features stay off:"
+msgstr[0] "Your organisation did not allow one of the permissions Iris asked for, so this feature stays off:"
+msgstr[1] "Your organisation did not allow {count} of the permissions Iris asked for, so these features stay off:"
 
 #: app/src/add_account.rs:1265
 msgid "You left one box unticked on Google's page, so this feature stays off:"
@@ -416,30 +416,30 @@ msgid "Newest mail comes first. Older mail keeps coming in the background, even 
 msgstr "Newest mail comes first. Older mail keeps coming in the background, even with the window closed."
 
 #: app/src/add_account.rs:1294
-msgid "Penguin Mail keeps checking for new mail, even with the window closed."
-msgstr "Penguin Mail keeps checking for new mail, even with the window closed."
+msgid "Iris keeps checking for new mail, even with the window closed."
+msgstr "Iris keeps checking for new mail, even with the window closed."
 
 #: app/src/add_account.rs:1304
-msgid "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
-msgstr "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
+msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
+msgstr "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
 
 #: app/src/add_account.rs:1307
-msgid "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
-msgstr "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
+msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
+msgstr "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
 
 #: app/src/add_account.rs:1310
-msgid "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
-msgid_plural "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
-msgstr[0] "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
-msgstr[1] "Penguin Mail downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
+msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
+msgid_plural "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
+msgstr[0] "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
+msgstr[1] "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
 
 #: app/src/add_account.rs:1326
-msgid "Penguin Mail needs the password for {address} again."
-msgstr "Penguin Mail needs the password for {address} again."
+msgid "Iris needs the password for {address} again."
+msgstr "Iris needs the password for {address} again."
 
 #: app/src/add_account/lookup.rs:33
-msgid "Penguin Mail's own list"
-msgstr "Penguin Mail's own list"
+msgid "Iris's own list"
+msgstr "Iris's own list"
 
 #: app/src/add_account/lookup.rs:34
 msgid "Mail servers (MX)"
@@ -510,8 +510,8 @@ msgid "Choose your {provider} account."
 msgstr "Choose your {provider} account."
 
 #: app/src/add_account/post.rs:236
-msgid "If {provider} says it has not verified the app, choose Advanced, then Go to Penguin Mail."
-msgstr "If {provider} says it has not verified the app, choose Advanced, then Go to Penguin Mail."
+msgid "If {provider} says it has not verified the app, choose Advanced, then Go to Iris."
+msgstr "If {provider} says it has not verified the app, choose Advanced, then Go to Iris."
 
 #: app/src/add_account/post.rs:240
 msgid "Leave every box ticked and choose Continue."
@@ -522,8 +522,8 @@ msgid "Choose or type your Microsoft account."
 msgstr "Choose or type your Microsoft account."
 
 #: app/src/add_account/post.rs:244
-msgid "Read what Penguin Mail asks for and choose Accept."
-msgstr "Read what Penguin Mail asks for and choose Accept."
+msgid "Read what Iris asks for and choose Accept."
+msgstr "Read what Iris asks for and choose Accept."
 
 #: app/src/add_account/post.rs:259
 msgid "Other"
@@ -554,8 +554,8 @@ msgid "{tile}, signs in through your browser"
 msgstr "{tile}, signs in through your browser"
 
 #: app/src/add_account/post.rs:381
-msgid "Penguin Mail's own list knows this address. Nothing has left this computer."
-msgstr "Penguin Mail's own list knows this address. Nothing has left this computer."
+msgid "Iris's own list knows this address. Nothing has left this computer."
+msgstr "Iris's own list knows this address. Nothing has left this computer."
 
 #: app/src/add_account/post.rs:399
 msgid "This copy cannot sign in to Microsoft"
@@ -570,12 +570,12 @@ msgid "{provider} keeps its mail in its own apps, so other mail apps cannot reac
 msgstr "{provider} keeps its mail in its own apps, so other mail apps cannot reach it. Use another address instead."
 
 #: app/src/add_account/post.rs:412
-msgid "Penguin Mail cannot reach {provider} yet"
-msgstr "Penguin Mail cannot reach {provider} yet"
+msgid "Iris cannot reach {provider} yet"
+msgstr "Iris cannot reach {provider} yet"
 
 #: app/src/add_account/post.rs:414
-msgid "{provider} lets other mail apps in only through an app of its own, which Penguin Mail does not support yet. Use another address instead."
-msgstr "{provider} lets other mail apps in only through an app of its own, which Penguin Mail does not support yet. Use another address instead."
+msgid "{provider} lets other mail apps in only through an app of its own, which Iris does not support yet. Use another address instead."
+msgstr "{provider} lets other mail apps in only through an app of its own, which Iris does not support yet. Use another address instead."
 
 #: app/src/add_account/post.rs:439
 msgid "{provider} needs an app password"
@@ -610,8 +610,8 @@ msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr "Continue opens {provider}'s sign-in page in your browser."
 
 #: app/src/app.rs:373
-msgid "Your preferences could not be read, so Penguin Mail started from the defaults. The old file is kept as {file}."
-msgstr "Your preferences could not be read, so Penguin Mail started from the defaults. The old file is kept as {file}."
+msgid "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
+msgstr "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
 
 #: app/src/app/sending.rs:31
 msgid "That account is not connected. Check its status in the sidebar."
@@ -666,8 +666,8 @@ msgid "“{subject}”"
 msgstr "“{subject}”"
 
 #: app/src/app/updates.rs:125
-msgid "Penguin Mail {version} is up to date"
-msgstr "Penguin Mail {version} is up to date"
+msgid "Iris {version} is up to date"
+msgstr "Iris {version} is up to date"
 
 #: app/src/app/updates.rs:135
 msgid "Could not reach GitHub to check for updates"
@@ -1384,8 +1384,8 @@ msgid "Run {tool} on the MCP server {server}?"
 msgstr "Run {tool} on the MCP server {server}?"
 
 #: app/src/assistant/sources/skills/mod.rs:59
-msgid "Penguin Mail"
-msgstr "Penguin Mail"
+msgid "Iris"
+msgstr "Iris"
 
 #: app/src/assistant/sources/skills/mod.rs:60
 msgid "Claude Code"
@@ -1482,8 +1482,8 @@ msgid "Running a command in the sandbox"
 msgstr "Running a command in the sandbox"
 
 #: app/src/autostart.rs:50
-msgid "Penguin Mail keeps syncing with no window open"
-msgstr "Penguin Mail keeps syncing with no window open"
+msgid "Iris keeps syncing with no window open"
+msgstr "Iris keeps syncing with no window open"
 
 #: app/src/compose.rs:548 app/src/compose.rs:2542
 msgid "Add at least one recipient."
@@ -1546,12 +1546,12 @@ msgstr[0] "Could not save {count} person to contacts in {account}"
 msgstr[1] "Could not save {count} people to contacts in {account}"
 
 #: app/src/core.rs:208
-msgid "Another copy of Penguin Mail, or penguin-mail-cli sync, is syncing your mail. Stop it, then open Penguin Mail again."
-msgstr "Another copy of Penguin Mail, or penguin-mail-cli sync, is syncing your mail. Stop it, then open Penguin Mail again."
+msgid "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then open Iris again."
+msgstr "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then open Iris again."
 
 #: app/src/core.rs:220
-msgid "Penguin Mail could not update its mail store, and kept the old one."
-msgstr "Penguin Mail could not update its mail store, and kept the old one."
+msgid "Iris could not update its mail store, and kept the old one."
+msgstr "Iris could not update its mail store, and kept the old one."
 
 #: app/src/core.rs:717 app/src/core.rs:774 app/src/core.rs:819
 msgid "Demo mode cannot add real accounts."
@@ -1772,8 +1772,8 @@ msgid "Slate"
 msgstr "Slate"
 
 #: app/src/keyring_plug.rs:128
-msgid "Penguin Mail cannot save sign-ins until the snap can reach your keyring. Run {command} in a terminal, then restart Penguin Mail."
-msgstr "Penguin Mail cannot save sign-ins until the snap can reach your keyring. Run {command} in a terminal, then restart Penguin Mail."
+msgid "Iris cannot save sign-ins until the snap can reach your keyring. Run {command} in a terminal, then restart Iris."
+msgstr "Iris cannot save sign-ins until the snap can reach your keyring. Run {command} in a terminal, then restart Iris."
 
 #: app/src/language_names.rs:48
 msgid "{language} ({country})"
@@ -1781,7 +1781,7 @@ msgstr "{language} ({country})"
 
 #: app/src/main.rs:70
 msgid ""
-"Usage: penguin-mail [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
+"Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
 "\n"
 "  --version      print the version and quit\n"
 "  --background   start in the tray without opening a window\n"
@@ -1790,7 +1790,7 @@ msgid ""
 "  mailto:...     the same as --compose mailto:...\n"
 "  FILE.ics       open a calendar file, to add its events to a calendar"
 msgstr ""
-"Usage: penguin-mail [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
+"Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
 "\n"
 "  --version      print the version and quit\n"
 "  --background   start in the tray without opening a window\n"
@@ -1800,12 +1800,12 @@ msgstr ""
 "  FILE.ics       open a calendar file, to add its events to a calendar"
 
 #: app/src/main.rs:141
-msgid "penguin-mail: unknown option {option}"
-msgstr "penguin-mail: unknown option {option}"
+msgid "iris: unknown option {option}"
+msgstr "iris: unknown option {option}"
 
 #: app/src/main.rs:301
-msgid "Penguin Mail Could Not Start"
-msgstr "Penguin Mail Could Not Start"
+msgid "Iris Could Not Start"
+msgstr "Iris Could Not Start"
 
 #: app/src/main.rs:306 app/src/ui/about.rs:179
 msgid "Report a Problem"
@@ -2016,44 +2016,44 @@ msgid "This account has no folders yet."
 msgstr "This account has no folders yet."
 
 #: app/src/offered.rs:427
-msgid "Your organization does not allow Penguin Mail to use this calendar."
-msgstr "Your organisation does not allow Penguin Mail to use this calendar."
+msgid "Your organization does not allow Iris to use this calendar."
+msgstr "Your organisation does not allow Iris to use this calendar."
 
 #: app/src/offered.rs:430
-msgid "Your organization does not allow Penguin Mail to read these contacts."
-msgstr "Your organisation does not allow Penguin Mail to read these contacts."
+msgid "Your organization does not allow Iris to read these contacts."
+msgstr "Your organisation does not allow Iris to read these contacts."
 
 #: app/src/offered.rs:433
-msgid "Your organization does not allow Penguin Mail to change these rules."
-msgstr "Your organisation does not allow Penguin Mail to change these rules."
+msgid "Your organization does not allow Iris to change these rules."
+msgstr "Your organisation does not allow Iris to change these rules."
 
 #: app/src/offered.rs:436
-msgid "Your organization does not allow Penguin Mail to change the automatic reply."
-msgstr "Your organisation does not allow Penguin Mail to change the automatic reply."
+msgid "Your organization does not allow Iris to change the automatic reply."
+msgstr "Your organisation does not allow Iris to change the automatic reply."
 
 #: app/src/offered.rs:440
 msgid "{provider} refused the password for calendars. Some providers need an app password with access to calendars and contacts."
 msgstr "{provider} refused the password for calendars. Some providers need an app password with access to calendars and contacts."
 
 #: app/src/offered.rs:444
-msgid "Penguin Mail could not reach the calendar server for {provider}."
-msgstr "Penguin Mail could not reach the calendar server for {provider}."
+msgid "Iris could not reach the calendar server for {provider}."
+msgstr "Iris could not reach the calendar server for {provider}."
 
 #: app/src/offered.rs:447
-msgid "Penguin Mail found no calendar server for {provider}."
-msgstr "Penguin Mail found no calendar server for {provider}."
+msgid "Iris found no calendar server for {provider}."
+msgstr "Iris found no calendar server for {provider}."
 
 #: app/src/offered.rs:452
 msgid "{provider} refused the password for contacts. Some providers need an app password with access to calendars and contacts."
 msgstr "{provider} refused the password for contacts. Some providers need an app password with access to calendars and contacts."
 
 #: app/src/offered.rs:456
-msgid "Penguin Mail could not reach the contacts server for {provider}."
-msgstr "Penguin Mail could not reach the contacts server for {provider}."
+msgid "Iris could not reach the contacts server for {provider}."
+msgstr "Iris could not reach the contacts server for {provider}."
 
 #: app/src/offered.rs:459
-msgid "Penguin Mail found no contacts server for {provider}."
-msgstr "Penguin Mail found no contacts server for {provider}."
+msgid "Iris found no contacts server for {provider}."
+msgstr "Iris found no contacts server for {provider}."
 
 #: app/src/offered.rs:463
 msgid "{provider} cannot send automatic replies over POP3."
@@ -2096,12 +2096,12 @@ msgid "The server would not hand it over."
 msgstr "The server would not hand it over."
 
 #: app/src/offered.rs:530
-msgid "The message is larger than Penguin Mail downloads."
-msgstr "The message is larger than Penguin Mail downloads."
+msgid "The message is larger than Iris downloads."
+msgstr "The message is larger than Iris downloads."
 
 #: app/src/offered.rs:533
-msgid "Penguin Mail could not read the server's answer."
-msgstr "Penguin Mail could not read the server's answer."
+msgid "Iris could not read the server's answer."
+msgstr "Iris could not read the server's answer."
 
 #: app/src/offered.rs:536
 msgid "The connection closed while the message downloaded."
@@ -2136,8 +2136,8 @@ msgid "Its downloaded mail and saved sign-in are deleted from this computer. Not
 msgstr "Its downloaded mail and saved sign-in are deleted from this computer. Nothing changes in {provider}."
 
 #: app/src/offered.rs:595
-msgid "Mail from {address} is kept only on this computer. To keep a copy, quit Penguin Mail, then back up this file."
-msgstr "Mail from {address} is kept only on this computer. To keep a copy, quit Penguin Mail, then back up this file."
+msgid "Mail from {address} is kept only on this computer. To keep a copy, quit Iris, then back up this file."
+msgstr "Mail from {address} is kept only on this computer. To keep a copy, quit Iris, then back up this file."
 
 #: app/src/open_thread/run/translation.rs:121
 msgid "The model sent nothing back to put in the message."
@@ -2164,44 +2164,44 @@ msgid "Updates come from the Snap Store"
 msgstr "Updates come from the Snap Store"
 
 #: app/src/permission.rs:82
-msgid "Penguin Mail needs permission to change {service} settings"
-msgstr "Penguin Mail needs permission to change {service} settings"
+msgid "Iris needs permission to change {service} settings"
+msgstr "Iris needs permission to change {service} settings"
 
 #: app/src/permission.rs:121
 msgid "Allow Changes to {service} Settings"
 msgstr "Allow Changes to {service} Settings"
 
 #: app/src/permission.rs:125
-msgid "Penguin Mail needs permission to change {service} settings for {account}. {company} asks you to confirm in your browser."
-msgstr "Penguin Mail needs permission to change {service} settings for {account}. {company} asks you to confirm in your browser."
+msgid "Iris needs permission to change {service} settings for {account}. {company} asks you to confirm in your browser."
+msgstr "Iris needs permission to change {service} settings for {account}. {company} asks you to confirm in your browser."
 
 #: app/src/permission.rs:130
-msgid "Allow Penguin Mail to Delete Mail"
-msgstr "Allow Penguin Mail to Delete Mail"
+msgid "Allow Iris to Delete Mail"
+msgstr "Allow Iris to Delete Mail"
 
 #: app/src/permission.rs:132
 msgid "Deleting mail for good needs one more permission for {account}. {company} asks you to confirm in your browser."
 msgstr "Deleting mail for good needs one more permission for {account}. {company} asks you to confirm in your browser."
 
 #: app/src/permission.rs:137
-msgid "Allow Penguin Mail to Read Your Contacts"
-msgstr "Allow Penguin Mail to Read Your Contacts"
+msgid "Allow Iris to Read Your Contacts"
+msgstr "Allow Iris to Read Your Contacts"
 
 #: app/src/permission.rs:139
 msgid "Reading the contacts of {account} needs one more permission. {company} asks you to confirm in your browser. Names and photos stay on this computer."
 msgstr "Reading the contacts of {account} needs one more permission. {company} asks you to confirm in your browser. Names and photos stay on this computer."
 
 #: app/src/permission.rs:145
-msgid "Allow Penguin Mail to Change Your Contacts"
-msgstr "Allow Penguin Mail to Change Your Contacts"
+msgid "Allow Iris to Change Your Contacts"
+msgstr "Allow Iris to Change Your Contacts"
 
 #: app/src/permission.rs:147
 msgid "The assistant needs permission to add and change the contacts of {account}. {company} asks you to confirm in your browser."
 msgstr "The assistant needs permission to add and change the contacts of {account}. {company} asks you to confirm in your browser."
 
 #: app/src/permission.rs:152 app/src/permission.rs:159
-msgid "Allow Penguin Mail to Use Your Calendar"
-msgstr "Allow Penguin Mail to Use Your Calendar"
+msgid "Allow Iris to Use Your Calendar"
+msgstr "Allow Iris to Use Your Calendar"
 
 #: app/src/permission.rs:154
 msgid "The assistant needs permission to read and change events on the calendar for {account}. {company} asks you to confirm in your browser."
@@ -2212,20 +2212,20 @@ msgid "Your reply went to the organizer as mail. With permission to change event
 msgstr "Your reply went to the organiser as mail. With permission to change events on the calendar for {account}, the meeting is marked on your own calendar too. {company} asks you to confirm in your browser."
 
 #: app/src/permission.rs:167
-msgid "Allow Penguin Mail to Manage Your Calendars"
-msgstr "Allow Penguin Mail to Manage Your Calendars"
+msgid "Allow Iris to Manage Your Calendars"
+msgstr "Allow Iris to Manage Your Calendars"
 
 #: app/src/permission.rs:169
 msgid "Making, renaming and deleting calendars, and subscribing to one, needs one more permission for {account}. {company} asks you to confirm in your browser."
 msgstr "Making, renaming and deleting calendars, and subscribing to one, needs one more permission for {account}. {company} asks you to confirm in your browser."
 
 #: app/src/permission.rs:175
-msgid "Allow Penguin Mail to Add Files to Google Drive"
-msgstr "Allow Penguin Mail to Add Files to Google Drive"
+msgid "Allow Iris to Add Files to Google Drive"
+msgstr "Allow Iris to Add Files to Google Drive"
 
 #: app/src/permission.rs:177
-msgid "Attaching a file from this computer to an event puts it in Google Drive for {account}. Penguin Mail can reach only the files it adds there. Google asks you to confirm in your browser."
-msgstr "Attaching a file from this computer to an event puts it in Google Drive for {account}. Penguin Mail can reach only the files it adds there. Google asks you to confirm in your browser."
+msgid "Attaching a file from this computer to an event puts it in Google Drive for {account}. Iris can reach only the files it adds there. Google asks you to confirm in your browser."
+msgstr "Attaching a file from this computer to an event puts it in Google Drive for {account}. Iris can reach only the files it adds there. Google asks you to confirm in your browser."
 
 #: app/src/permission.rs:246
 msgid "change {service} settings"
@@ -2320,8 +2320,8 @@ msgid "Files attached to events"
 msgstr "Files attached to events"
 
 #: app/src/permission.rs:323
-msgid "{account} has not allowed Penguin Mail to {missing}"
-msgstr "{account} has not allowed Penguin Mail to {missing}"
+msgid "{account} has not allowed Iris to {missing}"
+msgstr "{account} has not allowed Iris to {missing}"
 
 #: app/src/pgp.rs:110
 msgid "Add a recipient whose key gpg holds."
@@ -2784,8 +2784,8 @@ msgid "Show trimmed content"
 msgstr "Show trimmed content"
 
 #: app/src/rules.rs:13
-msgid "These rules run on this computer while Penguin Mail is open."
-msgstr "These rules run on this computer while Penguin Mail is open."
+msgid "These rules run on this computer while Iris is open."
+msgstr "These rules run on this computer while Iris is open."
 
 #: app/src/rules.rs:16
 msgid "{provider} runs these on new mail as it arrives, even when this computer is off."
@@ -2915,8 +2915,8 @@ msgid "Rules"
 msgstr "Rules"
 
 #: app/src/servers.rs:39
-msgid "On this computer, while Penguin Mail is open"
-msgstr "On this computer, while Penguin Mail is open"
+msgid "On this computer, while Iris is open"
+msgstr "On this computer, while Iris is open"
 
 #: app/src/servers.rs:40
 msgid "On the server"
@@ -3251,12 +3251,12 @@ msgstr[0] "{account}, {count} unread message"
 msgstr[1] "{account}, {count} unread messages"
 
 #: app/src/tray.rs:138 app/src/tray.rs:155
-msgid "Penguin Mail: {summary}"
-msgstr "Penguin Mail: {summary}"
+msgid "Iris: {summary}"
+msgstr "Iris: {summary}"
 
 #: app/src/tray.rs:206
-msgid "Open Penguin Mail"
-msgstr "Open Penguin Mail"
+msgid "Open Iris"
+msgstr "Open Iris"
 
 #: app/src/tray.rs:207 app/src/ui/composer/mod.rs:278
 #: app/src/ui/composer/mod.rs:535 app/src/ui/composer/mod.rs:1277
@@ -3308,16 +3308,16 @@ msgid "License"
 msgstr "Licence"
 
 #: app/src/ui/about.rs:201 app/src/ui/window.rs:3153
-msgid "About Penguin Mail"
-msgstr "About Penguin Mail"
+msgid "About Iris"
+msgstr "About Iris"
 
 #: app/src/ui/about.rs:231
 msgid "Checking…"
 msgstr "Checking…"
 
 #: app/src/ui/about.rs:237
-msgid "Penguin Mail is up to date"
-msgstr "Penguin Mail is up to date"
+msgid "Iris is up to date"
+msgstr "Iris is up to date"
 
 #: app/src/ui/about.rs:245
 msgid "Could not reach GitHub. Check your connection and try again."
@@ -3409,8 +3409,8 @@ msgid "Your email address"
 msgstr "Your email address"
 
 #: app/src/ui/add_account.rs:638
-msgid "Penguin Mail finds the servers for you."
-msgstr "Penguin Mail finds the servers for you."
+msgid "Iris finds the servers for you."
+msgstr "Iris finds the servers for you."
 
 #: app/src/ui/add_account.rs:671
 msgid "Looking Up"
@@ -3429,8 +3429,8 @@ msgid "Time left"
 msgstr "Time left"
 
 #: app/src/ui/add_account.rs:787
-msgid "Penguin Mail stops waiting after five minutes."
-msgstr "Penguin Mail stops waiting after five minutes."
+msgid "Iris stops waiting after five minutes."
+msgstr "Iris stops waiting after five minutes."
 
 #: app/src/ui/add_account.rs:792
 msgid "Open Page Again"
@@ -3489,8 +3489,8 @@ msgid "Use these servers"
 msgstr "Use these servers"
 
 #: app/src/ui/add_account.rs:965
-msgid "Penguin Mail guessed these servers. Your password goes to them only after you check the box."
-msgstr "Penguin Mail guessed these servers. Your password goes to them only after you check the box."
+msgid "Iris guessed these servers. Your password goes to them only after you check the box."
+msgstr "Iris guessed these servers. Your password goes to them only after you check the box."
 
 #: app/src/ui/add_account.rs:1031
 msgid "No Other Mail Apps"
@@ -3561,8 +3561,8 @@ msgid "Mail on the Server"
 msgstr "Mail on the Server"
 
 #: app/src/ui/add_account.rs:1308
-msgid "Penguin Mail keeps every message it downloads on this computer."
-msgstr "Penguin Mail keeps every message it downloads on this computer."
+msgid "Iris keeps every message it downloads on this computer."
+msgstr "Iris keeps every message it downloads on this computer."
 
 #: app/src/ui/add_account.rs:1313 app/src/ui/add_account.rs:1314
 #: app/src/ui/preferences.rs:1095
@@ -3646,12 +3646,12 @@ msgid "{provider}'s sign-in page is open in your browser. When you finish there,
 msgstr "{provider}'s sign-in page is open in your browser. When you finish there, this window moves on."
 
 #: app/src/ui/add_account.rs:2621
-msgid "This copy of Penguin Mail was built without Google sign-in. Get a release from github.com/c9dev/penguin-mail/releases."
-msgstr "This copy of Penguin Mail was built without Google sign-in. Get a release from github.com/c9dev/penguin-mail/releases."
+msgid "This copy of Iris was built without Google sign-in. Get a release from github.com/AlbertoBarrago/iris/releases."
+msgstr "This copy of Iris was built without Google sign-in. Get a release from github.com/AlbertoBarrago/iris/releases."
 
 #: app/src/ui/add_account.rs:2624
-msgid "This copy of Penguin Mail was built without Microsoft sign-in. Get a release from github.com/c9dev/penguin-mail/releases."
-msgstr "This copy of Penguin Mail was built without Microsoft sign-in. Get a release from github.com/c9dev/penguin-mail/releases."
+msgid "This copy of Iris was built without Microsoft sign-in. Get a release from github.com/AlbertoBarrago/iris/releases."
+msgstr "This copy of Iris was built without Microsoft sign-in. Get a release from github.com/AlbertoBarrago/iris/releases."
 
 #: app/src/ui/add_account.rs:2791
 msgid "Link copied"
@@ -3666,8 +3666,8 @@ msgid "{account} is ready"
 msgstr "{account} is ready"
 
 #: app/src/ui/add_account.rs:3122
-msgid "This server cannot tell its messages apart, so Penguin Mail cannot download from it safely."
-msgstr "This server cannot tell its messages apart, so Penguin Mail cannot download from it safely."
+msgid "This server cannot tell its messages apart, so Iris cannot download from it safely."
+msgstr "This server cannot tell its messages apart, so Iris cannot download from it safely."
 
 #: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3221
 msgid "Summarize this conversation"
@@ -3698,8 +3698,8 @@ msgid "Ask about your mail, or tell me what to tidy. I can search, summarize, so
 msgstr "Ask about your mail, or tell me what to tidy. I can search, summarise, sort, draft, and change settings."
 
 #: app/src/ui/assistant.rs:151
-msgid "Ask Penguin Mail…"
-msgstr "Ask Penguin Mail…"
+msgid "Ask Iris…"
+msgstr "Ask Iris…"
 
 #: app/src/ui/assistant.rs:156 app/src/ui/assistant.rs:160
 #: app/src/ui/assistant.rs:446 app/src/ui/calendar/scope.rs:113
@@ -3708,8 +3708,8 @@ msgid "Send"
 msgstr "Send"
 
 #: app/src/ui/assistant.rs:159
-msgid "Ask Penguin Mail"
-msgstr "Ask Penguin Mail"
+msgid "Ask Iris"
+msgstr "Ask Iris"
 
 #: app/src/ui/assistant.rs:175
 msgid "Choose a Model"
@@ -4083,16 +4083,16 @@ msgid "Skills"
 msgstr "Skills"
 
 #: app/src/ui/assistant_skills_prefs.rs:19
-msgid "Instructions the assistant follows for one kind of task, found in Penguin Mail's skills folder and in Claude Code's. Each skill is off until you turn it on. Scripts in a skill run in a sandbox that cannot reach your mail, keys or home folder, and the assistant asks before each command."
-msgstr "Instructions the assistant follows for one kind of task, found in Penguin Mail's skills folder and in Claude Code's. Each skill is off until you turn it on. Scripts in a skill run in a sandbox that cannot reach your mail, keys or home folder, and the assistant asks before each command."
+msgid "Instructions the assistant follows for one kind of task, found in Iris's skills folder and in Claude Code's. Each skill is off until you turn it on. Scripts in a skill run in a sandbox that cannot reach your mail, keys or home folder, and the assistant asks before each command."
+msgstr "Instructions the assistant follows for one kind of task, found in Iris's skills folder and in Claude Code's. Each skill is off until you turn it on. Scripts in a skill run in a sandbox that cannot reach your mail, keys or home folder, and the assistant asks before each command."
 
 #: app/src/ui/assistant_skills_prefs.rs:30
 msgid "Open Folder"
 msgstr "Open Folder"
 
 #: app/src/ui/assistant_skills_prefs.rs:32
-msgid "Open Penguin Mail's skills folder"
-msgstr "Open Penguin Mail's skills folder"
+msgid "Open Iris's skills folder"
+msgstr "Open Iris's skills folder"
 
 #: app/src/ui/assistant_skills_prefs.rs:42
 msgid "Scripts Cannot Run"
@@ -4111,8 +4111,8 @@ msgid "Skills Are Off in This Version"
 msgstr "Skills Are Off in This Version"
 
 #: app/src/ui/assistant_skills_prefs.rs:72
-msgid "Skill scripts run in a sandbox of their own, which cannot start inside the {sandbox} sandbox Penguin Mail runs in. The .deb and the rpm have skills."
-msgstr "Skill scripts run in a sandbox of their own, which cannot start inside the {sandbox} sandbox Penguin Mail runs in. The .deb and the rpm have skills."
+msgid "Skill scripts run in a sandbox of their own, which cannot start inside the {sandbox} sandbox Iris runs in. The .deb and the rpm have skills."
+msgstr "Skill scripts run in a sandbox of their own, which cannot start inside the {sandbox} sandbox Iris runs in. The .deb and the rpm have skills."
 
 #: app/src/ui/assistant_skills_prefs.rs:86
 msgid "{origin}: {description}"
@@ -4492,8 +4492,8 @@ msgid "Attach File"
 msgstr "Attach File"
 
 #: app/src/ui/calendar/editor.rs:1715
-msgid "Penguin Mail can attach only a file saved on this computer."
-msgstr "Penguin Mail can attach only a file saved on this computer."
+msgid "Iris can attach only a file saved on this computer."
+msgstr "Iris can attach only a file saved on this computer."
 
 #: app/src/ui/calendar/editor.rs:1743
 msgid "Uploading {file}"
@@ -5318,8 +5318,8 @@ msgid "Grant Access to show shared calendars"
 msgstr "Grant Access to show shared calendars"
 
 #: app/src/ui/calendar/sidebar.rs:918
-msgid "Penguin Mail cannot see this account's calendars"
-msgstr "Penguin Mail cannot see this account's calendars"
+msgid "Iris cannot see this account's calendars"
+msgstr "Iris cannot see this account's calendars"
 
 #: app/src/ui/calendar/sidebar.rs:998
 msgid "Show or hide this account's calendars"
@@ -5720,8 +5720,8 @@ msgid "Send Readable"
 msgstr "Send Readable"
 
 #: app/src/ui/composer/mod.rs:1577
-msgid "Penguin Mail sends it at this time while it runs, even in the tray."
-msgstr "Penguin Mail sends it at this time while it runs, even in the tray."
+msgid "Iris sends it at this time while it runs, even in the tray."
+msgstr "Iris sends it at this time while it runs, even in the tray."
 
 #: app/src/ui/composer/mod.rs:1578
 msgid "Schedule"
@@ -5976,8 +5976,8 @@ msgid "Calendar, Contacts and Rules Servers"
 msgstr "Calendar, Contacts and Rules Servers"
 
 #: app/src/ui/contacts_prefs.rs:62
-msgid "Penguin Mail looks for these when you add an account. The login is the account's own."
-msgstr "Penguin Mail looks for these when you add an account. The login is the account's own."
+msgid "Iris looks for these when you add an account. The login is the account's own."
+msgstr "Iris looks for these when you add an account. The login is the account's own."
 
 #: app/src/ui/contacts_prefs.rs:99
 msgid "Use It"
@@ -5997,16 +5997,16 @@ msgid "Edit…"
 msgstr "Edit…"
 
 #: app/src/ui/contacts_prefs.rs:179
-msgid "Penguin Mail can read an account's contacts: names, email addresses, photos, organizations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
-msgstr "Penguin Mail can read an account's contacts: names, email addresses, photos, organisations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
+msgid "Iris can read an account's contacts: names, email addresses, photos, organizations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
+msgstr "Iris can read an account's contacts: names, email addresses, photos, organisations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
 
 #: app/src/ui/contacts_prefs.rs:188
 msgid "No accounts yet"
 msgstr "No accounts yet"
 
 #: app/src/ui/contacts_prefs.rs:273
-msgid "Penguin Mail shows each account's meetings and reminds you before they start."
-msgstr "Penguin Mail shows each account's meetings and reminds you before they start."
+msgid "Iris shows each account's meetings and reminds you before they start."
+msgstr "Iris shows each account's meetings and reminds you before they start."
 
 #: app/src/ui/contacts_prefs.rs:277
 msgid "GNOME Online Accounts"
@@ -6273,8 +6273,8 @@ msgid "Contacts (CardDAV) URL"
 msgstr "Contacts (CardDAV) URL"
 
 #: app/src/ui/dav_edit.rs:20
-msgid "Penguin Mail signs in to these with {account}'s password."
-msgstr "Penguin Mail signs in to these with {account}'s password."
+msgid "Iris signs in to these with {account}'s password."
+msgstr "Iris signs in to these with {account}'s password."
 
 #: app/src/ui/dav_edit.rs:36
 msgid "Calendar and Contacts Servers"
@@ -6445,8 +6445,8 @@ msgid "No Events in This File"
 msgstr "No Events in This File"
 
 #: app/src/ui/ics_file.rs:76
-msgid "Penguin Mail found no event to add in it."
-msgstr "Penguin Mail found no event to add in it."
+msgid "Iris found no event to add in it."
+msgstr "Iris found no event to add in it."
 
 #: app/src/ui/ics_file.rs:78
 msgid "Could Not Open This File"
@@ -6461,8 +6461,8 @@ msgid "A file has nobody to answer to"
 msgstr "A file has nobody to answer to"
 
 #: app/src/ui/ics_file.rs:189
-msgid "No account here has a calendar Penguin Mail can add to. Add an account with a calendar, or turn one on in Preferences, under Contacts & Calendar, then open the file again."
-msgstr "No account here has a calendar Penguin Mail can add to. Add an account with a calendar, or turn one on in Preferences, under Contacts & Calendar, then open the file again."
+msgid "No account here has a calendar Iris can add to. Add an account with a calendar, or turn one on in Preferences, under Contacts & Calendar, then open the file again."
+msgstr "No account here has a calendar Iris can add to. Add an account with a calendar, or turn one on in Preferences, under Contacts & Calendar, then open the file again."
 
 #: app/src/ui/ics_file.rs:257
 msgid "Nothing in this file can be added, since its events have no id or start time"
@@ -6473,8 +6473,8 @@ msgid "Some events were left out, since they have no id or start time"
 msgstr "Some events were left out, since they have no id or start time"
 
 #: app/src/ui/ics_file.rs:271
-msgid "Penguin Mail has no permission to use this calendar. Allow it in Preferences."
-msgstr "Penguin Mail has no permission to use this calendar. Allow it in Preferences."
+msgid "Iris has no permission to use this calendar. Allow it in Preferences."
+msgstr "Iris has no permission to use this calendar. Allow it in Preferences."
 
 #: app/src/ui/ics_file.rs:274
 msgid "Could not add to your calendar: {reason}"
@@ -6518,8 +6518,8 @@ msgid "Show in Calendar"
 msgstr "Show in Calendar"
 
 #: app/src/ui/invitation.rs:458
-msgid "Penguin Mail needs permission to show this event in Calendar."
-msgstr "Penguin Mail needs permission to show this event in Calendar."
+msgid "Iris needs permission to show this event in Calendar."
+msgstr "Iris needs permission to show this event in Calendar."
 
 #: app/src/ui/invitation.rs:863
 msgid "Added to your calendar"
@@ -6751,10 +6751,10 @@ msgstr[0] "You can encrypt to this person and check their signatures."
 msgstr[1] "You can encrypt to these people and check their signatures."
 
 #: app/src/ui/key_import.rs:327
-msgid "Penguin Mail can check signatures made with this certificate."
-msgid_plural "Penguin Mail can check signatures made with these certificates."
-msgstr[0] "Penguin Mail can check signatures made with this certificate."
-msgstr[1] "Penguin Mail can check signatures made with these certificates."
+msgid "Iris can check signatures made with this certificate."
+msgid_plural "Iris can check signatures made with these certificates."
+msgstr[0] "Iris can check signatures made with this certificate."
+msgstr[1] "Iris can check signatures made with these certificates."
 
 #: app/src/ui/key_import.rs:350
 msgid "New, with secret key"
@@ -7006,8 +7006,8 @@ msgid "Signing and Encryption"
 msgstr "Signing and Encryption"
 
 #: app/src/ui/preferences.rs:482
-msgid "Penguin Mail signs and encrypts through GnuPG, which holds your keys and asks for your passphrase itself."
-msgstr "Penguin Mail signs and encrypts through GnuPG, which holds your keys and asks for your passphrase itself."
+msgid "Iris signs and encrypts through GnuPG, which holds your keys and asks for your passphrase itself."
+msgstr "Iris signs and encrypts through GnuPG, which holds your keys and asks for your passphrase itself."
 
 #: app/src/ui/preferences.rs:487
 msgid "Your OpenPGP Keys"
@@ -7052,18 +7052,18 @@ msgstr "gpgsm could not be asked: {reason}"
 #. The verb agrees with the programs: "gpg, which holds" but "gpg an"
 #. gpgsm, which hold""
 #: app/src/ui/preferences.rs:627
-msgid "Penguin Mail signs and encrypts through {programs}, which holds your keys and asks for your passphrase itself."
-msgid_plural "Penguin Mail signs and encrypts through {programs}, which hold your keys and ask for your passphrase themselves."
-msgstr[0] "Penguin Mail signs and encrypts through {programs}, which holds your keys and asks for your passphrase itself."
-msgstr[1] "Penguin Mail signs and encrypts through {programs}, which hold your keys and ask for your passphrase themselves."
+msgid "Iris signs and encrypts through {programs}, which holds your keys and asks for your passphrase itself."
+msgid_plural "Iris signs and encrypts through {programs}, which hold your keys and ask for your passphrase themselves."
+msgstr[0] "Iris signs and encrypts through {programs}, which holds your keys and asks for your passphrase itself."
+msgstr[1] "Iris signs and encrypts through {programs}, which hold your keys and ask for your passphrase themselves."
 
 #: app/src/ui/preferences.rs:659 app/src/ui/preferences.rs:672
 msgid "Spelling"
 msgstr "Spelling"
 
 #: app/src/ui/preferences.rs:661
-msgid "No dictionaries are installed, so Penguin Mail is not checking spelling. Install a Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and reopen the composer."
-msgstr "No dictionaries are installed, so Penguin Mail is not checking spelling. Install a Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and reopen the composer."
+msgid "No dictionaries are installed, so Iris is not checking spelling. Install a Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and reopen the composer."
+msgstr "No dictionaries are installed, so Iris is not checking spelling. Install a Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and reopen the composer."
 
 #: app/src/ui/preferences.rs:674
 msgid "The language each account checks spelling in. Dictionaries installed: {languages}."
@@ -7208,8 +7208,8 @@ msgid "Language"
 msgstr "Language"
 
 #: app/src/ui/preferences.rs:1179
-msgid "Penguin Mail shows a new language after a restart"
-msgstr "Penguin Mail shows a new language after a restart"
+msgid "Iris shows a new language after a restart"
+msgstr "Iris shows a new language after a restart"
 
 #: app/src/ui/preferences.rs:1251
 msgid "No signature"
@@ -7264,8 +7264,8 @@ msgid "Rules Written Elsewhere"
 msgstr "Rules Written Elsewhere"
 
 #: app/src/ui/rules.rs:273
-msgid "Penguin Mail keeps these as they are. Change them where they were written."
-msgstr "Penguin Mail keeps these as they are. Change them where they were written."
+msgid "Iris keeps these as they are. Change them where they were written."
+msgstr "Iris keeps these as they are. Change them where they were written."
 
 #: app/src/ui/rules.rs:304
 msgid "Rule deleted"
@@ -7364,8 +7364,8 @@ msgid "Replace “{script}”?"
 msgstr "Replace “{script}”?"
 
 #: app/src/ui/rules.rs:621
-msgid "{provider} runs one set of rules at a time, and it runs “{script}” now. Penguin Mail's rules would take its place; “{script}” stays on the server, switched off."
-msgstr "{provider} runs one set of rules at a time, and it runs “{script}” now. Penguin Mail's rules would take its place; “{script}” stays on the server, switched off."
+msgid "{provider} runs one set of rules at a time, and it runs “{script}” now. Iris's rules would take its place; “{script}” stays on the server, switched off."
+msgstr "{provider} runs one set of rules at a time, and it runs “{script}” now. Iris's rules would take its place; “{script}” stays on the server, switched off."
 
 #: app/src/ui/rules.rs:625
 msgid "Replace"
@@ -7506,8 +7506,8 @@ msgid "Downloading mail"
 msgstr "Downloading mail"
 
 #: app/src/ui/sidebar.rs:1910
-msgid "Syncing stopped after an error; restart Penguin Mail to try again"
-msgstr "Syncing stopped after an error; restart Penguin Mail to try again"
+msgid "Syncing stopped after an error; restart Iris to try again"
+msgstr "Syncing stopped after an error; restart Iris to try again"
 
 #: app/src/ui/sidebar/sections.rs:25
 msgid "Favorites"
@@ -8018,8 +8018,8 @@ msgstr[0] "Moved {count} message to the Inbox"
 msgstr[1] "Moved {count} messages to the Inbox"
 
 #: app/src/ui/window.rs:786
-msgid "Penguin Mail (Demo)"
-msgstr "Penguin Mail (Demo)"
+msgid "Iris (Demo)"
+msgstr "Iris (Demo)"
 
 #: app/src/ui/window.rs:1139
 msgid "Could not read accounts: {reason}"
@@ -8038,8 +8038,8 @@ msgid "Turn On the {service}"
 msgstr "Turn On the {service}"
 
 #: app/src/ui/window.rs:2028
-msgid "The Google Cloud project Penguin Mail signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
-msgstr "The Google Cloud project Penguin Mail signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
+msgid "The Google Cloud project Iris signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
+msgstr "The Google Cloud project Iris signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
 
 #: app/src/ui/window.rs:2034
 msgid "Open Google Cloud"
@@ -8082,8 +8082,8 @@ msgid "Continue in your browser"
 msgstr "Continue in your browser"
 
 #: app/src/ui/window.rs:2853
-msgid "This copy of Penguin Mail was built without Google sign-in."
-msgstr "This copy of Penguin Mail was built without Google sign-in."
+msgid "This copy of Iris was built without Google sign-in."
+msgstr "This copy of Iris was built without Google sign-in."
 
 #: app/src/ui/window.rs:2861
 msgid "Get a Release"
@@ -8134,8 +8134,8 @@ msgid "Open a message from the person first"
 msgstr "Open a message from the person first"
 
 #: app/src/ui/window.rs:3620
-msgid "Penguin Mail shows the new language after a restart"
-msgstr "Penguin Mail shows the new language after a restart"
+msgid "Iris shows the new language after a restart"
+msgstr "Iris shows the new language after a restart"
 
 #: app/src/ui/window.rs:3622 app/src/update/mod.rs:130
 msgid "Restart"
@@ -8146,8 +8146,8 @@ msgid "Messages That Will Not Download"
 msgstr "Messages That Will Not Download"
 
 #: app/src/ui/window.rs:3657
-msgid "Penguin Mail could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
-msgstr "Penguin Mail could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
+msgid "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
+msgstr "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
 
 #: app/src/ui/window/arrange.rs:104 app/src/ui/window/organize.rs:202
 msgid "Delete “{name}”?"
@@ -8452,8 +8452,8 @@ msgid "That message is no longer waiting."
 msgstr "That message is no longer waiting."
 
 #: app/src/ui/window/outbox.rs:144
-msgid "Penguin Mail cannot reopen this message. Send it as it is."
-msgstr "Penguin Mail cannot reopen this message. Send it as it is."
+msgid "Iris cannot reopen this message. Send it as it is."
+msgstr "Iris cannot reopen this message. Send it as it is."
 
 #: app/src/ui/window/outbox.rs:153
 msgid "Could not open it: {reason}"
@@ -8574,8 +8574,8 @@ msgid "Could not cancel: {reason}"
 msgstr "Could not cancel: {reason}"
 
 #: app/src/ui/window/scheduled.rs:255
-msgid "Gmail is out of reach and Penguin Mail cannot reopen a message, so it stays in Send Later."
-msgstr "Gmail is out of reach and Penguin Mail cannot reopen a message, so it stays in Send Later."
+msgid "Gmail is out of reach and Iris cannot reopen a message, so it stays in Send Later."
+msgstr "Gmail is out of reach and Iris cannot reopen a message, so it stays in Send Later."
 
 #: app/src/ui/window/scheduled.rs:258
 msgid "Won't be sent. Gmail is out of reach, so the message is open for you to save."
@@ -8866,16 +8866,16 @@ msgid "Checking for Updates…"
 msgstr "Checking for Updates…"
 
 #: app/src/update/mod.rs:116 app/src/update/mod.rs:206
-msgid "Penguin Mail {version} is available"
-msgstr "Penguin Mail {version} is available"
+msgid "Iris {version} is available"
+msgstr "Iris {version} is available"
 
 #: app/src/update/mod.rs:119 app/src/update/mod.rs:212
 msgid "Install"
 msgstr "Install"
 
 #: app/src/update/mod.rs:123
-msgid "Installing Penguin Mail {version}"
-msgstr "Installing Penguin Mail {version}"
+msgid "Installing Iris {version}"
+msgstr "Installing Iris {version}"
 
 #: app/src/update/mod.rs:129
 msgid "Restart to finish updating"
@@ -8886,16 +8886,16 @@ msgid "Install it now, or later from the tray."
 msgstr "Install it now, or later from the tray."
 
 #: app/src/update/signature.rs:31
-msgid "This release has no signature, so Penguin Mail will not install it."
-msgstr "This release has no signature, so Penguin Mail will not install it."
+msgid "This release has no signature, so Iris will not install it."
+msgstr "This release has no signature, so Iris will not install it."
 
 #: app/src/update/signature.rs:99
-msgid "Penguin Mail could not check the release's signature: {reason}"
-msgstr "Penguin Mail could not check the release's signature: {reason}"
+msgid "Iris could not check the release's signature: {reason}"
+msgstr "Iris could not check the release's signature: {reason}"
 
 #: app/src/update/signature.rs:147
-msgid "This release is not signed with Penguin Mail's key, so Penguin Mail will not install it."
-msgstr "This release is not signed with Penguin Mail's key, so Penguin Mail will not install it."
+msgid "This release is not signed with Iris's key, so Iris will not install it."
+msgstr "This release is not signed with Iris's key, so Iris will not install it."
 
 #: app/src/update/signature.rs:151
 msgid "Checking the release's signature needs gpgv or gpg, and neither is installed."
@@ -9087,28 +9087,28 @@ msgid "%-d %B"
 msgstr "%-d %B"
 
 #: domain/src/sign_in_page.rs:36
-msgid "Signed in to Penguin Mail"
-msgstr "Signed in to Penguin Mail"
+msgid "Signed in to Iris"
+msgstr "Signed in to Iris"
 
 #: domain/src/sign_in_page.rs:37
-msgid "You can close this tab and go back to Penguin Mail."
-msgstr "You can close this tab and go back to Penguin Mail."
+msgid "You can close this tab and go back to Iris."
+msgstr "You can close this tab and go back to Iris."
 
 #: domain/src/sign_in_page.rs:42
 msgid "You didn't allow access"
 msgstr "You didn't allow access"
 
 #: domain/src/sign_in_page.rs:44
-msgid "Penguin Mail has not been signed in. To try again, go back to Penguin Mail and press Grant Access."
-msgstr "Penguin Mail has not been signed in. To try again, go back to Penguin Mail and press Grant Access."
+msgid "Iris has not been signed in. To try again, go back to Iris and press Grant Access."
+msgstr "Iris has not been signed in. To try again, go back to Iris and press Grant Access."
 
 #: domain/src/sign_in_page.rs:50
 msgid "Sign-in didn't finish"
 msgstr "Sign-in didn't finish"
 
 #: domain/src/sign_in_page.rs:51
-msgid "Go back to Penguin Mail to see why and try again. You can close this tab."
-msgstr "Go back to Penguin Mail to see why and try again. You can close this tab."
+msgid "Go back to Iris to see why and try again. You can close this tab."
+msgstr "Go back to Iris to see why and try again. You can close this tab."
 
 #: domain/src/sign_in_page.rs:56
 msgid "Nothing here"
@@ -9328,8 +9328,8 @@ msgid "No Drafts"
 msgstr "No Drafts"
 
 #: sync/src/mailbox.rs:355
-msgid "Close a message without sending it and Penguin Mail keeps it here."
-msgstr "Close a message without sending it and Penguin Mail keeps it here."
+msgid "Close a message without sending it and Iris keeps it here."
+msgstr "Close a message without sending it and Iris keeps it here."
 
 #: sync/src/mailbox.rs:357
 msgid "No Muted Mail"
@@ -9402,8 +9402,8 @@ msgid "{problem}. Trying again {when}"
 msgstr "{problem}. Trying again {when}"
 
 #: sync/src/mailbox.rs:1406
-msgid "{problem}. Penguin Mail stopped trying"
-msgstr "{problem}. Penguin Mail stopped trying"
+msgid "{problem}. Iris stopped trying"
+msgstr "{problem}. Iris stopped trying"
 
 #: sync/src/passwords.rs:21
 msgid "The keyring refused: {reason}"
@@ -9430,20 +9430,20 @@ msgid "You are not a guest of this event."
 msgstr "You are not a guest of this event."
 
 #: sync/src/services/caldav.rs:502
-msgid "Penguin Mail cannot change the calendar list of a CalDAV server."
-msgstr "Penguin Mail cannot change the calendar list of a CalDAV server."
+msgid "Iris cannot change the calendar list of a CalDAV server."
+msgstr "Iris cannot change the calendar list of a CalDAV server."
 
 #: sync/src/services/finding.rs:197
-msgid "Penguin Mail reaches calendar and contact servers over HTTPS only."
-msgstr "Penguin Mail reaches calendar and contact servers over HTTPS only."
+msgid "Iris reaches calendar and contact servers over HTTPS only."
+msgstr "Iris reaches calendar and contact servers over HTTPS only."
 
 #: sync/src/services/imap/outgoing.rs:86
 msgid "The message names nobody to send it to."
 msgstr "The message names nobody to send it to."
 
 #: sync/src/services/local.rs:29
-msgid "This rule is read-only, so Penguin Mail leaves it as it is."
-msgstr "This rule is read-only, so Penguin Mail leaves it as it is."
+msgid "This rule is read-only, so Iris leaves it as it is."
+msgstr "This rule is read-only, so Iris leaves it as it is."
 
 #: sync/src/services/microsoft/calendar.rs:359
 msgid "Outlook cannot repeat an event that way."
@@ -9480,8 +9480,8 @@ msgid "Outlook has no other calendars to add."
 msgstr "Outlook has no other calendars to add."
 
 #: sync/src/services/microsoft/errors.rs:18
-msgid "This mailbox is on your organization's own Exchange server, which Penguin Mail cannot reach."
-msgstr "This mailbox is on your organisation's own Exchange server, which Penguin Mail cannot reach."
+msgid "This mailbox is on your organization's own Exchange server, which Iris cannot reach."
+msgstr "This mailbox is on your organisation's own Exchange server, which Iris cannot reach."
 
 #: sync/src/services/microsoft/outgoing.rs:61
 msgid "The message has no Message-ID."
@@ -9508,16 +9508,16 @@ msgid "A folder needs a name."
 msgstr "A folder needs a name."
 
 #: sync/src/services/pop3/mod.rs:416
-msgid "Penguin Mail keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive."
-msgstr "Penguin Mail keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive."
+msgid "Iris keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive."
+msgstr "Iris keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive."
 
 #: sync/src/services/pop3/mod.rs:432
-msgid "Penguin Mail keeps Inbox, Sent, Drafts, Trash, Junk and Archive."
-msgstr "Penguin Mail keeps Inbox, Sent, Drafts, Trash, Junk and Archive."
+msgid "Iris keeps Inbox, Sent, Drafts, Trash, Junk and Archive."
+msgstr "Iris keeps Inbox, Sent, Drafts, Trash, Junk and Archive."
 
 #: sync/src/services/sieve.rs:95
-msgid "{provider} offers no encrypted connection for rules, so Penguin Mail does not send your password there."
-msgstr "{provider} offers no encrypted connection for rules, so Penguin Mail does not send your password there."
+msgid "{provider} offers no encrypted connection for rules, so Iris does not send your password there."
+msgstr "{provider} offers no encrypted connection for rules, so Iris does not send your password there."
 
 #: sync/src/services/sieve.rs:108
 msgid "{provider} cannot run this rule: its server lacks the Sieve extension “{extension}”."
@@ -9552,24 +9552,24 @@ msgid "The rule is read-only."
 msgstr "The rule is read-only."
 
 #: sync/src/sign_in.rs:168
-msgid "{address} is already in Penguin Mail as a {provider} account."
-msgstr "{address} is already in Penguin Mail as a {provider} account."
+msgid "{address} is already in Iris as a {provider} account."
+msgstr "{address} is already in Iris as a {provider} account."
 
 #: sync/src/sign_in/browser.rs:109
 msgid "You signed in as {account}. Choose {wanted} to reconnect that account."
 msgstr "You signed in as {account}. Choose {wanted} to reconnect that account."
 
 #: sync/src/sign_in/browser.rs:119
-msgid "Penguin Mail cannot work without access to your mail. Sign in again and leave the Gmail permission ticked."
-msgstr "Penguin Mail cannot work without access to your mail. Sign in again and leave the Gmail permission ticked."
+msgid "Iris cannot work without access to your mail. Sign in again and leave the Gmail permission ticked."
+msgstr "Iris cannot work without access to your mail. Sign in again and leave the Gmail permission ticked."
 
 #: sync/src/sign_in/browser.rs:128
-msgid "Your organization's administrator must approve Penguin Mail."
-msgstr "Your organisation's administrator must approve Penguin Mail."
+msgid "Your organization's administrator must approve Iris."
+msgstr "Your organisation's administrator must approve Iris."
 
 #: sync/src/sign_in/browser.rs:130
-msgid "Penguin Mail cannot work without access to your mail. Sign in again and allow it."
-msgstr "Penguin Mail cannot work without access to your mail. Sign in again and allow it."
+msgid "Iris cannot work without access to your mail. Sign in again and allow it."
+msgstr "Iris cannot work without access to your mail. Sign in again and allow it."
 
 #: sync/src/triage.rs:53
 msgid "Mark read"

@@ -16,7 +16,7 @@ use crate::packaging::Packaging;
 
 /// What connects the plug. It names the snap, so it stays the same in
 /// every language.
-pub const COMMAND: &str = "snap connect penguin-mail:password-manager-service";
+pub const COMMAND: &str = "snap connect iris:password-manager-service";
 
 /// What the app knows about the plug.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -125,8 +125,8 @@ pub fn is_keyring_refusal(err: &anyhow::Error) -> bool {
 /// The notice's words as Pango markup, with the command in monospace.
 pub fn notice_markup() -> String {
     let words = gettext(
-        "Penguin Mail cannot save sign-ins until the snap can reach your keyring. \
-         Run {command} in a terminal, then restart Penguin Mail.",
+        "Iris cannot save sign-ins until the snap can reach your keyring. \
+         Run {command} in a terminal, then restart Iris.",
     );
     fill(
         &glib::markup_escape_text(&words),

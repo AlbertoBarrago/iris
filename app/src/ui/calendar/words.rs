@@ -575,7 +575,7 @@ pub fn answer_icon(answer: Option<Answer>) -> &'static str {
         Some(Answer::Yes) => "object-select-symbolic",
         Some(Answer::Maybe) => "dialog-question-symbolic",
         Some(Answer::No) => "process-stop-symbolic",
-        None => "penguin-mail-waiting-symbolic",
+        None => "iris-waiting-symbolic",
     }
 }
 
@@ -1090,7 +1090,7 @@ mod tests {
         assert_eq!(answer_icon(Some(Answer::Yes)), "object-select-symbolic");
         assert_eq!(answer_icon(Some(Answer::Maybe)), "dialog-question-symbolic");
         assert_eq!(answer_icon(Some(Answer::No)), "process-stop-symbolic");
-        assert_eq!(answer_icon(None), "penguin-mail-waiting-symbolic");
+        assert_eq!(answer_icon(None), "iris-waiting-symbolic");
     }
 
     #[test]

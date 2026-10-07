@@ -16,7 +16,7 @@ use chrono::Locale;
 pub use gettextrs::{gettext, ngettext, pgettext};
 
 /// The text domain, which is also the name of the `.mo` files.
-pub const DOMAIN: &str = "penguin-mail";
+pub const DOMAIN: &str = "iris";
 
 /// `text` with every `{name}` replaced by the value given for that name.
 ///

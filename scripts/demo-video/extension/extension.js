@@ -8,7 +8,7 @@ import GLib from 'gi://GLib';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 
-const IFACE = `<node><interface name="dev.penguinmail.Tour">
+const IFACE = `<node><interface name="dev.iris.Tour">
   <method name="Place">
     <arg type="s" name="title" direction="in"/>
     <arg type="i" name="x" direction="in"/><arg type="i" name="y" direction="in"/>
@@ -86,7 +86,7 @@ export default class TourExtension extends Extension {
                 pressed ? Clutter.KeyState.PRESSED : Clutter.KeyState.RELEASED),
         };
         this._dbus = Gio.DBusExportedObject.wrapJSObject(IFACE, tour);
-        this._dbus.export(Gio.DBus.session, '/dev/penguinmail/Tour');
+        this._dbus.export(Gio.DBus.session, '/dev/iris/Tour');
 
         // The recording indicator would sit in every frame of the video.
         this._hider = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {

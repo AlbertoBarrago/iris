@@ -1,4 +1,4 @@
-//! Calendars and events as Penguin Mail keeps them, whatever the
+//! Calendars and events as Iris keeps them, whatever the
 //! provider. The Google adapter maps Google's JSON to these; CalDAV and
 //! Microsoft Graph will map theirs. A repeating event is kept as its
 //! rule, and [`expand`] turns it into occurrences for the range on
@@ -66,7 +66,7 @@ impl Access {
 pub enum ReminderMethod {
     /// A notification on this computer.
     Notification,
-    /// An email the provider sends. Penguin Mail shows it and sends
+    /// An email the provider sends. Iris shows it and sends
     /// nothing itself.
     Email,
 }
@@ -133,7 +133,7 @@ pub struct Attachment {
     /// event goes out without it and the window says so.
     #[serde(default)]
     pub waiting: Option<String>,
-    /// For a file Penguin Mail uploaded, whether the event's guests may
+    /// For a file Iris uploaded, whether the event's guests may
     /// open it: Drive makes each one a reader when the event is saved.
     /// `None` for a file someone else attached, which `drive.file` cannot
     /// share. Kept on this computer only.
@@ -345,7 +345,7 @@ pub enum Kind {
 impl Kind {
     /// Whether only Google's own apps make and change it: birthdays come
     /// from contacts and working locations from Google's settings, so
-    /// Penguin Mail shows them and writes nothing to them.
+    /// Iris shows them and writes nothing to them.
     pub fn made_elsewhere(&self) -> bool {
         matches!(self, Kind::WorkingLocation(_) | Kind::Birthday)
     }
@@ -438,7 +438,7 @@ pub struct Event {
     #[serde(default)]
     pub kind: Kind,
     /// Files linked to the event. `None` when the copy has not read
-    /// them, as for a row stored before Penguin Mail read attachments or
+    /// them, as for a row stored before Iris read attachments or
     /// a change queued then: a write leaves the provider's list alone,
     /// since sending an empty one would take every file off the event.
     #[serde(default)]

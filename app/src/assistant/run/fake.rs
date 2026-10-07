@@ -1,4 +1,4 @@
-//! Penguin Mail with no window: a store, sync's in-memory Gmail behind the
+//! Iris with no window: a store, sync's in-memory Gmail behind the
 //! modules, and fake adapters in front of both ports. Building one costs a
 //! tempdir and a tokio runtime, so the whole tool loop runs under
 //! `cargo test`. Where the window hands an effect to a sync module, as with

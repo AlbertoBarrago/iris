@@ -122,7 +122,7 @@ impl App {
                     this.set_update_state(State::Current);
                     if asked {
                         this.answer_update_check(fill(
-                            &gettext("Penguin Mail {version} is up to date"),
+                            &gettext("Iris {version} is up to date"),
                             &[("version", &running.to_string())],
                         ));
                     }

@@ -4,7 +4,7 @@
 //! mailboxes became query trees. The printed trees must match it byte for
 //! byte: Gmail answers the same searches it answered before.
 //!
-//! `PENGUIN_MAIL_BLESS=1` records the text again. Set it only after a
+//! `IRIS_BLESS=1` records the text again. Set it only after a
 //! person has read the new text and judged it right.
 
 use std::fmt::Write as _;
@@ -226,11 +226,11 @@ fn folders_and_smart_mailboxes_print_the_recorded_gmail_text() {
         writeln!(now, "smart {name} => {:?}", smart_text(&smart)).unwrap();
     }
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/golden/queries.txt");
-    if std::env::var_os("PENGUIN_MAIL_BLESS").is_some() {
+    if std::env::var_os("IRIS_BLESS").is_some() {
         std::fs::write(&path, &now).unwrap();
     }
     let then = std::fs::read_to_string(&path)
-        .expect("tests/golden/queries.txt, recorded with PENGUIN_MAIL_BLESS=1");
+        .expect("tests/golden/queries.txt, recorded with IRIS_BLESS=1");
     for (line, (now, then)) in now.lines().zip(then.lines()).enumerate() {
         assert_eq!(now, then, "line {} of golden/queries.txt", line + 1);
     }

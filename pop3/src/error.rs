@@ -17,11 +17,11 @@ pub enum Pop3Error {
     Refused(String),
     #[error("the server answered something unexpected: {0}")]
     Protocol(String),
-    /// The server lacks something Penguin Mail needs, such as UIDL or STLS.
+    /// The server lacks something Iris needs, such as UIDL or STLS.
     #[error("the server does not offer {0}")]
     Unsupported(&'static str),
     /// An answer longer than [`crate::MOST_MESSAGE_BYTES`].
-    #[error("the answer is larger than Penguin Mail reads")]
+    #[error("the answer is larger than Iris reads")]
     TooLarge,
 }
 

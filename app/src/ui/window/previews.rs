@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 /// The folder under the cache the copies go in.
 pub(super) fn folder() -> PathBuf {
     gtk::glib::user_cache_dir()
-        .join("penguin-mail")
+        .join("iris")
         .join("previews")
 }
 

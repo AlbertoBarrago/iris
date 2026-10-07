@@ -1,7 +1,7 @@
 #!/bin/sh
 # Pulls the mail and calendar servers the Docker-backed tests start, each
 # pinned by digest. The tests never pull: without an image they skip, or
-# fail under PENGUIN_MAIL_REQUIRE_IMAP. Run this once on a new computer
+# fail under IRIS_REQUIRE_IMAP. Run this once on a new computer
 # and after a digest changes in testmail/src/lib.rs.
 set -eu
 for image in \

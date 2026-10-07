@@ -37,9 +37,9 @@ const FETCH_TOKENS: u32 = 20_000;
 /// Characters of a fetched page the tool row shows.
 const FETCH_SHOWN: usize = 2_000;
 
-/// The API base, or `PENGUIN_MAIL_ANTHROPIC_BASE` when set.
+/// The API base, or `IRIS_ANTHROPIC_BASE` when set.
 pub(crate) fn default_base() -> String {
-    std::env::var("PENGUIN_MAIL_ANTHROPIC_BASE")
+    std::env::var("IRIS_ANTHROPIC_BASE")
         .ok()
         .filter(|b| !b.is_empty())
         .map(|b| b.trim_end_matches('/').to_string())
