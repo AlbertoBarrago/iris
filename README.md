@@ -189,13 +189,23 @@ uses a tool from outside the app, and it is off until you pick a model.
 
 ## Install on macOS
 
-Test builds come as `Iris-<version>.dmg`, for a Mac with Apple silicon and
-macOS 26 or later. Open it and drag Iris onto Applications.
+Test builds are for a Mac with Apple silicon and macOS 26 or later. The
+quickest way in is the installer, which fetches the newest build, puts it in
+Applications and opens it:
 
-The DMG is signed with the author's own certificate, not yet with an Apple
-Developer ID, so macOS stops Iris the first time. Open it once, then go to
-**System Settings > Privacy & Security** and choose **Open Anyway** beside
-Iris. From then on it opens like any other app.
+```sh
+curl -fsSL https://albz.it/iris/install.sh | sh
+```
+
+The builds are signed with the author's own certificate, not yet with an
+Apple Developer ID. A copy installed this way opens at once; a DMG
+downloaded in a browser carries macOS's quarantine mark, and macOS stops
+Iris until you choose **Open Anyway** in **System Settings > Privacy &
+Security**, or clear the mark yourself:
+
+```sh
+xattr -cr /Applications/Iris.app
+```
 
 Iris then updates itself through Sparkle: it checks once a day, and
 **Check for Updates…** in the Iris menu checks at once.

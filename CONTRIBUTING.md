@@ -144,7 +144,8 @@ Both run on the demo's sample accounts, and nothing talks to Google.
    with GTK and Sparkle inside, and rewrites `target/dmg/appcast.xml` for
    every DMG in that folder, signed with the Sparkle key in your login
    Keychain. Keep the older DMGs there, so the feed keeps listing them.
-3. Upload the new DMG and `appcast.xml` to `https://albz.it/iris/`.
+3. Upload the new DMG, `appcast.xml` and `install.sh` to
+   `https://albz.it/iris/`.
    `IRIS_DOWNLOAD_URL` and `IRIS_APPCAST_URL` change where the feed and the
    app look.
 
