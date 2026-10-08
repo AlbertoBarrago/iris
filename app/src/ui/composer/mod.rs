@@ -895,6 +895,7 @@ impl Composer {
         add("<Control>s", Box::new(|c| c.save_draft(false)));
         add("Escape", Box::new(|c| c.window.close()));
         self.window.add_controller(shortcuts);
+        self.window.add_controller(crate::ui::platform_keys::deleting_keys());
 
         // Formatting keys run before the text view's own bindings.
         let formatting = gtk::ShortcutController::new();

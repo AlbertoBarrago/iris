@@ -3159,6 +3159,7 @@ impl MainWindow {
         );
 
         self.window.add_controller(shortcuts::main_chords());
+        self.window.add_controller(crate::ui::platform_keys::deleting_keys());
 
         let weak = Rc::downgrade(self);
         self.window.connect_close_request(move |window| {

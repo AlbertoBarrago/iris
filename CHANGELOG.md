@@ -5,6 +5,16 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### New
+
+- On macOS, Iris opens email links from websites and other apps in a new
+  message: choose Make Default under Default Mail App in Preferences.
+
+### Improved
+
+- On macOS, ⌘⌫ deletes to the start of the line and ⌥⌫ the word before
+  the cursor in every text field and the composer, as in other Mac apps.
+
 ## 1.0.8 (2026-10-08)
 
 ### Fixed

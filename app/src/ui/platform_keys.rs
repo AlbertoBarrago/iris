@@ -52,6 +52,45 @@ pub fn tip(text: String) -> String {
     }
 }
 
+/// The Mac's deleting keys in text, which GTK's fields lack: ⌘⌫ deletes
+/// back to the start of the line, ⌥⌫ the word before the cursor, and ⌘⌦
+/// and ⌥⌦ the same forwards. Added to a window, it answers whichever text
+/// field or text view has the focus there. On other systems it does
+/// nothing, as GTK's own Ctrl keys already do the job.
+pub fn deleting_keys() -> gtk::EventControllerKey {
+    use gtk::prelude::*;
+    let keys = gtk::EventControllerKey::new();
+    keys.set_propagation_phase(gtk::PropagationPhase::Capture);
+    keys.connect_key_pressed(|keys, key, _, modifiers| {
+        if !MAC {
+            return gtk::glib::Propagation::Proceed;
+        }
+        let backwards = match key {
+            gdk::Key::BackSpace => -1,
+            gdk::Key::Delete | gdk::Key::KP_Delete => 1,
+            _ => return gtk::glib::Propagation::Proceed,
+        };
+        let unit = if modifiers.contains(PRIMARY) {
+            gtk::DeleteType::ParagraphEnds
+        } else if modifiers.contains(gdk::ModifierType::ALT_MASK) {
+            gtk::DeleteType::WordEnds
+        } else {
+            return gtk::glib::Propagation::Proceed;
+        };
+        let Some(focus) = keys.widget().and_then(|w| w.root()).and_then(|root| root.focus()) else {
+            return gtk::glib::Propagation::Proceed;
+        };
+        let editable = focus.downcast_ref::<gtk::Text>().is_some_and(|t| t.is_editable())
+            || focus.downcast_ref::<gtk::TextView>().is_some_and(|t| t.is_editable());
+        if !editable {
+            return gtk::glib::Propagation::Proceed;
+        }
+        focus.emit_by_name::<()>("delete-from-cursor", &[&unit, &backwards]);
+        gtk::glib::Propagation::Stop
+    });
+    keys
+}
+
 fn mac_trigger(accelerator: &str) -> Cow<'_, str> {
     if accelerator.contains("<Control>") {
         Cow::Owned(accelerator.replace("<Control>", "<Meta>"))
