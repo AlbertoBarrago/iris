@@ -2081,7 +2081,7 @@ msgstr "Nova mensagem"
 msgid "From {senders}"
 msgstr "De {senders}"
 
-#: app/src/notify.rs:198 app/src/ui/window.rs:2732
+#: app/src/notify.rs:204 app/src/ui/window.rs:2732
 msgid "Open"
 msgstr "Abrir"
 

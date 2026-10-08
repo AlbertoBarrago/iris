@@ -182,6 +182,12 @@ fn show(
 ) {
     std::thread::spawn(move || {
         let target = target.filter(|_| takes_actions());
+        // macOS shows one action button, and several fold into a menu
+        // behind an "Options" button, so a click on the body, which opens
+        // the conversation, is all a Mac notification offers.
+        let buttons = if cfg!(target_os = "macos") { Vec::new() } else { buttons };
+        #[cfg(target_os = "macos")]
+        send_as_iris();
         let mut notification = notify_rust::Notification::new();
         notification
             .appname("Iris")
@@ -242,11 +248,24 @@ fn takes_actions() -> bool {
     })
 }
 
-/// macOS notifications carry no buttons that report back, so a plain one
-/// goes out.
+/// A Mac notification reports a click on its body, which opens the
+/// conversation.
 #[cfg(target_os = "macos")]
 fn takes_actions() -> bool {
-    false
+    true
+}
+
+/// Sends notifications under Iris's bundle id, once. Without it they go
+/// out under another app's name and icon, and a click brings that app
+/// forward instead of Iris.
+#[cfg(target_os = "macos")]
+fn send_as_iris() {
+    static SET: std::sync::OnceLock<()> = std::sync::OnceLock::new();
+    SET.get_or_init(|| {
+        if let Err(err) = notify_rust::set_application(APP_ID) {
+            tracing::warn!(error = %err, "notifications could not take Iris's name");
+        }
+    });
 }
 
 /// Notification bodies accept a little markup, so text must be escaped.

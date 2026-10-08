@@ -28,6 +28,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ### Fixed
 
+- On macOS, a click on a new-mail notification brings Iris forward and
+  opens the conversation.
 - On macOS, closing the window with the red button no longer freezes
   Iris: a click on the Dock icon brings the window back as you left it.
 - On macOS, a dialog opened over an invitation no longer shows a dark
