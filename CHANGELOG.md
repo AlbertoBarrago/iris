@@ -5,6 +5,19 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.2 (2026-10-08)
+
+### Fixed
+
+- On macOS, Check for Updates in Preferences and in About Iris now asks
+  the update feed, as the Iris menu does, and the daily check follows the
+  switch in Preferences.
+
+### Improved
+
+- The mailboxes keep a fixed width; the message list and the assistant
+  still resize.
+
 ## 1.0.1 (2026-10-08)
 
 The first release of Iris for macOS.
