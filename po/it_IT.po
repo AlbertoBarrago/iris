@@ -2048,13 +2048,13 @@ msgid "Report a Problem"
 msgstr "Segnala un problema"
 
 #: app/src/notify.rs:48 app/src/ui/conversation.rs:407
-#: app/src/ui/conversation.rs:559 app/src/ui/conversation.rs:1127
+#: app/src/ui/conversation.rs:559 app/src/ui/conversation.rs:1129
 #: app/src/ui/window/message_menu.rs:125 app/src/ui/window/shortcuts.rs:402
 msgid "Archive"
 msgstr "Archivia"
 
 #: app/src/notify.rs:49 app/src/ui/conversation.rs:408
-#: app/src/ui/conversation.rs:1171 app/src/ui/preferences.rs:167
+#: app/src/ui/conversation.rs:1173 app/src/ui/preferences.rs:167
 #: app/src/ui/rules.rs:370 app/src/ui/window/message_menu.rs:128
 msgid "Mark as Read"
 msgstr "Segna come letto"
@@ -6070,7 +6070,7 @@ msgstr ""
 msgid "Description"
 msgstr "Descrizione"
 
-#: app/src/ui/composer/mod.rs:287 app/src/ui/conversation.rs:1751
+#: app/src/ui/composer/mod.rs:287 app/src/ui/conversation.rs:1753
 msgid "Choose a Time…"
 msgstr "Scegli un orario…"
 
@@ -6574,23 +6574,23 @@ msgstr "Carica immagini"
 msgid "This message is from a mailing list"
 msgstr "Questo messaggio proviene da una mailing list"
 
-#: app/src/ui/conversation.rs:409 app/src/ui/conversation.rs:1178
+#: app/src/ui/conversation.rs:409 app/src/ui/conversation.rs:1180
 #: app/src/ui/window/message_menu.rs:130
 msgid "Flag"
 msgstr "Contrassegna"
 
 #: app/src/ui/conversation.rs:410 app/src/ui/conversation.rs:569
-#: app/src/ui/conversation.rs:957 app/src/ui/conversation.rs:1183
+#: app/src/ui/conversation.rs:957 app/src/ui/conversation.rs:1185
 msgid "Mute"
 msgstr "Silenzia"
 
 #: app/src/ui/conversation.rs:411 app/src/ui/conversation.rs:561
-#: app/src/ui/conversation.rs:1120 app/src/ui/window/shortcuts.rs:421
+#: app/src/ui/conversation.rs:1122 app/src/ui/window/shortcuts.rs:421
 msgid "Junk"
 msgstr "Indesiderata"
 
 #: app/src/ui/conversation.rs:412 app/src/ui/conversation.rs:560
-#: app/src/ui/conversation.rs:1115 app/src/ui/window/message_menu.rs:126
+#: app/src/ui/conversation.rs:1117 app/src/ui/window/message_menu.rs:126
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
@@ -6606,11 +6606,11 @@ msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 msgid "Archive (E or Ctrl+Alt+A)"
 msgstr "Archivia (E o Ctrl+Alt+A)"
 
-#: app/src/ui/conversation.rs:485 app/src/ui/conversation.rs:1098
+#: app/src/ui/conversation.rs:485 app/src/ui/conversation.rs:1100
 msgid "Move to Trash (Delete)"
 msgstr "Sposta nel Cestino (Canc)"
 
-#: app/src/ui/conversation.rs:486 app/src/ui/conversation.rs:1108
+#: app/src/ui/conversation.rs:486 app/src/ui/conversation.rs:1110
 msgid "Junk (Ctrl+Shift+J)"
 msgstr "Indesiderata (Ctrl+Maiusc+J)"
 
@@ -6619,7 +6619,7 @@ msgid "Mark as Unread (Ctrl+Shift+U)"
 msgstr "Segna come non letto (Ctrl+Maiusc+U)"
 
 #: app/src/ui/conversation.rs:494 app/src/ui/conversation.rs:498
-#: app/src/ui/conversation.rs:1791
+#: app/src/ui/conversation.rs:1793
 msgid "Flag (Ctrl+Shift+L)"
 msgstr "Contrassegna (Ctrl+Maiusc+L)"
 
@@ -6723,64 +6723,64 @@ msgstr "Tag"
 msgid "Remove Sender from VIPs"
 msgstr "Rimuovi mittente dai VIP"
 
-#: app/src/ui/conversation.rs:955 app/src/ui/conversation.rs:1181
+#: app/src/ui/conversation.rs:955 app/src/ui/conversation.rs:1183
 msgid "Unmute"
 msgstr "Riattiva notifiche"
 
-#: app/src/ui/conversation.rs:1097
+#: app/src/ui/conversation.rs:1099
 msgid "Delete Forever (Delete)"
 msgstr "Elimina definitivamente (Canc)"
 
-#: app/src/ui/conversation.rs:1106
+#: app/src/ui/conversation.rs:1108
 msgid "Not Junk (Ctrl+Shift+J)"
 msgstr "Non indesiderata (Ctrl+Maiusc+J)"
 
-#: app/src/ui/conversation.rs:1114 app/src/ui/window/message_menu.rs:127
+#: app/src/ui/conversation.rs:1116 app/src/ui/window/message_menu.rs:127
 #: app/src/ui/window/press.rs:425
 msgid "Delete Forever"
 msgstr "Elimina definitivamente"
 
-#: app/src/ui/conversation.rs:1119
+#: app/src/ui/conversation.rs:1121
 msgid "Not Junk"
 msgstr "Non indesiderata"
 
-#: app/src/ui/conversation.rs:1173 app/src/ui/window/message_menu.rs:129
+#: app/src/ui/conversation.rs:1175 app/src/ui/window/message_menu.rs:129
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
-#: app/src/ui/conversation.rs:1176 app/src/ui/window/message_menu.rs:131
+#: app/src/ui/conversation.rs:1178 app/src/ui/window/message_menu.rs:131
 msgid "Unflag"
 msgstr "Rimuovi contrassegno"
 
-#: app/src/ui/conversation.rs:1192
+#: app/src/ui/conversation.rs:1194
 msgid "{count} Conversation Selected"
 msgid_plural "{count} Conversations Selected"
 msgstr[0] "{count} conversazione selezionata"
 msgstr[1] "{count} conversazioni selezionate"
 
-#: app/src/ui/conversation.rs:1198
+#: app/src/ui/conversation.rs:1200
 msgid "{count} Message Selected"
 msgid_plural "{count} Messages Selected"
 msgstr[0] "{count} messaggio selezionato"
 msgstr[1] "{count} messaggi selezionati"
 
-#: app/src/ui/conversation.rs:1790
+#: app/src/ui/conversation.rs:1792
 msgid "Unflag (Ctrl+Shift+L)"
 msgstr "Rimuovi contrassegno (Ctrl+Maiusc+L)"
 
-#: app/src/ui/conversation.rs:1803
+#: app/src/ui/conversation.rs:1805
 msgid "Mark as Read (U)"
 msgstr "Segna come letto (U)"
 
-#: app/src/ui/conversation.rs:1804
+#: app/src/ui/conversation.rs:1806
 msgid "Mark as Unread (U)"
 msgstr "Segna come non letto (U)"
 
-#: app/src/ui/conversation.rs:2029
+#: app/src/ui/conversation.rs:2031
 msgid "{color} (Ctrl+Alt+{number})"
 msgstr "{color} (Ctrl+Alt+{number})"
 
-#: app/src/ui/conversation.rs:2046 app/src/ui/window/message_menu.rs:258
+#: app/src/ui/conversation.rs:2048 app/src/ui/window/message_menu.rs:258
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
 

@@ -5,6 +5,13 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### Fixed
+
+- The arrow beside Send in the composer lights up inside the button's
+  rounded end, instead of as a square past it.
+- On macOS, the menu a right click opens on a message shows every item
+  and its whole title, instead of opening short with the rest to scroll.
+
 ## 1.0.3 (2026-10-08)
 
 ### Improved

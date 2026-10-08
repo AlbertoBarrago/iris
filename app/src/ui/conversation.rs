@@ -999,6 +999,7 @@ impl ConversationView {
         self.menu
             .set_pointing_to(Some(&gdk::Rectangle::new(at.0, at.1, 1, 1)));
         self.menu.popup();
+        fit_to_content(self.menu.upcast_ref());
     }
 
     /// Puts `popover` where the message menu was, for an item that leads
@@ -1013,6 +1014,7 @@ impl ConversationView {
         popover.set_parent(&self.webview);
         popover.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 1, 1)));
         popover.popup();
+        fit_to_content(popover);
     }
 
     /// The screenshot hook's way in: asks for the menu of the message at
@@ -2160,4 +2162,47 @@ pub(crate) fn network_session() -> webkit::NetworkSession {
         static SESSION: webkit::NetworkSession = webkit::NetworkSession::new_ephemeral();
     }
     SESSION.with(|s| s.clone())
+}
+
+/// On macOS the message menu opened shorter than its items: GTK sizes a
+/// popover's window as it opens, while the menu's title and separators
+/// are still hidden and measure nothing, so the window came out some 60 px
+/// short, the lower items had to be scrolled to and the title was cut.
+/// Once the menu shows, its scrolled list is measured whole and, when it
+/// needs more room than it opened with, the menu opens again at that size.
+/// A menu taller than the screen still scrolls, as GTK keeps a popover
+/// inside the monitor.
+fn fit_to_content(popover: &gtk::Popover) {
+    if !cfg!(target_os = "macos") {
+        return;
+    }
+    let Some(scrolled) = first_scrolled(popover.upcast_ref()) else { return };
+    let popover = popover.clone();
+    glib::idle_add_local_once(move || {
+        let Some(items) = scrolled.child() else { return };
+        let (_, width, _, _) = items.measure(gtk::Orientation::Horizontal, -1);
+        let (_, height, _, _) = items.measure(gtk::Orientation::Vertical, width);
+        let short = scrolled.height() < height || scrolled.width() < width;
+        tracing::debug!(width, height, short, "message menu fitted to its items");
+        scrolled.set_min_content_width(width);
+        scrolled.set_min_content_height(height);
+        if short && popover.is_visible() {
+            popover.popdown();
+            popover.popup();
+        }
+    });
+}
+
+fn first_scrolled(widget: &gtk::Widget) -> Option<gtk::ScrolledWindow> {
+    if let Some(scrolled) = widget.downcast_ref::<gtk::ScrolledWindow>() {
+        return Some(scrolled.clone());
+    }
+    let mut child = widget.first_child();
+    while let Some(current) = child {
+        if let Some(found) = first_scrolled(&current) {
+            return Some(found);
+        }
+        child = current.next_sibling();
+    }
+    None
 }

@@ -2042,13 +2042,13 @@ msgid "Report a Problem"
 msgstr "Comunicar um problema"
 
 #: app/src/notify.rs:48 app/src/ui/conversation.rs:407
-#: app/src/ui/conversation.rs:559 app/src/ui/conversation.rs:1127
+#: app/src/ui/conversation.rs:559 app/src/ui/conversation.rs:1129
 #: app/src/ui/window/message_menu.rs:125 app/src/ui/window/shortcuts.rs:402
 msgid "Archive"
 msgstr "Arquivar"
 
 #: app/src/notify.rs:49 app/src/ui/conversation.rs:408
-#: app/src/ui/conversation.rs:1171 app/src/ui/preferences.rs:167
+#: app/src/ui/conversation.rs:1173 app/src/ui/preferences.rs:167
 #: app/src/ui/rules.rs:370 app/src/ui/window/message_menu.rs:128
 msgid "Mark as Read"
 msgstr "Marcar como lida"
@@ -6056,7 +6056,7 @@ msgstr ""
 msgid "Description"
 msgstr "Descrição"
 
-#: app/src/ui/composer/mod.rs:287 app/src/ui/conversation.rs:1751
+#: app/src/ui/composer/mod.rs:287 app/src/ui/conversation.rs:1753
 msgid "Choose a Time…"
 msgstr "Escolher uma hora…"
 
@@ -6558,23 +6558,23 @@ msgstr "Carregar imagens"
 msgid "This message is from a mailing list"
 msgstr "Esta mensagem vem de uma lista de distribuição"
 
-#: app/src/ui/conversation.rs:409 app/src/ui/conversation.rs:1178
+#: app/src/ui/conversation.rs:409 app/src/ui/conversation.rs:1180
 #: app/src/ui/window/message_menu.rs:130
 msgid "Flag"
 msgstr "Marcar"
 
 #: app/src/ui/conversation.rs:410 app/src/ui/conversation.rs:569
-#: app/src/ui/conversation.rs:957 app/src/ui/conversation.rs:1183
+#: app/src/ui/conversation.rs:957 app/src/ui/conversation.rs:1185
 msgid "Mute"
 msgstr "Silenciar"
 
 #: app/src/ui/conversation.rs:411 app/src/ui/conversation.rs:561
-#: app/src/ui/conversation.rs:1120 app/src/ui/window/shortcuts.rs:421
+#: app/src/ui/conversation.rs:1122 app/src/ui/window/shortcuts.rs:421
 msgid "Junk"
 msgstr "Spam"
 
 #: app/src/ui/conversation.rs:412 app/src/ui/conversation.rs:560
-#: app/src/ui/conversation.rs:1115 app/src/ui/window/message_menu.rs:126
+#: app/src/ui/conversation.rs:1117 app/src/ui/window/message_menu.rs:126
 msgid "Move to Trash"
 msgstr "Mover para o lixo"
 
@@ -6590,11 +6590,11 @@ msgstr "As ações e os atalhos aplicam-se a todas. Esc limpa a seleção."
 msgid "Archive (E or Ctrl+Alt+A)"
 msgstr "Arquivar (E ou Ctrl+Alt+A)"
 
-#: app/src/ui/conversation.rs:485 app/src/ui/conversation.rs:1098
+#: app/src/ui/conversation.rs:485 app/src/ui/conversation.rs:1100
 msgid "Move to Trash (Delete)"
 msgstr "Mover para o lixo (Delete)"
 
-#: app/src/ui/conversation.rs:486 app/src/ui/conversation.rs:1108
+#: app/src/ui/conversation.rs:486 app/src/ui/conversation.rs:1110
 msgid "Junk (Ctrl+Shift+J)"
 msgstr "Spam (Ctrl+Shift+J)"
 
@@ -6603,7 +6603,7 @@ msgid "Mark as Unread (Ctrl+Shift+U)"
 msgstr "Marcar como não lida (Ctrl+Shift+U)"
 
 #: app/src/ui/conversation.rs:494 app/src/ui/conversation.rs:498
-#: app/src/ui/conversation.rs:1791
+#: app/src/ui/conversation.rs:1793
 msgid "Flag (Ctrl+Shift+L)"
 msgstr "Marcar (Ctrl+Shift+L)"
 
@@ -6707,64 +6707,64 @@ msgstr "Marcadores"
 msgid "Remove Sender from VIPs"
 msgstr "Remover remetente dos VIP"
 
-#: app/src/ui/conversation.rs:955 app/src/ui/conversation.rs:1181
+#: app/src/ui/conversation.rs:955 app/src/ui/conversation.rs:1183
 msgid "Unmute"
 msgstr "Retirar silêncio"
 
-#: app/src/ui/conversation.rs:1097
+#: app/src/ui/conversation.rs:1099
 msgid "Delete Forever (Delete)"
 msgstr "Eliminar definitivamente (Delete)"
 
-#: app/src/ui/conversation.rs:1106
+#: app/src/ui/conversation.rs:1108
 msgid "Not Junk (Ctrl+Shift+J)"
 msgstr "Não é spam (Ctrl+Shift+J)"
 
-#: app/src/ui/conversation.rs:1114 app/src/ui/window/message_menu.rs:127
+#: app/src/ui/conversation.rs:1116 app/src/ui/window/message_menu.rs:127
 #: app/src/ui/window/press.rs:425
 msgid "Delete Forever"
 msgstr "Eliminar definitivamente"
 
-#: app/src/ui/conversation.rs:1119
+#: app/src/ui/conversation.rs:1121
 msgid "Not Junk"
 msgstr "Não é spam"
 
-#: app/src/ui/conversation.rs:1173 app/src/ui/window/message_menu.rs:129
+#: app/src/ui/conversation.rs:1175 app/src/ui/window/message_menu.rs:129
 msgid "Mark as Unread"
 msgstr "Marcar como não lida"
 
-#: app/src/ui/conversation.rs:1176 app/src/ui/window/message_menu.rs:131
+#: app/src/ui/conversation.rs:1178 app/src/ui/window/message_menu.rs:131
 msgid "Unflag"
 msgstr "Desmarcar"
 
-#: app/src/ui/conversation.rs:1192
+#: app/src/ui/conversation.rs:1194
 msgid "{count} Conversation Selected"
 msgid_plural "{count} Conversations Selected"
 msgstr[0] "{count} conversa selecionada"
 msgstr[1] "{count} conversas selecionadas"
 
-#: app/src/ui/conversation.rs:1198
+#: app/src/ui/conversation.rs:1200
 msgid "{count} Message Selected"
 msgid_plural "{count} Messages Selected"
 msgstr[0] "{count} mensagem selecionada"
 msgstr[1] "{count} mensagens selecionadas"
 
-#: app/src/ui/conversation.rs:1790
+#: app/src/ui/conversation.rs:1792
 msgid "Unflag (Ctrl+Shift+L)"
 msgstr "Desmarcar (Ctrl+Shift+L)"
 
-#: app/src/ui/conversation.rs:1803
+#: app/src/ui/conversation.rs:1805
 msgid "Mark as Read (U)"
 msgstr "Marcar como lida (U)"
 
-#: app/src/ui/conversation.rs:1804
+#: app/src/ui/conversation.rs:1806
 msgid "Mark as Unread (U)"
 msgstr "Marcar como não lida (U)"
 
-#: app/src/ui/conversation.rs:2029
+#: app/src/ui/conversation.rs:2031
 msgid "{color} (Ctrl+Alt+{number})"
 msgstr "{color} (Ctrl+Alt+{number})"
 
-#: app/src/ui/conversation.rs:2046 app/src/ui/window/message_menu.rs:258
+#: app/src/ui/conversation.rs:2048 app/src/ui/window/message_menu.rs:258
 msgid "Clear Flag"
 msgstr "Retirar a marca"
 
