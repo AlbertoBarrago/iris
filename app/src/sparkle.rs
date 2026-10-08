@@ -94,6 +94,44 @@ pub fn add_menu_item(title: &str) {
     });
 }
 
+/// Whether this bundle carries Sparkle, and so updates through it.
+pub fn available() -> bool {
+    framework_path().is_some()
+}
+
+/// Checks the feed now and shows Sparkle's own window with the answer,
+/// as Check for Updates… in the Iris menu does.
+pub fn check_now() {
+    if !start() {
+        return;
+    }
+    CONTROLLER.with(|c| {
+        if let Some(controller) = c.borrow().as_ref() {
+            let none: *mut AnyObject = std::ptr::null_mut();
+            unsafe {
+                let _: () = msg_send![&**controller, checkForUpdates: none];
+            }
+        }
+    });
+}
+
+/// Turns Sparkle's daily check on or off, as the switch in Preferences says.
+pub fn set_automatic(on: bool) {
+    if !start() {
+        return;
+    }
+    CONTROLLER.with(|c| {
+        if let Some(controller) = c.borrow().as_ref() {
+            unsafe {
+                let updater: Option<Retained<AnyObject>> = msg_send![&**controller, updater];
+                if let Some(updater) = updater {
+                    let _: () = msg_send![&*updater, setAutomaticallyChecksForUpdates: Bool::new(on)];
+                }
+            }
+        }
+    });
+}
+
 /// Sparkle.framework inside the running bundle, if it carries one.
 fn framework_path() -> Option<std::path::PathBuf> {
     let exe = std::env::current_exe().ok()?;

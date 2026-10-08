@@ -14,6 +14,19 @@ use crate::settings::Change;
 use crate::ui::window::Notice;
 use crate::update::{self, Blockers, Restart, State, github, install, signature, version};
 
+/// Whether this copy updates through Sparkle: the macOS DMG's bundle.
+fn sparkle_updates() -> bool {
+    #[cfg(target_os = "macos")]
+    return crate::sparkle::available();
+    #[cfg(not(target_os = "macos"))]
+    false
+}
+
+fn check_with_sparkle() {
+    #[cfg(target_os = "macos")]
+    crate::sparkle::check_now();
+}
+
 /// The first timed check waits for the app to settle after it starts.
 const FIRST_CHECK: u32 = 5 * 60;
 /// How often the timer looks at the clock. The check itself runs once a day;
@@ -27,6 +40,15 @@ impl App {
     /// Starts the daily check, and listens for the Install button on the
     /// notification that announces a release.
     pub(super) fn start_update_checks(self: &Rc<Self>) {
+        if sparkle_updates() {
+            // Sparkle keeps its own schedule; Iris gives it the person's
+            // choice and a way to ask now.
+            let action = gio::SimpleAction::new("check-for-updates", None);
+            action.connect_activate(|_, _| check_with_sparkle());
+            self.gio.add_action(&action);
+            self.sync_update_schedule();
+            return;
+        }
         if !self.can_update() {
             return;
         }
@@ -73,6 +95,12 @@ impl App {
     /// always runs and always answers; a timed one runs once a day at most
     /// and speaks only when there is something to install.
     pub(crate) fn check_for_updates(self: &Rc<Self>, asked: bool) {
+        if sparkle_updates() {
+            if asked {
+                check_with_sparkle();
+            }
+            return;
+        }
         let Some(updater) = self.updater.clone() else {
             return;
         };
@@ -290,7 +318,20 @@ impl App {
 
     /// Where an update stands, when this copy updates at all.
     pub fn update_state(&self) -> Option<State> {
+        if sparkle_updates() {
+            // Sparkle answers in its own window, so the button stays ready.
+            return Some(State::Idle);
+        }
         self.updater.as_ref().map(|u| u.state())
+    }
+
+    /// Gives Sparkle the person's Check for Updates choice. Linux's
+    /// updater reads the setting itself at each check.
+    pub(crate) fn sync_update_schedule(&self) {
+        #[cfg(target_os = "macos")]
+        if sparkle_updates() {
+            crate::sparkle::set_automatic(self.settings().check_for_updates);
+        }
     }
 
     /// Answers a check the person asked for: in the window when it is open,
@@ -305,7 +346,7 @@ impl App {
     /// Whether this copy updates itself: not the demo, not a cargo build,
     /// and not the rpm, a Flatpak or a snap, which dnf or a store updates.
     pub fn can_update(&self) -> bool {
-        self.updater.is_some()
+        self.updater.is_some() || sparkle_updates()
     }
 
     pub(crate) fn open_release_notes(&self) {

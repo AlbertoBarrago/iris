@@ -831,12 +831,15 @@ fn sync_page(app: &Rc<App>, pending: &Rc<RefCell<SyncConfig>>) -> adw::Preferenc
     }
     startup.add(&login);
     if app.can_update() {
-        startup.add(&switch(
+        startup.add(&switch_with(
             app,
             &gettext("Check for Updates"),
             Some(&gettext("Look for a new release once a day")),
             app.settings().check_for_updates,
-            Change::CheckForUpdates,
+            |app, on| {
+                app.change_settings(Change::CheckForUpdates(on));
+                app.sync_update_schedule();
+            },
         ));
     } else if let Some(updater) = crate::packaging::BUILT_FOR.updated_by() {
         startup.add(

@@ -15,7 +15,9 @@ use crate::packaging::Packaging;
 /// anywhere else it came from a tarball or `scripts/install.sh`, into the
 /// prefix two levels above it.
 pub fn method_for(packaging: Packaging, exe: &Path) -> Option<Method> {
-    if packaging.updated_by().is_some() {
+    // A Mac updates through Sparkle (sparkle.rs). Read as a tarball install,
+    // Iris.app would be offered the Linux release.
+    if cfg!(target_os = "macos") || packaging.updated_by().is_some() {
         return None;
     }
     if exe.starts_with("/usr") {
@@ -137,6 +139,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg(not(target_os = "macos"))]
     fn the_binary_path_says_how_this_copy_was_installed() {
         let native = |exe: &str| method_for(Packaging::Native, Path::new(exe));
         assert_eq!(native("/usr/bin/iris"), Some(Method::Deb));
@@ -147,6 +150,14 @@ mod tests {
             })
         );
         assert_eq!(native("/home/ann/mail/target/release/iris"), None);
+    }
+
+    #[test]
+    #[cfg(target_os = "macos")]
+    fn a_mac_leaves_updates_to_sparkle() {
+        let native = |exe: &str| method_for(Packaging::Native, Path::new(exe));
+        assert_eq!(native("/Applications/Iris.app/Contents/MacOS/iris"), None);
+        assert_eq!(native("/usr/local/bin/iris"), None);
     }
 
     #[test]
