@@ -200,6 +200,12 @@ fn edit(selector: Sel, gtk_action: &str) {
     let _ = focus.activate_action(gtk_action, None::<&glib::Variant>);
 }
 
+/// Whether a mouse button is held down right now, whichever window has it.
+pub fn mouse_button_down() -> bool {
+    let pressed: usize = unsafe { msg_send![class!(NSEvent), pressedMouseButtons] };
+    pressed != 0
+}
+
 fn active_window() -> Option<gtk::Window> {
     gtk::Window::list_toplevels()
         .into_iter()

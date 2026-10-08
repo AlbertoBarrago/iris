@@ -3166,16 +3166,16 @@ impl MainWindow {
                 (weak.upgrade(), weak.upgrade().and_then(|w| w.app.upgrade()))
             {
                 // On macOS the red button hides the window, as Mail's does,
-                // and the Dock's click shows it again. Destroying it here
-                // ran inside AppKit's tracking of that button's click, and
-                // AppKit then kept waiting there for good: GLib's loop
-                // stopped and the Dock's click could not reopen the window.
-                // The hide waits for an idle turn, after AppKit has let go.
+                // and the Dock's click shows it again. AppKit tracks that
+                // button's click in a loop of its own, inside which GLib
+                // keeps running; a window hidden while the mouse button was
+                // still down took the release with it, AppKit waited for it
+                // for good, and neither the window nor the Dock's click
+                // answered again. The hide waits until the button is up.
                 if cfg!(target_os = "macos") {
                     win.calendar.commit_all_now();
                     app.core.set_window_open(false);
-                    let window = window.clone();
-                    glib::idle_add_local_once(move || window.set_visible(false));
+                    hide_once_released(window);
                     return glib::Propagation::Stop;
                 }
                 win.conversation.stop_rendering();
@@ -3960,6 +3960,20 @@ fn still_there(mailbox: &Mailbox, data: &[(Account, Vec<Label>)]) -> bool {
             .account()
             .is_none_or(|id| data.iter().any(|(a, _)| a.id == id)),
     }
+}
+
+/// Hides `window` once no mouse button is held, looking again every 30 ms
+/// until then. macOS only: see the close-request handler.
+fn hide_once_released(window: &adw::Window) {
+    let window = window.clone();
+    glib::timeout_add_local(std::time::Duration::from_millis(30), move || {
+        #[cfg(target_os = "macos")]
+        if crate::macos_menu::mouse_button_down() {
+            return glib::ControlFlow::Continue;
+        }
+        window.set_visible(false);
+        glib::ControlFlow::Break
+    });
 }
 
 /// Wraps the assistant's split view in a [`room::Room`] that folds the
