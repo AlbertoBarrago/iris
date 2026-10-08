@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: iris 1.0.8\n"
+"Project-Id-Version: iris 1.0.9\n"
 "Report-Msgid-Bugs-To: https://github.com/AlbertoBarrago/iris/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1469,7 +1469,7 @@ msgstr "Running a command in the sandbox"
 msgid "Iris keeps syncing with no window open"
 msgstr "Iris keeps syncing with no window open"
 
-#: app/src/compose.rs:548 app/src/compose.rs:2542
+#: app/src/compose.rs:548 app/src/compose.rs:2611
 msgid "Add at least one recipient."
 msgstr "Add at least one recipient."
 
@@ -1477,7 +1477,7 @@ msgstr "Add at least one recipient."
 msgid "“{address}” is not an email address."
 msgstr "“{address}” is not an email address."
 
-#: app/src/compose.rs:783 app/src/compose.rs:2548
+#: app/src/compose.rs:783 app/src/compose.rs:2617
 msgid "Choose a time in the future"
 msgstr "Choose a time in the future"
 
@@ -1843,11 +1843,11 @@ msgstr ""
 msgid "iris: unknown option {option}"
 msgstr "iris: unknown option {option}"
 
-#: app/src/main.rs:357
+#: app/src/main.rs:337
 msgid "Iris Could Not Start"
 msgstr "Iris Could Not Start"
 
-#: app/src/main.rs:362 app/src/ui/about.rs:190
+#: app/src/main.rs:342 app/src/ui/about.rs:190
 msgid "Report a Problem"
 msgstr "Report a Problem"
 

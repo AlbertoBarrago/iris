@@ -161,10 +161,31 @@ impl App {
 
     /// Opens a composer on a new message to `to`, or the window when there
     /// is no account to write from yet.
+    /// Opens a new message to `to`: an address, or a whole `mailto:` link,
+    /// whose Cc, Bcc, subject and body fill the message too.
     pub(super) fn compose_to(self: &Rc<Self>, to: &str) {
-        if !self.new_message(None, to) {
+        let opened = match to.starts_with("mailto:") {
+            true => self.new_message_from(&crate::compose::Mailto::parse(to)),
+            false => self.new_message(None, to),
+        };
+        if !opened {
             self.show_window();
         }
+    }
+
+    /// Opens a composer filled from a `mailto:` link, on the default account.
+    fn new_message_from(self: &Rc<Self>, mailto: &crate::compose::Mailto) -> bool {
+        let Some(account_id) = self.default_account(None) else {
+            return false;
+        };
+        let mut draft = self.blank_draft(account_id);
+        draft.to = crate::compose::parse_recipients(&mailto.to);
+        draft.cc = crate::compose::parse_recipients(&mailto.cc);
+        draft.bcc = crate::compose::parse_recipients(&mailto.bcc);
+        draft.subject = mailto.subject.clone();
+        draft.markdown = mailto.body.clone();
+        self.open_composer(draft, Signature::Add);
+        true
     }
 }
 

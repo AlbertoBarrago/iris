@@ -185,7 +185,8 @@ fn main() -> glib::ExitCode {
     // `Some("")` opens a blank message; `Some(address)` addresses it.
     let compose = args
         .iter()
-        .find_map(|a| a.strip_prefix("mailto:").map(mailto_recipient))
+        .find(|a| a.starts_with("mailto:"))
+        .cloned()
         .or_else(|| args.iter().any(|a| a == "--compose").then(String::new));
     let file = std::env::current_dir()
         .ok()
@@ -295,27 +296,6 @@ fn path_from_variant(parameter: &glib::Variant) -> Option<std::path::PathBuf> {
     parameter.get::<std::path::PathBuf>()
 }
 
-/// The address part of a `mailto:` URI, percent-decoded.
-pub(crate) fn mailto_recipient(rest: &str) -> String {
-    let address = rest.split('?').next().unwrap_or(rest);
-    let bytes = address.as_bytes();
-    let mut out = Vec::with_capacity(bytes.len());
-    let mut i = 0;
-    while i < bytes.len() {
-        if bytes[i] == b'%'
-            && let Some(hex) = address.get(i + 1..i + 3)
-            && let Ok(byte) = u8::from_str_radix(hex, 16)
-        {
-            out.push(byte);
-            i += 3;
-            continue;
-        }
-        out.push(bytes[i]);
-        i += 1;
-    }
-    String::from_utf8_lossy(&out).into_owned()
-}
-
 /// Starts GTK and libadwaita and loads the app's icons and stylesheet.
 /// Safe to call more than once.
 pub fn ensure_gtk() {
@@ -387,7 +367,7 @@ mod tests {
     use std::ffi::OsString;
     use std::path::{Path, PathBuf};
 
-    use super::{calendar_file, mailto_recipient, path_from_variant};
+    use super::{calendar_file, path_from_variant};
 
     fn args(list: &[&str]) -> Vec<OsString> {
         std::iter::once("iris").chain(list.iter().copied()).map(OsString::from).collect()
@@ -433,18 +413,5 @@ mod tests {
         assert_eq!(file(&["--background", "--demo"]), None);
         assert_eq!(file(&["mailto:ann@example.com"]), None);
         assert_eq!(file(&["--compose", "mailto:ann@example.com"]), None);
-    }
-
-    #[test]
-    fn mailto_uris_yield_their_address() {
-        assert_eq!(mailto_recipient("ann@example.com"), "ann@example.com");
-        assert_eq!(
-            mailto_recipient("ann%40example.com?subject=Hi"),
-            "ann@example.com"
-        );
-        assert_eq!(
-            mailto_recipient("Ann%20Lee%20%3Cann@example.com%3E"),
-            "Ann Lee <ann@example.com>"
-        );
     }
 }

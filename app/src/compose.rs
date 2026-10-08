@@ -1181,6 +1181,75 @@ pub fn format_recipients(list: &[Address]) -> String {
 
 /// Parses what the user typed into a recipient field. Semicolons work as
 /// separators too.
+/// What a `mailto:` link asks for, after RFC 6068: the addresses in its
+/// path, and the `to`, `cc`, `bcc`, `subject` and `body` fields of its
+/// query. Fields it does not know, such as `in-reply-to`, are left out.
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub struct Mailto {
+    pub to: String,
+    pub cc: String,
+    pub bcc: String,
+    pub subject: String,
+    pub body: String,
+}
+
+impl Mailto {
+    /// Reads `uri`, with or without its `mailto:` scheme. Every part is
+    /// percent-decoded; a `+` stays a plus, as RFC 6068 has it, since an
+    /// address may hold one.
+    pub fn parse(uri: &str) -> Mailto {
+        let rest = uri.strip_prefix("mailto:").unwrap_or(uri);
+        let (path, query) = rest.split_once('?').unwrap_or((rest, ""));
+        let mut mailto = Mailto {
+            to: percent_decode(path),
+            ..Mailto::default()
+        };
+        for field in query.split('&').filter(|f| !f.is_empty()) {
+            let (key, value) = field.split_once('=').unwrap_or((field, ""));
+            let value = percent_decode(value);
+            let join = |list: &mut String, more: String| {
+                if more.is_empty() {
+                    return;
+                }
+                if !list.is_empty() {
+                    list.push_str(", ");
+                }
+                list.push_str(&more);
+            };
+            match percent_decode(key).to_ascii_lowercase().as_str() {
+                "to" => join(&mut mailto.to, value),
+                "cc" => join(&mut mailto.cc, value),
+                "bcc" => join(&mut mailto.bcc, value),
+                "subject" => mailto.subject = value,
+                // A body's line breaks come as %0D%0A; the composer wants \n.
+                "body" => mailto.body = value.replace("\r\n", "\n"),
+                _ => {}
+            }
+        }
+        mailto
+    }
+}
+
+/// `text` with each `%XX` turned back into its byte, read as UTF-8.
+fn percent_decode(text: &str) -> String {
+    let bytes = text.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%'
+            && let Some(hex) = text.get(i + 1..i + 3)
+            && let Ok(byte) = u8::from_str_radix(hex, 16)
+        {
+            out.push(byte);
+            i += 3;
+            continue;
+        }
+        out.push(bytes[i]);
+        i += 1;
+    }
+    String::from_utf8_lossy(&out).into_owned()
+}
+
 pub fn parse_recipients(text: &str) -> Vec<Address> {
     parse_address_list_keeping_invalid(&text.replace(';', ","))
 }
@@ -2852,5 +2921,41 @@ mod tests {
         assert_eq!(trailing_quote_at("Hi\n> my own quote\nbye"), None);
         let text = "Hi\n> mine\n\nOn Monday, Ann wrote:\n> hi\n>\n> there";
         assert_eq!(trailing_quote_at(text), text.find("On Monday"));
+    }
+}
+
+#[cfg(test)]
+mod mailto_tests {
+    use super::Mailto;
+
+    #[test]
+    fn a_plain_link_names_its_address() {
+        assert_eq!(Mailto::parse("mailto:ann@example.com").to, "ann@example.com");
+        assert_eq!(Mailto::parse("ann%40example.com").to, "ann@example.com");
+        assert_eq!(
+            Mailto::parse("mailto:Ann%20Lee%20%3Cann@example.com%3E").to,
+            "Ann Lee <ann@example.com>"
+        );
+    }
+
+    #[test]
+    fn the_query_fills_the_message() {
+        let mailto = Mailto::parse(
+            "mailto:ann@example.com?Subject=Ciao%20Iris&body=Riga%20uno%0D%0ARiga%20due&cc=bo%40example.com&bcc=cy@example.com",
+        );
+        assert_eq!(mailto.to, "ann@example.com");
+        assert_eq!(mailto.subject, "Ciao Iris");
+        assert_eq!(mailto.body, "Riga uno\nRiga due");
+        assert_eq!(mailto.cc, "bo@example.com");
+        assert_eq!(mailto.bcc, "cy@example.com");
+    }
+
+    #[test]
+    fn to_fields_add_to_the_path_and_a_plus_stays() {
+        let mailto = Mailto::parse("mailto:ann+news@example.com?to=bo@example.com&to=");
+        assert_eq!(mailto.to, "ann+news@example.com, bo@example.com");
+        let only_query = Mailto::parse("mailto:?to=cy@example.com&subject=Hi");
+        assert_eq!(only_query.to, "cy@example.com");
+        assert_eq!(only_query.subject, "Hi");
     }
 }

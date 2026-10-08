@@ -195,13 +195,13 @@ define_class!(
                 descriptor.and_then(|d| msg_send![&*d, stringValue])
             };
             let Some(url) = url.map(|u| u.to_string()) else { return };
-            let Some(rest) = url.strip_prefix("mailto:") else {
+            if !url.starts_with("mailto:") {
                 tracing::warn!(url, "a URL Iris does not handle");
                 return;
-            };
-            let to = crate::mailto_recipient(rest);
+            }
+            // The whole link goes through, so its subject and body do too.
             if let Some(app) = self.ivars().app.upgrade() {
-                app.activate_action("compose-to", Some(&to.to_variant()));
+                app.activate_action("compose-to", Some(&url.to_variant()));
             }
         }
     }

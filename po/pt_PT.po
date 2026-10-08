@@ -1647,7 +1647,7 @@ msgstr "A correr um comando na área isolada"
 msgid "Iris keeps syncing with no window open"
 msgstr "O Iris continua a sincronizar sem nenhuma janela aberta"
 
-#: app/src/compose.rs:548 app/src/compose.rs:2542
+#: app/src/compose.rs:548 app/src/compose.rs:2611
 msgid "Add at least one recipient."
 msgstr "Adicione pelo menos um destinatário."
 
@@ -1655,7 +1655,7 @@ msgstr "Adicione pelo menos um destinatário."
 msgid "“{address}” is not an email address."
 msgstr "“{address}” não é um endereço de e-mail."
 
-#: app/src/compose.rs:783 app/src/compose.rs:2548
+#: app/src/compose.rs:783 app/src/compose.rs:2617
 msgid "Choose a time in the future"
 msgstr "Escolha uma hora no futuro"
 
@@ -2033,11 +2033,11 @@ msgstr ""
 msgid "iris: unknown option {option}"
 msgstr "iris: opção desconhecida {option}"
 
-#: app/src/main.rs:357
+#: app/src/main.rs:337
 msgid "Iris Could Not Start"
 msgstr "O Iris não conseguiu arrancar"
 
-#: app/src/main.rs:362 app/src/ui/about.rs:190
+#: app/src/main.rs:342 app/src/ui/about.rs:190
 msgid "Report a Problem"
 msgstr "Comunicar um problema"
 
