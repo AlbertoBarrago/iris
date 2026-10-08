@@ -5,6 +5,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.9 (2026-10-08)
+
 ### New
 
 - On macOS, Iris opens email links from websites and other apps in a new
