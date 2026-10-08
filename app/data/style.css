@@ -1776,3 +1776,14 @@ row.guest-field:focus-within {
 .composer-narrow .format-bar button { padding: 2px 1px; }
 .composer-narrow .format-group { padding: 0 3px; }
 .calendar-narrow button.calendar-today { padding: 0 10px; }
+
+/* A banner over the message as a floating island (macOS, conversation.rs):
+   inset from the pane, round, with a hairline edge and a soft shadow. */
+banner.island > revealer > widget {
+  margin: 8px 16px 0;
+  padding: 6px 8px 6px 16px;
+  border-radius: 14px;
+  border: 1px solid alpha(currentColor, 0.10);
+  box-shadow: 0 2px 10px alpha(black, 0.18);
+}
+banner.island > revealer > widget > button { border-radius: 999px; }

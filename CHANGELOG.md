@@ -5,6 +5,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### Improved
+
+- On macOS, the notices over a message, such as remote images hidden or
+  a mailing list's Unsubscribe, float as rounded islands.
+
 ## 1.0.10 (2026-10-08)
 
 ### Fixed

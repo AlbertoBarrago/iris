@@ -454,6 +454,13 @@ impl ConversationView {
         let queued = QueuedCard::new();
         let web_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
         web_box.append(&queued.widget);
+        // On macOS the two banners over the message float as rounded
+        // islands, as the Mac's own notices do, instead of spanning the
+        // pane edge to edge.
+        if cfg!(target_os = "macos") {
+            list_banner.add_css_class("island");
+            banner.add_css_class("island");
+        }
         web_box.append(&list_banner);
         web_box.append(&banner);
         web_box.append(&seal.widget);
