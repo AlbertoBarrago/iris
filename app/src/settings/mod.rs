@@ -176,7 +176,9 @@ pub struct Layout {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum Pane {
-    /// The mailboxes.
+    /// The mailboxes, which no longer resize. Kept so a preferences file
+    /// that saved their width still reads; the width is ignored.
+    #[allow(dead_code)]
     Sidebar,
     /// The message list beside the conversation.
     List,

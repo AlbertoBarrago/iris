@@ -178,9 +178,9 @@ uses a tool from outside the app, and it is off until you pick a model.
   with Archive, Mark Read, Delete and Reply buttons. In the tray Iris
   uses about 55 MB: a minute after you close the window, it restarts
   itself in the background to give back the memory the window used.
-- **Panes you size.** Drag the edge of the mailboxes, the message list or
-  the assistant; a double click puts it back. Iris remembers the widths and
-  the window's size.
+- **Panes you size.** Drag the edge of the message list or the assistant;
+  a double click puts it back. Iris remembers the widths and the window's
+  size.
 - **Apple Mail's shortcuts**, with Command on macOS and Ctrl on Linux, plus
   Gmail's single keys.
 - **English, European Portuguese and Italian**, chosen in Preferences, with

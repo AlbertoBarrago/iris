@@ -114,11 +114,11 @@ pub fn fix_width(set_least: impl Fn(f64), set_most: impl Fn(f64), most_now: f64,
     }
 }
 
-/// The three panes the person can resize, each with its strip and the
-/// split view that sets its width. The assistant's width goes through the
-/// room (room.rs), which reads it from the shared cell.
+/// The panes the person can resize, each with its strip and the split
+/// view that sets its width. The assistant's width goes through the room
+/// (room.rs), which reads it from the shared cell. The mailboxes keep their
+/// fixed width.
 pub struct Edges<'a> {
-    pub sidebar: (&'a PaneEdge, &'a adw::OverlaySplitView),
     pub list: (&'a PaneEdge, &'a adw::NavigationSplitView),
     pub assistant: (&'a PaneEdge, &'a adw::OverlaySplitView, Rc<Cell<Option<i32>>>),
 }
@@ -127,22 +127,6 @@ pub struct Edges<'a> {
 /// kept, and keeps each new width in them when a drag ends.
 pub fn wire(app: &Rc<App>, edges: Edges<'_>) {
     let saved = app.settings_with(|settings| settings.layout.panes.clone());
-
-    let (edge, split) = edges.sidebar;
-    let defaults = (split.min_sidebar_width(), split.max_sidebar_width());
-    let weak = split.downgrade();
-    let apply: Rc<dyn Fn(Option<i32>)> = Rc::new(move |width| {
-        let Some(split) = weak.upgrade() else { return };
-        fix_width(
-            |v| split.set_min_sidebar_width(v),
-            |v| split.set_max_sidebar_width(v),
-            split.max_sidebar_width(),
-            width.map(|w| clamp(Pane::Sidebar, w)),
-            defaults,
-        );
-        rearrange(split.upcast_ref());
-    });
-    hook(app, edge, Pane::Sidebar, apply, saved.get(&Pane::Sidebar).copied());
 
     let (edge, columns) = edges.list;
     let defaults = (columns.min_sidebar_width(), columns.max_sidebar_width());

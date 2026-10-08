@@ -649,13 +649,8 @@ impl MainWindow {
                 .build();
             spaces.add_named(&nav, Some("mail"));
             spaces.add_named(&calendar.page, Some("calendar"));
-            let sidebar_edge = pane_edge::PaneEdge::around(
-                &sidebar.page,
-                gtk::PackType::End,
-                &gettext("Resize the mailboxes"),
-            );
             let split = adw::OverlaySplitView::builder()
-                .sidebar(&sidebar_edge.overlay)
+                .sidebar(&sidebar.page)
                 .content(&spaces)
                 .css_classes(["inset-sidebar"])
                 .min_sidebar_width(256.0)
@@ -747,7 +742,6 @@ impl MainWindow {
             pane_edge::wire(
                 app,
                 pane_edge::Edges {
-                    sidebar: (&sidebar_edge, &split),
                     list: (&list_edge, &nav),
                     assistant: (&assistant_edge, &assistant_split, Rc::clone(&panel_chosen)),
                 },

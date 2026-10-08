@@ -60,7 +60,7 @@ Terms the code and its docs use for Gmail mail. The `domain` crate holds the cod
 
 **Layout**: how the person left the main window, kept in the preferences for the next start: the sidebar sections folded under their title, the accounts open under their heading, each pane's dragged width, and the window's size and whether it is maximized. `mailrs::settings::Layout`, changed through settings changes that redo no part of the window. _Avoid_: window state, geometry.
 
-**Pane edge**: the strip along a pane's edge that the pointer drags to resize the mailboxes, the message list or the assistant; a double click puts the pane's default width back. libadwaita's split views offer nothing to drag, so the strip sets both of the pane's width bounds to the width reached, and the room reads the chosen widths when it folds the panes. `ui::window::pane_edge`. _Avoid_: splitter, divider, handle.
+**Pane edge**: the strip along a pane's edge that the pointer drags to resize the message list or the assistant (the mailboxes keep a fixed width); a double click puts the pane's default width back. libadwaita's split views offer nothing to drag, so the strip sets both of the pane's width bounds to the width reached, and the room reads the chosen widths when it folds the panes. `ui::window::pane_edge`. _Avoid_: splitter, divider, handle.
 
 **Account settings**: what Gmail keeps for one account and Iris changes: the automatic reply, the rules, blocked senders, and hidden addresses. `mailrs_sync::AccountSettings` makes each change for the dialogs and the assistant alike. Preferences, which live in the app's own settings file, are something else. _Avoid_: preferences, options, Gmail config.
 
