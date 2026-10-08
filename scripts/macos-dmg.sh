@@ -108,7 +108,9 @@ hdiutil create -volname "Iris $version" -srcfolder "$staging" -fs HFS+ -format U
 rm -rf "$staging"
 # The testers' installer goes up beside the DMGs.
 cp packaging/macos/install.sh "$out/install.sh"
-# The feed lists every DMG in target/dmg, newest first, each signed.
-"$sparkle/bin/generate_appcast" --download-url-prefix "$download_url" "$out" >&2
+# The feed offers the newest build alone, with deltas from the three
+# before it, so the site keeps one DMG and testers download a few MB.
+"$sparkle/bin/generate_appcast" --download-url-prefix "$download_url" \
+    --maximum-versions 1 --maximum-deltas 3 "$out" >&2
 echo "$dmg (macOS $minimum or later, Apple silicon)"
-echo "Upload it, $out/appcast.xml and $out/install.sh to $download_url"
+echo "Publish it with: scripts/macos-publish.sh ~/Projects/albertobarrago.github.io"
