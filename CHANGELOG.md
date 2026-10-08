@@ -5,6 +5,13 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.10 (2026-10-08)
+
+### Fixed
+
+- An email link fills in its subject, text, Cc and Bcc as well as the
+  address, instead of opening a message with the address alone.
+
 ## 1.0.9 (2026-10-08)
 
 ### New
