@@ -11,7 +11,7 @@ use mailrs_domain::translate::gettext;
 use crate::ui::{Mailbox, Standard};
 
 /// A heading in the sidebar.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Section {
     Favorites,
     Mailboxes,
@@ -27,6 +27,23 @@ impl Section {
             Section::Smart => gettext("Smart Mailboxes"),
             Section::Accounts => gettext("Accounts"),
         }
+    }
+
+    /// The name the preferences file keeps a folded section under. It
+    /// never changes with the language, unlike the title.
+    pub fn key(self) -> &'static str {
+        match self {
+            Section::Favorites => "favorites",
+            Section::Mailboxes => "mailboxes",
+            Section::Smart => "smart",
+            Section::Accounts => "accounts",
+        }
+    }
+
+    pub fn from_key(key: &str) -> Option<Section> {
+        [Section::Favorites, Section::Mailboxes, Section::Smart, Section::Accounts]
+            .into_iter()
+            .find(|section| section.key() == key)
     }
 }
 
@@ -96,6 +113,14 @@ mod tests {
     use mailrs_domain::FlagColor;
 
     use super::*;
+
+    #[test]
+    fn every_section_reads_back_from_its_key() {
+        for section in [Section::Favorites, Section::Mailboxes, Section::Smart, Section::Accounts] {
+            assert_eq!(Section::from_key(section.key()), Some(section));
+        }
+        assert_eq!(Section::from_key("Favorites"), None);
+    }
 
     #[test]
     fn an_outbox_with_nothing_stuck_shows_its_tray() {

@@ -393,6 +393,18 @@ flowboxchild:focus-visible > .recipient-chip {
   text-transform: uppercase;
 }
 .mailboxes > row:first-child > .sidebar-section { margin-top: 12px; }
+/* A mail section's title folds the section, so it holds the title and a
+   chevron in a box. The title row lights up under the pointer, so the
+   space above the section sits outside the row, and the box keeps the
+   title centred in what lights up. */
+.mailboxes > row.sidebar-section-row { margin-top: 10px; }
+.mailboxes > row.sidebar-section-row:first-child { margin-top: 6px; }
+.mailboxes > row.sidebar-section-row > box { margin: 6px 8px 6px 10px; }
+.mailboxes > row.sidebar-section-row > box > .sidebar-section {
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.sidebar-section-chevron { -gtk-icon-size: 12px; }
 
 /* Row type: 14 px names, 700 when selected. */
 .mailbox-row > label { font-size: 0.95em; font-weight: 500; }

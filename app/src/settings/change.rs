@@ -81,6 +81,17 @@ pub enum Change {
         email: String,
         folded: bool,
     },
+    /// Folds a mailbox sidebar section under its title, or opens it,
+    /// by the section's key.
+    SidebarSectionFolded {
+        section: String,
+        folded: bool,
+    },
+    /// Opens or closes an account's mailboxes under its sidebar heading.
+    SidebarAccountOpen {
+        email: String,
+        open: bool,
+    },
     /// Folds the old one switch for every account into the per-account
     /// list: all of `emails` when it was on.
     AllContacts(Vec<String>),
@@ -288,6 +299,16 @@ impl Change {
                 if folded {
                     settings.folded_calendar_accounts.push(email);
                 }
+            }
+            Change::SidebarSectionFolded { section, folded } => {
+                let sections = &mut settings.layout.folded_sections;
+                sections.retain(|s| *s != section);
+                if folded {
+                    sections.push(section);
+                }
+            }
+            Change::SidebarAccountOpen { email, open } => {
+                settings.layout.open_accounts.insert(email.to_lowercase(), open);
             }
             Change::Signature { email, text } => settings.set_signature(&email, &text),
             Change::ToggleVip { email, name } => {
@@ -542,6 +563,7 @@ settable! {
         calendar_view,
         last_calendar_account,
         folded_calendar_accounts,
+        layout,
         // How the assistant's pane lays out its own turns belongs with the
         // rest of its settings, on the AI page.
         assistant_allowed_tools,
@@ -786,6 +808,7 @@ impl Effects {
             week_start,
             last_calendar_account,
             folded_calendar_accounts,
+            layout,
         } = after;
         // These leave the window as it is. The flag colour, the delay before
         // Send commits, and the rest are read when they are needed, so
@@ -844,6 +867,9 @@ impl Effects {
             // The calendar sidebar folds the account itself as the
             // person clicks its heading.
             folded_calendar_accounts,
+            // The mailbox sidebar folds its sections and accounts itself
+            // too.
+            layout,
         );
         let smart_changed = *smart_mailboxes != before.smart_mailboxes;
         let colors_changed = *account_colors != before.account_colors;
@@ -1058,6 +1084,31 @@ mod tests {
     }
 
     #[test]
+    fn a_sidebar_section_folds_once_and_opens_again() {
+        let mut settings = Settings::default();
+        let fold = |folded| Change::SidebarSectionFolded {
+            section: "smart".into(),
+            folded,
+        };
+        fold(true).apply_to(&mut settings);
+        fold(true).apply_to(&mut settings);
+        assert_eq!(settings.layout.folded_sections, vec!["smart".to_string()]);
+        fold(false).apply_to(&mut settings);
+        assert!(settings.layout.folded_sections.is_empty());
+    }
+
+    #[test]
+    fn an_open_account_is_kept_by_its_lower_case_address() {
+        let mut settings = Settings::default();
+        Change::SidebarAccountOpen {
+            email: "Dana@Example.com".into(),
+            open: true,
+        }
+        .apply_to(&mut settings);
+        assert_eq!(settings.layout.open_accounts.get("dana@example.com"), Some(&true));
+    }
+
+    #[test]
     fn small_preferences_need_no_reload() {
         // The list the module's comment calls quiet, checked one by one.
         let quiet = [
@@ -1091,6 +1142,14 @@ mod tests {
             Change::CalendarAccountFolded {
                 email: "me@work.pt".into(),
                 folded: true,
+            },
+            Change::SidebarSectionFolded {
+                section: "favorites".into(),
+                folded: true,
+            },
+            Change::SidebarAccountOpen {
+                email: "me@work.pt".into(),
+                open: false,
             },
         ];
         for change in quiet {

@@ -148,6 +148,21 @@ pub struct Settings {
     /// until the owner turns it on, because each asks Google for more
     /// access.
     pub contact_accounts: Vec<String>,
+    /// How the person left the mailbox sidebar.
+    pub layout: Layout,
+}
+
+/// How the person left the window, kept for the next start.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Layout {
+    /// The sidebar sections folded under their title, by the key
+    /// `Section::key` gives each.
+    pub folded_sections: Vec<String>,
+    /// Accounts whose mailboxes the person opened or closed under their
+    /// heading, by lower-case address. An account missing here opens as
+    /// the sidebar decides by default.
+    pub open_accounts: BTreeMap<String, bool>,
 }
 
 /// One skill's switches on the AI page. Both start off: a skill is text
@@ -482,6 +497,7 @@ impl Default for Settings {
             week_start: WeekStart::default(),
             last_calendar_account: None,
             folded_calendar_accounts: Vec::new(),
+            layout: Layout::default(),
         }
     }
 }

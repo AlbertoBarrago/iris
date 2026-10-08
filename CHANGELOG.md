@@ -5,6 +5,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### New
+
+- Fold a sidebar section, such as Favorites or Accounts, by clicking its
+  title. Iris remembers which sections and accounts you left open.
+
 ### Fixed
 
 - On macOS, closing the window with the red button no longer freezes

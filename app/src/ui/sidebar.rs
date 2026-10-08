@@ -21,7 +21,8 @@ use crate::format::{PALETTE, account_color_index, palette_name};
 use crate::offered::Filing;
 use crate::settings::Space;
 use keys::ListKey;
-use sections::{Place, Section};
+pub use sections::Section;
+use sections::Place;
 use tree::label_rows;
 
 struct Row {
@@ -36,6 +37,9 @@ struct Row {
 struct Heading {
     row: gtk::ListBoxRow,
     account_id: AccountId,
+    /// The account's address in lower case, which the preferences keep
+    /// its open or closed state under.
+    email: String,
     /// What the heading calls the account: its name, or its address.
     name: String,
     /// What a screen reader adds after the row's name.
@@ -299,8 +303,19 @@ pub struct Sidebar {
     keyed: RefCell<Option<gtk::ListBoxRow>>,
     rows: RefCell<Vec<Row>>,
     headings: RefCell<Vec<Heading>>,
-    /// Accounts whose sections the user expanded or collapsed.
-    expanded: RefCell<HashMap<AccountId, bool>>,
+    /// Accounts whose mailboxes the user opened or closed, by lower-case
+    /// address, so the choice outlives a restart and a rebuild.
+    expanded: RefCell<HashMap<String, bool>>,
+    /// Sections folded under their title.
+    folded: RefCell<HashSet<Section>>,
+    /// The section each row sits in, which the list's filter reads.
+    section_of: RefCell<HashMap<gtk::ListBoxRow, Section>>,
+    /// Each section's title row and its chevron.
+    titles: RefCell<Vec<(gtk::ListBoxRow, Section, gtk::Image)>>,
+    /// The section the rows `rebuild` is adding belong to.
+    building: Cell<Section>,
+    /// Told when the person folds a section or opens an account.
+    on_fold: RefCell<Option<OnFold>>,
     /// Whether sections start open. Unset means open only with one account.
     pub start_expanded: Cell<Option<bool>>,
     muted: Cell<bool>,
@@ -311,6 +326,15 @@ pub struct Sidebar {
     /// The label being dragged, while one is, so the rows it passes over
     /// can tell it from dragged mail.
     dragging: Rc<RefCell<Option<Dragged>>>,
+}
+
+type OnFold = Box<dyn Fn(Fold)>;
+
+/// A fold the person made in the sidebar, for the preferences to keep.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Fold {
+    Section { section: Section, folded: bool },
+    Account { email: String, open: bool },
 }
 
 /// A label on the move, by account and id.
@@ -449,14 +473,28 @@ impl Sidebar {
             rows: RefCell::new(Vec::new()),
             headings: RefCell::new(Vec::new()),
             expanded: RefCell::new(HashMap::new()),
+            folded: RefCell::new(HashSet::new()),
+            section_of: RefCell::new(HashMap::new()),
+            titles: RefCell::new(Vec::new()),
+            building: Cell::new(Section::Favorites),
+            on_fold: RefCell::new(None),
             start_expanded: Cell::new(None),
             muted: Cell::new(false),
             on_drop: Rc::new(on_drop),
             on_label_drop: Rc::new(on_label_drop),
             dragging: Rc::default(),
         });
+        // Folding goes through the filter rather than each row's
+        // visibility, which already hides the flag colours nobody uses.
         let weak = Rc::downgrade(&sidebar);
-        sidebar.list.connect_row_selected(move |_, row| {
+        sidebar
+            .list
+            .set_filter_func(move |row| weak.upgrade().is_none_or(|sidebar| sidebar.shows(row)));
+        let weak = Rc::downgrade(&sidebar);
+        sidebar.list.connect_row_selected(move |list, row| {
+            // The selected row stays in sight in a folded section, so a
+            // new selection may show or hide one.
+            list.invalidate_filter();
             let (Some(sidebar), Some(row)) = (weak.upgrade(), row) else {
                 return;
             };
@@ -478,16 +516,32 @@ impl Sidebar {
             let Some(sidebar) = weak.upgrade() else {
                 return;
             };
+            let title = sidebar
+                .titles
+                .borrow()
+                .iter()
+                .find(|(r, _, _)| r == row)
+                .map(|(_, section, _)| *section);
+            if let Some(section) = title {
+                let folded = !sidebar.folded.borrow_mut().remove(&section);
+                if folded {
+                    sidebar.folded.borrow_mut().insert(section);
+                }
+                sidebar.apply_expansion();
+                sidebar.told(Fold::Section { section, folded });
+                return;
+            }
             let account = sidebar
                 .headings
                 .borrow()
                 .iter()
                 .find(|h| &h.row == row)
-                .map(|h| h.account_id);
-            if let Some(account_id) = account {
-                let open = !sidebar.is_expanded(account_id);
-                sidebar.expanded.borrow_mut().insert(account_id, open);
+                .map(|h| h.email.clone());
+            if let Some(email) = account {
+                let open = !sidebar.is_expanded(&email);
+                sidebar.expanded.borrow_mut().insert(email.clone(), open);
                 sidebar.apply_expansion();
+                sidebar.told(Fold::Account { email, open });
             }
         });
         // The list is one Tab stop and the arrows move inside it without
@@ -765,16 +819,64 @@ impl Sidebar {
         self.foot.set_visible(foot.shown);
     }
 
-    fn is_expanded(&self, account_id: AccountId) -> bool {
+    fn is_expanded(&self, email: &str) -> bool {
         let default = self
             .start_expanded
             .get()
             .unwrap_or(self.headings.borrow().len() <= 1);
         self.expanded
             .borrow()
-            .get(&account_id)
+            .get(email)
             .copied()
             .unwrap_or(default)
+    }
+
+    /// Takes the folds the preferences kept: the sections by key, the
+    /// accounts by address.
+    pub fn set_folds<'a>(
+        &self,
+        sections: impl IntoIterator<Item = &'a String>,
+        accounts: impl IntoIterator<Item = (&'a String, &'a bool)>,
+    ) {
+        *self.folded.borrow_mut() = sections
+            .into_iter()
+            .filter_map(|key| Section::from_key(key))
+            .collect();
+        *self.expanded.borrow_mut() = accounts
+            .into_iter()
+            .map(|(email, open)| (email.to_lowercase(), *open))
+            .collect();
+        self.apply_expansion();
+    }
+
+    /// Calls `f` each time the person folds a section or opens or closes
+    /// an account, so the window can keep the choice.
+    pub fn connect_fold(&self, f: impl Fn(Fold) + 'static) {
+        *self.on_fold.borrow_mut() = Some(Box::new(f));
+    }
+
+    fn told(&self, fold: Fold) {
+        if let Some(f) = self.on_fold.borrow().as_ref() {
+            f(fold);
+        }
+    }
+
+    /// Whether the filter lets `row` show: it does unless its section is
+    /// folded, and the selected row always does.
+    fn shows(&self, row: &gtk::ListBoxRow) -> bool {
+        let Some(section) = self.section_of.borrow().get(row).copied() else {
+            return true;
+        };
+        !self.folded.borrow().contains(&section) || row.is_selected()
+    }
+
+    /// Adds `section`'s title row, and makes it the section the next rows
+    /// fall under.
+    fn add_section_title(&self, section: Section) {
+        self.building.set(section);
+        let (row, chevron) = section_title(&section.title());
+        self.list.append(&row);
+        self.titles.borrow_mut().push((row, section, chevron));
     }
 
     /// Shows or hides each account's rows. The selected row always stays visible.
@@ -785,7 +887,7 @@ impl Sidebar {
         // on the same pitch as the mailboxes.
         let mut after_open = false;
         for heading in self.headings.borrow().iter() {
-            let open = self.is_expanded(heading.account_id);
+            let open = self.is_expanded(&heading.email);
             if after_open {
                 heading.row.add_css_class("after-open");
             } else {
@@ -805,6 +907,12 @@ impl Sidebar {
                 }
             }
         }
+        for (row, section, chevron) in self.titles.borrow().iter() {
+            let open = !self.folded.borrow().contains(section);
+            chevron.set_icon_name(Some(if open { "pan-down-symbolic" } else { "pan-end-symbolic" }));
+            row.update_state(&[gtk::accessible::State::Expanded(Some(open))]);
+        }
+        self.list.invalidate_filter();
     }
 
     /// Sets each account heading's own Rules, Hide My Email and Automatic
@@ -845,14 +953,16 @@ impl Sidebar {
         self.list.remove_all();
         self.rows.borrow_mut().clear();
         self.headings.borrow_mut().clear();
+        self.section_of.borrow_mut().clear();
+        self.titles.borrow_mut().clear();
         for (section, places) in sections::LAYOUT {
-            self.list.append(&section_title(&section.title()));
+            self.add_section_title(section);
             for &place in places {
                 self.add_place(place, vips);
             }
         }
         if !extras.smart.is_empty() {
-            self.list.append(&section_title(&Section::Smart.title()));
+            self.add_section_title(Section::Smart);
             for smart in &extras.smart {
                 let mailbox = Mailbox::Smart(smart.clone());
                 let row = self.add_mailbox(mailbox, &smart.name, "folder-saved-search-symbolic", 0);
@@ -863,7 +973,7 @@ impl Sidebar {
             // The rows above list every account at once. This says what
             // the ones below are, rather than leaving a reader to work it
             // out from the addresses.
-            self.list.append(&section_title(&Section::Accounts.title()));
+            self.add_section_title(Section::Accounts);
         }
         for (account, labels) in accounts {
             let shown = extras.names.get(&account.id);
@@ -874,10 +984,12 @@ impl Sidebar {
                 account_offers,
                 extras.not_downloading.contains(&account.id),
             );
+            self.section_of.borrow_mut().insert(row.clone(), Section::Accounts);
             self.list.append(&row);
             self.headings.borrow_mut().push(Heading {
                 row,
                 account_id: account.id,
+                email: account.email.to_lowercase(),
                 name: shown.unwrap_or(&account.email).clone(),
                 description: heading_description(account),
                 count,
@@ -1217,6 +1329,7 @@ impl Sidebar {
             row.add_controller(target);
         }
         super::name(&row, name);
+        self.section_of.borrow_mut().insert(row.clone(), self.building.get());
         self.list.append(&row);
         self.rows.borrow_mut().push(Row {
             row: row.clone(),
@@ -1433,24 +1546,35 @@ pub struct Extras {
 }
 
 /// A small heading between sections. It cannot be selected.
-fn section_title(text: &str) -> gtk::ListBoxRow {
+/// A section's title row, which folds the section when activated, and the
+/// chevron that shows whether it is open.
+fn section_title(text: &str) -> (gtk::ListBoxRow, gtk::Image) {
+    let chevron = gtk::Image::builder()
+        .icon_name("pan-down-symbolic")
+        .css_classes(["sidebar-section-chevron", "dim-label"])
+        .build();
+    let content = gtk::Box::builder().build();
+    content.append(
+        &gtk::Label::builder()
+            .label(text)
+            .xalign(0.0)
+            .hexpand(true)
+            .css_classes(["sidebar-section", "dim-label", "caption-heading"])
+            .build(),
+    );
+    content.append(&chevron);
     let row = gtk::ListBoxRow::builder()
-        .child(
-            &gtk::Label::builder()
-                .label(text)
-                .xalign(0.0)
-                .css_classes(["sidebar-section", "dim-label", "caption-heading"])
-                .build(),
-        )
+        .child(&content)
         .selectable(false)
-        .activatable(false)
+        .activatable(true)
+        .css_classes(["sidebar-section-row"])
         .build();
     // The list puts the label inside a row of its own, and the row is
     // what a screen reader reaches, so the words have to be on it too or
     // the section announces as nothing.
     row.set_accessible_role(gtk::AccessibleRole::RowHeader);
     crate::ui::name(&row, text);
-    row
+    (row, chevron)
 }
 
 /// Edit, move, and delete on a right click or long press of a smart mailbox.
@@ -1674,7 +1798,9 @@ const GROUP_CLASS: &str = "mailbox-group";
 /// What the keys need to know of `row`.
 fn row_keys(row: &gtk::ListBoxRow) -> keys::Row {
     keys::Row {
-        shown: row.is_visible(),
+        // A row in a folded section is visible but filtered out, which
+        // GTK marks by taking its child visibility.
+        shown: row.is_visible() && row.is_child_visible(),
         sensitive: row.is_sensitive(),
         opens: row.is_selectable() || row.is_activatable(),
         group: row.has_css_class(GROUP_CLASS),

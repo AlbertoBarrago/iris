@@ -874,6 +874,26 @@ impl MainWindow {
         if window.core.demo {
             window.sidebar.start_expanded.set(Some(true));
         }
+        app.settings_with(|settings| {
+            window
+                .sidebar
+                .set_folds(&settings.layout.folded_sections, &settings.layout.open_accounts);
+        });
+        let fold_app = Rc::downgrade(app);
+        window.sidebar.connect_fold(move |fold| {
+            let Some(app) = fold_app.upgrade() else { return };
+            app.change_settings(match fold {
+                crate::ui::sidebar::Fold::Section { section, folded } => {
+                    Change::SidebarSectionFolded {
+                        section: section.key().to_string(),
+                        folded,
+                    }
+                }
+                crate::ui::sidebar::Fold::Account { email, open } => {
+                    Change::SidebarAccountOpen { email, open }
+                }
+            });
+        });
         let weak = Rc::downgrade(&window);
         if let Some(arrow) = window.conversation.label_arrow() {
             arrow.set_create_popup_func(move |button| {
