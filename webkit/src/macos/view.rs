@@ -150,6 +150,10 @@ mod imp {
         /// The last placement `follow` logged, so the debug log gets one
         /// line per change rather than one per frame.
         pub(super) logged: RefCell<String>,
+        /// Trackpad scrolling waiting to reach the page, in widget pixels,
+        /// and whether a pass to hand it over is already queued.
+        pub(super) scrolled: Cell<(f64, f64)>,
+        pub(super) scroll_queued: Cell<bool>,
     }
 
     impl Default for WebView {
@@ -175,6 +179,8 @@ mod imp {
                 tick: RefCell::new(None),
                 uri: RefCell::new(None),
                 logged: RefCell::new(String::new()),
+                scrolled: Cell::new((0.0, 0.0)),
+                scroll_queued: Cell::new(false),
             }
         }
     }
@@ -196,6 +202,21 @@ mod imp {
             self.parent_constructed();
             let widget = self.obj();
             widget.set_focusable(true);
+            // GTK's macOS backend handles a trackpad's scrolling itself and
+            // never hands it on to AppKit, so the page never saw it: a mouse
+            // wheel scrolled the mail and a trackpad did nothing. GTK still
+            // reports it here, in surface units, and it goes on to the page.
+            let scroll = gtk::EventControllerScroll::new(gtk::EventControllerScrollFlags::BOTH_AXES);
+            let weak = widget.downgrade();
+            scroll.connect_scroll(move |controller, dx, dy| {
+                if controller.unit() != gdk::ScrollUnit::Surface {
+                    return glib::Propagation::Proceed;
+                }
+                let Some(view) = weak.upgrade() else { return glib::Propagation::Proceed };
+                view.scroll_page_by(dx, dy);
+                glib::Propagation::Stop
+            });
+            widget.add_controller(scroll);
             // GTK's focus and AppKit's first responder have to agree: a
             // key goes to whichever of the two AppKit thinks has it.
             let focus = gtk::EventControllerFocus::new();
@@ -706,6 +727,29 @@ impl WebView {
         if clip.isHidden() {
             clip.setHidden(false);
         }
+    }
+
+    /// Scrolls the page by a trackpad's `dx`, `dy`, gathered over a frame
+    /// so the page hears once per frame rather than once per event. The
+    /// page measures in CSS pixels, which the zoom level stands between.
+    fn scroll_page_by(&self, dx: f64, dy: f64) {
+        let imp = self.imp();
+        let (x, y) = imp.scrolled.get();
+        imp.scrolled.set((x + dx, y + dy));
+        if imp.scroll_queued.replace(true) {
+            return;
+        }
+        let weak = self.downgrade();
+        glib::idle_add_local_once(move || {
+            let Some(view) = weak.upgrade() else { return };
+            let imp = view.imp();
+            imp.scroll_queued.set(false);
+            let (x, y) = imp.scrolled.replace((0.0, 0.0));
+            let Some(page) = imp.page.borrow().clone() else { return };
+            let zoom = imp.zoom.get().max(0.1);
+            let script = format!("window.scrollBy({}, {})", x / zoom, y / zoom);
+            unsafe { page.evaluateJavaScript_completionHandler(&NSString::from_str(&script), None) };
+        });
     }
 
     /// Logs where the page went, at debug level, when it differs from the
