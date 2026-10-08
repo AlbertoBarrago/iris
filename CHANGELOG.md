@@ -5,6 +5,12 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.11 (2026-10-08)
+
+### Fixed
+
+- On macOS, a trackpad scrolls an open message, as the mouse wheel does.
+
 ### Improved
 
 - On macOS, the notices over a message, such as remote images hidden or
