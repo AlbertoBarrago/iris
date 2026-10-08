@@ -5,6 +5,13 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.8 (2026-10-08)
+
+### Fixed
+
+- On macOS, the open message stays on screen around a dialog, such as
+  Add Account or a confirmation, instead of disappearing until it closes.
+
 ## 1.0.7 (2026-10-08)
 
 ### Fixed
