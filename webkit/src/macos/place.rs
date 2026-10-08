@@ -48,6 +48,32 @@ fn corner_radius(widget: &gtk::Widget, bounds: &graphene::Rect) -> f64 {
     }
 }
 
+/// The sheet a libadwaita dialog draws, when `widget` is a dialog: the
+/// `background` child of its floating or bottom sheet. The rest of the
+/// dialog is the backdrop, which dims the window behind the sheet.
+fn dialog_sheet(widget: &gtk::Widget) -> Option<gtk::Widget> {
+    if widget.type_().name() != "AdwDialog" {
+        return None;
+    }
+    fn find(widget: &gtk::Widget, depth: usize) -> Option<gtk::Widget> {
+        let mut child = widget.first_child();
+        while let Some(current) = child {
+            let in_sheet = matches!(widget.type_().name(), "AdwFloatingSheet" | "AdwBottomSheet");
+            if in_sheet && current.has_css_class("background") {
+                return Some(current);
+            }
+            if depth < 4
+                && let Some(found) = find(&current, depth + 1)
+            {
+                return Some(found);
+            }
+            child = current.next_sibling();
+        }
+        None
+    }
+    find(widget, 0)
+}
+
 /// The part of the window the page takes, in the window's GTK coordinates.
 pub(crate) struct Placement {
     /// The whole widget, where the page lays itself out.
@@ -85,6 +111,11 @@ pub(crate) fn measure(widget: &gtk::Widget) -> Option<Placement> {
                 // toast that also spans the list beside the page must keep
                 // its rounded ends where they are, not grow new ones at the
                 // page's edge. The clip cuts the rest away.
+                // A dialog spans the whole window with its dimmed backdrop,
+                // and cutting all of that away left no mail on screen while
+                // any dialog was open. Only its sheet covers the page; the
+                // mail stays visible around it, undimmed.
+                let above = dialog_sheet(&above).unwrap_or(above);
                 if above.is_drawable()
                     && let Some(bounds) = above.compute_bounds(native)
                     && bounds.intersection(&full).is_some()
