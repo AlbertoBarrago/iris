@@ -3103,10 +3103,23 @@ impl MainWindow {
         self.window.add_controller(shortcuts::main_chords());
 
         let weak = Rc::downgrade(self);
-        self.window.connect_close_request(move |_| {
+        self.window.connect_close_request(move |window| {
             if let (Some(win), Some(app)) =
                 (weak.upgrade(), weak.upgrade().and_then(|w| w.app.upgrade()))
             {
+                // On macOS the red button hides the window, as Mail's does,
+                // and the Dock's click shows it again. Destroying it here
+                // ran inside AppKit's tracking of that button's click, and
+                // AppKit then kept waiting there for good: GLib's loop
+                // stopped and the Dock's click could not reopen the window.
+                // The hide waits for an idle turn, after AppKit has let go.
+                if cfg!(target_os = "macos") {
+                    win.calendar.commit_all_now();
+                    app.core.set_window_open(false);
+                    let window = window.clone();
+                    glib::idle_add_local_once(move || window.set_visible(false));
+                    return glib::Propagation::Stop;
+                }
                 win.conversation.stop_rendering();
                 win.previews.forget_decrypted();
                 // A held calendar change whose Undo toast is still up

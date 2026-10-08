@@ -5,6 +5,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### Fixed
+
+- On macOS, closing the window with the red button no longer freezes
+  Iris: a click on the Dock icon brings the window back as you left it.
+
 ## 1.0.0 (2026-10-06)
 
 ### New
