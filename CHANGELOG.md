@@ -5,6 +5,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.5 (2026-10-08)
+
 ### Fixed
 
 - On macOS, closing the window with the red button no longer leaves Iris
