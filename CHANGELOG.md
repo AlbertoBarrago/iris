@@ -9,6 +9,9 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 - Fold a sidebar section, such as Favorites or Accounts, by clicking its
   title. Iris remembers which sections and accounts you left open.
+- Iris speaks Italian: choose Italiano under Language in Preferences.
+- On macOS, the app carries its translations, so Português and
+  Italiano work there too.
 
 ### Fixed
 

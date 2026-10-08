@@ -41,6 +41,16 @@ if [ ! -f "$icns" ] || [ "$svg" -nt "$icns" ]; then
     rm -r "$(dirname "$iconset")"
 fi
 
+# The translations, where language.rs looks inside a bundle. Compiled from
+# po/ on every run, so a bundle never carries a stale language.
+command -v msgfmt >/dev/null || { echo "msgfmt is missing: brew install gettext" >&2; exit 1; }
+rm -rf "$app/Contents/Resources/locale"
+for po in po/*.po; do
+    lang="$(basename "$po" .po)"
+    mkdir -p "$app/Contents/Resources/locale/$lang/LC_MESSAGES"
+    msgfmt -o "$app/Contents/Resources/locale/$lang/LC_MESSAGES/iris.mo" "$po"
+done
+
 # Sign it, so the Keychain recognises each new build as the same app and
 # keeps the "Always Allow" answers. IRIS_SIGN_IDENTITY names the identity;
 # by default the self-signed "albz Code Signing", when it is there. No

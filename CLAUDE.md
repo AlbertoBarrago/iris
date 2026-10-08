@@ -38,6 +38,9 @@ Iris is a fork of [Penguin Mail](https://github.com/c9dev/penguin-mail)
   `refactor:`, `chore:`), not AGENTS.md's prefix-free style.
 - Present a plan and wait for confirmation before implementing, despite
   AGENTS.md's "decide on taste and keep going".
+- `po/it_IT.po` is kept complete like `po/pt_PT.po`: translate every
+  new string into both in the same change. The owner reads the UI in
+  Italian too.
 - `.github/workflows` and `packaging/` are inherited and inactive for
   Iris (no apt, rpm, snap or Flatpak publishing yet). Flag before
   changing them.
