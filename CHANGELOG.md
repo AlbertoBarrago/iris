@@ -5,12 +5,16 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.4 (2026-10-08)
+
 ### Fixed
 
 - The arrow beside Send in the composer lights up inside the button's
   rounded end, instead of as a square past it.
 - On macOS, the menu a right click opens on a message shows every item
   and its whole title, instead of opening short with the rest to scroll.
+- The macOS installer no longer stops with an xattr error before it
+  opens Iris.
 
 ## 1.0.3 (2026-10-08)
 
