@@ -1877,7 +1877,11 @@ msgstr ""
 msgid "Window"
 msgstr ""
 
-#: app/src/main.rs:74
+#: app/src/macos_menu.rs:116
+msgid "Check for Updates…"
+msgstr ""
+
+#: app/src/main.rs:78
 msgid ""
 "Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
 "\n"
@@ -1889,15 +1893,15 @@ msgid ""
 "  FILE.ics       open a calendar file, to add its events to a calendar"
 msgstr ""
 
-#: app/src/main.rs:173
+#: app/src/main.rs:179
 msgid "iris: unknown option {option}"
 msgstr ""
 
-#: app/src/main.rs:349
+#: app/src/main.rs:357
 msgid "Iris Could Not Start"
 msgstr ""
 
-#: app/src/main.rs:354 app/src/ui/about.rs:190
+#: app/src/main.rs:362 app/src/ui/about.rs:190
 msgid "Report a Problem"
 msgstr ""
 
@@ -1908,7 +1912,7 @@ msgid "Archive"
 msgstr ""
 
 #: app/src/notify.rs:49 app/src/ui/conversation.rs:408
-#: app/src/ui/conversation.rs:1171 app/src/ui/preferences.rs:162
+#: app/src/ui/conversation.rs:1171 app/src/ui/preferences.rs:167
 #: app/src/ui/rules.rs:370 app/src/ui/window/message_menu.rs:128
 msgid "Mark as Read"
 msgstr ""
@@ -3409,7 +3413,7 @@ msgstr ""
 
 #: app/src/tray.rs:219 app/src/ui/about.rs:129 app/src/ui/about.rs:236
 #: app/src/ui/about.rs:244 app/src/ui/about.rs:251
-#: app/src/ui/preferences.rs:831 app/src/update/mod.rs:108
+#: app/src/ui/preferences.rs:836 app/src/update/mod.rs:108
 msgid "Check for Updates"
 msgstr ""
 
@@ -3704,7 +3708,7 @@ msgid "Iris keeps every message it downloads on this computer."
 msgstr ""
 
 #: app/src/ui/add_account.rs:1313 app/src/ui/add_account.rs:1314
-#: app/src/ui/preferences.rs:1118
+#: app/src/ui/preferences.rs:1123
 msgid "Days"
 msgstr ""
 
@@ -4413,7 +4417,7 @@ msgid "Declined"
 msgstr ""
 
 #: app/src/ui/calendar/block.rs:576 app/src/ui/calendar/words.rs:164
-#: app/src/ui/preferences.rs:951
+#: app/src/ui/preferences.rs:956
 msgid "{start}–{end}"
 msgstr ""
 
@@ -4529,11 +4533,11 @@ msgstr ""
 msgid "End time"
 msgstr ""
 
-#: app/src/ui/calendar/editor.rs:713 app/src/ui/preferences.rs:1080
+#: app/src/ui/calendar/editor.rs:713 app/src/ui/preferences.rs:1085
 msgid "Starts"
 msgstr ""
 
-#: app/src/ui/calendar/editor.rs:716 app/src/ui/preferences.rs:1082
+#: app/src/ui/calendar/editor.rs:716 app/src/ui/preferences.rs:1087
 msgid "Ends"
 msgstr ""
 
@@ -5196,7 +5200,7 @@ msgstr ""
 
 #: app/src/ui/calendar/mod.rs:1699 app/src/ui/calendar/mod.rs:2811
 #: app/src/ui/calendar/sidebar.rs:314 app/src/ui/calendar/words.rs:373
-#: app/src/ui/preferences.rs:965 app/src/ui/preferences.rs:1126
+#: app/src/ui/preferences.rs:970 app/src/ui/preferences.rs:1131
 msgid "%a"
 msgstr ""
 
@@ -7019,249 +7023,249 @@ msgstr ""
 msgid "Not checked"
 msgstr ""
 
-#: app/src/ui/preferences.rs:119 app/src/ui/window/shortcuts.rs:239
+#: app/src/ui/preferences.rs:124 app/src/ui/window/shortcuts.rs:239
 msgid "General"
 msgstr ""
 
-#: app/src/ui/preferences.rs:124 app/src/ui/window/shortcuts.rs:235
+#: app/src/ui/preferences.rs:129 app/src/ui/window/shortcuts.rs:235
 msgid "Reading"
 msgstr ""
 
-#: app/src/ui/preferences.rs:128
+#: app/src/ui/preferences.rs:133
 msgid "Group Messages into Conversations"
 msgstr ""
 
-#: app/src/ui/preferences.rs:130
+#: app/src/ui/preferences.rs:135
 msgid "Show a thread's replies together instead of one row per message"
 msgstr ""
 
-#: app/src/ui/preferences.rs:137
+#: app/src/ui/preferences.rs:142
 msgid "Group Inbox into Categories"
 msgstr ""
 
-#: app/src/ui/preferences.rs:139
+#: app/src/ui/preferences.rs:144
 msgid ""
 "Sort the inbox into Primary, Updates, Promotions, and Social, as Gmail does"
 msgstr ""
 
-#: app/src/ui/preferences.rs:146
+#: app/src/ui/preferences.rs:151
 msgid "Open the Inbox On"
 msgstr ""
 
-#: app/src/ui/preferences.rs:147
+#: app/src/ui/preferences.rs:152
 msgid "Which category the window starts on"
 msgstr ""
 
-#: app/src/ui/preferences.rs:153
+#: app/src/ui/preferences.rs:158
 msgid "Suggest Follow-Ups"
 msgstr ""
 
-#: app/src/ui/preferences.rs:155
+#: app/src/ui/preferences.rs:160
 msgid "List mail you sent that has had no reply for three days"
 msgstr ""
 
-#: app/src/ui/preferences.rs:169
+#: app/src/ui/preferences.rs:174
 msgid "Remote Images"
 msgstr ""
 
-#: app/src/ui/preferences.rs:171
+#: app/src/ui/preferences.rs:176
 msgid "Loading them can tell senders when you read their mail"
 msgstr ""
 
-#: app/src/ui/preferences.rs:179
+#: app/src/ui/preferences.rs:184
 msgid "Text Size"
 msgstr ""
 
-#: app/src/ui/preferences.rs:187
+#: app/src/ui/preferences.rs:192
 msgid "Appearance"
 msgstr ""
 
-#: app/src/ui/preferences.rs:191
+#: app/src/ui/preferences.rs:196
 msgid "Style"
 msgstr ""
 
-#: app/src/ui/preferences.rs:200
+#: app/src/ui/preferences.rs:205
 msgid "Notifications"
 msgstr ""
 
-#: app/src/ui/preferences.rs:204
+#: app/src/ui/preferences.rs:209
 msgid "Notify About New Mail"
 msgstr ""
 
-#: app/src/ui/preferences.rs:211
+#: app/src/ui/preferences.rs:216
 msgid "Show Sender and Subject"
 msgstr ""
 
-#: app/src/ui/preferences.rs:212
+#: app/src/ui/preferences.rs:217
 msgid "Turn off to see only how much mail arrived"
 msgstr ""
 
-#: app/src/ui/preferences.rs:222
+#: app/src/ui/preferences.rs:227
 msgid "Only for VIPs"
 msgstr ""
 
-#: app/src/ui/preferences.rs:223
+#: app/src/ui/preferences.rs:228
 msgid "Stay quiet about mail from everyone else"
 msgstr ""
 
-#: app/src/ui/preferences.rs:232
+#: app/src/ui/preferences.rs:237
 msgid "Buttons"
 msgstr ""
 
-#: app/src/ui/preferences.rs:234
+#: app/src/ui/preferences.rs:239
 msgid "What a notification offers besides opening the conversation"
 msgstr ""
 
-#: app/src/ui/preferences.rs:257
+#: app/src/ui/preferences.rs:262
 msgid "Not Available"
 msgstr ""
 
-#: app/src/ui/preferences.rs:282
+#: app/src/ui/preferences.rs:287
 msgid "Event Reminders"
 msgstr ""
 
-#: app/src/ui/preferences.rs:284
+#: app/src/ui/preferences.rs:289
 msgid ""
 "A notification before each event, at the times the event or its calendar sets"
 msgstr ""
 
-#: app/src/ui/preferences.rs:303 app/src/ui/window/shortcuts.rs:237
+#: app/src/ui/preferences.rs:308 app/src/ui/window/shortcuts.rs:237
 msgid "Writing"
 msgstr ""
 
-#: app/src/ui/preferences.rs:308
+#: app/src/ui/preferences.rs:313
 msgid "No Accounts Yet"
 msgstr ""
 
-#: app/src/ui/preferences.rs:310
+#: app/src/ui/preferences.rs:315
 msgid "Add an account to choose a sender and write signatures."
 msgstr ""
 
-#: app/src/ui/preferences.rs:319
+#: app/src/ui/preferences.rs:324
 msgid "New Messages"
 msgstr ""
 
-#: app/src/ui/preferences.rs:329
+#: app/src/ui/preferences.rs:334
 msgid "Send New Messages From"
 msgstr ""
 
-#: app/src/ui/preferences.rs:331
+#: app/src/ui/preferences.rs:336
 msgid "Replies always come from the account that received the message"
 msgstr ""
 
-#: app/src/ui/preferences.rs:349
+#: app/src/ui/preferences.rs:354
 msgid "New Messages Start As"
 msgstr ""
 
-#: app/src/ui/preferences.rs:351
+#: app/src/ui/preferences.rs:356
 msgid "Rich text styles the words themselves; Markdown shows its marks"
 msgstr ""
 
 #. The seconds change every second and the name stays put, so a
 #. screen reader is not told each one.
-#: app/src/ui/preferences.rs:358 app/src/ui/sidebar.rs:68
+#: app/src/ui/preferences.rs:363 app/src/ui/sidebar.rs:68
 #: app/src/ui/sidebar.rs:81
 msgid "Undo Send"
 msgstr ""
 
-#: app/src/ui/preferences.rs:360
+#: app/src/ui/preferences.rs:365
 msgid "How long you can take a message back after sending it"
 msgstr ""
 
-#: app/src/ui/preferences.rs:367
+#: app/src/ui/preferences.rs:372
 msgid "Check for Missing Attachments"
 msgstr ""
 
-#: app/src/ui/preferences.rs:369
+#: app/src/ui/preferences.rs:374
 msgid "Ask before sending a message that promises a file and carries none"
 msgstr ""
 
-#: app/src/ui/preferences.rs:377
+#: app/src/ui/preferences.rs:382
 msgid "Signatures"
 msgstr ""
 
-#: app/src/ui/preferences.rs:379
+#: app/src/ui/preferences.rs:384
 msgid ""
 "Added below new messages and above quoted text in replies. Markdown works."
 msgstr ""
 
-#: app/src/ui/preferences.rs:404
+#: app/src/ui/preferences.rs:409
 msgid "Signature for {account}"
 msgstr ""
 
-#: app/src/ui/preferences.rs:417
+#: app/src/ui/preferences.rs:422
 msgid "Import from Gmail"
 msgstr ""
 
-#: app/src/ui/preferences.rs:434
+#: app/src/ui/preferences.rs:439
 msgid "This account is not syncing yet"
 msgstr ""
 
-#: app/src/ui/preferences.rs:449
+#: app/src/ui/preferences.rs:454
 msgid "Imported the signature from Gmail"
 msgstr ""
 
-#: app/src/ui/preferences.rs:453
+#: app/src/ui/preferences.rs:458
 msgid "Gmail has no signature for this account"
 msgstr ""
 
-#: app/src/ui/preferences.rs:456
+#: app/src/ui/preferences.rs:461
 msgid "Could not import: {reason}"
 msgstr ""
 
-#: app/src/ui/preferences.rs:503
+#: app/src/ui/preferences.rs:508
 msgid "Signing and Encryption"
 msgstr ""
 
-#: app/src/ui/preferences.rs:505
+#: app/src/ui/preferences.rs:510
 msgid ""
 "Iris signs and encrypts through GnuPG, which holds your keys and asks for "
 "your passphrase itself."
 msgstr ""
 
-#: app/src/ui/preferences.rs:510
+#: app/src/ui/preferences.rs:515
 msgid "Your OpenPGP Keys"
 msgstr ""
 
-#: app/src/ui/preferences.rs:511
+#: app/src/ui/preferences.rs:516
 msgid "Asking gpg…"
 msgstr ""
 
-#: app/src/ui/preferences.rs:515
+#: app/src/ui/preferences.rs:520
 msgid "Your S/MIME Certificates"
 msgstr ""
 
-#: app/src/ui/preferences.rs:516
+#: app/src/ui/preferences.rs:521
 msgid "Asking gpgsm…"
 msgstr ""
 
-#: app/src/ui/preferences.rs:523
+#: app/src/ui/preferences.rs:528
 msgid "Sign My Messages by Default"
 msgstr ""
 
-#: app/src/ui/preferences.rs:524
+#: app/src/ui/preferences.rs:529
 msgid "New messages open with Sign turned on"
 msgstr ""
 
-#: app/src/ui/preferences.rs:530
+#: app/src/ui/preferences.rs:535
 msgid "Encrypt When I Can"
 msgstr ""
 
-#: app/src/ui/preferences.rs:532
+#: app/src/ui/preferences.rs:537
 msgid "Turn Encrypt on as soon as every recipient has a key or a certificate"
 msgstr ""
 
-#: app/src/ui/preferences.rs:621
+#: app/src/ui/preferences.rs:626
 msgid "gpg could not be asked: {reason}"
 msgstr ""
 
-#: app/src/ui/preferences.rs:640
+#: app/src/ui/preferences.rs:645
 msgid "gpgsm could not be asked: {reason}"
 msgstr ""
 
 #. The verb agrees with the programs: "gpg, which holds" but "gpg and
 #. gpgsm, which hold".
-#: app/src/ui/preferences.rs:650
+#: app/src/ui/preferences.rs:655
 msgid ""
 "Iris signs and encrypts through {programs}, which holds your keys and asks "
 "for your passphrase itself."
@@ -7271,166 +7275,166 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/src/ui/preferences.rs:682 app/src/ui/preferences.rs:695
+#: app/src/ui/preferences.rs:687 app/src/ui/preferences.rs:700
 msgid "Spelling"
 msgstr ""
 
-#: app/src/ui/preferences.rs:684
+#: app/src/ui/preferences.rs:689
 msgid ""
 "No dictionaries are installed, so Iris is not checking spelling. Install a "
 "Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and reopen "
 "the composer."
 msgstr ""
 
-#: app/src/ui/preferences.rs:697
+#: app/src/ui/preferences.rs:702
 msgid ""
 "The language each account checks spelling in. Dictionaries installed: "
 "{languages}."
 msgstr ""
 
-#: app/src/ui/preferences.rs:709
+#: app/src/ui/preferences.rs:714
 msgid "System: {language}"
 msgstr ""
 
-#: app/src/ui/preferences.rs:721
+#: app/src/ui/preferences.rs:726
 msgid "All Installed Languages"
 msgstr ""
 
-#: app/src/ui/preferences.rs:759
+#: app/src/ui/preferences.rs:764
 msgid "Sync"
 msgstr ""
 
-#: app/src/ui/preferences.rs:765
+#: app/src/ui/preferences.rs:770
 msgid "Checking"
 msgstr ""
 
-#: app/src/ui/preferences.rs:771
+#: app/src/ui/preferences.rs:776
 msgid "Check for New Mail"
 msgstr ""
 
-#: app/src/ui/preferences.rs:780
+#: app/src/ui/preferences.rs:785
 msgid "Storage"
 msgstr ""
 
-#: app/src/ui/preferences.rs:785
+#: app/src/ui/preferences.rs:790
 msgid "Keep Mail on This Computer For"
 msgstr ""
 
-#: app/src/ui/preferences.rs:787
+#: app/src/ui/preferences.rs:792
 msgid "Everything in your inbox stays too, and older mail remains searchable"
 msgstr ""
 
-#: app/src/ui/preferences.rs:796
+#: app/src/ui/preferences.rs:801
 msgid "Message Cache"
 msgstr ""
 
-#: app/src/ui/preferences.rs:798
+#: app/src/ui/preferences.rs:803
 msgid "Bodies of mail you have read, kept for opening offline"
 msgstr ""
 
-#: app/src/ui/preferences.rs:807
+#: app/src/ui/preferences.rs:812
 msgid "Startup"
 msgstr ""
 
-#: app/src/ui/preferences.rs:810
+#: app/src/ui/preferences.rs:815
 msgid "Start in the Tray at Login"
 msgstr ""
 
-#: app/src/ui/preferences.rs:824
+#: app/src/ui/preferences.rs:829
 msgid "Not available in demo mode"
 msgstr ""
 
-#: app/src/ui/preferences.rs:832
+#: app/src/ui/preferences.rs:837
 msgid "Look for a new release once a day"
 msgstr ""
 
-#: app/src/ui/preferences.rs:839
+#: app/src/ui/preferences.rs:844
 msgid "Updates"
 msgstr ""
 
-#: app/src/ui/preferences.rs:853
+#: app/src/ui/preferences.rs:858
 msgid "Senders Who May Load Images"
 msgstr ""
 
-#: app/src/ui/preferences.rs:854 app/src/ui/preferences.rs:862
+#: app/src/ui/preferences.rs:859 app/src/ui/preferences.rs:867
 msgid "Nobody yet"
 msgstr ""
 
-#: app/src/ui/preferences.rs:864
+#: app/src/ui/preferences.rs:869
 msgid "{count} sender"
 msgid_plural "{count} senders"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/src/ui/preferences.rs:874
+#: app/src/ui/preferences.rs:879
 msgid "Anyone at this domain"
 msgstr ""
 
-#: app/src/ui/preferences.rs:876
+#: app/src/ui/preferences.rs:881
 msgid "This address"
 msgstr ""
 
-#: app/src/ui/preferences.rs:881
+#: app/src/ui/preferences.rs:886
 msgid "Stop Loading Images from This Sender"
 msgstr ""
 
-#: app/src/ui/preferences.rs:888
+#: app/src/ui/preferences.rs:893
 msgid "Stop loading images from {sender}"
 msgstr ""
 
-#: app/src/ui/preferences.rs:958
+#: app/src/ui/preferences.rs:963
 msgid "Monday to Friday"
 msgstr ""
 
-#: app/src/ui/preferences.rs:959
+#: app/src/ui/preferences.rs:964
 msgid "Every day of the week"
 msgstr ""
 
-#: app/src/ui/preferences.rs:960
+#: app/src/ui/preferences.rs:965
 msgid "No days"
 msgstr ""
 
-#: app/src/ui/preferences.rs:967
+#: app/src/ui/preferences.rs:972
 msgid ", "
 msgstr ""
 
-#: app/src/ui/preferences.rs:969
+#: app/src/ui/preferences.rs:974
 msgid "{time}, {days}"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1033
+#: app/src/ui/preferences.rs:1038
 msgid "Week Starts On"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1038
+#: app/src/ui/preferences.rs:1043
 msgid "Automatic follows the locale's own first day of the week"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1054
+#: app/src/ui/preferences.rs:1059
 msgid "Working Hours"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1072
+#: app/src/ui/preferences.rs:1077
 msgid "Hours"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1113
+#: app/src/ui/preferences.rs:1118
 msgid "–"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1197
+#: app/src/ui/preferences.rs:1202
 msgid "Follow System"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1201
+#: app/src/ui/preferences.rs:1206
 msgid "Language"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1202
+#: app/src/ui/preferences.rs:1207
 msgid "Iris shows a new language after a restart"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1274
+#: app/src/ui/preferences.rs:1279
 msgid "No signature"
 msgstr ""
 

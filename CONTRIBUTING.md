@@ -135,6 +135,24 @@ Both run on the demo's sample accounts, and nothing talks to Google.
 
 ## Releasing
 
+### macOS
+
+1. Bump `version` in `Cargo.toml` and write the `## Unreleased` section
+   of `CHANGELOG.md` into a release. Sparkle offers a new DMG only when its
+   version is higher than the one a tester runs.
+2. Run `scripts/macos-dmg.sh`. It builds `target/dmg/Iris-<version>.dmg`
+   with GTK and Sparkle inside, and rewrites `target/dmg/appcast.xml` for
+   every DMG in that folder, signed with the Sparkle key in your login
+   Keychain. Keep the older DMGs there, so the feed keeps listing them.
+3. Upload the new DMG and `appcast.xml` to `https://albz.it/iris/`.
+   `IRIS_DOWNLOAD_URL` and `IRIS_APPCAST_URL` change where the feed and the
+   app look.
+
+Every copy installed from a DMG checks the feed once a day, and
+**Check for Updates…** in the Iris menu checks at once.
+
+### Linux
+
 `scripts/release.sh` bumps the version, opens the changelog draft in your
 editor, writes the store listings' release notes with
 `scripts/metainfo.sh`, runs the checks, then commits, tags and pushes. If

@@ -109,6 +109,13 @@ pub fn install(app: &Rc<App>, gio: &gio::Application) {
     bar.append_submenu(Some(&gettext("Window")), &window);
     gtk_app.set_menubar(Some(&bar));
 
+    // Sparkle runs only in a bundle that carries it, the DMG's. GTK builds
+    // the Iris menu from the model above a moment later, so the item goes
+    // in on the next idle turn.
+    if crate::sparkle::start() {
+        glib::idle_add_local_once(|| crate::sparkle::add_menu_item(&gettext("Check for Updates…")));
+    }
+
     listen_for_reopen(gio);
 }
 

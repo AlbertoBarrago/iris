@@ -151,8 +151,10 @@ Iris on a Mac is `Iris.app`. A test build comes as a DMG; a build from
 source comes from `scripts/macos-install.sh`, which loads GTK from Homebrew
 and so runs on the Mac that built it.
 
-- **Updates.** None in the app yet: install the next DMG over the old copy.
-  Updates through Sparkle are on the way.
+- **Updates.** A copy installed from a DMG updates itself through Sparkle:
+  it checks once a day, asks before it installs, and **Check for
+  Updates…** in the Iris menu checks at once. A copy built with
+  `scripts/macos-install.sh` has no updater.
 - **Secrets.** Refresh tokens, IMAP passwords and the assistant's keys sit
   in the login Keychain. macOS asks once whether Iris may read them; choose
   Always Allow.

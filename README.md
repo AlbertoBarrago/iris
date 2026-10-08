@@ -197,6 +197,9 @@ Developer ID, so macOS stops Iris the first time. Open it once, then go to
 **System Settings > Privacy & Security** and choose **Open Anyway** beside
 Iris. From then on it opens like any other app.
 
+Iris then updates itself through Sparkle: it checks once a day, and
+**Check for Updates…** in the Iris menu checks at once.
+
 ## Build
 
 You need Rust 1.98.
@@ -317,17 +320,17 @@ The full policy is in [docs/privacy-policy.md](docs/privacy-policy.md).
 ## Roadmap
 
 Done: the macOS app with its menu bar, Dock badge, Command shortcuts and
-Keychain; the winged-envelope identity; Google and Microsoft clients; the
-Italian translation.
+Keychain; a DMG that carries its own GTK and updates through Sparkle; the
+winged-envelope identity; Google and Microsoft clients; the Italian
+translation.
 
-1. **A DMG that runs on any Mac**, with GTK and its libraries inside the
-   bundle.
-2. **Updates through Sparkle**, from an appcast on albz.it.
-3. **Start at login on macOS** through `SMAppService`; the switch in
+1. **Start at login on macOS** through `SMAppService`; the switch in
    Preferences only works on Linux today.
-4. **A Developer ID and notarization**, so the DMG opens without the
+2. **A Developer ID and notarization**, so the DMG opens without the
    Privacy & Security step.
-5. **Device sync without a cloud.** Rules, settings and the local store
+3. **macOS before 26 and Intel Macs**, with GTK built for them rather
+   than taken from Homebrew.
+4. **Device sync without a cloud.** Rules, settings and the local store
    kept in step between your own computers, peer to peer.
 
 ## Help and feedback
