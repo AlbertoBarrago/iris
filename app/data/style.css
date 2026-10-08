@@ -852,6 +852,12 @@ button.new-event { min-width: 32px; min-height: 32px; padding: 0; margin: 0 0 0 
 /* New Event with its menu of types, where a calendar takes focus time or
    out of office: the circle grows into a 32 px pill, the "+" half the
    width of the circle and the arrow a narrower half. */
+/* Send and its Send Later arrow: one pill. Each half takes the pill's
+   rounding on its outer side, so the arrow's hover, press and focus ring
+   stay inside the pill rather than squaring off past its end. */
+splitbutton.composer-send { border-radius: 999px; }
+splitbutton.composer-send > button { border-radius: 999px 0 0 999px; }
+splitbutton.composer-send > menubutton > button { border-radius: 0 999px 999px 0; }
 splitbutton.new-event-split { margin: 0 0 0 6px; }
 splitbutton.new-event-split > button {
   min-width: 30px;

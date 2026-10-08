@@ -297,7 +297,7 @@ impl Composer {
             )
             .menu_model(&later)
             .dropdown_tooltip(gettext("Send Later"))
-            .css_classes(["suggested-action"])
+            .css_classes(["suggested-action", "composer-send"])
             .tooltip_text(crate::ui::platform_keys::tip(gettext("Send (Ctrl+Enter)")))
             .build();
         let attach = gtk::Button::builder()
