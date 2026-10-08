@@ -5,6 +5,15 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.3 (2026-10-08)
+
+### Improved
+
+- On macOS, the mailboxes take about 100 pixels less: the Mail and
+  Calendar switch above them shows its icons, with the names in a
+  tooltip, so the message list keeps the mailboxes beside it longer as you
+  widen it.
+
 ## 1.0.2 (2026-10-08)
 
 ### Fixed
