@@ -64,6 +64,7 @@ mod notice;
 mod on_screen;
 mod organize;
 mod outbox;
+mod pane_edge;
 mod pgp;
 mod pictures;
 mod press;
@@ -540,6 +541,16 @@ impl MainWindow {
             // window colour, as the mockup draws it, rather than the
             // sidebar shade an `AdwNavigationSplitView` pane takes by
             // default.
+            // The list's page must stay the split view's own child, so the
+            // strip wraps what the page holds.
+            let list_view = list.page.child().expect("the list page holds its view");
+            list.page.set_child(None::<&gtk::Widget>);
+            let list_edge = pane_edge::PaneEdge::around(
+                &list_view,
+                gtk::PackType::End,
+                &gettext("Resize the message list"),
+            );
+            list.page.set_child(Some(&list_edge.overlay));
             let nav = adw::NavigationSplitView::builder()
                 .sidebar(&list.page)
                 .content(&conversation.page)
@@ -638,8 +649,13 @@ impl MainWindow {
                 .build();
             spaces.add_named(&nav, Some("mail"));
             spaces.add_named(&calendar.page, Some("calendar"));
+            let sidebar_edge = pane_edge::PaneEdge::around(
+                &sidebar.page,
+                gtk::PackType::End,
+                &gettext("Resize the mailboxes"),
+            );
             let split = adw::OverlaySplitView::builder()
-                .sidebar(&sidebar.page)
+                .sidebar(&sidebar_edge.overlay)
                 .content(&spaces)
                 .css_classes(["inset-sidebar"])
                 .min_sidebar_width(256.0)
@@ -703,8 +719,13 @@ impl MainWindow {
                     }
                 },
             );
+            let assistant_edge = pane_edge::PaneEdge::around(
+                &assistant.page,
+                gtk::PackType::Start,
+                &gettext("Resize the assistant"),
+            );
             let assistant_split = adw::OverlaySplitView::builder()
-                .sidebar(&assistant.page)
+                .sidebar(&assistant_edge.overlay)
                 .content(&split)
                 .sidebar_position(gtk::PackType::End)
                 .show_sidebar(false)
@@ -722,6 +743,15 @@ impl MainWindow {
                     split.set_show_sidebar(false);
                 }
             });
+            let panel_chosen = Rc::new(Cell::new(None::<i32>));
+            pane_edge::wire(
+                app,
+                pane_edge::Edges {
+                    sidebar: (&sidebar_edge, &split),
+                    list: (&list_edge, &nav),
+                    assistant: (&assistant_edge, &assistant_split, Rc::clone(&panel_chosen)),
+                },
+            );
             // Only the page on screen sets the width. Measured whole, the
             // hidden first-run page's row of provider tiles held the mail
             // at about 600 px, and a narrower window clipped it.
@@ -734,7 +764,8 @@ impl MainWindow {
                 let mailboxes = sidebar.page.clone().upcast::<gtk::Widget>().downgrade();
                 let list_page = list.page.clone().upcast::<gtk::Widget>().downgrade();
                 let panel = assistant.page.clone().upcast::<gtk::Widget>().downgrade();
-                let sidebar_least = split.min_sidebar_width() as i32;
+                let mailboxes_split = split.downgrade();
+                let chosen = Rc::clone(&panel_chosen);
                 let (columns, reading, days) =
                     (nav.downgrade(), Rc::downgrade(&conversation), Rc::downgrade(&calendar));
                 // The window's buttons show in one header at a time, so
@@ -757,11 +788,14 @@ impl MainWindow {
                         days.upgrade().map_or((0, 0), |view| view.least_width());
                     buttons.set(buttons.get().max(bar_buttons).max(calendar_buttons));
                     room::Needs {
-                        mailboxes: mailboxes.upgrade().map_or(0, |w| least(&w)).max(sidebar_least),
+                        mailboxes: mailboxes.upgrade().map_or(0, |w| least(&w)).max(
+                            mailboxes_split.upgrade().map_or(0, |s| s.min_sidebar_width() as i32),
+                        ),
                         space: mail.max(calendar),
                         columns: mail,
                         controls: buttons.get(),
                         panel: panel.upgrade().map_or(0, |w| least(&w)).max(room::PANEL_LEAST),
+                        panel_chosen: chosen.get(),
                     }
                 })
             };
@@ -781,18 +815,28 @@ impl MainWindow {
             stack.set_vexpand(true);
             let toasts = adw::ToastOverlay::new();
             toasts.set_child(Some(&content));
+            let (width, height, maximized) = app.settings_with(|settings| {
+                let layout = &settings.layout;
+                (
+                    layout.window_width.unwrap_or(1320),
+                    layout.window_height.unwrap_or(840),
+                    layout.maximized,
+                )
+            });
             let window = adw::Window::builder()
                 .title(if app.core.demo {
                     gettext("Iris (Demo)")
                 } else {
                     gettext("Iris")
                 })
-                .default_width(1320)
-                .default_height(840)
+                .default_width(width)
+                .default_height(height)
+                .maximized(maximized)
                 .width_request(360)
                 .height_request(480)
                 .content(&toasts)
                 .build();
+            pane_edge::keep_size(app, &window);
             // Whether the mailboxes fold, the assistant slides over the
             // space and the list stacks over the conversation follow from
             // the widths the panes need (room.rs), not from fixed

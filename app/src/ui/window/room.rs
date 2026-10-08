@@ -35,6 +35,9 @@ pub struct Needs {
     pub controls: i32,
     /// The assistant's panel.
     pub panel: i32,
+    /// The panel's width as the person dragged it, which it keeps
+    /// wherever that fits, in place of its share of the window.
+    pub panel_chosen: Option<i32>,
 }
 
 /// What the window folds away or lays over the rest.
@@ -67,7 +70,10 @@ const PANEL_WIDEST: i32 = 460;
 /// opening beside the space and then jumping over it.
 pub fn arrange(width: i32, panel_open: bool, needs: Needs) -> Arrangement {
     let share = (f64::from(width) * PANEL_SHARE) as i32;
-    let panel_natural = share.clamp(needs.panel, PANEL_WIDEST.max(needs.panel));
+    let panel_natural = match needs.panel_chosen {
+        Some(chosen) => chosen.max(needs.panel),
+        None => share.clamp(needs.panel, PANEL_WIDEST.max(needs.panel)),
+    };
     let with_mailboxes = needs.mailboxes + needs.space;
     // Without the panel beside it, the space's own header holds the
     // window's buttons.
@@ -246,7 +252,26 @@ mod tests {
         columns: 767,
         controls: 108,
         panel: 320,
+        panel_chosen: None,
     };
+
+    #[test]
+    fn a_dragged_panel_keeps_its_width_where_it_fits() {
+        let chosen = Needs {
+            panel_chosen: Some(560),
+            ..MAIL
+        };
+        assert_eq!(arrange(1800, true, chosen).panel_width, 560);
+        // Narrower than the panel's own least, it takes the least.
+        let narrow = Needs {
+            panel_chosen: Some(200),
+            ..MAIL
+        };
+        assert_eq!(arrange(1800, true, narrow).panel_width, 320);
+        // Beside a space that cannot shrink, it gives way.
+        let wide = arrange(1300, true, chosen);
+        assert!(wide.panel_width < 560 || wide.panel_overlays, "{wide:?}");
+    }
 
     #[test]
     fn a_wide_window_keeps_everything_side_by_side() {

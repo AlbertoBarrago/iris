@@ -163,6 +163,36 @@ pub struct Layout {
     /// heading, by lower-case address. An account missing here opens as
     /// the sidebar decides by default.
     pub open_accounts: BTreeMap<String, bool>,
+    /// The panes' widths as the person dragged them. A pane missing here
+    /// takes its own default.
+    pub panes: BTreeMap<Pane, i32>,
+    /// The window's size when it was last left, outside full screen.
+    pub window_width: Option<i32>,
+    pub window_height: Option<i32>,
+    pub maximized: bool,
+}
+
+/// A pane of the main window whose width the person can drag.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Pane {
+    /// The mailboxes.
+    Sidebar,
+    /// The message list beside the conversation.
+    List,
+    /// The assistant's panel.
+    Assistant,
+}
+
+impl Pane {
+    /// The narrowest and widest the pane may be dragged to.
+    pub fn bounds(self) -> (i32, i32) {
+        match self {
+            Pane::Sidebar => (200, 400),
+            Pane::List => (280, 600),
+            Pane::Assistant => (320, 640),
+        }
+    }
 }
 
 /// One skill's switches on the AI page. Both start off: a skill is text
@@ -1078,6 +1108,22 @@ mod tests {
         assert!(!partial.threading);
         assert_eq!(partial.mark_read, MarkRead::AfterDelay);
         assert!(partial.notifications, "missing keys take their defaults");
+    }
+
+    #[test]
+    fn the_window_layout_round_trips() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        let mut settings = Settings::default();
+        settings.layout.folded_sections.push("smart".into());
+        settings.layout.open_accounts.insert("dana@example.com".into(), false);
+        settings.layout.panes.insert(Pane::Sidebar, 300);
+        settings.layout.panes.insert(Pane::Assistant, 500);
+        settings.layout.window_width = Some(1500);
+        settings.layout.window_height = Some(900);
+        settings.layout.maximized = true;
+        settings.save(&path).unwrap();
+        assert_eq!(Settings::load(&path), settings);
     }
 
     #[test]

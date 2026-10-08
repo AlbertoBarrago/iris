@@ -92,6 +92,18 @@ pub enum Change {
         email: String,
         open: bool,
     },
+    /// A pane's width as the person dragged it, or `None` to go back to
+    /// its default. The width is kept inside the pane's bounds.
+    PaneWidth {
+        pane: super::Pane,
+        width: Option<i32>,
+    },
+    /// The window's size and whether it is maximized, as it was left.
+    WindowSize {
+        width: i32,
+        height: i32,
+        maximized: bool,
+    },
     /// Folds the old one switch for every account into the per-account
     /// list: all of `emails` when it was on.
     AllContacts(Vec<String>),
@@ -309,6 +321,28 @@ impl Change {
             }
             Change::SidebarAccountOpen { email, open } => {
                 settings.layout.open_accounts.insert(email.to_lowercase(), open);
+            }
+            Change::PaneWidth { pane, width } => match width {
+                Some(width) => {
+                    let (least, most) = pane.bounds();
+                    settings.layout.panes.insert(pane, width.clamp(least, most));
+                }
+                None => {
+                    settings.layout.panes.remove(&pane);
+                }
+            },
+            Change::WindowSize {
+                width,
+                height,
+                maximized,
+            } => {
+                let layout = &mut settings.layout;
+                layout.maximized = maximized;
+                // A maximized window keeps the size it returns to.
+                if !maximized {
+                    layout.window_width = Some(width);
+                    layout.window_height = Some(height);
+                }
             }
             Change::Signature { email, text } => settings.set_signature(&email, &text),
             Change::ToggleVip { email, name } => {
@@ -1109,6 +1143,36 @@ mod tests {
     }
 
     #[test]
+    fn a_pane_width_stays_inside_its_bounds_and_resets() {
+        use crate::settings::Pane;
+        let mut settings = Settings::default();
+        let set = |width| Change::PaneWidth {
+            pane: Pane::Sidebar,
+            width,
+        };
+        set(Some(9000)).apply_to(&mut settings);
+        assert_eq!(settings.layout.panes.get(&Pane::Sidebar), Some(&400));
+        set(Some(10)).apply_to(&mut settings);
+        assert_eq!(settings.layout.panes.get(&Pane::Sidebar), Some(&200));
+        set(None).apply_to(&mut settings);
+        assert!(settings.layout.panes.is_empty());
+    }
+
+    #[test]
+    fn a_maximized_window_keeps_the_size_it_returns_to() {
+        let mut settings = Settings::default();
+        let size = |width, maximized| Change::WindowSize {
+            width,
+            height: 800,
+            maximized,
+        };
+        size(1200, false).apply_to(&mut settings);
+        size(2560, true).apply_to(&mut settings);
+        assert_eq!(settings.layout.window_width, Some(1200));
+        assert!(settings.layout.maximized);
+    }
+
+    #[test]
     fn small_preferences_need_no_reload() {
         // The list the module's comment calls quiet, checked one by one.
         let quiet = [
@@ -1150,6 +1214,15 @@ mod tests {
             Change::SidebarAccountOpen {
                 email: "me@work.pt".into(),
                 open: false,
+            },
+            Change::PaneWidth {
+                pane: crate::settings::Pane::List,
+                width: Some(400),
+            },
+            Change::WindowSize {
+                width: 1400,
+                height: 900,
+                maximized: false,
             },
         ];
         for change in quiet {

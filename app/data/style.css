@@ -406,6 +406,15 @@ flowboxchild:focus-visible > .recipient-chip {
 }
 .sidebar-section-chevron { -gtk-icon-size: 12px; }
 
+/* The strip on a pane's edge that resizes it (window/pane_edge.rs). It
+   draws nothing: the split view's own border already marks the edge, and
+   the pointer turns into a resize arrow over it. */
+separator.pane-edge {
+  background: none;
+  min-width: 6px;
+  margin: 0;
+}
+
 /* Row type: 14 px names, 700 when selected. */
 .mailbox-row > label { font-size: 0.95em; font-weight: 500; }
 .mailboxes > row:selected .mailbox-row > label { font-weight: 700; }
