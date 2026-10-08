@@ -18,14 +18,26 @@ opening an issue.
 
 ## Building from source
 
-You need Rust 1.98 and the development packages:
+You need Rust 1.98 and the development packages. On Linux:
 
 ```sh
 sudo apt install libgtk-4-dev libadwaita-1-dev libwebkitgtk-6.0-dev libglib2.0-dev-bin gettext
 scripts/install.sh
 ```
 
-This builds and installs into `~/.local`. `scripts/uninstall.sh` removes it
+On macOS, install GTK from Homebrew and run the app from its bundle:
+
+```sh
+brew install gtk4 libadwaita adwaita-icon-theme librsvg gettext pkgconf
+scripts/dev-macos.sh
+```
+
+Every crate but the app (`mailrs`) builds and tests on macOS with
+`cargo test --workspace --exclude mailrs`. Eight of the app's own tests
+fail on macOS (paths under the assistant, the demo folder, the GTK
+composer test, the install script) and pass on Linux.
+
+On Linux, `scripts/install.sh` builds and installs into `~/.local`. `scripts/uninstall.sh` removes it
 again and leaves your mail and settings alone. A copy built from source
 signs in to Google only with a Google client compiled in;
 [docs/setup.md](docs/setup.md#building-your-own-copy) says how to give it

@@ -24,7 +24,7 @@ the server settings for you and says what the provider needs, such as an app
 password for iCloud, Fastmail or Yahoo, with a link to the page where you make
 one. If it can't find them, **Enter Server Settings** lets you type the
 incoming (IMAP) and outgoing (SMTP) servers yourself. The password goes to
-your desktop's keyring, never into a file.
+the macOS Keychain or your desktop's keyring, never into a file.
 
 The account appears in the sidebar and starts downloading.
 
@@ -61,7 +61,8 @@ client, and the `[oauth]` section can go once none of them uses it.
 
 Iris needs no config file. To change how often it checks for mail,
 how many days of mail it keeps, or how much message text it caches, write
-`~/.config/iris/config.toml`:
+`config.toml` in `~/Library/Application Support/iris/` on macOS or
+`~/.config/iris/` on Linux:
 
 ```toml
 # These are the defaults.
@@ -71,8 +72,8 @@ window_days = 30
 body_cache_mb = 1024
 ```
 
-Iris keeps your refresh tokens in the GNOME keyring, not in this
-file. The Flatpak keeps them in its own store instead, through the Secret
+Iris keeps your refresh tokens in the macOS Keychain or the GNOME
+keyring, not in this file. The Flatpak keeps them in its own store instead, through the Secret
 portal; see "Which package" below.
 
 ## Building your own copy
@@ -144,7 +145,29 @@ cargo run --release -p mailrs-cli -- show you@gmail.com <thread-id>
 cargo run --release -p mailrs-cli -- triage you@gmail.com <thread-id> archive
 ```
 
+## On macOS
+
+Iris on a Mac is `Iris.app`. A test build comes as a DMG; a build from
+source comes from `scripts/macos-install.sh`, which loads GTK from Homebrew
+and so runs on the Mac that built it.
+
+- **Updates.** None in the app yet: install the next DMG over the old copy.
+  Updates through Sparkle are on the way.
+- **Secrets.** Refresh tokens, IMAP passwords and the assistant's keys sit
+  in the login Keychain. macOS asks once whether Iris may read them; choose
+  Always Allow.
+- **Unread mail** shows on the Dock icon, as there is no tray. Closing the
+  window keeps Iris running, and a click on the Dock icon brings the window
+  back.
+- **Start at login** does nothing on macOS yet. Add Iris under System
+  Settings > General > Login Items meanwhile.
+- **Skills.** A skill's instructions work, but its scripts do not run:
+  they need bubblewrap's sandbox, which macOS lacks.
+- **Shortcuts** take Command where Linux takes Control.
+
 ## Which package
+
+The packages below are Linux's.
 
 Every package is the same app, built with a cargo feature that says what
 kind it is (`packaging-rpm`, `packaging-arch`, `packaging-flatpak`,
@@ -202,11 +225,12 @@ decides where updates come from and whether skills run.
 
 ## Where things live
 
-| What | Where | Override |
-|---|---|---|
-| Config | `~/.config/iris/config.toml` | `MAILRS_CONFIG` |
-| Mail cache | `~/.local/share/iris/mailrs.db` | `MAILRS_DATA_DIR` |
-| Refresh tokens | GNOME keyring, service `mailrs`, one entry per address | |
+| What | Linux | macOS | Override |
+|---|---|---|---|
+| Config | `~/.config/iris/config.toml` | `~/Library/Application Support/iris/config.toml` | `MAILRS_CONFIG` |
+| Preferences | `~/.config/iris/settings.toml` | `~/Library/Application Support/iris/settings.toml` | `MAILRS_SETTINGS` |
+| Mail cache | `~/.local/share/iris/mailrs.db` | `~/Library/Application Support/iris/mailrs.db` | `MAILRS_DATA_DIR` |
+| Refresh tokens | GNOME keyring, service `mailrs`, one entry per address | login Keychain, the same service | |
 
 The keyring service keeps the app's old name, mailrs, so accounts added
 before the rename stay signed in. The Flatpak keeps refresh tokens, IMAP

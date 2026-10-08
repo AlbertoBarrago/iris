@@ -1,6 +1,6 @@
 # The assistant
 
-Press Ctrl+J, or the sparkle button above the message list, to open the
+Press ⌘J (Ctrl+J on Linux), or the sparkle button above the message list, to open the
 assistant on the right. Ask it about your mail in plain words:
 
 - "Summarize what came in today."
@@ -38,10 +38,10 @@ servers that run Sieve keep them on the server; for other providers
 Iris runs them on this computer while it is open, and the
 assistant says which when it lists them. It looks people up in your address book,
 by name, address or organisation, and gets back their addresses, phone
-number and organisation. It acts through the app too, so Ctrl+Z
-undoes what it archived, trashed, flagged, muted, or marked. It can also
+number and organisation. It acts through the app too, so ⌘Z
+(Ctrl+Z on Linux) undoes what it archived, trashed, flagged, muted, or marked. It can also
 take a change back itself, yours or its own, from the same undo stack
-Ctrl+Z reads, one change at a time, newest first.
+⌘Z reads, one change at a time, newest first.
 
 It reads Send Later and the Outbox as their lists show them: why each
 message waits and when it goes. It can send one now, cancel a scheduled

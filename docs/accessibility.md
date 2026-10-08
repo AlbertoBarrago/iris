@@ -170,7 +170,7 @@ the focused day in Month; the narrow list has no grid to point quick
 create at, so N opens the editor there instead. It does nothing while
 no calendar takes new events, the same as the New Event button beside
 the header. Every one of these gives way while a text field, such as
-search, has the focus. The main menu's Assistant item, and Ctrl+J, open
+search, has the focus. The main menu's Assistant item, and ⌘J (Ctrl+J on Linux), open
 the assistant in either space.
 
 A double click opens the popover on its first click and the editor on

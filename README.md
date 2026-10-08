@@ -29,12 +29,12 @@ macOS as a first-class platform.
 
 | Platform | State |
 |---|---|
+| macOS | Works. An `Iris.app` with a Dock badge for unread mail, a menu bar, Command shortcuts and secrets in the Keychain. Test builds come as a DMG; see [Install on macOS](#install-on-macos). |
 | Linux | Works, as Penguin Mail 1.0 does. Builds from source only for now: Iris publishes no packages yet. |
-| macOS | In progress. The sync, store and protocol crates build and pass their tests; the app itself needs the macOS port of the tray, login item, updater and keychain before it runs. |
 
-Iris signs in to Google and Microsoft with its own OAuth clients, which are
-not set up yet. Until they are, sign in with an IMAP account, or build with
-your own clients as [Build](#build) describes.
+A build signs in to Google and Microsoft only with OAuth clients compiled
+in. The test DMGs carry Iris's own; a build from source needs yours, as
+[Build](#build) describes. Without one, sign in with an IMAP account.
 
 ## Features
 
@@ -84,9 +84,9 @@ and an IMAP account its rules over ManageSieve.
 
 ### Organizing
 
-- **Select several at once** with Ctrl+click, Shift+click or Ctrl+A, then
-  archive, trash, junk, flag, mark or label them together. Ctrl+Z undoes
-  each one.
+- **Select several at once** with Command-click (Ctrl+click on Linux),
+  Shift-click or ⌘A, then archive, trash, junk, flag, mark or label them
+  together. ⌘Z undoes each one.
 - **One message at a time.** Right-click a message inside a conversation
   to reply to it, archive it, trash it, mark it, flag it, label it or
   export it on its own. The rest of the thread stays where it is.
@@ -102,6 +102,9 @@ and an IMAP account its rules over ManageSieve.
   answer for three days. **Mute** keeps a noisy thread out of the inbox.
 - **Labels** from the toolbar or with `l`, nested as a tree under their
   account. Drag mail onto any mailbox or label to move it there.
+- **A sidebar you arrange.** Fold Favorites, Mailboxes, Smart Mailboxes or
+  Accounts by clicking the title, and each account under its heading.
+  Iris remembers what you left open.
 - **Export** a conversation or a selection as mbox, or one message as `.eml`.
 
 ### Gmail settings
@@ -144,7 +147,7 @@ Gmail runs all four, so they work with your computer off.
 
 ### The assistant
 
-An assistant pane (Ctrl+J) summarizes, sorts, cleans up, drafts replies and
+An assistant pane (⌘J, or Ctrl+J on Linux) summarizes, sorts, cleans up, drafts replies and
 changes settings such as an automatic reply, using the app's own tools. It
 also reads and changes your Google Calendar, finds free time, looks people
 up in your contacts, and reads attachments.
@@ -168,20 +171,49 @@ uses a tool from outside the app, and it is off until you pick a model.
 
 ### On the desktop
 
-- **Tray and notifications.** An unread count in the tray, and new-mail
-  notifications with Archive, Mark Read, Delete and Reply buttons.
-- **Light on memory.** In the tray Iris uses about 55 MB. A minute
-  after you close the window, it restarts itself in the background to give
-  back the memory the window used.
-- **Apple Mail's shortcuts** with Ctrl in place of Command, plus Gmail's
-  single keys.
-- **English and European Portuguese**, chosen in Preferences, with the
-  window's controls named for screen readers.
+- **On macOS**, the unread count on the Dock icon, the app's menu in the
+  menu bar, and Preferences in a window of its own. Closing the window
+  keeps Iris running, and a click on the Dock icon brings it back.
+- **On Linux**, an unread count in the tray, and new-mail notifications
+  with Archive, Mark Read, Delete and Reply buttons. In the tray Iris
+  uses about 55 MB: a minute after you close the window, it restarts
+  itself in the background to give back the memory the window used.
+- **Panes you size.** Drag the edge of the mailboxes, the message list or
+  the assistant; a double click puts it back. Iris remembers the widths and
+  the window's size.
+- **Apple Mail's shortcuts**, with Command on macOS and Ctrl on Linux, plus
+  Gmail's single keys.
+- **English, European Portuguese and Italian**, chosen in Preferences, with
+  the window's controls named for screen readers.
 
+
+## Install on macOS
+
+Test builds come as `Iris-<version>.dmg`. Open it and drag Iris onto
+Applications.
+
+The DMG is signed with the author's own certificate, not yet with an Apple
+Developer ID, so macOS stops Iris the first time. Open it once, then go to
+**System Settings > Privacy & Security** and choose **Open Anyway** beside
+Iris. From then on it opens like any other app.
 
 ## Build
 
 You need Rust 1.98.
+
+On macOS, install GTK and libadwaita from Homebrew, then build and run, or
+install into `/Applications`:
+
+```sh
+brew install gtk4 libadwaita adwaita-icon-theme librsvg gettext pkgconf
+scripts/dev-macos.sh              # build the debug app and run it
+scripts/dev-macos.sh --demo       # the same, on sample accounts
+scripts/macos-install.sh          # build a release and install Iris.app
+```
+
+`macos-install.sh` builds an app that loads GTK from Homebrew, so it runs on
+the Mac that built it. Short on disk, build with
+`CARGO_PROFILE_DEV_DEBUG=line-tables-only CARGO_INCREMENTAL=0`.
 
 On Linux, install the development packages, then build and install into
 `~/.local`:
@@ -189,13 +221,6 @@ On Linux, install the development packages, then build and install into
 ```sh
 sudo apt install libgtk-4-dev libadwaita-1-dev libwebkitgtk-6.0-dev libglib2.0-dev-bin gettext
 scripts/install.sh
-```
-
-On macOS the app does not run yet (see [Status](#status)). The crates
-without a window build and test with:
-
-```sh
-cargo test --workspace --exclude mailrs
 ```
 
 To sign in to Google and Microsoft, compile your own OAuth clients in:
@@ -224,23 +249,24 @@ talks to Google.
 
 ### Keyboard
 
-Apple Mail's shortcuts work with Ctrl in place of Command. Gmail's single
-keys work whenever you are not typing. `Ctrl+?` lists every shortcut.
+Apple Mail's shortcuts work as they do in Mail. The table writes them as a
+Mac does; on Linux, Ctrl takes ⌘'s place, Alt ⌥'s and Shift ⇧'s. Gmail's
+single keys work whenever you are not typing. ⌘? lists every shortcut.
 
 | Key | Action | Key | Action |
 |---|---|---|---|
-| `j` / `k` | Next / previous conversation | `Ctrl+R` or `r` | Reply |
-| `Ctrl+Alt+A` or `e` | Archive | `Ctrl+Shift+R` or `a` | Reply all |
-| `Delete` or `#` | Move to trash | `Ctrl+Shift+F` or `f` | Forward |
-| `Ctrl+Shift+J` | Junk | `Ctrl+N` or `c` | New message |
-| `Ctrl+Shift+L` or `s` | Flag or unflag | `Ctrl+Shift+D` | Send |
-| `Ctrl+Alt+1` to `Ctrl+Alt+7` | Flag color | `Ctrl+Shift+A` | Attach files |
-| `Ctrl+Shift+U` or `u` | Mark read or unread | `Ctrl+B` / `Ctrl+I` / `Ctrl+K` | Bold, italic, link |
-| `Ctrl+Alt+M` or `l` | Labels | `Ctrl+F` or `/` | Search |
-| `Ctrl+Z` | Undo | `Ctrl+1` to `Ctrl+9` | Open a mailbox |
-| `Ctrl+A` | Select all | `Ctrl+=` / `Ctrl+-` / `Ctrl+0` | Text size |
-| `Ctrl+Shift+N` or `F5` | Check for mail | `Ctrl+P` | Print |
-| `Ctrl+O` or double-click | Open in a new window | `Ctrl+Alt+U` | View source |
+| `j` / `k` | Next / previous conversation | `⌘R` or `r` | Reply |
+| `⌥⌘A` or `e` | Archive | `⇧⌘R` or `a` | Reply all |
+| `Delete` or `#` | Move to trash | `⇧⌘F` or `f` | Forward |
+| `⇧⌘J` | Junk | `⌘N` or `c` | New message |
+| `⇧⌘L` or `s` | Flag or unflag | `⇧⌘D` | Send |
+| `⌥⌘1` to `⌥⌘7` | Flag color | `⇧⌘A` | Attach files |
+| `⇧⌘U` or `u` | Mark read or unread | `⌘B` / `⌘I` / `⌘K` | Bold, italic, link |
+| `⌥⌘M` or `l` | Labels | `⌘F` or `/` | Search |
+| `⌘Z` | Undo | `⌘1` to `⌘9` | Open a mailbox |
+| `⌘A` | Select all | `⌘=` / `⌘-` / `⌘0` | Text size |
+| `⇧⌘N` or `F5` | Check for mail | `⌘P` | Print |
+| `⌘O` or double-click | Open in a new window | `⌥⌘U` | View source |
 
 ### Command line
 
@@ -251,13 +277,13 @@ iris mailto:ann@example.com   # new message to Ann
 iris --version
 ```
 
-To make Iris open `mailto:` links:
+To make Iris open `mailto:` links on Linux:
 
 ```sh
 xdg-mime default io.github.AlbertoBarrago.Iris.desktop x-scheme-handler/mailto
 ```
 
-The running app answers D-Bus actions, for custom shortcuts:
+On Linux, the running app answers D-Bus actions, for custom shortcuts:
 
 ```sh
 gdbus call --session --dest io.github.AlbertoBarrago.Iris --object-path /io/github/AlbertoBarrago/Iris \
@@ -273,11 +299,12 @@ The actions are `show-window`, `hide-window`, `compose`, `check` and `quit`.
 
 - Iris talks to Google's APIs straight from your computer. No
   Iris server sits in between.
-- Refresh tokens live in the system keyring. The config file holds sync
+- Refresh tokens live in the macOS Keychain or the Linux keyring. The config file holds sync
   settings and, for accounts added through the old setup page, their Google
   client ID and secret, readable by you alone.
-- Mail is cached in `~/.local/share/iris`: the last 30 days plus
-  everything in your inbox. Opening an older thread fetches it on demand.
+- Mail is cached in `~/Library/Application Support/iris` on macOS and
+  `~/.local/share/iris` on Linux: the last 30 days plus everything in your
+  inbox. Opening an older thread fetches it on demand.
 - The assistant is off until you pick a model. A local model keeps mail on
   your computer; the Anthropic API and Claude Code send what the assistant
   reads to Anthropic. API keys live in the system keyring.
@@ -287,14 +314,17 @@ The full policy is in [docs/privacy-policy.md](docs/privacy-policy.md).
 
 ## Roadmap
 
-1. **macOS build.** Platform gates for the tray, login item, updater and
-   packaging; secrets in the macOS Keychain.
-2. **macOS bundle.** An `Iris.app` with its GTK libraries inside, and a
-   macOS job in CI.
-3. **Native touches.** A menu bar item, a login item through
-   `SMAppService`, Command shortcuts and the application menu.
-4. **Own identity.** An Iris icon and artwork, Google and Microsoft OAuth
-   clients, and a privacy policy of its own.
+Done: the macOS app with its menu bar, Dock badge, Command shortcuts and
+Keychain; the winged-envelope identity; Google and Microsoft clients; the
+Italian translation.
+
+1. **A DMG that runs on any Mac**, with GTK and its libraries inside the
+   bundle.
+2. **Updates through Sparkle**, from an appcast on albz.it.
+3. **Start at login on macOS** through `SMAppService`; the switch in
+   Preferences only works on Linux today.
+4. **A Developer ID and notarization**, so the DMG opens without the
+   Privacy & Security step.
 5. **Device sync without a cloud.** Rules, settings and the local store
    kept in step between your own computers, peer to peer.
 
@@ -314,7 +344,8 @@ authors; the changes since the fork are Iris's. Fixes from Penguin Mail are
 merged back where they apply, and the release history before the fork is in
 [CHANGELOG.md](CHANGELOG.md).
 
-The app icon and artwork still come from Penguin Mail and will be replaced.
+Iris has its own icon and artwork, a winged envelope; the penguin is
+Penguin Mail's.
 
 ## License
 

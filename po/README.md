@@ -42,9 +42,17 @@ is behind the template.
    scripts/install.sh       # installs into <prefix>/share/locale
    ```
 
+   On macOS, `scripts/macos-bundle.sh` compiles every `.po` into
+   `Iris.app/Contents/Resources/locale` each time it builds the app, so
+   `scripts/dev-macos.sh` and `scripts/macos-install.sh` carry the new
+   language with no other step.
+
    Iris offers a language in Preferences only once its catalogue
    is installed, and reads the choice as it starts, so pick one and
    restart.
+
+European Portuguese (`pt_PT`) and Italian (`it_IT`) are kept complete:
+a change that adds a string translates it into both.
 
 ## Keeping a language up to date
 
