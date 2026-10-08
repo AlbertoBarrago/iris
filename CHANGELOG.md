@@ -5,6 +5,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### Fixed
+
+- On macOS, a message stays whole when the window goes full screen or
+  grows, instead of losing a corner to the window's background.
+
 ## 1.0.5 (2026-10-08)
 
 ### Fixed

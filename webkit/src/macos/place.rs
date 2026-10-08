@@ -176,6 +176,15 @@ impl Clip {
         let this: Retained<Clip> = unsafe { msg_send![super(this), initWithFrame: CGRect::ZERO] };
         this.setWantsLayer(true);
         this.setClipsToBounds(true);
+        // GTK draws the window into its content view's own layer, as tiles,
+        // and the page's layer sits among them. A resize such as going full
+        // screen makes new tiles, which landed above the page and covered
+        // part of it, leaving the mail cut off in an L. Raised above every
+        // tile, the page stays on top whatever order they come in; the
+        // holes still let GTK's covering widgets through.
+        if let Some(layer) = this.layer() {
+            layer.setZPosition(1000.0);
+        }
         this
     }
 
