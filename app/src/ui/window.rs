@@ -3770,7 +3770,15 @@ impl MainWindow {
                 win.about.replace(None);
             }
         });
-        about.dialog.present(Some(&self.window));
+        // On macOS About is a small window of its own, as in every Mac app.
+        // Inside the main window its dimmed backdrop covers the mail page,
+        // which lies above GTK and cannot be dimmed with it, so the page
+        // was cut away whole while About was open.
+        if cfg!(target_os = "macos") {
+            about.dialog.present(None::<&gtk::Widget>);
+        } else {
+            about.dialog.present(Some(&self.window));
+        }
         self.about.replace(Some(about));
     }
 }
