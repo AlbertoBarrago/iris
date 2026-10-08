@@ -114,7 +114,9 @@ for po in po/*.po; do
     if [ "$lang" != en_GB ]; then
         msgmerge --quiet --update --backup=none --previous "$po" "$pot"
     fi
-    install -Dm644 /dev/null "target/locale/$lang/LC_MESSAGES/iris.mo"
+    # mkdir rather than GNU install's -D, which the BSD install on macOS
+    # lacks.
+    mkdir -p "target/locale/$lang/LC_MESSAGES"
     msgfmt --check --statistics -o "target/locale/$lang/LC_MESSAGES/iris.mo" "$po"
 done
 

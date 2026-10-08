@@ -75,22 +75,6 @@ msgstr "Every control named for screen readers and reachable from the keyboard, 
 msgid "Adding a Gmail or Microsoft account takes one sign-in in your browser. Iris is built with GTK and libadwaita and fits best on GNOME, but it runs on any Linux desktop."
 msgstr "Adding a Gmail or Microsoft account takes one sign-in in your browser. Iris is built with GTK and libadwaita and fits best on GNOME, but it runs on any Linux desktop."
 
-#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:53
-msgid "gmail"
-msgstr "gmail"
-
-#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:54
-msgid "email"
-msgstr "email"
-
-#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:55
-msgid "mail"
-msgstr "mail"
-
-#: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:56
-msgid "inbox"
-msgstr "inbox"
-
 #: app/data/io.github.AlbertoBarrago.Iris.metainfo.xml:85
 msgid "All your accounts in one inbox, with a reply open"
 msgstr "All your accounts in one inbox, with a reply open"
@@ -609,7 +593,7 @@ msgstr "{provider} signs in through your browser"
 msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr "Continue opens {provider}'s sign-in page in your browser."
 
-#: app/src/app.rs:373
+#: app/src/app.rs:375
 msgid "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
 msgstr "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
 
@@ -1779,7 +1763,59 @@ msgstr "Iris cannot save sign-ins until the snap can reach your keyring. Run {co
 msgid "{language} ({country})"
 msgstr "{language} ({country})"
 
-#: app/src/main.rs:70
+#: app/src/macos_menu.rs:87
+msgid "New Message"
+msgstr "New Message"
+
+#: app/src/macos_menu.rs:88
+msgid "Check for Mail"
+msgstr "Check for Mail"
+
+#: app/src/macos_menu.rs:89
+msgid "Add Account…"
+msgstr "Add Account…"
+
+#: app/src/macos_menu.rs:93
+msgid "Undo"
+msgstr "Undo"
+
+#: app/src/macos_menu.rs:94
+msgid "Redo"
+msgstr "Redo"
+
+#: app/src/macos_menu.rs:97
+msgid "Cut"
+msgstr "Cut"
+
+#: app/src/macos_menu.rs:98
+msgid "Copy"
+msgstr "Copy"
+
+#: app/src/macos_menu.rs:99
+msgid "Paste"
+msgstr "Paste"
+
+#: app/src/macos_menu.rs:100
+msgid "Select All"
+msgstr "Select All"
+
+#: app/src/macos_menu.rs:104
+msgid "Minimize"
+msgstr "Minimise"
+
+#: app/src/macos_menu.rs:107
+msgid "File"
+msgstr "File"
+
+#: app/src/macos_menu.rs:108
+msgid "Edit"
+msgstr "Edit"
+
+#: app/src/macos_menu.rs:109
+msgid "Window"
+msgstr "Window"
+
+#: app/src/main.rs:74
 msgid ""
 "Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
 "\n"
@@ -1799,31 +1835,31 @@ msgstr ""
 "  mailto:...     the same as --compose mailto:...\n"
 "  FILE.ics       open a calendar file, to add its events to a calendar"
 
-#: app/src/main.rs:141
+#: app/src/main.rs:173
 msgid "iris: unknown option {option}"
 msgstr "iris: unknown option {option}"
 
-#: app/src/main.rs:301
+#: app/src/main.rs:349
 msgid "Iris Could Not Start"
 msgstr "Iris Could Not Start"
 
-#: app/src/main.rs:306 app/src/ui/about.rs:179
+#: app/src/main.rs:354 app/src/ui/about.rs:190
 msgid "Report a Problem"
 msgstr "Report a Problem"
 
-#: app/src/notify.rs:49 app/src/ui/conversation.rs:407
+#: app/src/notify.rs:48 app/src/ui/conversation.rs:407
 #: app/src/ui/conversation.rs:559 app/src/ui/conversation.rs:1127
 #: app/src/ui/window/message_menu.rs:125 app/src/ui/window/shortcuts.rs:392
 msgid "Archive"
 msgstr "Archive"
 
-#: app/src/notify.rs:50 app/src/ui/conversation.rs:408
+#: app/src/notify.rs:49 app/src/ui/conversation.rs:408
 #: app/src/ui/conversation.rs:1171 app/src/ui/preferences.rs:139
 #: app/src/ui/rules.rs:370 app/src/ui/window/message_menu.rs:128
 msgid "Mark as Read"
 msgstr "Mark as Read"
 
-#: app/src/notify.rs:51 app/src/ui/calendar/manage.rs:292
+#: app/src/notify.rs:50 app/src/ui/calendar/manage.rs:292
 #: app/src/ui/calendar/popover.rs:211 app/src/ui/calendar/popover.rs:213
 #: app/src/ui/calendar/popover.rs:713 app/src/ui/calendar/scope.rs:112
 #: app/src/ui/conversation.rs:545 app/src/ui/hide_my_email.rs:289
@@ -1832,26 +1868,26 @@ msgstr "Mark as Read"
 msgid "Delete"
 msgstr "Delete"
 
-#: app/src/notify.rs:52 app/src/ui/conversation.rs:553
+#: app/src/notify.rs:51 app/src/ui/conversation.rs:553
 #: app/src/ui/window/message_menu.rs:122 app/src/ui/window/shortcuts.rs:471
 msgid "Reply"
 msgstr "Reply"
 
-#: app/src/notify.rs:112 app/src/notify.rs:151
+#: app/src/notify.rs:111 app/src/notify.rs:150
 msgid "{count} new message"
 msgid_plural "{count} new messages"
 msgstr[0] "{count} new message"
 msgstr[1] "{count} new messages"
 
-#: app/src/notify.rs:127 app/src/ui/window/shortcuts.rs:463
+#: app/src/notify.rs:126 app/src/ui/window/shortcuts.rs:463
 msgid "New message"
 msgstr "New message"
 
-#: app/src/notify.rs:157
+#: app/src/notify.rs:156
 msgid "From {senders}"
 msgstr "From {senders}"
 
-#: app/src/notify.rs:195 app/src/ui/window.rs:2668
+#: app/src/notify.rs:198 app/src/ui/window.rs:2688
 msgid "Open"
 msgstr "Open"
 
@@ -2645,7 +2681,7 @@ msgstr "That account is not connected."
 msgid "Could not save: {reason}"
 msgstr "Could not save: {reason}"
 
-#: app/src/protection/draft.rs:200 app/src/ui/window.rs:2586
+#: app/src/protection/draft.rs:200 app/src/ui/window.rs:2606
 msgid "Could not open the draft: {reason}"
 msgstr "Could not open the draft: {reason}"
 
@@ -2901,7 +2937,7 @@ msgstr "{host} refused the login: {reason}"
 
 #: app/src/servers.rs:34 app/src/ui/calendar/editor.rs:1164
 #: app/src/ui/calendar/editor.rs:1240 app/src/ui/contacts_prefs.rs:271
-#: app/src/ui/sidebar.rs:356 app/src/ui/sidebar.rs:1389
+#: app/src/ui/sidebar.rs:380 app/src/ui/sidebar.rs:1506
 #: app/src/ui/window/shortcuts.rs:236
 msgid "Calendar"
 msgstr "Calendar"
@@ -2922,191 +2958,191 @@ msgstr "On this computer, while Iris is open"
 msgid "On the server"
 msgstr "On the server"
 
-#: app/src/settings/mod.rs:187 app/src/settings/mod.rs:362
-#: app/src/settings/mod.rs:656 app/src/ui/assistant_mcp_prefs.rs:184
+#: app/src/settings/mod.rs:202 app/src/settings/mod.rs:377
+#: app/src/settings/mod.rs:672 app/src/ui/assistant_mcp_prefs.rs:184
 msgid "Off"
 msgstr "Off"
 
-#: app/src/settings/mod.rs:188
+#: app/src/settings/mod.rs:203
 msgid "Local Server"
 msgstr "Local Server"
 
-#: app/src/settings/mod.rs:189
+#: app/src/settings/mod.rs:204
 msgid "Anthropic API"
 msgstr "Anthropic API"
 
-#: app/src/settings/mod.rs:190
+#: app/src/settings/mod.rs:205
 msgid "Claude Subscription"
 msgstr "Claude Subscription"
 
 #. The header in both spaces carries a button for this now (R12);
 #. the menu item stays too, so Ctrl+J shows here as well.
-#: app/src/settings/mod.rs:215 app/src/ui/assistant.rs:99
-#: app/src/ui/window.rs:3139
+#: app/src/settings/mod.rs:230 app/src/ui/assistant.rs:99
+#: app/src/ui/window.rs:3172
 msgid "Assistant"
 msgstr "Assistant"
 
-#: app/src/settings/mod.rs:216
+#: app/src/settings/mod.rs:231
 msgid "Translation"
 msgstr "Translation"
 
 #. The assistant's running label says "Unsubscribing" too, an"
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: app/src/settings/mod.rs:220
+#: app/src/settings/mod.rs:235
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr "Unsubscribing"
 
-#: app/src/settings/mod.rs:226
+#: app/src/settings/mod.rs:241
 msgid "Answers questions and acts on your mail"
 msgstr "Answers questions and acts on your mail"
 
-#: app/src/settings/mod.rs:227
+#: app/src/settings/mod.rs:242
 msgid "Translates a message when you ask"
 msgstr "Translates a message when you ask"
 
-#: app/src/settings/mod.rs:229
+#: app/src/settings/mod.rs:244
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr "Reads a newsletter's unsubscribe page when the rules cannot"
 
-#: app/src/settings/mod.rs:267
+#: app/src/settings/mod.rs:282
 msgid "Same as the Assistant"
 msgstr "Same as the Assistant"
 
-#: app/src/settings/mod.rs:363
+#: app/src/settings/mod.rs:378
 msgid "Claude's own only"
 msgstr "Claude's own only"
 
-#: app/src/settings/mod.rs:364
+#: app/src/settings/mod.rs:379
 msgid "Brave Search"
 msgstr "Brave Search"
 
-#: app/src/settings/mod.rs:365
+#: app/src/settings/mod.rs:380
 msgid "SearXNG"
 msgstr "SearXNG"
 
-#: app/src/settings/mod.rs:503
+#: app/src/settings/mod.rs:519
 msgid "Rich text"
 msgstr "Rich text"
 
-#: app/src/settings/mod.rs:504
+#: app/src/settings/mod.rs:520
 msgid "Markdown"
 msgstr "Markdown"
 
-#: app/src/settings/mod.rs:523
+#: app/src/settings/mod.rs:539
 msgid "Automatic"
 msgstr "Automatic"
 
-#: app/src/settings/mod.rs:524 app/src/ui/calendar/editor.rs:2033
+#: app/src/settings/mod.rs:540 app/src/ui/calendar/editor.rs:2033
 msgid "Monday"
 msgstr "Monday"
 
-#: app/src/settings/mod.rs:525 app/src/ui/calendar/editor.rs:2039
+#: app/src/settings/mod.rs:541 app/src/ui/calendar/editor.rs:2039
 msgid "Sunday"
 msgstr "Sunday"
 
-#: app/src/settings/mod.rs:563
+#: app/src/settings/mod.rs:579
 msgid "When opened"
 msgstr "When opened"
 
-#: app/src/settings/mod.rs:564
+#: app/src/settings/mod.rs:580
 msgid "After 2 seconds"
 msgstr "After 2 seconds"
 
-#: app/src/settings/mod.rs:565
+#: app/src/settings/mod.rs:581
 msgid "Only when I choose"
 msgstr "Only when I choose"
 
-#: app/src/settings/mod.rs:581
+#: app/src/settings/mod.rs:597
 msgid "Ask each time"
 msgstr "Ask each time"
 
-#: app/src/settings/mod.rs:582
+#: app/src/settings/mod.rs:598
 msgid "Always load"
 msgstr "Always load"
 
-#: app/src/settings/mod.rs:616
+#: app/src/settings/mod.rs:632
 msgid "Small"
 msgstr "Small"
 
-#: app/src/settings/mod.rs:617
+#: app/src/settings/mod.rs:633
 msgid "Default"
 msgstr "Default"
 
-#: app/src/settings/mod.rs:618
+#: app/src/settings/mod.rs:634
 msgid "Large"
 msgstr "Large"
 
-#: app/src/settings/mod.rs:619
+#: app/src/settings/mod.rs:635
 msgid "Larger"
 msgstr "Larger"
 
-#: app/src/settings/mod.rs:657
+#: app/src/settings/mod.rs:673
 msgid "5 seconds"
 msgstr "5 seconds"
 
-#: app/src/settings/mod.rs:658
+#: app/src/settings/mod.rs:674
 msgid "10 seconds"
 msgstr "10 seconds"
 
-#: app/src/settings/mod.rs:659
+#: app/src/settings/mod.rs:675
 msgid "20 seconds"
 msgstr "20 seconds"
 
-#: app/src/settings/mod.rs:660
+#: app/src/settings/mod.rs:676
 msgid "30 seconds"
 msgstr "30 seconds"
 
-#: app/src/settings/mod.rs:677
+#: app/src/settings/mod.rs:693
 msgid "Follow system"
 msgstr "Follow system"
 
-#: app/src/settings/mod.rs:678
+#: app/src/settings/mod.rs:694
 msgid "Light"
 msgstr "Light"
 
-#: app/src/settings/mod.rs:679
+#: app/src/settings/mod.rs:695
 msgid "Dark"
 msgstr "Dark"
 
-#: app/src/settings/mod.rs:713
+#: app/src/settings/mod.rs:729
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] "Every second"
 msgstr[1] "Every {count} seconds"
 
-#: app/src/settings/mod.rs:721
+#: app/src/settings/mod.rs:737
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] "Every minute"
 msgstr[1] "Every {count} minutes"
 
-#: app/src/settings/mod.rs:738
+#: app/src/settings/mod.rs:754
 msgid "2 weeks"
 msgstr "2 weeks"
 
-#: app/src/settings/mod.rs:739
+#: app/src/settings/mod.rs:755
 msgid "30 days"
 msgstr "30 days"
 
-#: app/src/settings/mod.rs:740
+#: app/src/settings/mod.rs:756
 msgid "90 days"
 msgstr "90 days"
 
-#: app/src/settings/mod.rs:741
+#: app/src/settings/mod.rs:757
 msgid "1 year"
 msgstr "1 year"
 
-#: app/src/settings/mod.rs:748
+#: app/src/settings/mod.rs:764
 msgid "256 MB"
 msgstr "256 MB"
 
-#: app/src/settings/mod.rs:749
+#: app/src/settings/mod.rs:765
 msgid "1 GB"
 msgstr "1 GB"
 
-#: app/src/settings/mod.rs:750
+#: app/src/settings/mod.rs:766
 msgid "4 GB"
 msgstr "4 GB"
 
@@ -3244,7 +3280,7 @@ msgid_plural "{count} unread messages"
 msgstr[0] "{count} unread message"
 msgstr[1] "{count} unread messages"
 
-#: app/src/tray.rs:63 app/src/ui/sidebar.rs:1408
+#: app/src/tray.rs:63 app/src/ui/sidebar.rs:1525
 msgid "{account}, {count} unread message"
 msgid_plural "{account}, {count} unread messages"
 msgstr[0] "{account}, {count} unread message"
@@ -3258,16 +3294,6 @@ msgstr "Iris: {summary}"
 msgid "Open Iris"
 msgstr "Open Iris"
 
-#: app/src/tray.rs:207 app/src/ui/composer/mod.rs:278
-#: app/src/ui/composer/mod.rs:535 app/src/ui/composer/mod.rs:1277
-#: app/src/ui/contact_card.rs:158 app/src/ui/thread_list.rs:394
-msgid "New Message"
-msgstr "New Message"
-
-#: app/src/tray.rs:208 app/src/ui/sidebar.rs:1794 app/src/ui/window.rs:3142
-msgid "Check for Mail"
-msgstr "Check for Mail"
-
 #: app/src/tray.rs:212 app/src/update/mod.rs:98
 msgid "Install Update {version}"
 msgstr "Install Update {version}"
@@ -3276,90 +3302,94 @@ msgstr "Install Update {version}"
 msgid "What's New in {version}"
 msgstr "What's New in {version}"
 
-#: app/src/tray.rs:219 app/src/ui/about.rs:118 app/src/ui/about.rs:225
-#: app/src/ui/about.rs:233 app/src/ui/about.rs:240
+#: app/src/tray.rs:219 app/src/ui/about.rs:129 app/src/ui/about.rs:236
+#: app/src/ui/about.rs:244 app/src/ui/about.rs:251
 #: app/src/ui/preferences.rs:808 app/src/update/mod.rs:108
 msgid "Check for Updates"
 msgstr "Check for Updates"
 
-#: app/src/tray.rs:224 app/src/ui/window.rs:3154
+#: app/src/tray.rs:224 app/src/ui/window.rs:3187
 #: app/src/ui/window/shortcuts.rs:629
 msgid "Quit"
 msgstr "Quit"
 
-#: app/src/ui/about.rs:60
+#: app/src/ui/about.rs:62
+msgid "Based on {app}"
+msgstr "Based on {app}"
+
+#: app/src/ui/about.rs:71
 msgid "Version {version}"
 msgstr "Version {version}"
 
-#: app/src/ui/about.rs:77
+#: app/src/ui/about.rs:88
 msgid "Mail and calendar for Linux. Your mail stays on your computer."
 msgstr "Mail and calendar for Linux. Your mail stays on your computer."
 
-#: app/src/ui/about.rs:173
+#: app/src/ui/about.rs:184
 msgid "What's New"
 msgstr "What's New"
 
-#: app/src/ui/about.rs:177
+#: app/src/ui/about.rs:188
 msgid "Website"
 msgstr "Website"
 
-#: app/src/ui/about.rs:184
+#: app/src/ui/about.rs:195
 msgid "License"
 msgstr "Licence"
 
-#: app/src/ui/about.rs:201 app/src/ui/window.rs:3153
+#: app/src/ui/about.rs:212 app/src/ui/window.rs:3186
 msgid "About Iris"
 msgstr "About Iris"
 
-#: app/src/ui/about.rs:231
+#: app/src/ui/about.rs:242
 msgid "Checking…"
 msgstr "Checking…"
 
-#: app/src/ui/about.rs:237
+#: app/src/ui/about.rs:248
 msgid "Iris is up to date"
 msgstr "Iris is up to date"
 
-#: app/src/ui/about.rs:245
+#: app/src/ui/about.rs:256
 msgid "Could not reach GitHub. Check your connection and try again."
 msgstr "Could not reach GitHub. Check your connection and try again."
 
-#: app/src/ui/about.rs:250
+#: app/src/ui/about.rs:261
 msgid "Install {version}"
 msgstr "Install {version}"
 
-#: app/src/ui/about.rs:257
+#: app/src/ui/about.rs:268
 msgid "Version {version} is available"
 msgstr "Version {version} is available"
 
-#: app/src/ui/about.rs:262
+#: app/src/ui/about.rs:273
 msgid "Installing…"
 msgstr "Installing…"
 
-#: app/src/ui/about.rs:267
+#: app/src/ui/about.rs:278
 msgid "Installing version {version}"
 msgstr "Installing version {version}"
 
-#: app/src/ui/about.rs:272 app/src/update/mod.rs:104
+#: app/src/ui/about.rs:283 app/src/update/mod.rs:104
 msgid "Restart to Update"
 msgstr "Restart to Update"
 
-#: app/src/ui/about.rs:277
+#: app/src/ui/about.rs:288
 msgid "Version {version} is installed"
 msgstr "Version {version} is installed"
 
-#: app/src/ui/about.rs:282 app/src/update/mod.rs:137
+#: app/src/ui/about.rs:293 app/src/update/mod.rs:137
 msgid "Show Log"
 msgstr "Show Log"
 
-#: app/src/ui/about.rs:287 app/src/update/mod.rs:134
+#: app/src/ui/about.rs:298 app/src/update/mod.rs:134
 msgid "The update to {version} failed"
 msgstr "The update to {version} failed"
 
-#: app/src/ui/add_account.rs:401 app/src/ui/window.rs:1250
+#: app/src/ui/add_account.rs:401 app/src/ui/window.rs:1270
 msgid "Copy Command"
 msgstr "Copy Command"
 
-#: app/src/ui/add_account.rs:409 app/src/ui/window.rs:1255
+#: app/src/ui/add_account.rs:409 app/src/ui/window.rs:1275
 msgid "Command copied"
 msgstr "Command copied"
 
@@ -3460,7 +3490,7 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: app/src/ui/add_account.rs:895 app/src/ui/add_account.rs:988
-#: app/src/ui/add_account.rs:2284 app/src/ui/window.rs:1204
+#: app/src/ui/add_account.rs:2284 app/src/ui/window.rs:1224
 msgid "Sign In"
 msgstr "Sign In"
 
@@ -3540,7 +3570,7 @@ msgstr "Not Now"
 #: app/src/ui/add_account.rs:1159 app/src/ui/calendar/editor.rs:1606
 #: app/src/ui/calendar/sidebar.rs:922 app/src/ui/contacts_prefs.rs:365
 #: app/src/ui/invitation.rs:461 app/src/ui/permission.rs:42
-#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1316
+#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1336
 msgid "Grant Access"
 msgstr "Grant Access"
 
@@ -3669,7 +3699,7 @@ msgstr "{account} is ready"
 msgid "This server cannot tell its messages apart, so Iris cannot download from it safely."
 msgstr "This server cannot tell its messages apart, so Iris cannot download from it safely."
 
-#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3221
+#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3254
 msgid "Summarize this conversation"
 msgstr "Summarise this conversation"
 
@@ -3789,18 +3819,13 @@ msgstr "Add Server"
 msgid "Use {server}"
 msgstr "Use {server}"
 
-#: app/src/ui/assistant_mcp_prefs.rs:111 app/src/ui/calendar/popover.rs:203
-#: app/src/ui/calendar/popover.rs:205
-msgid "Edit"
-msgstr "Edit"
-
 #: app/src/ui/assistant_mcp_prefs.rs:115
 msgid "Edit {server}"
 msgstr "Edit {server}"
 
 #: app/src/ui/assistant_mcp_prefs.rs:121 app/src/ui/calendar/editor.rs:1639
 #: app/src/ui/composer/mod.rs:1729 app/src/ui/composer/recipients.rs:315
-#: app/src/ui/window.rs:2937
+#: app/src/ui/window.rs:2957
 msgid "Remove"
 msgstr "Remove"
 
@@ -4524,8 +4549,8 @@ msgid "Only people who can change this calendar see the details"
 msgstr "Only people who can change this calendar see the details"
 
 #: app/src/ui/calendar/editor.rs:1895 app/src/ui/calendar/manage.rs:353
-#: app/src/ui/calendar/sidebar.rs:1261 app/src/ui/sidebar.rs:1568
-#: app/src/ui/sidebar.rs:1811
+#: app/src/ui/calendar/sidebar.rs:1261 app/src/ui/sidebar.rs:1696
+#: app/src/ui/sidebar.rs:1941
 msgid "Color"
 msgstr "Colour"
 
@@ -5025,12 +5050,6 @@ msgstr "Deleted “{title}”"
 msgid "Could not delete the event: {reason}"
 msgstr "Could not delete the event: {reason}"
 
-#: app/src/ui/calendar/mod.rs:2058 app/src/ui/composer/mod.rs:1190
-#: app/src/ui/window.rs:2129 app/src/ui/window/scheduled.rs:98
-#: app/src/ui/window/shortcuts.rs:458
-msgid "Undo"
-msgstr "Undo"
-
 #: app/src/ui/calendar/mod.rs:2201
 msgid "Could not send your answer: {reason}"
 msgstr "Could not send your answer: {reason}"
@@ -5365,13 +5384,13 @@ msgstr "Hide from the List"
 msgid "Original Color"
 msgstr "Original Colour"
 
-#: app/src/ui/calendar/sidebar.rs:1265 app/src/ui/sidebar.rs:1557
-#: app/src/ui/sidebar.rs:1801
+#: app/src/ui/calendar/sidebar.rs:1265 app/src/ui/sidebar.rs:1685
+#: app/src/ui/sidebar.rs:1931
 msgid "Rename…"
 msgstr "Rename…"
 
-#: app/src/ui/calendar/sidebar.rs:1266 app/src/ui/sidebar.rs:1467
-#: app/src/ui/sidebar.rs:1583
+#: app/src/ui/calendar/sidebar.rs:1266 app/src/ui/sidebar.rs:1595
+#: app/src/ui/sidebar.rs:1711
 msgid "Delete…"
 msgstr "Delete…"
 
@@ -5489,7 +5508,7 @@ msgstr "{date}, has events"
 msgid "Offline, last updated {time}"
 msgstr "Offline, last updated {time}"
 
-#: app/src/ui/calendar/words.rs:358 app/src/ui/sidebar.rs:1891
+#: app/src/ui/calendar/words.rs:358 app/src/ui/sidebar.rs:2021
 msgid "Offline"
 msgstr "Offline"
 
@@ -5578,7 +5597,7 @@ msgid "Choose a Time…"
 msgstr "Choose a Time…"
 
 #: app/src/ui/composer/mod.rs:299 app/src/ui/composer/mod.rs:1576
-#: app/src/ui/sidebar.rs:1024
+#: app/src/ui/sidebar.rs:1136
 msgid "Send Later"
 msgstr "Send Later"
 
@@ -5955,7 +5974,7 @@ msgstr "Other email"
 msgid "Phone"
 msgstr "Phone"
 
-#: app/src/ui/contact_card.rs:168 app/src/ui/sidebar.rs:995
+#: app/src/ui/contact_card.rs:168 app/src/ui/sidebar.rs:1107
 msgid "Remove from VIPs"
 msgstr "Remove from VIPs"
 
@@ -5992,7 +6011,7 @@ msgid "Find Again"
 msgstr "Find Again"
 
 #: app/src/ui/contacts_prefs.rs:120 app/src/ui/conversation.rs:543
-#: app/src/ui/queued.rs:60 app/src/ui/sidebar.rs:1461
+#: app/src/ui/queued.rs:60 app/src/ui/sidebar.rs:1589
 msgid "Edit…"
 msgstr "Edit…"
 
@@ -6156,7 +6175,7 @@ msgstr "Mark Read or Unread"
 msgid "Tags…"
 msgstr "Tags…"
 
-#: app/src/ui/conversation.rs:578 app/src/ui/sidebar.rs:1030
+#: app/src/ui/conversation.rs:578 app/src/ui/sidebar.rs:1142
 #: app/src/ui/window/reminders.rs:25 app/src/ui/window/reminders.rs:30
 msgid "Remind Me"
 msgstr "Remind Me"
@@ -6396,7 +6415,7 @@ msgstr "Could not delete the address: {reason}"
 msgid "Allow Hide My Email"
 msgstr "Allow Hide My Email"
 
-#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3269
+#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3302
 msgid "Add an account first"
 msgstr "Add an account first"
 
@@ -6419,10 +6438,6 @@ msgstr "Could not create the address: {reason}"
 #: app/src/ui/hide_my_email.rs:428
 msgid "Your New Address"
 msgstr "Your New Address"
-
-#: app/src/ui/hide_my_email.rs:443
-msgid "Copy"
-msgstr "Copy"
 
 #: app/src/ui/hide_my_email.rs:458
 msgid "It is on your clipboard. Mail sent to it gets the Hide My Email label in Gmail."
@@ -6513,7 +6528,7 @@ msgid "Events to add"
 msgstr "Events to add"
 
 #: app/src/ui/invitation.rs:399 app/src/ui/invitation.rs:405
-#: app/src/ui/sidebar.rs:133
+#: app/src/ui/sidebar.rs:137
 msgid "Show in Calendar"
 msgstr "Show in Calendar"
 
@@ -6700,7 +6715,7 @@ msgid "All Files"
 msgstr "All Files"
 
 #: app/src/ui/key_import.rs:213 app/src/ui/key_import.rs:217
-#: app/src/ui/window.rs:3680
+#: app/src/ui/window.rs:3713
 msgid "Close"
 msgstr "Close"
 
@@ -6952,8 +6967,8 @@ msgstr "Rich text styles the words themselves; Markdown shows its marks"
 
 #. The seconds change every second and the name stays put, so a
 #. screen reader is not told each one.
-#: app/src/ui/preferences.rs:335 app/src/ui/sidebar.rs:64
-#: app/src/ui/sidebar.rs:77
+#: app/src/ui/preferences.rs:335 app/src/ui/sidebar.rs:68
+#: app/src/ui/sidebar.rs:81
 msgid "Undo Send"
 msgstr "Undo Send"
 
@@ -7371,141 +7386,141 @@ msgstr "{provider} runs one set of rules at a time, and it runs “{script}” n
 msgid "Replace"
 msgstr "Replace"
 
-#: app/src/ui/sidebar.rs:73
+#: app/src/ui/sidebar.rs:77
 msgid "Stop the message from going out"
 msgstr "Stop the message from going out"
 
-#: app/src/ui/sidebar.rs:348 app/src/ui/sidebar/sections.rs:26
+#: app/src/ui/sidebar.rs:372 app/src/ui/sidebar/sections.rs:26
 msgid "Mailboxes"
 msgstr "Mailboxes"
 
-#: app/src/ui/sidebar.rs:355 app/src/ui/sidebar.rs:1388
+#: app/src/ui/sidebar.rs:379 app/src/ui/sidebar.rs:1505
 #: app/src/ui/thread_list.rs:315
 msgid "Mail"
 msgstr "Mail"
 
-#: app/src/ui/sidebar.rs:982 app/src/ui/sidebar.rs:984
+#: app/src/ui/sidebar.rs:1094 app/src/ui/sidebar.rs:1096
 msgid "VIPs"
 msgstr "VIPs"
 
 #. Send Later has the tray with an arrow, which the mockup
 #. pictures; the Outbox has a tray holding a letter, and
 #. `set_counts` swaps in a warning while a send has failed.
-#: app/src/ui/sidebar.rs:1019
+#: app/src/ui/sidebar.rs:1131
 msgid "Outbox"
 msgstr "Outbox"
 
-#: app/src/ui/sidebar.rs:1035
+#: app/src/ui/sidebar.rs:1147
 msgid "Follow Up"
 msgstr "Follow Up"
 
-#: app/src/ui/sidebar.rs:1062
+#: app/src/ui/sidebar.rs:1174
 msgid "Holds folders, not mail"
 msgstr "Holds folders, not mail"
 
-#: app/src/ui/sidebar.rs:1342
+#: app/src/ui/sidebar.rs:1459
 msgid "{mailbox}, {count} unread message"
 msgid_plural "{mailbox}, {count} unread messages"
 msgstr[0] "{mailbox}, {count} unread message"
 msgstr[1] "{mailbox}, {count} unread messages"
 
-#: app/src/ui/sidebar.rs:1348
+#: app/src/ui/sidebar.rs:1465
 msgid "{mailbox}, {count} message"
 msgid_plural "{mailbox}, {count} messages"
 msgstr[0] "{mailbox}, {count} message"
 msgstr[1] "{mailbox}, {count} messages"
 
-#: app/src/ui/sidebar.rs:1379
+#: app/src/ui/sidebar.rs:1496
 msgid "99+"
 msgstr "99+"
 
-#: app/src/ui/sidebar.rs:1390
+#: app/src/ui/sidebar.rs:1507
 msgid "Mail, {count} unread"
 msgid_plural "Mail, {count} unread"
 msgstr[0] "Mail, {count} unread"
 msgstr[1] "Mail, {count} unread"
 
-#: app/src/ui/sidebar.rs:1392
+#: app/src/ui/sidebar.rs:1509
 msgid "Calendar, {count} waiting for your answer"
 msgid_plural "Calendar, {count} waiting for your answer"
 msgstr[0] "Calendar, {count} waiting for your answer"
 msgstr[1] "Calendar, {count} waiting for your answer"
 
-#: app/src/ui/sidebar.rs:1463 app/src/ui/sidebar.rs:1574
-#: app/src/ui/sidebar.rs:1812
+#: app/src/ui/sidebar.rs:1591 app/src/ui/sidebar.rs:1702
+#: app/src/ui/sidebar.rs:1942
 msgid "Move Up"
 msgstr "Move Up"
 
-#: app/src/ui/sidebar.rs:1464 app/src/ui/sidebar.rs:1577
-#: app/src/ui/sidebar.rs:1813
+#: app/src/ui/sidebar.rs:1592 app/src/ui/sidebar.rs:1705
+#: app/src/ui/sidebar.rs:1943
 msgid "Move Down"
 msgstr "Move Down"
 
-#: app/src/ui/sidebar.rs:1703
+#: app/src/ui/sidebar.rs:1833
 msgid "Automatic Reply…"
 msgstr "Automatic Reply…"
 
-#: app/src/ui/sidebar.rs:1704
+#: app/src/ui/sidebar.rs:1834
 msgid "Signature…"
 msgstr "Signature…"
 
-#: app/src/ui/sidebar.rs:1705
+#: app/src/ui/sidebar.rs:1835
 msgid "Rules…"
 msgstr "Rules…"
 
-#: app/src/ui/sidebar.rs:1706 app/src/ui/window.rs:3145
+#: app/src/ui/sidebar.rs:1836 app/src/ui/window.rs:3178
 msgid "Hide My Email…"
 msgstr "Hide My Email…"
 
-#: app/src/ui/sidebar.rs:1715
+#: app/src/ui/sidebar.rs:1845
 msgid "On this computer"
 msgstr "On this computer"
 
-#: app/src/ui/sidebar.rs:1723
+#: app/src/ui/sidebar.rs:1853
 msgid "On this computer. Show or hide this account's mailboxes"
 msgstr "On this computer. Show or hide this account's mailboxes"
 
-#: app/src/ui/sidebar.rs:1724
+#: app/src/ui/sidebar.rs:1854
 msgid "Show or hide this account's mailboxes"
 msgstr "Show or hide this account's mailboxes"
 
-#: app/src/ui/sidebar.rs:1816
+#: app/src/ui/sidebar.rs:1946
 msgid "Sign In Again…"
 msgstr "Sign In Again…"
 
-#: app/src/ui/sidebar.rs:1818
+#: app/src/ui/sidebar.rs:1948
 msgid "Messages That Will Not Download…"
 msgstr "Messages That Will Not Download…"
 
-#: app/src/ui/sidebar.rs:1823
+#: app/src/ui/sidebar.rs:1953
 msgid "Remove Account…"
 msgstr "Remove Account…"
 
-#: app/src/ui/sidebar.rs:1830
+#: app/src/ui/sidebar.rs:1960
 msgid "Account options"
 msgstr "Account options"
 
-#: app/src/ui/sidebar.rs:1835
+#: app/src/ui/sidebar.rs:1965
 msgid "Options for {account}"
 msgstr "Options for {account}"
 
-#: app/src/ui/sidebar.rs:1889
+#: app/src/ui/sidebar.rs:2019
 msgid "Sign in again to keep syncing"
 msgstr "Sign in again to keep syncing"
 
-#: app/src/ui/sidebar.rs:1895
+#: app/src/ui/sidebar.rs:2025
 msgid "{provider} is not responding; retrying"
 msgstr "{provider} is not responding; retrying"
 
-#: app/src/ui/sidebar.rs:1903
+#: app/src/ui/sidebar.rs:2033
 msgid "The keyring is not responding; retrying"
 msgstr "The keyring is not responding; retrying"
 
-#: app/src/ui/sidebar.rs:1906
+#: app/src/ui/sidebar.rs:2036
 msgid "Downloading mail"
 msgstr "Downloading mail"
 
-#: app/src/ui/sidebar.rs:1910
+#: app/src/ui/sidebar.rs:2040
 msgid "Syncing stopped after an error; restart Iris to try again"
 msgstr "Syncing stopped after an error; restart Iris to try again"
 
@@ -7879,7 +7894,7 @@ msgstr "Could not load mail: {reason}"
 msgid "Added {account}. Downloading mail…"
 msgstr "Added {account}. Downloading mail…"
 
-#: app/src/ui/window.rs:350 app/src/ui/window.rs:2727
+#: app/src/ui/window.rs:350 app/src/ui/window.rs:2747
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 
@@ -8021,131 +8036,127 @@ msgstr[1] "Moved {count} messages to the Inbox"
 msgid "Iris (Demo)"
 msgstr "Iris (Demo)"
 
-#: app/src/ui/window.rs:1139
+#: app/src/ui/window.rs:1159
 msgid "Could not read accounts: {reason}"
 msgstr "Could not read accounts: {reason}"
 
-#: app/src/ui/window.rs:1201
+#: app/src/ui/window.rs:1221
 msgid "Sign in again to keep {account} syncing"
 msgstr "Sign in again to keep {account} syncing"
 
-#: app/src/ui/window.rs:1941
+#: app/src/ui/window.rs:1961
 msgid "Could not delete the mail: {reason}"
 msgstr "Could not delete the mail: {reason}"
 
-#: app/src/ui/window.rs:2025
+#: app/src/ui/window.rs:2045
 msgid "Turn On the {service}"
 msgstr "Turn On the {service}"
 
-#: app/src/ui/window.rs:2028
+#: app/src/ui/window.rs:2048
 msgid "The Google Cloud project Iris signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
 msgstr "The Google Cloud project Iris signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
 
-#: app/src/ui/window.rs:2034
+#: app/src/ui/window.rs:2054
 msgid "Open Google Cloud"
 msgstr "Open Google Cloud"
 
-#: app/src/ui/window.rs:2150
+#: app/src/ui/window.rs:2170
 msgid "Nothing to undo"
 msgstr "Nothing to undo"
 
-#: app/src/ui/window.rs:2156
+#: app/src/ui/window.rs:2176
 msgid "{action} undone"
 msgstr "{action} undone"
 
-#: app/src/ui/window.rs:2382
+#: app/src/ui/window.rs:2402
 msgid "Select mail from one account to tag it."
 msgstr "Select mail from one account to tag it."
 
-#: app/src/ui/window.rs:2394
+#: app/src/ui/window.rs:2414
 msgid "This account has no tags yet. Make one in Outlook."
 msgstr "This account has no tags yet. Make one in Outlook."
 
-#: app/src/ui/window.rs:2533
+#: app/src/ui/window.rs:2553
 msgid "Could not include {file}: {reason}"
 msgstr "Could not include {file}: {reason}"
 
-#: app/src/ui/window.rs:2644
+#: app/src/ui/window.rs:2664
 msgid "Downloading {file}…"
 msgstr "Downloading {file}…"
 
-#: app/src/ui/window.rs:2665 app/src/ui/window/attachments.rs:229
+#: app/src/ui/window.rs:2685 app/src/ui/window/attachments.rs:229
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: app/src/ui/window.rs:2683 app/src/ui/window/attachments.rs:234
+#: app/src/ui/window.rs:2703 app/src/ui/window/attachments.rs:234
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: app/src/ui/window.rs:2826
+#: app/src/ui/window.rs:2846
 msgid "Continue in your browser"
 msgstr "Continue in your browser"
 
-#: app/src/ui/window.rs:2853
+#: app/src/ui/window.rs:2873
 msgid "This copy of Iris was built without Google sign-in."
 msgstr "This copy of Iris was built without Google sign-in."
 
-#: app/src/ui/window.rs:2861
+#: app/src/ui/window.rs:2881
 msgid "Get a Release"
 msgstr "Get a Release"
 
-#: app/src/ui/window.rs:2933
+#: app/src/ui/window.rs:2953
 msgid "Remove {account}?"
 msgstr "Remove {account}?"
 
-#: app/src/ui/window.rs:2948
+#: app/src/ui/window.rs:2968
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: app/src/ui/window.rs:2950
+#: app/src/ui/window.rs:2970
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: app/src/ui/window.rs:3126
+#: app/src/ui/window.rs:3159
 msgid "Refresh"
 msgstr "Refresh"
 
-#: app/src/ui/window.rs:3130
+#: app/src/ui/window.rs:3163
 msgid "Show Declined Events"
 msgstr "Show Declined Events"
 
-#: app/src/ui/window.rs:3143
-msgid "Add Account…"
-msgstr "Add Account…"
-
-#: app/src/ui/window.rs:3144
+#: app/src/ui/window.rs:3177
 msgid "New Smart Mailbox…"
 msgstr "New Smart Mailbox…"
 
-#: app/src/ui/window.rs:3151 app/src/ui/window/shortcuts.rs:606
+#: app/src/ui/window.rs:3184 app/src/ui/window/shortcuts.rs:606
 msgid "Preferences"
 msgstr "Preferences"
 
-#: app/src/ui/window.rs:3152
+#: app/src/ui/window.rs:3185
 msgid "Keyboard Shortcuts"
 msgstr "Keyboard Shortcuts"
 
-#: app/src/ui/window.rs:3160 app/src/ui/window.rs:3162
+#: app/src/ui/window.rs:3193 app/src/ui/window.rs:3195
 msgid "Main Menu"
 msgstr "Main Menu"
 
-#: app/src/ui/window.rs:3544
+#: app/src/ui/window.rs:3577
 msgid "Open a message from the person first"
 msgstr "Open a message from the person first"
 
-#: app/src/ui/window.rs:3620
+#: app/src/ui/window.rs:3653
 msgid "Iris shows the new language after a restart"
 msgstr "Iris shows the new language after a restart"
 
-#: app/src/ui/window.rs:3622 app/src/update/mod.rs:130
+#: app/src/ui/window.rs:3655 app/src/update/mod.rs:130
 msgid "Restart"
 msgstr "Restart"
 
-#: app/src/ui/window.rs:3655
+#: app/src/ui/window.rs:3688
 msgid "Messages That Will Not Download"
 msgstr "Messages That Will Not Download"
 
-#: app/src/ui/window.rs:3657
+#: app/src/ui/window.rs:3690
 msgid "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
 msgstr "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
 
@@ -8201,19 +8212,19 @@ msgstr "Open in Another Program"
 msgid "{file}, preview"
 msgstr "{file}, preview"
 
-#: app/src/ui/window/categories.rs:341
+#: app/src/ui/window/categories.rs:342
 msgid "Open a message from the sender first"
 msgstr "Open a message from the sender first"
 
-#: app/src/ui/window/categories.rs:385
+#: app/src/ui/window/categories.rs:386
 msgid "Mail from {sender} now goes to {category}"
 msgstr "Mail from {sender} now goes to {category}"
 
-#: app/src/ui/window/categories.rs:390
+#: app/src/ui/window/categories.rs:391
 msgid "Moved mail from {sender} to {category}"
 msgstr "Moved mail from {sender} to {category}"
 
-#: app/src/ui/window/categories.rs:397
+#: app/src/ui/window/categories.rs:398
 msgid "Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
 msgstr "Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
 
@@ -8869,7 +8880,7 @@ msgstr "Checking for Updates…"
 msgid "Iris {version} is available"
 msgstr "Iris {version} is available"
 
-#: app/src/update/mod.rs:119 app/src/update/mod.rs:212
+#: app/src/update/mod.rs:119 app/src/update/mod.rs:211
 msgid "Install"
 msgstr "Install"
 
@@ -9150,33 +9161,33 @@ msgstr "Is unread"
 msgid "Is flagged"
 msgstr "Is flagged"
 
-#: sync/src/account/writes.rs:760
+#: sync/src/account/writes.rs:776
 msgid "{provider} is busy. Still working on {conversations}."
 msgstr "{provider} is busy. Still working on {conversations}."
 
-#: sync/src/account/writes.rs:783
+#: sync/src/account/writes.rs:799
 msgid "{provider} is busy, so “{action}” did not go through for {conversations}. Try again in a moment."
 msgstr "{provider} is busy, so “{action}” did not go through for {conversations}. Try again in a moment."
 
-#: sync/src/account/writes.rs:792
+#: sync/src/account/writes.rs:808
 msgid "{provider} stayed busy for {waited}, so “{action}” did not go through for {conversations}."
 msgstr "{provider} stayed busy for {waited}, so “{action}” did not go through for {conversations}."
 
-#: sync/src/account/writes.rs:799
+#: sync/src/account/writes.rs:815
 msgid "{action} failed: {reason}"
 msgstr "{action} failed: {reason}"
 
-#: sync/src/account/writes.rs:817
+#: sync/src/account/writes.rs:833
 msgid "a moment"
 msgstr "a moment"
 
-#: sync/src/account/writes.rs:819
+#: sync/src/account/writes.rs:835
 msgid "{count} second"
 msgid_plural "{count} seconds"
 msgstr[0] "{count} second"
 msgstr[1] "{count} seconds"
 
-#: sync/src/account/writes.rs:824
+#: sync/src/account/writes.rs:840
 msgid "a minute"
 msgstr "a minute"
 
