@@ -76,6 +76,9 @@ plutil -replace LSMinimumSystemVersion -string "$minimum" "$app/Contents/Info.pl
 # services, which only a sandboxed app needs, stay out.
 ditto "$sparkle/Sparkle.framework" "$app/Contents/Frameworks/Sparkle.framework"
 rm -rf "$app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices"
+# The framework's top-level link to them would be left pointing at nothing,
+# which xattr -cr trips on.
+rm -f "$app/Contents/Frameworks/Sparkle.framework/XPCServices"
 plist="$app/Contents/Info.plist"
 plutil -replace SUFeedURL -string "$appcast_url" "$plist"
 plutil -replace SUPublicEDKey -string "$public_key" "$plist"

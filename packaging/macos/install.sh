@@ -49,7 +49,13 @@ fi
 say "Installing into /Applications…"
 rm -rf "$target"
 ditto "$mount/Iris.app" "$target"
-xattr -cr "$target"
+# xattr reports an error for an attribute macOS keeps, such as
+# com.apple.provenance, or a link inside the bundle it cannot follow, yet
+# clears the rest; what matters is that the quarantine mark is gone.
+xattr -cr "$target" 2>/dev/null || true
+if xattr -p com.apple.quarantine "$target" >/dev/null 2>&1; then
+    fail "macOS kept its quarantine mark on Iris; run: xattr -cr $target"
+fi
 
 say "Done. Opening Iris."
 open "$target"
