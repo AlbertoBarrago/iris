@@ -5,6 +5,13 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.7 (2026-10-08)
+
+### Fixed
+
+- On macOS, About Iris opens in a small window of its own, and the open
+  message stays on screen behind it instead of disappearing.
+
 ## 1.0.6 (2026-10-08)
 
 ### Fixed
