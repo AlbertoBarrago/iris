@@ -380,9 +380,13 @@ impl Sidebar {
             (Space::Calendar, "calendar", gettext("Calendar"), "x-office-calendar-symbolic"),
         ]
         .map(|(space, name, label, icon)| {
+            // On macOS the window's buttons share this bar, and with both
+            // names the switch held the mailboxes about 100 px wider than
+            // their width, so there the toggles show their icons alone and
+            // name themselves in a tooltip.
             let content = adw::ButtonContent::builder()
                 .icon_name(icon)
-                .label(&label)
+                .label(if cfg!(target_os = "macos") { "" } else { label.as_str() })
                 .build();
             // Each toggle counts what waits in the other space, in a small
             // accent pill after its name, while that space is away.
@@ -397,6 +401,7 @@ impl Sidebar {
             let toggle = adw::Toggle::builder()
                 .name(name)
                 .label(&label)
+                .tooltip(&label)
                 .child(&child)
                 .build();
             switch.add(toggle);
