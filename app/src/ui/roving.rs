@@ -121,6 +121,7 @@ pub fn toolbar(bar: &impl IsA<gtk::Widget>, items: Vec<gtk::Widget>) {
         };
         if modifiers.intersects(
             gdk::ModifierType::CONTROL_MASK
+                | crate::ui::platform_keys::PRIMARY
                 | gdk::ModifierType::ALT_MASK
                 | gdk::ModifierType::SHIFT_MASK,
         ) {

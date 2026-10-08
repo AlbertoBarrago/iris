@@ -20,6 +20,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 - On macOS, Preferences opens in a window of its own, which you can move
   and resize.
+- On macOS, shortcuts take Command where Linux takes Control, and
+  tooltips show them in the Mac's own symbols, such as ⇧⌘J for Junk.
 
 ### Fixed
 

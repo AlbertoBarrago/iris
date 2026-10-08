@@ -847,7 +847,7 @@ fn context_menu(
 fn menu_keys() -> gtk::ShortcutController {
     let controller = gtk::ShortcutController::new();
     for keys in MENU_KEYS {
-        let trigger = gtk::ShortcutTrigger::parse_string(keys);
+        let trigger = gtk::ShortcutTrigger::parse_string(&crate::ui::platform_keys::trigger(keys));
         let action = gtk::CallbackAction::new(|list, _| {
             let opened = list
                 .focus_child()

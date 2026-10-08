@@ -79,7 +79,8 @@ impl<A: Accounts> MailTool<A> {
     pub fn spec(&self) -> ToolSpec {
         ToolSpec {
             name: self.name.into(),
-            description: self.description.into(),
+            // The descriptions name the undo keys as Linux has them.
+            description: self.description.replace("Ctrl+Z", super::UNDO_KEYS),
             input_schema: json!({
                 "type": "object",
                 "properties": (self.input)(),

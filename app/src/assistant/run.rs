@@ -1789,13 +1789,17 @@ fn reply_json(reply: &AutomaticReply) -> Value {
 
 /// What the model hears about a mail action: how many targets changed, and
 /// which failed and why. An error when nothing changed.
+/// The keys that undo a mail change, as the assistant names them to the
+/// person: Command on a Mac, Control elsewhere.
+pub(crate) const UNDO_KEYS: &str = if cfg!(target_os = "macos") { "Cmd+Z" } else { "Ctrl+Z" };
+
 fn report(outcome: &Outcome) -> ToolResult {
     if let (true, Some(error)) = (outcome.done.is_empty(), outcome.first_error()) {
         return Err(error.to_string());
     }
     let mut result = json!({
         "done": outcome.done.len(),
-        "undo": "The user can press Ctrl+Z to undo this.",
+        "undo": format!("The user can press {UNDO_KEYS} to undo this."),
     });
     if !outcome.failed.is_empty() {
         result["failed"] = outcome

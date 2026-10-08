@@ -371,9 +371,9 @@ impl CalendarView {
         new_slot.append(&new_split);
         let search_button = gtk::ToggleButton::builder()
             .icon_name("system-search-symbolic")
-            .tooltip_text(gettext("Search the Calendar (Ctrl+F)"))
+            .tooltip_text(crate::ui::platform_keys::tip(gettext("Search the Calendar (Ctrl+F)")))
             .build();
-        crate::ui::name_with_shortcut(&search_button, &gettext("Search the Calendar (Ctrl+F)"));
+        crate::ui::name_with_shortcut(&search_button, &crate::ui::platform_keys::tip(gettext("Search the Calendar (Ctrl+F)")));
         let sidebar_button = gtk::ToggleButton::builder()
             .icon_name("sidebar-show-symbolic")
             .tooltip_text(gettext("Show Calendars"))
@@ -385,11 +385,11 @@ impl CalendarView {
         // on.
         let assistant_toggle = gtk::ToggleButton::builder()
             .icon_name("iris-sparkle-symbolic")
-            .tooltip_text(gettext("Assistant (Ctrl+J)"))
+            .tooltip_text(crate::ui::platform_keys::tip(gettext("Assistant (Ctrl+J)")))
             .css_classes(["flat", "assistant-toggle"])
             .visible(false)
             .build();
-        crate::ui::name_with_shortcut(&assistant_toggle, &gettext("Assistant (Ctrl+J)"));
+        crate::ui::name_with_shortcut(&assistant_toggle, &crate::ui::platform_keys::tip(gettext("Assistant (Ctrl+J)")));
 
         // No centred title: the range's title sits at the start, and
         // without a centre the bar's natural width is its two sides, the

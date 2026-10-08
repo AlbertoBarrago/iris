@@ -740,11 +740,11 @@ msgstr "Delete a rule from {account}?"
 msgid "Hide My Email works with Gmail accounts."
 msgstr "Hide My Email works with Gmail accounts."
 
-#: app/src/assistant/run.rs:1825
+#: app/src/assistant/run.rs:1829
 msgid "Move mail from {sender} to {category} in {account}, and send their future mail there too?"
 msgstr "Move mail from {sender} to {category} in {account}, and send their future mail there too?"
 
-#: app/src/assistant/run.rs:1837
+#: app/src/assistant/run.rs:1841
 msgid "Move mail from {sender} to {category} in {account}, and add a {provider} rule for their future mail?"
 msgstr "Move mail from {sender} to {category} in {account}, and add a {provider} rule for their future mail?"
 
@@ -821,283 +821,283 @@ msgstr "Its guests are told."
 msgid "Answer {answer} to “{title}”?"
 msgstr "Answer {answer} to “{title}”?"
 
-#: app/src/assistant/run/catalog.rs:258
+#: app/src/assistant/run/catalog.rs:259
 msgid "Looking at the screen"
 msgstr "Looking at the screen"
 
-#: app/src/assistant/run/catalog.rs:266
+#: app/src/assistant/run/catalog.rs:267
 msgid "Reading a mailbox"
 msgstr "Reading a mailbox"
 
-#: app/src/assistant/run/catalog.rs:284
+#: app/src/assistant/run/catalog.rs:285
 msgid "Searching mail"
 msgstr "Searching mail"
 
-#: app/src/assistant/run/catalog.rs:298
+#: app/src/assistant/run/catalog.rs:299
 msgid "Reading a conversation"
 msgstr "Reading a conversation"
 
-#: app/src/assistant/run/catalog.rs:311
+#: app/src/assistant/run/catalog.rs:312
 msgid "Organizing mail"
 msgstr "Organising mail"
 
-#: app/src/assistant/run/catalog.rs:326
+#: app/src/assistant/run/catalog.rs:327
 msgid "Changing labels"
 msgstr "Changing labels"
 
-#: app/src/assistant/run/catalog.rs:341
+#: app/src/assistant/run/catalog.rs:342
 msgid "Setting reminders"
 msgstr "Setting reminders"
 
-#: app/src/assistant/run/catalog.rs:355
+#: app/src/assistant/run/catalog.rs:356
 msgid "Writing a draft"
 msgstr "Writing a draft"
 
-#: app/src/assistant/run/catalog.rs:363
+#: app/src/assistant/run/catalog.rs:364
 msgid "Sending mail"
 msgstr "Sending mail"
 
-#: app/src/assistant/run/catalog.rs:371
+#: app/src/assistant/run/catalog.rs:372
 msgid "Reading drafts"
 msgstr "Reading drafts"
 
-#: app/src/assistant/run/catalog.rs:379
+#: app/src/assistant/run/catalog.rs:380
 msgid "Changing a draft"
 msgstr "Changing a draft"
 
-#: app/src/assistant/run/catalog.rs:401
+#: app/src/assistant/run/catalog.rs:402
 msgid "Deleting a draft"
 msgstr "Deleting a draft"
 
-#: app/src/assistant/run/catalog.rs:414
+#: app/src/assistant/run/catalog.rs:415
 msgid "Blocking a sender"
 msgstr "Blocking a sender"
 
-#: app/src/assistant/run/catalog.rs:427
+#: app/src/assistant/run/catalog.rs:428
 msgid "Checking the automatic reply"
 msgstr "Checking the automatic reply"
 
-#: app/src/assistant/run/catalog.rs:435
+#: app/src/assistant/run/catalog.rs:436
 msgid "Setting the automatic reply"
 msgstr "Setting the automatic reply"
 
-#: app/src/assistant/run/catalog.rs:453
+#: app/src/assistant/run/catalog.rs:454
 msgid "Reading rules"
 msgstr "Reading rules"
 
-#: app/src/assistant/run/catalog.rs:461
+#: app/src/assistant/run/catalog.rs:462
 msgid "Creating a rule"
 msgstr "Creating a rule"
 
-#: app/src/assistant/run/catalog.rs:485
+#: app/src/assistant/run/catalog.rs:486
 msgid "Deleting a rule"
 msgstr "Deleting a rule"
 
-#: app/src/assistant/run/catalog.rs:493
+#: app/src/assistant/run/catalog.rs:494
 msgid "Creating a label"
 msgstr "Creating a label"
 
-#: app/src/assistant/run/catalog.rs:501
+#: app/src/assistant/run/catalog.rs:502
 msgid "Renaming a label"
 msgstr "Renaming a label"
 
-#: app/src/assistant/run/catalog.rs:515
+#: app/src/assistant/run/catalog.rs:516
 msgid "Coloring a label"
 msgstr "Colouring a label"
 
-#: app/src/assistant/run/catalog.rs:529
+#: app/src/assistant/run/catalog.rs:530
 msgid "Deleting a label"
 msgstr "Deleting a label"
 
-#: app/src/assistant/run/catalog.rs:537
+#: app/src/assistant/run/catalog.rs:538
 msgid "Reading smart mailboxes"
 msgstr "Reading smart mailboxes"
 
-#: app/src/assistant/run/catalog.rs:545
+#: app/src/assistant/run/catalog.rs:546
 msgid "Changing a smart mailbox"
 msgstr "Changing a smart mailbox"
 
-#: app/src/assistant/run/catalog.rs:573
+#: app/src/assistant/run/catalog.rs:574
 msgid "Deleting a smart mailbox"
 msgstr "Deleting a smart mailbox"
 
-#: app/src/assistant/run/catalog.rs:581
+#: app/src/assistant/run/catalog.rs:582
 msgid "Saving a template"
 msgstr "Saving a template"
 
-#: app/src/assistant/run/catalog.rs:595
+#: app/src/assistant/run/catalog.rs:596
 msgid "Deleting a template"
 msgstr "Deleting a template"
 
-#: app/src/assistant/run/catalog.rs:603
+#: app/src/assistant/run/catalog.rs:604
 msgid "Adding a contact"
 msgstr "Adding a contact"
 
-#: app/src/assistant/run/catalog.rs:619
+#: app/src/assistant/run/catalog.rs:620
 msgid "Changing a contact"
 msgstr "Changing a contact"
 
-#: app/src/assistant/run/catalog.rs:636
+#: app/src/assistant/run/catalog.rs:637
 msgid "Reading who may load images"
 msgstr "Reading who may load images"
 
-#: app/src/assistant/run/catalog.rs:644
+#: app/src/assistant/run/catalog.rs:645
 msgid "Allowing remote images"
 msgstr "Allowing remote images"
 
-#: app/src/assistant/run/catalog.rs:657
+#: app/src/assistant/run/catalog.rs:658
 msgid "Blocking remote images"
 msgstr "Blocking remote images"
 
-#: app/src/assistant/run/catalog.rs:665
+#: app/src/assistant/run/catalog.rs:666
 msgid "Exporting mail"
 msgstr "Exporting mail"
 
-#: app/src/assistant/run/catalog.rs:679
+#: app/src/assistant/run/catalog.rs:680
 msgid "Reading settings"
 msgstr "Reading settings"
 
-#: app/src/assistant/run/catalog.rs:687
+#: app/src/assistant/run/catalog.rs:688
 msgid "Changing a setting"
 msgstr "Changing a setting"
 
-#: app/src/assistant/run/catalog.rs:700
+#: app/src/assistant/run/catalog.rs:701
 msgid "Setting a signature"
 msgstr "Setting a signature"
 
-#: app/src/assistant/run/catalog.rs:708
+#: app/src/assistant/run/catalog.rs:709
 msgid "Updating VIPs"
 msgstr "Updating VIPs"
 
-#: app/src/assistant/run/catalog.rs:722
+#: app/src/assistant/run/catalog.rs:723
 msgid "Creating a smart mailbox"
 msgstr "Creating a smart mailbox"
 
-#: app/src/assistant/run/catalog.rs:748
+#: app/src/assistant/run/catalog.rs:749
 msgid "Sorting a sender"
 msgstr "Sorting a sender"
 
-#: app/src/assistant/run/catalog.rs:763
+#: app/src/assistant/run/catalog.rs:764
 msgid "Dismissing a follow-up"
 msgstr "Dismissing a follow-up"
 
-#: app/src/assistant/run/catalog.rs:771
+#: app/src/assistant/run/catalog.rs:772
 msgid "Reading hidden addresses"
 msgstr "Reading hidden addresses"
 
-#: app/src/assistant/run/catalog.rs:779
+#: app/src/assistant/run/catalog.rs:780
 msgid "Making a hidden address"
 msgstr "Making a hidden address"
 
-#: app/src/assistant/run/catalog.rs:792
+#: app/src/assistant/run/catalog.rs:793
 msgid "Changing a hidden address"
 msgstr "Changing a hidden address"
 
-#: app/src/assistant/run/catalog.rs:800
+#: app/src/assistant/run/catalog.rs:801
 msgid "Opening a conversation"
 msgstr "Opening a conversation"
 
-#: app/src/assistant/run/catalog.rs:808
+#: app/src/assistant/run/catalog.rs:809
 msgid "Muting conversations"
 msgstr "Muting conversations"
 
-#: app/src/assistant/run/catalog.rs:822
+#: app/src/assistant/run/catalog.rs:823
 msgid "Deleting mail forever"
 msgstr "Deleting mail forever"
 
-#: app/src/assistant/run/catalog.rs:830
+#: app/src/assistant/run/catalog.rs:831
 msgid "Scheduling a message"
 msgstr "Scheduling a message"
 
-#: app/src/assistant/run/catalog.rs:852
+#: app/src/assistant/run/catalog.rs:853
 msgid "Sending a waiting message"
 msgstr "Sending a waiting message"
 
-#: app/src/assistant/run/catalog.rs:860
+#: app/src/assistant/run/catalog.rs:861
 msgid "Canceling a scheduled message"
 msgstr "Cancelling a scheduled message"
 
-#: app/src/assistant/run/catalog.rs:868
+#: app/src/assistant/run/catalog.rs:869
 msgid "Deleting from the Outbox"
 msgstr "Deleting from the Outbox"
 
-#: app/src/assistant/run/catalog.rs:876
+#: app/src/assistant/run/catalog.rs:877
 msgid "Changing when a message goes"
 msgstr "Changing when a message goes"
 
-#: app/src/assistant/run/catalog.rs:889
+#: app/src/assistant/run/catalog.rs:890
 msgid "Reading reminders"
 msgstr "Reading reminders"
 
-#: app/src/assistant/run/catalog.rs:897
+#: app/src/assistant/run/catalog.rs:898
 msgid "Canceling a reminder"
 msgstr "Cancelling a reminder"
 
-#: app/src/assistant/run/catalog.rs:905
+#: app/src/assistant/run/catalog.rs:906
 msgid "Changing a reminder"
 msgstr "Changing a reminder"
 
-#: app/src/assistant/run/catalog.rs:918
+#: app/src/assistant/run/catalog.rs:919
 msgid "Unmuting conversations"
 msgstr "Unmuting conversations"
 
-#: app/src/assistant/run/catalog.rs:926
+#: app/src/assistant/run/catalog.rs:927
 msgid "Undoing the last change"
 msgstr "Undoing the last change"
 
-#: app/src/assistant/run/catalog.rs:934
+#: app/src/assistant/run/catalog.rs:935
 msgid "Reading templates"
 msgstr "Reading templates"
 
-#: app/src/assistant/run/catalog.rs:942
+#: app/src/assistant/run/catalog.rs:943
 msgid "Writing from a template"
 msgstr "Writing from a template"
 
-#: app/src/assistant/run/catalog.rs:957
+#: app/src/assistant/run/catalog.rs:958
 msgid "Finding your newsletters"
 msgstr "Finding your newsletters"
 
-#: app/src/assistant/run/catalog.rs:970
+#: app/src/assistant/run/catalog.rs:971
 msgid "Unsubscribing"
 msgstr "Unsubscribing"
 
-#: app/src/assistant/run/catalog.rs:1001
+#: app/src/assistant/run/catalog.rs:1002
 msgid "Reading an attachment"
 msgstr "Reading an attachment"
 
-#: app/src/assistant/run/catalog.rs:1015
+#: app/src/assistant/run/catalog.rs:1016
 msgid "Looking up a contact"
 msgstr "Looking up a contact"
 
-#: app/src/assistant/run/catalog.rs:1023
+#: app/src/assistant/run/catalog.rs:1024
 msgid "Reading the calendar"
 msgstr "Reading the calendar"
 
-#: app/src/assistant/run/catalog.rs:1037
+#: app/src/assistant/run/catalog.rs:1038
 msgid "Finding free time"
 msgstr "Finding free time"
 
-#: app/src/assistant/run/catalog.rs:1055
+#: app/src/assistant/run/catalog.rs:1056
 msgid "Listing the calendars"
 msgstr "Listing the calendars"
 
-#: app/src/assistant/run/catalog.rs:1063
+#: app/src/assistant/run/catalog.rs:1064
 msgid "Adding an event"
 msgstr "Adding an event"
 
-#: app/src/assistant/run/catalog.rs:1082
+#: app/src/assistant/run/catalog.rs:1083
 msgid "Changing an event"
 msgstr "Changing an event"
 
-#: app/src/assistant/run/catalog.rs:1102
+#: app/src/assistant/run/catalog.rs:1103
 msgid "Deleting an event"
 msgstr "Deleting an event"
 
-#: app/src/assistant/run/catalog.rs:1116
+#: app/src/assistant/run/catalog.rs:1117
 msgid "Answering an invitation"
 msgstr "Answering an invitation"
 
-#: app/src/assistant/run/catalog.rs:1162 app/src/assistant/turn.rs:287
+#: app/src/assistant/run/catalog.rs:1163 app/src/assistant/turn.rs:287
 msgid "Working"
 msgstr "Working"
 
@@ -1849,7 +1849,7 @@ msgstr "Report a Problem"
 
 #: app/src/notify.rs:48 app/src/ui/conversation.rs:407
 #: app/src/ui/conversation.rs:559 app/src/ui/conversation.rs:1127
-#: app/src/ui/window/message_menu.rs:125 app/src/ui/window/shortcuts.rs:392
+#: app/src/ui/window/message_menu.rs:125 app/src/ui/window/shortcuts.rs:402
 msgid "Archive"
 msgstr "Archive"
 
@@ -1869,7 +1869,7 @@ msgid "Delete"
 msgstr "Delete"
 
 #: app/src/notify.rs:51 app/src/ui/conversation.rs:553
-#: app/src/ui/window/message_menu.rs:122 app/src/ui/window/shortcuts.rs:471
+#: app/src/ui/window/message_menu.rs:122 app/src/ui/window/shortcuts.rs:481
 msgid "Reply"
 msgstr "Reply"
 
@@ -1879,7 +1879,7 @@ msgid_plural "{count} new messages"
 msgstr[0] "{count} new message"
 msgstr[1] "{count} new messages"
 
-#: app/src/notify.rs:126 app/src/ui/window/shortcuts.rs:463
+#: app/src/notify.rs:126 app/src/ui/window/shortcuts.rs:473
 msgid "New message"
 msgstr "New message"
 
@@ -1891,7 +1891,7 @@ msgstr "From {senders}"
 msgid "Open"
 msgstr "Open"
 
-#: app/src/offered.rs:237 app/src/ui/window/shortcuts.rs:450
+#: app/src/offered.rs:237 app/src/ui/window/shortcuts.rs:460
 msgid "Labels"
 msgstr "Labels"
 
@@ -2938,7 +2938,7 @@ msgstr "{host} refused the login: {reason}"
 #: app/src/servers.rs:34 app/src/ui/calendar/editor.rs:1164
 #: app/src/ui/calendar/editor.rs:1240 app/src/ui/contacts_prefs.rs:271
 #: app/src/ui/sidebar.rs:380 app/src/ui/sidebar.rs:1506
-#: app/src/ui/window/shortcuts.rs:236
+#: app/src/ui/window/shortcuts.rs:238
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -3308,8 +3308,8 @@ msgstr "What's New in {version}"
 msgid "Check for Updates"
 msgstr "Check for Updates"
 
-#: app/src/tray.rs:224 app/src/ui/window.rs:3231
-#: app/src/ui/window/shortcuts.rs:629
+#: app/src/tray.rs:224 app/src/ui/window.rs:3232
+#: app/src/ui/window/shortcuts.rs:639
 msgid "Quit"
 msgstr "Quit"
 
@@ -3337,7 +3337,7 @@ msgstr "Website"
 msgid "License"
 msgstr "Licence"
 
-#: app/src/ui/about.rs:212 app/src/ui/window.rs:3230
+#: app/src/ui/about.rs:212 app/src/ui/window.rs:3231
 msgid "About Iris"
 msgstr "About Iris"
 
@@ -3699,7 +3699,7 @@ msgstr "{account} is ready"
 msgid "This server cannot tell its messages apart, so Iris cannot download from it safely."
 msgstr "This server cannot tell its messages apart, so Iris cannot download from it safely."
 
-#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3298
+#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3299
 msgid "Summarize this conversation"
 msgstr "Summarise this conversation"
 
@@ -3733,7 +3733,7 @@ msgstr "Ask Iris…"
 
 #: app/src/ui/assistant.rs:156 app/src/ui/assistant.rs:160
 #: app/src/ui/assistant.rs:446 app/src/ui/calendar/scope.rs:113
-#: app/src/ui/composer/mod.rs:295 app/src/ui/window/shortcuts.rs:492
+#: app/src/ui/composer/mod.rs:295 app/src/ui/window/shortcuts.rs:502
 msgid "Send"
 msgstr "Send"
 
@@ -5012,7 +5012,7 @@ msgstr "Search the Calendar"
 msgid "Loading older events"
 msgstr "Loading older events"
 
-#: app/src/ui/calendar/mod.rs:896 app/src/ui/window/shortcuts.rs:571
+#: app/src/ui/calendar/mod.rs:896 app/src/ui/window/shortcuts.rs:581
 msgid "Go to date"
 msgstr "Go to date"
 
@@ -6084,7 +6084,7 @@ msgid "Mute"
 msgstr "Mute"
 
 #: app/src/ui/conversation.rs:411 app/src/ui/conversation.rs:561
-#: app/src/ui/conversation.rs:1120 app/src/ui/window/shortcuts.rs:411
+#: app/src/ui/conversation.rs:1120 app/src/ui/window/shortcuts.rs:421
 msgid "Junk"
 msgstr "Junk"
 
@@ -6159,7 +6159,7 @@ msgid "Reply All"
 msgstr "Reply All"
 
 #: app/src/ui/conversation.rs:555 app/src/ui/window/message_menu.rs:124
-#: app/src/ui/window/shortcuts.rs:484
+#: app/src/ui/window/shortcuts.rs:494
 msgid "Forward"
 msgstr "Forward"
 
@@ -6314,7 +6314,7 @@ msgstr[0] "{position} of {total} match"
 msgstr[1] "{position} of {total} matches"
 
 #: app/src/ui/find.rs:128 app/src/ui/find.rs:143
-#: app/src/ui/window/shortcuts.rs:330
+#: app/src/ui/window/shortcuts.rs:340
 msgid "Find in the conversation"
 msgstr "Find in the conversation"
 
@@ -6415,7 +6415,7 @@ msgstr "Could not delete the address: {reason}"
 msgid "Allow Hide My Email"
 msgstr "Allow Hide My Email"
 
-#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3346
+#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3347
 msgid "Add an account first"
 msgstr "Add an account first"
 
@@ -6715,7 +6715,7 @@ msgid "All Files"
 msgstr "All Files"
 
 #: app/src/ui/key_import.rs:213 app/src/ui/key_import.rs:217
-#: app/src/ui/window.rs:3757
+#: app/src/ui/window.rs:3758
 msgid "Close"
 msgstr "Close"
 
@@ -6797,7 +6797,7 @@ msgstr[1] "And {count} more"
 msgid "Could not read {file}: {reason}"
 msgstr "Could not read {file}: {reason}"
 
-#: app/src/ui/mod.rs:426
+#: app/src/ui/mod.rs:427
 msgid "Gray"
 msgstr "Grey"
 
@@ -6829,11 +6829,11 @@ msgstr "Warning"
 msgid "Not checked"
 msgstr "Not checked"
 
-#: app/src/ui/preferences.rs:119 app/src/ui/window/shortcuts.rs:237
+#: app/src/ui/preferences.rs:119 app/src/ui/window/shortcuts.rs:239
 msgid "General"
 msgstr "General"
 
-#: app/src/ui/preferences.rs:124 app/src/ui/window/shortcuts.rs:233
+#: app/src/ui/preferences.rs:124 app/src/ui/window/shortcuts.rs:235
 msgid "Reading"
 msgstr "Reading"
 
@@ -6933,7 +6933,7 @@ msgstr "Event Reminders"
 msgid "A notification before each event, at the times the event or its calendar sets"
 msgstr "A notification before each event, at the times the event or its calendar sets"
 
-#: app/src/ui/preferences.rs:303 app/src/ui/window/shortcuts.rs:235
+#: app/src/ui/preferences.rs:303 app/src/ui/window/shortcuts.rs:237
 msgid "Writing"
 msgstr "Writing"
 
@@ -7468,7 +7468,7 @@ msgstr "Signature…"
 msgid "Rules…"
 msgstr "Rules…"
 
-#: app/src/ui/sidebar.rs:1836 app/src/ui/window.rs:3222
+#: app/src/ui/sidebar.rs:1836 app/src/ui/window.rs:3223
 msgid "Hide My Email…"
 msgstr "Hide My Email…"
 
@@ -8136,39 +8136,39 @@ msgstr "Refresh"
 msgid "Show Declined Events"
 msgstr "Show Declined Events"
 
-#: app/src/ui/window.rs:3221
+#: app/src/ui/window.rs:3222
 msgid "New Smart Mailbox…"
 msgstr "New Smart Mailbox…"
 
-#: app/src/ui/window.rs:3228 app/src/ui/window/shortcuts.rs:606
+#: app/src/ui/window.rs:3229 app/src/ui/window/shortcuts.rs:616
 msgid "Preferences"
 msgstr "Preferences"
 
-#: app/src/ui/window.rs:3229
+#: app/src/ui/window.rs:3230
 msgid "Keyboard Shortcuts"
 msgstr "Keyboard Shortcuts"
 
-#: app/src/ui/window.rs:3237 app/src/ui/window.rs:3239
+#: app/src/ui/window.rs:3238 app/src/ui/window.rs:3240
 msgid "Main Menu"
 msgstr "Main Menu"
 
-#: app/src/ui/window.rs:3621
+#: app/src/ui/window.rs:3622
 msgid "Open a message from the person first"
 msgstr "Open a message from the person first"
 
-#: app/src/ui/window.rs:3697
+#: app/src/ui/window.rs:3698
 msgid "Iris shows the new language after a restart"
 msgstr "Iris shows the new language after a restart"
 
-#: app/src/ui/window.rs:3699 app/src/update/mod.rs:130
+#: app/src/ui/window.rs:3700 app/src/update/mod.rs:130
 msgid "Restart"
 msgstr "Restart"
 
-#: app/src/ui/window.rs:3732
+#: app/src/ui/window.rs:3733
 msgid "Messages That Will Not Download"
 msgstr "Messages That Will Not Download"
 
-#: app/src/ui/window.rs:3734
+#: app/src/ui/window.rs:3735
 msgid "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
 msgstr "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
 
@@ -8446,7 +8446,7 @@ msgstr "Copied {address}"
 msgid "A rule that waited was refused: {reason}"
 msgstr "A rule that waited was refused: {reason}"
 
-#: app/src/ui/window/on_screen.rs:222 app/src/ui/window/shortcuts.rs:318
+#: app/src/ui/window/on_screen.rs:222 app/src/ui/window/shortcuts.rs:328
 msgid "Search"
 msgstr "Search"
 
@@ -8660,179 +8660,179 @@ msgstr "Blocked {sender}"
 msgid "Could not block the sender: {reason}"
 msgstr "Could not block the sender: {reason}"
 
-#: app/src/ui/window/shortcuts.rs:234
+#: app/src/ui/window/shortcuts.rs:236
 msgid "Organizing"
 msgstr "Organising"
 
-#: app/src/ui/window/shortcuts.rs:295
+#: app/src/ui/window/shortcuts.rs:305
 msgid "Next or previous conversation"
 msgstr "Next or previous conversation"
 
-#: app/src/ui/window/shortcuts.rs:303
+#: app/src/ui/window/shortcuts.rs:313
 msgid "Open mailbox 1 to 9"
 msgstr "Open mailbox 1 to 9"
 
-#: app/src/ui/window/shortcuts.rs:325
+#: app/src/ui/window/shortcuts.rs:335
 msgid "Search from a text field"
 msgstr "Search from a text field"
 
-#: app/src/ui/window/shortcuts.rs:335
+#: app/src/ui/window/shortcuts.rs:345
 msgid "Check for mail"
 msgstr "Check for mail"
 
-#: app/src/ui/window/shortcuts.rs:343
+#: app/src/ui/window/shortcuts.rs:353
 msgid "Select all"
 msgstr "Select all"
 
-#: app/src/ui/window/shortcuts.rs:348
+#: app/src/ui/window/shortcuts.rs:358
 msgid "Clear the selection"
 msgstr "Clear the selection"
 
-#: app/src/ui/window/shortcuts.rs:353
+#: app/src/ui/window/shortcuts.rs:363
 msgid "Bigger or smaller text"
 msgstr "Bigger or smaller text"
 
-#: app/src/ui/window/shortcuts.rs:362
+#: app/src/ui/window/shortcuts.rs:372
 msgid "Open the menu of the conversation in focus"
 msgstr "Open the menu of the conversation in focus"
 
-#: app/src/ui/window/shortcuts.rs:367
+#: app/src/ui/window/shortcuts.rs:377
 msgid "Open the menu of the message in focus"
 msgstr "Open the menu of the message in focus"
 
-#: app/src/ui/window/shortcuts.rs:372
+#: app/src/ui/window/shortcuts.rs:382
 msgid "Open in a new window"
 msgstr "Open in a new window"
 
-#: app/src/ui/window/shortcuts.rs:377
+#: app/src/ui/window/shortcuts.rs:387
 msgid "Print"
 msgstr "Print"
 
-#: app/src/ui/window/shortcuts.rs:382
+#: app/src/ui/window/shortcuts.rs:392
 msgid "View source"
 msgstr "View source"
 
-#: app/src/ui/window/shortcuts.rs:387
+#: app/src/ui/window/shortcuts.rs:397
 msgid "Normal text size"
 msgstr "Normal text size"
 
-#: app/src/ui/window/shortcuts.rs:400
+#: app/src/ui/window/shortcuts.rs:410
 msgid "Move to trash"
 msgstr "Move to trash"
 
-#: app/src/ui/window/shortcuts.rs:416
+#: app/src/ui/window/shortcuts.rs:426
 msgid "Flag or unflag"
 msgstr "Flag or unflag"
 
-#: app/src/ui/window/shortcuts.rs:424
+#: app/src/ui/window/shortcuts.rs:434
 msgid "Flag colors"
 msgstr "Flag colours"
 
-#: app/src/ui/window/shortcuts.rs:437
+#: app/src/ui/window/shortcuts.rs:447
 msgid "Mark read or unread"
 msgstr "Mark read or unread"
 
-#: app/src/ui/window/shortcuts.rs:445
+#: app/src/ui/window/shortcuts.rs:455
 msgid "Mute or unmute"
 msgstr "Mute or unmute"
 
-#: app/src/ui/window/shortcuts.rs:476
+#: app/src/ui/window/shortcuts.rs:486
 msgid "Reply all"
 msgstr "Reply all"
 
-#: app/src/ui/window/shortcuts.rs:497
+#: app/src/ui/window/shortcuts.rs:507
 msgid "Attach files"
 msgstr "Attach files"
 
-#: app/src/ui/window/shortcuts.rs:502
+#: app/src/ui/window/shortcuts.rs:512
 msgid "Insert image"
 msgstr "Insert image"
 
-#: app/src/ui/window/shortcuts.rs:507
+#: app/src/ui/window/shortcuts.rs:517
 msgid "Bold, italic, link"
 msgstr "Bold, italic, link"
 
-#: app/src/ui/window/shortcuts.rs:516
+#: app/src/ui/window/shortcuts.rs:526
 msgid "Save draft"
 msgstr "Save draft"
 
-#: app/src/ui/window/shortcuts.rs:521
+#: app/src/ui/window/shortcuts.rs:531
 msgid "Show mail"
 msgstr "Show mail"
 
-#: app/src/ui/window/shortcuts.rs:526
+#: app/src/ui/window/shortcuts.rs:536
 msgid "Show the calendar"
 msgstr "Show the calendar"
 
-#: app/src/ui/window/shortcuts.rs:531
+#: app/src/ui/window/shortcuts.rs:541
 msgid "Go to today"
 msgstr "Go to today"
 
-#: app/src/ui/window/shortcuts.rs:536
+#: app/src/ui/window/shortcuts.rs:546
 msgid "Day, week, month or agenda"
 msgstr "Day, week, month or agenda"
 
-#: app/src/ui/window/shortcuts.rs:541
+#: app/src/ui/window/shortcuts.rs:551
 msgid "Previous or next"
 msgstr "Previous or next"
 
-#: app/src/ui/window/shortcuts.rs:546
+#: app/src/ui/window/shortcuts.rs:556
 msgid "Edit the event"
 msgstr "Edit the event"
 
-#: app/src/ui/window/shortcuts.rs:551
+#: app/src/ui/window/shortcuts.rs:561
 msgid "Show the event"
 msgstr "Show the event"
 
-#: app/src/ui/window/shortcuts.rs:556
+#: app/src/ui/window/shortcuts.rs:566
 msgid "Delete the event, with Undo"
 msgstr "Delete the event, with Undo"
 
-#: app/src/ui/window/shortcuts.rs:561
+#: app/src/ui/window/shortcuts.rs:571
 msgid "New event"
 msgstr "New event"
 
-#: app/src/ui/window/shortcuts.rs:566
+#: app/src/ui/window/shortcuts.rs:576
 msgid "Search the calendar"
 msgstr "Search the calendar"
 
-#: app/src/ui/window/shortcuts.rs:576
+#: app/src/ui/window/shortcuts.rs:586
 msgid "Undo, while its toast is still up"
 msgstr "Undo, while its toast is still up"
 
-#: app/src/ui/window/shortcuts.rs:581
+#: app/src/ui/window/shortcuts.rs:591
 msgid "Move the focused event a day earlier or later"
 msgstr "Move the focused event a day earlier or later"
 
-#: app/src/ui/window/shortcuts.rs:586
+#: app/src/ui/window/shortcuts.rs:596
 msgid "Move the focused event by 15 minutes"
 msgstr "Move the focused event by 15 minutes"
 
-#: app/src/ui/window/shortcuts.rs:591
+#: app/src/ui/window/shortcuts.rs:601
 msgid "Change when the focused event ends"
 msgstr "Change when the focused event ends"
 
-#: app/src/ui/window/shortcuts.rs:596
+#: app/src/ui/window/shortcuts.rs:606
 msgid "Change when the focused event starts"
 msgstr "Change when the focused event starts"
 
-#: app/src/ui/window/shortcuts.rs:601
+#: app/src/ui/window/shortcuts.rs:611
 msgid "Refresh the calendar"
 msgstr "Refresh the calendar"
 
-#: app/src/ui/window/shortcuts.rs:611
+#: app/src/ui/window/shortcuts.rs:621
 msgid "Keyboard shortcuts"
 msgstr "Keyboard shortcuts"
 
-#: app/src/ui/window/shortcuts.rs:616
+#: app/src/ui/window/shortcuts.rs:626
 msgid "Show or hide the assistant"
 msgstr "Show or hide the assistant"
 
-#: app/src/ui/window/shortcuts.rs:621
+#: app/src/ui/window/shortcuts.rs:631
 msgid "Close window"
 msgstr "Close window"
 
-#: app/src/ui/window/shortcuts.rs:802
+#: app/src/ui/window/shortcuts.rs:812
 msgid "Checking for mail"
 msgstr "Checking for mail"
 

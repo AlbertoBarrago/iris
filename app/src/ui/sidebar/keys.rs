@@ -46,7 +46,10 @@ pub fn route(key: gdk::Key, state: gdk::ModifierType, focus: Focus) -> Option<Li
 /// The list's own reading of `key`, or `None` for a key it leaves to
 /// GTK and the window, such as Ctrl+Tab or a letter.
 pub fn list_key(key: gdk::Key, state: gdk::ModifierType) -> Option<ListKey> {
-    let chord = gdk::ModifierType::CONTROL_MASK | gdk::ModifierType::ALT_MASK | gdk::ModifierType::SUPER_MASK;
+    let chord = gdk::ModifierType::CONTROL_MASK
+        | crate::ui::platform_keys::PRIMARY
+        | gdk::ModifierType::ALT_MASK
+        | gdk::ModifierType::SUPER_MASK;
     if state.intersects(chord) {
         return None;
     }

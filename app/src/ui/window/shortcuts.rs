@@ -21,6 +21,7 @@ use crate::compose::ReplyKind;
 use crate::offered::Filing;
 use crate::settings::Space;
 use crate::ui::conversation::{Action, ConversationView};
+use crate::ui::platform_keys;
 use crate::ui::thread_list::MENU_KEYS;
 
 /// Where a key works.
@@ -182,15 +183,16 @@ impl Key {
         let Some(wanted) = gdk::Key::from_name(name) else {
             return false;
         };
-        if modifiers.intersects(gdk::ModifierType::ALT_MASK | gdk::ModifierType::SUPER_MASK) {
+        // `<Control>` is Command on macOS (platform_keys.rs).
+        if modifiers.intersects(platform_keys::others()) {
             return false;
         }
         if control {
-            return modifiers.contains(gdk::ModifierType::CONTROL_MASK)
+            return modifiers.contains(platform_keys::PRIMARY)
                 && !modifiers.contains(gdk::ModifierType::SHIFT_MASK)
                 && pressed == wanted;
         }
-        if modifiers.contains(gdk::ModifierType::CONTROL_MASK) {
+        if modifiers.contains(platform_keys::PRIMARY) {
             return false;
         }
         match wanted.to_unicode().filter(|c| !c.is_control()) {
@@ -267,7 +269,11 @@ impl Shortcut {
                 .iter()
                 .all(|k| k.argument.is_some() && k.action == first.action)
         {
-            return format!("{}...{}", first.trigger, last.trigger);
+            return format!(
+                "{}...{}",
+                platform_keys::trigger(first.trigger),
+                platform_keys::trigger(last.trigger)
+            );
         }
         let mut triggers: Vec<&str> = Vec::new();
         for key in shown {
@@ -275,7 +281,11 @@ impl Shortcut {
                 triggers.push(key.trigger);
             }
         }
-        triggers.join(" ")
+        triggers
+            .iter()
+            .map(|t| platform_keys::trigger(t))
+            .collect::<Vec<_>>()
+            .join(" ")
     }
 }
 
@@ -743,7 +753,7 @@ fn chords(window: Place) -> gtk::ShortcutController {
     let controller = gtk::ShortcutController::new();
     for key in keys().filter(|k| !k.letter && k.place.reaches(window)) {
         let shortcut = gtk::Shortcut::new(
-            gtk::ShortcutTrigger::parse_string(key.trigger),
+            gtk::ShortcutTrigger::parse_string(&platform_keys::trigger(key.trigger)),
             Some(gtk::NamedAction::new(key.action)),
         );
         if let Some(argument) = key.argument {
@@ -1012,7 +1022,7 @@ impl MainWindow {
             return glib::Propagation::Proceed;
         };
         // In the message itself, Control keys select and copy its text.
-        if modifiers.contains(gdk::ModifierType::CONTROL_MASK) && self.reading_text() {
+        if modifiers.contains(platform_keys::PRIMARY) && self.reading_text() {
             return glib::Propagation::Proceed;
         }
         // Escape belongs to whatever is under it unless there is a
@@ -1124,7 +1134,7 @@ mod tests {
         let mut modifiers = gdk::ModifierType::empty();
         let mut name = trigger;
         for (prefix, mask) in [
-            ("<Control>", gdk::ModifierType::CONTROL_MASK),
+            ("<Control>", platform_keys::PRIMARY),
             ("<Shift>", gdk::ModifierType::SHIFT_MASK),
             ("<Alt>", gdk::ModifierType::ALT_MASK),
         ] {
@@ -1181,7 +1191,7 @@ mod tests {
     #[test]
     fn a_calendar_letter_ignores_alt_and_control() {
         assert_eq!(calendar_key(gdk::Key::t, gdk::ModifierType::empty()), Some(CalendarKey::Today));
-        assert_eq!(calendar_key(gdk::Key::t, gdk::ModifierType::CONTROL_MASK), None);
+        assert_eq!(calendar_key(gdk::Key::t, platform_keys::PRIMARY), None);
         assert_eq!(calendar_key(gdk::Key::_1, gdk::ModifierType::ALT_MASK), None);
         assert_eq!(calendar_key(gdk::Key::e, gdk::ModifierType::empty()), None);
     }
@@ -1231,7 +1241,7 @@ mod tests {
             Some(CalendarKey::Refresh)
         );
         assert_eq!(
-            calendar_key(gdk::Key::r, gdk::ModifierType::CONTROL_MASK),
+            calendar_key(gdk::Key::r, platform_keys::PRIMARY),
             Some(CalendarKey::Refresh)
         );
     }
@@ -1274,14 +1284,16 @@ mod tests {
                 .map(Shortcut::accelerators)
                 .unwrap()
         };
-        assert_eq!(line("Open mailbox 1 to 9"), "<Control>1...<Control>9");
+        // The dialog shows each platform's own modifier.
+        let on_platform = |text: &str| platform_keys::trigger(text).into_owned();
+        assert_eq!(line("Open mailbox 1 to 9"), on_platform("<Control>1...<Control>9"));
         assert_eq!(line("Move to trash"), "Delete numbersign");
         assert_eq!(
             line("Bigger or smaller text"),
-            "<Control>plus <Control>minus"
+            on_platform("<Control>plus <Control>minus")
         );
         assert_eq!(line("Search"), "slash");
-        assert_eq!(line("Search from a text field"), "<Control><Alt>f");
+        assert_eq!(line("Search from a text field"), on_platform("<Control><Alt>f"));
         assert_eq!(line("Day, week, month or agenda"), "d w m a");
         assert_eq!(line("Show the calendar"), "<Alt>2");
     }
@@ -1303,7 +1315,7 @@ mod tests {
     fn a_letter_is_the_character_it_types() {
         let none = gdk::ModifierType::empty();
         let shift = gdk::ModifierType::SHIFT_MASK;
-        let control = gdk::ModifierType::CONTROL_MASK;
+        let control = platform_keys::PRIMARY;
         let action = |key, modifiers| letter_for(key, modifiers).map(|k| k.action);
         assert_eq!(action(gdk::Key::e, none), Some("win.archive"));
         assert_eq!(action(gdk::Key::J, shift), None);

@@ -3214,7 +3214,8 @@ impl MainWindow {
         // The header in both spaces carries a button for this now (R12);
         // the menu item stays too, so Ctrl+J shows here as well.
         let assistant = gio::MenuItem::new(Some(&gettext("Assistant")), Some("win.assistant"));
-        assistant.set_attribute_value("accel", Some(&"<Control>j".to_variant()));
+        let accel = crate::ui::platform_keys::trigger("<Control>j").into_owned();
+        assistant.set_attribute_value("accel", Some(&accel.to_variant()));
         first.append_item(&assistant);
         first.append(Some(&gettext("Check for Mail")), Some("win.check"));
         first.append(Some(&gettext("Add Account…")), Some("win.add-account"));

@@ -29,6 +29,7 @@ pub mod list_feed;
 pub mod moving;
 pub mod narrow_header;
 pub mod permission;
+pub mod platform_keys;
 pub mod pgp;
 pub mod preferences;
 pub mod queued;

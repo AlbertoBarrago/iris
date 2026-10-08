@@ -363,7 +363,7 @@ async fn organize_archives_and_reports_what_changed() {
         .await;
     assert_eq!(
         done,
-        json!({"done": 1, "undo": "The user can press Ctrl+Z to undo this."})
+        json!({"done": 1, "undo": format!("The user can press {} to undo this.", super::UNDO_KEYS)})
     );
     assert!(!h.labels_of("m1").await.contains(&"INBOX".to_string()));
     assert_eq!(

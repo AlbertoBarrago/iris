@@ -298,11 +298,11 @@ impl Composer {
             .menu_model(&later)
             .dropdown_tooltip(gettext("Send Later"))
             .css_classes(["suggested-action"])
-            .tooltip_text(gettext("Send (Ctrl+Enter)"))
+            .tooltip_text(crate::ui::platform_keys::tip(gettext("Send (Ctrl+Enter)")))
             .build();
         let attach = gtk::Button::builder()
             .icon_name("mail-attachment-symbolic")
-            .tooltip_text(gettext("Attach Files (Ctrl+Shift+A)"))
+            .tooltip_text(crate::ui::platform_keys::tip(gettext("Attach Files (Ctrl+Shift+A)")))
             .build();
         let template_items = gio::Menu::new();
         let template_menu = gio::Menu::new();
@@ -879,7 +879,7 @@ impl Composer {
         let add = |trigger: &str, run: ComposerAction| {
             let weak = Rc::downgrade(self);
             shortcuts.add_shortcut(gtk::Shortcut::new(
-                gtk::ShortcutTrigger::parse_string(trigger),
+                gtk::ShortcutTrigger::parse_string(&crate::ui::platform_keys::trigger(trigger)),
                 Some(gtk::CallbackAction::new(move |_, _| {
                     if let Some(c) = weak.upgrade() {
                         run(&c);
@@ -917,7 +917,7 @@ impl Composer {
         ] {
             let weak = Rc::downgrade(self);
             formatting.add_shortcut(gtk::Shortcut::new(
-                gtk::ShortcutTrigger::parse_string(trigger),
+                gtk::ShortcutTrigger::parse_string(&crate::ui::platform_keys::trigger(trigger)),
                 Some(gtk::CallbackAction::new(move |_, _| {
                     let Some(c) = weak.upgrade() else {
                         return glib::Propagation::Proceed;
@@ -941,7 +941,7 @@ impl Composer {
                 return glib::Propagation::Proceed;
             };
             if !matches!(key, gdk::Key::Return | gdk::Key::KP_Enter)
-                || modifiers.contains(gdk::ModifierType::CONTROL_MASK)
+                || modifiers.contains(crate::ui::platform_keys::PRIMARY)
                 || !c.editor.enter()
             {
                 return glib::Propagation::Proceed;
@@ -1303,7 +1303,7 @@ impl Composer {
             }
         };
         self.send.set_sensitive(problem.is_none());
-        let tip = problem.unwrap_or_else(|| gettext("Send (Ctrl+Enter)"));
+        let tip = problem.unwrap_or_else(|| crate::ui::platform_keys::tip(gettext("Send (Ctrl+Enter)")));
         self.send.set_tooltip_text(Some(&tip));
     }
 
@@ -1767,14 +1767,14 @@ impl Composer {
         // Letters read better than the text-style icons at this size.
         let styles = group();
         for (markup, tip, tag) in [
-            ("<b>B</b>", gettext("Bold (Ctrl+B)"), "bold"),
-            ("<i>I</i>", gettext("Italic (Ctrl+I)"), "italic"),
+            ("<b>B</b>", crate::ui::platform_keys::tip(gettext("Bold (Ctrl+B)")), "bold"),
+            ("<i>I</i>", crate::ui::platform_keys::tip(gettext("Italic (Ctrl+I)")), "italic"),
             (
                 "<s>S</s>",
-                gettext("Strikethrough (Ctrl+Shift+X)"),
+                crate::ui::platform_keys::tip(gettext("Strikethrough (Ctrl+Shift+X)")),
                 "strike",
             ),
-            ("<tt>&lt;/&gt;</tt>", gettext("Code (Ctrl+E)"), "code"),
+            ("<tt>&lt;/&gt;</tt>", crate::ui::platform_keys::tip(gettext("Code (Ctrl+E)")), "code"),
         ] {
             let button = gtk::ToggleButton::builder()
                 .child(&label(markup))
@@ -1811,7 +1811,7 @@ impl Composer {
         button(
             &blocks,
             "iris-link-symbolic",
-            gettext("Link (Ctrl+K)"),
+            crate::ui::platform_keys::tip(gettext("Link (Ctrl+K)")),
         )
         .connect_clicked(move |_| {
             if let Some(c) = weak.upgrade() {
@@ -1821,17 +1821,17 @@ impl Composer {
         for (icon, tip, kind) in [
             (
                 "view-list-bullet-symbolic",
-                gettext("Bulleted List (Ctrl+Shift+8)"),
+                crate::ui::platform_keys::tip(gettext("Bulleted List (Ctrl+Shift+8)")),
                 BlockKind::Bullet,
             ),
             (
                 "view-list-ordered-symbolic",
-                gettext("Numbered List (Ctrl+Shift+7)"),
+                crate::ui::platform_keys::tip(gettext("Numbered List (Ctrl+Shift+7)")),
                 BlockKind::Numbered,
             ),
             (
                 "format-indent-more-symbolic",
-                gettext("Quote (Ctrl+Shift+9)"),
+                crate::ui::platform_keys::tip(gettext("Quote (Ctrl+Shift+9)")),
                 BlockKind::Quote,
             ),
         ] {
@@ -1848,7 +1848,7 @@ impl Composer {
         button(
             &extras,
             "image-x-generic-symbolic",
-            gettext("Insert Image (Ctrl+Shift+P)"),
+            crate::ui::platform_keys::tip(gettext("Insert Image (Ctrl+Shift+P)")),
         )
         .connect_clicked(move |_| {
             if let Some(c) = weak.upgrade() {
@@ -2271,7 +2271,7 @@ impl Composer {
             let Some(c) = weak.upgrade() else {
                 return glib::Propagation::Proceed;
             };
-            let paste = modifiers.contains(gdk::ModifierType::CONTROL_MASK)
+            let paste = modifiers.contains(crate::ui::platform_keys::PRIMARY)
                 && matches!(key, gdk::Key::v | gdk::Key::V);
             let clipboard = c.body.clipboard();
             let formats = clipboard.formats();

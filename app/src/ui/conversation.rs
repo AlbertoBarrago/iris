@@ -480,22 +480,22 @@ impl ConversationView {
         let buttons = Buttons {
             archive: button(
                 "iris-archive-symbolic",
-                gettext("Archive (E or Ctrl+Alt+A)"),
+                crate::ui::platform_keys::tip(gettext("Archive (E or Ctrl+Alt+A)")),
             ),
             trash: button("user-trash-symbolic", gettext("Move to Trash (Delete)")),
-            junk: button("mail-mark-junk-symbolic", gettext("Junk (Ctrl+Shift+J)")),
+            junk: button("mail-mark-junk-symbolic", crate::ui::platform_keys::tip(gettext("Junk (Ctrl+Shift+J)"))),
             read: button(
                 "mail-unread-symbolic",
-                gettext("Mark as Unread (Ctrl+Shift+U)"),
+                crate::ui::platform_keys::tip(gettext("Mark as Unread (Ctrl+Shift+U)")),
             ),
             star: {
                 let star = adw::SplitButton::builder()
                     .icon_name("iris-flag-outline-symbolic")
-                    .tooltip_text(gettext("Flag (Ctrl+Shift+L)"))
+                    .tooltip_text(crate::ui::platform_keys::tip(gettext("Flag (Ctrl+Shift+L)")))
                     .dropdown_tooltip(gettext("Choose Flag Color"))
                     .popover(&flag_colors())
                     .build();
-                name_with_shortcut(&star, &gettext("Flag (Ctrl+Shift+L)"));
+                name_with_shortcut(&star, &crate::ui::platform_keys::tip(gettext("Flag (Ctrl+Shift+L)")));
                 name_arrow(
                     &star,
                     &gettext("Choose Flag Color"),
@@ -503,12 +503,12 @@ impl ConversationView {
                 );
                 star
             },
-            reply: button("mail-reply-sender-symbolic", gettext("Reply (Ctrl+R)")),
+            reply: button("mail-reply-sender-symbolic", crate::ui::platform_keys::tip(gettext("Reply (Ctrl+R)"))),
             reply_all: button(
                 "mail-reply-all-symbolic",
-                gettext("Reply All (Ctrl+Shift+R)"),
+                crate::ui::platform_keys::tip(gettext("Reply All (Ctrl+Shift+R)")),
             ),
-            forward: button("mail-forward-symbolic", gettext("Forward (Ctrl+Shift+F)")),
+            forward: button("mail-forward-symbolic", crate::ui::platform_keys::tip(gettext("Forward (Ctrl+Shift+F)"))),
             edit: gtk::Button::builder()
                 .label(gettext("Edit Draft"))
                 .css_classes(["suggested-action"])
@@ -530,11 +530,11 @@ impl ConversationView {
         // and stays that way (set_detached).
         let assistant_toggle = gtk::ToggleButton::builder()
             .icon_name("iris-sparkle-symbolic")
-            .tooltip_text(gettext("Assistant (Ctrl+J)"))
+            .tooltip_text(crate::ui::platform_keys::tip(gettext("Assistant (Ctrl+J)")))
             .css_classes(["flat", "assistant-toggle"])
             .visible(false)
             .build();
-        name_with_shortcut(&assistant_toggle, &gettext("Assistant (Ctrl+J)"));
+        name_with_shortcut(&assistant_toggle, &crate::ui::platform_keys::tip(gettext("Assistant (Ctrl+J)")));
         let more = gio::Menu::new();
         // Only the Outbox turns these three on, and GTK leaves an item whose
         // action is off out of the menu rather than greying it.
@@ -1103,9 +1103,9 @@ impl ConversationView {
         let (junk_icon, junk_tip) = match folder {
             Some(Folder::Junk) => (
                 "mail-mark-notjunk-symbolic",
-                gettext("Not Junk (Ctrl+Shift+J)"),
+                crate::ui::platform_keys::tip(gettext("Not Junk (Ctrl+Shift+J)")),
             ),
-            _ => ("mail-mark-junk-symbolic", gettext("Junk (Ctrl+Shift+J)")),
+            _ => ("mail-mark-junk-symbolic", crate::ui::platform_keys::tip(gettext("Junk (Ctrl+Shift+J)"))),
         };
         self.buttons.junk.set_icon_name(junk_icon);
         self.buttons.junk.set_tooltip_text(Some(&junk_tip));
@@ -1787,8 +1787,8 @@ impl ConversationView {
             ));
         }
         let said = match starred {
-            true => gettext("Unflag (Ctrl+Shift+L)"),
-            false => gettext("Flag (Ctrl+Shift+L)"),
+            true => crate::ui::platform_keys::tip(gettext("Unflag (Ctrl+Shift+L)")),
+            false => crate::ui::platform_keys::tip(gettext("Flag (Ctrl+Shift+L)")),
         };
         star.set_tooltip_text(Some(&said));
         name_with_shortcut(star, &said);
@@ -2025,13 +2025,13 @@ fn name_arrow(split: &adw::SplitButton, said: &str, main: &str) {
 fn flag_colors() -> gtk::Popover {
     let row = gtk::Box::builder().spacing(2).build();
     for color in FlagColor::ALL {
-        let tip = fill(
+        let tip = crate::ui::platform_keys::tip(fill(
             &gettext("{color} (Ctrl+Alt+{number})"),
             &[
                 ("color", &color.name()),
                 ("number", &(color_index(color) + 1).to_string()),
             ],
-        );
+        ));
         let button = gtk::Button::builder()
             .icon_name("iris-flag-symbolic")
             .tooltip_text(&tip)
