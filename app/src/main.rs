@@ -25,6 +25,8 @@ mod images;
 mod keyring_plug;
 mod language;
 #[cfg(target_os = "macos")]
+mod macos_bundle;
+#[cfg(target_os = "macos")]
 mod macos_menu;
 mod language_names;
 mod locale_time;
@@ -111,6 +113,8 @@ fn macos_data_dirs() {
 fn main() -> glib::ExitCode {
     #[cfg(target_os = "macos")]
     macos_data_dirs();
+    #[cfg(target_os = "macos")]
+    macos_bundle::set_environment();
     // async-imap logs passwords and mail at trace level; `quiet` drops
     // those lines whatever RUST_LOG says.
     tracing_subscriber::util::SubscriberInitExt::init(mailrs_imap::quiet(
@@ -325,6 +329,8 @@ pub fn ensure_gtk() {
         gtk::init().expect("GTK starts on this display");
     }
     adw::init().expect("libadwaita starts");
+    #[cfg(target_os = "macos")]
+    macos_bundle::bind_toolkit_translations();
     if let Some(display) = gdk::Display::default() {
         gtk::IconTheme::for_display(&display)
             .add_resource_path("/io/github/AlbertoBarrago/Iris/icons");

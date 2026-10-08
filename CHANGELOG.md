@@ -12,6 +12,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 - Iris speaks Italian: choose Italiano under Language in Preferences.
 - On macOS, the app carries its translations, so Português and
   Italiano work there too.
+- Iris for macOS comes as a DMG that carries everything it needs, so it
+  installs on a Mac without Homebrew.
 - Drag the edge of the mailboxes, the message list or the assistant to
   make it wider or narrower; a double click puts it back. Iris remembers
   the widths and the window's size for the next start.

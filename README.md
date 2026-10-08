@@ -189,8 +189,8 @@ uses a tool from outside the app, and it is off until you pick a model.
 
 ## Install on macOS
 
-Test builds come as `Iris-<version>.dmg`. Open it and drag Iris onto
-Applications.
+Test builds come as `Iris-<version>.dmg`, for a Mac with Apple silicon and
+macOS 26 or later. Open it and drag Iris onto Applications.
 
 The DMG is signed with the author's own certificate, not yet with an Apple
 Developer ID, so macOS stops Iris the first time. Open it once, then go to
@@ -212,7 +212,9 @@ scripts/macos-install.sh          # build a release and install Iris.app
 ```
 
 `macos-install.sh` builds an app that loads GTK from Homebrew, so it runs on
-the Mac that built it. Short on disk, build with
+the Mac that built it. `scripts/macos-dmg.sh` builds the test DMG instead,
+in `target/dmg/`: the app carries GTK and its libraries inside, so it runs
+on a Mac without Homebrew, on the macOS Homebrew built them for or later. Short on disk, build with
 `CARGO_PROFILE_DEV_DEBUG=line-tables-only CARGO_INCREMENTAL=0`.
 
 On Linux, install the development packages, then build and install into
