@@ -84,6 +84,11 @@ pub fn present(
         OPEN.with(|open| *open.borrow_mut() = Some(dialog.downgrade()));
         dialog.connect_closed(|_| OPEN.with(|open| *open.borrow_mut() = None));
         dialog.present(None::<&gtk::Widget>);
+        // libadwaita leaves the window it makes for a dialog fixed in size;
+        // a Settings window on a Mac is one the person can resize.
+        if let Some(window) = dialog.root().and_downcast::<gtk::Window>() {
+            window.set_resizable(true);
+        }
     } else {
         dialog.present(Some(parent));
     }
