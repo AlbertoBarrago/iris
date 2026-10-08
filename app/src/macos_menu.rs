@@ -123,6 +123,12 @@ pub fn install(app: &Rc<App>, gio: &gio::Application) {
 /// Launchpad or Finder, sends a running app: class 'aevt', id 'rapp'.
 const CORE_EVENT_CLASS: u32 = u32::from_be_bytes(*b"aevt");
 const REOPEN_APPLICATION: u32 = u32::from_be_bytes(*b"rapp");
+/// The Apple event macOS sends the app that handles a URL scheme, such as
+/// a `mailto:` link clicked in a browser: class 'GURL', id 'GURL', with the
+/// URL as its direct object, '----'.
+const INTERNET_EVENT_CLASS: u32 = u32::from_be_bytes(*b"GURL");
+const GET_URL: u32 = u32::from_be_bytes(*b"GURL");
+const DIRECT_OBJECT: u32 = u32::from_be_bytes(*b"----");
 
 thread_local! {
     /// The handler, kept for the life of the app: the event manager does
@@ -149,6 +155,13 @@ fn listen_for_reopen(gio: &gio::Application) {
             forEventClass: CORE_EVENT_CLASS,
             andEventID: REOPEN_APPLICATION
         ];
+        let _: () = msg_send![
+            &*manager,
+            setEventHandler: &*reopener,
+            andSelector: sel!(handleGetURL:withReplyEvent:),
+            forEventClass: INTERNET_EVENT_CLASS,
+            andEventID: GET_URL
+        ];
     }
     REOPEN.with(|kept| kept.replace(Some(reopener)));
 }
@@ -169,6 +182,26 @@ define_class!(
         fn handle_reopen(&self, _event: &AnyObject, _reply: &AnyObject) {
             if let Some(app) = self.ivars().app.upgrade() {
                 app.activate();
+            }
+        }
+
+        /// A `mailto:` link opens a new message to its address, through
+        /// the same app action as `iris mailto:…` on Linux.
+        #[unsafe(method(handleGetURL:withReplyEvent:))]
+        fn handle_get_url(&self, event: &AnyObject, _reply: &AnyObject) {
+            let url: Option<Retained<objc2_foundation::NSString>> = unsafe {
+                let descriptor: Option<Retained<AnyObject>> =
+                    msg_send![event, paramDescriptorForKeyword: DIRECT_OBJECT];
+                descriptor.and_then(|d| msg_send![&*d, stringValue])
+            };
+            let Some(url) = url.map(|u| u.to_string()) else { return };
+            let Some(rest) = url.strip_prefix("mailto:") else {
+                tracing::warn!(url, "a URL Iris does not handle");
+                return;
+            };
+            let to = crate::mailto_recipient(rest);
+            if let Some(app) = self.ivars().app.upgrade() {
+                app.activate_action("compose-to", Some(&to.to_variant()));
             }
         }
     }
@@ -198,6 +231,15 @@ fn edit(selector: Sel, gtk_action: &str) {
     };
     // A widget without the action, such as a button, has nothing to edit.
     let _ = focus.activate_action(gtk_action, None::<&glib::Variant>);
+}
+
+/// Asks macOS to open `mailto:` links in Iris. macOS shows its own
+/// confirmation, and the choice can be undone in any mail app's settings.
+pub fn make_default_mail_app() {
+    let workspace = objc2_app_kit::NSWorkspace::sharedWorkspace();
+    let app = objc2_foundation::NSBundle::mainBundle().bundleURL();
+    let scheme = objc2_foundation::NSString::from_str("mailto");
+    workspace.setDefaultApplicationAtURL_toOpenURLsWithScheme_completionHandler(&app, &scheme, None);
 }
 
 /// Whether a mouse button is held down right now, whichever window has it.

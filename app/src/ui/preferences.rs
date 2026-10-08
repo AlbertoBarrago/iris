@@ -849,6 +849,20 @@ fn sync_page(app: &Rc<App>, pending: &Rc<RefCell<SyncConfig>>) -> adw::Preferenc
                 .build(),
         );
     }
+    #[cfg(target_os = "macos")]
+    {
+        let make = gtk::Button::builder()
+            .label(gettext("Make Default"))
+            .valign(gtk::Align::Center)
+            .build();
+        make.connect_clicked(|_| crate::macos_menu::make_default_mail_app());
+        let row = adw::ActionRow::builder()
+            .title(gettext("Default Mail App"))
+            .subtitle(gettext("Open email links from websites and other apps in Iris"))
+            .build();
+        row.add_suffix(&make);
+        startup.add(&row);
+    }
     page.add(&startup);
     page
 }

@@ -3083,7 +3083,7 @@ msgstr "Crittografia standard (TLS)"
 msgid "Not encrypted in transit"
 msgstr "Non cifrato durante il transito"
 
-#: app/src/render.rs:447 app/src/ui/composer/mod.rs:1693
+#: app/src/render.rs:447 app/src/ui/composer/mod.rs:1694
 msgid "{count} attachment"
 msgid_plural "{count} attachments"
 msgstr[0] "{count} allegato"
@@ -3301,7 +3301,7 @@ msgstr "Abbonamento Claude"
 #. The header in both spaces carries a button for this now (R12);
 #. the menu item stays too, so Ctrl+J shows here as well.
 #: app/src/settings/mod.rs:262 app/src/ui/assistant.rs:99
-#: app/src/ui/window.rs:3210
+#: app/src/ui/window.rs:3211
 msgid "Assistant"
 msgstr "Assistente"
 
@@ -3649,7 +3649,7 @@ msgstr "Novità della versione {version}"
 msgid "Check for Updates"
 msgstr "Controlla aggiornamenti"
 
-#: app/src/tray.rs:224 app/src/ui/window.rs:3226
+#: app/src/tray.rs:224 app/src/ui/window.rs:3227
 #: app/src/ui/window/shortcuts.rs:639
 msgid "Quit"
 msgstr "Esci"
@@ -3678,7 +3678,7 @@ msgstr "Sito web"
 msgid "License"
 msgstr "Licenza"
 
-#: app/src/ui/about.rs:212 app/src/ui/window.rs:3225
+#: app/src/ui/about.rs:212 app/src/ui/window.rs:3226
 msgid "About Iris"
 msgstr "Informazioni su Iris"
 
@@ -3820,8 +3820,8 @@ msgstr "Riprova"
 #: app/src/ui/calendar/editor.rs:183 app/src/ui/calendar/manage.rs:252
 #: app/src/ui/calendar/manage.rs:374 app/src/ui/calendar/manage.rs:417
 #: app/src/ui/calendar/scope.rs:92 app/src/ui/composer/editor.rs:343
-#: app/src/ui/composer/mod.rs:1561 app/src/ui/composer/mod.rs:1630
-#: app/src/ui/composer/mod.rs:1953 app/src/ui/composer/mod.rs:2404
+#: app/src/ui/composer/mod.rs:1562 app/src/ui/composer/mod.rs:1631
+#: app/src/ui/composer/mod.rs:1954 app/src/ui/composer/mod.rs:2405
 #: app/src/ui/confirm.rs:29 app/src/ui/rules.rs:445 app/src/ui/rules.rs:625
 #: app/src/ui/smart_editor.rs:150 app/src/ui/templates.rs:239
 #: app/src/ui/unsubscribe.rs:95 app/src/ui/vacation.rs:45 app/src/ui/when.rs:52
@@ -3944,7 +3944,7 @@ msgid "Iris keeps every message it downloads on this computer."
 msgstr "Iris conserva su questo computer ogni messaggio che scarica."
 
 #: app/src/ui/add_account.rs:1313 app/src/ui/add_account.rs:1314
-#: app/src/ui/preferences.rs:1126
+#: app/src/ui/preferences.rs:1140
 msgid "Days"
 msgstr "Giorni"
 
@@ -4068,7 +4068,7 @@ msgstr ""
 "Questo server non distingue i suoi messaggi, quindi Iris non può scaricarli "
 "in sicurezza."
 
-#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3293
+#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3294
 msgid "Summarize this conversation"
 msgstr "Riassumi questa conversazione"
 
@@ -4207,7 +4207,7 @@ msgid "Edit {server}"
 msgstr "Modifica {server}"
 
 #: app/src/ui/assistant_mcp_prefs.rs:121 app/src/ui/calendar/editor.rs:1639
-#: app/src/ui/composer/mod.rs:1729 app/src/ui/composer/recipients.rs:315
+#: app/src/ui/composer/mod.rs:1730 app/src/ui/composer/recipients.rs:315
 #: app/src/ui/window.rs:2995
 msgid "Remove"
 msgstr "Rimuovi"
@@ -4250,7 +4250,7 @@ msgstr ""
 "server via HTTP."
 
 #: app/src/ui/assistant_mcp_prefs.rs:254 app/src/ui/calendar/manage.rs:348
-#: app/src/ui/composer/mod.rs:2399 app/src/ui/smart_editor.rs:37
+#: app/src/ui/composer/mod.rs:2400 app/src/ui/smart_editor.rs:37
 #: app/src/ui/templates.rs:190
 msgid "Name"
 msgstr "Nome"
@@ -4286,7 +4286,7 @@ msgstr "Prova"
 
 #: app/src/ui/assistant_mcp_prefs.rs:341 app/src/ui/calendar/editor.rs:179
 #: app/src/ui/calendar/quick.rs:211 app/src/ui/calendar/scope.rs:111
-#: app/src/ui/composer/editor.rs:343 app/src/ui/composer/mod.rs:2404
+#: app/src/ui/composer/editor.rs:343 app/src/ui/composer/mod.rs:2405
 #: app/src/ui/dav_edit.rs:26 app/src/ui/rules.rs:438
 #: app/src/ui/smart_editor.rs:144 app/src/ui/templates.rs:233
 #: app/src/ui/vacation.rs:41 app/src/ui/window/arrange.rs:146
@@ -4701,7 +4701,7 @@ msgid "Declined"
 msgstr "Rifiutato"
 
 #: app/src/ui/calendar/block.rs:576 app/src/ui/calendar/words.rs:164
-#: app/src/ui/preferences.rs:959
+#: app/src/ui/preferences.rs:973
 msgid "{start}–{end}"
 msgstr "{start}-{end}"
 
@@ -4819,11 +4819,11 @@ msgstr "Data di fine"
 msgid "End time"
 msgstr "Ora di fine"
 
-#: app/src/ui/calendar/editor.rs:713 app/src/ui/preferences.rs:1088
+#: app/src/ui/calendar/editor.rs:713 app/src/ui/preferences.rs:1102
 msgid "Starts"
 msgstr "Inizio"
 
-#: app/src/ui/calendar/editor.rs:716 app/src/ui/preferences.rs:1090
+#: app/src/ui/calendar/editor.rs:716 app/src/ui/preferences.rs:1104
 msgid "Ends"
 msgstr "Fine"
 
@@ -4940,7 +4940,7 @@ msgstr "Condividi con gli invitati"
 msgid "Share {file} with the guests"
 msgstr "Condividi {file} con gli invitati"
 
-#: app/src/ui/calendar/editor.rs:1641 app/src/ui/composer/mod.rs:1733
+#: app/src/ui/calendar/editor.rs:1641 app/src/ui/composer/mod.rs:1734
 msgid "Remove {file}"
 msgstr "Rimuovi {file}"
 
@@ -5502,7 +5502,7 @@ msgstr "Tutto il giorno"
 
 #: app/src/ui/calendar/mod.rs:1699 app/src/ui/calendar/mod.rs:2811
 #: app/src/ui/calendar/sidebar.rs:314 app/src/ui/calendar/words.rs:373
-#: app/src/ui/preferences.rs:973 app/src/ui/preferences.rs:1134
+#: app/src/ui/preferences.rs:987 app/src/ui/preferences.rs:1148
 msgid "%a"
 msgstr "%a"
 
@@ -6074,12 +6074,12 @@ msgstr "Descrizione"
 msgid "Choose a Time…"
 msgstr "Scegli un orario…"
 
-#: app/src/ui/composer/mod.rs:299 app/src/ui/composer/mod.rs:1576
+#: app/src/ui/composer/mod.rs:299 app/src/ui/composer/mod.rs:1577
 #: app/src/ui/sidebar.rs:1141
 msgid "Send Later"
 msgstr "Invia più tardi"
 
-#: app/src/ui/composer/mod.rs:301 app/src/ui/composer/mod.rs:1306
+#: app/src/ui/composer/mod.rs:301 app/src/ui/composer/mod.rs:1307
 msgid "Send (Ctrl+Enter)"
 msgstr "Invia (Ctrl+Invio)"
 
@@ -6127,7 +6127,7 @@ msgstr "Copia conoscenza nascosta"
 msgid "Cc/Bcc"
 msgstr "Cc/Ccn"
 
-#: app/src/ui/composer/mod.rs:405 app/src/ui/composer/mod.rs:991
+#: app/src/ui/composer/mod.rs:405 app/src/ui/composer/mod.rs:992
 msgid "Show Cc and Bcc"
 msgstr "Mostra Cc e Ccn"
 
@@ -6156,264 +6156,264 @@ msgstr "Oggetto"
 msgid "Formatting"
 msgstr "Formattazione"
 
-#: app/src/ui/composer/mod.rs:523 app/src/ui/composer/mod.rs:1156
+#: app/src/ui/composer/mod.rs:523 app/src/ui/composer/mod.rs:1157
 msgid "Forwarded Message"
 msgstr "Messaggio inoltrato"
 
-#: app/src/ui/composer/mod.rs:989
+#: app/src/ui/composer/mod.rs:990
 msgid "Hide Cc and Bcc"
 msgstr "Nascondi Cc e Ccn"
 
-#: app/src/ui/composer/mod.rs:1074
+#: app/src/ui/composer/mod.rs:1075
 msgid "Remove Quoted Text"
 msgstr "Rimuovi testo citato"
 
-#: app/src/ui/composer/mod.rs:1075
+#: app/src/ui/composer/mod.rs:1076
 msgid "Do Not Forward the Original"
 msgstr "Non inoltrare l'originale"
 
-#: app/src/ui/composer/mod.rs:1185
+#: app/src/ui/composer/mod.rs:1186
 msgid "Quoted text removed"
 msgstr "Testo citato rimosso"
 
-#: app/src/ui/composer/mod.rs:1186
+#: app/src/ui/composer/mod.rs:1187
 msgid "Forwarded message removed"
 msgstr "Messaggio inoltrato rimosso"
 
-#: app/src/ui/composer/mod.rs:1285
+#: app/src/ui/composer/mod.rs:1286
 msgid "Scheduled to send {when}"
 msgstr "Invio programmato {when}"
 
-#: app/src/ui/composer/mod.rs:1296
+#: app/src/ui/composer/mod.rs:1297
 msgid "No account to send from."
 msgstr "Nessun account da cui inviare."
 
-#: app/src/ui/composer/mod.rs:1528
+#: app/src/ui/composer/mod.rs:1529
 msgid "Attachment Missing?"
 msgstr "Allegato mancante?"
 
-#: app/src/ui/composer/mod.rs:1530
+#: app/src/ui/composer/mod.rs:1531
 msgid "The message says “{sentence}” and carries no file."
 msgstr "Il messaggio dice “{sentence}” ma non contiene alcun file."
 
-#: app/src/ui/composer/mod.rs:1535
+#: app/src/ui/composer/mod.rs:1536
 msgid "Add Attachment"
 msgstr "Aggiungi allegato"
 
-#: app/src/ui/composer/mod.rs:1536
+#: app/src/ui/composer/mod.rs:1537
 msgid "Send Anyway"
 msgstr "Invia comunque"
 
-#: app/src/ui/composer/mod.rs:1554
+#: app/src/ui/composer/mod.rs:1555
 msgid "Send Without Encryption?"
 msgstr "Inviare senza cifratura?"
 
-#: app/src/ui/composer/mod.rs:1556
+#: app/src/ui/composer/mod.rs:1557
 msgid "This message was to go out encrypted, and it cannot be. {reason}"
 msgstr ""
 "Questo messaggio doveva essere inviato cifrato, ma non è possibile. {reason}"
 
-#: app/src/ui/composer/mod.rs:1562
+#: app/src/ui/composer/mod.rs:1563
 msgid "Send Readable"
 msgstr "Invia in chiaro"
 
-#: app/src/ui/composer/mod.rs:1577
+#: app/src/ui/composer/mod.rs:1578
 msgid "Iris sends it at this time while it runs, even in the tray."
 msgstr ""
 "Iris lo invia a quest'ora mentre è in esecuzione, anche nella barra di "
 "sistema."
 
-#: app/src/ui/composer/mod.rs:1578
+#: app/src/ui/composer/mod.rs:1579
 msgid "Schedule"
 msgstr "Programma"
 
-#: app/src/ui/composer/mod.rs:1611
+#: app/src/ui/composer/mod.rs:1612
 msgid "Draft saved, encrypted to your own key"
 msgstr "Bozza salvata, cifrata con la tua chiave"
 
-#: app/src/ui/composer/mod.rs:1613
+#: app/src/ui/composer/mod.rs:1614
 msgid "Draft saved"
 msgstr "Bozza salvata"
 
-#: app/src/ui/composer/mod.rs:1623
+#: app/src/ui/composer/mod.rs:1624
 msgid "Save as Draft?"
 msgstr "Salvare come bozza?"
 
-#: app/src/ui/composer/mod.rs:1625
+#: app/src/ui/composer/mod.rs:1626
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 "La bozza resta in Gmail, così puoi completarla più tardi su qualsiasi "
 "dispositivo."
 
-#: app/src/ui/composer/mod.rs:1629
+#: app/src/ui/composer/mod.rs:1630
 msgid "Discard"
 msgstr "Scarta"
 
-#: app/src/ui/composer/mod.rs:1631
+#: app/src/ui/composer/mod.rs:1632
 msgid "Save Draft"
 msgstr "Salva bozza"
 
-#: app/src/ui/composer/mod.rs:1652
+#: app/src/ui/composer/mod.rs:1653
 msgid "Attach Files"
 msgstr "Allega file"
 
-#: app/src/ui/composer/mod.rs:1688
+#: app/src/ui/composer/mod.rs:1689
 msgid "{files}  ·  {size}"
 msgstr "{files}  ·  {size}"
 
-#: app/src/ui/composer/mod.rs:1770
+#: app/src/ui/composer/mod.rs:1771
 msgid "Bold (Ctrl+B)"
 msgstr "Grassetto (Ctrl+B)"
 
-#: app/src/ui/composer/mod.rs:1771
+#: app/src/ui/composer/mod.rs:1772
 msgid "Italic (Ctrl+I)"
 msgstr "Corsivo (Ctrl+I)"
 
-#: app/src/ui/composer/mod.rs:1774
+#: app/src/ui/composer/mod.rs:1775
 msgid "Strikethrough (Ctrl+Shift+X)"
 msgstr "Barrato (Ctrl+Maiusc+X)"
 
-#: app/src/ui/composer/mod.rs:1777
+#: app/src/ui/composer/mod.rs:1778
 msgid "Code (Ctrl+E)"
 msgstr "Codice (Ctrl+E)"
 
-#: app/src/ui/composer/mod.rs:1814
+#: app/src/ui/composer/mod.rs:1815
 msgid "Link (Ctrl+K)"
 msgstr "Link (Ctrl+K)"
 
-#: app/src/ui/composer/mod.rs:1824
+#: app/src/ui/composer/mod.rs:1825
 msgid "Bulleted List (Ctrl+Shift+8)"
 msgstr "Elenco puntato (Ctrl+Maiusc+8)"
 
-#: app/src/ui/composer/mod.rs:1829
+#: app/src/ui/composer/mod.rs:1830
 msgid "Numbered List (Ctrl+Shift+7)"
 msgstr "Elenco numerato (Ctrl+Maiusc+7)"
 
-#: app/src/ui/composer/mod.rs:1834
+#: app/src/ui/composer/mod.rs:1835
 msgid "Quote (Ctrl+Shift+9)"
 msgstr "Citazione (Ctrl+Maiusc+9)"
 
-#: app/src/ui/composer/mod.rs:1851
+#: app/src/ui/composer/mod.rs:1852
 msgid "Insert Image (Ctrl+Shift+P)"
 msgstr "Inserisci immagine (Ctrl+Maiusc+P)"
 
-#: app/src/ui/composer/mod.rs:1861
+#: app/src/ui/composer/mod.rs:1862
 msgid "Paragraph"
 msgstr "Paragrafo"
 
-#: app/src/ui/composer/mod.rs:1862
+#: app/src/ui/composer/mod.rs:1863
 msgid "Heading 1"
 msgstr "Titolo 1"
 
-#: app/src/ui/composer/mod.rs:1863
+#: app/src/ui/composer/mod.rs:1864
 msgid "Heading 2"
 msgstr "Titolo 2"
 
-#: app/src/ui/composer/mod.rs:1864
+#: app/src/ui/composer/mod.rs:1865
 msgid "Heading 3"
 msgstr "Titolo 3"
 
-#: app/src/ui/composer/mod.rs:1865
+#: app/src/ui/composer/mod.rs:1866
 msgid "Code Block"
 msgstr "Blocco di codice"
 
-#: app/src/ui/composer/mod.rs:1879
+#: app/src/ui/composer/mod.rs:1880
 msgid "Turn Markdown into Formatting"
 msgstr "Converti Markdown in formattazione"
 
-#: app/src/ui/composer/mod.rs:1883
+#: app/src/ui/composer/mod.rs:1884
 msgid "Clear Formatting"
 msgstr "Cancella formattazione"
 
-#: app/src/ui/composer/mod.rs:1889
+#: app/src/ui/composer/mod.rs:1890
 msgid "Write in Markdown"
 msgstr "Scrivi in Markdown"
 
-#: app/src/ui/composer/mod.rs:1895 app/src/ui/composer/mod.rs:1899
+#: app/src/ui/composer/mod.rs:1896 app/src/ui/composer/mod.rs:1900
 msgid "More Formatting"
 msgstr "Altra formattazione"
 
-#: app/src/ui/composer/mod.rs:1936
+#: app/src/ui/composer/mod.rs:1937
 msgid "Add a Link"
 msgstr "Aggiungi un link"
 
-#: app/src/ui/composer/mod.rs:1942
+#: app/src/ui/composer/mod.rs:1943
 msgid "Text"
 msgstr "Testo"
 
-#: app/src/ui/composer/mod.rs:1954
+#: app/src/ui/composer/mod.rs:1955
 msgid "Add Link"
 msgstr "Aggiungi link"
 
-#: app/src/ui/composer/mod.rs:1990
+#: app/src/ui/composer/mod.rs:1991
 msgid "Markdown formatted"
 msgstr "Markdown formattato"
 
-#: app/src/ui/composer/mod.rs:2106
+#: app/src/ui/composer/mod.rs:2107
 msgid "Pasted as rich text"
 msgstr "Incollato come testo formattato"
 
-#: app/src/ui/composer/mod.rs:2107
+#: app/src/ui/composer/mod.rs:2108
 msgid "Paste as Plain Text"
 msgstr "Incolla come testo semplice"
 
-#: app/src/ui/composer/mod.rs:2141
+#: app/src/ui/composer/mod.rs:2142
 msgid "Editing as Markdown"
 msgstr "Modifica in Markdown"
 
-#: app/src/ui/composer/mod.rs:2174
+#: app/src/ui/composer/mod.rs:2175
 msgid "Images"
 msgstr "Immagini"
 
-#: app/src/ui/composer/mod.rs:2179
+#: app/src/ui/composer/mod.rs:2180
 msgid "Insert Image"
 msgstr "Inserisci immagine"
 
-#: app/src/ui/composer/mod.rs:2223
+#: app/src/ui/composer/mod.rs:2224
 msgid "Could not read the file: {reason}"
 msgstr "Impossibile leggere il file: {reason}"
 
-#: app/src/ui/composer/mod.rs:2298
+#: app/src/ui/composer/mod.rs:2299
 msgid "Could not paste the image"
 msgstr "Impossibile incollare l'immagine"
 
-#: app/src/ui/composer/mod.rs:2343
+#: app/src/ui/composer/mod.rs:2344
 msgid "No Templates Yet"
 msgstr "Ancora nessun modello"
 
-#: app/src/ui/composer/mod.rs:2393
+#: app/src/ui/composer/mod.rs:2394
 msgid "Save as Template"
 msgstr "Salva come modello"
 
-#: app/src/ui/composer/mod.rs:2395
+#: app/src/ui/composer/mod.rs:2396
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr "I segnaposto come {{first_name}} si compilano ogni volta che lo usi."
 
-#: app/src/ui/composer/mod.rs:2418 app/src/ui/templates.rs:280
+#: app/src/ui/composer/mod.rs:2419 app/src/ui/templates.rs:280
 msgid "Give the template a name"
 msgstr "Dai un nome al modello"
 
-#: app/src/ui/composer/mod.rs:2426
+#: app/src/ui/composer/mod.rs:2427
 msgid "Template saved"
 msgstr "Modello salvato"
 
-#: app/src/ui/composer/mod.rs:2429
+#: app/src/ui/composer/mod.rs:2430
 msgid "Template not saved: {reason}"
 msgstr "Modello non salvato: {reason}"
 
-#: app/src/ui/composer/mod.rs:2499
+#: app/src/ui/composer/mod.rs:2500
 msgid "This looks like Markdown"
 msgstr "Sembra Markdown"
 
-#: app/src/ui/composer/mod.rs:2505
+#: app/src/ui/composer/mod.rs:2506
 msgid "Format"
 msgstr "Formatta"
 
-#: app/src/ui/composer/mod.rs:2506
+#: app/src/ui/composer/mod.rs:2507
 msgid "Turn the Markdown into rich text"
 msgstr "Converti il Markdown in testo formattato"
 
-#: app/src/ui/composer/mod.rs:2512 app/src/ui/composer/mod.rs:2516
+#: app/src/ui/composer/mod.rs:2513 app/src/ui/composer/mod.rs:2517
 msgid "Dismiss"
 msgstr "Chiudi"
 
@@ -6930,7 +6930,7 @@ msgstr "Impossibile eliminare l'indirizzo: {reason}"
 msgid "Allow Hide My Email"
 msgstr "Consenti Nascondi la mia email"
 
-#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3341
+#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3342
 msgid "Add an account first"
 msgstr "Aggiungi prima un account"
 
@@ -7251,7 +7251,7 @@ msgid "All Files"
 msgstr "Tutti i file"
 
 #: app/src/ui/key_import.rs:213 app/src/ui/key_import.rs:217
-#: app/src/ui/window.rs:3752
+#: app/src/ui/window.rs:3753
 msgid "Close"
 msgstr "Chiudi"
 
@@ -7723,89 +7723,101 @@ msgstr "Cerca una nuova versione una volta al giorno"
 msgid "Updates"
 msgstr "Aggiornamenti"
 
+#: app/src/ui/preferences.rs:855
+msgid "Make Default"
+msgstr "Rendi predefinita"
+
+#: app/src/ui/preferences.rs:860
+msgid "Default Mail App"
+msgstr "App di posta predefinita"
+
 #: app/src/ui/preferences.rs:861
+msgid "Open email links from websites and other apps in Iris"
+msgstr "Apri in Iris i link email di siti web e altre app"
+
+#: app/src/ui/preferences.rs:875
 msgid "Senders Who May Load Images"
 msgstr "Mittenti che possono caricare immagini"
 
-#: app/src/ui/preferences.rs:862 app/src/ui/preferences.rs:870
+#: app/src/ui/preferences.rs:876 app/src/ui/preferences.rs:884
 msgid "Nobody yet"
 msgstr "Ancora nessuno"
 
-#: app/src/ui/preferences.rs:872
+#: app/src/ui/preferences.rs:886
 msgid "{count} sender"
 msgid_plural "{count} senders"
 msgstr[0] "{count} mittente"
 msgstr[1] "{count} mittenti"
 
-#: app/src/ui/preferences.rs:882
+#: app/src/ui/preferences.rs:896
 msgid "Anyone at this domain"
 msgstr "Chiunque di questo dominio"
 
-#: app/src/ui/preferences.rs:884
+#: app/src/ui/preferences.rs:898
 msgid "This address"
 msgstr "Questo indirizzo"
 
-#: app/src/ui/preferences.rs:889
+#: app/src/ui/preferences.rs:903
 msgid "Stop Loading Images from This Sender"
 msgstr "Smetti di caricare immagini da questo mittente"
 
-#: app/src/ui/preferences.rs:896
+#: app/src/ui/preferences.rs:910
 msgid "Stop loading images from {sender}"
 msgstr "Smetti di caricare immagini da {sender}"
 
-#: app/src/ui/preferences.rs:966
+#: app/src/ui/preferences.rs:980
 msgid "Monday to Friday"
 msgstr "Dal lunedì al venerdì"
 
-#: app/src/ui/preferences.rs:967
+#: app/src/ui/preferences.rs:981
 msgid "Every day of the week"
 msgstr "Tutti i giorni della settimana"
 
-#: app/src/ui/preferences.rs:968
+#: app/src/ui/preferences.rs:982
 msgid "No days"
 msgstr "Nessun giorno"
 
-#: app/src/ui/preferences.rs:975
+#: app/src/ui/preferences.rs:989
 msgid ", "
 msgstr ", "
 
-#: app/src/ui/preferences.rs:977
+#: app/src/ui/preferences.rs:991
 msgid "{time}, {days}"
 msgstr "{time}, {days}"
 
-#: app/src/ui/preferences.rs:1041
+#: app/src/ui/preferences.rs:1055
 msgid "Week Starts On"
 msgstr "La settimana inizia di"
 
-#: app/src/ui/preferences.rs:1046
+#: app/src/ui/preferences.rs:1060
 msgid "Automatic follows the locale's own first day of the week"
 msgstr "Automatico segue il primo giorno della settimana della lingua locale"
 
-#: app/src/ui/preferences.rs:1062
+#: app/src/ui/preferences.rs:1076
 msgid "Working Hours"
 msgstr "Orario di lavoro"
 
-#: app/src/ui/preferences.rs:1080
+#: app/src/ui/preferences.rs:1094
 msgid "Hours"
 msgstr "Orario"
 
-#: app/src/ui/preferences.rs:1121
+#: app/src/ui/preferences.rs:1135
 msgid "–"
 msgstr "–"
 
-#: app/src/ui/preferences.rs:1205
+#: app/src/ui/preferences.rs:1219
 msgid "Follow System"
 msgstr "Segui il sistema"
 
-#: app/src/ui/preferences.rs:1209
+#: app/src/ui/preferences.rs:1223
 msgid "Language"
 msgstr "Lingua"
 
-#: app/src/ui/preferences.rs:1210
+#: app/src/ui/preferences.rs:1224
 msgid "Iris shows a new language after a restart"
 msgstr "Iris mostra una nuova lingua dopo il riavvio"
 
-#: app/src/ui/preferences.rs:1282
+#: app/src/ui/preferences.rs:1296
 msgid "No signature"
 msgstr "Nessuna firma"
 
@@ -8057,7 +8069,7 @@ msgstr "Firma…"
 msgid "Rules…"
 msgstr "Regole…"
 
-#: app/src/ui/sidebar.rs:1841 app/src/ui/window.rs:3217
+#: app/src/ui/sidebar.rs:1841 app/src/ui/window.rs:3218
 msgid "Hide My Email…"
 msgstr "Nascondi la mia email…"
 
@@ -8742,47 +8754,47 @@ msgstr "{account} rimosso"
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: app/src/ui/window.rs:3197
+#: app/src/ui/window.rs:3198
 msgid "Refresh"
 msgstr "Aggiorna"
 
-#: app/src/ui/window.rs:3201
+#: app/src/ui/window.rs:3202
 msgid "Show Declined Events"
 msgstr "Mostra eventi rifiutati"
 
-#: app/src/ui/window.rs:3216
+#: app/src/ui/window.rs:3217
 msgid "New Smart Mailbox…"
 msgstr "Nuova casella smart…"
 
-#: app/src/ui/window.rs:3223 app/src/ui/window/shortcuts.rs:616
+#: app/src/ui/window.rs:3224 app/src/ui/window/shortcuts.rs:616
 msgid "Preferences"
 msgstr "Impostazioni"
 
-#: app/src/ui/window.rs:3224
+#: app/src/ui/window.rs:3225
 msgid "Keyboard Shortcuts"
 msgstr "Abbreviazioni da tastiera"
 
-#: app/src/ui/window.rs:3232 app/src/ui/window.rs:3234
+#: app/src/ui/window.rs:3233 app/src/ui/window.rs:3235
 msgid "Main Menu"
 msgstr "Menu principale"
 
-#: app/src/ui/window.rs:3616
+#: app/src/ui/window.rs:3617
 msgid "Open a message from the person first"
 msgstr "Apri prima un messaggio della persona"
 
-#: app/src/ui/window.rs:3692
+#: app/src/ui/window.rs:3693
 msgid "Iris shows the new language after a restart"
 msgstr "Iris mostra la nuova lingua dopo il riavvio"
 
-#: app/src/ui/window.rs:3694 app/src/update/mod.rs:130
+#: app/src/ui/window.rs:3695 app/src/update/mod.rs:130
 msgid "Restart"
 msgstr "Riavvia"
 
-#: app/src/ui/window.rs:3727
+#: app/src/ui/window.rs:3728
 msgid "Messages That Will Not Download"
 msgstr "Messaggi che non si scaricano"
 
-#: app/src/ui/window.rs:3729
+#: app/src/ui/window.rs:3730
 msgid ""
 "Iris could not download these from {address}'s server. It tries again at "
 "each check, except for a message too large to download."

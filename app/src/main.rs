@@ -296,7 +296,7 @@ fn path_from_variant(parameter: &glib::Variant) -> Option<std::path::PathBuf> {
 }
 
 /// The address part of a `mailto:` URI, percent-decoded.
-fn mailto_recipient(rest: &str) -> String {
+pub(crate) fn mailto_recipient(rest: &str) -> String {
     let address = rest.split('?').next().unwrap_or(rest);
     let bytes = address.as_bytes();
     let mut out = Vec::with_capacity(bytes.len());
