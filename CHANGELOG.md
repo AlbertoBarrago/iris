@@ -5,6 +5,10 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+## 1.0.1 (2026-10-08)
+
+The first release of Iris for macOS.
+
 ### New
 
 - Fold a sidebar section, such as Favorites or Accounts, by clicking its
