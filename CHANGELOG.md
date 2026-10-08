@@ -13,6 +13,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 - On macOS, the app carries its translations, so Português and
   Italiano work there too.
 
+### Improved
+
+- On macOS, Preferences opens in a window of its own, which you can move
+  and resize.
+
 ### Fixed
 
 - On macOS, closing the window with the red button no longer freezes

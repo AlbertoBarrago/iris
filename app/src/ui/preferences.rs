@@ -36,6 +36,12 @@ pub fn present(
     parent: &impl IsA<gtk::Widget>,
     signature_of: Option<&str>,
 ) -> adw::PreferencesDialog {
+    // In a window of its own, Preferences could open twice; the second
+    // ask brings the open one forward instead.
+    if let Some(open) = OPEN.with(|open| open.borrow().as_ref().and_then(|weak| weak.upgrade())) {
+        open.present(None::<&gtk::Widget>);
+        return open;
+    }
     let settings = app.settings();
     let offered: Vec<(Account, Offers)> = accounts
         .iter()
@@ -68,8 +74,25 @@ pub fn present(
             tracing::warn!(error = %err, "could not apply the sync settings");
         }
     });
-    dialog.present(Some(parent));
+    // On macOS, Preferences is a window of its own, as Settings is in
+    // every Mac app, which the person moves and resizes. Presented with
+    // no parent, libadwaita puts the dialog in a separate window and
+    // takes its content size as the window's starting size.
+    if cfg!(target_os = "macos") {
+        dialog.set_content_width(760);
+        dialog.set_content_height(720);
+        OPEN.with(|open| *open.borrow_mut() = Some(dialog.downgrade()));
+        dialog.connect_closed(|_| OPEN.with(|open| *open.borrow_mut() = None));
+        dialog.present(None::<&gtk::Widget>);
+    } else {
+        dialog.present(Some(parent));
+    }
     dialog
+}
+
+thread_local! {
+    /// Preferences while it is open in a window of its own, on macOS.
+    static OPEN: RefCell<Option<glib::WeakRef<adw::PreferencesDialog>>> = const { RefCell::new(None) };
 }
 
 /// Shows Preferences on the page with this name, such as "assistant".
