@@ -147,6 +147,9 @@ mod imp {
         pub(super) authenticate: RefCell<Vec<AuthenticateHandler>>,
         pub(super) tick: RefCell<Option<gtk::TickCallbackId>>,
         pub(super) uri: RefCell<Option<String>>,
+        /// The last placement `follow` logged, so the debug log gets one
+        /// line per change rather than one per frame.
+        pub(super) logged: RefCell<String>,
     }
 
     impl Default for WebView {
@@ -171,6 +174,7 @@ mod imp {
                 authenticate: RefCell::new(Vec::new()),
                 tick: RefCell::new(None),
                 uri: RefCell::new(None),
+                logged: RefCell::new(String::new()),
             }
         }
     }
@@ -644,10 +648,21 @@ impl WebView {
             imp.window.set(address);
         }
         let Some(placement) = place::measure(self.upcast_ref()) else {
+            self.log_placement(|| "hidden: no part shows".to_string());
             clip.setHidden(true);
             return;
         };
         let (dx, dy) = self.native().map(|native| native.surface_transform()).unwrap_or((0.0, 0.0));
+        self.log_placement(|| {
+            format!(
+                "full {:?} visible {:?} surface ({dx}, {dy}) content {:?} flipped {} holes {:?}",
+                placement.full,
+                placement.visible,
+                content.bounds().size,
+                content.isFlipped(),
+                placement.covers,
+            )
+        });
         let visible = &placement.visible;
         let (x, y) = (f64::from(visible.x()) + dx, f64::from(visible.y()) + dy);
         let (width, height) = (f64::from(visible.width()), f64::from(visible.height()));
@@ -691,6 +706,22 @@ impl WebView {
         if clip.isHidden() {
             clip.setHidden(false);
         }
+    }
+
+    /// Logs where the page went, at debug level, when it differs from the
+    /// last line logged. A page drawn over a GTK dialog or left short of
+    /// its widget is a wrong placement, and this is what shows which.
+    fn log_placement(&self, line: impl FnOnce() -> String) {
+        if !tracing::enabled!(tracing::Level::DEBUG) {
+            return;
+        }
+        let line = line();
+        if *self.imp().logged.borrow() == line {
+            return;
+        }
+        let view = self.as_ptr() as usize;
+        tracing::debug!(view = format!("{view:#x}"), "web view placed: {line}");
+        self.imp().logged.replace(line);
     }
 
     /// Gives the keys to the page, or takes them back for GTK, when GTK's

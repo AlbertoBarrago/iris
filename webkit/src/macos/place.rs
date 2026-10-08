@@ -17,7 +17,7 @@ use objc2_app_kit::NSView;
 use objc2_core_foundation::{CGPoint, CGRect, CGSize};
 use objc2_core_graphics::CGPath;
 use objc2_foundation::NSPoint;
-use objc2_quartz_core::{CAShapeLayer, kCAFillRuleEvenOdd};
+use objc2_quartz_core::CAShapeLayer;
 
 /// Containers whose children are drawn on top of one another, later ones
 /// above earlier ones. A child drawn after the one that holds the page
@@ -57,6 +57,8 @@ pub(crate) struct Placement {
     /// The widgets GTK draws over the page, whole, each with the radius of
     /// its corners. Parts of them may lie outside `visible`.
     pub(crate) holes: Vec<Hole>,
+    /// Each hole's widget and bounds, for the debug log.
+    pub(crate) covers: Vec<String>,
 }
 
 /// Measures `widget` against its native (the window it is drawn in).
@@ -70,6 +72,7 @@ pub(crate) fn measure(widget: &gtk::Widget) -> Option<Placement> {
     let full = widget.compute_bounds(native)?;
     let mut visible = full;
     let mut holes = Vec::new();
+    let mut covers = Vec::new();
     let mut child = widget.clone();
     while let Some(parent) = child.parent() {
         if let Some(bounds) = parent.compute_bounds(native) {
@@ -95,6 +98,15 @@ pub(crate) fn measure(widget: &gtk::Widget) -> Option<Placement> {
                         ),
                         radius: corner_radius(&above, &bounds),
                     });
+                    covers.push(format!(
+                        "{} in {} at ({}, {}) {}x{}",
+                        above.type_().name(),
+                        parent.type_().name(),
+                        bounds.x(),
+                        bounds.y(),
+                        bounds.width(),
+                        bounds.height()
+                    ));
                 }
                 later = above.next_sibling();
             }
@@ -107,7 +119,7 @@ pub(crate) fn measure(widget: &gtk::Widget) -> Option<Placement> {
     if visible.width() < 1.0 || visible.height() < 1.0 {
         return None;
     }
-    Some(Placement { full, visible, holes })
+    Some(Placement { full, visible, holes, covers })
 }
 
 pub(crate) struct ClipIvars {
@@ -167,9 +179,16 @@ impl Clip {
         this
     }
 
-    /// Cuts the page to `holes`, given in the clip's coordinates. A layer
-    /// mask with an even-odd path leaves the holes see-through; `hitTest`
-    /// above sends their clicks on to GTK.
+    /// Cuts the page to `holes`, given in the clip's coordinates. The
+    /// mask is the clip's bounds less every hole; `hitTest` above sends
+    /// the holes' clicks on to GTK.
+    ///
+    /// Holes overlap: the event card sits under any dialog opened over the
+    /// message. The mask used to be the bounds and the holes in one
+    /// even-odd path, which fills a point covered by two holes again, so
+    /// the page came back over the dialog where the card was. Subtracting
+    /// the holes, drawn all the same way round so they join, cannot do
+    /// that.
     pub(crate) fn set_holes(&self, holes: Vec<Hole>) {
         // The mask is drawn to the clip's size, so a resize redraws it.
         let bounds = self.bounds();
@@ -185,8 +204,9 @@ impl Clip {
             unsafe { layer.setMask(None) };
         } else {
             unsafe {
+                let page = objc2_core_graphics::CGMutablePath::new();
+                objc2_core_graphics::CGMutablePath::add_rect(Some(&page), std::ptr::null(), bounds);
                 let path = objc2_core_graphics::CGMutablePath::new();
-                objc2_core_graphics::CGMutablePath::add_rect(Some(&path), std::ptr::null(), bounds);
                 for hole in &holes {
                     // A corner radius past half the side makes Core Graphics
                     // refuse the rectangle.
@@ -199,10 +219,14 @@ impl Clip {
                         radius,
                     );
                 }
+                let shown = CGPath::new_copy_by_subtracting_path(
+                    Some(page.as_ref() as &CGPath),
+                    Some(path.as_ref() as &CGPath),
+                    false,
+                );
                 let mask = CAShapeLayer::new();
                 mask.setFrame(bounds);
-                mask.setPath(Some(path.as_ref() as &CGPath));
-                mask.setFillRule(kCAFillRuleEvenOdd);
+                mask.setPath(shown.as_deref());
                 layer.setMask(Some(&mask));
             }
         }
