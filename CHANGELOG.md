@@ -5,6 +5,13 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### Fixed
+
+- On macOS, closing the window with the red button no longer leaves Iris
+  stuck now and then, with neither the window nor the Dock answering.
+- The composer's From, To and Subject labels sit level with the words
+  beside them.
+
 ## 1.0.4 (2026-10-08)
 
 ### Fixed

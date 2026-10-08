@@ -2579,9 +2579,10 @@ fn line() -> gtk::Separator {
 /// One header row: its label in the shared column, its field beside it.
 ///
 /// `column` holds every label to one width, so the fields all start at the
-/// same edge however long the labels are. The label sits at the top of the
-/// row rather than its middle, because a Cc row whose chips wrap grows
-/// downwards and the label belongs on the first line either way.
+/// same edge however long the labels are. The label shares the first
+/// line's baseline with the field, so its words sit level with what is
+/// typed beside them, and stays on that line when a Cc row's chips wrap
+/// and the row grows downwards.
 fn field(label: &str, widget: &impl IsA<gtk::Widget>, column: &gtk::SizeGroup) -> gtk::Box {
     let row = gtk::Box::builder()
         .spacing(0)
@@ -2590,9 +2591,10 @@ fn field(label: &str, widget: &impl IsA<gtk::Widget>, column: &gtk::SizeGroup) -
     let label = gtk::Label::builder()
         .label(label)
         .xalign(1.0)
-        .valign(gtk::Align::Start)
+        .valign(gtk::Align::BaselineFill)
         .css_classes(["dim-label", "composer-label"])
         .build();
+    widget.as_ref().set_valign(gtk::Align::BaselineFill);
     column.add_widget(&label);
     labelled_by(widget, &label);
     row.append(&label);

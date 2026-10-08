@@ -219,8 +219,6 @@ row.account-heading:hover .account-options,
 .composer-field > .composer-label {
   min-width: 4.2em;
   padding-right: 0.85em;
-  /* Enough to drop the label onto the first line of its field. */
-  margin-top: 0.42em;
   font-size: 0.94em;
 }
 /* GTK gives entries and dropdown buttons padding of their own, which would
