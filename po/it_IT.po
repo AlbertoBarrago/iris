@@ -1504,50 +1504,6 @@ msgstr "Leggo un file di una skill"
 msgid "Running a command in the sandbox"
 msgstr "Eseguo un comando nella sandbox"
 
-#: app/src/contacts.rs:96
-msgid "from mail"
-msgstr "dalla posta"
-
-#: app/src/contacts.rs:118
-msgid "{account} and {count} more"
-msgid_plural "{account} and {count} more"
-msgstr[0] "{account} e {count} altro"
-msgstr[1] "{account} e altri {count}"
-
-#: app/src/contacts.rs:131
-msgid "contact in {accounts}"
-msgstr "contatto in {accounts}"
-
-#: app/src/contacts.rs:159
-msgid "Save {name} to contacts in {account}?"
-msgstr "Salvare {name} nei contatti di {account}?"
-
-#: app/src/contacts.rs:163
-msgid "Save {count} person to contacts in {account}?"
-msgid_plural "Save {count} people to contacts in {account}?"
-msgstr[0] "Salvare {count} persona nei contatti di {account}?"
-msgstr[1] "Salvare {count} persone nei contatti di {account}?"
-
-#: app/src/contacts.rs:212
-msgid "Saved {name} to contacts in {account}"
-msgstr "{name} salvato nei contatti di {account}"
-
-#: app/src/contacts.rs:216
-msgid "Saved {count} person to contacts in {account}"
-msgid_plural "Saved {count} people to contacts in {account}"
-msgstr[0] "{count} persona salvata nei contatti di {account}"
-msgstr[1] "{count} persone salvate nei contatti di {account}"
-
-#: app/src/contacts.rs:228
-msgid "Could not save {name} to contacts in {account}"
-msgstr "Impossibile salvare {name} nei contatti di {account}"
-
-#: app/src/contacts.rs:232
-msgid "Could not save {count} person to contacts in {account}"
-msgid_plural "Could not save {count} people to contacts in {account}"
-msgstr[0] "Impossibile salvare {count} persona nei contatti di {account}"
-msgstr[1] "Impossibile salvare {count} persone nei contatti di {account}"
-
 #: app/src/core.rs:208
 msgid ""
 "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then "
@@ -8637,6 +8593,50 @@ msgstr "Scegli un orario nel futuro"
 msgid "On {date}, {sender} wrote:"
 msgstr "Il giorno {date}, {sender} ha scritto:"
 
+#: appcore/src/contacts.rs:96
+msgid "from mail"
+msgstr "dalla posta"
+
+#: appcore/src/contacts.rs:118
+msgid "{account} and {count} more"
+msgid_plural "{account} and {count} more"
+msgstr[0] "{account} e {count} altro"
+msgstr[1] "{account} e altri {count}"
+
+#: appcore/src/contacts.rs:131
+msgid "contact in {accounts}"
+msgstr "contatto in {accounts}"
+
+#: appcore/src/contacts.rs:159
+msgid "Save {name} to contacts in {account}?"
+msgstr "Salvare {name} nei contatti di {account}?"
+
+#: appcore/src/contacts.rs:163
+msgid "Save {count} person to contacts in {account}?"
+msgid_plural "Save {count} people to contacts in {account}?"
+msgstr[0] "Salvare {count} persona nei contatti di {account}?"
+msgstr[1] "Salvare {count} persone nei contatti di {account}?"
+
+#: appcore/src/contacts.rs:212
+msgid "Saved {name} to contacts in {account}"
+msgstr "{name} salvato nei contatti di {account}"
+
+#: appcore/src/contacts.rs:216
+msgid "Saved {count} person to contacts in {account}"
+msgid_plural "Saved {count} people to contacts in {account}"
+msgstr[0] "{count} persona salvata nei contatti di {account}"
+msgstr[1] "{count} persone salvate nei contatti di {account}"
+
+#: appcore/src/contacts.rs:228
+msgid "Could not save {name} to contacts in {account}"
+msgstr "Impossibile salvare {name} nei contatti di {account}"
+
+#: appcore/src/contacts.rs:232
+msgid "Could not save {count} person to contacts in {account}"
+msgid_plural "Could not save {count} people to contacts in {account}"
+msgstr[0] "Impossibile salvare {count} persona nei contatti di {account}"
+msgstr[1] "Impossibile salvare {count} persone nei contatti di {account}"
+
 #: appcore/src/notify.rs:111 appcore/src/notify.rs:150
 msgid "{count} new message"
 msgid_plural "{count} new messages"
@@ -9074,6 +9074,10 @@ msgstr "Non letto"
 #: domain/src/smart.rs:78
 msgid "Is flagged"
 msgstr "Contrassegnato"
+
+#: ffi/src/compose.rs:100
+msgid "Add an account to write mail."
+msgstr "Aggiungi un account per scrivere."
 
 #: render/src/calendar_words.rs:72
 msgid "{date} · {start}–{end}"

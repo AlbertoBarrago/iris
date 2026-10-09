@@ -12,6 +12,7 @@ mailrs-domain.workspace = true
 mailrs-gmail.workspace = true
 mailrs-mime.workspace = true
 mailrs-render.workspace = true
+mailrs-store.workspace = true
 mailrs-sync.workspace = true
 ammonia.workspace = true
 base64.workspace = true

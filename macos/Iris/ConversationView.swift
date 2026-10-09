@@ -35,14 +35,14 @@ struct ConversationView: View {
             // Reply and Forward arrive with the composer.
             ToolbarItemGroup {
                 Group {
-                    Button(tr("Reply"), systemImage: "arrowshape.turn.up.left") {}
+                    Button(tr("Reply"), systemImage: "arrowshape.turn.up.left") { answer(.reply) }
                         .keyboardShortcut("r", modifiers: .command)
-                    Button(tr("Reply All"), systemImage: "arrowshape.turn.up.left.2") {}
+                    Button(tr("Reply All"), systemImage: "arrowshape.turn.up.left.2") { answer(.replyAll) }
                         .keyboardShortcut("r", modifiers: [.command, .shift])
-                    Button(tr("Forward"), systemImage: "arrowshape.turn.up.right") {}
+                    Button(tr("Forward"), systemImage: "arrowshape.turn.up.right") { answer(.forward) }
                         .keyboardShortcut("f", modifiers: [.command, .shift])
                 }
-                .disabled(true)
+                .disabled(model.openThread == nil)
             }
             ToolbarItemGroup {
                 Group {
@@ -71,6 +71,14 @@ struct ConversationView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSColor.systemColorsDidChangeNotification)) { _ in
             model.theme = PageTheme.current(dark: colorScheme == .dark)
         }
+    }
+}
+
+extension ConversationView {
+    /// Opens a composer on a reply to, or a forward of, the open conversation.
+    func answer(_ kind: ComposeRequest.Kind) {
+        guard let key = model.openThread else { return }
+        model.composeAsked = ComposeRequest(kind: kind, account: key.account, thread: key.thread)
     }
 }
 

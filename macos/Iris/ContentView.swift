@@ -5,6 +5,7 @@ import SwiftUI
 struct ContentView: View {
     @Environment(MailModel.self) private var model
     @Environment(\.undoManager) private var undoManager
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         NavigationSplitView {
@@ -26,6 +27,12 @@ struct ContentView: View {
         }
         .animation(.snappy, value: model.toast)
         .onAppear { model.undoManager = undoManager }
+        .onChange(of: model.composeAsked) {
+            if let request = model.composeAsked {
+                openWindow(id: "compose", value: request)
+                model.composeAsked = nil
+            }
+        }
         .onChange(of: undoManager) { model.undoManager = undoManager }
         .alert("Iris could not read the mail", isPresented: .constant(model.problem != nil)) {
             Button("OK") {}

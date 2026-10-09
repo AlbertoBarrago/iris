@@ -1499,50 +1499,6 @@ msgstr "A ler um ficheiro de uma competência"
 msgid "Running a command in the sandbox"
 msgstr "A correr um comando na área isolada"
 
-#: app/src/contacts.rs:96
-msgid "from mail"
-msgstr "do correio"
-
-#: app/src/contacts.rs:118
-msgid "{account} and {count} more"
-msgid_plural "{account} and {count} more"
-msgstr[0] "{account} e mais {count}"
-msgstr[1] "{account} e mais {count}"
-
-#: app/src/contacts.rs:131
-msgid "contact in {accounts}"
-msgstr "contacto em {accounts}"
-
-#: app/src/contacts.rs:159
-msgid "Save {name} to contacts in {account}?"
-msgstr "Guardar {name} nos contactos de {account}?"
-
-#: app/src/contacts.rs:163
-msgid "Save {count} person to contacts in {account}?"
-msgid_plural "Save {count} people to contacts in {account}?"
-msgstr[0] "Guardar {count} pessoa nos contactos de {account}?"
-msgstr[1] "Guardar {count} pessoas nos contactos de {account}?"
-
-#: app/src/contacts.rs:212
-msgid "Saved {name} to contacts in {account}"
-msgstr "Guardado nos contactos de {account}: {name}"
-
-#: app/src/contacts.rs:216
-msgid "Saved {count} person to contacts in {account}"
-msgid_plural "Saved {count} people to contacts in {account}"
-msgstr[0] "{count} pessoa guardada nos contactos de {account}"
-msgstr[1] "{count} pessoas guardadas nos contactos de {account}"
-
-#: app/src/contacts.rs:228
-msgid "Could not save {name} to contacts in {account}"
-msgstr "Não foi possível guardar {name} nos contactos de {account}"
-
-#: app/src/contacts.rs:232
-msgid "Could not save {count} person to contacts in {account}"
-msgid_plural "Could not save {count} people to contacts in {account}"
-msgstr[0] "Não foi possível guardar {count} pessoa nos contactos de {account}"
-msgstr[1] "Não foi possível guardar {count} pessoas nos contactos de {account}"
-
 #: app/src/core.rs:208
 msgid ""
 "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then "
@@ -8616,6 +8572,50 @@ msgstr "Escolha uma hora no futuro"
 msgid "On {date}, {sender} wrote:"
 msgstr "A {date}, {sender} escreveu:"
 
+#: appcore/src/contacts.rs:96
+msgid "from mail"
+msgstr "do correio"
+
+#: appcore/src/contacts.rs:118
+msgid "{account} and {count} more"
+msgid_plural "{account} and {count} more"
+msgstr[0] "{account} e mais {count}"
+msgstr[1] "{account} e mais {count}"
+
+#: appcore/src/contacts.rs:131
+msgid "contact in {accounts}"
+msgstr "contacto em {accounts}"
+
+#: appcore/src/contacts.rs:159
+msgid "Save {name} to contacts in {account}?"
+msgstr "Guardar {name} nos contactos de {account}?"
+
+#: appcore/src/contacts.rs:163
+msgid "Save {count} person to contacts in {account}?"
+msgid_plural "Save {count} people to contacts in {account}?"
+msgstr[0] "Guardar {count} pessoa nos contactos de {account}?"
+msgstr[1] "Guardar {count} pessoas nos contactos de {account}?"
+
+#: appcore/src/contacts.rs:212
+msgid "Saved {name} to contacts in {account}"
+msgstr "Guardado nos contactos de {account}: {name}"
+
+#: appcore/src/contacts.rs:216
+msgid "Saved {count} person to contacts in {account}"
+msgid_plural "Saved {count} people to contacts in {account}"
+msgstr[0] "{count} pessoa guardada nos contactos de {account}"
+msgstr[1] "{count} pessoas guardadas nos contactos de {account}"
+
+#: appcore/src/contacts.rs:228
+msgid "Could not save {name} to contacts in {account}"
+msgstr "Não foi possível guardar {name} nos contactos de {account}"
+
+#: appcore/src/contacts.rs:232
+msgid "Could not save {count} person to contacts in {account}"
+msgid_plural "Could not save {count} people to contacts in {account}"
+msgstr[0] "Não foi possível guardar {count} pessoa nos contactos de {account}"
+msgstr[1] "Não foi possível guardar {count} pessoas nos contactos de {account}"
+
 #: appcore/src/notify.rs:111 appcore/src/notify.rs:150
 msgid "{count} new message"
 msgid_plural "{count} new messages"
@@ -9053,6 +9053,12 @@ msgstr "Está por ler"
 #: domain/src/smart.rs:78
 msgid "Is flagged"
 msgstr "Está marcada"
+
+#: ffi/src/compose.rs:100
+#, fuzzy
+#| msgid "Add an account first"
+msgid "Add an account to write mail."
+msgstr "Adicione primeiro uma conta"
 
 #: render/src/calendar_words.rs:72
 msgid "{date} · {start}–{end}"

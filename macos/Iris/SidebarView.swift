@@ -23,7 +23,7 @@ struct SidebarView: View {
                                 MailboxRow(item: item).tag(item.key)
                             }
                         } label: {
-                            AccountLine(item: account.line)
+                            AccountLine(item: account.line, isOpen: open(account.line.key))
                         }
                     }
                 } header: {
@@ -89,6 +89,9 @@ struct AccountGroup: Identifiable {
 struct AccountLine: View {
     @Environment(MailModel.self) private var model
     let item: SidebarItem
+    /// Whether the account's mailboxes show; a click on the line folds
+    /// or unfolds them, and does nothing else.
+    @Binding var isOpen: Bool
     @State private var hovering = false
 
     var body: some View {
@@ -99,13 +102,27 @@ struct AccountLine: View {
             if let (symbol, words) = state {
                 Image(systemName: symbol).foregroundStyle(.secondary).help(words)
             }
+            // The account's menu, offered under the pointer as the GTK
+            // sidebar's options button was; a right click opens it too.
+            Menu {
+                menu
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .opacity(hovering ? 1 : 0)
+            .help(tr("Account options"))
         }
-        .padding(.vertical, 2)
-        .padding(.horizontal, 4)
-        .background(RoundedRectangle(cornerRadius: 6).fill(hovering ? Color.primary.opacity(0.07) : .clear))
+        .contentShape(Rectangle())
+        .onTapGesture { isOpen.toggle() }
         .onHover { hovering = $0 }
         .help(item.title)
-        .contextMenu {
+        .contextMenu { menu }
+    }
+
+    @ViewBuilder private var menu: some View {
             Button(tr("Check for Mail")) {
                 if let id = item.accountId { model.checkAccount(id) }
             }
@@ -126,7 +143,6 @@ struct AccountLine: View {
                 Button(tr("Remove Account…")) {}
             }
             .disabled(true)
-        }
     }
 
     /// The mark beside an account whose sync needs attention.

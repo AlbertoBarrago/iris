@@ -22,15 +22,12 @@ app/src/assistant/sources/skills/sandbox.rs
 app/src/assistant/sources/skills/shell.rs
 app/src/assistant/sources/web.rs
 app/src/assistant/turn.rs
-appcore/src/compose.rs
-app/src/contacts.rs
 app/src/core.rs
 app/src/event_reminders/notice.rs
 app/src/format.rs
 app/src/language_names.rs
 app/src/macos_menu.rs
 app/src/main.rs
-appcore/src/notify.rs
 app/src/offered.rs
 app/src/open_thread/run/translation.rs
 app/src/permission.rs
@@ -40,7 +37,6 @@ app/src/protection/draft.rs
 app/src/rules.rs
 app/src/search.rs
 app/src/servers.rs
-appcore/src/settings/mod.rs
 app/src/smime.rs
 app/src/templates.rs
 app/src/translation.rs
@@ -71,7 +67,6 @@ app/src/ui/calendar/scope.rs
 app/src/ui/calendar/shown.rs
 app/src/ui/calendar/sidebar.rs
 app/src/ui/calendar/time_grid.rs
-render/src/calendar_words.rs
 app/src/ui/composer/editor.rs
 app/src/ui/composer/mod.rs
 app/src/ui/composer/recipients.rs
@@ -96,8 +91,6 @@ app/src/ui/preferences.rs
 app/src/ui/queued.rs
 app/src/ui/rules.rs
 app/src/ui/sidebar.rs
-view/src/done.rs
-view/src/sections.rs
 app/src/ui/signature_source.rs
 app/src/ui/smart_editor.rs
 app/src/ui/templates.rs
@@ -135,6 +128,10 @@ app/src/ui/window/shortcuts.rs
 app/src/ui/window/spaces.rs
 app/src/unsubscribe_page.rs
 app/src/unsubscribe_page/webkit.rs
+appcore/src/compose.rs
+appcore/src/contacts.rs
+appcore/src/notify.rs
+appcore/src/settings/mod.rs
 domain/src/calendar/clock.rs
 domain/src/category.rs
 domain/src/invitation.rs
@@ -143,6 +140,8 @@ domain/src/lib.rs
 domain/src/sign_in_page.rs
 domain/src/smart.rs
 domain/src/translate.rs
+ffi/src/compose.rs
+render/src/calendar_words.rs
 render/src/conversation.rs
 render/src/format.rs
 sync/src/account/pop3.rs
@@ -170,3 +169,5 @@ sync/src/settings.rs
 sync/src/sign_in.rs
 sync/src/sign_in/browser.rs
 sync/src/triage.rs
+view/src/done.rs
+view/src/sections.rs

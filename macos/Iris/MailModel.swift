@@ -311,6 +311,108 @@ final class MailModel {
         perform(selectionIsRead ? .markUnread : .markRead)
     }
 
+    // MARK: Writing mail
+
+    /// Messages Undo Send brought back, until their composer takes them.
+    private var kept: [UUID: ComposeDraft] = [:]
+    /// The message waiting out its Undo Send delay, with its key.
+    private var sending: (UUID, ComposeDraft)?
+
+    /// Every address the accounts send as.
+    func senders() async throws -> [Sender] {
+        guard let mail else { return [] }
+        return try await Task.detached { try mail.senders() }.value
+    }
+
+    /// The draft a composer opens on, made by the core.
+    func startDraft(_ request: ComposeRequest) async throws -> ComposeDraft {
+        guard let mail else { throw CoreError.Store(tr("Add an account to write mail.")) }
+        let account = request.account ?? openThread?.account
+        return try await Task.detached { () throws -> ComposeDraft in
+            switch request.kind {
+            case .reply, .replyAll, .forward:
+                guard let account = request.account, let thread = request.thread else {
+                    return try mail.newDraft(accountId: account)
+                }
+                let mode: ReplyMode = request.kind == .reply ? .reply : request.kind == .replyAll ? .replyAll : .forward
+                return try mail.replyDraft(accountId: account, threadId: thread, mode: mode)
+            default:
+                return try mail.newDraft(accountId: account)
+            }
+        }.value
+    }
+
+    /// Saves a composer's draft on the server.
+    func saveDraft(_ draft: ComposeDraft) async throws -> ComposeDraft {
+        guard let mail else { return draft }
+        return try await Task.detached { try mail.saveDraft(composed: draft) }.value
+    }
+
+    /// Deletes the server's copy of a discarded draft, when there is one.
+    func discardDraft(_ draft: ComposeDraft) {
+        guard let mail else { return }
+        Task.detached { mail.deleteDraft(composed: draft) }
+    }
+
+    /// People a recipient field could mean.
+    func suggest(_ field: String, account: Int64) async -> [Suggestion] {
+        guard let mail else { return [] }
+        return await Task.detached { mail.suggest(field: field, accountId: account) }.value
+    }
+
+    /// Shows `words` in the toast corner.
+    func say(_ words: String) {
+        toast = Toast(words: words, undo: false)
+    }
+
+    /// The message Undo Send kept under `key`, once.
+    func takeKept(_ key: UUID) -> ComposeDraft? {
+        kept.removeValue(forKey: key)
+    }
+
+    /// Asks the window to open a composer; ContentView carries it out,
+    /// since only a view can open a window.
+    var composeAsked: ComposeRequest?
+
+    /// Sends `draft` after the Undo Send delay, saying so in a toast with
+    /// Undo, which brings the message back in a composer instead.
+    func send(_ draft: ComposeDraft) {
+        let key = UUID()
+        sending = (key, draft)
+        toast = Toast(words: tr("Sending…"), undo: true, undoSend: key)
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(5))
+            guard let (waiting, draft) = sending, waiting == key, let mail else { return }
+            sending = nil
+            Task.detached {
+                let said: String
+                do {
+                    said = try mail.send(composed: draft)
+                } catch {
+                    said = "\(error)"
+                    await MainActor.run {
+                        // Not sent: the message comes back to be fixed.
+                        self.kept[key] = draft
+                        self.composeAsked = ComposeRequest(kind: .restore, restore: key)
+                    }
+                }
+                await MainActor.run {
+                    self.toast = Toast(words: said, undo: false)
+                    self.refresh()
+                }
+            }
+        }
+    }
+
+    /// Stops a message waiting to go and brings it back in its composer.
+    func undoSend(_ key: UUID) {
+        guard let (waiting, draft) = sending, waiting == key else { return }
+        sending = nil
+        kept[key] = draft
+        toast = nil
+        composeAsked = ComposeRequest(kind: .restore, restore: key)
+    }
+
     /// Reverses the newest mail action.
     func undo() {
         guard let mail else { return }
@@ -361,7 +463,14 @@ final class MailModel {
                     if self.selectedMailbox == key, self.category == category { self.listing = listing }
                 }
             } catch {
-                await MainActor.run { self.problem = "\(error)" }
+                // A mailbox that left the sidebar, such as a flag color
+                // with nothing left under it, gives way to the first one
+                // rather than an alert.
+                await MainActor.run {
+                    if self.selectedMailbox == key {
+                        self.selectedMailbox = self.sidebar.first { $0.kind == "mailbox" }?.key
+                    }
+                }
             }
         }
     }
@@ -407,6 +516,8 @@ struct Toast: Equatable {
     let id = UUID()
     let words: String
     let undo: Bool
+    /// Set while the toast stands for a message waiting to go.
+    var undoSend: UUID? = nil
 }
 
 /// A conversation, by the account it belongs to and its id.

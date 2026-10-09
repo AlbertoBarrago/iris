@@ -6,7 +6,7 @@ use mailrs_domain::translate::{fill, fill_plural, gettext};
 use mailrs_domain::{AccountId, Address};
 use mailrs_store::contacts::Suggestion;
 
-use crate::format::AccountName;
+use mailrs_render::format::AccountName;
 
 /// The most account dots one suggestion shows. The tooltip names them all.
 pub const MOST_DOTS: usize = 3;

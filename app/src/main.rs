@@ -10,7 +10,7 @@ mod assistant;
 use mailrs_appcore::attachcheck;
 use mailrs_render::clock as clock_format;
 use mailrs_appcore::compose;
-mod contacts;
+use mailrs_appcore::contacts;
 mod core;
 mod demo;
 mod diff;

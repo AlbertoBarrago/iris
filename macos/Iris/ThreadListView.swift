@@ -66,7 +66,9 @@ struct ThreadListView: View {
             ToolbarItemGroup {
                 Button(tr("Check for Mail"), systemImage: "arrow.clockwise") { model.checkNow() }
                 Button(tr("Search"), systemImage: "magnifyingglass") {}
-                Button(tr("New Message"), systemImage: "square.and.pencil") {}
+                Button(tr("New Message"), systemImage: "square.and.pencil") {
+                    model.composeAsked = ComposeRequest(kind: .new)
+                }
             }
         }
     }
@@ -250,7 +252,9 @@ struct ToastView: View {
         HStack(spacing: 14) {
             Text(toast.words).fontWeight(.semibold)
             if toast.undo {
-                Button(tr("Undo")) { model.undo(); model.dismissToast() }
+                Button(tr("Undo")) {
+                    if let key = toast.undoSend { model.undoSend(key) } else { model.undo(); model.dismissToast() }
+                }
                     .buttonStyle(.borderless)
                     .fontWeight(.semibold)
             }

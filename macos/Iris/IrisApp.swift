@@ -22,6 +22,18 @@ struct IrisApp: App {
                 .task { model.open() }
         }
         .defaultSize(width: 1100, height: 720)
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                Button(tr("New Message")) { model.composeAsked = ComposeRequest(kind: .new) }
+                    .keyboardShortcut("n")
+            }
+        }
+        WindowGroup(id: "compose", for: ComposeRequest.self) { $request in
+            if let request {
+                ComposeView(request: request).environment(model)
+            }
+        }
+        .defaultSize(width: 720, height: 620)
     }
 }
 

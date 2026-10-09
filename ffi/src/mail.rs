@@ -29,7 +29,7 @@ use crate::CoreError;
 /// The engine, once `Mail::start_sync` started it. Mail actions and
 /// listings that need the server look accounts up here.
 #[derive(Default)]
-struct Running(Mutex<Option<Arc<SyncEngine>>>);
+pub(crate) struct Running(Mutex<Option<Arc<SyncEngine>>>);
 
 impl Running {
     fn current(&self) -> Option<Arc<SyncEngine>> {
@@ -177,16 +177,18 @@ pub struct MailboxListing {
 #[derive(uniffi::Object)]
 pub struct Mail {
     runtime: tokio::runtime::Runtime,
-    db: Db,
+    pub(crate) db: Db,
     /// The folder the store sits in, which the sync lock goes in too.
     dir: PathBuf,
-    running: Arc<Running>,
+    pub(crate) running: Arc<Running>,
     /// Held while this front end syncs, so the GTK app cannot.
     lock: Mutex<Option<SyncLock>>,
     mailboxes: Arc<Mailboxes<Running>>,
     actions: Arc<MailActions<Running>>,
     /// The mailbox behind each key the last sidebar handed out.
     keys: Mutex<HashMap<String, Mailbox>>,
+    /// Everyone a recipient field can offer, read once.
+    pub(crate) people: Mutex<Option<Arc<Vec<mailrs_store::contacts::Suggestion>>>>,
 }
 
 #[uniffi::export]
@@ -212,6 +214,7 @@ impl Mail {
             runtime,
             db,
             keys: Mutex::new(HashMap::new()),
+            people: Mutex::new(None),
         })
     }
 
@@ -363,7 +366,7 @@ impl Mail {
             .get(index as usize)
             .cloned()
             .ok_or_else(|| CoreError::Store("That attachment is not in the message.".into()))?;
-        let data = self.fetch_part(account_id, message_id, part.part_id.clone())?;
+        let data = self.fetch_part(account_id, message_id, handle(&part))?;
         Ok(FilePart {
             filename: part.filename,
             mime_type: part.mime_type,
@@ -382,7 +385,7 @@ impl Mail {
         else {
             return Ok(None);
         };
-        let data = self.fetch_part(account_id, message_id, part.part_id.clone())?;
+        let data = self.fetch_part(account_id, message_id, handle(&part))?;
         Ok(Some(FilePart {
             filename: part.filename,
             mime_type: part.mime_type,
@@ -505,13 +508,17 @@ impl Mail {
     /// The conversations of the mailbox `key` names, narrowed to the
     /// category `category` names when it is an inbox's.
     pub fn list(&self, key: String, category: Option<String>) -> Result<MailboxListing, CoreError> {
-        let mailbox = self
-            .keys
-            .lock()
-            .unwrap_or_else(|p| p.into_inner())
-            .get(&key)
-            .cloned()
-            .ok_or_else(|| CoreError::Store("That mailbox is no longer in the sidebar.".into()))?;
+        // The sidebar may be in the middle of being read again, as it is
+        // when the engine's first news comes in right at start; reading it
+        // once more settles which mailbox the key names.
+        let mailbox = match self.mailbox(&key) {
+            Some(mailbox) => mailbox,
+            None => {
+                self.sidebar()?;
+                self.mailbox(&key)
+                    .ok_or_else(|| CoreError::Store("That mailbox is no longer in the sidebar.".into()))?
+            }
+        };
         let category = category
             .as_deref()
             .and_then(Category::from_key)
@@ -560,14 +567,14 @@ impl Mail {
 
 impl Mail {
     /// The body the store holds for a message, which names its files.
-    fn stored_body(&self, account_id: i64, message_id: &str) -> Result<mailrs_domain::MessageBody, CoreError> {
+    pub(crate) fn stored_body(&self, account_id: i64, message_id: &str) -> Result<mailrs_domain::MessageBody, CoreError> {
         let (db, id) = (self.db.clone(), message_id.to_string());
         self.run(async move { db.read(move |c| mailrs_store::bodies::peek_body(c, account_id, &id)).await })?
             .ok_or_else(|| CoreError::Store("The message has not been fetched yet.".into()))
     }
 
     /// One part of a message, through the account's sync.
-    fn fetch_part(&self, account_id: i64, message_id: String, part_path: String) -> Result<Vec<u8>, CoreError> {
+    pub(crate) fn fetch_part(&self, account_id: i64, message_id: String, part_path: String) -> Result<Vec<u8>, CoreError> {
         let sync = self
             .running
             .account(account_id)
@@ -580,7 +587,7 @@ impl Mail {
     /// code needs the large stacks those threads get
     /// (`mailrs_sync::WORKER_STACK`): run on the Swift thread that called,
     /// an action overflowed its stack and took the app down.
-    fn run<T: Send + 'static>(&self, work: impl std::future::Future<Output = T> + Send + 'static) -> T {
+    pub(crate) fn run<T: Send + 'static>(&self, work: impl std::future::Future<Output = T> + Send + 'static) -> T {
         self.runtime
             .block_on(self.runtime.spawn(work))
             .unwrap_or_else(|err| std::panic::resume_unwind(err.into_panic()))
@@ -625,6 +632,12 @@ fn what_changed(event: &ChangeEvent) -> &'static str {
         ChangeEvent::NewMail { .. } => "mail",
         _ => "threads",
     }
+}
+
+/// What the server fetches an attachment by: its own handle where it gives
+/// one, as the GTK app asks, else the part's path.
+fn handle(part: &mailrs_domain::Attachment) -> String {
+    part.attachment_id.clone().unwrap_or_else(|| part.part_id.clone())
 }
 
 fn target(thread: ThreadRef) -> Target {
