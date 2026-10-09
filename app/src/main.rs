@@ -105,10 +105,14 @@ fn macos_data_dirs() {
 fn main() -> glib::ExitCode {
     macos_data_dirs();
     macos_bundle::set_environment();
+    macos_bundle::add_tool_paths();
     // async-imap logs passwords and mail at trace level; `quiet` drops
     // those lines whatever RUST_LOG says.
     tracing_subscriber::util::SubscriberInitExt::init(mailrs_imap::quiet(
         tracing_subscriber::fmt()
+            // The same lines go to the log file, where colors would be
+            // escape codes.
+            .with_ansi(false)
             .with_writer(logging::Writer {
                 details: logging::details(),
             })
@@ -145,6 +149,9 @@ fn main() -> glib::ExitCode {
             }
         };
     }
+    // Opened past the bridge, which runs on every one of Claude Code's
+    // turns and has nothing worth keeping.
+    logging::open_file();
     // The language is the one preference read before the window exists,
     // because every word after this point has to come out in it. A demo
     // keeps its own throwaway preferences, but not this one: it is the

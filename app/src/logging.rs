@@ -1,7 +1,12 @@
 //! Where the app's log lines go, and what a release build keeps out of them.
 //!
-//! The log lands in the system journal, which any program running as the
-//! person can read, and it outlives the mail. Error text from Google and
+//! Each line goes to standard error and to `~/Library/Logs/Iris/iris.log`,
+//! where Console.app finds it. An app opened from the Dock has nowhere to
+//! send standard error, so without the file a problem left no trace. Every
+//! run adds to the file, so a second launch that hands a link to the
+//! running copy leaves that copy's lines in place; past 5 MB the file
+//! becomes `iris.log.1` and a new one starts. The file is the person's
+//! own, and it outlives the mail. Error text from Google and
 //! from sending can carry addresses, so a release build masks every email
 //! address on its way out: `dana.reyes@example.com` becomes
 //! `d…@example.com`. A debug build keeps them, and so does a release build
@@ -9,11 +14,44 @@
 //! an installed copy.
 
 use std::io::{self, Write};
+use std::path::PathBuf;
+use std::sync::{Mutex, OnceLock};
 
 use tracing_subscriber::fmt::MakeWriter;
 
 /// The variable that keeps addresses in a release build's log.
 const DETAILS: &str = "IRIS_LOG_DETAILS";
+
+/// This run's log file, once `open_file` made it.
+static FILE: OnceLock<Mutex<std::fs::File>> = OnceLock::new();
+
+/// Where the log file goes: `~/Library/Logs/Iris`.
+fn folder() -> Option<PathBuf> {
+    std::env::var_os("HOME").map(|home| PathBuf::from(home).join("Library/Logs/Iris"))
+}
+
+/// How large the log file grows before it starts again.
+const MOST_BYTES: u64 = 5 * 1024 * 1024;
+
+/// Opens the log file for this run to add to. A file that cannot be made
+/// leaves the log on standard error alone.
+pub fn open_file() {
+    let Some(folder) = folder() else { return };
+    if let Err(err) = std::fs::create_dir_all(&folder) {
+        eprintln!("could not make the log folder {}: {err}", folder.display());
+        return;
+    }
+    let path = folder.join("iris.log");
+    if std::fs::metadata(&path).is_ok_and(|meta| meta.len() > MOST_BYTES) {
+        let _ = std::fs::rename(&path, folder.join("iris.log.1"));
+    }
+    match std::fs::OpenOptions::new().create(true).append(true).open(&path) {
+        Ok(file) => {
+            let _ = FILE.set(Mutex::new(file));
+        }
+        Err(err) => eprintln!("could not start the log file {}: {err}", path.display()),
+    }
+}
 
 /// Whether this run's log keeps addresses whole.
 pub fn details() -> bool {
@@ -65,6 +103,11 @@ impl Drop for Event {
             mask_addresses(&text)
         };
         let _ = io::stderr().lock().write_all(text.as_bytes());
+        if let Some(file) = FILE.get()
+            && let Ok(mut file) = file.lock()
+        {
+            let _ = file.write_all(text.as_bytes());
+        }
     }
 }
 

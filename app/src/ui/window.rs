@@ -3870,11 +3870,18 @@ fn still_there(mailbox: &Mailbox, data: &[(Account, Vec<Label>)]) -> bool {
 /// until then. See the close-request handler.
 fn hide_once_released(window: &adw::Window) {
     let window = window.clone();
+    let waits = std::cell::Cell::new(0u32);
     glib::timeout_add_local(std::time::Duration::from_millis(30), move || {
         if crate::macos_menu::mouse_button_down() {
+            // A button held this long is worth a line: the window stays
+            // until it is up.
+            if waits.replace(waits.get() + 1) == 100 {
+                tracing::warn!("the window waits for a mouse button held for 3 s");
+            }
             return glib::ControlFlow::Continue;
         }
         window.set_visible(false);
+        tracing::info!("the window is hidden");
         glib::ControlFlow::Break
     });
 }

@@ -240,6 +240,7 @@ impl App {
             return;
         }
         if self.skip_first_window.replace(false) {
+            tracing::info!("started without a window, as asked");
             return;
         }
         self.show_window();
@@ -319,9 +320,14 @@ impl App {
         self.apply_style();
         self.core.set_window_open(true);
         if let Some(window) = self.window.borrow().as_ref() {
+            tracing::info!(visible = window.window.is_visible(), "showing the window");
+            // A window sent to the Dock with the yellow button comes back
+            // from there too; on one that is not, this does nothing.
+            window.window.unminimize();
             window.present();
             return Rc::clone(window);
         }
+        tracing::info!("opening a new window");
         // WebKit starts its graphics stack when first used, which costs
         // tens of megabytes; waiting for the first window keeps a copy
         // started without one small.

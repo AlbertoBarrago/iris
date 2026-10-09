@@ -501,7 +501,7 @@ msgstr "{provider} signs in through your browser"
 msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr "Continue opens {provider}'s sign-in page in your browser."
 
-#: app/src/app.rs:343
+#: app/src/app.rs:349
 msgid "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
 msgstr "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
 
@@ -1731,15 +1731,15 @@ msgstr ""
 "  mailto:...     the same as --compose mailto:...\n"
 "  FILE.ics       open a calendar file, to add its events to a calendar"
 
-#: app/src/main.rs:167
+#: app/src/main.rs:174
 msgid "iris: unknown option {option}"
 msgstr "iris: unknown option {option}"
 
-#: app/src/main.rs:312
+#: app/src/main.rs:319
 msgid "Iris Could Not Start"
 msgstr "Iris Could Not Start"
 
-#: app/src/main.rs:317 app/src/ui/about.rs:155
+#: app/src/main.rs:324 app/src/ui/about.rs:155
 msgid "Report a Problem"
 msgstr "Report a Problem"
 

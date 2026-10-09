@@ -583,7 +583,7 @@ msgstr "L'accesso a {provider} avviene tramite il browser"
 msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr "Continua apre la pagina di accesso di {provider} nel browser."
 
-#: app/src/app.rs:343
+#: app/src/app.rs:349
 msgid ""
 "Your preferences could not be read, so Iris started from the defaults. The "
 "old file is kept as {file}."
@@ -1879,15 +1879,15 @@ msgstr ""
 "  FILE.ics       apre un file di calendario, per aggiungerne gli eventi a un "
 "calendario"
 
-#: app/src/main.rs:167
+#: app/src/main.rs:174
 msgid "iris: unknown option {option}"
 msgstr "iris: opzione sconosciuta {option}"
 
-#: app/src/main.rs:312
+#: app/src/main.rs:319
 msgid "Iris Could Not Start"
 msgstr "Impossibile avviare Iris"
 
-#: app/src/main.rs:317 app/src/ui/about.rs:155
+#: app/src/main.rs:324 app/src/ui/about.rs:155
 msgid "Report a Problem"
 msgstr "Segnala un problema"
 

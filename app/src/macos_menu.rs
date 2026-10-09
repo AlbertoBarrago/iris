@@ -180,6 +180,11 @@ define_class!(
     impl Reopener {
         #[unsafe(method(handleReopen:withReplyEvent:))]
         fn handle_reopen(&self, _event: &AnyObject, _reply: &AnyObject) {
+            tracing::info!("the Dock asked for the window");
+            // Brings Iris in front of the app that had the screen, as a
+            // click on any Mac app's Dock icon does; GTK's present alone
+            // can leave the window behind it.
+            NSApplication::sharedApplication(self.mtm()).activate();
             if let Some(app) = self.ivars().app.upgrade() {
                 app.activate();
             }
