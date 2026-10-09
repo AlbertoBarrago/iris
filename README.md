@@ -9,7 +9,7 @@ Mail and calendar for macOS, written in Rust.
 [![Rust 1.98](https://img.shields.io/badge/rust-1.98-orange?logo=rust)](https://www.rust-lang.org)
 [![GTK 4 and libadwaita 1.8](https://img.shields.io/badge/GTK_4-libadwaita_1.8-4a86cf?logo=gnome)](https://gnome.pages.gitlab.gnome.org/libadwaita/)
 
-[Status](#status) · [Features](#features) · [Install](#install) · [Build](#build) · [Usage](#usage) · [Based on Penguin Mail](#based-on-penguin-mail)
+[Status](#status) · [Features](#features) · [Install](#install) · [Build](#build) · [Usage](#usage)
 
 </div>
 
@@ -20,10 +20,6 @@ server settings for you. It shows your accounts in one inbox or one at a
 time, and keeps your mail on your own computer. Gmail and Google Calendar
 accounts talk to Google directly, and Microsoft accounts talk to Microsoft
 Graph, so no other server sees your mail.
-
-Iris began as a modified version of
-[Penguin Mail](https://github.com/c9dev/penguin-mail), a GTK and libadwaita
-mail client for Linux, and is now a macOS app of its own.
 
 ## Status
 
@@ -332,19 +328,11 @@ Questions, bug reports and ideas are welcome in
 [CONTRIBUTING.md](CONTRIBUTING.md) says what a useful report holds.
 [SECURITY.md](SECURITY.md) says where to send a vulnerability.
 
-## Based on Penguin Mail
-
-Iris is a modified version of
-[Penguin Mail](https://github.com/c9dev/penguin-mail) by David Santos,
-starting from its 1.0.0 release. The original work and its copyright belong
-to its authors; the changes since then are Iris's, published by Alberto
-Barrago. The release history before Iris is in [CHANGELOG.md](CHANGELOG.md).
-
-Iris has its own icon and artwork, a winged envelope; the penguin is
-Penguin Mail's.
-
 ## License
 
 Iris is free software under the
-[GNU General Public License, version 3 or later](LICENSE), the same license
-as Penguin Mail.
+[GNU General Public License, version 3 or later](LICENSE).
+
+Iris includes code from
+[Penguin Mail](https://github.com/c9dev/penguin-mail) by David Santos,
+under the same license.
