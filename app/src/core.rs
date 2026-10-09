@@ -489,11 +489,6 @@ impl Core {
         .await
     }
 
-    /// User operations, such as a send or an archive, that have not finished.
-    pub fn busy(&self) -> bool {
-        self.in_flight.load(Ordering::SeqCst) > 0
-    }
-
     /// Runs a read query on the store's reader pool.
     pub async fn read<T, F>(&self, query: F) -> Result<T>
     where

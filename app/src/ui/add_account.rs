@@ -2674,10 +2674,7 @@ impl Dialog {
                 }
                 Err(err) if this.asking.wants(ticket) => {
                     this.stop_browser();
-                    match add_account::keyring_unplugged(&err, crate::keyring_plug::current()) {
-                        Some(unplugged) => this.browser_failed_with(&unplugged),
-                        None => this.browser_failed(&err.to_string()),
-                    }
+                    this.browser_failed(&err.to_string());
                 }
                 Err(err) => tracing::info!(error = %err, "a browser sign-in ended after its dialog moved on"),
             }

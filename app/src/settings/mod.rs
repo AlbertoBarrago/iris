@@ -113,15 +113,8 @@ pub struct Settings {
     pub sign_by_default: bool,
     /// Turn Encrypt on as soon as gpg holds a key for every recipient.
     pub encrypt_when_possible: bool,
-    /// Ask GitHub once a day whether a newer release is out.
+    /// Let Sparkle look for a newer release once a day.
     pub check_for_updates: bool,
-    /// When the last timed check ran, in seconds since the Unix epoch. The
-    /// app restarts itself after its window closes, so without this it
-    /// would check on every start.
-    pub last_update_check: Option<i64>,
-    /// The newest release already announced in a notification, so each one
-    /// is announced once.
-    pub announced_update: Option<String>,
     /// Which space the window opened on last: mail or the calendar.
     pub space: Space,
     /// The view the calendar shows: a day, a week, a month or the agenda.
@@ -526,8 +519,6 @@ impl Default for Settings {
             contacts: false,
             contact_accounts: Vec::new(),
             check_for_updates: true,
-            last_update_check: None,
-            announced_update: None,
             space: Space::Mail,
             calendar_view: CalendarView::Week,
             show_declined_events: false,

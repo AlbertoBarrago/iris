@@ -11,7 +11,6 @@ use mailrs_sync::{MailAction, Outcome};
 
 use super::MainWindow;
 use crate::settings::Effects;
-use crate::update::State;
 
 pub enum Notice<'a> {
     /// The engine changed mail, labels, or an account.
@@ -23,11 +22,6 @@ pub enum Notice<'a> {
     },
     /// A saved settings change left these to bring back in line.
     SettingsChanged(&'a Effects),
-    /// Where an update stands, for the menu, the banner and About.
-    Update(&'a State),
-    /// The answer to a check for updates the person asked for, when there
-    /// is nothing to install.
-    UpdateChecked(String),
     /// The recipient suggestions and contact photos loaded again.
     ContactsLoaded,
     /// Preferences changed which senders' images load.
@@ -69,14 +63,6 @@ impl MainWindow {
             Notice::SettingsChanged(effects) => {
                 for effect in effects.iter() {
                     self.apply_effect(effect);
-                }
-            }
-            Notice::Update(state) => self.show_update(state),
-            // The About window shows the answer under its button, so a
-            // toast would only repeat it.
-            Notice::UpdateChecked(text) => {
-                if self.about.borrow().is_none() {
-                    self.toast(&text);
                 }
             }
             Notice::ContactsLoaded => self.contacts_loaded(),

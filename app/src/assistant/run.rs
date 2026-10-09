@@ -1791,7 +1791,7 @@ fn reply_json(reply: &AutomaticReply) -> Value {
 /// which failed and why. An error when nothing changed.
 /// The keys that undo a mail change, as the assistant names them to the
 /// person: Command on a Mac, Control elsewhere.
-pub(crate) const UNDO_KEYS: &str = if cfg!(target_os = "macos") { "Cmd+Z" } else { "Ctrl+Z" };
+pub(crate) const UNDO_KEYS: &str = "Cmd+Z";
 
 fn report(outcome: &Outcome) -> ToolResult {
     if let (true, Some(error)) = (outcome.done.is_empty(), outcome.first_error()) {

@@ -316,8 +316,9 @@ fn keys_and_settings_stay_on_this_computer() {
     let private = [PathBuf::from("/srv/penguin")];
     let refused = |path: &str| off_limits(Path::new(path), home, &private);
     assert!(!refused("/home/dana/Documents/plan.pdf"));
-    assert!(!refused("/tmp/scan.pdf"));
-    assert!(!refused("/media/dana/USB/photo.jpg"));
+    assert!(!refused("/private/tmp/scan.pdf"));
+    assert!(!refused("/Volumes/USB/photo.jpg"));
+    assert!(refused("/Volumes/USB/.Trashes/photo.jpg"));
     assert!(refused("/home/dana/.ssh/id_ed25519"));
     assert!(refused("/home/dana/.gnupg/private-keys-v1.d/key"));
     assert!(refused("/home/dana/.local/share/iris/mail.db"));

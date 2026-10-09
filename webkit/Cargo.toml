@@ -5,19 +5,16 @@ license.workspace = true
 repository.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-description = "webkit6 on Linux; the subset of its API the app uses, over WKWebView, on macOS"
+description = "The subset of webkit6's API the app uses, over WKWebView"
 
-# WebKitGTK does not run on macOS, so this crate stands in for it there and
-# re-exports it everywhere else. The app names only this crate, as `webkit`.
-[target.'cfg(not(target_os = "macos"))'.dependencies]
-webkit6 = { workspace = true }
-
-[target.'cfg(target_os = "macos")'.dependencies]
+# WebKitGTK does not run on macOS, so this crate stands in for it with the
+# same names. The app names only this crate, as `webkit`.
+[dependencies]
 gtk.workspace = true
 futures.workspace = true
 tracing.workspace = true
 # Apple's frameworks from Rust, generated from their headers by the objc2
-# project. Only the macOS build pulls these in.
+# project.
 block2 = "0.6.2"
 objc2 = "0.6.3"
 objc2-core-foundation = { version = "0.3.2", features = ["CFCGTypes"] }

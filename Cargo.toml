@@ -59,13 +59,9 @@ keyring = "4.2.0"
 # so lettre brings no TLS stack, and without `hostname` no host name.
 lettre = { version = "0.11.23", default-features = false, features = ["smtp-transport", "tokio1"] }
 libc = "0.2.189"
-ksni = "0.3.6"
 mail-builder = "1.0.0"
 mail-parser = { version = "0.11.9", features = ["full_encoding"] }
 notify-rust = "4.18.0"
-# Secrets through the Secret portal, for a Flatpak build; a build outside
-# one keeps using `keyring`, which oo7 never touches then.
-oo7 = "0.6.0"
 # The Public Suffix List, compiled in, so discovery can tell a registrable
 # domain from a suffix such as `co.uk` without asking anyone.
 psl = "2.1.237"
@@ -93,5 +89,4 @@ toml = "1.1.6"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 url = "2.5.8"
-webkit6 = { package = "webkit6", version = "0.6.1", features = ["v2_50"] }
 wiremock = "0.6.5"

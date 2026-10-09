@@ -1715,11 +1715,7 @@ impl Editor {
                 this.say_file_problem(&gettext("Iris can attach only a file saved on this computer."));
                 return;
             };
-            let mime = info
-                .content_type()
-                .and_then(|kind| gtk::gio::content_type_get_mime_type(&kind))
-                .map(|m| m.to_string())
-                .unwrap_or_else(|| "application/octet-stream".into());
+            let mime = crate::file_type::mime_type(&info.display_name(), &[]);
             let waiting = Attachment {
                 title: info.display_name().to_string(),
                 mime_type: mime,

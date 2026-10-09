@@ -39,19 +39,11 @@ while read -r file; do
     number=$((number + 1))
     xtr "${keywords[@]}" -o "$(printf '%s/1-%03d.pot' "$work" "$number")" "$file"
 done <<< "$listed"
-# The desktop entry and the AppStream metainfo are not Rust at all. xgettext
-# reads the metainfo through the ITS rules AppStream installs, which leave
-# out the release notes marked translate="no".
-xgettext --from-code=UTF-8 -L Desktop \
-    -o "$work/2-desktop.pot" app/data/io.github.AlbertoBarrago.Iris.desktop
-xgettext --from-code=UTF-8 \
-    -o "$work/3-metainfo.pot" app/data/io.github.AlbertoBarrago.Iris.metainfo.xml
-
-msgcat --use-first --sort-by-file -o "$work/joined.pot" "$work"/[123]-*.pot
+msgcat --use-first --sort-by-file -o "$work/joined.pot" "$work"/1-*.pot
 # msgcat needs a header on its inputs; ours replaces it, so drop theirs.
 sed '1,/^$/d' "$work/joined.pot" > "$work/merged.pot"
 cat > "$work/header.pot" <<HEADER
-# Iris, mail and calendar for Linux.
+# Iris, mail and calendar for macOS.
 # This file is distributed under the same licence as Iris.
 #
 msgid ""
@@ -97,8 +89,7 @@ if [ -n "$forgotten" ]; then
     echo "$forgotten" | sed 's/^/  /' >&2
 fi
 
-# LINGUAS names the languages that exist. msgfmt reads it to put the
-# translated Name and Comment into the desktop entry.
+# LINGUAS names the languages that exist.
 printf '# The languages po/ holds, one per line. update-po.sh writes this.\n' \
     > po/LINGUAS
 for po in po/*.po; do

@@ -85,18 +85,24 @@ fn a_program_that_writes_a_lot_does_not_hold_up_its_input() {
 /// Whether the process `pid` still runs. One that has exited and not been
 /// reaped yet is a zombie, which runs nothing, so it counts as gone here;
 /// the tests that care about zombies look for the entry itself.
-#[cfg(target_os = "linux")]
 fn running(pid: &str) -> bool {
-    std::fs::read_to_string(format!("/proc/{pid}/stat"))
+    std::process::Command::new("ps")
+        .args(["-o", "stat=", "-p", pid])
+        .output()
         .ok()
-        .and_then(|stat| {
-            let after_name = stat.rsplit_once(')')?.1.trim_start().to_string();
-            after_name.chars().next()
-        })
+        .and_then(|out| String::from_utf8(out.stdout).ok())
+        .and_then(|stat| stat.trim().chars().next())
         .is_some_and(|state| state != 'Z')
 }
 
-#[cfg(target_os = "linux")]
+/// Whether the process table holds `pid` at all, a zombie included.
+fn listed(pid: &str) -> bool {
+    std::process::Command::new("ps")
+        .args(["-o", "pid=", "-p", pid])
+        .output()
+        .is_ok_and(|out| !String::from_utf8_lossy(&out.stdout).trim().is_empty())
+}
+
 #[test]
 fn a_run_with_a_limit_stops_a_program_that_never_answers() {
     let dir = tempfile::tempdir().expect("a temp directory");
@@ -112,29 +118,29 @@ fn a_run_with_a_limit_stops_a_program_that_never_answers() {
     ));
     let started = std::time::Instant::now();
 
+    // Two seconds, so the stand-in has written its pid before the limit
+    // even under a full parallel test run, where macOS starts a shell
+    // slowly; the program sleeps for thirty.
     let err = match program.run_within(
-        std::time::Duration::from_millis(500),
+        std::time::Duration::from_secs(2),
         b"",
         Pinentry::Never,
         |_| {},
     ) {
-        Ok(_) => panic!("a program that sleeps for 30 seconds answered in half of one"),
+        Ok(_) => panic!("a program that sleeps for 30 seconds answered in two"),
         Err(err) => err,
     };
 
     let waited = started.elapsed();
     assert_eq!(err.kind(), std::io::ErrorKind::TimedOut, "{err}");
     assert!(
-        waited < std::time::Duration::from_secs(3),
+        waited < std::time::Duration::from_secs(5),
         "gave up after {waited:?}"
     );
     let pid = std::fs::read_to_string(&pid).expect("the stand-in wrote its pid");
     let pid = pid.trim();
     // Reaped rather than left a zombie: its entry is gone altogether.
-    assert!(
-        !Path::new(&format!("/proc/{pid}")).exists(),
-        "the stand-in {pid} was left behind"
-    );
+    assert!(!listed(pid), "the stand-in {pid} was left behind");
     let child = std::fs::read_to_string(&child).expect("the stand-in wrote its child's pid");
     let child = child.trim();
     // The child's new parent reaps it, which takes a moment.

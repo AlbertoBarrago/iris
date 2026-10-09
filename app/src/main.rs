@@ -8,38 +8,28 @@ mod add_account;
 mod app;
 mod assistant;
 mod attachcheck;
-mod autostart;
 mod clock_format;
 mod compose;
 mod contacts;
 mod core;
 mod demo;
 mod diff;
-#[cfg(target_os = "macos")]
 mod dock;
 mod event_reminders;
-mod exe;
+mod file_type;
 mod format;
-mod goa;
 mod images;
-mod keyring_plug;
 mod language;
-#[cfg(target_os = "macos")]
 mod macos_bundle;
-#[cfg(target_os = "macos")]
 mod macos_menu;
-#[cfg(target_os = "macos")]
 mod macos_pasteboard;
-#[cfg(target_os = "macos")]
 mod sparkle;
 mod language_names;
 mod locale_time;
 mod logging;
 mod notify;
 mod offered;
-mod old_id;
 mod open_thread;
-mod packaging;
 mod permission;
 mod pgp;
 mod quoted;
@@ -57,11 +47,9 @@ mod smime;
 mod stray_markdown;
 mod templates;
 mod translation;
-mod tray;
 mod ui;
 mod unsubscribe;
 mod unsubscribe_page;
-mod update;
 mod wanted;
 
 use std::cell::RefCell;
@@ -81,7 +69,7 @@ fn usage() -> String {
         "Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]
 
   --version      print the version and quit
-  --background   start in the tray without opening a window
+  --background   start without opening a window
   --demo         open sample mail in a throwaway store; nothing syncs
   --compose      open a new message, addressed to ADDRESS when given
   mailto:...     the same as --compose mailto:...
@@ -94,7 +82,6 @@ fn usage() -> String {
 /// launching terminal set replaces its own default rather than adding to it,
 /// so the Adwaita icons go missing. A bundle's own `Resources/share` comes
 /// first, then Homebrew's.
-#[cfg(target_os = "macos")]
 fn macos_data_dirs() {
     let mut dirs: Vec<std::path::PathBuf> = Vec::new();
     if let Ok(exe) = std::env::current_exe()
@@ -116,9 +103,7 @@ fn macos_data_dirs() {
 }
 
 fn main() -> glib::ExitCode {
-    #[cfg(target_os = "macos")]
     macos_data_dirs();
-    #[cfg(target_os = "macos")]
     macos_bundle::set_environment();
     // async-imap logs passwords and mail at trace level; `quiet` drops
     // those lines whatever RUST_LOG says.
@@ -196,12 +181,6 @@ fn main() -> glib::ExitCode {
         .and_then(|here| calendar_file(&raw_args, &here));
     let demo = args.iter().any(|a| a == "--demo");
     let background = args.iter().any(|a| a == "--background");
-    if !demo {
-        old_id::carry_over_on_start();
-    }
-
-    // Wayland and X11 name the window after the program; matching the
-    // desktop entry lets the dock show the right icon.
     glib::set_prgname(Some(if demo {
         "io.github.AlbertoBarrago.Iris.Demo"
     } else {
@@ -212,13 +191,8 @@ fn main() -> glib::ExitCode {
     } else {
         APP_ID
     };
-    // A plain GApplication: GTK starts only when a window is first needed,
-    // so a process running in the tray never loads the graphics stack.
-    #[cfg(not(target_os = "macos"))]
-    let gio_app = gio::Application::builder().application_id(app_id).build();
-    // macOS has no tray to keep small, and only a GtkApplication gets the
-    // menu bar and the Dock's click to reopen the window.
-    #[cfg(target_os = "macos")]
+    // Only a GtkApplication gets the menu bar and the Dock's click to
+    // reopen the window.
     let gio_app: gio::Application = gtk::Application::builder()
         .application_id(app_id)
         .build()
@@ -243,7 +217,6 @@ fn main() -> glib::ExitCode {
         match core::Core::open(demo) {
             Ok(core) => {
                 let app = app::App::new(gio_app, core, background, compose.clone(), file.clone());
-                #[cfg(target_os = "macos")]
                 macos_menu::install(&app, gio_app);
                 *started.borrow_mut() = Some(app)
             }
@@ -314,7 +287,6 @@ pub fn ensure_gtk() {
         gtk::init().expect("GTK starts on this display");
     }
     adw::init().expect("libadwaita starts");
-    #[cfg(target_os = "macos")]
     macos_bundle::bind_toolkit_translations();
     if let Some(display) = gdk::Display::default() {
         gtk::IconTheme::for_display(&display)

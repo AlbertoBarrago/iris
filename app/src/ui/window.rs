@@ -127,11 +127,6 @@ pub struct MainWindow {
     app: Weak<App>,
     core: Rc<Core>,
     toasts: adw::ToastOverlay,
-    /// Says a release is available, installing, waiting to restart, or failed.
-    update_banner: adw::Banner,
-    /// Says a snap cannot reach the keyring and gives the command that
-    /// connects it. Revealed once, for the rest of the run.
-    keyring_banner: adw::Banner,
     /// One bar per account whose own consent leaves something out, at the
     /// top of the mail list; see [`crate::permission::wants_banner`].
     /// Rebuilt whenever the accounts are read again.
@@ -142,11 +137,8 @@ pub struct MainWindow {
     /// mid-walk when the accounts are read again, and a banner that
     /// blinks out and back shifts every row below it for a moment.
     grant_banner_widgets: RefCell<HashMap<AccountId, adw::Banner>>,
-    /// The main menu's update entry: Check for Updates, or what to do with
-    /// the one that is waiting.
-    update_menu: gio::Menu,
-    /// The About window while it is open, so an update's progress reaches
-    /// its button.
+    /// The About window while it is open, so a second ask brings it
+    /// forward rather than opening another.
     about: RefCell<Option<Rc<crate::ui::about::About>>>,
     stack: gtk::Stack,
     split: adw::OverlaySplitView,
@@ -795,16 +787,8 @@ impl MainWindow {
             };
             stack.add_named(&room, Some("mail"));
             stack.add_named(&first_page, Some("first-account"));
-            // An update's banner spans the whole window, above the panes,
-            // since it is about the app and not the mail on screen.
-            let update_banner = adw::Banner::builder().use_markup(false).revealed(false).build();
-            // The keyring notice is about the app too, and the command it
-            // gives needs the width a pane would cut short.
-            let keyring_banner = adw::Banner::builder().revealed(false).build();
             let grant_banners = list.grant_bars.clone();
             let content = gtk::Box::new(gtk::Orientation::Vertical, 0);
-            content.append(&update_banner);
-            content.append(&keyring_banner);
             content.append(&stack);
             stack.set_vexpand(true);
             let toasts = adw::ToastOverlay::new();
@@ -869,11 +853,8 @@ impl MainWindow {
                 app: Rc::downgrade(app),
                 core: Rc::clone(&app.core),
                 toasts,
-                update_banner,
-                keyring_banner,
                 grant_banners,
                 grant_banner_widgets: RefCell::new(HashMap::new()),
-                update_menu: gio::Menu::new(),
                 about: RefCell::new(None),
                 stack,
                 split,
@@ -1050,7 +1031,6 @@ impl MainWindow {
             .set_zoom(app.settings_with(|s| s.text_size.zoom()));
         window.refresh_accounts(Reload::Yes);
         window.reload_image_senders();
-        window.check_keyring_plug();
         // Copies another program opened in an earlier run have had their
         // chance; nothing else deletes them.
         // The handle is dropped; the sweep runs on to the end regardless.
@@ -1064,36 +1044,6 @@ impl MainWindow {
 
     pub fn is_active(&self) -> bool {
         self.window.is_active() && self.window.is_visible()
-    }
-
-    /// Shows where an update stands, or hides the banner when nothing does.
-    /// Each state's button runs an app action, so the banner needs no
-    /// callbacks of its own.
-    fn show_update(&self, state: &crate::update::State) {
-        if let Some(about) = self.about.borrow().as_ref() {
-            about.show_update(state);
-        }
-        let shown = crate::update::shown(state);
-        self.update_menu.remove_all();
-        self.update_menu
-            .append(Some(&shown.menu.label), shown.menu.action);
-        let banner = &self.update_banner;
-        let Some(news) = shown.banner else {
-            banner.set_revealed(false);
-            return;
-        };
-        banner.set_title(&news.title);
-        match news.button {
-            Some((label, action)) => {
-                banner.set_button_label(Some(&label));
-                banner.set_action_name(Some(action));
-            }
-            None => {
-                banner.set_button_label(None);
-                banner.set_action_name(None);
-            }
-        }
-        banner.set_revealed(true);
     }
 
     fn toast(&self, text: &str) {
@@ -1283,39 +1233,6 @@ impl MainWindow {
         self.accounts_for_calendar(&accounts);
     }
 
-    /// Asks snapd whether the snap can reach the keyring, and when it
-    /// cannot, puts a notice across the top of the window that stays for
-    /// the rest of the run: connecting the plug takes a restart.
-    /// Outside a snap this asks nothing. `MAILRS_DEMO_KEYRING_UNPLUGGED`
-    /// shows the notice in the demo.
-    fn check_keyring_plug(self: &Rc<Self>) {
-        let unplugged_demo =
-            self.core.demo && std::env::var_os("MAILRS_DEMO_KEYRING_UNPLUGGED").is_some();
-        let weak = Rc::downgrade(self);
-        glib::spawn_future_local(async move {
-            let plug = crate::keyring_plug::check(unplugged_demo).await;
-            let Some(win) = weak.upgrade() else { return };
-            if plug.wants_notice() {
-                win.show_keyring_notice();
-            }
-        });
-    }
-
-    fn show_keyring_notice(self: &Rc<Self>) {
-        let banner = &self.keyring_banner;
-        banner.set_use_markup(true);
-        banner.set_title(&crate::keyring_plug::notice_markup());
-        banner.set_button_label(Some(&gettext("Copy Command")));
-        let weak = Rc::downgrade(self);
-        banner.connect_button_clicked(move |banner| {
-            banner.clipboard().set_text(crate::keyring_plug::COMMAND);
-            if let Some(win) = weak.upgrade() {
-                win.toast(&gettext("Command copied"));
-            }
-        });
-        banner.set_revealed(true);
-    }
-
     /// Brings the Grant Access banners in line with `accounts` and
     /// `consent`: one per account whose own scopes leave something out
     /// and that has never been asked for everything. Only accounts whose
@@ -1451,16 +1368,6 @@ impl MainWindow {
     /// The mailbox on screen.
     fn shown(&self) -> Mailbox {
         self.screen.borrow().mailbox().clone()
-    }
-
-    /// Puts one account's inbox on screen and selects its sidebar row.
-    pub fn show_inbox_of(self: &Rc<Self>, account_id: AccountId) {
-        let inbox = Mailbox::Standard {
-            account_id,
-            which: crate::ui::Standard::Inbox,
-        };
-        self.sidebar.select(&inbox);
-        self.show_mailbox(inbox);
     }
 
     /// Puts `mailbox` on screen.
@@ -3166,26 +3073,21 @@ impl MainWindow {
             if let (Some(win), Some(app)) =
                 (weak.upgrade(), weak.upgrade().and_then(|w| w.app.upgrade()))
             {
-                // On macOS the red button hides the window, as Mail's does,
-                // and the Dock's click shows it again. AppKit tracks that
-                // button's click in a loop of its own, inside which GLib
-                // keeps running; a window hidden while the mouse button was
-                // still down took the release with it, AppKit waited for it
-                // for good, and neither the window nor the Dock's click
+                // The red button hides the window, as Mail's does, and the
+                // Dock's click shows it again. AppKit tracks that button's
+                // click in a loop of its own, inside which GLib keeps
+                // running; a window hidden while the mouse button was still
+                // down took the release with it, AppKit waited for it for
+                // good, and neither the window nor the Dock's click
                 // answered again. The hide waits until the button is up.
-                if cfg!(target_os = "macos") {
-                    win.calendar.commit_all_now();
-                    app.core.set_window_open(false);
-                    hide_once_released(window);
-                    return glib::Propagation::Stop;
-                }
-                win.conversation.stop_rendering();
-                win.previews.forget_decrypted();
-                // A held calendar change whose Undo toast is still up
-                // must not vanish with the window: nothing else would
-                // queue it (AGENTS.md "Late answers", carried from Task 4).
+                // A held calendar change whose Undo toast is still up must
+                // not vanish with the window, so it goes in first, and the
+                // decrypted copies the window opened leave the disk.
                 win.calendar.commit_all_now();
-                app.forget_window(&win);
+                win.previews.forget_decrypted();
+                app.core.set_window_open(false);
+                hide_once_released(window);
+                return glib::Propagation::Stop;
             }
             glib::Propagation::Proceed
         });
@@ -3218,7 +3120,9 @@ impl MainWindow {
         first.append(Some(&gettext("Hide My Email…")), Some("win.hide-my-email"));
         menu.append_section(None, &first);
         if self.app.upgrade().is_some_and(|app| app.can_update()) {
-            menu.append_section(None, &self.update_menu);
+            let updates = gio::Menu::new();
+            updates.append(Some(&gettext("Check for Updates…")), Some("app.check-for-updates"));
+            menu.append_section(None, &updates);
         }
         let second = gio::Menu::new();
         second.append(Some(&gettext("Preferences")), Some("win.preferences"));
@@ -3552,7 +3456,6 @@ impl MainWindow {
                     win.grant_access(id);
                 }
             },
-            &self.window,
             signature_of.as_deref(),
         );
     }
@@ -3585,7 +3488,6 @@ impl MainWindow {
                     win.grant_access(id);
                 }
             },
-            &self.window,
             page,
         );
     }
@@ -3762,9 +3664,6 @@ impl MainWindow {
         };
         let kept_here = crate::offered::kept_here_lines(&self.accounts());
         let about = crate::ui::about::About::new(app.can_update(), &self.core.store_path, &kept_here);
-        if let Some(state) = app.update_state() {
-            about.show_update(&state);
-        }
         let weak = Rc::downgrade(self);
         about.dialog.connect_closed(move |_| {
             if let Some(win) = weak.upgrade() {
@@ -3775,11 +3674,7 @@ impl MainWindow {
         // Inside the main window its dimmed backdrop covers the mail page,
         // which lies above GTK and cannot be dimmed with it, so the page
         // was cut away whole while About was open.
-        if cfg!(target_os = "macos") {
-            about.dialog.present(None::<&gtk::Widget>);
-        } else {
-            about.dialog.present(Some(&self.window));
-        }
+        about.dialog.present(None::<&gtk::Widget>);
         self.about.replace(Some(about));
     }
 }
@@ -3972,11 +3867,10 @@ fn still_there(mailbox: &Mailbox, data: &[(Account, Vec<Label>)]) -> bool {
 }
 
 /// Hides `window` once no mouse button is held, looking again every 30 ms
-/// until then. macOS only: see the close-request handler.
+/// until then. See the close-request handler.
 fn hide_once_released(window: &adw::Window) {
     let window = window.clone();
     glib::timeout_add_local(std::time::Duration::from_millis(30), move || {
-        #[cfg(target_os = "macos")]
         if crate::macos_menu::mouse_button_down() {
             return glib::ControlFlow::Continue;
         }

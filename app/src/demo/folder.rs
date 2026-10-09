@@ -63,7 +63,7 @@ fn sweep(base: &Path) {
         let Some(pid) = name.to_str().and_then(owner) else {
             continue;
         };
-        if Path::new("/proc").join(pid.to_string()).exists() {
+        if alive(pid) {
             continue;
         }
         let path = entry.path();
@@ -73,6 +73,18 @@ fn sweep(base: &Path) {
             std::fs::remove_file(&path)
         };
     }
+}
+
+/// Whether process `pid` still runs. A signal of 0 only asks: the call
+/// succeeds for a process this user owns, and fails with `EPERM` for one
+/// that runs under someone else, which is alive all the same.
+fn alive(pid: u32) -> bool {
+    let Ok(pid) = libc::pid_t::try_from(pid) else {
+        return false;
+    };
+    // SAFETY: signal 0 sends nothing; kill only checks the process.
+    let answered = unsafe { libc::kill(pid, 0) };
+    answered == 0 || std::io::Error::last_os_error().raw_os_error() == Some(libc::EPERM)
 }
 
 /// The process id a demo file or folder name starts with.

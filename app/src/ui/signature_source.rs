@@ -9,29 +9,9 @@ use mailrs_domain::translate::gettext;
 
 /// The HTML on the clipboard. `Ok(None)` when it holds only text or
 /// nothing, which is the case for a signature copied from a plain text
-/// field.
-pub async fn from_clipboard(widget: &impl IsA<gtk::Widget>) -> Result<Option<String>, String> {
-    #[cfg(target_os = "macos")]
-    {
-        let _ = widget;
-        Ok(crate::macos_pasteboard::html())
-    }
-    #[cfg(not(target_os = "macos"))]
-    {
-        let clipboard = widget.as_ref().clipboard();
-        if !clipboard
-            .formats()
-            .contain_mime_type("text/html")
-        {
-            return Ok(None);
-        }
-        let (stream, _) = clipboard
-            .read_future(&["text/html"], gtk::glib::Priority::DEFAULT)
-            .await
-            .map_err(|e| e.to_string())?;
-        let bytes = read_all(&stream).await?;
-        Ok(Some(crate::signature::decode(&bytes)))
-    }
+/// field. GDK's clipboard on macOS offers no HTML, so this reads AppKit's.
+pub async fn from_clipboard() -> Result<Option<String>, String> {
+    Ok(crate::macos_pasteboard::html())
 }
 
 /// Asks for an `.htm` or `.html` file and reads it, with the pictures it
@@ -71,20 +51,4 @@ pub async fn from_file(parent: Option<&gtk::Window>) -> Result<Option<String>, S
         .await
         .map_err(|_| gettext("Reading the file stopped."))?;
     Ok(Some(imported))
-}
-
-/// Everything `stream` holds.
-#[cfg(not(target_os = "macos"))]
-async fn read_all(stream: &gio::InputStream) -> Result<Vec<u8>, String> {
-    let mut out = Vec::new();
-    loop {
-        let chunk = stream
-            .read_bytes_future(64 * 1024, gtk::glib::Priority::DEFAULT)
-            .await
-            .map_err(|e| e.to_string())?;
-        if chunk.is_empty() {
-            return Ok(out);
-        }
-        out.extend_from_slice(&chunk);
-    }
 }

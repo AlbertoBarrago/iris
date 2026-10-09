@@ -14,7 +14,6 @@ use mailrs_sync::config::SyncConfig;
 use mailrs_sync::{Offers, Withheld};
 
 use crate::app::App;
-use crate::autostart;
 use crate::language;
 use crate::offered::missing_lines;
 use crate::settings::{
@@ -33,7 +32,6 @@ pub fn present(
     offers: impl Fn(AccountId) -> Offers,
     withheld: impl Fn(AccountId) -> Withheld,
     grant: impl Fn(AccountId) + Clone + 'static,
-    parent: &impl IsA<gtk::Widget>,
     signature_of: Option<&str>,
 ) -> adw::PreferencesDialog {
     // In a window of its own, Preferences could open twice; the second
@@ -74,23 +72,19 @@ pub fn present(
             tracing::warn!(error = %err, "could not apply the sync settings");
         }
     });
-    // On macOS, Preferences is a window of its own, as Settings is in
-    // every Mac app, which the person moves and resizes. Presented with
-    // no parent, libadwaita puts the dialog in a separate window and
-    // takes its content size as the window's starting size.
-    if cfg!(target_os = "macos") {
-        dialog.set_content_width(760);
-        dialog.set_content_height(720);
-        OPEN.with(|open| *open.borrow_mut() = Some(dialog.downgrade()));
-        dialog.connect_closed(|_| OPEN.with(|open| *open.borrow_mut() = None));
-        dialog.present(None::<&gtk::Widget>);
-        // libadwaita leaves the window it makes for a dialog fixed in size;
-        // a Settings window on a Mac is one the person can resize.
-        if let Some(window) = dialog.root().and_downcast::<gtk::Window>() {
-            window.set_resizable(true);
-        }
-    } else {
-        dialog.present(Some(parent));
+    // Preferences is a window of its own, as Settings is in every Mac
+    // app, which the person moves and resizes. Presented with no parent,
+    // libadwaita puts the dialog in a separate window and takes its
+    // content size as the window's starting size.
+    dialog.set_content_width(760);
+    dialog.set_content_height(720);
+    OPEN.with(|open| *open.borrow_mut() = Some(dialog.downgrade()));
+    dialog.connect_closed(|_| OPEN.with(|open| *open.borrow_mut() = None));
+    dialog.present(None::<&gtk::Widget>);
+    // libadwaita leaves the window it makes for a dialog fixed in size;
+    // a Settings window on a Mac is one the person can resize.
+    if let Some(window) = dialog.root().and_downcast::<gtk::Window>() {
+        window.set_resizable(true);
     }
     dialog
 }
@@ -107,10 +101,9 @@ pub fn present_page(
     offers: impl Fn(AccountId) -> Offers,
     withheld: impl Fn(AccountId) -> Withheld,
     grant: impl Fn(AccountId) + Clone + 'static,
-    parent: &impl IsA<gtk::Widget>,
     page: &str,
 ) {
-    present(app, accounts, offers, withheld, grant, parent, None).set_visible_page_name(page);
+    present(app, accounts, offers, withheld, grant, None).set_visible_page_name(page);
 }
 
 /// The General page. `missing` holds an address and a reason for each
@@ -829,25 +822,6 @@ fn sync_page(app: &Rc<App>, pending: &Rc<RefCell<SyncConfig>>) -> adw::Preferenc
     let startup = adw::PreferencesGroup::builder()
         .title(gettext("Startup"))
         .build();
-    let login = adw::SwitchRow::builder()
-        .title(gettext("Start in the Tray at Login"))
-        .subtitle(gettext("Iris keeps syncing with no window open"))
-        .build();
-    match autostart::path() {
-        Some(path) if !app.core.demo => {
-            login.set_active(autostart::is_enabled(&path));
-            login.connect_active_notify(move |row| {
-                if let Err(err) = autostart::apply(&path, row.is_active()) {
-                    tracing::warn!(error = %err, "could not change the login item");
-                }
-            });
-        }
-        _ => {
-            login.set_sensitive(false);
-            login.set_subtitle(&gettext("Not available in demo mode"));
-        }
-    }
-    startup.add(&login);
     if app.can_update() {
         startup.add(&switch_with(
             app,
@@ -859,28 +833,18 @@ fn sync_page(app: &Rc<App>, pending: &Rc<RefCell<SyncConfig>>) -> adw::Preferenc
                 app.sync_update_schedule();
             },
         ));
-    } else if let Some(updater) = crate::packaging::BUILT_FOR.updated_by() {
-        startup.add(
-            &adw::ActionRow::builder()
-                .title(gettext("Updates"))
-                .subtitle(updater.line())
-                .build(),
-        );
     }
-    #[cfg(target_os = "macos")]
-    {
-        let make = gtk::Button::builder()
-            .label(gettext("Make Default"))
-            .valign(gtk::Align::Center)
-            .build();
-        make.connect_clicked(|_| crate::macos_menu::make_default_mail_app());
-        let row = adw::ActionRow::builder()
-            .title(gettext("Default Mail App"))
-            .subtitle(gettext("Open email links from websites and other apps in Iris"))
-            .build();
-        row.add_suffix(&make);
-        startup.add(&row);
-    }
+    let make = gtk::Button::builder()
+        .label(gettext("Make Default"))
+        .valign(gtk::Align::Center)
+        .build();
+    make.connect_clicked(|_| crate::macos_menu::make_default_mail_app());
+    let row = adw::ActionRow::builder()
+        .title(gettext("Default Mail App"))
+        .subtitle(gettext("Open email links from websites and other apps in Iris"))
+        .build();
+    row.add_suffix(&make);
+    startup.add(&row);
     page.add(&startup);
     page
 }
@@ -1423,10 +1387,10 @@ fn formatted_signature_row(
         }
     };
     let (kept, fail) = (Rc::clone(&keep), failed.clone());
-    paste.connect_clicked(move |button| {
-        let (button, keep, fail) = (button.clone(), Rc::clone(&kept), fail.clone());
+    paste.connect_clicked(move |_| {
+        let (keep, fail) = (Rc::clone(&kept), fail.clone());
         glib::spawn_future_local(async move {
-            match crate::ui::signature_source::from_clipboard(&button).await {
+            match crate::ui::signature_source::from_clipboard().await {
                 Ok(html) => keep(html),
                 Err(err) => fail(err),
             }

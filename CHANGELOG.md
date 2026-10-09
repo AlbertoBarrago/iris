@@ -14,6 +14,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 - A Gmail signature with pictures or formatting no longer goes out as
   plain lines with its pictures missing.
+- Attached files go out with their exact type, such as `text/plain` for
+  a text file, so the recipient's mail app opens them right.
+- The assistant can attach files from temporary folders and external
+  disks.
+- Decrypted attachments you opened leave the disk when the window closes.
 
 ## 1.0.11 (2026-10-08)
 

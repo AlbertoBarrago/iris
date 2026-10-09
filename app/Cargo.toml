@@ -41,7 +41,8 @@ futures.workspace = true
 # `mailrs_domain::translate`.
 gettext-rs.workspace = true
 gtk.workspace = true
-ksni.workspace = true
+# Asks whether a demo run's process is still alive (`kill(pid, 0)`).
+libc.workspace = true
 mail-builder.workspace = true
 # The message inside an encrypted one arrives as MIME, not through Gmail.
 mail-parser.workspace = true
@@ -59,12 +60,12 @@ tracing-subscriber.workspace = true
 # The web source checks a page's host before it downloads anything.
 url.workspace = true
 
-# WebKitGTK on Linux, WKWebView on macOS, behind the same API.
+# WKWebView behind the API of WebKitGTK's webkit6, which the app was
+# written against.
 webkit = { package = "mailrs-webkit", path = "../webkit" }
 
 # AppKit for what macOS shows outside the window, such as the Dock badge.
-# The same crates the webkit shim already uses.
-[target.'cfg(target_os = "macos")'.dependencies]
+# The same crates the webkit crate already uses.
 objc2 = "0.6.3"
 objc2-foundation = { version = "0.3.2", features = ["NSString", "NSURL", "NSBundle"] }
 objc2-app-kit = { version = "0.3.2", features = ["NSApplication", "NSDockTile", "NSResponder", "NSWorkspace", "NSPasteboard", "block2"] }
@@ -73,14 +74,3 @@ objc2-app-kit = { version = "0.3.2", features = ["NSApplication", "NSDockTile", 
 mail-parser.workspace = true
 tempfile.workspace = true
 wiremock.workspace = true
-
-# The kind of package a build is for; see src/packaging.rs. A plain build
-# is the .deb or the tarball.
-[features]
-packaging-rpm = []
-packaging-arch = []
-# Also moves the Google refresh tokens, the IMAP passwords and the
-# assistant's API keys and MCP tokens from the desktop keyring to the
-# Secret portal; see gmail/src/secret_portal.rs.
-packaging-flatpak = ["mailrs-gmail/packaging-flatpak", "mailrs-sync/packaging-flatpak"]
-packaging-snap = []

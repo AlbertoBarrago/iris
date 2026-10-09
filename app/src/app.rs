@@ -1,16 +1,13 @@
-//! Application state that outlives any window: the core, the tray, the
-//! content filter, identities, and the engine event loop.
+//! Application state that outlives any window: the core, the Dock badge,
+//! the content filter, identities, and the engine event loop.
 
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
-use std::os::unix::process::CommandExt;
 use std::path::PathBuf;
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
 
 use adw::prelude::*;
 use gtk::{gio, glib};
-use ksni::TrayMethods;
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{Account, AccountId, Address, ChangeEvent, Label, MailSet, Provider, Role};
 use mailrs_store::{accounts, labels, messages, threads};
@@ -22,7 +19,6 @@ use crate::core::Core;
 use crate::notify;
 use crate::permission::{Occasion, Permission};
 use crate::settings::{Change, ColorScheme, Effect, Effects, Settings};
-use crate::tray::{AccountUnread, MailTray, TrayCommand};
 use crate::ui::autocomplete::Contacts;
 use crate::ui::composer::spell;
 use crate::ui::window::{MainWindow, Notice, Reveal};
@@ -62,22 +58,19 @@ pub struct App {
     /// Grant Access banner never waits on a round trip of its own.
     consent: RefCell<HashMap<AccountId, accounts::Consent>>,
     names: RefCell<HashMap<AccountId, String>>,
-    tray: Arc<Mutex<Option<ksni::Handle<MailTray>>>>,
     /// What somebody picked on a new-mail notification.
     chosen: async_channel::Sender<notify::Request>,
     skip_first_window: Cell<bool>,
     filter_requested: Cell<bool>,
     /// Main window plus open composers.
     open_windows: Cell<usize>,
-    shed_generation: Cell<u64>,
     /// A message requested on the command line, opened on first activation.
     pending_compose: RefCell<Option<String>>,
     /// A calendar file requested on the command line, opened on first
     /// activation.
     pending_file: RefCell<Option<std::path::PathBuf>>,
-    tray_started: Cell<bool>,
-    /// Holds the tray's recount while a burst of changes goes by.
-    tray_recount: crate::tray::Burst,
+    /// Holds the Dock badge's recount while a burst of changes goes by.
+    badge_recount: crate::dock::Burst,
     /// Accounts whose waiting rule would replace a script of the person's
     /// own and were asked about it this run, so the minute timer asks once.
     asked_to_replace: RefCell<std::collections::HashSet<AccountId>>,
@@ -110,9 +103,6 @@ pub struct App {
     reminder_wake: RefCell<Option<glib::SourceId>>,
     /// A reminder check is reading or posting; another waits for it.
     reminders_running: Cell<bool>,
-    /// Finds and installs newer releases. None in the demo and in a cargo
-    /// build, which never update.
-    updater: Option<Rc<crate::update::Updater>>,
     _hold: gio::ApplicationHoldGuard,
 }
 
@@ -146,16 +136,13 @@ impl App {
             label_order: RefCell::new(HashMap::new()),
             consent: RefCell::new(HashMap::new()),
             names: RefCell::new(HashMap::new()),
-            tray: Arc::new(Mutex::new(None)),
             chosen,
             skip_first_window: Cell::new(background),
             filter_requested: Cell::new(false),
             open_windows: Cell::new(0),
-            shed_generation: Cell::new(0),
             pending_compose: RefCell::new(compose),
             pending_file: RefCell::new(calendar_file),
-            tray_started: Cell::new(false),
-            tray_recount: crate::tray::Burst::default(),
+            badge_recount: crate::dock::Burst::default(),
             asked_to_replace: RefCell::default(),
             settings: RefCell::new(Settings {
                 // The demo's contacts are already in its throwaway store,
@@ -175,14 +162,13 @@ impl App {
             scheduler_running: Cell::new(false),
             reminder_wake: RefCell::new(None),
             reminders_running: Cell::new(false),
-            updater: crate::update::Updater::for_this_copy(core_demo).map(Rc::new),
             _hold: gio_app.hold(),
         });
         crate::locale_time::set_week_start_setting(app.settings.borrow().week_start);
         app.install_actions();
         app.listen();
         app.listen_for_notifications(picked);
-        // The tray's Quit and a session logout can end the process
+        // The menu's Quit and a session logout can end the process
         // through the application without ever calling `App::quit`, so
         // this is the one signal every way out fires. `Holding::drain`
         // makes a second call, from the window's own close request, a
@@ -195,11 +181,6 @@ impl App {
                 window.calendar.commit_all_now();
             }
         });
-        // The tray is a StatusNotifierItem on the session bus, which macOS
-        // has no session bus for; watching for its host there panics in gio.
-        if !app.core.demo && cfg!(not(target_os = "macos")) {
-            app.watch_for_tray_host();
-        }
         let weak = Rc::downgrade(&app);
         let monitor = gio::NetworkMonitor::default();
         app.core.set_network(monitor.is_network_available());
@@ -333,16 +314,6 @@ impl App {
         });
     }
 
-    /// Shows the window on `account_id`'s inbox, as the sidebar's Inbox row
-    /// under that account does. A tray line can outlive its account, and
-    /// then the window opens as it is.
-    pub fn show_inbox_of(self: &Rc<Self>, account_id: AccountId) {
-        let window = self.show_window();
-        if self.accounts.borrow().iter().any(|a| a.id == account_id) {
-            window.show_inbox_of(account_id);
-        }
-    }
-
     pub fn show_window(self: &Rc<Self>) -> Rc<MainWindow> {
         crate::ensure_gtk();
         self.apply_style();
@@ -352,15 +323,12 @@ impl App {
             return Rc::clone(window);
         }
         // WebKit starts its graphics stack when first used, which costs
-        // tens of megabytes; waiting for the first window keeps a
-        // background-only process small.
+        // tens of megabytes; waiting for the first window keeps a copy
+        // started without one small.
         if self.filter.borrow().is_none() && !self.filter_requested.replace(true) {
             self.compile_filter();
         }
         let window = MainWindow::new(self);
-        if let Some(updater) = &self.updater {
-            window.notice(Notice::Update(&updater.state()));
-        }
         *self.window.borrow_mut() = Some(Rc::clone(&window));
         self.window_opened();
         window.present();
@@ -388,77 +356,18 @@ impl App {
         self.settings_saver.flush();
     }
 
-    /// Replaces this process with `command`, as the idle restart and an
-    /// update do, and says why when that fails.
-    pub(crate) fn exec_into(&self, mut command: std::process::Command) -> std::io::Error {
-        self.before_leaving();
-        command.exec()
-    }
-
-    pub fn forget_window(self: &Rc<Self>, window: &Rc<MainWindow>) {
-        let forgotten = {
-            let mut slot = self.window.borrow_mut();
-            let same = slot.as_ref().is_some_and(|w| Rc::ptr_eq(w, window));
-            if same {
-                *slot = None;
-            }
-            same
-        };
-        if forgotten {
-            self.window_closed();
-        }
-    }
-
     fn window_opened(&self) {
         self.open_windows.set(self.open_windows.get() + 1);
-        self.shed_generation.set(self.shed_generation.get() + 1);
     }
 
-    /// Once no window has been open for a minute, restarts the process in
-    /// the background. GTK, the graphics drivers, and WebKit cannot be
-    /// unloaded, so this is how a closed window gives its memory back.
+    /// Tells the engine when the last window closes, so it syncs at the
+    /// slower pace of an app left running in the Dock.
     fn window_closed(self: &Rc<Self>) {
         let open = self.open_windows.get().saturating_sub(1);
         self.open_windows.set(open);
         if open == 0 {
             self.core.set_window_open(false);
         }
-        // On macOS the app lives in the Dock, not in a tray, and a copy that
-        // restarted itself in the background is one Launch Services did not
-        // start: it never comes to the front, and the Dock's click that
-        // should reopen the window is spent on its skipped first activate.
-        if open > 0 || self.core.demo || cfg!(target_os = "macos") {
-            return;
-        }
-        let generation = self.shed_generation.get() + 1;
-        self.shed_generation.set(generation);
-        let delay = std::env::var("MAILRS_SHED_AFTER")
-            .ok()
-            .and_then(|v| v.parse().ok())
-            .unwrap_or(60);
-        self.shed_after(generation, delay);
-    }
-
-    fn shed_after(self: &Rc<Self>, generation: u64, seconds: u32) {
-        let weak = Rc::downgrade(self);
-        glib::timeout_add_seconds_local_once(seconds, move || {
-            let Some(app) = weak.upgrade() else { return };
-            if app.shed_generation.get() != generation || app.open_windows.get() > 0 {
-                return;
-            }
-            if app.core.busy() || app.pending_sends.get() > 0 {
-                app.shed_after(generation, 10);
-                return;
-            }
-            let Ok(exe) = crate::exe::launcher() else {
-                return;
-            };
-            tracing::info!("no window for a while; restarting in the background to return memory");
-            let mut command = std::process::Command::new(exe);
-            command.arg("--background");
-            let err = app.exec_into(command);
-            tracing::warn!(error = %err, "could not restart in the background; staying as is");
-        });
     }
 
     pub(crate) fn window(&self) -> Option<Rc<MainWindow>> {
@@ -771,7 +680,7 @@ impl App {
             });
         }
         self.refresh_send_as(arrived);
-        self.update_tray();
+        self.update_badge();
     }
 
     fn load_accounts(self: &Rc<Self>) {
@@ -1140,7 +1049,7 @@ impl App {
         add("quit", Box::new(|app| app.quit()));
     }
 
-    /// Quits the whole process, tray included.
+    /// Quits the whole process.
     pub fn quit(&self) {
         self.gio.quit();
     }
@@ -1149,7 +1058,7 @@ impl App {
     /// copy. The Language preference needs it: GTK and gettext both read
     /// the locale as the process starts.
     pub fn restart(&self) {
-        let Ok(exe) = crate::exe::launcher() else {
+        let Ok(exe) = std::env::current_exe() else {
             return;
         };
         let args: Vec<std::ffi::OsString> = std::env::args_os().skip(1).collect();
@@ -1199,7 +1108,7 @@ impl App {
                         this.after_rules(*account_id, message_ids.clone());
                     }
                     ChangeEvent::ThreadsChanged { .. }
-                    | ChangeEvent::AccountStateChanged { .. } => this.update_tray(),
+                    | ChangeEvent::AccountStateChanged { .. } => this.update_badge(),
                     _ => {}
                 }
             }
@@ -1435,127 +1344,39 @@ impl App {
         });
     }
 
-    /// Registers the tray icon whenever a tray host appears on the session
-    /// bus. On Ubuntu that host is the AppIndicators extension, so enabling
-    /// it later shows the icon without restarting Iris.
-    fn watch_for_tray_host(self: &Rc<Self>) {
-        let weak = Rc::downgrade(self);
-        // The watch lasts for the life of the process; the id is not needed.
-        let _ = gio::bus_watch_name(
-            gio::BusType::Session,
-            "org.kde.StatusNotifierWatcher",
-            gio::BusNameWatcherFlags::NONE,
-            move |_, _, _| {
-                if let Some(app) = weak.upgrade()
-                    && !app.tray_started.replace(true)
-                {
-                    app.start_tray();
-                }
-            },
-            |_, _| tracing::info!("the tray host went away; the icon returns when it does"),
-        );
-    }
-
-    fn start_tray(self: &Rc<Self>) {
-        let (commands, received) = async_channel::unbounded();
-        let tray = MailTray {
-            unread: 0,
-            accounts: Vec::new(),
-            commands,
-            can_update: self.updater.is_some(),
-            update: None,
-        };
-        let slot = Arc::clone(&self.tray);
-        // The restart that returns memory execs in place and keeps the pid,
-        // so the default name, StatusNotifierItem-<pid>-1, comes back while
-        // the AppIndicators extension is still timing out the old owner. When
-        // the new process registers inside that 500 ms window, the extension
-        // sometimes destroys the indicator after accepting the registration,
-        // and the icon stays gone. A unique connection name never repeats.
-        self.core.spawn(async move {
-            match tray.disable_dbus_name(true).spawn().await {
-                Ok(handle) => *slot.lock().expect("tray slot poisoned") = Some(handle),
-                Err(err) => tracing::warn!(error = %err, "could not add the tray icon"),
-            }
-        });
-        let this = Rc::clone(self);
-        glib::spawn_future_local(async move {
-            while let Ok(command) = received.recv().await {
-                match command {
-                    TrayCommand::Toggle => match this.window() {
-                        Some(window) if window.is_active() => window.window.close(),
-                        _ => {
-                            this.show_window();
-                        }
-                    },
-                    TrayCommand::Open => {
-                        this.show_window();
-                    }
-                    TrayCommand::OpenInbox(id) => this.show_inbox_of(id),
-                    TrayCommand::Compose => this.compose_to(""),
-                    TrayCommand::Check => this.core.poke_all(),
-                    TrayCommand::CheckForUpdates => this.check_for_updates(true),
-                    TrayCommand::InstallUpdate => this.install_update(),
-                    TrayCommand::WhatsNew => this.open_release_notes(),
-                    TrayCommand::Quit => this.quit(),
-                }
-            }
-        });
-    }
-
-    /// Counts each account's unread mail for the tray, once per burst of
-    /// changes rather than once per change.
-    fn update_tray(self: &Rc<Self>) {
-        // macOS has no tray; the same count goes to the Dock's badge.
-        let shown = self.tray.lock().expect("tray slot poisoned").is_some() || cfg!(target_os = "macos");
-        if !shown || !self.tray_recount.claim() {
+    /// Counts the unread conversations in every inbox for the Dock's badge,
+    /// once per burst of changes rather than once per change.
+    fn update_badge(self: &Rc<Self>) {
+        if !self.badge_recount.claim() {
             return;
         }
         let this = Rc::clone(self);
-        glib::timeout_add_local_once(crate::tray::RECOUNT_AFTER, move || {
-            this.tray_recount.start();
-            this.count_for_tray();
+        glib::timeout_add_local_once(crate::dock::RECOUNT_AFTER, move || {
+            this.badge_recount.start();
+            this.count_for_badge();
         });
     }
 
-    fn count_for_tray(self: &Rc<Self>) {
-        let handle = self.tray.lock().expect("tray slot poisoned").clone();
-        if handle.is_none() && cfg!(not(target_os = "macos")) {
-            return;
-        }
+    fn count_for_badge(self: &Rc<Self>) {
         let accounts = self.accounts.borrow().clone();
         let this = Rc::clone(self);
         glib::spawn_future_local(async move {
-            let counts = this
+            let unread = this
                 .core
                 .read(move |c| {
-                    let mut counts = Vec::new();
+                    let mut unread = 0;
                     for account in accounts {
-                        let unread = threads::unread_threads(
+                        unread += threads::unread_threads(
                             c,
                             &threads::ThreadFilter::account(account.id, MailSet::Role(Role::Inbox)),
                         )?;
-                        counts.push(AccountUnread {
-                            id: account.id,
-                            email: account.email,
-                            unread,
-                        });
                     }
-                    Ok(counts)
+                    Ok(unread)
                 })
                 .await;
-            let Ok(counts) = counts else { return };
-            #[cfg(target_os = "macos")]
-            crate::dock::set_badge(counts.iter().map(|a| a.unread).sum());
-            let Some(handle) = handle else { return };
-            this.core.spawn(async move {
-                handle
-                    .update(move |tray: &mut MailTray| {
-                        tray.unread = counts.iter().map(|a| a.unread).sum();
-                        tray.accounts = counts;
-                    })
-                    .await;
-            });
+            if let Ok(unread) = unread {
+                crate::dock::set_badge(unread);
+            }
         });
     }
 }

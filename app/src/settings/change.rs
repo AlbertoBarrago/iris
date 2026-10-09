@@ -47,10 +47,6 @@ pub enum Change {
     DefaultCategory(Category),
     SuggestFollowUps(bool),
     CheckForUpdates(bool),
-    /// The updater asked GitHub at this time, in Unix seconds.
-    UpdateChecked(i64),
-    /// The release version the updater last put a notification up for.
-    UpdateAnnounced(String),
     /// What a new message starts as.
     ComposeFormat(ComposeFormat),
     /// Ask before a message that promises a file goes without one.
@@ -281,8 +277,6 @@ impl Change {
             Change::DefaultCategory(category) => settings.default_category = category,
             Change::SuggestFollowUps(on) => settings.suggest_follow_ups = on,
             Change::CheckForUpdates(on) => settings.check_for_updates = on,
-            Change::UpdateChecked(at) => settings.last_update_check = Some(at),
-            Change::UpdateAnnounced(version) => settings.announced_update = Some(version),
             Change::ComposeFormat(format) => settings.compose_format = format,
             Change::CheckAttachments(on) => settings.check_attachments = on,
             Change::SignByDefault(on) => settings.sign_by_default = on,
@@ -599,8 +593,6 @@ settable! {
         account_names,
         account_order,
         ai,
-        // The updater's own record of what it announced.
-        announced_update,
         // Where the window was and what the calendar showed are the
         // window's memory of the person's own clicks.
         calendar_view,
@@ -639,7 +631,6 @@ settable! {
         // preference with nothing to show.
         language,
         last_sender,
-        last_update_check,
         // Each server runs commands or reaches a service of the person's
         // choosing, so only Preferences adds one.
         mcp_servers,
@@ -844,8 +835,6 @@ impl Effects {
             contacts,
             contact_accounts,
             check_for_updates,
-            last_update_check,
-            announced_update,
             space,
             calendar_view,
             show_declined_events,
@@ -895,10 +884,8 @@ impl Effects {
             // A chat reads the skills as it starts, so a switch changes the
             // next chat rather than the one on screen.
             assistant_skills,
-            // The updater reads these when its timer fires.
+            // Sparkle hears of this from Preferences itself.
             check_for_updates,
-            last_update_check,
-            announced_update,
             // The calendar changes its own view as the person picks one,
             // and the setting only remembers the pick for the next start.
             space,
@@ -1205,8 +1192,6 @@ mod tests {
                 html: "<b>Ann</b>".into(),
             },
             Change::AssistantDetailsExpanded(true),
-            Change::UpdateChecked(1_700_000_000),
-            Change::UpdateAnnounced("0.2.0".into()),
             Change::Space(crate::settings::Space::Calendar),
             Change::CalendarView(crate::settings::CalendarView::Day),
             Change::ShowDeclinedEvents(true),

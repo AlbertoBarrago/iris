@@ -185,8 +185,10 @@ fn show(
         // macOS shows one action button, and several fold into a menu
         // behind an "Options" button, so a click on the body, which opens
         // the conversation, is all a Mac notification offers.
-        let buttons = if cfg!(target_os = "macos") { Vec::new() } else { buttons };
-        #[cfg(target_os = "macos")]
+        let buttons: Vec<Button> = {
+            let _ = buttons;
+            Vec::new()
+        };
         send_as_iris();
         let mut notification = notify_rust::Notification::new();
         notification
@@ -194,12 +196,6 @@ fn show(
             .summary(&summary)
             .body(&escape(&body))
             .icon(APP_ID);
-        // The hints a freedesktop daemon reads. macOS notifications have
-        // no such thing.
-        #[cfg(not(target_os = "macos"))]
-        notification
-            .hint(notify_rust::Hint::Category("email.arrived".into()))
-            .hint(notify_rust::Hint::DesktopEntry(APP_ID.into()));
         if target.is_some() {
             notification.action("default", &gettext("Open"));
             for button in &buttons {
@@ -233,24 +229,8 @@ fn choice_of(key: &str, buttons: &[Button]) -> Option<Choice> {
         .map(|button| Choice::Button(*button))
 }
 
-/// Whether the running notification daemon invokes actions, asked once.
-/// Without that capability the buttons would sit on screen doing nothing,
-/// so a plain notification goes out instead.
-#[cfg(not(target_os = "macos"))]
-fn takes_actions() -> bool {
-    static TAKES: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    *TAKES.get_or_init(|| match notify_rust::get_capabilities() {
-        Ok(capabilities) => capabilities.iter().any(|c| c == "actions"),
-        Err(err) => {
-            tracing::warn!(error = %err, "could not ask the notification daemon what it does");
-            false
-        }
-    })
-}
-
 /// A Mac notification reports a click on its body, which opens the
 /// conversation.
-#[cfg(target_os = "macos")]
 fn takes_actions() -> bool {
     true
 }
@@ -258,7 +238,6 @@ fn takes_actions() -> bool {
 /// Sends notifications under Iris's bundle id, once. Without it they go
 /// out under another app's name and icon, and a click brings that app
 /// forward instead of Iris.
-#[cfg(target_os = "macos")]
 fn send_as_iris() {
     static SET: std::sync::OnceLock<()> = std::sync::OnceLock::new();
     SET.get_or_init(|| {

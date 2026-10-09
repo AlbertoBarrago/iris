@@ -20,7 +20,6 @@ use mailrs_domain::{Account, Provider, RemoveSetting};
 use mailrs_imap::{CheckError, ImapError};
 use mailrs_store::servers::{Pop3Servers, Saved, Servers};
 
-use crate::keyring_plug::Plug;
 
 /// An address the person typed, split at its last `@`. The domain is in
 /// lower case, as DNS and the provider table read it; the local part
@@ -742,14 +741,6 @@ pub enum FailureKind {
 /// words; anything else, such as the keyring refusing or an address a
 /// Google account holds, already reads as a sentence.
 pub fn failure(err: &anyhow::Error, proposal: &Proposal) -> Failure {
-    failure_given(err, proposal, crate::keyring_plug::current())
-}
-
-/// `failure`, with the keyring plug as `plug` found it.
-fn failure_given(err: &anyhow::Error, proposal: &Proposal, plug: Plug) -> Failure {
-    if let Some(unplugged) = keyring_unplugged(err, plug) {
-        return unplugged;
-    }
     let could_not = gettext("Could not sign in");
     let Some(check) = err.downcast_ref::<CheckError>() else {
         return Failure::plain(err.to_string(), could_not.clone(), err.to_string());
@@ -859,30 +850,6 @@ fn failure_given(err: &anyhow::Error, proposal: &Proposal, plug: Plug) -> Failur
             Failure::plain(line.clone(), could_not.clone(), line)
         }
     }
-}
-
-/// The failure for a sign-in the keyring would not keep because the snap
-/// cannot reach it: the command that connects the plug, with a Copy
-/// button, in place of the keyring's own words. `None` for any other
-/// failure, and outside a snap.
-pub fn keyring_unplugged(err: &anyhow::Error, plug: Plug) -> Option<Failure> {
-    if !plug.explains_refusal() || !crate::keyring_plug::is_keyring_refusal(err) {
-        return None;
-    }
-    let command = crate::keyring_plug::COMMAND;
-    let body = gettext(
-        "Iris cannot save your sign-in until the snap can reach your keyring. \
-         Run this command in a terminal, restart Iris, then add the account again.",
-    );
-    Some(Failure {
-        line: format!("{body} {command}"),
-        title: gettext("Connect Your Keyring"),
-        body,
-        said: Some(command.to_string()),
-        links: Vec::new(),
-        copy: Some(command.to_string()),
-        kind: FailureKind::Refused,
-    })
 }
 
 impl Failure {
@@ -1829,28 +1796,9 @@ mod tests {
     }
 
     #[test]
-    fn a_keyring_the_snap_cannot_reach_gets_the_command_that_connects_it() {
-        let said = failure_given(&keyring_refused(), &fastmail(), Plug::Disconnected);
-        assert_eq!(said.said.as_deref(), Some(crate::keyring_plug::COMMAND));
-        assert_eq!(said.copy.as_deref(), Some(crate::keyring_plug::COMMAND));
-        assert!(said.body.contains("restart"), "{}", said.body);
-        let command = crate::keyring_plug::COMMAND;
-        assert!(said.line.contains(command), "{}", said.line);
-    }
-
-    #[test]
-    fn a_keyring_refusal_with_the_plug_connected_reads_as_itself() {
-        let said = failure_given(&keyring_refused(), &fastmail(), Plug::Connected);
+    fn a_keyring_refusal_reads_as_itself() {
+        let said = failure(&keyring_refused(), &fastmail());
         assert_eq!(said.line, "The keyring refused: no such interface");
-        assert_eq!(said.copy, None);
-    }
-
-    #[test]
-    fn a_refused_password_in_a_snap_is_not_blamed_on_the_keyring() {
-        let refused = anyhow::Error::new(CheckError::Imap(ImapError::Auth {
-            text: "AUTHENTICATIONFAILED".into(),
-        }));
-        let said = failure_given(&refused, &fastmail(), Plug::Disconnected);
         assert_eq!(said.copy, None);
     }
 

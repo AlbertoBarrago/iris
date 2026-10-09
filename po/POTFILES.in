@@ -1,5 +1,3 @@
-app/data/io.github.AlbertoBarrago.Iris.desktop
-app/data/io.github.AlbertoBarrago.Iris.metainfo.xml
 app/src/add_account.rs
 app/src/add_account/lookup.rs
 app/src/add_account/post.rs
@@ -21,20 +19,17 @@ app/src/assistant/sources/skills/sandbox.rs
 app/src/assistant/sources/skills/shell.rs
 app/src/assistant/sources/web.rs
 app/src/assistant/turn.rs
-app/src/autostart.rs
 app/src/compose.rs
 app/src/contacts.rs
 app/src/core.rs
 app/src/event_reminders/notice.rs
 app/src/format.rs
-app/src/keyring_plug.rs
 app/src/language_names.rs
 app/src/macos_menu.rs
 app/src/main.rs
 app/src/notify.rs
 app/src/offered.rs
 app/src/open_thread/run/translation.rs
-app/src/packaging.rs
 app/src/permission.rs
 app/src/pgp.rs
 app/src/protection/draft.rs
@@ -46,7 +41,6 @@ app/src/settings/mod.rs
 app/src/smime.rs
 app/src/templates.rs
 app/src/translation.rs
-app/src/tray.rs
 app/src/ui/about.rs
 app/src/ui/add_account.rs
 app/src/ui/assistant_mcp_prefs.rs
@@ -136,8 +130,6 @@ app/src/ui/window/shortcuts.rs
 app/src/ui/window/spaces.rs
 app/src/unsubscribe_page.rs
 app/src/unsubscribe_page/webkit.rs
-app/src/update/mod.rs
-app/src/update/signature.rs
 domain/src/calendar/clock.rs
 domain/src/category.rs
 domain/src/invitation/recurrence.rs

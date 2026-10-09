@@ -35,7 +35,7 @@ pub fn locale_dir() -> PathBuf {
     // `<prefix>/bin/iris` once installed, `target/<profile>/
     // iris` in the build tree: both sit two directories below the
     // one that holds the catalogues.
-    let above = crate::exe::path()
+    let above = std::env::current_exe()
         .ok()
         .and_then(|exe| exe.parent().and_then(Path::parent).map(Path::to_path_buf));
     let Some(above) = above else {
@@ -44,12 +44,9 @@ pub fn locale_dir() -> PathBuf {
     // Inside Iris.app the binary sits in Contents/MacOS, and
     // scripts/macos-bundle.sh puts the catalogues in Contents/Resources,
     // where a bundle keeps what it reads and codesign seals it.
-    #[cfg(target_os = "macos")]
-    {
-        let bundled = above.join("Resources/locale");
-        if bundled.is_dir() {
-            return bundled;
-        }
+    let bundled = above.join("Resources/locale");
+    if bundled.is_dir() {
+        return bundled;
     }
     let installed = above.join("share/locale");
     match installed.is_dir() {

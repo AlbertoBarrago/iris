@@ -454,13 +454,11 @@ impl ConversationView {
         let queued = QueuedCard::new();
         let web_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
         web_box.append(&queued.widget);
-        // On macOS the two banners over the message float as rounded
-        // islands, as the Mac's own notices do, instead of spanning the
-        // pane edge to edge.
-        if cfg!(target_os = "macos") {
-            list_banner.add_css_class("island");
-            banner.add_css_class("island");
-        }
+        // The two banners over the message float as rounded islands, as
+        // the Mac's own notices do, instead of spanning the pane edge to
+        // edge.
+        list_banner.add_css_class("island");
+        banner.add_css_class("island");
         web_box.append(&list_banner);
         web_box.append(&banner);
         web_box.append(&seal.widget);
@@ -2180,9 +2178,6 @@ pub(crate) fn network_session() -> webkit::NetworkSession {
 /// A menu taller than the screen still scrolls, as GTK keeps a popover
 /// inside the monitor.
 fn fit_to_content(popover: &gtk::Popover) {
-    if !cfg!(target_os = "macos") {
-        return;
-    }
     let Some(scrolled) = first_scrolled(popover.upcast_ref()) else { return };
     let popover = popover.clone();
     glib::idle_add_local_once(move || {

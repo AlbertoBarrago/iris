@@ -2321,10 +2321,7 @@ impl Composer {
                     .basename()
                     .map(|p| p.to_string_lossy().into_owned())
                     .unwrap_or_else(|| "attachment".into());
-                let (guess, _) = gio::content_type_guess(Some(&filename), &bytes[..]);
-                let mime_type = gio::content_type_get_mime_type(&guess)
-                    .map(|m| m.to_string())
-                    .unwrap_or_else(|| "application/octet-stream".into());
+                let mime_type = crate::file_type::mime_type(&filename, &bytes);
                 if inline && mime_type.starts_with("image/") {
                     let alt = pictures::alt_from_file_name(&filename);
                     self.add_inline_image(filename, &alt, mime_type, bytes.to_vec());

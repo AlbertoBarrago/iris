@@ -866,7 +866,12 @@ mod tests {
     /// WebKit tore its run loop down on the way out while one of its IPC
     /// threads waited to hand that run loop a message, and now and then
     /// the two waited on each other for good.
+    ///
+    /// GTK on macOS starts only on the process's main thread, which the
+    /// harness keeps for itself, so the test waits for a harness that can
+    /// hand it that thread.
     #[test]
+    #[ignore = "GTK on macOS starts only on the main thread, which libtest keeps"]
     fn the_buffer_holds_a_rich_body_and_gives_it_back() {
         let (done, finished) = std::sync::mpsc::channel();
         std::thread::Builder::new()

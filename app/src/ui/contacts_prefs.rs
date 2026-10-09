@@ -5,7 +5,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use adw::prelude::*;
-use mailrs_domain::translate::{fill, gettext, pgettext};
+use mailrs_domain::translate::{fill, gettext};
 use gtk::glib;
 use mailrs_domain::{Account, AccountId, Provider};
 use mailrs_store::services::{Miss, ServiceKind};
@@ -34,11 +34,7 @@ pub fn page(
         .build();
     page.add(&contacts(app, settings, accounts, &withheld, grant.clone()));
     let missed = |id, missing| app.core.missed(id, missing);
-    let (calendar, online) = calendar(accounts, &withheld, &missed, grant, calendar_rows);
-    page.add(&calendar);
-    if let Some(online) = online {
-        page.add(&online);
-    }
+    page.add(&calendar(accounts, &withheld, &missed, grant, calendar_rows));
     if let Some(group) = servers(app, accounts) {
         page.add(&group);
     }
@@ -256,36 +252,23 @@ enum CalendarRow {
 /// whose server has no calendar, or whose own consent withheld it, gets
 /// a row that says so instead. `settings_rows`, the calendar's own
 /// settings, sit above the accounts.
-///
-/// The Online Accounts rows go in a group of their own, the second one
-/// returned, so they do not sit among Event Reminders and Working Hours
-/// under no heading. It is `None` when there are none.
 fn calendar(
     accounts: &[(Account, Offers)],
     withheld: &impl Fn(AccountId) -> Withheld,
     missed: &impl Fn(AccountId, Missing) -> Option<Miss>,
     grant: impl Fn(AccountId) + Clone + 'static,
     settings_rows: &[gtk::Widget],
-) -> (adw::PreferencesGroup, Option<adw::PreferencesGroup>) {
+) -> adw::PreferencesGroup {
     let group = adw::PreferencesGroup::builder()
         .title(gettext("Calendar"))
         .description(gettext(
             "Iris shows each account's meetings and reminds you before they start.",
         ))
         .build();
-    let online = adw::PreferencesGroup::builder()
-        .title(gettext("GNOME Online Accounts"))
-        .description(gettext(
-            "Add an account to GNOME Online Accounts to see its meetings in GNOME \
-             Calendar and the clock too.",
-        ))
-        .build();
-    let mut online_rows = 0;
     // The calendar's own settings come first, above the accounts.
     for row in settings_rows {
         group.add(row);
     }
-    let mut online_accounts = true;
     for (account, offers) in accounts {
         match calendar_lack(account, *offers, withheld(account.id), missed(account.id, Missing::Calendar)) {
             CalendarRow::NotOffered(lack) => {
@@ -303,42 +286,8 @@ fn calendar(
             }
             CalendarRow::Available => {}
         }
-        if !online_accounts {
-            continue;
-        }
-        let Some(known) = crate::goa::known(&account.email) else {
-            // No Online Accounts on this desktop: there is nothing to add
-            // the account to, so the rows would only say so.
-            online_accounts = false;
-            continue;
-        };
-        let row = adw::ActionRow::builder().use_markup(false).title(&account.email).build();
-        if known {
-            row.set_subtitle(&pgettext("an account in Online Accounts", "Added"));
-        } else {
-            row.set_subtitle(&pgettext("an account in Online Accounts", "Not added"));
-            let add = gtk::Button::builder()
-                .label(gettext("Add to Online Accounts…"))
-                .valign(gtk::Align::Center)
-                .build();
-            crate::ui::name(
-                &add,
-                &fill(
-                    &gettext("Add {account} to GNOME Online Accounts"),
-                    &[("account", &account.email)],
-                ),
-            );
-            add.connect_clicked(|_| {
-                if let Err(err) = crate::goa::open_online_accounts() {
-                    tracing::warn!(error = %err, "could not open Online Accounts");
-                }
-            });
-            row.add_suffix(&add);
-        }
-        online.add(&row);
-        online_rows += 1;
     }
-    (group, (online_rows > 0).then_some(online))
+    group
 }
 
 /// Why `account`'s calendar row is not the Online Accounts row: the

@@ -95,7 +95,9 @@ pub(super) fn local_file(
 
 /// Whether the assistant must leave the file at `path` alone. It attaches
 /// what sits in the home folder, outside any hidden folder, and what sits
-/// in the temporary and removable-media folders. Hidden folders such as
+/// in the temporary folders and on disks the Mac mounts under
+/// `/Volumes`. Paths arrive resolved, so `/tmp` reads as `/private/tmp`
+/// and a temporary file as `/private/var/folders/...`. Hidden folders such as
 /// `~/.ssh` and `~/.gnupg` hold keys, passwords and settings, and the rest
 /// of the system holds the computer's own; the folders in `private` hold
 /// Iris's mail store, settings and tokens wherever they live.
@@ -111,7 +113,9 @@ pub(super) fn off_limits(path: &Path, home: &Path, private: &[PathBuf]) -> bool 
     if let Ok(inside) = path.strip_prefix(home) {
         return hidden(inside);
     }
-    let open = ["/tmp", "/media", "/mnt", "/run/media"];
+    let temporary = std::env::temp_dir();
+    let temporary = std::fs::canonicalize(&temporary).unwrap_or(temporary);
+    let open = [Path::new("/private/tmp"), temporary.as_path(), Path::new("/Volumes")];
     match open.iter().find_map(|root| path.strip_prefix(root).ok()) {
         Some(inside) => hidden(inside),
         None => true,
@@ -581,10 +585,7 @@ impl<A: Accounts> Tools<A> {
                 .file_name()
                 .map(|n| n.to_string_lossy().into_owned())
                 .unwrap_or_else(|| "attachment".into());
-            let (guess, _) = gtk::gio::content_type_guess(Some(&filename), &data[..]);
-            let mime_type = gtk::gio::content_type_get_mime_type(&guess)
-                .map(|m| m.to_string())
-                .unwrap_or_else(|| "application/octet-stream".into());
+            let mime_type = crate::file_type::mime_type(&filename, &data);
             files.push(OutgoingAttachment {
                 filename,
                 mime_type,

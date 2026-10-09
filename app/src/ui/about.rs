@@ -1,5 +1,5 @@
 //! The About window: which Iris this is, who made it, where to read
-//! about it, and a button that checks for a newer version and installs it.
+//! about it, and a button that asks Sparkle for a newer version.
 //! libadwaita's own About dialog takes no widgets of ours, so this one draws
 //! its main page the same way and adds the button.
 
@@ -8,19 +8,10 @@ use std::rc::Rc;
 use adw::prelude::*;
 use mailrs_domain::translate::{fill, gettext};
 
-use crate::update::State;
-
 pub(crate) const REPOSITORY: &str = "https://github.com/AlbertoBarrago/iris";
 
 pub struct About {
     pub dialog: adw::Dialog,
-    /// Holds the update button and the line under it. Hidden when this copy
-    /// never updates: the demo and a cargo build.
-    updates: gtk::Box,
-    button: gtk::Button,
-    label: gtk::Label,
-    spinner: adw::Spinner,
-    status: gtk::Label,
 }
 
 impl About {
@@ -74,18 +65,10 @@ impl About {
         version.add_css_class("dim-label");
         version.set_margin_top(6);
         content.append(&version);
-        // A copy that dnf or a store updates has no update button, so it
-        // says who updates it.
-        if let Some(updater) = crate::packaging::BUILT_FOR.updated_by() {
-            let updates = gtk::Label::new(Some(&updater.line()));
-            updates.add_css_class("dim-label");
-            updates.add_css_class("caption");
-            content.append(&updates);
-        }
 
         let comments = gtk::Label::builder()
             .label(gettext(
-                "Mail and calendar for Linux. Your mail stays on your computer.",
+                "Mail and calendar for macOS. Your mail stays on your computer.",
             ))
             .wrap(true)
             .justify(gtk::Justification::Center)
@@ -126,35 +109,17 @@ impl About {
             }
         }
 
-        let label = gtk::Label::new(Some(&gettext("Check for Updates")));
-        let spinner = adw::Spinner::builder().visible(false).build();
-        let inside = gtk::Box::builder()
-            .spacing(8)
-            .halign(gtk::Align::Center)
-            .build();
-        inside.append(&spinner);
-        inside.append(&label);
+        // Sparkle answers in a window of its own, so the button only asks.
+        // Hidden when this copy never updates: the demo and a cargo build.
         let button = gtk::Button::builder()
-            .child(&inside)
+            .label(gettext("Check for Updates"))
+            .action_name("app.check-for-updates")
             .halign(gtk::Align::Center)
-            .build();
-        button.add_css_class("pill");
-        let status = gtk::Label::builder()
-            .wrap(true)
-            .justify(gtk::Justification::Center)
-            .visible(false)
-            .build();
-        status.add_css_class("dim-label");
-        status.add_css_class("caption");
-        let updates = gtk::Box::builder()
-            .orientation(gtk::Orientation::Vertical)
-            .spacing(8)
             .margin_top(18)
             .visible(can_update)
             .build();
-        updates.append(&button);
-        updates.append(&status);
-        content.append(&updates);
+        button.add_css_class("pill");
+        content.append(&button);
 
         let links = gtk::ListBox::builder()
             .selection_mode(gtk::SelectionMode::None)
@@ -214,113 +179,7 @@ impl About {
             .child(&view)
             .build();
 
-        Rc::new(About {
-            dialog,
-            updates,
-            button,
-            label,
-            spinner,
-            status,
-        })
-    }
-
-    /// Puts the update button and the line under it in step with where an
-    /// update stands. The button runs an app action, as the banner's does.
-    pub fn show_update(&self, state: &State) {
-        if !self.updates.is_visible() {
-            return;
-        }
-        let version = |v: &crate::update::version::Version| v.to_string();
-        let (label, action, busy, suggested, status) = match state {
-            State::Idle => (
-                gettext("Check for Updates"),
-                Some("app.check-for-updates"),
-                false,
-                false,
-                None,
-            ),
-            State::Checking => (gettext("Checking…"), None, true, false, None),
-            State::Current => (
-                gettext("Check for Updates"),
-                Some("app.check-for-updates"),
-                false,
-                false,
-                Some(gettext("Iris is up to date")),
-            ),
-            State::Unreachable => (
-                gettext("Check for Updates"),
-                Some("app.check-for-updates"),
-                false,
-                false,
-                Some(gettext(
-                    "Could not reach GitHub. Check your connection and try again.",
-                )),
-            ),
-            State::Available(release) => (
-                fill(
-                    &gettext("Install {version}"),
-                    &[("version", &version(&release.version))],
-                ),
-                Some("app.install-update"),
-                false,
-                true,
-                Some(fill(
-                    &gettext("Version {version} is available"),
-                    &[("version", &version(&release.version))],
-                )),
-            ),
-            State::Installing(v) => (
-                gettext("Installing…"),
-                None,
-                true,
-                false,
-                Some(fill(
-                    &gettext("Installing version {version}"),
-                    &[("version", &version(v))],
-                )),
-            ),
-            State::Installed(v) => (
-                gettext("Restart to Update"),
-                Some("app.restart-for-update"),
-                false,
-                true,
-                Some(fill(
-                    &gettext("Version {version} is installed"),
-                    &[("version", &version(v))],
-                )),
-            ),
-            State::Failed { version: v, .. } => (
-                gettext("Show Log"),
-                Some("app.update-log"),
-                false,
-                false,
-                Some(fill(
-                    &gettext("The update to {version} failed"),
-                    &[("version", &version(v))],
-                )),
-            ),
-        };
-        self.label.set_label(&label);
-        // The label sits inside a box, which a screen reader does not read
-        // as the button's name.
-        crate::ui::name(&self.button, &label);
-        self.button.set_action_name(action);
-        // A button with no action is insensitive, which is what a check or
-        // an install in progress wants.
-        self.button.set_sensitive(action.is_some());
-        self.spinner.set_visible(busy);
-        if suggested {
-            self.button.add_css_class("suggested-action");
-        } else {
-            self.button.remove_css_class("suggested-action");
-        }
-        match status {
-            Some(text) => {
-                self.status.set_label(&text);
-                self.status.set_visible(true);
-            }
-            None => self.status.set_visible(false),
-        }
+        Rc::new(About { dialog })
     }
 }
 
