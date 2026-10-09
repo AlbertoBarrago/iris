@@ -17,7 +17,7 @@ use serde_json::{Value, json};
 
 use super::manage::COLOR_KEYS;
 use super::{Answer, MailboxName, Organize, ToolResult, Tools};
-use crate::core::RunningEngine;
+use crate::engine::RunningEngine;
 use mailrs_sync::Accounts;
 
 /// A handler that answers the call itself.

@@ -55,9 +55,16 @@ pgp/      OpenPGP mail through the person's own gpg
 smime/    S/MIME mail through their gpgsm
 ai/       model providers, tool calls, the Claude Code bridge
 cli/      iris-cli
+render/   the conversation page, sanitizing, dates and times as people
+          read them
+view/     the sidebar and the words a window shows, free of any toolkit
+appcore/  what Iris does between a window and the engine: writing mail,
+          signatures, settings, protection, rules, and the assistant
 webkit/   webkit6's API, as the app uses it, over WKWebView
 app/      the GTK 4 and libadwaita app, with the calendar view in
           app/src/ui/calendar/
+ffi/      the Rust core for the SwiftUI app, through UniFFI
+macos/    Iris Next, the SwiftUI and AppKit app
 testmail/ Dovecot and Mailpit in Docker, for the IMAP and SMTP tests
 ```
 

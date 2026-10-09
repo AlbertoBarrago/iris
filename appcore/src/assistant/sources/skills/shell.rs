@@ -69,7 +69,7 @@ impl Shell {
 
 /// Where each conversation's scratch folder goes.
 fn scratch_root() -> PathBuf {
-    gtk::glib::user_cache_dir()
+    crate::dirs::user_cache_dir()
         .join("iris")
         .join("skill-work")
 }

@@ -127,9 +127,9 @@ pub(super) fn off_limits(path: &Path, home: &Path, private: &[PathBuf]) -> bool 
 fn private_dirs() -> Vec<PathBuf> {
     let name = mailrs_sync::config::DIR_NAME;
     let mut dirs = vec![
-        gtk::glib::user_config_dir().join(name),
-        gtk::glib::user_data_dir().join(name),
-        gtk::glib::user_cache_dir().join(name),
+        crate::dirs::user_config_dir().join(name),
+        crate::dirs::user_data_dir().join(name),
+        crate::dirs::user_cache_dir().join(name),
     ];
     dirs.extend(mailrs_sync::config::data_dir().ok());
     dirs.extend(
@@ -548,7 +548,7 @@ impl<A: Accounts> Tools<A> {
         for item in items {
             if let Some(path) = text(item, "path") {
                 let private = private.get_or_insert_with(private_dirs);
-                local.push(local_file(&path, &gtk::glib::home_dir(), private)?);
+                local.push(local_file(&path, &crate::dirs::home_dir(), private)?);
                 continue;
             }
             let email = text(item, "account").unwrap_or_else(|| self.email_of(account_id));
@@ -585,7 +585,7 @@ impl<A: Accounts> Tools<A> {
                 .file_name()
                 .map(|n| n.to_string_lossy().into_owned())
                 .unwrap_or_else(|| "attachment".into());
-            let mime_type = crate::file_type::mime_type(&filename, &data);
+            let mime_type = crate::file_type::mime_type(&filename);
             files.push(OutgoingAttachment {
                 filename,
                 mime_type,

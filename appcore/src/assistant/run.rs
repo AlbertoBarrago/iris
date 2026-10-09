@@ -37,7 +37,7 @@ use crate::rules::{RuleForm, describe_action, describe_criteria};
 use crate::settings::{
     Change, Choice, ColorScheme, MarkRead, RemoteImages, Setting, Settings, TextSize, UndoSend,
 };
-use crate::ui::unsubscribe::{ListLine, Way};
+use crate::unsubscribe_lines::{ListLine, Way};
 use crate::unsubscribe::RequestSent;
 use crate::unsubscribe_page::{Adviser, Browser};
 use mailrs_domain::translate::{date_locale, fill, fill_plural, gettext};

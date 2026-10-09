@@ -7,13 +7,30 @@
 /// know Iris by.
 pub const APP_ID: &str = "io.github.AlbertoBarrago.Iris";
 
+pub mod assistant;
 pub mod attachcheck;
 pub mod compose;
-pub mod images;
 pub mod contacts;
+pub mod dirs;
+pub mod engine;
+pub mod file_type;
+pub mod format;
+pub mod images;
+pub mod label_colors;
 pub mod notify;
+pub mod offered;
+pub mod permission;
+pub mod pgp;
+pub mod protection;
 pub mod richtext;
+pub mod rules;
 pub mod settings;
 pub mod signature;
+pub mod smime;
 pub mod standard;
 pub mod stray_markdown;
+pub mod templates;
+pub mod unsubscribe;
+pub mod unsubscribe_lines;
+pub mod unsubscribe_page;
+pub mod wanted;

@@ -647,859 +647,7 @@ msgstr "a sua mensagem"
 msgid "“{subject}”"
 msgstr "“{subject}”"
 
-#: app/src/assistant/mod.rs:119
-msgid "The assistant is off. Choose a model in Preferences."
-msgstr "O assistente está desligado. Escolha um modelo nas Preferências."
-
-#: app/src/assistant/mod.rs:121
-msgid "Translation has no model. Choose one in Preferences, on the AI page."
-msgstr "A tradução não tem modelo. Escolha um nas Preferências, na página IA."
-
-#: app/src/assistant/mod.rs:124
-msgid "Unsubscribing has no model. Choose one in Preferences, on the AI page."
-msgstr ""
-"O cancelamento de subscrições não tem modelo. Escolha um nas Preferências, "
-"na página IA."
-
-#: app/src/assistant/mod.rs:130
-msgid "Choose a model for the local server in Preferences."
-msgstr "Escolha um modelo para o servidor local nas Preferências."
-
-#: app/src/assistant/mod.rs:142
-msgid "Add an Anthropic API key in Preferences."
-msgstr "Adicione uma chave de API da Anthropic nas Preferências."
-
-#: app/src/assistant/mod.rs:149
-msgid "Claude Code is not installed. Install it and sign in, then try again."
-msgstr ""
-"O Claude Code não está instalado. Instale-o, inicie sessão e tente de novo."
-
-#: app/src/assistant/run.rs:1031
-msgid "Move {count} conversation to the Trash?"
-msgid_plural "Move {count} conversations to the Trash?"
-msgstr[0] "Mover {count} conversa para o lixo?"
-msgstr[1] "Mover {count} conversas para o lixo?"
-
-#: app/src/assistant/run.rs:1196
-msgid ""
-"Don't Allow labels only the mail in accounts that have the label already."
-msgstr ""
-"Com «Não permitir», só o correio das contas que já têm a etiqueta a recebe."
-
-#: app/src/assistant/run.rs:1233
-msgid "Block {address}? Their future mail goes straight to the Trash."
-msgstr "Bloquear {address}? O correio futuro vai direto para o lixo."
-
-#: app/src/assistant/run.rs:1315 app/src/assistant/run/calendar.rs:228
-#: app/src/assistant/run/calendar.rs:726
-msgid "%a %-d %b"
-msgstr "%a %-d %b"
-
-#: app/src/assistant/run.rs:1321
-msgid " from {first} to {last}"
-msgstr ", de {first} a {last}"
-
-#: app/src/assistant/run.rs:1324
-msgid " until {last}"
-msgstr ", até {last}"
-
-#: app/src/assistant/run.rs:1325
-msgid " from {first}"
-msgstr ", a partir de {first}"
-
-#: app/src/assistant/run.rs:1331
-msgid ""
-"Turn on the automatic reply for {account}{dates}?\n"
-"\n"
-"“{subject}”\n"
-"{body}"
-msgstr ""
-"Ligar a resposta automática de {account}{dates}?\n"
-"\n"
-"“{subject}”\n"
-"{body}"
-
-#: app/src/assistant/run.rs:1342
-msgid "Turn off the automatic reply for {account}?"
-msgstr "Desligar a resposta automática de {account}?"
-
-#: app/src/assistant/run.rs:1444
-msgid "Create a rule for {account}: {when} → {then}?"
-msgstr "Criar uma regra para {account}: {when} → {then}?"
-
-#: app/src/assistant/run.rs:1487
-msgid "Delete a rule from {account}?"
-msgstr "Eliminar uma regra de {account}?"
-
-#: app/src/assistant/run.rs:1686 app/src/assistant/run.rs:1720
-msgid "Hide My Email works with Gmail accounts."
-msgstr "O Ocultar o meu e-mail funciona com contas Gmail."
-
-#: app/src/assistant/run.rs:1829
-msgid ""
-"Move mail from {sender} to {category} in {account}, and send their future "
-"mail there too?"
-msgstr ""
-"Mover o correio de {sender} para {category} em {account} e enviar também "
-"para lá o correio futuro?"
-
-#: app/src/assistant/run.rs:1841
-msgid ""
-"Move mail from {sender} to {category} in {account}, and add a {provider} "
-"rule for their future mail?"
-msgstr ""
-"Mover o correio de {sender} para {category} em {account} e criar uma regra "
-"do {provider} para o correio futuro?"
-
-#: app/src/assistant/run/calendar.rs:234 app/src/assistant/run/calendar.rs:730
-msgid "%a %-d %b %H:%M"
-msgstr "%a %-d %b %H:%M"
-
-#: app/src/assistant/run/calendar.rs:247 app/src/assistant/run/calendar.rs:251
-#: app/src/assistant/run/calendar.rs:255
-msgid "{first} to {last}"
-msgstr "{first} a {last}"
-
-#: app/src/assistant/run/calendar.rs:483
-msgid "Add “{title}” to the calendar “{calendar}” for {account}, {when}?"
-msgstr "Adicionar “{title}” ao calendário “{calendar}” de {account}, {when}?"
-
-#: app/src/assistant/run/calendar.rs:492
-msgid "Add “{title}” to the calendar for {account}, {when}?"
-msgstr "Adicionar “{title}” ao calendário de {account}, {when}?"
-
-#: app/src/assistant/run/calendar.rs:499
-msgid "Guests get an invitation: {guests}."
-msgstr "Os convidados recebem um convite: {guests}."
-
-#: app/src/assistant/run/calendar.rs:553
-msgid "Title: {value}"
-msgstr "Título: {value}"
-
-#: app/src/assistant/run/calendar.rs:556
-msgid "Starts: {value}"
-msgstr "Começa: {value}"
-
-#: app/src/assistant/run/calendar.rs:559
-msgid "Ends: {value}"
-msgstr "Termina: {value}"
-
-#: app/src/assistant/run/calendar.rs:562
-msgid "Where: {value}"
-msgstr "Local: {value}"
-
-#: app/src/assistant/run/calendar.rs:565
-msgid "Guests: {value}"
-msgstr "Convidados: {value}"
-
-#: app/src/assistant/run/calendar.rs:569
-msgid "Description: {value}"
-msgstr "Descrição: {value}"
-
-#: app/src/assistant/run/calendar.rs:574
-msgid "Change “{title}” on the calendar for {account}?"
-msgstr "Alterar “{title}” no calendário de {account}?"
-
-#: app/src/assistant/run/calendar.rs:578
-msgid "Change an event on the calendar for {account}?"
-msgstr "Alterar um evento no calendário de {account}?"
-
-#: app/src/assistant/run/calendar.rs:606
-msgid "Delete “{title}” from the calendar for {account}?"
-msgstr "Eliminar “{title}” do calendário de {account}?"
-
-#: app/src/assistant/run/calendar.rs:610
-msgid "Delete an event from the calendar for {account}?"
-msgstr "Eliminar um evento do calendário de {account}?"
-
-#: app/src/assistant/run/calendar.rs:633
-msgid "The new guests get their invitation, and the others get an update."
-msgstr "Os novos convidados recebem o convite e os restantes uma atualização."
-
-#: app/src/assistant/run/calendar.rs:634 app/src/assistant/run/calendar.rs:636
-msgid "Its guests are told."
-msgstr "Os convidados são avisados."
-
-#: app/src/assistant/run/calendar.rs:663
-msgid "Answer {answer} to “{title}”?"
-msgstr "Responder {answer} a “{title}”?"
-
-#: app/src/assistant/run/catalog.rs:259
-msgid "Looking at the screen"
-msgstr "A olhar para o ecrã"
-
-#: app/src/assistant/run/catalog.rs:267
-msgid "Reading a mailbox"
-msgstr "A ler uma caixa de correio"
-
-#: app/src/assistant/run/catalog.rs:285
-msgid "Searching mail"
-msgstr "A pesquisar correio"
-
-#: app/src/assistant/run/catalog.rs:299
-msgid "Reading a conversation"
-msgstr "A ler uma conversa"
-
-#: app/src/assistant/run/catalog.rs:312
-msgid "Organizing mail"
-msgstr "A organizar correio"
-
-#: app/src/assistant/run/catalog.rs:327
-msgid "Changing labels"
-msgstr "A alterar etiquetas"
-
-#: app/src/assistant/run/catalog.rs:342
-msgid "Setting reminders"
-msgstr "A definir lembretes"
-
-#: app/src/assistant/run/catalog.rs:356
-msgid "Writing a draft"
-msgstr "A escrever um rascunho"
-
-#: app/src/assistant/run/catalog.rs:364
-msgid "Sending mail"
-msgstr "A enviar correio"
-
-#: app/src/assistant/run/catalog.rs:372
-msgid "Reading drafts"
-msgstr "A ler rascunhos"
-
-#: app/src/assistant/run/catalog.rs:380
-msgid "Changing a draft"
-msgstr "A alterar um rascunho"
-
-#: app/src/assistant/run/catalog.rs:402
-msgid "Deleting a draft"
-msgstr "A eliminar um rascunho"
-
-#: app/src/assistant/run/catalog.rs:415
-msgid "Blocking a sender"
-msgstr "A bloquear um remetente"
-
-#: app/src/assistant/run/catalog.rs:428
-msgid "Checking the automatic reply"
-msgstr "A verificar a resposta automática"
-
-#: app/src/assistant/run/catalog.rs:436
-msgid "Setting the automatic reply"
-msgstr "A definir a resposta automática"
-
-#: app/src/assistant/run/catalog.rs:454
-msgid "Reading rules"
-msgstr "A ler regras"
-
-#: app/src/assistant/run/catalog.rs:462
-msgid "Creating a rule"
-msgstr "A criar uma regra"
-
-#: app/src/assistant/run/catalog.rs:486
-msgid "Deleting a rule"
-msgstr "A eliminar uma regra"
-
-#: app/src/assistant/run/catalog.rs:494
-msgid "Creating a label"
-msgstr "A criar uma etiqueta"
-
-#: app/src/assistant/run/catalog.rs:502
-msgid "Renaming a label"
-msgstr "A mudar o nome de uma etiqueta"
-
-#: app/src/assistant/run/catalog.rs:516
-msgid "Coloring a label"
-msgstr "A mudar a cor de uma etiqueta"
-
-#: app/src/assistant/run/catalog.rs:530
-msgid "Deleting a label"
-msgstr "A eliminar uma etiqueta"
-
-#: app/src/assistant/run/catalog.rs:538
-msgid "Reading smart mailboxes"
-msgstr "A ler as caixas inteligentes"
-
-#: app/src/assistant/run/catalog.rs:546
-msgid "Changing a smart mailbox"
-msgstr "A alterar uma caixa inteligente"
-
-#: app/src/assistant/run/catalog.rs:574
-msgid "Deleting a smart mailbox"
-msgstr "A eliminar uma caixa inteligente"
-
-#: app/src/assistant/run/catalog.rs:582
-msgid "Saving a template"
-msgstr "A guardar um modelo"
-
-#: app/src/assistant/run/catalog.rs:596
-msgid "Deleting a template"
-msgstr "A eliminar um modelo"
-
-#: app/src/assistant/run/catalog.rs:604
-msgid "Adding a contact"
-msgstr "A adicionar um contacto"
-
-#: app/src/assistant/run/catalog.rs:620
-msgid "Changing a contact"
-msgstr "A alterar um contacto"
-
-#: app/src/assistant/run/catalog.rs:637
-msgid "Reading who may load images"
-msgstr "A ver quem pode carregar imagens"
-
-#: app/src/assistant/run/catalog.rs:645
-msgid "Allowing remote images"
-msgstr "A permitir imagens remotas"
-
-#: app/src/assistant/run/catalog.rs:658
-msgid "Blocking remote images"
-msgstr "A bloquear imagens remotas"
-
-#: app/src/assistant/run/catalog.rs:666
-msgid "Exporting mail"
-msgstr "A exportar correio"
-
-#: app/src/assistant/run/catalog.rs:680
-msgid "Reading settings"
-msgstr "A ler definições"
-
-#: app/src/assistant/run/catalog.rs:688
-msgid "Changing a setting"
-msgstr "A alterar uma definição"
-
-#: app/src/assistant/run/catalog.rs:701
-msgid "Setting a signature"
-msgstr "A definir uma assinatura"
-
-#: app/src/assistant/run/catalog.rs:709
-msgid "Updating VIPs"
-msgstr "A atualizar os VIP"
-
-#: app/src/assistant/run/catalog.rs:723
-msgid "Creating a smart mailbox"
-msgstr "A criar uma caixa inteligente"
-
-#: app/src/assistant/run/catalog.rs:749
-msgid "Sorting a sender"
-msgstr "A organizar um remetente"
-
-#: app/src/assistant/run/catalog.rs:764
-msgid "Dismissing a follow-up"
-msgstr "A dispensar um seguimento"
-
-#: app/src/assistant/run/catalog.rs:772
-msgid "Reading hidden addresses"
-msgstr "A ler endereços ocultos"
-
-#: app/src/assistant/run/catalog.rs:780
-msgid "Making a hidden address"
-msgstr "A criar um endereço oculto"
-
-#: app/src/assistant/run/catalog.rs:793
-msgid "Changing a hidden address"
-msgstr "A alterar um endereço oculto"
-
-#: app/src/assistant/run/catalog.rs:801
-msgid "Opening a conversation"
-msgstr "A abrir uma conversa"
-
-#: app/src/assistant/run/catalog.rs:809
-msgid "Muting conversations"
-msgstr "A silenciar conversas"
-
-#: app/src/assistant/run/catalog.rs:823
-msgid "Deleting mail forever"
-msgstr "A eliminar correio definitivamente"
-
-#: app/src/assistant/run/catalog.rs:831
-msgid "Scheduling a message"
-msgstr "A agendar uma mensagem"
-
-#: app/src/assistant/run/catalog.rs:853
-msgid "Sending a waiting message"
-msgstr "A enviar uma mensagem em espera"
-
-#: app/src/assistant/run/catalog.rs:861
-msgid "Canceling a scheduled message"
-msgstr "A cancelar uma mensagem agendada"
-
-#: app/src/assistant/run/catalog.rs:869
-msgid "Deleting from the Outbox"
-msgstr "A eliminar da caixa de saída"
-
-#: app/src/assistant/run/catalog.rs:877
-msgid "Changing when a message goes"
-msgstr "A mudar a hora de envio"
-
-#: app/src/assistant/run/catalog.rs:890
-msgid "Reading reminders"
-msgstr "A ler os lembretes"
-
-#: app/src/assistant/run/catalog.rs:898
-msgid "Canceling a reminder"
-msgstr "A cancelar um lembrete"
-
-#: app/src/assistant/run/catalog.rs:906
-msgid "Changing a reminder"
-msgstr "A alterar um lembrete"
-
-#: app/src/assistant/run/catalog.rs:919
-msgid "Unmuting conversations"
-msgstr "A reativar o som de conversas"
-
-#: app/src/assistant/run/catalog.rs:927
-msgid "Undoing the last change"
-msgstr "A anular a última alteração"
-
-#: app/src/assistant/run/catalog.rs:935
-msgid "Reading templates"
-msgstr "A ler modelos"
-
-#: app/src/assistant/run/catalog.rs:943
-msgid "Writing from a template"
-msgstr "A escrever a partir de um modelo"
-
-#: app/src/assistant/run/catalog.rs:958
-msgid "Finding your newsletters"
-msgstr "A procurar as suas newsletters"
-
-#: app/src/assistant/run/catalog.rs:971
-msgid "Unsubscribing"
-msgstr "A cancelar a subscrição"
-
-#: app/src/assistant/run/catalog.rs:1002
-msgid "Reading an attachment"
-msgstr "A ler um anexo"
-
-#: app/src/assistant/run/catalog.rs:1016
-msgid "Looking up a contact"
-msgstr "A procurar um contacto"
-
-#: app/src/assistant/run/catalog.rs:1024
-msgid "Reading the calendar"
-msgstr "A ler o calendário"
-
-#: app/src/assistant/run/catalog.rs:1038
-msgid "Finding free time"
-msgstr "A procurar tempo livre"
-
-#: app/src/assistant/run/catalog.rs:1056
-msgid "Listing the calendars"
-msgstr "A listar os calendários"
-
-#: app/src/assistant/run/catalog.rs:1064
-msgid "Adding an event"
-msgstr "A adicionar um evento"
-
-#: app/src/assistant/run/catalog.rs:1083
-msgid "Changing an event"
-msgstr "A alterar um evento"
-
-#: app/src/assistant/run/catalog.rs:1103
-msgid "Deleting an event"
-msgstr "A eliminar um evento"
-
-#: app/src/assistant/run/catalog.rs:1117
-msgid "Answering an invitation"
-msgstr "A responder a um convite"
-
-#: app/src/assistant/run/catalog.rs:1163 app/src/assistant/turn.rs:287
-msgid "Working"
-msgstr "A trabalhar"
-
-#: app/src/assistant/run/mail.rs:257
-msgid "Send “{subject}” to {recipients} {when}?"
-msgstr "Enviar “{subject}” para {recipients} {when}?"
-
-#: app/src/assistant/run/mail.rs:408
-msgid "Each account's server"
-msgstr "O servidor de cada conta"
-
-#: app/src/assistant/run/mail.rs:411
-msgid "Delete {count} conversation forever? {provider} cannot bring it back."
-msgid_plural ""
-"Delete {count} conversations forever? {provider} cannot bring them back."
-msgstr[0] ""
-"Eliminar {count} conversa definitivamente? {provider} não a consegue "
-"recuperar."
-msgstr[1] ""
-"Eliminar {count} conversas definitivamente? {provider} não as consegue "
-"recuperar."
-
-#: app/src/assistant/run/manage.rs:127
-msgid "Name: {name}"
-msgstr "Nome: {name}"
-
-#: app/src/assistant/run/manage.rs:131
-msgid "Addresses: {addresses}"
-msgstr "Endereços: {addresses}"
-
-#: app/src/assistant/run/manage.rs:137
-msgid "Phones: {phones}"
-msgstr "Telefones: {phones}"
-
-#: app/src/assistant/run/manage.rs:143
-msgid "Organization: {organisation}"
-msgstr "Organização: {organisation}"
-
-#: app/src/assistant/run/manage.rs:233
-msgid ""
-"Rename the label “{label}” in {account} to “{name}”? Labels nested under it "
-"move along."
-msgstr ""
-"Mudar o nome da etiqueta “{label}” de {account} para “{name}”? As etiquetas "
-"dentro dela acompanham-na."
-
-#: app/src/assistant/run/manage.rs:262
-msgid "Color the label “{label}” in {account} {color}?"
-msgstr "Dar a cor {color} à etiqueta “{label}” de {account}?"
-
-#: app/src/assistant/run/manage.rs:296
-msgid ""
-"Delete the label “{label}” from {account}? {count} conversation carries it. "
-"The mail stays in Gmail, without the label."
-msgid_plural ""
-"Delete the label “{label}” from {account}? {count} conversations carry it. "
-"The mail stays in Gmail, without the label."
-msgstr[0] ""
-"Eliminar a etiqueta “{label}” de {account}? {count} conversa tem-na. O "
-"correio fica no Gmail, sem a etiqueta."
-msgstr[1] ""
-"Eliminar a etiqueta “{label}” de {account}? {count} conversas têm-na. O "
-"correio fica no Gmail, sem a etiqueta."
-
-#: app/src/assistant/run/manage.rs:360
-msgid "Delete the smart mailbox “{name}”? The mail it lists stays where it is."
-msgstr ""
-"Eliminar a caixa inteligente “{name}”? O correio que mostra fica onde está."
-
-#: app/src/assistant/run/manage.rs:421
-msgid "Replace the template “{name}” with this one? The saved one is lost."
-msgstr "Substituir o modelo “{name}” por este? O que está guardado perde-se."
-
-#: app/src/assistant/run/manage.rs:425
-msgid "Save a template called “{name}”?"
-msgstr "Guardar um modelo chamado “{name}”?"
-
-#: app/src/assistant/run/manage.rs:463
-msgid "Delete the template “{name}”?"
-msgstr "Eliminar o modelo “{name}”?"
-
-#: app/src/assistant/run/manage.rs:494
-msgid "Add {contact} to the contacts of {account}?"
-msgstr "Adicionar {contact} aos contactos de {account}?"
-
-#: app/src/assistant/run/manage.rs:538
-msgid "this contact"
-msgstr "este contacto"
-
-#: app/src/assistant/run/manage.rs:550
-msgid "Change {contact} in the contacts of {account}?"
-msgstr "Alterar {contact} nos contactos de {account}?"
-
-#: app/src/assistant/run/manage.rs:597
-msgid "Always load images from anyone at {domain}?"
-msgstr "Carregar sempre as imagens de qualquer remetente em {domain}?"
-
-#: app/src/assistant/run/manage.rs:601
-msgid "Always load images from {sender}?"
-msgstr "Carregar sempre as imagens de {sender}?"
-
-#: app/src/assistant/run/manage.rs:607
-msgid "Loading a remote image tells the sender when you opened their mail."
-msgstr ""
-"Carregar uma imagem remota diz ao remetente quando abriu o correio dele."
-
-#: app/src/assistant/run/manage.rs:632
-msgid "Stop loading images from {sender}?"
-msgstr "Deixar de carregar imagens de {sender}?"
-
-#: app/src/assistant/run/manage.rs:667
-msgid "Export {what} to {file}?"
-msgstr "Exportar {what} para {file}?"
-
-#: app/src/assistant/run/manage.rs:673
-msgid "A file with that name is there already, and exporting replaces it."
-msgstr "Já existe um ficheiro com esse nome, e a exportação substitui-o."
-
-#: app/src/assistant/run/manage.rs:752
-msgid "the message “{subject}”"
-msgstr "a mensagem “{subject}”"
-
-#: app/src/assistant/run/queue.rs:17 app/src/assistant/run/writing.rs:228
-msgid "(no subject)"
-msgstr "(sem assunto)"
-
-#: app/src/assistant/run/queue.rs:91
-msgid "Send “{subject}” now?"
-msgstr "Enviar “{subject}” agora?"
-
-#: app/src/assistant/run/queue.rs:94
-msgid "Send {count} waiting message now?"
-msgid_plural "Send {count} waiting messages now?"
-msgstr[0] "Enviar agora {count} mensagem em espera?"
-msgstr[1] "Enviar agora {count} mensagens em espera?"
-
-#: app/src/assistant/run/queue.rs:146
-msgid "Cancel sending “{subject}”? It goes back to Drafts."
-msgstr "Cancelar o envio de “{subject}”? Volta para os rascunhos."
-
-#: app/src/assistant/run/queue.rs:152
-msgid "Cancel {count} scheduled message? It goes back to Drafts."
-msgid_plural "Cancel {count} scheduled messages? They go back to Drafts."
-msgstr[0] "Cancelar {count} mensagem agendada? Volta para os rascunhos."
-msgstr[1] "Cancelar {count} mensagens agendadas? Voltam para os rascunhos."
-
-#: app/src/assistant/run/queue.rs:223
-msgid "Delete “{subject}” from the Outbox? It will not be sent."
-msgstr "Eliminar “{subject}” da caixa de saída? Não será enviada."
-
-#: app/src/assistant/run/queue.rs:229
-msgid "Delete {count} message from the Outbox? It will not be sent."
-msgid_plural "Delete {count} messages from the Outbox? They will not be sent."
-msgstr[0] "Eliminar {count} mensagem da caixa de saída? Não será enviada."
-msgstr[1] "Eliminar {count} mensagens da caixa de saída? Não serão enviadas."
-
-#: app/src/assistant/run/queue.rs:261
-msgid "Send “{subject}” {when} instead?"
-msgstr "Enviar “{subject}” {when}, em vez da hora marcada?"
-
-#: app/src/assistant/run/queue.rs:267
-msgid "Send {count} scheduled message {when} instead?"
-msgid_plural "Send {count} scheduled messages {when} instead?"
-msgstr[0] "Enviar {count} mensagem agendada {when}, em vez da hora marcada?"
-msgstr[1] "Enviar {count} mensagens agendadas {when}, em vez da hora marcada?"
-
-#: app/src/assistant/run/queue.rs:345
-msgid "Cancel the reminder on “{subject}” and put it back in the Inbox?"
-msgstr ""
-"Cancelar o lembrete de “{subject}” e devolver a conversa à caixa de entrada?"
-
-#: app/src/assistant/run/queue.rs:351
-msgid "Cancel {count} reminder and put its conversation back in the Inbox?"
-msgid_plural ""
-"Cancel {count} reminders and put their conversations back in the Inbox?"
-msgstr[0] "Cancelar {count} lembrete e devolver a conversa à caixa de entrada?"
-msgstr[1] ""
-"Cancelar {count} lembretes e devolver as conversas à caixa de entrada?"
-
-#: app/src/assistant/run/queue.rs:385
-msgid "Bring “{subject}” back {when} instead?"
-msgstr "Trazer “{subject}” de volta {when}, em vez da hora marcada?"
-
-#: app/src/assistant/run/queue.rs:391
-msgid "Bring {count} conversation back {when} instead?"
-msgid_plural "Bring {count} conversations back {when} instead?"
-msgstr[0] "Trazer {count} conversa de volta {when}, em vez da hora marcada?"
-msgstr[1] "Trazer {count} conversas de volta {when}, em vez da hora marcada?"
-
-#: app/src/assistant/run/queue.rs:426
-msgid "Undo “{action}”?"
-msgstr "Anular “{action}”?"
-
-#: app/src/assistant/run/unsubscribe.rs:373
-msgid "this list"
-msgstr "esta lista"
-
-#: app/src/assistant/run/writing.rs:241
-msgid "Signed with {standard}"
-msgstr "Assinada com {standard}"
-
-#: app/src/assistant/run/writing.rs:242
-msgid "Encrypted with {standard}"
-msgstr "Encriptada com {standard}"
-
-#: app/src/assistant/run/writing.rs:243
-msgid "Signed and encrypted with {standard}"
-msgstr "Assinada e encriptada com {standard}"
-
-#: app/src/assistant/run/writing.rs:255
-msgid "Blind copy to {recipients}"
-msgstr "Cópia oculta para {recipients}"
-
-#: app/src/assistant/run/writing.rs:261
-msgid "Forwards “{subject}” from {sender}"
-msgstr "Reencaminha “{subject}” de {sender}"
-
-#: app/src/assistant/run/writing.rs:271 app/src/assistant/run/writing.rs:916
-msgid "Attached: {files}"
-msgstr "Em anexo: {files}"
-
-#: app/src/assistant/run/writing.rs:287
-msgid "From this computer: {files}"
-msgstr "Deste computador: {files}"
-
-#: app/src/assistant/run/writing.rs:319
-msgid "Put a file from this computer in a draft?"
-msgid_plural "Put {count} files from this computer in a draft?"
-msgstr[0] "Pôr um ficheiro deste computador num rascunho?"
-msgstr[1] "Pôr {count} ficheiros deste computador num rascunho?"
-
-#: app/src/assistant/run/writing.rs:351
-msgid "Send “{subject}” to {recipients}?"
-msgstr "Enviar “{subject}” para {recipients}?"
-
-#: app/src/assistant/run/writing.rs:737
-msgid "Change the draft “{subject}”?"
-msgstr "Alterar o rascunho “{subject}”?"
-
-#: app/src/assistant/run/writing.rs:884
-msgid "nobody"
-msgstr "ninguém"
-
-#: app/src/assistant/run/writing.rs:890
-msgid "To: {recipients}"
-msgstr "Para: {recipients}"
-
-#: app/src/assistant/run/writing.rs:893
-msgid "Cc: {recipients}"
-msgstr "Cc: {recipients}"
-
-#: app/src/assistant/run/writing.rs:896
-msgid "Bcc: {recipients}"
-msgstr "Bcc: {recipients}"
-
-#: app/src/assistant/run/writing.rs:900
-msgid "Subject: {subject}"
-msgstr "Assunto: {subject}"
-
-#: app/src/assistant/run/writing.rs:905
-msgid "New text in place of the old"
-msgstr "Texto novo em vez do antigo"
-
-#: app/src/assistant/run/writing.rs:909
-msgid "Takes out: {files}"
-msgstr "Retira: {files}"
-
-#: app/src/assistant/run/writing.rs:924
-msgid "Goes out encrypted"
-msgstr "Sai encriptada"
-
-#: app/src/assistant/run/writing.rs:925
-msgid "Goes out unencrypted"
-msgstr "Sai sem encriptação"
-
-#: app/src/assistant/run/writing.rs:929
-msgid "Goes out signed"
-msgstr "Sai assinada"
-
-#: app/src/assistant/run/writing.rs:930
-msgid "Goes out unsigned"
-msgstr "Sai sem assinatura"
-
-#: app/src/assistant/run/writing.rs:940
-msgid "Delete the draft “{subject}”? {provider} cannot bring it back."
-msgstr "Eliminar o rascunho “{subject}”? {provider} não o consegue recuperar."
-
-#: app/src/assistant/sources/mcp/mod.rs:154
-msgid "Run {tool} on the MCP server {server}?"
-msgstr "Executar {tool} no servidor MCP {server}?"
-
-#: app/src/assistant/sources/skills/mod.rs:59
-msgid "Iris"
-msgstr "Iris"
-
-#: app/src/assistant/sources/skills/mod.rs:60
-msgid "Claude Code"
-msgstr "Claude Code"
-
-#: app/src/assistant/sources/skills/sandbox.rs:230
-msgid ""
-"Skill scripts need bubblewrap, which is not installed. Install the "
-"bubblewrap package to run them."
-msgstr ""
-"Os scripts das competências precisam do bubblewrap, que não está instalado. "
-"Instale o pacote bubblewrap para os executar."
-
-#: app/src/assistant/sources/skills/sandbox.rs:249
-#: app/src/assistant/sources/skills/sandbox.rs:255
-msgid ""
-"Skill scripts cannot run: bubblewrap failed to start a sandbox ({reason})."
-msgstr ""
-"Os scripts das competências não podem ser executados: o bubblewrap não "
-"conseguiu criar uma área isolada ({reason})."
-
-#: app/src/assistant/sources/skills/shell.rs:181
-msgid "It can reach the internet."
-msgstr "Pode aceder à Internet."
-
-#: app/src/assistant/sources/skills/shell.rs:183
-msgid "It cannot reach the internet."
-msgstr "Não pode aceder à Internet."
-
-#: app/src/assistant/sources/skills/shell.rs:187
-msgid ""
-"Run this command for the skill {skill}?\n"
-"\n"
-"{command}\n"
-"\n"
-"It runs in a sandbox with no access to your mail or home folder. {network} "
-"Always Allow covers this exact command only."
-msgstr ""
-"Executar este comando para a competência {skill}?\n"
-"\n"
-"{command}\n"
-"\n"
-"Corre numa área isolada, sem acesso ao seu correio nem à sua pasta pessoal. "
-"{network} Permitir sempre aplica-se só a este comando, tal como está."
-
-#: app/src/assistant/sources/web.rs:60
-msgid "Add a Brave Search API key."
-msgstr "Adicione uma chave de API do Brave Search."
-
-#: app/src/assistant/sources/web.rs:62
-msgid "Enter the address of a SearXNG server."
-msgstr "Introduza o endereço de um servidor SearXNG."
-
-#: app/src/assistant/sources/web.rs:66
-msgid "Choose Brave Search or SearXNG for a local model to search with."
-msgstr "Escolha o Brave Search ou o SearXNG para um modelo local pesquisar."
-
-#: app/src/assistant/turn.rs:57
-msgid "Waiting for the model…"
-msgstr "À espera do modelo…"
-
-#: app/src/assistant/turn.rs:58 app/src/assistant/turn.rs:259
-msgid "Thinking…"
-msgstr "A pensar…"
-
-#: app/src/assistant/turn.rs:59
-msgid "{activity}…"
-msgstr "{activity}…"
-
-#: app/src/assistant/turn.rs:60
-msgid "Waiting for your answer…"
-msgstr "À espera da sua resposta…"
-
-#: app/src/assistant/turn.rs:61
-msgid "Writing…"
-msgstr "A escrever…"
-
-#: app/src/assistant/turn.rs:264
-msgid "Thought for {count} second"
-msgid_plural "Thought for {count} seconds"
-msgstr[0] "Pensou durante {count} segundo"
-msgstr[1] "Pensou durante {count} segundos"
-
-#. The app's own web tools, Anthropic's, and Claude Code's.
-#: app/src/assistant/turn.rs:282
-msgid "Searching the web"
-msgstr "A pesquisar na web"
-
-#: app/src/assistant/turn.rs:283
-msgid "Reading a web page"
-msgstr "A ler uma página web"
-
-#: app/src/assistant/turn.rs:284
-msgid "Reading a skill"
-msgstr "A ler uma competência"
-
-#: app/src/assistant/turn.rs:285
-msgid "Reading a skill's file"
-msgstr "A ler um ficheiro de uma competência"
-
-#: app/src/assistant/turn.rs:286
-msgid "Running a command in the sandbox"
-msgstr "A correr um comando na área isolada"
-
-#: app/src/core.rs:208
+#: app/src/core.rs:183
 msgid ""
 "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then "
 "open Iris again."
@@ -1507,20 +655,20 @@ msgstr ""
 "Outra cópia do Iris, ou o iris-cli sync, está a sincronizar o seu correio. "
 "Pare esse processo e volte a abrir o Iris."
 
-#: app/src/core.rs:220
+#: app/src/core.rs:195
 msgid "Iris could not update its mail store, and kept the old one."
 msgstr ""
 "O Iris não conseguiu atualizar o arquivo de correio e manteve o anterior."
 
-#: app/src/core.rs:712 app/src/core.rs:769 app/src/core.rs:814
+#: app/src/core.rs:687 app/src/core.rs:744 app/src/core.rs:789
 msgid "Demo mode cannot add real accounts."
 msgstr "O modo de demonstração não adiciona contas reais."
 
-#: app/src/core.rs:726
+#: app/src/core.rs:701
 msgid "Canceled."
 msgstr "Cancelado."
 
-#: app/src/core.rs:730
+#: app/src/core.rs:705
 msgid "Gave up waiting for the browser after five minutes."
 msgstr "Desistiu de esperar pelo navegador ao fim de cinco minutos."
 
@@ -1673,324 +821,6 @@ msgstr "O Iris não conseguiu arrancar"
 msgid "Report a Problem"
 msgstr "Comunicar um problema"
 
-#: app/src/offered.rs:237 app/src/ui/window/shortcuts.rs:460
-msgid "Labels"
-msgstr "Etiquetas"
-
-#: app/src/offered.rs:238
-msgid "Move to folder"
-msgstr "Mover para pasta"
-
-#: app/src/offered.rs:244
-msgid "Labels…"
-msgstr "Etiquetas…"
-
-#: app/src/offered.rs:245
-msgid "Move to Folder…"
-msgstr "Mover para pasta…"
-
-#: app/src/offered.rs:254
-msgid "Choose Labels"
-msgstr "Escolher etiquetas"
-
-#: app/src/offered.rs:255
-msgid "Choose a Folder"
-msgstr "Escolher uma pasta"
-
-#: app/src/offered.rs:262
-msgid "Labels (L)"
-msgstr "Etiquetas (L)"
-
-#: app/src/offered.rs:263
-msgid "Move to Folder (L)"
-msgstr "Mover para pasta (L)"
-
-#: app/src/offered.rs:280
-msgid "New Label…"
-msgstr "Nova etiqueta…"
-
-#: app/src/offered.rs:281
-msgid "New Folder…"
-msgstr "Nova pasta…"
-
-#: app/src/offered.rs:289
-msgid "New Label Inside…"
-msgstr "Nova etiqueta dentro desta…"
-
-#: app/src/offered.rs:290
-msgid "New Folder Inside…"
-msgstr "Nova pasta dentro desta…"
-
-#: app/src/offered.rs:297
-msgid "Label Options for {name}"
-msgstr "Opções da etiqueta {name}"
-
-#: app/src/offered.rs:298
-msgid "Folder Options for {name}"
-msgstr "Opções da pasta {name}"
-
-#: app/src/offered.rs:305
-msgid "Label options"
-msgstr "Opções da etiqueta"
-
-#: app/src/offered.rs:306
-msgid "Folder options"
-msgstr "Opções da pasta"
-
-#: app/src/offered.rs:313
-msgid "A label cannot go inside a label nested under it"
-msgstr ""
-"Uma etiqueta não pode ir para dentro de uma etiqueta que está dentro dela"
-
-#: app/src/offered.rs:314
-msgid "A folder cannot go inside a folder nested under it"
-msgstr "Uma pasta não pode ir para dentro de uma pasta que está dentro dela"
-
-#: app/src/offered.rs:322
-msgid "There is a label called “{name}” already"
-msgstr "Já existe uma etiqueta chamada “{name}”"
-
-#: app/src/offered.rs:324
-msgid "There is a folder called “{name}” already"
-msgstr "Já existe uma pasta chamada “{name}”"
-
-#: app/src/offered.rs:332
-msgid "New Label"
-msgstr "Nova etiqueta"
-
-#: app/src/offered.rs:333
-msgid "New Folder"
-msgstr "Nova pasta"
-
-#: app/src/offered.rs:341
-msgid "Could not create the label: {reason}"
-msgstr "Não foi possível criar a etiqueta: {reason}"
-
-#: app/src/offered.rs:342
-msgid "Could not create the folder: {reason}"
-msgstr "Não foi possível criar a pasta: {reason}"
-
-#: app/src/offered.rs:349
-msgid "Open or select mail to label it."
-msgstr "Abra ou selecione correio para o etiquetar."
-
-#: app/src/offered.rs:350
-msgid "Open or select mail to move it."
-msgstr "Abra ou selecione correio para o mover."
-
-#: app/src/offered.rs:358
-msgid "Select mail from one account to label it."
-msgstr "Selecione correio de uma só conta para o etiquetar."
-
-#: app/src/offered.rs:359
-msgid "Select mail from one account to move it."
-msgstr "Selecione correio de uma só conta para o mover."
-
-#: app/src/offered.rs:365
-msgid "Rename Label"
-msgstr "Mudar o nome da etiqueta"
-
-#: app/src/offered.rs:366
-msgid "Rename Folder"
-msgstr "Mudar o nome da pasta"
-
-#: app/src/offered.rs:372
-msgid "Labels nested under it move along."
-msgstr "As etiquetas aninhadas nela acompanham-na."
-
-#: app/src/offered.rs:373
-msgid "Folders nested under it move along."
-msgstr "As pastas aninhadas nela acompanham-na."
-
-#: app/src/offered.rs:381
-msgid "Could not rename the label: {reason}"
-msgstr "Não foi possível mudar o nome da etiqueta: {reason}"
-
-#: app/src/offered.rs:382
-msgid "Could not rename the folder: {reason}"
-msgstr "Não foi possível mudar o nome da pasta: {reason}"
-
-#: app/src/offered.rs:392
-msgid "Its mail stays in Gmail, without the label. Nested labels stay too."
-msgstr ""
-"O correio dela fica no Gmail, sem a etiqueta. As etiquetas aninhadas também "
-"ficam."
-
-#: app/src/offered.rs:394
-msgid "The mail in the folder is deleted with it."
-msgstr "O correio da pasta é eliminado com ela."
-
-#: app/src/offered.rs:402
-msgid "Could not delete the label: {reason}"
-msgstr "Não foi possível eliminar a etiqueta: {reason}"
-
-#: app/src/offered.rs:403
-msgid "Could not delete the folder: {reason}"
-msgstr "Não foi possível eliminar a pasta: {reason}"
-
-#: app/src/offered.rs:410
-msgid "This account has no labels yet."
-msgstr "Esta conta ainda não tem etiquetas."
-
-#: app/src/offered.rs:411
-msgid "This account has no folders yet."
-msgstr "Esta conta ainda não tem pastas."
-
-#: app/src/offered.rs:427
-msgid "Your organization does not allow Iris to use this calendar."
-msgstr "A sua organização não permite que o Iris use este calendário."
-
-#: app/src/offered.rs:430
-msgid "Your organization does not allow Iris to read these contacts."
-msgstr "A sua organização não permite que o Iris leia estes contactos."
-
-#: app/src/offered.rs:433
-msgid "Your organization does not allow Iris to change these rules."
-msgstr "A sua organização não permite que o Iris altere estas regras."
-
-#: app/src/offered.rs:436
-msgid "Your organization does not allow Iris to change the automatic reply."
-msgstr "A sua organização não permite que o Iris altere a resposta automática."
-
-#: app/src/offered.rs:440
-msgid ""
-"{provider} refused the password for calendars. Some providers need an app "
-"password with access to calendars and contacts."
-msgstr ""
-"{provider} recusou a palavra-passe para os calendários. Alguns fornecedores "
-"pedem uma palavra-passe de aplicação com acesso a calendários e contactos."
-
-#: app/src/offered.rs:444
-msgid "Iris could not reach the calendar server for {provider}."
-msgstr "O Iris não conseguiu contactar o servidor de calendário de {provider}."
-
-#: app/src/offered.rs:447
-msgid "Iris found no calendar server for {provider}."
-msgstr "O Iris não encontrou nenhum servidor de calendário para {provider}."
-
-#: app/src/offered.rs:452
-msgid ""
-"{provider} refused the password for contacts. Some providers need an app "
-"password with access to calendars and contacts."
-msgstr ""
-"{provider} recusou a palavra-passe para os contactos. Alguns fornecedores "
-"pedem uma palavra-passe de aplicação com acesso a calendários e contactos."
-
-#: app/src/offered.rs:456
-msgid "Iris could not reach the contacts server for {provider}."
-msgstr "O Iris não conseguiu contactar o servidor de contactos de {provider}."
-
-#: app/src/offered.rs:459
-msgid "Iris found no contacts server for {provider}."
-msgstr "O Iris não encontrou nenhum servidor de contactos para {provider}."
-
-#: app/src/offered.rs:463
-msgid "{provider} cannot send automatic replies over POP3."
-msgstr "{provider} não consegue enviar respostas automáticas por POP3."
-
-#: app/src/offered.rs:466
-msgid "{provider} cannot send automatic replies."
-msgstr "{provider} não consegue enviar respostas automáticas."
-
-#: app/src/offered.rs:468
-msgid "{provider} has no calendar that other apps can reach."
-msgstr ""
-"{provider} não tem um calendário a que outras aplicações possam aceder."
-
-#: app/src/offered.rs:470
-msgid "{provider} keeps no contacts that other apps can reach."
-msgstr "{provider} não guarda contactos a que outras aplicações possam aceder."
-
-#: app/src/offered.rs:472
-msgid "{provider} has no rules that other apps can change."
-msgstr "{provider} não tem regras que outras aplicações possam alterar."
-
-#: app/src/offered.rs:474
-msgid "{provider} has no automatic reply that other apps can change."
-msgstr ""
-"{provider} não tem uma resposta automática que outras aplicações possam "
-"alterar."
-
-#: app/src/offered.rs:477
-msgid "{provider} cannot delete mail for good. Delete moves it to the Trash."
-msgstr ""
-"{provider} não consegue eliminar mensagens definitivamente. Eliminar move-as "
-"para o Lixo."
-
-#: app/src/offered.rs:479
-msgid "{provider} does not sort the inbox into categories."
-msgstr "{provider} não organiza a caixa de entrada em categorias."
-
-#: app/src/offered.rs:513
-msgid "{address}: {reason}"
-msgstr "{address}: {reason}"
-
-#: app/src/offered.rs:528
-msgid "The server would not hand it over."
-msgstr "O servidor não a entregou."
-
-#: app/src/offered.rs:530
-msgid "The message is larger than Iris downloads."
-msgstr "A mensagem é maior do que o Iris transfere."
-
-#: app/src/offered.rs:533
-msgid "Iris could not read the server's answer."
-msgstr "O Iris não conseguiu ler a resposta do servidor."
-
-#: app/src/offered.rs:536
-msgid "The connection closed while the message downloaded."
-msgstr "A ligação fechou-se durante a transferência da mensagem."
-
-#: app/src/offered.rs:542
-msgid "“{subject}” from {sender}: {words}"
-msgstr "“{subject}” de {sender}: {words}"
-
-#: app/src/offered.rs:546
-msgid "“{subject}”: {words}"
-msgstr "“{subject}”: {words}"
-
-#: app/src/offered.rs:550
-msgid "A message from {sender}: {words}"
-msgstr "Uma mensagem de {sender}: {words}"
-
-#: app/src/offered.rs:554
-msgid "Message {number}: {words}"
-msgstr "Mensagem {number}: {words}"
-
-#: app/src/offered.rs:569
-msgid ""
-"Removing the account deletes this computer's copy of its mail and the saved "
-"sign-in. Mail still on the server stays there."
-msgstr ""
-"Remover a conta elimina a cópia do correio neste computador e a sessão "
-"guardada. O correio que ainda está no servidor fica lá."
-
-#: app/src/offered.rs:573
-msgid ""
-"Mail already removed from the server exists only on this computer, and "
-"removing the account deletes it with the saved sign-in. Mail still on the "
-"server stays there."
-msgstr ""
-"O correio já removido do servidor só existe neste computador, e remover a "
-"conta elimina-o com a sessão guardada. O correio que ainda está no servidor "
-"fica lá."
-
-#: app/src/offered.rs:579
-msgid ""
-"Its downloaded mail and saved sign-in are deleted from this computer. "
-"Nothing changes in {provider}."
-msgstr ""
-"O correio transferido e a sessão guardada são eliminados deste computador. "
-"Nada muda em {provider}."
-
-#: app/src/offered.rs:595
-msgid ""
-"Mail from {address} is kept only on this computer. To keep a copy, quit "
-"Iris, then back up this file."
-msgstr ""
-"O correio de {address} só existe neste computador. Para guardar uma cópia, "
-"saia do Iris e faça depois uma cópia de segurança deste ficheiro."
-
 #: app/src/open_thread/run/translation.rs:121
 msgid "The model sent nothing back to put in the message."
 msgstr "O modelo não devolveu nada para pôr na mensagem."
@@ -1999,548 +829,11 @@ msgstr "O modelo não devolveu nada para pôr na mensagem."
 msgid "The model could not translate this: {reason}"
 msgstr "O modelo não conseguiu traduzir isto: {reason}"
 
-#: app/src/permission.rs:82
-msgid "Iris needs permission to change {service} settings"
-msgstr "O Iris precisa de permissão para alterar as definições do {service}"
-
-#: app/src/permission.rs:121
-msgid "Allow Changes to {service} Settings"
-msgstr "Permitir alterações às definições do {service}"
-
-#: app/src/permission.rs:125
-msgid ""
-"Iris needs permission to change {service} settings for {account}. {company} "
-"asks you to confirm in your browser."
-msgstr ""
-"O Iris precisa de permissão para alterar as definições do {service} de "
-"{account}. A {company} pede-lhe confirmação no navegador."
-
-#: app/src/permission.rs:130
-msgid "Allow Iris to Delete Mail"
-msgstr "Permitir que o Iris elimine correio"
-
-#: app/src/permission.rs:132
-msgid ""
-"Deleting mail for good needs one more permission for {account}. {company} "
-"asks you to confirm in your browser."
-msgstr ""
-"Eliminar correio de vez precisa de mais uma permissão para {account}. A "
-"{company} pede-lhe confirmação no navegador."
-
-#: app/src/permission.rs:137
-msgid "Allow Iris to Read Your Contacts"
-msgstr "Permitir que o Iris leia os seus contactos"
-
-#: app/src/permission.rs:139
-msgid ""
-"Reading the contacts of {account} needs one more permission. {company} asks "
-"you to confirm in your browser. Names and photos stay on this computer."
-msgstr ""
-"Ler os contactos de {account} precisa de mais uma permissão. A {company} "
-"pede-lhe confirmação no navegador. Os nomes e as fotografias ficam neste "
-"computador."
-
-#: app/src/permission.rs:145
-msgid "Allow Iris to Change Your Contacts"
-msgstr "Permitir que o Iris altere os seus contactos"
-
-#: app/src/permission.rs:147
-msgid ""
-"The assistant needs permission to add and change the contacts of {account}. "
-"{company} asks you to confirm in your browser."
-msgstr ""
-"O assistente precisa de permissão para adicionar e alterar os contactos de "
-"{account}. A {company} pede-lhe confirmação no navegador."
-
-#: app/src/permission.rs:152 app/src/permission.rs:159
-msgid "Allow Iris to Use Your Calendar"
-msgstr "Permitir que o Iris use o seu calendário"
-
-#: app/src/permission.rs:154
-msgid ""
-"The assistant needs permission to read and change events on the calendar for "
-"{account}. {company} asks you to confirm in your browser."
-msgstr ""
-"O assistente precisa de permissão para ler e alterar eventos no calendário "
-"de {account}. A {company} pede-lhe confirmação no navegador."
-
-#: app/src/permission.rs:161
-msgid ""
-"Your reply went to the organizer as mail. With permission to change events "
-"on the calendar for {account}, the meeting is marked on your own calendar "
-"too. {company} asks you to confirm in your browser."
-msgstr ""
-"A sua resposta seguiu por correio para o organizador. Com permissão para "
-"alterar eventos no calendário de {account}, a reunião fica também marcada no "
-"seu calendário. A {company} pede-lhe confirmação no navegador."
-
-#: app/src/permission.rs:167
-msgid "Allow Iris to Manage Your Calendars"
-msgstr "Permitir que o Iris faça a gestão dos seus calendários"
-
-#: app/src/permission.rs:169
-msgid ""
-"Making, renaming and deleting calendars, and subscribing to one, needs one "
-"more permission for {account}. {company} asks you to confirm in your browser."
-msgstr ""
-"Criar, mudar o nome e eliminar calendários, e subscrever um, precisa de mais "
-"uma permissão para {account}. A {company} pede-lhe confirmação no navegador."
-
-#: app/src/permission.rs:175
-msgid "Allow Iris to Add Files to Google Drive"
-msgstr "Permitir que o Iris adicione ficheiros ao Google Drive"
-
-#: app/src/permission.rs:177
-msgid ""
-"Attaching a file from this computer to an event puts it in Google Drive for "
-"{account}. Iris can reach only the files it adds there. Google asks you to "
-"confirm in your browser."
-msgstr ""
-"Anexar um ficheiro deste computador a um evento coloca-o no Google Drive de "
-"{account}. O Iris só tem acesso aos ficheiros que lá coloca. A Google pede-"
-"lhe confirmação no navegador."
-
-#: app/src/permission.rs:246
-msgid "change {service} settings"
-msgstr "alterar as definições do {service}"
-
-#: app/src/permission.rs:249
-msgid "delete mail for good"
-msgstr "eliminar correio definitivamente"
-
-#: app/src/permission.rs:250
-msgid "read contacts"
-msgstr "ler os contactos"
-
-#: app/src/permission.rs:251
-msgid "add and change contacts"
-msgstr "adicionar e alterar contactos"
-
-#: app/src/permission.rs:252
-msgid "use the calendar"
-msgstr "usar o calendário"
-
-#: app/src/permission.rs:253
-msgid "manage calendars"
-msgstr "gerir calendários"
-
-#: app/src/permission.rs:254
-msgid "add files to Google Drive"
-msgstr "adicionar ficheiros ao Google Drive"
-
-#: app/src/permission.rs:266
-msgid "Change {service} settings"
-msgstr "Alterar definições do {service}"
-
-#: app/src/permission.rs:269
-msgid "Rules and automatic reply"
-msgstr "Regras e resposta automática"
-
-#: app/src/permission.rs:272
-msgid "Change Gmail settings"
-msgstr "Alterar definições do Gmail"
-
-#: app/src/permission.rs:273
-msgid "Rules, automatic reply, send-as addresses"
-msgstr "Regras, resposta automática, endereços de envio"
-
-#: app/src/permission.rs:276
-msgid "Delete mail for good"
-msgstr "Eliminar correio de vez"
-
-#: app/src/permission.rs:277
-msgid "Emptying the trash and spam"
-msgstr "Esvaziar o lixo e o spam"
-
-#: app/src/permission.rs:280
-msgid "Read contacts"
-msgstr "Ler contactos"
-
-#: app/src/permission.rs:281
-msgid "Names and photos as you write"
-msgstr "Nomes e fotografias enquanto escreve"
-
-#: app/src/permission.rs:284
-msgid "Add and change contacts"
-msgstr "Adicionar e alterar contactos"
-
-#: app/src/permission.rs:285
-msgid "Saving a sender as a contact"
-msgstr "Guardar um remetente como contacto"
-
-#: app/src/permission.rs:288
-msgid "Use the calendar"
-msgstr "Usar o calendário"
-
-#: app/src/permission.rs:289
-msgid "Events, invitations, reminders"
-msgstr "Eventos, convites, lembretes"
-
-#: app/src/permission.rs:292
-msgid "Manage calendars"
-msgstr "Gerir calendários"
-
-#: app/src/permission.rs:293
-msgid "New calendars, colors, subscriptions"
-msgstr "Novos calendários, cores, subscrições"
-
-#: app/src/permission.rs:296
-msgid "Add files to Google Drive"
-msgstr "Adicionar ficheiros ao Google Drive"
-
-#: app/src/permission.rs:297
-msgid "Files attached to events"
-msgstr "Ficheiros anexados a eventos"
-
-#: app/src/permission.rs:323
-msgid "{account} has not allowed Iris to {missing}"
-msgstr "{account} não autorizou o Iris a {missing}"
-
-#: app/src/pgp.rs:110
-msgid "Add a recipient whose key gpg holds."
-msgstr "Adicione um destinatário de quem o gpg tenha a chave."
-
-#: app/src/pgp.rs:119
-msgid "gpg holds no key for {addresses}."
-msgstr "O gpg não tem chave para {addresses}."
-
-#: app/src/pgp.rs:136
-msgid "gpg holds no key for any of the addresses you send from."
-msgstr "O gpg não tem chave para nenhum dos endereços de onde envia."
-
-#: app/src/pgp.rs:138
-msgid "gpg holds a key for {addresses}."
-msgstr "O gpg tem chave para {addresses}."
-
-#: app/src/pgp.rs:142
-msgid "gpg holds a key for {addresses}, and none for {without}."
-msgstr "O gpg tem chave para {addresses} e nenhuma para {without}."
-
-#: app/src/pgp.rs:245
-msgid "This computer has no gpg. Install GnuPG to read or send OpenPGP mail."
-msgstr ""
-"Este computador não tem gpg. Instale o GnuPG para ler ou enviar correio "
-"OpenPGP."
-
-#: app/src/pgp.rs:248 app/src/smime.rs:257
-msgid "Could not run {program}: {reason}"
-msgstr "Não foi possível executar {program}: {reason}"
-
-#: app/src/pgp.rs:252 app/src/smime.rs:261
-msgid "Could not write a temporary file: {reason}"
-msgstr "Não foi possível escrever um ficheiro temporário: {reason}"
-
-#: app/src/pgp.rs:256
-msgid "This message is encrypted to a key this computer does not hold."
-msgstr ""
-"Esta mensagem está encriptada para uma chave que este computador não tem."
-
-#: app/src/pgp.rs:259
-msgid "gpg holds no secret key to sign as {address}."
-msgstr "O gpg não tem chave secreta para assinar como {address}."
-
-#: app/src/pgp.rs:263
-msgid "gpg holds no key it can encrypt to for {address}."
-msgstr "O gpg não tem chave para encriptar para {address}."
-
-#: app/src/pgp.rs:266
-msgid "This text holds no OpenPGP block."
-msgstr "Este texto não contém nenhum bloco OpenPGP."
-
-#: app/src/pgp.rs:267
-msgid "This file holds no OpenPGP key."
-msgstr "Este ficheiro não contém nenhuma chave OpenPGP."
-
-#: app/src/pgp.rs:268
-msgid "gpg failed: {reason}"
-msgstr "O gpg falhou: {reason}"
-
-#: app/src/protection.rs:116
-msgid "{smime} {pgp}"
-msgstr "{smime} {pgp}"
-
-#: app/src/protection.rs:129
-msgid "This computer has nothing to encrypt with."
-msgstr "Este computador não tem com que encriptar."
-
-#: app/src/protection.rs:136
-msgid ""
-"S/MIME names every recipient inside an encrypted message, so a blind copy "
-"would not stay blind."
-msgstr ""
-"O S/MIME indica todos os destinatários dentro de uma mensagem encriptada, "
-"pelo que uma cópia oculta deixaria de ser oculta."
-
-#: app/src/protection.rs:294
-msgid "Signed"
-msgstr "Assinada"
-
-#: app/src/protection.rs:295
-msgid "Encrypted"
-msgstr "Encriptada"
-
-#: app/src/protection.rs:296
-msgid "Signed and encrypted"
-msgstr "Assinada e encriptada"
-
-#: app/src/protection.rs:305
-msgid "Encrypt this message to the recipients' keys"
-msgstr "Encriptar esta mensagem para as chaves dos destinatários"
-
-#: app/src/protection.rs:306
-msgid "Encrypt this message to the recipients' certificates"
-msgstr "Encriptar esta mensagem para os certificados dos destinatários"
-
-#: app/src/protection.rs:332
-msgid "gpg holds no key and gpgsm no trusted certificate for {addresses}."
-msgstr ""
-"O gpg não tem chave nem o gpgsm certificado de confiança para {addresses}."
-
-#: app/src/protection.rs:340
-msgid "A message goes out under one standard or the other. {pgp} {smime}"
-msgstr "Uma mensagem sai por uma norma ou pela outra. {pgp} {smime}"
-
-#: app/src/protection.rs:600
-msgid ""
-"This key does not name {sender}, the address the message says it is from."
-msgstr ""
-"Esta chave não identifica {sender}, o endereço de onde a mensagem diz que "
-"vem."
-
-#: app/src/protection.rs:604
-msgid ""
-"This certificate does not name {sender}, the address the message says it is "
-"from."
-msgstr ""
-"Este certificado não identifica {sender}, o endereço de onde a mensagem diz "
-"que vem."
-
-#: app/src/protection.rs:613
-msgid "Signed by {signer}"
-msgstr "Assinada por {signer}"
-
-#: app/src/protection.rs:619
-msgid "This message changed after it was signed"
-msgstr "Esta mensagem mudou depois de ter sido assinada"
-
-#: app/src/protection.rs:621
-msgid "The signature of {signer} does not match what arrived."
-msgstr "A assinatura de {signer} não corresponde ao que chegou."
-
-#: app/src/protection.rs:628
-msgid "Signed by {signer}, whose key has expired"
-msgstr "Assinada por {signer}, cuja chave expirou"
-
-#: app/src/protection.rs:632
-msgid "The text is as it was written, and the key behind it ran out."
-msgstr "O texto está como foi escrito e a chave por trás dele expirou."
-
-#: app/src/protection.rs:638
-msgid "Signed by {signer}, whose certificate has run out"
-msgstr "Assinada por {signer}, cujo certificado expirou"
-
-#: app/src/protection.rs:642
-msgid ""
-"The text is as it was written, and the certificate behind it has expired."
-msgstr "O texto está como foi escrito e o certificado por trás dele expirou."
-
-#: app/src/protection.rs:648
-msgid "Signed by {signer}, who took this key back"
-msgstr "Assinada por {signer}, que revogou esta chave"
-
-#: app/src/protection.rs:652
-msgid "The owner revoked it, so it says nothing about who wrote this."
-msgstr "O dono revogou-a, por isso não diz nada sobre quem escreveu isto."
-
-#: app/src/protection.rs:658
-msgid "Signed by {signer}, whose certificate was taken back"
-msgstr "Assinada por {signer}, cujo certificado foi revogado"
-
-#: app/src/protection.rs:662
-msgid "Whoever issued it revoked it, so it says nothing about who wrote this."
-msgstr ""
-"Quem o emitiu revogou-o, por isso não diz nada sobre quem escreveu isto."
-
-#: app/src/protection.rs:668
-msgid "Signed by {signer}, and the signature has run out"
-msgstr "Assinada por {signer}, e a assinatura expirou"
-
-#: app/src/protection.rs:672
-msgid "It carried a date to stop being good on, and that date has passed."
-msgstr ""
-"Levava uma data a partir da qual deixava de valer, e essa data já passou."
-
-#: app/src/protection.rs:677
-msgid "Signed by a key this computer does not hold"
-msgstr "Assinada por uma chave que este computador não tem"
-
-#: app/src/protection.rs:679
-msgid "Nothing here can check it. Ask gpg for key {key}."
-msgstr "Nada aqui a consegue verificar. Peça ao gpg a chave {key}."
-
-#: app/src/protection.rs:686
-msgid "it names"
-msgstr "que indica"
-
-#: app/src/protection.rs:692
-msgid "Signed by a certificate this computer does not hold"
-msgstr "Assinada por um certificado que este computador não tem"
-
-#: app/src/protection.rs:694
-msgid ""
-"The message carried none either, so there is nothing here to check it "
-"against."
-msgstr ""
-"A mensagem também não o trazia, por isso não há aqui nada com que a "
-"verificar."
-
-#: app/src/protection.rs:700
-msgid "gpg could not check this signature"
-msgstr "O gpg não conseguiu verificar esta assinatura"
-
-#: app/src/protection.rs:705
-msgid "gpgsm could not check this signature"
-msgstr "O gpgsm não conseguiu verificar esta assinatura"
-
-#: app/src/protection.rs:728
-msgid "Encrypted, and signed by {signer}"
-msgstr "Encriptada e assinada por {signer}"
-
-#: app/src/protection.rs:737
-msgid "Encrypted. {what}"
-msgstr "Encriptada. {what}"
-
-#: app/src/protection.rs:743
-msgid "This message arrived encrypted"
-msgstr "Esta mensagem chegou encriptada"
-
-#: app/src/protection.rs:745
-msgid "Nobody signed it, so it says nothing about who sent it."
-msgstr "Ninguém a assinou, por isso não diz nada sobre quem a enviou."
-
-#: app/src/protection.rs:753
-msgid "{detail} {files}"
-msgstr "{detail} {files}"
-
-#: app/src/protection.rs:767
-msgid "This message is encrypted to a key you do not hold"
-msgstr "Esta mensagem está encriptada para uma chave que não tem"
-
-#: app/src/protection.rs:769
-msgid "Whoever sent it used a key gpg has no secret half of."
-msgstr "Quem a enviou usou uma chave de que o gpg não tem a metade secreta."
-
-#: app/src/protection.rs:774
-msgid "This message is encrypted to a certificate you do not hold"
-msgstr "Esta mensagem está encriptada para um certificado que não tem"
-
-#: app/src/protection.rs:776
-msgid "Whoever sent it used a certificate gpgsm has no secret key for."
-msgstr ""
-"Quem a enviou usou um certificado de que o gpgsm não tem a chave secreta."
-
-#: app/src/protection.rs:782
-msgid "This message says it is OpenPGP and is not"
-msgstr "Esta mensagem diz ser OpenPGP e não é"
-
-#: app/src/protection.rs:783
-msgid "This message says it is S/MIME and is not"
-msgstr "Esta mensagem diz ser S/MIME e não é"
-
-#: app/src/protection.rs:786
-msgid "Its parts are not where a signed or encrypted message keeps them."
-msgstr ""
-"As partes dela não estão onde uma mensagem assinada ou encriptada as guarda."
-
-#: app/src/protection.rs:792
-msgid "gpg could not open this message"
-msgstr "O gpg não conseguiu abrir esta mensagem"
-
-#: app/src/protection.rs:793
-msgid "gpgsm could not open this message"
-msgstr "O gpgsm não conseguiu abrir esta mensagem"
-
-#: app/src/protection.rs:806
-msgid "You marked this key as one not to trust."
-msgstr "Marcou esta chave como não fiável."
-
-#: app/src/protection.rs:807
-msgid "This is one of your own keys."
-msgstr "Esta é uma das suas chaves."
-
-#: app/src/protection.rs:808
-msgid "You have vouched for this key."
-msgstr "Confirmou esta chave."
-
-#: app/src/protection.rs:810
-msgid ""
-"Only people you partly trust have vouched for this key, so it is not fully "
-"checked."
-msgstr ""
-"Só pessoas em quem confia em parte confirmaram esta chave, por isso não está "
-"totalmente verificada."
-
-#: app/src/protection.rs:813
-msgid "Nobody has vouched for this key, so it names no one."
-msgstr "Ninguém confirmou esta chave, por isso não identifica ninguém."
-
-#: app/src/protection.rs:816
-msgid ""
-"Its certificate leads back to an authority you trust, but this computer "
-"could not check whether it was revoked."
-msgstr ""
-"O certificado dela remete para uma autoridade em que confia, mas este "
-"computador não conseguiu verificar se foi revogado."
-
-#: app/src/protection.rs:820
-msgid "Its certificate leads back to an authority you trust."
-msgstr "O certificado dela remete para uma autoridade em que confia."
-
-#: app/src/protection.rs:823
-msgid "Its certificate leads back to nobody you trust, so it names no one."
-msgstr ""
-"O certificado dela não remete para ninguém em quem confie, por isso não "
-"identifica ninguém."
-
-#: app/src/protection.rs:826
-msgid "Nothing here says who that certificate belongs to."
-msgstr "Nada aqui diz a quem pertence esse certificado."
-
-#: app/src/protection.rs:862
-msgid "key {key}"
-msgstr "chave {key}"
-
-#: app/src/protection.rs:865
-msgid "a key gpg would not name"
-msgstr "uma chave que o gpg não identificou"
-
-#: app/src/protection.rs:866
-msgid "a certificate gpgsm would not name"
-msgstr "um certificado que o gpgsm não identificou"
-
-#: app/src/protection.rs:877
-msgid "It carries a file, kept in this window only."
-msgstr "Leva um ficheiro, guardado apenas nesta janela."
-
-#: app/src/protection.rs:879
-msgid "It carries {count} file, kept in this window only."
-msgid_plural "It carries {count} files, kept in this window only."
-msgstr[0] "Leva {count} ficheiro, guardado apenas nesta janela."
-msgstr[1] "Leva {count} ficheiros, guardados apenas nesta janela."
-
-#: app/src/protection.rs:910
-msgid "{names} or {last}"
-msgstr "{names} ou {last}"
-
-#: app/src/protection.rs:922
-msgid "{names} and {last}"
-msgstr "{names} e {last}"
-
-#: app/src/protection/draft.rs:96 app/src/protection/draft.rs:162
+#: app/src/protection/draft.rs:27 app/src/protection/draft.rs:93
 msgid "Draft not saved: {reason}"
 msgstr "Rascunho não guardado: {reason}"
 
-#: app/src/protection/draft.rs:124
+#: app/src/protection/draft.rs:55
 msgid ""
 "Draft not saved. An encrypted message waits in Drafts encrypted to your own "
 "key, and this computer holds no key or certificate for {address}."
@@ -2549,111 +842,17 @@ msgstr ""
 "encriptada para a sua própria chave, e este computador não tem chave nem "
 "certificado para {address}."
 
-#: app/src/protection/draft.rs:143
+#: app/src/protection/draft.rs:74
 msgid "That account is not connected."
 msgstr "Essa conta não está ligada."
 
-#: app/src/protection/draft.rs:156 app/src/ui/vacation.rs:146
+#: app/src/protection/draft.rs:87 app/src/ui/vacation.rs:146
 msgid "Could not save: {reason}"
 msgstr "Não foi possível guardar: {reason}"
 
-#: app/src/protection/draft.rs:200 app/src/ui/window.rs:2429
+#: app/src/protection/draft.rs:117 app/src/ui/window.rs:2429
 msgid "Could not open the draft: {reason}"
 msgstr "Não foi possível abrir o rascunho: {reason}"
-
-#: app/src/rules.rs:13
-msgid "These rules run on this computer while Iris is open."
-msgstr "Estas regras correm neste computador enquanto o Iris estiver aberto."
-
-#: app/src/rules.rs:16
-msgid ""
-"{provider} runs these on new mail as it arrives, even when this computer is "
-"off."
-msgstr ""
-"{provider} aplica-as às mensagens novas quando chegam, mesmo com este "
-"computador desligado."
-
-#: app/src/rules.rs:25
-msgid "{provider} is not answering. Changes wait here and go out when it does."
-msgstr ""
-"{provider} não está a responder. As alterações esperam aqui e seguem quando "
-"responder."
-
-#: app/src/rules.rs:203
-msgid "From {address}"
-msgstr "De {address}"
-
-#: app/src/rules.rs:206
-msgid "To {address}"
-msgstr "Para {address}"
-
-#: app/src/rules.rs:210
-msgid "Subject has “{words}”"
-msgstr "Assunto com “{words}”"
-
-#: app/src/rules.rs:215
-msgid "Has “{words}”"
-msgstr "Contém “{words}”"
-
-#: app/src/rules.rs:219
-msgid "Doesn't have “{words}”"
-msgstr "Não contém “{words}”"
-
-#: app/src/rules.rs:224
-msgid "Has an attachment"
-msgstr "Tem um anexo"
-
-#: app/src/rules.rs:229
-msgid "Smaller than {size}"
-msgstr "Menor do que {size}"
-
-#: app/src/rules.rs:230
-msgid "Larger than {size}"
-msgstr "Maior do que {size}"
-
-#: app/src/rules.rs:235
-msgid "All mail"
-msgstr "Todo o correio"
-
-#: app/src/rules.rs:255
-msgid "Delete it"
-msgstr "Eliminá-la"
-
-#: app/src/rules.rs:257 app/src/ui/rules.rs:369
-msgid "Skip the Inbox"
-msgstr "Saltar a caixa de entrada"
-
-#: app/src/rules.rs:262
-msgid "Apply {label}"
-msgstr "Aplicar {label}"
-
-#: app/src/rules.rs:268
-msgid "Star it"
-msgstr "Marcar com estrela"
-
-#: app/src/rules.rs:271
-msgid "Mark as read"
-msgstr "Marcar como lida"
-
-#: app/src/rules.rs:274
-msgid "Mark as important"
-msgstr "Marcar como importante"
-
-#: app/src/rules.rs:277
-msgid "Never mark as important"
-msgstr "Nunca marcar como importante"
-
-#: app/src/rules.rs:280
-msgid "Never send to Spam"
-msgstr "Nunca enviar para spam"
-
-#: app/src/rules.rs:283
-msgid "Forward to {address}"
-msgstr "Reencaminhar para {address}"
-
-#: app/src/rules.rs:286
-msgid "Nothing"
-msgstr "Nada"
 
 #: app/src/search.rs:33
 msgid "Subject contains “{words}”"
@@ -2705,79 +904,6 @@ msgstr "Neste computador, enquanto o Iris estiver aberto"
 #: app/src/servers.rs:40
 msgid "On the server"
 msgstr "No servidor"
-
-#: app/src/smime.rs:93
-msgid "Add a recipient whose certificate gpgsm trusts."
-msgstr ""
-"Adicione um destinatário cujo certificado o gpgsm considere de confiança."
-
-#: app/src/smime.rs:103
-msgid ""
-"gpgsm holds no trusted certificate for {addresses}. A certificate that only "
-"arrived in mail does not count."
-msgstr ""
-"O gpgsm não tem certificado de confiança para {addresses}. Um certificado "
-"que só chegou por correio não conta."
-
-#: app/src/smime.rs:123
-msgid "gpgsm holds no certificate for any of the addresses you send from."
-msgstr "O gpgsm não tem certificado para nenhum dos endereços de onde envia."
-
-#: app/src/smime.rs:125
-msgid "gpgsm holds a certificate for {addresses}."
-msgstr "O gpgsm tem certificado para {addresses}."
-
-#: app/src/smime.rs:129
-msgid "gpgsm holds a certificate for {addresses}, and none for {without}."
-msgstr "O gpgsm tem certificado para {addresses} e nenhum para {without}."
-
-#: app/src/smime.rs:254
-msgid "This computer has no gpgsm. Install GnuPG to read or send S/MIME mail."
-msgstr ""
-"Este computador não tem gpgsm. Instale o GnuPG para ler ou enviar correio S/"
-"MIME."
-
-#: app/src/smime.rs:265
-msgid "This message is encrypted to a certificate this computer does not hold."
-msgstr ""
-"Esta mensagem está encriptada para um certificado que este computador não "
-"tem."
-
-#: app/src/smime.rs:268
-msgid "gpgsm holds no secret key to sign as {address}."
-msgstr "O gpgsm não tem chave secreta para assinar como {address}."
-
-#: app/src/smime.rs:272
-msgid "gpgsm holds no trusted certificate it can encrypt to for {address}."
-msgstr ""
-"O gpgsm não tem certificado de confiança para encriptar para {address}."
-
-#: app/src/smime.rs:275
-msgid "This part holds no S/MIME data."
-msgstr "Esta parte não contém dados S/MIME."
-
-#: app/src/smime.rs:276
-msgid "This file holds no certificate."
-msgstr "Este ficheiro não contém nenhum certificado."
-
-#: app/src/smime.rs:278
-msgid "That passphrase does not open this file. Nothing was imported."
-msgstr "Essa frase-passe não abre este ficheiro. Não foi importado nada."
-
-#: app/src/smime.rs:281
-msgid ""
-"The file needs its passphrase, and none was given. Nothing was imported."
-msgstr ""
-"O ficheiro precisa da frase-passe e não foi indicada nenhuma. Não foi "
-"importado nada."
-
-#: app/src/smime.rs:284
-msgid "gpgsm failed: {reason}"
-msgstr "O gpgsm falhou: {reason}"
-
-#: app/src/templates.rs:28
-msgid "%-d %B %Y"
-msgstr "%-d de %B de %Y"
 
 #: app/src/translation.rs:76
 msgid "Portuguese"
@@ -2845,6 +971,10 @@ msgid ""
 msgstr ""
 "A mensagem vai para a Anthropic, para ser lida pelo Claude através da sua "
 "subscrição."
+
+#: app/src/ui/about.rs:37 app/src/ui/window.rs:686
+msgid "Iris"
+msgstr "Iris"
 
 #: app/src/ui/about.rs:53
 msgid "Based on {app}"
@@ -2976,7 +1106,7 @@ msgstr "Tentar de novo"
 #: app/src/ui/composer/mod.rs:2073 app/src/ui/composer/mod.rs:2521
 #: app/src/ui/confirm.rs:29 app/src/ui/rules.rs:445 app/src/ui/rules.rs:625
 #: app/src/ui/smart_editor.rs:150 app/src/ui/templates.rs:239
-#: app/src/ui/unsubscribe.rs:95 app/src/ui/vacation.rs:45 app/src/ui/when.rs:52
+#: app/src/ui/unsubscribe.rs:76 app/src/ui/vacation.rs:45 app/src/ui/when.rs:52
 #: app/src/ui/window/arrange.rs:146 app/src/ui/window/images.rs:101
 #: app/src/ui/window/organize.rs:73 app/src/ui/window/organize.rs:122
 msgid "Cancel"
@@ -4535,7 +2665,7 @@ msgstr ""
 "Pode subscrevê-lo outra vez mais tarde."
 
 #: app/src/ui/calendar/manage.rs:324 app/src/ui/conversation.rs:396
-#: app/src/ui/unsubscribe.rs:96
+#: app/src/ui/unsubscribe.rs:77
 msgid "Unsubscribe"
 msgstr "Cancelar subscrição"
 
@@ -4914,6 +3044,10 @@ msgstr "Os convidados recebem um cancelamento por correio."
 #: app/src/ui/calendar/scope.rs:196
 msgid "The guests get an update by mail."
 msgstr "Os convidados recebem uma atualização por correio."
+
+#: app/src/ui/calendar/scope.rs:200
+msgid "The new guests get their invitation, and the others get an update."
+msgstr "Os novos convidados recebem o convite e os restantes uma atualização."
 
 #: app/src/ui/calendar/shown.rs:69
 msgid "Day"
@@ -6375,42 +4509,6 @@ msgstr[1] "E mais {count}"
 msgid "Could not read {file}: {reason}"
 msgstr "Não foi possível ler {file}: {reason}"
 
-#: app/src/ui/mod.rs:420
-msgid "Red"
-msgstr "Vermelho"
-
-#: app/src/ui/mod.rs:421
-msgid "Orange"
-msgstr "Laranja"
-
-#: app/src/ui/mod.rs:422
-msgid "Yellow"
-msgstr "Amarelo"
-
-#: app/src/ui/mod.rs:423
-msgid "Green"
-msgstr "Verde"
-
-#: app/src/ui/mod.rs:424
-msgid "Teal"
-msgstr "Turquesa"
-
-#: app/src/ui/mod.rs:425
-msgid "Blue"
-msgstr "Azul"
-
-#: app/src/ui/mod.rs:426
-msgid "Purple"
-msgstr "Roxo"
-
-#: app/src/ui/mod.rs:427
-msgid "Pink"
-msgstr "Rosa"
-
-#: app/src/ui/mod.rs:428
-msgid "Gray"
-msgstr "Cinzento"
-
 #: app/src/ui/moving.rs:40
 msgid "The mail is already there"
 msgstr "O correio já está lá"
@@ -6989,6 +5087,10 @@ msgstr "Tem um anexo"
 msgid "When Mail Matches"
 msgstr "Quando o correio corresponder"
 
+#: app/src/ui/rules.rs:369
+msgid "Skip the Inbox"
+msgstr "Saltar a caixa de entrada"
+
 #: app/src/ui/rules.rs:371
 msgid "Star It"
 msgstr "Marcar com estrela"
@@ -7409,6 +5511,10 @@ msgstr "{sender}, {subject}, {snippet}"
 msgid "Unknown sender"
 msgstr "Remetente desconhecido"
 
+#: app/src/ui/thread_row.rs:374
+msgid "(no subject)"
+msgstr "(sem assunto)"
+
 #: app/src/ui/translation.rs:50 app/src/ui/translation.rs:85
 #: app/src/ui/translation.rs:125
 msgid "Translate"
@@ -7449,73 +5555,6 @@ msgstr "Mostrar o original"
 #: app/src/ui/translation.rs:115
 msgid "Show Translation"
 msgstr "Mostrar a tradução"
-
-#: app/src/ui/unsubscribe.rs:165
-msgid "Unsubscribe from {sender}?"
-msgstr "Cancelar a subscrição de {sender}?"
-
-#: app/src/ui/unsubscribe.rs:169
-msgid "Unsubscribe from {count} list?"
-msgid_plural "Unsubscribe from {count} lists?"
-msgstr[0] "Cancelar a subscrição de {count} lista?"
-msgstr[1] "Cancelar a subscrição de {count} listas?"
-
-#: app/src/ui/unsubscribe.rs:184
-msgid "Loading a page tells the sender you acted, as opening it yourself does."
-msgstr ""
-"Carregar uma página diz ao remetente que agiu, tal como abri-la você mesmo."
-
-#: app/src/ui/unsubscribe.rs:190
-msgid "Reading the page…"
-msgstr "A ler a página…"
-
-#: app/src/ui/unsubscribe.rs:191
-msgid "ask the sender to take you off the list"
-msgstr "pedir ao remetente que o retire da lista"
-
-#: app/src/ui/unsubscribe.rs:193
-msgid "send a request from {address}"
-msgstr "enviar um pedido de {address}"
-
-#: app/src/ui/unsubscribe.rs:205
-msgid "nothing: the page says you are off the list already"
-msgstr "nada: a página diz que já não está na lista"
-
-#: app/src/ui/unsubscribe.rs:206
-msgid "open the page in the browser"
-msgstr "abrir a página no navegador"
-
-#: app/src/ui/unsubscribe.rs:219
-msgid "press “{button}” on {site} with {address}, all emails"
-msgstr "carregar em “{button}” em {site} com {address}, todos os emails"
-
-#: app/src/ui/unsubscribe.rs:223
-msgid "press “{button}” on {site} with {address}"
-msgstr "carregar em “{button}” em {site} com {address}"
-
-#: app/src/ui/unsubscribe.rs:226
-msgid "press “{button}” on {site}, all emails"
-msgstr "carregar em “{button}” em {site}, todos os emails"
-
-#: app/src/ui/unsubscribe.rs:227
-msgid "press “{button}” on {site}"
-msgstr "carregar em “{button}” em {site}"
-
-#: app/src/ui/unsubscribe.rs:236
-msgid "Unsubscribed from {sender}"
-msgstr "Subscrição de {sender} cancelada"
-
-#: app/src/ui/unsubscribe.rs:237
-msgid "Sent, but the page did not say it worked"
-msgstr "Enviado, mas a página não disse que resultou"
-
-#: app/src/ui/unsubscribe.rs:238
-msgid "The page needs you to finish it"
-msgstr "A página precisa de si para terminar"
-
-#: app/src/ui/unsubscribe.rs:240
-msgid "Could not unsubscribe from {sender}: {reason}"
-msgstr "Não foi possível cancelar a subscrição de {sender}: {reason}"
 
 #: app/src/ui/vacation.rs:58
 msgid "Automatic Reply"
@@ -7937,6 +5976,10 @@ msgid_plural "{count} sent messages have had no reply"
 msgstr[0] "{count} mensagem enviada está sem resposta"
 msgstr[1] "{count} mensagens enviadas estão sem resposta"
 
+#: app/src/ui/window/images.rs:66
+msgid "Always load images from {sender}?"
+msgstr "Carregar sempre as imagens de {sender}?"
+
 #: app/src/ui/window/images.rs:71
 msgid "Always"
 msgstr "Sempre"
@@ -7948,6 +5991,11 @@ msgstr "Esta mensagem não tem remetente para memorizar."
 #: app/src/ui/window/images.rs:96
 msgid "Always Load Images?"
 msgstr "Carregar sempre as imagens?"
+
+#: app/src/ui/window/images.rs:98
+msgid "Loading a remote image tells the sender when you opened their mail."
+msgstr ""
+"Carregar uma imagem remota diz ao remetente quando abriu o correio dele."
 
 #: app/src/ui/window/images.rs:104
 msgid "From {sender}"
@@ -8284,6 +6332,10 @@ msgstr ""
 "Não vão ser enviadas. Algumas estão nos rascunhos, e as que o Gmail não "
 "aceitou ficaram abertas para as guardar."
 
+#: app/src/ui/window/senders.rs:42
+msgid "this list"
+msgstr "esta lista"
+
 #: app/src/ui/window/senders.rs:64
 msgid "This message has no unsubscribe link"
 msgstr "Esta mensagem não tem ligação para cancelar a subscrição"
@@ -8407,6 +6459,10 @@ msgstr "Marcar como lida ou não lida"
 #: app/src/ui/window/shortcuts.rs:455
 msgid "Mute or unmute"
 msgstr "Silenciar ou retirar o silêncio"
+
+#: app/src/ui/window/shortcuts.rs:460
+msgid "Labels"
+msgstr "Etiquetas"
 
 #: app/src/ui/window/shortcuts.rs:473
 msgid "New message"
@@ -8532,22 +6588,6 @@ msgstr "A sua alteração a “{title}” não foi guardada: {reason}"
 msgid "Show Event"
 msgstr "Mostrar evento"
 
-#: app/src/unsubscribe_page.rs:171
-msgid "the page took longer than 20 seconds"
-msgstr "a página demorou mais de 20 segundos"
-
-#: app/src/unsubscribe_page.rs:173
-msgid "the page did not load: {reason}"
-msgstr "a página não carregou: {reason}"
-
-#: app/src/unsubscribe_page.rs:177
-msgid "the page could not be read: {reason}"
-msgstr "não foi possível ler a página: {reason}"
-
-#: app/src/unsubscribe_page.rs:180
-msgid "the page changed while it was waiting to be asked"
-msgstr "a página mudou enquanto esperava pela sua resposta"
-
 #: app/src/unsubscribe_page/webkit.rs:304
 msgid "the view went away"
 msgstr "a vista fechou-se"
@@ -8555,6 +6595,837 @@ msgstr "a vista fechou-se"
 #: app/src/unsubscribe_page/webkit.rs:404
 msgid "the plan would type something other than the address"
 msgstr "o plano escreveria algo que não o endereço"
+
+#: appcore/src/assistant/mod.rs:119
+msgid "The assistant is off. Choose a model in Preferences."
+msgstr "O assistente está desligado. Escolha um modelo nas Preferências."
+
+#: appcore/src/assistant/mod.rs:121
+msgid "Translation has no model. Choose one in Preferences, on the AI page."
+msgstr "A tradução não tem modelo. Escolha um nas Preferências, na página IA."
+
+#: appcore/src/assistant/mod.rs:124
+msgid "Unsubscribing has no model. Choose one in Preferences, on the AI page."
+msgstr ""
+"O cancelamento de subscrições não tem modelo. Escolha um nas Preferências, "
+"na página IA."
+
+#: appcore/src/assistant/mod.rs:130
+msgid "Choose a model for the local server in Preferences."
+msgstr "Escolha um modelo para o servidor local nas Preferências."
+
+#: appcore/src/assistant/mod.rs:142
+msgid "Add an Anthropic API key in Preferences."
+msgstr "Adicione uma chave de API da Anthropic nas Preferências."
+
+#: appcore/src/assistant/mod.rs:149
+msgid "Claude Code is not installed. Install it and sign in, then try again."
+msgstr ""
+"O Claude Code não está instalado. Instale-o, inicie sessão e tente de novo."
+
+#: appcore/src/assistant/run.rs:1031
+msgid "Move {count} conversation to the Trash?"
+msgid_plural "Move {count} conversations to the Trash?"
+msgstr[0] "Mover {count} conversa para o lixo?"
+msgstr[1] "Mover {count} conversas para o lixo?"
+
+#: appcore/src/assistant/run.rs:1196
+msgid ""
+"Don't Allow labels only the mail in accounts that have the label already."
+msgstr ""
+"Com «Não permitir», só o correio das contas que já têm a etiqueta a recebe."
+
+#: appcore/src/assistant/run.rs:1233
+msgid "Block {address}? Their future mail goes straight to the Trash."
+msgstr "Bloquear {address}? O correio futuro vai direto para o lixo."
+
+#: appcore/src/assistant/run.rs:1315 appcore/src/assistant/run/calendar.rs:228
+#: appcore/src/assistant/run/calendar.rs:726
+msgid "%a %-d %b"
+msgstr "%a %-d %b"
+
+#: appcore/src/assistant/run.rs:1321
+msgid " from {first} to {last}"
+msgstr ", de {first} a {last}"
+
+#: appcore/src/assistant/run.rs:1324
+msgid " until {last}"
+msgstr ", até {last}"
+
+#: appcore/src/assistant/run.rs:1325
+msgid " from {first}"
+msgstr ", a partir de {first}"
+
+#: appcore/src/assistant/run.rs:1331
+msgid ""
+"Turn on the automatic reply for {account}{dates}?\n"
+"\n"
+"“{subject}”\n"
+"{body}"
+msgstr ""
+"Ligar a resposta automática de {account}{dates}?\n"
+"\n"
+"“{subject}”\n"
+"{body}"
+
+#: appcore/src/assistant/run.rs:1342
+msgid "Turn off the automatic reply for {account}?"
+msgstr "Desligar a resposta automática de {account}?"
+
+#: appcore/src/assistant/run.rs:1444
+msgid "Create a rule for {account}: {when} → {then}?"
+msgstr "Criar uma regra para {account}: {when} → {then}?"
+
+#: appcore/src/assistant/run.rs:1487
+msgid "Delete a rule from {account}?"
+msgstr "Eliminar uma regra de {account}?"
+
+#: appcore/src/assistant/run.rs:1686 appcore/src/assistant/run.rs:1720
+msgid "Hide My Email works with Gmail accounts."
+msgstr "O Ocultar o meu e-mail funciona com contas Gmail."
+
+#: appcore/src/assistant/run.rs:1829
+msgid ""
+"Move mail from {sender} to {category} in {account}, and send their future "
+"mail there too?"
+msgstr ""
+"Mover o correio de {sender} para {category} em {account} e enviar também "
+"para lá o correio futuro?"
+
+#: appcore/src/assistant/run.rs:1841
+msgid ""
+"Move mail from {sender} to {category} in {account}, and add a {provider} "
+"rule for their future mail?"
+msgstr ""
+"Mover o correio de {sender} para {category} em {account} e criar uma regra "
+"do {provider} para o correio futuro?"
+
+#: appcore/src/assistant/run/calendar.rs:234
+#: appcore/src/assistant/run/calendar.rs:730
+msgid "%a %-d %b %H:%M"
+msgstr "%a %-d %b %H:%M"
+
+#: appcore/src/assistant/run/calendar.rs:247
+#: appcore/src/assistant/run/calendar.rs:251
+#: appcore/src/assistant/run/calendar.rs:255
+msgid "{first} to {last}"
+msgstr "{first} a {last}"
+
+#: appcore/src/assistant/run/calendar.rs:483
+msgid "Add “{title}” to the calendar “{calendar}” for {account}, {when}?"
+msgstr "Adicionar “{title}” ao calendário “{calendar}” de {account}, {when}?"
+
+#: appcore/src/assistant/run/calendar.rs:492
+msgid "Add “{title}” to the calendar for {account}, {when}?"
+msgstr "Adicionar “{title}” ao calendário de {account}, {when}?"
+
+#: appcore/src/assistant/run/calendar.rs:499
+msgid "Guests get an invitation: {guests}."
+msgstr "Os convidados recebem um convite: {guests}."
+
+#: appcore/src/assistant/run/calendar.rs:553
+msgid "Title: {value}"
+msgstr "Título: {value}"
+
+#: appcore/src/assistant/run/calendar.rs:556
+msgid "Starts: {value}"
+msgstr "Começa: {value}"
+
+#: appcore/src/assistant/run/calendar.rs:559
+msgid "Ends: {value}"
+msgstr "Termina: {value}"
+
+#: appcore/src/assistant/run/calendar.rs:562
+msgid "Where: {value}"
+msgstr "Local: {value}"
+
+#: appcore/src/assistant/run/calendar.rs:565
+msgid "Guests: {value}"
+msgstr "Convidados: {value}"
+
+#: appcore/src/assistant/run/calendar.rs:569
+msgid "Description: {value}"
+msgstr "Descrição: {value}"
+
+#: appcore/src/assistant/run/calendar.rs:574
+msgid "Change “{title}” on the calendar for {account}?"
+msgstr "Alterar “{title}” no calendário de {account}?"
+
+#: appcore/src/assistant/run/calendar.rs:578
+msgid "Change an event on the calendar for {account}?"
+msgstr "Alterar um evento no calendário de {account}?"
+
+#: appcore/src/assistant/run/calendar.rs:606
+msgid "Delete “{title}” from the calendar for {account}?"
+msgstr "Eliminar “{title}” do calendário de {account}?"
+
+#: appcore/src/assistant/run/calendar.rs:610
+msgid "Delete an event from the calendar for {account}?"
+msgstr "Eliminar um evento do calendário de {account}?"
+
+#: appcore/src/assistant/run/calendar.rs:634
+#: appcore/src/assistant/run/calendar.rs:636
+msgid "Its guests are told."
+msgstr "Os convidados são avisados."
+
+#: appcore/src/assistant/run/calendar.rs:663
+msgid "Answer {answer} to “{title}”?"
+msgstr "Responder {answer} a “{title}”?"
+
+#: appcore/src/assistant/run/catalog.rs:259
+msgid "Looking at the screen"
+msgstr "A olhar para o ecrã"
+
+#: appcore/src/assistant/run/catalog.rs:267
+msgid "Reading a mailbox"
+msgstr "A ler uma caixa de correio"
+
+#: appcore/src/assistant/run/catalog.rs:285
+msgid "Searching mail"
+msgstr "A pesquisar correio"
+
+#: appcore/src/assistant/run/catalog.rs:299
+msgid "Reading a conversation"
+msgstr "A ler uma conversa"
+
+#: appcore/src/assistant/run/catalog.rs:312
+msgid "Organizing mail"
+msgstr "A organizar correio"
+
+#: appcore/src/assistant/run/catalog.rs:327
+msgid "Changing labels"
+msgstr "A alterar etiquetas"
+
+#: appcore/src/assistant/run/catalog.rs:342
+msgid "Setting reminders"
+msgstr "A definir lembretes"
+
+#: appcore/src/assistant/run/catalog.rs:356
+msgid "Writing a draft"
+msgstr "A escrever um rascunho"
+
+#: appcore/src/assistant/run/catalog.rs:364
+msgid "Sending mail"
+msgstr "A enviar correio"
+
+#: appcore/src/assistant/run/catalog.rs:372
+msgid "Reading drafts"
+msgstr "A ler rascunhos"
+
+#: appcore/src/assistant/run/catalog.rs:380
+msgid "Changing a draft"
+msgstr "A alterar um rascunho"
+
+#: appcore/src/assistant/run/catalog.rs:402
+msgid "Deleting a draft"
+msgstr "A eliminar um rascunho"
+
+#: appcore/src/assistant/run/catalog.rs:415
+msgid "Blocking a sender"
+msgstr "A bloquear um remetente"
+
+#: appcore/src/assistant/run/catalog.rs:428
+msgid "Checking the automatic reply"
+msgstr "A verificar a resposta automática"
+
+#: appcore/src/assistant/run/catalog.rs:436
+msgid "Setting the automatic reply"
+msgstr "A definir a resposta automática"
+
+#: appcore/src/assistant/run/catalog.rs:454
+msgid "Reading rules"
+msgstr "A ler regras"
+
+#: appcore/src/assistant/run/catalog.rs:462
+msgid "Creating a rule"
+msgstr "A criar uma regra"
+
+#: appcore/src/assistant/run/catalog.rs:486
+msgid "Deleting a rule"
+msgstr "A eliminar uma regra"
+
+#: appcore/src/assistant/run/catalog.rs:494
+msgid "Creating a label"
+msgstr "A criar uma etiqueta"
+
+#: appcore/src/assistant/run/catalog.rs:502
+msgid "Renaming a label"
+msgstr "A mudar o nome de uma etiqueta"
+
+#: appcore/src/assistant/run/catalog.rs:516
+msgid "Coloring a label"
+msgstr "A mudar a cor de uma etiqueta"
+
+#: appcore/src/assistant/run/catalog.rs:530
+msgid "Deleting a label"
+msgstr "A eliminar uma etiqueta"
+
+#: appcore/src/assistant/run/catalog.rs:538
+msgid "Reading smart mailboxes"
+msgstr "A ler as caixas inteligentes"
+
+#: appcore/src/assistant/run/catalog.rs:546
+msgid "Changing a smart mailbox"
+msgstr "A alterar uma caixa inteligente"
+
+#: appcore/src/assistant/run/catalog.rs:574
+msgid "Deleting a smart mailbox"
+msgstr "A eliminar uma caixa inteligente"
+
+#: appcore/src/assistant/run/catalog.rs:582
+msgid "Saving a template"
+msgstr "A guardar um modelo"
+
+#: appcore/src/assistant/run/catalog.rs:596
+msgid "Deleting a template"
+msgstr "A eliminar um modelo"
+
+#: appcore/src/assistant/run/catalog.rs:604
+msgid "Adding a contact"
+msgstr "A adicionar um contacto"
+
+#: appcore/src/assistant/run/catalog.rs:620
+msgid "Changing a contact"
+msgstr "A alterar um contacto"
+
+#: appcore/src/assistant/run/catalog.rs:637
+msgid "Reading who may load images"
+msgstr "A ver quem pode carregar imagens"
+
+#: appcore/src/assistant/run/catalog.rs:645
+msgid "Allowing remote images"
+msgstr "A permitir imagens remotas"
+
+#: appcore/src/assistant/run/catalog.rs:658
+msgid "Blocking remote images"
+msgstr "A bloquear imagens remotas"
+
+#: appcore/src/assistant/run/catalog.rs:666
+msgid "Exporting mail"
+msgstr "A exportar correio"
+
+#: appcore/src/assistant/run/catalog.rs:680
+msgid "Reading settings"
+msgstr "A ler definições"
+
+#: appcore/src/assistant/run/catalog.rs:688
+msgid "Changing a setting"
+msgstr "A alterar uma definição"
+
+#: appcore/src/assistant/run/catalog.rs:701
+msgid "Setting a signature"
+msgstr "A definir uma assinatura"
+
+#: appcore/src/assistant/run/catalog.rs:709
+msgid "Updating VIPs"
+msgstr "A atualizar os VIP"
+
+#: appcore/src/assistant/run/catalog.rs:723
+msgid "Creating a smart mailbox"
+msgstr "A criar uma caixa inteligente"
+
+#: appcore/src/assistant/run/catalog.rs:749
+msgid "Sorting a sender"
+msgstr "A organizar um remetente"
+
+#: appcore/src/assistant/run/catalog.rs:764
+msgid "Dismissing a follow-up"
+msgstr "A dispensar um seguimento"
+
+#: appcore/src/assistant/run/catalog.rs:772
+msgid "Reading hidden addresses"
+msgstr "A ler endereços ocultos"
+
+#: appcore/src/assistant/run/catalog.rs:780
+msgid "Making a hidden address"
+msgstr "A criar um endereço oculto"
+
+#: appcore/src/assistant/run/catalog.rs:793
+msgid "Changing a hidden address"
+msgstr "A alterar um endereço oculto"
+
+#: appcore/src/assistant/run/catalog.rs:801
+msgid "Opening a conversation"
+msgstr "A abrir uma conversa"
+
+#: appcore/src/assistant/run/catalog.rs:809
+msgid "Muting conversations"
+msgstr "A silenciar conversas"
+
+#: appcore/src/assistant/run/catalog.rs:823
+msgid "Deleting mail forever"
+msgstr "A eliminar correio definitivamente"
+
+#: appcore/src/assistant/run/catalog.rs:831
+msgid "Scheduling a message"
+msgstr "A agendar uma mensagem"
+
+#: appcore/src/assistant/run/catalog.rs:853
+msgid "Sending a waiting message"
+msgstr "A enviar uma mensagem em espera"
+
+#: appcore/src/assistant/run/catalog.rs:861
+msgid "Canceling a scheduled message"
+msgstr "A cancelar uma mensagem agendada"
+
+#: appcore/src/assistant/run/catalog.rs:869
+msgid "Deleting from the Outbox"
+msgstr "A eliminar da caixa de saída"
+
+#: appcore/src/assistant/run/catalog.rs:877
+msgid "Changing when a message goes"
+msgstr "A mudar a hora de envio"
+
+#: appcore/src/assistant/run/catalog.rs:890
+msgid "Reading reminders"
+msgstr "A ler os lembretes"
+
+#: appcore/src/assistant/run/catalog.rs:898
+msgid "Canceling a reminder"
+msgstr "A cancelar um lembrete"
+
+#: appcore/src/assistant/run/catalog.rs:906
+msgid "Changing a reminder"
+msgstr "A alterar um lembrete"
+
+#: appcore/src/assistant/run/catalog.rs:919
+msgid "Unmuting conversations"
+msgstr "A reativar o som de conversas"
+
+#: appcore/src/assistant/run/catalog.rs:927
+msgid "Undoing the last change"
+msgstr "A anular a última alteração"
+
+#: appcore/src/assistant/run/catalog.rs:935
+msgid "Reading templates"
+msgstr "A ler modelos"
+
+#: appcore/src/assistant/run/catalog.rs:943
+msgid "Writing from a template"
+msgstr "A escrever a partir de um modelo"
+
+#: appcore/src/assistant/run/catalog.rs:958
+msgid "Finding your newsletters"
+msgstr "A procurar as suas newsletters"
+
+#: appcore/src/assistant/run/catalog.rs:971
+msgid "Unsubscribing"
+msgstr "A cancelar a subscrição"
+
+#: appcore/src/assistant/run/catalog.rs:1002
+msgid "Reading an attachment"
+msgstr "A ler um anexo"
+
+#: appcore/src/assistant/run/catalog.rs:1016
+msgid "Looking up a contact"
+msgstr "A procurar um contacto"
+
+#: appcore/src/assistant/run/catalog.rs:1024
+msgid "Reading the calendar"
+msgstr "A ler o calendário"
+
+#: appcore/src/assistant/run/catalog.rs:1038
+msgid "Finding free time"
+msgstr "A procurar tempo livre"
+
+#: appcore/src/assistant/run/catalog.rs:1056
+msgid "Listing the calendars"
+msgstr "A listar os calendários"
+
+#: appcore/src/assistant/run/catalog.rs:1064
+msgid "Adding an event"
+msgstr "A adicionar um evento"
+
+#: appcore/src/assistant/run/catalog.rs:1083
+msgid "Changing an event"
+msgstr "A alterar um evento"
+
+#: appcore/src/assistant/run/catalog.rs:1103
+msgid "Deleting an event"
+msgstr "A eliminar um evento"
+
+#: appcore/src/assistant/run/catalog.rs:1117
+msgid "Answering an invitation"
+msgstr "A responder a um convite"
+
+#: appcore/src/assistant/run/catalog.rs:1163 appcore/src/assistant/turn.rs:287
+msgid "Working"
+msgstr "A trabalhar"
+
+#: appcore/src/assistant/run/mail.rs:257
+msgid "Send “{subject}” to {recipients} {when}?"
+msgstr "Enviar “{subject}” para {recipients} {when}?"
+
+#: appcore/src/assistant/run/mail.rs:408
+msgid "Each account's server"
+msgstr "O servidor de cada conta"
+
+#: appcore/src/assistant/run/mail.rs:411
+msgid "Delete {count} conversation forever? {provider} cannot bring it back."
+msgid_plural ""
+"Delete {count} conversations forever? {provider} cannot bring them back."
+msgstr[0] ""
+"Eliminar {count} conversa definitivamente? {provider} não a consegue "
+"recuperar."
+msgstr[1] ""
+"Eliminar {count} conversas definitivamente? {provider} não as consegue "
+"recuperar."
+
+#: appcore/src/assistant/run/manage.rs:127
+msgid "Name: {name}"
+msgstr "Nome: {name}"
+
+#: appcore/src/assistant/run/manage.rs:131
+msgid "Addresses: {addresses}"
+msgstr "Endereços: {addresses}"
+
+#: appcore/src/assistant/run/manage.rs:137
+msgid "Phones: {phones}"
+msgstr "Telefones: {phones}"
+
+#: appcore/src/assistant/run/manage.rs:143
+msgid "Organization: {organisation}"
+msgstr "Organização: {organisation}"
+
+#: appcore/src/assistant/run/manage.rs:233
+msgid ""
+"Rename the label “{label}” in {account} to “{name}”? Labels nested under it "
+"move along."
+msgstr ""
+"Mudar o nome da etiqueta “{label}” de {account} para “{name}”? As etiquetas "
+"dentro dela acompanham-na."
+
+#: appcore/src/assistant/run/manage.rs:262
+msgid "Color the label “{label}” in {account} {color}?"
+msgstr "Dar a cor {color} à etiqueta “{label}” de {account}?"
+
+#: appcore/src/assistant/run/manage.rs:296
+msgid ""
+"Delete the label “{label}” from {account}? {count} conversation carries it. "
+"The mail stays in Gmail, without the label."
+msgid_plural ""
+"Delete the label “{label}” from {account}? {count} conversations carry it. "
+"The mail stays in Gmail, without the label."
+msgstr[0] ""
+"Eliminar a etiqueta “{label}” de {account}? {count} conversa tem-na. O "
+"correio fica no Gmail, sem a etiqueta."
+msgstr[1] ""
+"Eliminar a etiqueta “{label}” de {account}? {count} conversas têm-na. O "
+"correio fica no Gmail, sem a etiqueta."
+
+#: appcore/src/assistant/run/manage.rs:360
+msgid "Delete the smart mailbox “{name}”? The mail it lists stays where it is."
+msgstr ""
+"Eliminar a caixa inteligente “{name}”? O correio que mostra fica onde está."
+
+#: appcore/src/assistant/run/manage.rs:421
+msgid "Replace the template “{name}” with this one? The saved one is lost."
+msgstr "Substituir o modelo “{name}” por este? O que está guardado perde-se."
+
+#: appcore/src/assistant/run/manage.rs:425
+msgid "Save a template called “{name}”?"
+msgstr "Guardar um modelo chamado “{name}”?"
+
+#: appcore/src/assistant/run/manage.rs:463
+msgid "Delete the template “{name}”?"
+msgstr "Eliminar o modelo “{name}”?"
+
+#: appcore/src/assistant/run/manage.rs:494
+msgid "Add {contact} to the contacts of {account}?"
+msgstr "Adicionar {contact} aos contactos de {account}?"
+
+#: appcore/src/assistant/run/manage.rs:538
+msgid "this contact"
+msgstr "este contacto"
+
+#: appcore/src/assistant/run/manage.rs:550
+msgid "Change {contact} in the contacts of {account}?"
+msgstr "Alterar {contact} nos contactos de {account}?"
+
+#: appcore/src/assistant/run/manage.rs:597
+msgid "Always load images from anyone at {domain}?"
+msgstr "Carregar sempre as imagens de qualquer remetente em {domain}?"
+
+#: appcore/src/assistant/run/manage.rs:632
+msgid "Stop loading images from {sender}?"
+msgstr "Deixar de carregar imagens de {sender}?"
+
+#: appcore/src/assistant/run/manage.rs:667
+msgid "Export {what} to {file}?"
+msgstr "Exportar {what} para {file}?"
+
+#: appcore/src/assistant/run/manage.rs:673
+msgid "A file with that name is there already, and exporting replaces it."
+msgstr "Já existe um ficheiro com esse nome, e a exportação substitui-o."
+
+#: appcore/src/assistant/run/manage.rs:752
+msgid "the message “{subject}”"
+msgstr "a mensagem “{subject}”"
+
+#: appcore/src/assistant/run/queue.rs:91
+msgid "Send “{subject}” now?"
+msgstr "Enviar “{subject}” agora?"
+
+#: appcore/src/assistant/run/queue.rs:94
+msgid "Send {count} waiting message now?"
+msgid_plural "Send {count} waiting messages now?"
+msgstr[0] "Enviar agora {count} mensagem em espera?"
+msgstr[1] "Enviar agora {count} mensagens em espera?"
+
+#: appcore/src/assistant/run/queue.rs:146
+msgid "Cancel sending “{subject}”? It goes back to Drafts."
+msgstr "Cancelar o envio de “{subject}”? Volta para os rascunhos."
+
+#: appcore/src/assistant/run/queue.rs:152
+msgid "Cancel {count} scheduled message? It goes back to Drafts."
+msgid_plural "Cancel {count} scheduled messages? They go back to Drafts."
+msgstr[0] "Cancelar {count} mensagem agendada? Volta para os rascunhos."
+msgstr[1] "Cancelar {count} mensagens agendadas? Voltam para os rascunhos."
+
+#: appcore/src/assistant/run/queue.rs:223
+msgid "Delete “{subject}” from the Outbox? It will not be sent."
+msgstr "Eliminar “{subject}” da caixa de saída? Não será enviada."
+
+#: appcore/src/assistant/run/queue.rs:229
+msgid "Delete {count} message from the Outbox? It will not be sent."
+msgid_plural "Delete {count} messages from the Outbox? They will not be sent."
+msgstr[0] "Eliminar {count} mensagem da caixa de saída? Não será enviada."
+msgstr[1] "Eliminar {count} mensagens da caixa de saída? Não serão enviadas."
+
+#: appcore/src/assistant/run/queue.rs:261
+msgid "Send “{subject}” {when} instead?"
+msgstr "Enviar “{subject}” {when}, em vez da hora marcada?"
+
+#: appcore/src/assistant/run/queue.rs:267
+msgid "Send {count} scheduled message {when} instead?"
+msgid_plural "Send {count} scheduled messages {when} instead?"
+msgstr[0] "Enviar {count} mensagem agendada {when}, em vez da hora marcada?"
+msgstr[1] "Enviar {count} mensagens agendadas {when}, em vez da hora marcada?"
+
+#: appcore/src/assistant/run/queue.rs:345
+msgid "Cancel the reminder on “{subject}” and put it back in the Inbox?"
+msgstr ""
+"Cancelar o lembrete de “{subject}” e devolver a conversa à caixa de entrada?"
+
+#: appcore/src/assistant/run/queue.rs:351
+msgid "Cancel {count} reminder and put its conversation back in the Inbox?"
+msgid_plural ""
+"Cancel {count} reminders and put their conversations back in the Inbox?"
+msgstr[0] "Cancelar {count} lembrete e devolver a conversa à caixa de entrada?"
+msgstr[1] ""
+"Cancelar {count} lembretes e devolver as conversas à caixa de entrada?"
+
+#: appcore/src/assistant/run/queue.rs:385
+msgid "Bring “{subject}” back {when} instead?"
+msgstr "Trazer “{subject}” de volta {when}, em vez da hora marcada?"
+
+#: appcore/src/assistant/run/queue.rs:391
+msgid "Bring {count} conversation back {when} instead?"
+msgid_plural "Bring {count} conversations back {when} instead?"
+msgstr[0] "Trazer {count} conversa de volta {when}, em vez da hora marcada?"
+msgstr[1] "Trazer {count} conversas de volta {when}, em vez da hora marcada?"
+
+#: appcore/src/assistant/run/queue.rs:426
+msgid "Undo “{action}”?"
+msgstr "Anular “{action}”?"
+
+#: appcore/src/assistant/run/writing.rs:241
+msgid "Signed with {standard}"
+msgstr "Assinada com {standard}"
+
+#: appcore/src/assistant/run/writing.rs:242
+msgid "Encrypted with {standard}"
+msgstr "Encriptada com {standard}"
+
+#: appcore/src/assistant/run/writing.rs:243
+msgid "Signed and encrypted with {standard}"
+msgstr "Assinada e encriptada com {standard}"
+
+#: appcore/src/assistant/run/writing.rs:255
+msgid "Blind copy to {recipients}"
+msgstr "Cópia oculta para {recipients}"
+
+#: appcore/src/assistant/run/writing.rs:261
+msgid "Forwards “{subject}” from {sender}"
+msgstr "Reencaminha “{subject}” de {sender}"
+
+#: appcore/src/assistant/run/writing.rs:271
+#: appcore/src/assistant/run/writing.rs:916
+msgid "Attached: {files}"
+msgstr "Em anexo: {files}"
+
+#: appcore/src/assistant/run/writing.rs:287
+msgid "From this computer: {files}"
+msgstr "Deste computador: {files}"
+
+#: appcore/src/assistant/run/writing.rs:319
+msgid "Put a file from this computer in a draft?"
+msgid_plural "Put {count} files from this computer in a draft?"
+msgstr[0] "Pôr um ficheiro deste computador num rascunho?"
+msgstr[1] "Pôr {count} ficheiros deste computador num rascunho?"
+
+#: appcore/src/assistant/run/writing.rs:351
+msgid "Send “{subject}” to {recipients}?"
+msgstr "Enviar “{subject}” para {recipients}?"
+
+#: appcore/src/assistant/run/writing.rs:737
+msgid "Change the draft “{subject}”?"
+msgstr "Alterar o rascunho “{subject}”?"
+
+#: appcore/src/assistant/run/writing.rs:884
+msgid "nobody"
+msgstr "ninguém"
+
+#: appcore/src/assistant/run/writing.rs:890
+msgid "To: {recipients}"
+msgstr "Para: {recipients}"
+
+#: appcore/src/assistant/run/writing.rs:893
+msgid "Cc: {recipients}"
+msgstr "Cc: {recipients}"
+
+#: appcore/src/assistant/run/writing.rs:896
+msgid "Bcc: {recipients}"
+msgstr "Bcc: {recipients}"
+
+#: appcore/src/assistant/run/writing.rs:900
+msgid "Subject: {subject}"
+msgstr "Assunto: {subject}"
+
+#: appcore/src/assistant/run/writing.rs:905
+msgid "New text in place of the old"
+msgstr "Texto novo em vez do antigo"
+
+#: appcore/src/assistant/run/writing.rs:909
+msgid "Takes out: {files}"
+msgstr "Retira: {files}"
+
+#: appcore/src/assistant/run/writing.rs:924
+msgid "Goes out encrypted"
+msgstr "Sai encriptada"
+
+#: appcore/src/assistant/run/writing.rs:925
+msgid "Goes out unencrypted"
+msgstr "Sai sem encriptação"
+
+#: appcore/src/assistant/run/writing.rs:929
+msgid "Goes out signed"
+msgstr "Sai assinada"
+
+#: appcore/src/assistant/run/writing.rs:930
+msgid "Goes out unsigned"
+msgstr "Sai sem assinatura"
+
+#: appcore/src/assistant/run/writing.rs:940
+msgid "Delete the draft “{subject}”? {provider} cannot bring it back."
+msgstr "Eliminar o rascunho “{subject}”? {provider} não o consegue recuperar."
+
+#: appcore/src/assistant/sources/mcp/mod.rs:154
+msgid "Run {tool} on the MCP server {server}?"
+msgstr "Executar {tool} no servidor MCP {server}?"
+
+#: appcore/src/assistant/sources/skills/mod.rs:60
+msgid "Claude Code"
+msgstr "Claude Code"
+
+#: appcore/src/assistant/sources/skills/sandbox.rs:230
+msgid ""
+"Skill scripts need bubblewrap, which is not installed. Install the "
+"bubblewrap package to run them."
+msgstr ""
+"Os scripts das competências precisam do bubblewrap, que não está instalado. "
+"Instale o pacote bubblewrap para os executar."
+
+#: appcore/src/assistant/sources/skills/sandbox.rs:249
+#: appcore/src/assistant/sources/skills/sandbox.rs:255
+msgid ""
+"Skill scripts cannot run: bubblewrap failed to start a sandbox ({reason})."
+msgstr ""
+"Os scripts das competências não podem ser executados: o bubblewrap não "
+"conseguiu criar uma área isolada ({reason})."
+
+#: appcore/src/assistant/sources/skills/shell.rs:181
+msgid "It can reach the internet."
+msgstr "Pode aceder à Internet."
+
+#: appcore/src/assistant/sources/skills/shell.rs:183
+msgid "It cannot reach the internet."
+msgstr "Não pode aceder à Internet."
+
+#: appcore/src/assistant/sources/skills/shell.rs:187
+msgid ""
+"Run this command for the skill {skill}?\n"
+"\n"
+"{command}\n"
+"\n"
+"It runs in a sandbox with no access to your mail or home folder. {network} "
+"Always Allow covers this exact command only."
+msgstr ""
+"Executar este comando para a competência {skill}?\n"
+"\n"
+"{command}\n"
+"\n"
+"Corre numa área isolada, sem acesso ao seu correio nem à sua pasta pessoal. "
+"{network} Permitir sempre aplica-se só a este comando, tal como está."
+
+#: appcore/src/assistant/sources/web.rs:60
+msgid "Add a Brave Search API key."
+msgstr "Adicione uma chave de API do Brave Search."
+
+#: appcore/src/assistant/sources/web.rs:62
+msgid "Enter the address of a SearXNG server."
+msgstr "Introduza o endereço de um servidor SearXNG."
+
+#: appcore/src/assistant/sources/web.rs:66
+msgid "Choose Brave Search or SearXNG for a local model to search with."
+msgstr "Escolha o Brave Search ou o SearXNG para um modelo local pesquisar."
+
+#: appcore/src/assistant/turn.rs:57
+msgid "Waiting for the model…"
+msgstr "À espera do modelo…"
+
+#: appcore/src/assistant/turn.rs:58 appcore/src/assistant/turn.rs:259
+msgid "Thinking…"
+msgstr "A pensar…"
+
+#: appcore/src/assistant/turn.rs:59
+msgid "{activity}…"
+msgstr "{activity}…"
+
+#: appcore/src/assistant/turn.rs:60
+msgid "Waiting for your answer…"
+msgstr "À espera da sua resposta…"
+
+#: appcore/src/assistant/turn.rs:61
+msgid "Writing…"
+msgstr "A escrever…"
+
+#: appcore/src/assistant/turn.rs:264
+msgid "Thought for {count} second"
+msgid_plural "Thought for {count} seconds"
+msgstr[0] "Pensou durante {count} segundo"
+msgstr[1] "Pensou durante {count} segundos"
+
+#. The app's own web tools, Anthropic's, and Claude Code's.
+#: appcore/src/assistant/turn.rs:282
+msgid "Searching the web"
+msgstr "A pesquisar na web"
+
+#: appcore/src/assistant/turn.rs:283
+msgid "Reading a web page"
+msgstr "A ler uma página web"
+
+#: appcore/src/assistant/turn.rs:284
+msgid "Reading a skill"
+msgstr "A ler uma competência"
+
+#: appcore/src/assistant/turn.rs:285
+msgid "Reading a skill's file"
+msgstr "A ler um ficheiro de uma competência"
+
+#: appcore/src/assistant/turn.rs:286
+msgid "Running a command in the sandbox"
+msgstr "A correr um comando na área isolada"
 
 #: appcore/src/compose.rs:592 appcore/src/compose.rs:2772
 msgid "Add at least one recipient."
@@ -8616,6 +7487,42 @@ msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] "Não foi possível guardar {count} pessoa nos contactos de {account}"
 msgstr[1] "Não foi possível guardar {count} pessoas nos contactos de {account}"
 
+#: appcore/src/label_colors.rs:22
+msgid "Red"
+msgstr "Vermelho"
+
+#: appcore/src/label_colors.rs:23
+msgid "Orange"
+msgstr "Laranja"
+
+#: appcore/src/label_colors.rs:24
+msgid "Yellow"
+msgstr "Amarelo"
+
+#: appcore/src/label_colors.rs:25
+msgid "Green"
+msgstr "Verde"
+
+#: appcore/src/label_colors.rs:26
+msgid "Teal"
+msgstr "Turquesa"
+
+#: appcore/src/label_colors.rs:27
+msgid "Blue"
+msgstr "Azul"
+
+#: appcore/src/label_colors.rs:28
+msgid "Purple"
+msgstr "Roxo"
+
+#: appcore/src/label_colors.rs:29
+msgid "Pink"
+msgstr "Rosa"
+
+#: appcore/src/label_colors.rs:30
+msgid "Gray"
+msgstr "Cinzento"
+
 #: appcore/src/notify.rs:111 appcore/src/notify.rs:150
 msgid "{count} new message"
 msgid_plural "{count} new messages"
@@ -8625,6 +7532,947 @@ msgstr[1] "{count} mensagens novas"
 #: appcore/src/notify.rs:156
 msgid "From {senders}"
 msgstr "De {senders}"
+
+#: appcore/src/offered.rs:238
+msgid "Move to folder"
+msgstr "Mover para pasta"
+
+#: appcore/src/offered.rs:244
+msgid "Labels…"
+msgstr "Etiquetas…"
+
+#: appcore/src/offered.rs:245
+msgid "Move to Folder…"
+msgstr "Mover para pasta…"
+
+#: appcore/src/offered.rs:254
+msgid "Choose Labels"
+msgstr "Escolher etiquetas"
+
+#: appcore/src/offered.rs:255
+msgid "Choose a Folder"
+msgstr "Escolher uma pasta"
+
+#: appcore/src/offered.rs:262
+msgid "Labels (L)"
+msgstr "Etiquetas (L)"
+
+#: appcore/src/offered.rs:263
+msgid "Move to Folder (L)"
+msgstr "Mover para pasta (L)"
+
+#: appcore/src/offered.rs:280
+msgid "New Label…"
+msgstr "Nova etiqueta…"
+
+#: appcore/src/offered.rs:281
+msgid "New Folder…"
+msgstr "Nova pasta…"
+
+#: appcore/src/offered.rs:289
+msgid "New Label Inside…"
+msgstr "Nova etiqueta dentro desta…"
+
+#: appcore/src/offered.rs:290
+msgid "New Folder Inside…"
+msgstr "Nova pasta dentro desta…"
+
+#: appcore/src/offered.rs:297
+msgid "Label Options for {name}"
+msgstr "Opções da etiqueta {name}"
+
+#: appcore/src/offered.rs:298
+msgid "Folder Options for {name}"
+msgstr "Opções da pasta {name}"
+
+#: appcore/src/offered.rs:305
+msgid "Label options"
+msgstr "Opções da etiqueta"
+
+#: appcore/src/offered.rs:306
+msgid "Folder options"
+msgstr "Opções da pasta"
+
+#: appcore/src/offered.rs:313
+msgid "A label cannot go inside a label nested under it"
+msgstr ""
+"Uma etiqueta não pode ir para dentro de uma etiqueta que está dentro dela"
+
+#: appcore/src/offered.rs:314
+msgid "A folder cannot go inside a folder nested under it"
+msgstr "Uma pasta não pode ir para dentro de uma pasta que está dentro dela"
+
+#: appcore/src/offered.rs:322
+msgid "There is a label called “{name}” already"
+msgstr "Já existe uma etiqueta chamada “{name}”"
+
+#: appcore/src/offered.rs:324
+msgid "There is a folder called “{name}” already"
+msgstr "Já existe uma pasta chamada “{name}”"
+
+#: appcore/src/offered.rs:332
+msgid "New Label"
+msgstr "Nova etiqueta"
+
+#: appcore/src/offered.rs:333
+msgid "New Folder"
+msgstr "Nova pasta"
+
+#: appcore/src/offered.rs:341
+msgid "Could not create the label: {reason}"
+msgstr "Não foi possível criar a etiqueta: {reason}"
+
+#: appcore/src/offered.rs:342
+msgid "Could not create the folder: {reason}"
+msgstr "Não foi possível criar a pasta: {reason}"
+
+#: appcore/src/offered.rs:349
+msgid "Open or select mail to label it."
+msgstr "Abra ou selecione correio para o etiquetar."
+
+#: appcore/src/offered.rs:350
+msgid "Open or select mail to move it."
+msgstr "Abra ou selecione correio para o mover."
+
+#: appcore/src/offered.rs:358
+msgid "Select mail from one account to label it."
+msgstr "Selecione correio de uma só conta para o etiquetar."
+
+#: appcore/src/offered.rs:359
+msgid "Select mail from one account to move it."
+msgstr "Selecione correio de uma só conta para o mover."
+
+#: appcore/src/offered.rs:365
+msgid "Rename Label"
+msgstr "Mudar o nome da etiqueta"
+
+#: appcore/src/offered.rs:366
+msgid "Rename Folder"
+msgstr "Mudar o nome da pasta"
+
+#: appcore/src/offered.rs:372
+msgid "Labels nested under it move along."
+msgstr "As etiquetas aninhadas nela acompanham-na."
+
+#: appcore/src/offered.rs:373
+msgid "Folders nested under it move along."
+msgstr "As pastas aninhadas nela acompanham-na."
+
+#: appcore/src/offered.rs:381
+msgid "Could not rename the label: {reason}"
+msgstr "Não foi possível mudar o nome da etiqueta: {reason}"
+
+#: appcore/src/offered.rs:382
+msgid "Could not rename the folder: {reason}"
+msgstr "Não foi possível mudar o nome da pasta: {reason}"
+
+#: appcore/src/offered.rs:392
+msgid "Its mail stays in Gmail, without the label. Nested labels stay too."
+msgstr ""
+"O correio dela fica no Gmail, sem a etiqueta. As etiquetas aninhadas também "
+"ficam."
+
+#: appcore/src/offered.rs:394
+msgid "The mail in the folder is deleted with it."
+msgstr "O correio da pasta é eliminado com ela."
+
+#: appcore/src/offered.rs:402
+msgid "Could not delete the label: {reason}"
+msgstr "Não foi possível eliminar a etiqueta: {reason}"
+
+#: appcore/src/offered.rs:403
+msgid "Could not delete the folder: {reason}"
+msgstr "Não foi possível eliminar a pasta: {reason}"
+
+#: appcore/src/offered.rs:410
+msgid "This account has no labels yet."
+msgstr "Esta conta ainda não tem etiquetas."
+
+#: appcore/src/offered.rs:411
+msgid "This account has no folders yet."
+msgstr "Esta conta ainda não tem pastas."
+
+#: appcore/src/offered.rs:427
+msgid "Your organization does not allow Iris to use this calendar."
+msgstr "A sua organização não permite que o Iris use este calendário."
+
+#: appcore/src/offered.rs:430
+msgid "Your organization does not allow Iris to read these contacts."
+msgstr "A sua organização não permite que o Iris leia estes contactos."
+
+#: appcore/src/offered.rs:433
+msgid "Your organization does not allow Iris to change these rules."
+msgstr "A sua organização não permite que o Iris altere estas regras."
+
+#: appcore/src/offered.rs:436
+msgid "Your organization does not allow Iris to change the automatic reply."
+msgstr "A sua organização não permite que o Iris altere a resposta automática."
+
+#: appcore/src/offered.rs:440
+msgid ""
+"{provider} refused the password for calendars. Some providers need an app "
+"password with access to calendars and contacts."
+msgstr ""
+"{provider} recusou a palavra-passe para os calendários. Alguns fornecedores "
+"pedem uma palavra-passe de aplicação com acesso a calendários e contactos."
+
+#: appcore/src/offered.rs:444
+msgid "Iris could not reach the calendar server for {provider}."
+msgstr "O Iris não conseguiu contactar o servidor de calendário de {provider}."
+
+#: appcore/src/offered.rs:447
+msgid "Iris found no calendar server for {provider}."
+msgstr "O Iris não encontrou nenhum servidor de calendário para {provider}."
+
+#: appcore/src/offered.rs:452
+msgid ""
+"{provider} refused the password for contacts. Some providers need an app "
+"password with access to calendars and contacts."
+msgstr ""
+"{provider} recusou a palavra-passe para os contactos. Alguns fornecedores "
+"pedem uma palavra-passe de aplicação com acesso a calendários e contactos."
+
+#: appcore/src/offered.rs:456
+msgid "Iris could not reach the contacts server for {provider}."
+msgstr "O Iris não conseguiu contactar o servidor de contactos de {provider}."
+
+#: appcore/src/offered.rs:459
+msgid "Iris found no contacts server for {provider}."
+msgstr "O Iris não encontrou nenhum servidor de contactos para {provider}."
+
+#: appcore/src/offered.rs:463
+msgid "{provider} cannot send automatic replies over POP3."
+msgstr "{provider} não consegue enviar respostas automáticas por POP3."
+
+#: appcore/src/offered.rs:466
+msgid "{provider} cannot send automatic replies."
+msgstr "{provider} não consegue enviar respostas automáticas."
+
+#: appcore/src/offered.rs:468
+msgid "{provider} has no calendar that other apps can reach."
+msgstr ""
+"{provider} não tem um calendário a que outras aplicações possam aceder."
+
+#: appcore/src/offered.rs:470
+msgid "{provider} keeps no contacts that other apps can reach."
+msgstr "{provider} não guarda contactos a que outras aplicações possam aceder."
+
+#: appcore/src/offered.rs:472
+msgid "{provider} has no rules that other apps can change."
+msgstr "{provider} não tem regras que outras aplicações possam alterar."
+
+#: appcore/src/offered.rs:474
+msgid "{provider} has no automatic reply that other apps can change."
+msgstr ""
+"{provider} não tem uma resposta automática que outras aplicações possam "
+"alterar."
+
+#: appcore/src/offered.rs:477
+msgid "{provider} cannot delete mail for good. Delete moves it to the Trash."
+msgstr ""
+"{provider} não consegue eliminar mensagens definitivamente. Eliminar move-as "
+"para o Lixo."
+
+#: appcore/src/offered.rs:479
+msgid "{provider} does not sort the inbox into categories."
+msgstr "{provider} não organiza a caixa de entrada em categorias."
+
+#: appcore/src/offered.rs:513
+msgid "{address}: {reason}"
+msgstr "{address}: {reason}"
+
+#: appcore/src/offered.rs:528
+msgid "The server would not hand it over."
+msgstr "O servidor não a entregou."
+
+#: appcore/src/offered.rs:530
+msgid "The message is larger than Iris downloads."
+msgstr "A mensagem é maior do que o Iris transfere."
+
+#: appcore/src/offered.rs:533
+msgid "Iris could not read the server's answer."
+msgstr "O Iris não conseguiu ler a resposta do servidor."
+
+#: appcore/src/offered.rs:536
+msgid "The connection closed while the message downloaded."
+msgstr "A ligação fechou-se durante a transferência da mensagem."
+
+#: appcore/src/offered.rs:542
+msgid "“{subject}” from {sender}: {words}"
+msgstr "“{subject}” de {sender}: {words}"
+
+#: appcore/src/offered.rs:546
+msgid "“{subject}”: {words}"
+msgstr "“{subject}”: {words}"
+
+#: appcore/src/offered.rs:550
+msgid "A message from {sender}: {words}"
+msgstr "Uma mensagem de {sender}: {words}"
+
+#: appcore/src/offered.rs:554
+msgid "Message {number}: {words}"
+msgstr "Mensagem {number}: {words}"
+
+#: appcore/src/offered.rs:569
+msgid ""
+"Removing the account deletes this computer's copy of its mail and the saved "
+"sign-in. Mail still on the server stays there."
+msgstr ""
+"Remover a conta elimina a cópia do correio neste computador e a sessão "
+"guardada. O correio que ainda está no servidor fica lá."
+
+#: appcore/src/offered.rs:573
+msgid ""
+"Mail already removed from the server exists only on this computer, and "
+"removing the account deletes it with the saved sign-in. Mail still on the "
+"server stays there."
+msgstr ""
+"O correio já removido do servidor só existe neste computador, e remover a "
+"conta elimina-o com a sessão guardada. O correio que ainda está no servidor "
+"fica lá."
+
+#: appcore/src/offered.rs:579
+msgid ""
+"Its downloaded mail and saved sign-in are deleted from this computer. "
+"Nothing changes in {provider}."
+msgstr ""
+"O correio transferido e a sessão guardada são eliminados deste computador. "
+"Nada muda em {provider}."
+
+#: appcore/src/offered.rs:595
+msgid ""
+"Mail from {address} is kept only on this computer. To keep a copy, quit "
+"Iris, then back up this file."
+msgstr ""
+"O correio de {address} só existe neste computador. Para guardar uma cópia, "
+"saia do Iris e faça depois uma cópia de segurança deste ficheiro."
+
+#: appcore/src/permission.rs:82
+msgid "Iris needs permission to change {service} settings"
+msgstr "O Iris precisa de permissão para alterar as definições do {service}"
+
+#: appcore/src/permission.rs:121
+msgid "Allow Changes to {service} Settings"
+msgstr "Permitir alterações às definições do {service}"
+
+#: appcore/src/permission.rs:125
+msgid ""
+"Iris needs permission to change {service} settings for {account}. {company} "
+"asks you to confirm in your browser."
+msgstr ""
+"O Iris precisa de permissão para alterar as definições do {service} de "
+"{account}. A {company} pede-lhe confirmação no navegador."
+
+#: appcore/src/permission.rs:130
+msgid "Allow Iris to Delete Mail"
+msgstr "Permitir que o Iris elimine correio"
+
+#: appcore/src/permission.rs:132
+msgid ""
+"Deleting mail for good needs one more permission for {account}. {company} "
+"asks you to confirm in your browser."
+msgstr ""
+"Eliminar correio de vez precisa de mais uma permissão para {account}. A "
+"{company} pede-lhe confirmação no navegador."
+
+#: appcore/src/permission.rs:137
+msgid "Allow Iris to Read Your Contacts"
+msgstr "Permitir que o Iris leia os seus contactos"
+
+#: appcore/src/permission.rs:139
+msgid ""
+"Reading the contacts of {account} needs one more permission. {company} asks "
+"you to confirm in your browser. Names and photos stay on this computer."
+msgstr ""
+"Ler os contactos de {account} precisa de mais uma permissão. A {company} "
+"pede-lhe confirmação no navegador. Os nomes e as fotografias ficam neste "
+"computador."
+
+#: appcore/src/permission.rs:145
+msgid "Allow Iris to Change Your Contacts"
+msgstr "Permitir que o Iris altere os seus contactos"
+
+#: appcore/src/permission.rs:147
+msgid ""
+"The assistant needs permission to add and change the contacts of {account}. "
+"{company} asks you to confirm in your browser."
+msgstr ""
+"O assistente precisa de permissão para adicionar e alterar os contactos de "
+"{account}. A {company} pede-lhe confirmação no navegador."
+
+#: appcore/src/permission.rs:152 appcore/src/permission.rs:159
+msgid "Allow Iris to Use Your Calendar"
+msgstr "Permitir que o Iris use o seu calendário"
+
+#: appcore/src/permission.rs:154
+msgid ""
+"The assistant needs permission to read and change events on the calendar for "
+"{account}. {company} asks you to confirm in your browser."
+msgstr ""
+"O assistente precisa de permissão para ler e alterar eventos no calendário "
+"de {account}. A {company} pede-lhe confirmação no navegador."
+
+#: appcore/src/permission.rs:161
+msgid ""
+"Your reply went to the organizer as mail. With permission to change events "
+"on the calendar for {account}, the meeting is marked on your own calendar "
+"too. {company} asks you to confirm in your browser."
+msgstr ""
+"A sua resposta seguiu por correio para o organizador. Com permissão para "
+"alterar eventos no calendário de {account}, a reunião fica também marcada no "
+"seu calendário. A {company} pede-lhe confirmação no navegador."
+
+#: appcore/src/permission.rs:167
+msgid "Allow Iris to Manage Your Calendars"
+msgstr "Permitir que o Iris faça a gestão dos seus calendários"
+
+#: appcore/src/permission.rs:169
+msgid ""
+"Making, renaming and deleting calendars, and subscribing to one, needs one "
+"more permission for {account}. {company} asks you to confirm in your browser."
+msgstr ""
+"Criar, mudar o nome e eliminar calendários, e subscrever um, precisa de mais "
+"uma permissão para {account}. A {company} pede-lhe confirmação no navegador."
+
+#: appcore/src/permission.rs:175
+msgid "Allow Iris to Add Files to Google Drive"
+msgstr "Permitir que o Iris adicione ficheiros ao Google Drive"
+
+#: appcore/src/permission.rs:177
+msgid ""
+"Attaching a file from this computer to an event puts it in Google Drive for "
+"{account}. Iris can reach only the files it adds there. Google asks you to "
+"confirm in your browser."
+msgstr ""
+"Anexar um ficheiro deste computador a um evento coloca-o no Google Drive de "
+"{account}. O Iris só tem acesso aos ficheiros que lá coloca. A Google pede-"
+"lhe confirmação no navegador."
+
+#: appcore/src/permission.rs:246
+msgid "change {service} settings"
+msgstr "alterar as definições do {service}"
+
+#: appcore/src/permission.rs:249
+msgid "delete mail for good"
+msgstr "eliminar correio definitivamente"
+
+#: appcore/src/permission.rs:250
+msgid "read contacts"
+msgstr "ler os contactos"
+
+#: appcore/src/permission.rs:251
+msgid "add and change contacts"
+msgstr "adicionar e alterar contactos"
+
+#: appcore/src/permission.rs:252
+msgid "use the calendar"
+msgstr "usar o calendário"
+
+#: appcore/src/permission.rs:253
+msgid "manage calendars"
+msgstr "gerir calendários"
+
+#: appcore/src/permission.rs:254
+msgid "add files to Google Drive"
+msgstr "adicionar ficheiros ao Google Drive"
+
+#: appcore/src/permission.rs:266
+msgid "Change {service} settings"
+msgstr "Alterar definições do {service}"
+
+#: appcore/src/permission.rs:269
+msgid "Rules and automatic reply"
+msgstr "Regras e resposta automática"
+
+#: appcore/src/permission.rs:272
+msgid "Change Gmail settings"
+msgstr "Alterar definições do Gmail"
+
+#: appcore/src/permission.rs:273
+msgid "Rules, automatic reply, send-as addresses"
+msgstr "Regras, resposta automática, endereços de envio"
+
+#: appcore/src/permission.rs:276
+msgid "Delete mail for good"
+msgstr "Eliminar correio de vez"
+
+#: appcore/src/permission.rs:277
+msgid "Emptying the trash and spam"
+msgstr "Esvaziar o lixo e o spam"
+
+#: appcore/src/permission.rs:280
+msgid "Read contacts"
+msgstr "Ler contactos"
+
+#: appcore/src/permission.rs:281
+msgid "Names and photos as you write"
+msgstr "Nomes e fotografias enquanto escreve"
+
+#: appcore/src/permission.rs:284
+msgid "Add and change contacts"
+msgstr "Adicionar e alterar contactos"
+
+#: appcore/src/permission.rs:285
+msgid "Saving a sender as a contact"
+msgstr "Guardar um remetente como contacto"
+
+#: appcore/src/permission.rs:288
+msgid "Use the calendar"
+msgstr "Usar o calendário"
+
+#: appcore/src/permission.rs:289
+msgid "Events, invitations, reminders"
+msgstr "Eventos, convites, lembretes"
+
+#: appcore/src/permission.rs:292
+msgid "Manage calendars"
+msgstr "Gerir calendários"
+
+#: appcore/src/permission.rs:293
+msgid "New calendars, colors, subscriptions"
+msgstr "Novos calendários, cores, subscrições"
+
+#: appcore/src/permission.rs:296
+msgid "Add files to Google Drive"
+msgstr "Adicionar ficheiros ao Google Drive"
+
+#: appcore/src/permission.rs:297
+msgid "Files attached to events"
+msgstr "Ficheiros anexados a eventos"
+
+#: appcore/src/permission.rs:323
+msgid "{account} has not allowed Iris to {missing}"
+msgstr "{account} não autorizou o Iris a {missing}"
+
+#: appcore/src/pgp.rs:110
+msgid "Add a recipient whose key gpg holds."
+msgstr "Adicione um destinatário de quem o gpg tenha a chave."
+
+#: appcore/src/pgp.rs:119
+msgid "gpg holds no key for {addresses}."
+msgstr "O gpg não tem chave para {addresses}."
+
+#: appcore/src/pgp.rs:136
+msgid "gpg holds no key for any of the addresses you send from."
+msgstr "O gpg não tem chave para nenhum dos endereços de onde envia."
+
+#: appcore/src/pgp.rs:138
+msgid "gpg holds a key for {addresses}."
+msgstr "O gpg tem chave para {addresses}."
+
+#: appcore/src/pgp.rs:142
+msgid "gpg holds a key for {addresses}, and none for {without}."
+msgstr "O gpg tem chave para {addresses} e nenhuma para {without}."
+
+#: appcore/src/pgp.rs:245
+msgid "This computer has no gpg. Install GnuPG to read or send OpenPGP mail."
+msgstr ""
+"Este computador não tem gpg. Instale o GnuPG para ler ou enviar correio "
+"OpenPGP."
+
+#: appcore/src/pgp.rs:248
+msgid "Could not run {program}: {reason}"
+msgstr "Não foi possível executar {program}: {reason}"
+
+#: appcore/src/pgp.rs:252
+msgid "Could not write a temporary file: {reason}"
+msgstr "Não foi possível escrever um ficheiro temporário: {reason}"
+
+#: appcore/src/pgp.rs:256
+msgid "This message is encrypted to a key this computer does not hold."
+msgstr ""
+"Esta mensagem está encriptada para uma chave que este computador não tem."
+
+#: appcore/src/pgp.rs:259
+msgid "gpg holds no secret key to sign as {address}."
+msgstr "O gpg não tem chave secreta para assinar como {address}."
+
+#: appcore/src/pgp.rs:263
+msgid "gpg holds no key it can encrypt to for {address}."
+msgstr "O gpg não tem chave para encriptar para {address}."
+
+#: appcore/src/pgp.rs:266
+msgid "This text holds no OpenPGP block."
+msgstr "Este texto não contém nenhum bloco OpenPGP."
+
+#: appcore/src/pgp.rs:267
+msgid "This file holds no OpenPGP key."
+msgstr "Este ficheiro não contém nenhuma chave OpenPGP."
+
+#: appcore/src/pgp.rs:268
+msgid "gpg failed: {reason}"
+msgstr "O gpg falhou: {reason}"
+
+#: appcore/src/protection.rs:114
+msgid "{smime} {pgp}"
+msgstr "{smime} {pgp}"
+
+#: appcore/src/protection.rs:127
+msgid "This computer has nothing to encrypt with."
+msgstr "Este computador não tem com que encriptar."
+
+#: appcore/src/protection.rs:134
+msgid ""
+"S/MIME names every recipient inside an encrypted message, so a blind copy "
+"would not stay blind."
+msgstr ""
+"O S/MIME indica todos os destinatários dentro de uma mensagem encriptada, "
+"pelo que uma cópia oculta deixaria de ser oculta."
+
+#: appcore/src/protection.rs:248
+msgid "Signed"
+msgstr "Assinada"
+
+#: appcore/src/protection.rs:249
+msgid "Encrypted"
+msgstr "Encriptada"
+
+#: appcore/src/protection.rs:250
+msgid "Signed and encrypted"
+msgstr "Assinada e encriptada"
+
+#: appcore/src/protection.rs:259
+msgid "Encrypt this message to the recipients' keys"
+msgstr "Encriptar esta mensagem para as chaves dos destinatários"
+
+#: appcore/src/protection.rs:260
+msgid "Encrypt this message to the recipients' certificates"
+msgstr "Encriptar esta mensagem para os certificados dos destinatários"
+
+#: appcore/src/protection.rs:286
+msgid "gpg holds no key and gpgsm no trusted certificate for {addresses}."
+msgstr ""
+"O gpg não tem chave nem o gpgsm certificado de confiança para {addresses}."
+
+#: appcore/src/protection.rs:294
+msgid "A message goes out under one standard or the other. {pgp} {smime}"
+msgstr "Uma mensagem sai por uma norma ou pela outra. {pgp} {smime}"
+
+#: appcore/src/protection.rs:554
+msgid ""
+"This key does not name {sender}, the address the message says it is from."
+msgstr ""
+"Esta chave não identifica {sender}, o endereço de onde a mensagem diz que "
+"vem."
+
+#: appcore/src/protection.rs:558
+msgid ""
+"This certificate does not name {sender}, the address the message says it is "
+"from."
+msgstr ""
+"Este certificado não identifica {sender}, o endereço de onde a mensagem diz "
+"que vem."
+
+#: appcore/src/protection.rs:567
+msgid "Signed by {signer}"
+msgstr "Assinada por {signer}"
+
+#: appcore/src/protection.rs:573
+msgid "This message changed after it was signed"
+msgstr "Esta mensagem mudou depois de ter sido assinada"
+
+#: appcore/src/protection.rs:575
+msgid "The signature of {signer} does not match what arrived."
+msgstr "A assinatura de {signer} não corresponde ao que chegou."
+
+#: appcore/src/protection.rs:582
+msgid "Signed by {signer}, whose key has expired"
+msgstr "Assinada por {signer}, cuja chave expirou"
+
+#: appcore/src/protection.rs:586
+msgid "The text is as it was written, and the key behind it ran out."
+msgstr "O texto está como foi escrito e a chave por trás dele expirou."
+
+#: appcore/src/protection.rs:592
+msgid "Signed by {signer}, whose certificate has run out"
+msgstr "Assinada por {signer}, cujo certificado expirou"
+
+#: appcore/src/protection.rs:596
+msgid ""
+"The text is as it was written, and the certificate behind it has expired."
+msgstr "O texto está como foi escrito e o certificado por trás dele expirou."
+
+#: appcore/src/protection.rs:602
+msgid "Signed by {signer}, who took this key back"
+msgstr "Assinada por {signer}, que revogou esta chave"
+
+#: appcore/src/protection.rs:606
+msgid "The owner revoked it, so it says nothing about who wrote this."
+msgstr "O dono revogou-a, por isso não diz nada sobre quem escreveu isto."
+
+#: appcore/src/protection.rs:612
+msgid "Signed by {signer}, whose certificate was taken back"
+msgstr "Assinada por {signer}, cujo certificado foi revogado"
+
+#: appcore/src/protection.rs:616
+msgid "Whoever issued it revoked it, so it says nothing about who wrote this."
+msgstr ""
+"Quem o emitiu revogou-o, por isso não diz nada sobre quem escreveu isto."
+
+#: appcore/src/protection.rs:622
+msgid "Signed by {signer}, and the signature has run out"
+msgstr "Assinada por {signer}, e a assinatura expirou"
+
+#: appcore/src/protection.rs:626
+msgid "It carried a date to stop being good on, and that date has passed."
+msgstr ""
+"Levava uma data a partir da qual deixava de valer, e essa data já passou."
+
+#: appcore/src/protection.rs:631
+msgid "Signed by a key this computer does not hold"
+msgstr "Assinada por uma chave que este computador não tem"
+
+#: appcore/src/protection.rs:633
+msgid "Nothing here can check it. Ask gpg for key {key}."
+msgstr "Nada aqui a consegue verificar. Peça ao gpg a chave {key}."
+
+#: appcore/src/protection.rs:640
+msgid "it names"
+msgstr "que indica"
+
+#: appcore/src/protection.rs:646
+msgid "Signed by a certificate this computer does not hold"
+msgstr "Assinada por um certificado que este computador não tem"
+
+#: appcore/src/protection.rs:648
+msgid ""
+"The message carried none either, so there is nothing here to check it "
+"against."
+msgstr ""
+"A mensagem também não o trazia, por isso não há aqui nada com que a "
+"verificar."
+
+#: appcore/src/protection.rs:654
+msgid "gpg could not check this signature"
+msgstr "O gpg não conseguiu verificar esta assinatura"
+
+#: appcore/src/protection.rs:659
+msgid "gpgsm could not check this signature"
+msgstr "O gpgsm não conseguiu verificar esta assinatura"
+
+#: appcore/src/protection.rs:682
+msgid "Encrypted, and signed by {signer}"
+msgstr "Encriptada e assinada por {signer}"
+
+#: appcore/src/protection.rs:691
+msgid "Encrypted. {what}"
+msgstr "Encriptada. {what}"
+
+#: appcore/src/protection.rs:697
+msgid "This message arrived encrypted"
+msgstr "Esta mensagem chegou encriptada"
+
+#: appcore/src/protection.rs:699
+msgid "Nobody signed it, so it says nothing about who sent it."
+msgstr "Ninguém a assinou, por isso não diz nada sobre quem a enviou."
+
+#: appcore/src/protection.rs:707
+msgid "{detail} {files}"
+msgstr "{detail} {files}"
+
+#: appcore/src/protection.rs:721
+msgid "This message is encrypted to a key you do not hold"
+msgstr "Esta mensagem está encriptada para uma chave que não tem"
+
+#: appcore/src/protection.rs:723
+msgid "Whoever sent it used a key gpg has no secret half of."
+msgstr "Quem a enviou usou uma chave de que o gpg não tem a metade secreta."
+
+#: appcore/src/protection.rs:728
+msgid "This message is encrypted to a certificate you do not hold"
+msgstr "Esta mensagem está encriptada para um certificado que não tem"
+
+#: appcore/src/protection.rs:730
+msgid "Whoever sent it used a certificate gpgsm has no secret key for."
+msgstr ""
+"Quem a enviou usou um certificado de que o gpgsm não tem a chave secreta."
+
+#: appcore/src/protection.rs:736
+msgid "This message says it is OpenPGP and is not"
+msgstr "Esta mensagem diz ser OpenPGP e não é"
+
+#: appcore/src/protection.rs:737
+msgid "This message says it is S/MIME and is not"
+msgstr "Esta mensagem diz ser S/MIME e não é"
+
+#: appcore/src/protection.rs:740
+msgid "Its parts are not where a signed or encrypted message keeps them."
+msgstr ""
+"As partes dela não estão onde uma mensagem assinada ou encriptada as guarda."
+
+#: appcore/src/protection.rs:746
+msgid "gpg could not open this message"
+msgstr "O gpg não conseguiu abrir esta mensagem"
+
+#: appcore/src/protection.rs:747
+msgid "gpgsm could not open this message"
+msgstr "O gpgsm não conseguiu abrir esta mensagem"
+
+#: appcore/src/protection.rs:760
+msgid "You marked this key as one not to trust."
+msgstr "Marcou esta chave como não fiável."
+
+#: appcore/src/protection.rs:761
+msgid "This is one of your own keys."
+msgstr "Esta é uma das suas chaves."
+
+#: appcore/src/protection.rs:762
+msgid "You have vouched for this key."
+msgstr "Confirmou esta chave."
+
+#: appcore/src/protection.rs:764
+msgid ""
+"Only people you partly trust have vouched for this key, so it is not fully "
+"checked."
+msgstr ""
+"Só pessoas em quem confia em parte confirmaram esta chave, por isso não está "
+"totalmente verificada."
+
+#: appcore/src/protection.rs:767
+msgid "Nobody has vouched for this key, so it names no one."
+msgstr "Ninguém confirmou esta chave, por isso não identifica ninguém."
+
+#: appcore/src/protection.rs:770
+msgid ""
+"Its certificate leads back to an authority you trust, but this computer "
+"could not check whether it was revoked."
+msgstr ""
+"O certificado dela remete para uma autoridade em que confia, mas este "
+"computador não conseguiu verificar se foi revogado."
+
+#: appcore/src/protection.rs:774
+msgid "Its certificate leads back to an authority you trust."
+msgstr "O certificado dela remete para uma autoridade em que confia."
+
+#: appcore/src/protection.rs:777
+msgid "Its certificate leads back to nobody you trust, so it names no one."
+msgstr ""
+"O certificado dela não remete para ninguém em quem confie, por isso não "
+"identifica ninguém."
+
+#: appcore/src/protection.rs:780
+msgid "Nothing here says who that certificate belongs to."
+msgstr "Nada aqui diz a quem pertence esse certificado."
+
+#: appcore/src/protection.rs:816
+msgid "key {key}"
+msgstr "chave {key}"
+
+#: appcore/src/protection.rs:819
+msgid "a key gpg would not name"
+msgstr "uma chave que o gpg não identificou"
+
+#: appcore/src/protection.rs:820
+msgid "a certificate gpgsm would not name"
+msgstr "um certificado que o gpgsm não identificou"
+
+#: appcore/src/protection.rs:831
+msgid "It carries a file, kept in this window only."
+msgstr "Leva um ficheiro, guardado apenas nesta janela."
+
+#: appcore/src/protection.rs:833
+msgid "It carries {count} file, kept in this window only."
+msgid_plural "It carries {count} files, kept in this window only."
+msgstr[0] "Leva {count} ficheiro, guardado apenas nesta janela."
+msgstr[1] "Leva {count} ficheiros, guardados apenas nesta janela."
+
+#: appcore/src/protection.rs:864
+msgid "{names} or {last}"
+msgstr "{names} ou {last}"
+
+#: appcore/src/protection.rs:876
+msgid "{names} and {last}"
+msgstr "{names} e {last}"
+
+#: appcore/src/rules.rs:13
+msgid "These rules run on this computer while Iris is open."
+msgstr "Estas regras correm neste computador enquanto o Iris estiver aberto."
+
+#: appcore/src/rules.rs:16
+msgid ""
+"{provider} runs these on new mail as it arrives, even when this computer is "
+"off."
+msgstr ""
+"{provider} aplica-as às mensagens novas quando chegam, mesmo com este "
+"computador desligado."
+
+#: appcore/src/rules.rs:25
+msgid "{provider} is not answering. Changes wait here and go out when it does."
+msgstr ""
+"{provider} não está a responder. As alterações esperam aqui e seguem quando "
+"responder."
+
+#: appcore/src/rules.rs:203
+msgid "From {address}"
+msgstr "De {address}"
+
+#: appcore/src/rules.rs:206
+msgid "To {address}"
+msgstr "Para {address}"
+
+#: appcore/src/rules.rs:210
+msgid "Subject has “{words}”"
+msgstr "Assunto com “{words}”"
+
+#: appcore/src/rules.rs:215
+msgid "Has “{words}”"
+msgstr "Contém “{words}”"
+
+#: appcore/src/rules.rs:219
+msgid "Doesn't have “{words}”"
+msgstr "Não contém “{words}”"
+
+#: appcore/src/rules.rs:224
+msgid "Has an attachment"
+msgstr "Tem um anexo"
+
+#: appcore/src/rules.rs:229
+msgid "Smaller than {size}"
+msgstr "Menor do que {size}"
+
+#: appcore/src/rules.rs:230
+msgid "Larger than {size}"
+msgstr "Maior do que {size}"
+
+#: appcore/src/rules.rs:235
+msgid "All mail"
+msgstr "Todo o correio"
+
+#: appcore/src/rules.rs:255
+msgid "Delete it"
+msgstr "Eliminá-la"
+
+#: appcore/src/rules.rs:262
+msgid "Apply {label}"
+msgstr "Aplicar {label}"
+
+#: appcore/src/rules.rs:268
+msgid "Star it"
+msgstr "Marcar com estrela"
+
+#: appcore/src/rules.rs:271
+msgid "Mark as read"
+msgstr "Marcar como lida"
+
+#: appcore/src/rules.rs:274
+msgid "Mark as important"
+msgstr "Marcar como importante"
+
+#: appcore/src/rules.rs:277
+msgid "Never mark as important"
+msgstr "Nunca marcar como importante"
+
+#: appcore/src/rules.rs:280
+msgid "Never send to Spam"
+msgstr "Nunca enviar para spam"
+
+#: appcore/src/rules.rs:283
+msgid "Forward to {address}"
+msgstr "Reencaminhar para {address}"
+
+#: appcore/src/rules.rs:286
+msgid "Nothing"
+msgstr "Nada"
 
 #: appcore/src/settings/mod.rs:233
 msgid "Local Server"
@@ -8795,6 +8643,162 @@ msgstr "1 GB"
 #: appcore/src/settings/mod.rs:795
 msgid "4 GB"
 msgstr "4 GB"
+
+#: appcore/src/smime.rs:93
+msgid "Add a recipient whose certificate gpgsm trusts."
+msgstr ""
+"Adicione um destinatário cujo certificado o gpgsm considere de confiança."
+
+#: appcore/src/smime.rs:103
+msgid ""
+"gpgsm holds no trusted certificate for {addresses}. A certificate that only "
+"arrived in mail does not count."
+msgstr ""
+"O gpgsm não tem certificado de confiança para {addresses}. Um certificado "
+"que só chegou por correio não conta."
+
+#: appcore/src/smime.rs:123
+msgid "gpgsm holds no certificate for any of the addresses you send from."
+msgstr "O gpgsm não tem certificado para nenhum dos endereços de onde envia."
+
+#: appcore/src/smime.rs:125
+msgid "gpgsm holds a certificate for {addresses}."
+msgstr "O gpgsm tem certificado para {addresses}."
+
+#: appcore/src/smime.rs:129
+msgid "gpgsm holds a certificate for {addresses}, and none for {without}."
+msgstr "O gpgsm tem certificado para {addresses} e nenhum para {without}."
+
+#: appcore/src/smime.rs:254
+msgid "This computer has no gpgsm. Install GnuPG to read or send S/MIME mail."
+msgstr ""
+"Este computador não tem gpgsm. Instale o GnuPG para ler ou enviar correio S/"
+"MIME."
+
+#: appcore/src/smime.rs:265
+msgid "This message is encrypted to a certificate this computer does not hold."
+msgstr ""
+"Esta mensagem está encriptada para um certificado que este computador não "
+"tem."
+
+#: appcore/src/smime.rs:268
+msgid "gpgsm holds no secret key to sign as {address}."
+msgstr "O gpgsm não tem chave secreta para assinar como {address}."
+
+#: appcore/src/smime.rs:272
+msgid "gpgsm holds no trusted certificate it can encrypt to for {address}."
+msgstr ""
+"O gpgsm não tem certificado de confiança para encriptar para {address}."
+
+#: appcore/src/smime.rs:275
+msgid "This part holds no S/MIME data."
+msgstr "Esta parte não contém dados S/MIME."
+
+#: appcore/src/smime.rs:276
+msgid "This file holds no certificate."
+msgstr "Este ficheiro não contém nenhum certificado."
+
+#: appcore/src/smime.rs:278
+msgid "That passphrase does not open this file. Nothing was imported."
+msgstr "Essa frase-passe não abre este ficheiro. Não foi importado nada."
+
+#: appcore/src/smime.rs:281
+msgid ""
+"The file needs its passphrase, and none was given. Nothing was imported."
+msgstr ""
+"O ficheiro precisa da frase-passe e não foi indicada nenhuma. Não foi "
+"importado nada."
+
+#: appcore/src/smime.rs:284
+msgid "gpgsm failed: {reason}"
+msgstr "O gpgsm falhou: {reason}"
+
+#: appcore/src/templates.rs:28
+msgid "%-d %B %Y"
+msgstr "%-d de %B de %Y"
+
+#: appcore/src/unsubscribe_lines.rs:38
+msgid "Unsubscribe from {sender}?"
+msgstr "Cancelar a subscrição de {sender}?"
+
+#: appcore/src/unsubscribe_lines.rs:42
+msgid "Unsubscribe from {count} list?"
+msgid_plural "Unsubscribe from {count} lists?"
+msgstr[0] "Cancelar a subscrição de {count} lista?"
+msgstr[1] "Cancelar a subscrição de {count} listas?"
+
+#: appcore/src/unsubscribe_lines.rs:57
+msgid "Loading a page tells the sender you acted, as opening it yourself does."
+msgstr ""
+"Carregar uma página diz ao remetente que agiu, tal como abri-la você mesmo."
+
+#: appcore/src/unsubscribe_lines.rs:63
+msgid "Reading the page…"
+msgstr "A ler a página…"
+
+#: appcore/src/unsubscribe_lines.rs:64
+msgid "ask the sender to take you off the list"
+msgstr "pedir ao remetente que o retire da lista"
+
+#: appcore/src/unsubscribe_lines.rs:66
+msgid "send a request from {address}"
+msgstr "enviar um pedido de {address}"
+
+#: appcore/src/unsubscribe_lines.rs:78
+msgid "nothing: the page says you are off the list already"
+msgstr "nada: a página diz que já não está na lista"
+
+#: appcore/src/unsubscribe_lines.rs:79
+msgid "open the page in the browser"
+msgstr "abrir a página no navegador"
+
+#: appcore/src/unsubscribe_lines.rs:92
+msgid "press “{button}” on {site} with {address}, all emails"
+msgstr "carregar em “{button}” em {site} com {address}, todos os emails"
+
+#: appcore/src/unsubscribe_lines.rs:96
+msgid "press “{button}” on {site} with {address}"
+msgstr "carregar em “{button}” em {site} com {address}"
+
+#: appcore/src/unsubscribe_lines.rs:99
+msgid "press “{button}” on {site}, all emails"
+msgstr "carregar em “{button}” em {site}, todos os emails"
+
+#: appcore/src/unsubscribe_lines.rs:100
+msgid "press “{button}” on {site}"
+msgstr "carregar em “{button}” em {site}"
+
+#: appcore/src/unsubscribe_lines.rs:109
+msgid "Unsubscribed from {sender}"
+msgstr "Subscrição de {sender} cancelada"
+
+#: appcore/src/unsubscribe_lines.rs:110
+msgid "Sent, but the page did not say it worked"
+msgstr "Enviado, mas a página não disse que resultou"
+
+#: appcore/src/unsubscribe_lines.rs:111
+msgid "The page needs you to finish it"
+msgstr "A página precisa de si para terminar"
+
+#: appcore/src/unsubscribe_lines.rs:113
+msgid "Could not unsubscribe from {sender}: {reason}"
+msgstr "Não foi possível cancelar a subscrição de {sender}: {reason}"
+
+#: appcore/src/unsubscribe_page.rs:169
+msgid "the page took longer than 20 seconds"
+msgstr "a página demorou mais de 20 segundos"
+
+#: appcore/src/unsubscribe_page.rs:171
+msgid "the page did not load: {reason}"
+msgstr "a página não carregou: {reason}"
+
+#: appcore/src/unsubscribe_page.rs:175
+msgid "the page could not be read: {reason}"
+msgstr "não foi possível ler a página: {reason}"
+
+#: appcore/src/unsubscribe_page.rs:178
+msgid "the page changed while it was waiting to be asked"
+msgstr "a página mudou enquanto esperava pela sua resposta"
 
 #. A leading zero on the hour would read "03:05 PM" where every
 #. 12-hour clock on the desktop reads "3:05 PM".

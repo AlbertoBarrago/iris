@@ -8,7 +8,6 @@ use std::future::Future;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::Arc;
-use std::sync::Mutex;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use anyhow::{Context, Result, anyhow, bail};
@@ -48,7 +47,6 @@ pub struct StoreNotUpdated {
     pub message: String,
 }
 
-pub type Engine = SyncEngine;
 pub type Sync = AccountSync;
 pub type Actions = MailActions<RunningEngine>;
 /// Reads mailboxes for the window and the assistant alike.
@@ -70,30 +68,7 @@ pub type Waiting = Outbox<RunningEngine>;
 /// replaces the engine, and a copy holding the old one would go stale.
 pub type CalendarCopy = mailrs_sync::calendar_copy::CalendarCopy<RunningEngine>;
 
-/// The engine that runs now. Changing the sync settings replaces it, so mail
-/// actions look accounts up here rather than keep one engine.
-#[derive(Default)]
-pub struct RunningEngine(Mutex<Option<Arc<Engine>>>);
-
-impl RunningEngine {
-    fn current(&self) -> Option<Arc<Engine>> {
-        self.lock().clone()
-    }
-
-    fn replace(&self, engine: Option<Arc<Engine>>) -> Option<Arc<Engine>> {
-        std::mem::replace(&mut *self.lock(), engine)
-    }
-
-    fn lock(&self) -> std::sync::MutexGuard<'_, Option<Arc<Engine>>> {
-        self.0.lock().expect("engine lock poisoned")
-    }
-}
-
-impl Accounts for RunningEngine {
-    fn account(&self, account_id: AccountId) -> Option<Arc<Sync>> {
-        self.current()?.account(account_id).ok()
-    }
-}
+pub use mailrs_appcore::engine::RunningEngine;
 
 pub struct Core {
     runtime: tokio::runtime::Runtime,

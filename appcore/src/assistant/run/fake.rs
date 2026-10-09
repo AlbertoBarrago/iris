@@ -33,7 +33,7 @@ use super::{Answer, Background, Desk, Effects, Modules, OnScreen, Permission, To
 use crate::compose::{self, Draft};
 use crate::protection::{self, Held, Standard};
 use crate::settings::{Change, Settings};
-use crate::ui::unsubscribe::{ListLine, Way, line_text};
+use crate::unsubscribe_lines::{ListLine, Way, line_text};
 use crate::unsubscribe::RequestSent;
 use crate::unsubscribe_page::fake::FakeBrowser;
 use crate::unsubscribe_page::{Adviser, Browser, PageForm, Plan};

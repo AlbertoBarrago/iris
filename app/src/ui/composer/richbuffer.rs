@@ -931,27 +931,27 @@ mod tests {
         let pages = [
             (
                 "one_button",
-                include_str!("../../unsubscribe_page/fixtures/one_button.json"),
+                include_str!("../../../../appcore/src/unsubscribe_page/fixtures/one_button.json"),
             ),
             (
                 "email_confirm",
-                include_str!("../../unsubscribe_page/fixtures/email_confirm.json"),
+                include_str!("../../../../appcore/src/unsubscribe_page/fixtures/email_confirm.json"),
             ),
             (
                 "preferences",
-                include_str!("../../unsubscribe_page/fixtures/preferences.json"),
+                include_str!("../../../../appcore/src/unsubscribe_page/fixtures/preferences.json"),
             ),
             (
                 "reasons",
-                include_str!("../../unsubscribe_page/fixtures/reasons.json"),
+                include_str!("../../../../appcore/src/unsubscribe_page/fixtures/reasons.json"),
             ),
             (
                 "icon_button",
-                include_str!("../../unsubscribe_page/fixtures/icon_button.json"),
+                include_str!("../../../../appcore/src/unsubscribe_page/fixtures/icon_button.json"),
             ),
             (
                 "link_only",
-                include_str!("../../unsubscribe_page/fixtures/link_only.json"),
+                include_str!("../../../../appcore/src/unsubscribe_page/fixtures/link_only.json"),
             ),
         ];
         let browser = WebkitBrowser::new();

@@ -5,12 +5,17 @@ license.workspace = true
 repository.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-description = "What Iris does between the windows and the engine, free of any toolkit: writing mail, signatures, rich text"
+description = "What Iris does between the windows and the engine, free of any toolkit: writing mail, signatures, settings, protection and the assistant"
 
 [dependencies]
+mailrs-ai.workspace = true
+mailrs-discover.workspace = true
 mailrs-domain.workspace = true
 mailrs-gmail.workspace = true
+mailrs-graph.workspace = true
 mailrs-mime.workspace = true
+mailrs-pgp.workspace = true
+mailrs-smime.workspace = true
 mailrs-render.workspace = true
 mailrs-store.workspace = true
 mailrs-sync.workspace = true
@@ -26,8 +31,19 @@ tracing.workspace = true
 notify-rust.workspace = true
 async-channel.workspace = true
 url.workspace = true
+anyhow.workspace = true
+futures.workspace = true
+rand.workspace = true
+rusqlite.workspace = true
+mail-parser.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+# The media type a file goes out with comes from Apple's UTType.
+objc2 = "0.6.3"
+objc2-foundation = { version = "0.3.2", features = ["NSString"] }
 
 [dev-dependencies]
+wiremock.workspace = true
 mailrs-sync = { workspace = true, features = ["fake"] }
 mail-parser.workspace = true
 serde_json.workspace = true

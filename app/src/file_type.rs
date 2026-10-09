@@ -4,12 +4,7 @@
 //! `UTType` knows each extension's preferred media type; GIO's guess from
 //! the bytes stands in when the name has no extension Apple knows.
 
-use std::path::Path;
-
-use objc2::msg_send;
-use objc2::rc::Retained;
-use objc2::runtime::{AnyClass, AnyObject};
-use objc2_foundation::NSString;
+use mailrs_appcore::file_type::by_extension;
 
 /// The media type for `filename` holding `data`, `application/octet-stream`
 /// when nothing knows better.
@@ -23,23 +18,6 @@ pub fn mime_type(filename: &str, data: &[u8]) -> String {
                 .filter(|m| !m.ends_with("/*"))
         })
         .unwrap_or_else(|| "application/octet-stream".into())
-}
-
-/// The preferred media type `UTType` gives the extension of `filename`.
-fn by_extension(filename: &str) -> Option<String> {
-    let extension = Path::new(filename).extension()?.to_str()?;
-    // UniformTypeIdentifiers comes in with AppKit, so the class is there
-    // whenever the app runs; looked up by name, it needs no crate of its own.
-    let class = AnyClass::get(c"UTType")?;
-    let extension = NSString::from_str(extension);
-    // SAFETY: `typeWithFilenameExtension:` takes an NSString and returns
-    // a UTType or nil; `preferredMIMEType` returns an NSString or nil.
-    unsafe {
-        let kind: Option<Retained<AnyObject>> =
-            msg_send![class, typeWithFilenameExtension: &*extension];
-        let mime: Option<Retained<NSString>> = msg_send![&*kind?, preferredMIMEType];
-        mime.map(|m| m.to_string())
-    }
 }
 
 #[cfg(test)]

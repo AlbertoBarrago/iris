@@ -16,7 +16,7 @@ use mailrs_sync::export;
 
 use super::*;
 use crate::images;
-use crate::ui::{LABEL_COLORS, label_color_name};
+use crate::label_colors::{LABEL_COLORS, label_color_name};
 
 /// The colours `recolor_label` takes, in the order of Gmail's palette in
 /// [`LABEL_COLORS`]. Their keys make the schema's enum.

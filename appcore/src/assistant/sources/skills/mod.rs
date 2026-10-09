@@ -80,7 +80,7 @@ pub struct Skill {
 
 /// Iris's own skills folder, which Open Folder creates.
 pub fn own_folder() -> PathBuf {
-    gtk::glib::user_config_dir()
+    crate::dirs::user_config_dir()
         .join("iris")
         .join("skills")
 }
@@ -91,7 +91,7 @@ pub fn roots() -> Vec<(Origin, PathBuf)> {
         (Origin::Iris, own_folder()),
         (
             Origin::ClaudeCode,
-            gtk::glib::home_dir().join(".claude").join("skills"),
+            crate::dirs::home_dir().join(".claude").join("skills"),
         ),
     ]
 }

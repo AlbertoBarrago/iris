@@ -10,7 +10,7 @@
 //! submission waits for the person whatever Ask Before Acting says, and
 //! the dialog is the only question that can name the button and the
 //! address it is about to use, so this tool asks through
-//! [`crate::ui::unsubscribe::confirm`] and treats its answer as the
+//! [`crate::unsubscribe_lines::confirm`] and treats its answer as the
 //! approval. A card as well would ask the same thing twice, the second
 //! time in vaguer words.
 
@@ -21,7 +21,7 @@ use mailrs_store::unsubscribes::{self, How, Left};
 use mailrs_sync::{Leave, Newsletters};
 
 use super::*;
-use crate::ui::unsubscribe::{ListLine, Way, sent_to};
+use crate::unsubscribe_lines::{ListLine, Way, sent_to};
 use crate::unsubscribe::{RequestSent, Unsubscribe, choose_with_body};
 use crate::unsubscribe_page::{Browser, Outcome as PageOutcome, Prepared, finish, prepare};
 
