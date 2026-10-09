@@ -2,6 +2,8 @@
 //! here, the GTK app and the SwiftUI one, so a message looks the same and
 //! passes the same cleaning in either.
 
+pub mod calendar_layout;
+pub mod calendar_words;
 pub mod clock;
 pub mod conversation;
 pub mod format;

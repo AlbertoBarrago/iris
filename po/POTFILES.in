@@ -71,7 +71,7 @@ app/src/ui/calendar/scope.rs
 app/src/ui/calendar/shown.rs
 app/src/ui/calendar/sidebar.rs
 app/src/ui/calendar/time_grid.rs
-app/src/ui/calendar/words.rs
+render/src/calendar_words.rs
 app/src/ui/composer/editor.rs
 app/src/ui/composer/mod.rs
 app/src/ui/composer/recipients.rs

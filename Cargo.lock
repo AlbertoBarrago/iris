@@ -2625,6 +2625,7 @@ dependencies = [
  "mailrs-gmail",
  "mailrs-mime",
  "tracing",
+ "url",
 ]
 
 [[package]]

@@ -23,7 +23,7 @@ pub mod headings;
 pub mod holding;
 pub mod holidays;
 pub mod kinds;
-pub mod layout;
+pub use mailrs_render::calendar_layout as layout;
 mod manage;
 pub mod month;
 pub mod next;
@@ -38,7 +38,7 @@ pub mod shown;
 pub mod sidebar;
 pub mod time_grid;
 pub mod tint;
-pub mod words;
+pub use mailrs_render::calendar_words as words;
 
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeSet, HashMap, HashSet};

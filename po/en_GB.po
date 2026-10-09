@@ -1499,42 +1499,6 @@ msgstr "Tomorrow"
 msgid "%A %-d %B"
 msgstr "%A %-d %B"
 
-#: app/src/format.rs:21
-msgid "{date} · All day"
-msgstr "{date} · All day"
-
-#: app/src/format.rs:32
-msgid "{date} · {start}"
-msgstr "{date} · {start}"
-
-#: app/src/format.rs:39
-msgid "{date} {time}"
-msgstr "{date} {time}"
-
-#: app/src/format.rs:47
-msgid "{date} · {start}–{end}"
-msgstr "{date} · {start}–{end}"
-
-#: app/src/format.rs:60
-msgid "Yesterday"
-msgstr "Yesterday"
-
-#: app/src/format.rs:61
-msgid "%A"
-msgstr "%A"
-
-#: app/src/format.rs:62
-msgid "%A, %-d %B"
-msgstr "%A, %-d %B"
-
-#: app/src/format.rs:63
-msgid "%A, %-d %B %Y"
-msgstr "%A, %-d %B %Y"
-
-#: app/src/format.rs:79
-msgid "{day} {time}"
-msgstr "{day} {time}"
-
 #: app/src/language_names.rs:48
 msgid "{language} ({country})"
 msgstr "{language} ({country})"
@@ -3803,8 +3767,7 @@ msgstr "Not answered yet"
 msgid "Declined"
 msgstr "Declined"
 
-#: app/src/ui/calendar/block.rs:576 app/src/ui/calendar/words.rs:164
-#: app/src/ui/preferences.rs:955
+#: app/src/ui/calendar/block.rs:576 app/src/ui/preferences.rs:955
 msgid "{start}–{end}"
 msgstr "{start}–{end}"
 
@@ -3816,7 +3779,7 @@ msgstr "{title}, {day}"
 msgid "{title}, all day, {calendar}"
 msgstr "{title}, all day, {calendar}"
 
-#: app/src/ui/calendar/block.rs:633 app/src/ui/calendar/words.rs:148
+#: app/src/ui/calendar/block.rs:633
 msgid "{title}, {start} to {end}, {calendar}"
 msgstr "{title}, {start} to {end}, {calendar}"
 
@@ -3897,8 +3860,7 @@ msgstr "None"
 msgid "Message"
 msgstr "Message"
 
-#: app/src/ui/calendar/editor.rs:628 app/src/ui/calendar/words.rs:66
-#: app/src/ui/calendar/words.rs:161
+#: app/src/ui/calendar/editor.rs:628
 msgid "All day"
 msgstr "All day"
 
@@ -3951,7 +3913,6 @@ msgid "Stops"
 msgstr "Stops"
 
 #: app/src/ui/calendar/editor.rs:1014 app/src/ui/calendar/editor.rs:1019
-#: app/src/ui/calendar/words.rs:466
 msgid "Never"
 msgstr "Never"
 
@@ -4572,8 +4533,8 @@ msgid "All-day"
 msgstr "All-day"
 
 #: app/src/ui/calendar/mod.rs:1677 app/src/ui/calendar/mod.rs:2789
-#: app/src/ui/calendar/sidebar.rs:314 app/src/ui/calendar/words.rs:373
-#: app/src/ui/preferences.rs:969 app/src/ui/preferences.rs:1130
+#: app/src/ui/calendar/sidebar.rs:314 app/src/ui/preferences.rs:969
+#: app/src/ui/preferences.rs:1130
 msgid "%a"
 msgstr "%a"
 
@@ -4719,7 +4680,7 @@ msgstr "More Details"
 msgid "Calendar: {name}"
 msgstr "Calendar: {name}"
 
-#: app/src/ui/calendar/range.rs:108 app/src/ui/calendar/words.rs:34
+#: app/src/ui/calendar/range.rs:108
 msgid "%A %-d"
 msgstr "%A %-d"
 
@@ -4731,7 +4692,7 @@ msgstr "%B %Y"
 msgid "%B"
 msgstr "%B"
 
-#: app/src/ui/calendar/range.rs:123 app/src/ui/calendar/words.rs:192
+#: app/src/ui/calendar/range.rs:123
 msgid "{first} – {last}"
 msgstr "{first} – {last}"
 
@@ -4964,156 +4925,6 @@ msgstr "Shift+Up or Shift+Down moves it; Shift+Alt+Up or Shift+Alt+Down changes 
 #: app/src/ui/calendar/time_grid.rs:331
 msgid "{base} {hint}"
 msgstr "{base} {hint}"
-
-#: app/src/ui/calendar/words.rs:130
-msgid "{title}, {days}, all day, {calendar}"
-msgstr "{title}, {days}, all day, {calendar}"
-
-#: app/src/ui/calendar/words.rs:175
-msgid "{place} · {calendar}"
-msgstr "{place} · {calendar}"
-
-#: app/src/ui/calendar/words.rs:215
-msgid "{yes} of {count} said yes"
-msgid_plural "{yes} of {count} said yes"
-msgstr[0] "{yes} of {count} said yes"
-msgstr[1] "{yes} of {count} said yes"
-
-#. The calendar's popover words its people line the same way.
-#: app/src/ui/calendar/words.rs:231 app/src/ui/calendar/words.rs:592
-#: app/src/ui/invitation.rs:1195
-msgid "{name}, organizer"
-msgstr "{name}, organiser"
-
-#: app/src/ui/calendar/words.rs:235
-msgid "{organizer} · {answers}"
-msgstr "{organizer} · {answers}"
-
-#: app/src/ui/calendar/words.rs:246
-msgid "Could not undo, so the change stays: {reason}"
-msgstr "Could not undo, so the change stays: {reason}"
-
-#: app/src/ui/calendar/words.rs:252
-msgid "and {count} more"
-msgid_plural "and {count} more"
-msgstr[0] "and {count} more"
-msgstr[1] "and {count} more"
-
-#: app/src/ui/calendar/words.rs:263
-msgid "Join with Google Meet"
-msgstr "Join with Google Meet"
-
-#: app/src/ui/calendar/words.rs:265
-msgid "Join Call"
-msgstr "Join Call"
-
-#: app/src/ui/calendar/words.rs:279
-msgid "Google Meet"
-msgstr "Google Meet"
-
-#: app/src/ui/calendar/words.rs:281
-msgid "Microsoft Teams"
-msgstr "Microsoft Teams"
-
-#: app/src/ui/calendar/words.rs:283
-msgid "Zoom"
-msgstr "Zoom"
-
-#: app/src/ui/calendar/words.rs:285
-msgid "Video Call"
-msgstr "Video Call"
-
-#: app/src/ui/calendar/words.rs:297
-msgid "Open {place} in Maps"
-msgstr "Open {place} in Maps"
-
-#: app/src/ui/calendar/words.rs:312
-msgid "{count} more"
-msgid_plural "{count} more"
-msgstr[0] "{count} more"
-msgstr[1] "{count} more"
-
-#: app/src/ui/calendar/words.rs:323
-msgid "{count} more event on {date}"
-msgid_plural "{count} more events on {date}"
-msgstr[0] "{count} more event on {date}"
-msgstr[1] "{count} more events on {date}"
-
-#: app/src/ui/calendar/words.rs:338
-msgid "{date}, has events"
-msgstr "{date}, has events"
-
-#: app/src/ui/calendar/words.rs:357
-msgid "Offline, last updated {time}"
-msgstr "Offline, last updated {time}"
-
-#: app/src/ui/calendar/words.rs:358 app/src/ui/sidebar.rs:2026
-msgid "Offline"
-msgstr "Offline"
-
-#: app/src/ui/calendar/words.rs:378
-msgid "{weekday} {time}"
-msgstr "{weekday} {time}"
-
-#: app/src/ui/calendar/words.rs:399
-msgid "{day}, {time}"
-msgstr "{day}, {time}"
-
-#: app/src/ui/calendar/words.rs:417
-msgid "Open the invitation for “{title}” in Mail"
-msgstr "Open the invitation for “{title}” in Mail"
-
-#: app/src/ui/calendar/words.rs:429
-msgid "At the start"
-msgstr "At the start"
-
-#: app/src/ui/calendar/words.rs:431
-msgid "{count} week before"
-msgid_plural "{count} weeks before"
-msgstr[0] "{count} week before"
-msgstr[1] "{count} weeks before"
-
-#: app/src/ui/calendar/words.rs:437
-msgid "{count} day before"
-msgid_plural "{count} days before"
-msgstr[0] "{count} day before"
-msgstr[1] "{count} days before"
-
-#: app/src/ui/calendar/words.rs:443
-msgid "{count} hour before"
-msgid_plural "{count} hours before"
-msgstr[0] "{count} hour before"
-msgstr[1] "{count} hours before"
-
-#: app/src/ui/calendar/words.rs:449
-msgid "{count} minute before"
-msgid_plural "{count} minutes before"
-msgstr[0] "{count} minute before"
-msgstr[1] "{count} minutes before"
-
-#: app/src/ui/calendar/words.rs:468
-msgid "Every weekday"
-msgstr "Every weekday"
-
-#: app/src/ui/calendar/words.rs:473
-msgid "A rule set in another app"
-msgstr "A rule set in another app"
-
-#: app/src/ui/calendar/words.rs:556
-msgid "Organizer"
-msgstr "Organiser"
-
-#: app/src/ui/calendar/words.rs:566
-msgid "No answer yet"
-msgstr "No answer yet"
-
-#: app/src/ui/calendar/words.rs:588 app/src/ui/invitation.rs:1273
-msgid "You"
-msgstr "You"
-
-#: app/src/ui/calendar/words.rs:692
-msgid "{time} {city}"
-msgstr "{time} {city}"
 
 #: app/src/ui/composer/editor.rs:298
 msgid "Describe Picture…"
@@ -6146,6 +5957,15 @@ msgstr[1] "You have {event} and {count} more then"
 msgid "Reply to the invitation from {organizer}"
 msgstr "Reply to the invitation from {organizer}"
 
+#. The calendar's popover words its people line the same way.
+#: app/src/ui/invitation.rs:1195
+msgid "{name}, organizer"
+msgstr "{name}, organiser"
+
+#: app/src/ui/invitation.rs:1273
+msgid "You"
+msgstr "You"
+
 #: app/src/ui/invitation.rs:1299
 msgid "{count} yes"
 msgid_plural "{count} yes"
@@ -6790,6 +6610,10 @@ msgstr "Hours"
 msgid "–"
 msgstr "–"
 
+#: app/src/ui/preferences.rs:1142
+msgid "%A"
+msgstr "%A"
+
 #: app/src/ui/preferences.rs:1201
 msgid "Follow System"
 msgstr "Follow System"
@@ -7113,6 +6937,10 @@ msgstr "Options for {account}"
 #: app/src/ui/sidebar.rs:2024
 msgid "Sign in again to keep syncing"
 msgstr "Sign in again to keep syncing"
+
+#: app/src/ui/sidebar.rs:2026
+msgid "Offline"
+msgstr "Offline"
 
 #: app/src/ui/sidebar.rs:2030
 msgid "{provider} is not responding; retrying"
@@ -8625,6 +8453,154 @@ msgstr "Is unread"
 msgid "Is flagged"
 msgstr "Is flagged"
 
+#: render/src/calendar_words.rs:72
+msgid "{date} · {start}–{end}"
+msgstr "{date} · {start}–{end}"
+
+#: render/src/calendar_words.rs:91
+msgid "{date} · All day"
+msgstr "{date} · All day"
+
+#: render/src/calendar_words.rs:130
+msgid "{title}, {days}, all day, {calendar}"
+msgstr "{title}, {days}, all day, {calendar}"
+
+#: render/src/calendar_words.rs:140
+msgid "{date} {time}"
+msgstr "{date} {time}"
+
+#: render/src/calendar_words.rs:175
+msgid "{place} · {calendar}"
+msgstr "{place} · {calendar}"
+
+#: render/src/calendar_words.rs:215
+msgid "{yes} of {count} said yes"
+msgid_plural "{yes} of {count} said yes"
+msgstr[0] "{yes} of {count} said yes"
+msgstr[1] "{yes} of {count} said yes"
+
+#: render/src/calendar_words.rs:235
+msgid "{organizer} · {answers}"
+msgstr "{organizer} · {answers}"
+
+#: render/src/calendar_words.rs:246
+msgid "Could not undo, so the change stays: {reason}"
+msgstr "Could not undo, so the change stays: {reason}"
+
+#: render/src/calendar_words.rs:252
+msgid "and {count} more"
+msgid_plural "and {count} more"
+msgstr[0] "and {count} more"
+msgstr[1] "and {count} more"
+
+#: render/src/calendar_words.rs:263
+msgid "Join with Google Meet"
+msgstr "Join with Google Meet"
+
+#: render/src/calendar_words.rs:265
+msgid "Join Call"
+msgstr "Join Call"
+
+#: render/src/calendar_words.rs:279
+msgid "Google Meet"
+msgstr "Google Meet"
+
+#: render/src/calendar_words.rs:281
+msgid "Microsoft Teams"
+msgstr "Microsoft Teams"
+
+#: render/src/calendar_words.rs:283
+msgid "Zoom"
+msgstr "Zoom"
+
+#: render/src/calendar_words.rs:285
+msgid "Video Call"
+msgstr "Video Call"
+
+#: render/src/calendar_words.rs:297
+msgid "Open {place} in Maps"
+msgstr "Open {place} in Maps"
+
+#: render/src/calendar_words.rs:312
+msgid "{count} more"
+msgid_plural "{count} more"
+msgstr[0] "{count} more"
+msgstr[1] "{count} more"
+
+#: render/src/calendar_words.rs:323
+msgid "{count} more event on {date}"
+msgid_plural "{count} more events on {date}"
+msgstr[0] "{count} more event on {date}"
+msgstr[1] "{count} more events on {date}"
+
+#: render/src/calendar_words.rs:338
+msgid "{date}, has events"
+msgstr "{date}, has events"
+
+#: render/src/calendar_words.rs:357
+msgid "Offline, last updated {time}"
+msgstr "Offline, last updated {time}"
+
+#: render/src/calendar_words.rs:378
+msgid "{weekday} {time}"
+msgstr "{weekday} {time}"
+
+#: render/src/calendar_words.rs:399
+msgid "{day}, {time}"
+msgstr "{day}, {time}"
+
+#: render/src/calendar_words.rs:417
+msgid "Open the invitation for “{title}” in Mail"
+msgstr "Open the invitation for “{title}” in Mail"
+
+#: render/src/calendar_words.rs:429
+msgid "At the start"
+msgstr "At the start"
+
+#: render/src/calendar_words.rs:431
+msgid "{count} week before"
+msgid_plural "{count} weeks before"
+msgstr[0] "{count} week before"
+msgstr[1] "{count} weeks before"
+
+#: render/src/calendar_words.rs:437
+msgid "{count} day before"
+msgid_plural "{count} days before"
+msgstr[0] "{count} day before"
+msgstr[1] "{count} days before"
+
+#: render/src/calendar_words.rs:443
+msgid "{count} hour before"
+msgid_plural "{count} hours before"
+msgstr[0] "{count} hour before"
+msgstr[1] "{count} hours before"
+
+#: render/src/calendar_words.rs:449
+msgid "{count} minute before"
+msgid_plural "{count} minutes before"
+msgstr[0] "{count} minute before"
+msgstr[1] "{count} minutes before"
+
+#: render/src/calendar_words.rs:468
+msgid "Every weekday"
+msgstr "Every weekday"
+
+#: render/src/calendar_words.rs:473
+msgid "A rule set in another app"
+msgstr "A rule set in another app"
+
+#: render/src/calendar_words.rs:556
+msgid "Organizer"
+msgstr "Organiser"
+
+#: render/src/calendar_words.rs:566
+msgid "No answer yet"
+msgstr "No answer yet"
+
+#: render/src/calendar_words.rs:692
+msgid "{time} {city}"
+msgstr "{time} {city}"
+
 #: render/src/conversation.rs:195
 msgid "{count} message"
 msgid_plural "{count} messages"
@@ -8731,85 +8707,105 @@ msgstr[1] "{named}, and {count} others"
 msgid "me"
 msgstr "me"
 
-#: render/src/format.rs:38
+#: render/src/format.rs:36 render/src/format.rs:384
+msgid "Yesterday"
+msgstr "Yesterday"
+
+#: render/src/format.rs:39
 msgid "%-d %b"
 msgstr "%-d %b"
 
-#: render/src/format.rs:39
+#: render/src/format.rs:40
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
-#: render/src/format.rs:54
+#: render/src/format.rs:55
 msgid "Today at %H:%M"
 msgstr "Today at %H:%M"
 
-#: render/src/format.rs:55
+#: render/src/format.rs:56
 msgid "Yesterday at %H:%M"
 msgstr "Yesterday at %H:%M"
 
-#: render/src/format.rs:56
+#: render/src/format.rs:57
 msgid "Tomorrow at %H:%M"
 msgstr "Tomorrow at %H:%M"
 
-#: render/src/format.rs:57 render/src/format.rs:110
+#: render/src/format.rs:58 render/src/format.rs:111
 msgid "%a %-d %b at %H:%M"
 msgstr "%a %-d %b at %H:%M"
 
-#: render/src/format.rs:58 render/src/format.rs:111
+#: render/src/format.rs:59 render/src/format.rs:112
 msgid "%-d %b %Y at %H:%M"
 msgstr "%-d %b %Y at %H:%M"
 
-#: render/src/format.rs:59
+#: render/src/format.rs:60
 msgid "%-d %b %Y"
 msgstr "%-d %b %Y"
 
-#: render/src/format.rs:69
+#: render/src/format.rs:70
 msgid "%a, %-d %b"
 msgstr "%a, %-d %b"
 
-#: render/src/format.rs:70
+#: render/src/format.rs:71
 msgid "%a, %-d %b %Y"
 msgstr "%a, %-d %b %Y"
 
-#: render/src/format.rs:86
+#: render/src/format.rs:79 render/src/format.rs:387
+msgid "%A, %-d %B %Y"
+msgstr "%A, %-d %B %Y"
+
+#: render/src/format.rs:87
 msgid "{date} at {time}"
 msgstr "{date} at {time}"
 
-#: render/src/format.rs:107
+#: render/src/format.rs:108
 msgid "today at %H:%M"
 msgstr "today at %H:%M"
 
-#: render/src/format.rs:108
+#: render/src/format.rs:109
 msgid "tomorrow at %H:%M"
 msgstr "tomorrow at %H:%M"
 
-#: render/src/format.rs:109
+#: render/src/format.rs:110
 msgid "%A at %H:%M"
 msgstr "%A at %H:%M"
 
-#: render/src/format.rs:121
+#: render/src/format.rs:122
 msgid "Send {when}"
 msgstr "Send {when}"
 
-#: render/src/format.rs:128
+#: render/src/format.rs:129
 msgid "In 1 Hour"
 msgstr "In 1 Hour"
 
-#: render/src/format.rs:148
+#: render/src/format.rs:149
 msgid "Tonight at 21:00"
 msgstr "Tonight at 21:00"
 
-#: render/src/format.rs:152
+#: render/src/format.rs:153
 msgid "Tomorrow at 08:00"
 msgstr "Tomorrow at 08:00"
 
-#: render/src/format.rs:159
+#: render/src/format.rs:160
 msgid "Monday at 08:00"
 msgstr "Monday at 08:00"
 
-#: render/src/format.rs:234
+#: render/src/format.rs:235
 msgid "Slate"
 msgstr "Slate"
+
+#: render/src/format.rs:356
+msgid "{date} · {start}"
+msgstr "{date} · {start}"
+
+#: render/src/format.rs:386
+msgid "%A, %-d %B"
+msgstr "%A, %-d %B"
+
+#: render/src/format.rs:403
+msgid "{day} {time}"
+msgstr "{day} {time}"
 
 #: sync/src/account/writes.rs:776
 msgid "{provider} is busy. Still working on {conversations}."
