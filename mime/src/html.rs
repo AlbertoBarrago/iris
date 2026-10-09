@@ -219,6 +219,9 @@ impl Text {
             // A paragraph stands apart from what comes before and after
             // it, the way its margins set it apart in a browser.
             "p" => self.end_line(2),
+            // Cells on one row read across, so a space keeps "Tel" and the
+            // number beside it from running together.
+            "td" | "th" => self.space = true,
             "pre" => {
                 self.end_line(1);
                 self.pre = match tag.closing {
@@ -283,6 +286,17 @@ mod tests {
         );
         assert_eq!(html_to_text("<p>One</p><p>Two</p>"), "One\n\nTwo");
         assert_eq!(html_to_text("plain"), "plain");
+    }
+
+    #[test]
+    fn cells_on_a_row_read_across_with_a_space() {
+        assert_eq!(
+            html_to_text(
+                "<table><tr><td>Tel</td><td>+39 079 000</td></tr>\
+                 <tr><th>VAT</th><td><img src=x.png></td><td>IT0123</td></tr></table>"
+            ),
+            "Tel +39 079 000\nVAT IT0123"
+        );
     }
 
     #[test]
