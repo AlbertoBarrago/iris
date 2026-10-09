@@ -318,7 +318,7 @@ impl Mail {
 
     /// Everyone the store knows to write to, read once and kept: the
     /// accounts' contacts and the addresses mail turned up.
-    fn known_people(&self) -> Arc<Vec<mailrs_store::contacts::Suggestion>> {
+    pub(crate) fn known_people(&self) -> Arc<Vec<mailrs_store::contacts::Suggestion>> {
         let mut held = self.people.lock().unwrap_or_else(|p| p.into_inner());
         if let Some(people) = held.as_ref() {
             return Arc::clone(people);

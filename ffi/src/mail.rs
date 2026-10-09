@@ -158,6 +158,14 @@ pub struct MailboxListing {
     pub empty: String,
 }
 
+/// A search offered while one is typed: what the list shows, and the
+/// whole search to run when it is picked.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct SearchSuggestion {
+    pub label: String,
+    pub query: String,
+}
+
 /// The mail store, opened as the app opens it, with the mailboxes over it.
 #[derive(uniffi::Object)]
 pub struct Mail {
@@ -508,6 +516,49 @@ impl Mail {
                     .ok_or_else(|| CoreError::Store("That mailbox is no longer in the sidebar.".into()))?
             }
         };
+        self.listing(mailbox, category)
+    }
+
+    /// The conversations that `query` finds, in Gmail's search language,
+    /// in the account of the mailbox `scope_key` names, or in every
+    /// account when that mailbox spans them. The servers answer, as they
+    /// do in the GTK app's search.
+    pub fn search(&self, query: String, scope_key: Option<String>) -> Result<MailboxListing, CoreError> {
+        let account_id = scope_key.as_deref().and_then(|key| self.mailbox(key)).and_then(|m| m.account());
+        self.listing(
+            Mailbox::Search {
+                query: query.trim().to_string(),
+                account_id,
+            },
+            None,
+        )
+    }
+
+    /// Searches to offer while `text` is typed: the subject, people it
+    /// could be from or to, and labels it could name.
+    pub fn search_suggestions(&self, text: String) -> Vec<SearchSuggestion> {
+        let labels: Vec<String> = self
+            .keys
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .values()
+            .filter_map(|mailbox| match mailbox {
+                Mailbox::Label { name, .. } => Some(name.clone()),
+                _ => None,
+            })
+            .collect::<std::collections::BTreeSet<_>>()
+            .into_iter()
+            .collect();
+        mailrs_appcore::search::suggestions(&text, &self.known_people(), &labels)
+            .into_iter()
+            .map(|s| SearchSuggestion { label: s.label, query: s.query })
+            .collect()
+    }
+}
+
+impl Mail {
+    /// The list `mailbox` shows, as Preferences say it reads.
+    fn listing(&self, mailbox: Mailbox, category: Option<String>) -> Result<MailboxListing, CoreError> {
         // Preferences decide how the list reads: conversations or single
         // messages, an inbox in categories or whole, follow-ups or not.
         let settings = mailrs_appcore::settings::Settings::load(&mailrs_appcore::settings::Settings::default_path());

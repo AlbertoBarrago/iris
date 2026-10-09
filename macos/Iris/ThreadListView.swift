@@ -5,6 +5,7 @@ import SwiftUI
 /// the category tabs over an inbox, and one row per conversation.
 struct ThreadListView: View {
     @Environment(MailModel.self) private var model
+    @State private var searchShown = false
 
     var body: some View {
         @Bindable var model = model
@@ -60,12 +61,25 @@ struct ThreadListView: View {
                 }
             }
         }
+        .searchable(text: $model.searchText, isPresented: $searchShown, placement: .toolbar, prompt: tr("Search mail"))
+        .searchSuggestions {
+            ForEach(model.suggestions, id: \.query) { suggestion in
+                Text(suggestion.label).searchCompletion(suggestion.query)
+            }
+        }
+        .onSubmit(of: .search) { model.searchNow() }
+        .background {
+            // ⌘F goes to the search field, as in the GTK app.
+            Button(tr("Search")) { searchShown = true }
+                .keyboardShortcut("f")
+                .opacity(0)
+                .accessibilityHidden(true)
+        }
         .navigationTitle(model.listing?.title ?? "")
         .navigationSubtitle(model.listing?.subtitle ?? "")
         .toolbar {
             ToolbarItemGroup {
                 Button(tr("Check for Mail"), systemImage: "arrow.clockwise") { model.checkNow() }
-                Button(tr("Search"), systemImage: "magnifyingglass") {}
                 Button(tr("New Message"), systemImage: "square.and.pencil") {
                     model.composeAsked = ComposeRequest(kind: .new)
                 }

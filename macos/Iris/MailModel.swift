@@ -21,8 +21,25 @@ final class MailModel {
     private(set) var notSyncing: String?
 
     var selectedMailbox: String? {
-        didSet { if selectedMailbox != oldValue { category = openingCategory; loadList() } }
+        didSet {
+            guard selectedMailbox != oldValue else { return }
+            // Picking a mailbox ends a search, as in the GTK app.
+            if searching != nil { searchText = "" }
+            category = openingCategory
+            loadList()
+        }
     }
+    /// What the search field holds. A pause in the typing runs it.
+    var searchText = "" {
+        didSet { if searchText != oldValue { typed() } }
+    }
+    /// The search on screen, in place of the mailbox; nil shows the mailbox.
+    private(set) var searching: String? {
+        didSet { if searching != oldValue { loadList() } }
+    }
+    /// Searches to offer for what the field holds.
+    private(set) var suggestions: [SearchSuggestion] = []
+    private var pause: Task<Void, Never>?
     var category: String? {
         didSet { if category != oldValue { loadList() } }
     }
@@ -460,13 +477,31 @@ final class MailModel {
 
     fileprivate func loadList() {
         guard let mail, let key = selectedMailbox else { return }
+        if let query = searching {
+            Task.detached {
+                do {
+                    let listing = try mail.search(query: query, scopeKey: key)
+                    await MainActor.run {
+                        if self.searching == query { self.listing = listing }
+                    }
+                } catch {
+                    await MainActor.run {
+                        if self.searching == query { self.toast = Toast(words: "\(error)", undo: false) }
+                    }
+                }
+            }
+            return
+        }
         let category = category
         Task.detached {
             do {
                 let listing = try mail.list(key: key, category: category)
                 await MainActor.run {
-                    // The person may have picked another mailbox meanwhile.
-                    if self.selectedMailbox == key, self.category == category { self.listing = listing }
+                    // The person may have picked another mailbox, or
+                    // started a search, meanwhile.
+                    if self.selectedMailbox == key, self.category == category, self.searching == nil {
+                        self.listing = listing
+                    }
                 }
             } catch {
                 // A mailbox that left the sidebar, such as a flag color
@@ -752,5 +787,49 @@ extension MailModel {
     func findAi() async -> [FoundModel] {
         guard let mail else { return [] }
         return await Task.detached { mail.findAi() }.value
+    }
+}
+
+// MARK: Search
+
+extension MailModel {
+    /// The field changed. Clearing it puts the mailbox back; otherwise
+    /// the search runs once the typing pauses, from three letters on,
+    /// since fewer match nearly everything and each costs the servers a
+    /// request. The pause and the floor are the GTK app's
+    /// (`mailrs_appcore::search::typing`).
+    fileprivate func typed() {
+        pause?.cancel()
+        let text = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        suggest(searchText)
+        guard !text.isEmpty else {
+            searching = nil
+            return
+        }
+        guard text.count >= 3 else { return }
+        pause = Task {
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+            searching = text
+        }
+    }
+
+    /// Return in the field: search at once, however short the text.
+    func searchNow() {
+        pause?.cancel()
+        let text = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        searching = text.isEmpty ? nil : text
+    }
+
+    /// Reads the suggestions for `text` off the main thread: the first
+    /// time, the store's people are read.
+    private func suggest(_ text: String) {
+        guard let mail else { return }
+        Task.detached {
+            let found = mail.searchSuggestions(text: text)
+            await MainActor.run {
+                if self.searchText == text { self.suggestions = found }
+            }
+        }
     }
 }
