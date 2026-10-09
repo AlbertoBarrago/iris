@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="app/data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg" width="128" height="128" alt="The Iris icon, a winged envelope">
+
 # Iris
 
 Mail and calendar for macOS, written in Rust.
