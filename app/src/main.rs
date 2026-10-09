@@ -18,7 +18,7 @@ mod dock;
 mod event_reminders;
 mod file_type;
 mod format;
-mod images;
+use mailrs_appcore::images;
 mod language;
 mod macos_bundle;
 mod macos_menu;

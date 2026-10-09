@@ -25,7 +25,7 @@ struct ConversationView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                         .padding(10)
                     }
-                    MailPage(html: page.html, pictures: model.pictures) { url in model.followLink(url) }
+                    MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1) { url in model.followLink(url) }
                 }
             } else {
                 ContentUnavailableView(tr("No Conversation Selected"), systemImage: "envelope")
@@ -115,6 +115,8 @@ struct MailPage: NSViewRepresentable {
     let html: String
     /// Answers the page's `mailrs-cid:` requests for pictures in the mail.
     var pictures: PictureScheme? = nil
+    /// How much the page is magnified, from Preferences' Text Size.
+    var zoom: Double = 1
     /// What a click on one of the page's own `mailrs:` links asks for.
     var onLink: (URL) -> Void = { _ in }
 
@@ -135,6 +137,7 @@ struct MailPage: NSViewRepresentable {
     }
 
     func updateNSView(_ view: WKWebView, context: Context) {
+        if view.pageZoom != zoom { view.pageZoom = zoom }
         guard context.coordinator.loaded != html else { return }
         context.coordinator.loaded = html
         view.loadHTMLString(html, baseURL: nil)

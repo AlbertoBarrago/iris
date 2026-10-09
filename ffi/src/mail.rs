@@ -189,6 +189,8 @@ pub struct Mail {
     keys: Mutex<HashMap<String, Mailbox>>,
     /// Everyone a recipient field can offer, read once.
     pub(crate) people: Mutex<Option<Arc<Vec<mailrs_store::contacts::Suggestion>>>>,
+    /// Who hears the engine, kept to start it again after a change.
+    listener: Mutex<Option<Arc<dyn MailListener>>>,
 }
 
 #[uniffi::export]
@@ -215,6 +217,7 @@ impl Mail {
             db,
             keys: Mutex::new(HashMap::new()),
             people: Mutex::new(None),
+            listener: Mutex::new(None),
         })
     }
 
@@ -232,6 +235,7 @@ impl Mail {
             ),
             other => CoreError::Store(other.to_string()),
         })?;
+        *self.listener.lock().unwrap_or_else(|p| p.into_inner()) = Some(Arc::clone(&listener));
         let config = match config_path().map(|path| Config::load(&path)) {
             Ok(Ok(config)) => config,
             Ok(Err(err)) if err.is_missing() => Config::default(),
@@ -519,13 +523,21 @@ impl Mail {
                     .ok_or_else(|| CoreError::Store("That mailbox is no longer in the sidebar.".into()))?
             }
         };
+        // Preferences decide how the list reads: conversations or single
+        // messages, an inbox in categories or whole, follow-ups or not.
+        let settings = mailrs_appcore::settings::Settings::load(&mailrs_appcore::settings::Settings::default_path());
+        let categories_on = settings.inbox_categories && mailbox.takes_categories();
         let category = category
             .as_deref()
             .and_then(Category::from_key)
-            .filter(|_| mailbox.takes_categories());
+            .filter(|_| categories_on);
         let db = self.db.clone();
         let accounts = self.run(async move { db.read(accounts::list_accounts).await })?;
-        let view = view(category);
+        let view = View {
+            threading: settings.threading,
+            follow_ups: settings.suggest_follow_ups,
+            ..view(category)
+        };
         let (mailboxes, shown, asked) = (Arc::clone(&self.mailboxes), mailbox.clone(), view.clone());
         let listing = self
             .run(async move {
@@ -534,7 +546,7 @@ impl Mail {
                     .await
             })
             .map_err(|err| CoreError::Store(err.to_string()))?;
-        let categories = match mailbox.takes_categories() {
+        let categories = match categories_on {
             true => {
                 // The tabs are counted over the inbox as a whole, which a
                 // category in the view asks for.
@@ -566,6 +578,22 @@ impl Mail {
 }
 
 impl Mail {
+    /// Stops the engine and starts it again, so it reads `config.toml`
+    /// anew. Does nothing while this copy does not sync.
+    pub(crate) fn restart_sync(&self) -> Result<(), CoreError> {
+        let Some(listener) = self.listener.lock().unwrap_or_else(|p| p.into_inner()).clone() else {
+            return Ok(());
+        };
+        if self.lock.lock().unwrap_or_else(|p| p.into_inner()).is_none() {
+            return Ok(());
+        }
+        if let Some(engine) = self.running.0.lock().unwrap_or_else(|p| p.into_inner()).take() {
+            engine.shutdown();
+        }
+        *self.lock.lock().unwrap_or_else(|p| p.into_inner()) = None;
+        self.start_sync(listener)
+    }
+
     /// The body the store holds for a message, which names its files.
     pub(crate) fn stored_body(&self, account_id: i64, message_id: &str) -> Result<mailrs_domain::MessageBody, CoreError> {
         let (db, id) = (self.db.clone(), message_id.to_string());
@@ -773,6 +801,12 @@ pub fn start_logging() {
 #[uniffi::export]
 pub fn translate(text: String) -> String {
     gettextrs::gettext(text)
+}
+
+/// `one` or `many` in the interface's language, as `count` asks.
+#[uniffi::export]
+pub fn translate_plural(one: String, many: String, count: u32) -> String {
+    gettextrs::ngettext(one, many, count)
 }
 
 /// Binds the interface's words to the catalogs in `locale_dir`, in

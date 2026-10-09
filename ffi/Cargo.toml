@@ -20,6 +20,7 @@ path = "src/bin/uniffi-bindgen.rs"
 mailrs-domain.workspace = true
 mailrs-appcore.workspace = true
 mailrs-mime.workspace = true
+serde.workspace = true
 serde_json.workspace = true
 mailrs-store.workspace = true
 mailrs-render.workspace = true

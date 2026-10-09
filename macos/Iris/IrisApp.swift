@@ -9,9 +9,12 @@ struct IrisApp: App {
     init() {
         startLogging()
         // The words come from the same catalogs the GTK app reads, in the
-        // language macOS puts first.
+        // language picked in Settings, or else the one macOS puts first.
         let locale = Bundle.main.resourceURL?.appending(path: "locale").path(percentEncoded: false) ?? ""
-        let language = Locale.preferredLanguages.first?.replacingOccurrences(of: "-", with: "_") ?? ""
+        let chosen = chosenLanguage()
+        let language = chosen.isEmpty
+            ? Locale.preferredLanguages.first?.replacingOccurrences(of: "-", with: "_") ?? ""
+            : chosen
         bindLanguage(localeDir: locale, language: language)
     }
 
@@ -34,10 +37,26 @@ struct IrisApp: App {
             }
         }
         .defaultSize(width: 720, height: 620)
+        Settings {
+            SettingsView().environment(model)
+        }
+        .windowResizability(.contentMinSize)
     }
 }
 
 /// `text` in the interface's language, from the GTK app's catalogs.
 func tr(_ text: String) -> String {
     translate(text: text)
+}
+
+/// `one` or `many` in the interface's language, as `count` asks.
+func trPlural(_ one: String, _ many: String, _ count: Int) -> String {
+    translatePlural(one: one, many: many, count: UInt32(clamping: count))
+}
+
+/// The locale the interface speaks: the language picked in Settings, or
+/// the system's.
+var appLocale: Locale {
+    let chosen = chosenLanguage()
+    return chosen.isEmpty ? .current : Locale(identifier: chosen)
 }

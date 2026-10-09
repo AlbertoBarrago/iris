@@ -21,7 +21,7 @@ final class MailModel {
     private(set) var notSyncing: String?
 
     var selectedMailbox: String? {
-        didSet { if selectedMailbox != oldValue { category = nil; loadList() } }
+        didSet { if selectedMailbox != oldValue { category = openingCategory; loadList() } }
     }
     var category: String? {
         didSet { if category != oldValue { loadList() } }
@@ -56,8 +56,13 @@ final class MailModel {
         didSet { if theme != oldValue { loadConversation() } }
     }
 
-    private var mail: Mail?
+    fileprivate var mail: Mail?
     private var store: Store?
+
+    /// Preferences as they stand, read again after each change. Shared
+    /// with the GTK app's settings file.
+    private(set) var prefs: Preferences?
+    private(set) var choices: PreferenceChoices?
 
     /// Where the GTK app keeps the mail store, or the store `IRIS_STORE`
     /// names, such as a demo run's, for comparing the two front ends on
@@ -84,6 +89,7 @@ final class MailModel {
                 await MainActor.run {
                     self.mail = mail
                     self.store = store
+                    self.readPrefs()
                     self.startSync()
                     self.sidebar = sidebar
                     self.selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key
@@ -379,9 +385,9 @@ final class MailModel {
     func send(_ draft: ComposeDraft) {
         let key = UUID()
         sending = (key, draft)
-        toast = Toast(words: tr("Sending…"), undo: true, undoSend: key)
+        toast = Toast(words: tr("Sending…"), undo: (prefs?.undoSeconds ?? 5) > 0, undoSend: key)
         Task { @MainActor in
-            try? await Task.sleep(for: .seconds(5))
+            try? await Task.sleep(for: .seconds(Int(self.prefs?.undoSeconds ?? 5)))
             guard let (waiting, draft) = sending, waiting == key, let mail else { return }
             sending = nil
             Task.detached {
@@ -452,7 +458,7 @@ final class MailModel {
         }
     }
 
-    private func loadList() {
+    fileprivate func loadList() {
         guard let mail, let key = selectedMailbox else { return }
         let category = category
         Task.detached {
@@ -475,18 +481,14 @@ final class MailModel {
         }
     }
 
-    private func loadConversation() {
+    fileprivate func loadConversation() {
         guard let store, let key = openThread else {
             page = nil
             return
         }
-        // Opening a conversation reads it, as in the GTK app; the list
-        // hears of it from the engine.
-        if let mail, listing?.rows.contains(where: { $0.key == key && $0.unread }) == true {
-            Task.detached { mail.markRead(thread: ThreadRef(accountId: key.account, threadId: key.thread)) }
-        }
+        markReadOnOpen(key)
         let theme = theme
-        let remote = remoteAllowed.contains(key)
+        let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
         let toggled = toggled
         Task.detached {
             do {
@@ -507,6 +509,138 @@ final class MailModel {
             } catch {
                 await MainActor.run { self.problem = "\(error)" }
             }
+        }
+    }
+}
+
+// MARK: Preferences
+
+extension MailModel {
+    /// Reads Preferences again and applies what shows at once: the
+    /// appearance, and the page, which Text Size and Remote Images change.
+    func readPrefs() {
+        guard let mail else { return }
+        let before = prefs
+        prefs = mail.preferences()
+        if choices == nil { choices = mail.preferenceChoices() }
+        applyAppearance()
+        guard let before, let prefs else { return }
+        if before.remoteImages != prefs.remoteImages { loadConversation() }
+        if before.threading != prefs.threading || before.inboxCategories != prefs.inboxCategories
+            || before.suggestFollowUps != prefs.suggestFollowUps {
+            if !prefs.inboxCategories { category = nil }
+            loadList()
+        }
+    }
+
+    /// Changes one preference by its name in `Preferences`.
+    func setPreference(_ name: String, _ value: String) {
+        guard let mail else { return }
+        do {
+            try mail.setPreference(name: name, value: value)
+        } catch {
+            toast = Toast(words: "\(error)", undo: false)
+        }
+        readPrefs()
+    }
+
+    func setPreference(_ name: String, _ on: Bool) {
+        setPreference(name, on ? "true" : "false")
+    }
+
+    func signatures() -> [SignatureSetting] {
+        (try? mail?.signatures()) ?? []
+    }
+
+    /// Keeps a signature, Markdown or formatted, saying so when it cannot.
+    func keepSignature(email: String, markdown: String? = nil, formatted: String? = nil) {
+        guard let mail else { return }
+        do {
+            if let markdown { try mail.setSignature(email: email, text: markdown) }
+            if let formatted { try mail.setFormattedSignature(email: email, html: formatted) }
+        } catch {
+            toast = Toast(words: "\(error)", undo: false)
+        }
+    }
+
+    func setWorkingHours(_ hours: Hours) {
+        guard let mail else { return }
+        do {
+            try mail.setWorkingHours(hours: hours)
+        } catch {
+            toast = Toast(words: "\(error)", undo: false)
+        }
+        readPrefs()
+    }
+
+    func imageSenders() -> [ImageSender] {
+        (try? mail?.imageSenders()) ?? []
+    }
+
+    func forgetImageSender(_ sender: String) {
+        guard let mail else { return }
+        do {
+            try mail.forgetImageSender(sender: sender)
+        } catch {
+            toast = Toast(words: "\(error)", undo: false)
+        }
+    }
+
+    func syncSettings() -> SyncSettings? {
+        mail?.syncSettings()
+    }
+
+    /// Saves the sync settings; the engine starts again with them, off the
+    /// main thread, since stopping it waits for the accounts.
+    func setSyncSettings(_ settings: SyncSettings) {
+        guard let mail else { return }
+        Task.detached {
+            do {
+                try mail.setSyncSettings(settings: settings)
+            } catch {
+                await MainActor.run { self.toast = Toast(words: "\(error)", undo: false) }
+            }
+        }
+    }
+
+    /// The signature Gmail keeps for an account, asked off the main thread.
+    func gmailSignature(account: Int64) async throws -> String? {
+        guard let mail else { return nil }
+        return try await Task.detached { try mail.gmailSignature(accountId: account) }.value
+    }
+
+    /// The inbox category a mailbox opens on: Settings' choice, or the
+    /// whole inbox when categories are off.
+    var openingCategory: String? {
+        guard let prefs, prefs.inboxCategories, prefs.defaultCategory != "all" else { return nil }
+        return prefs.defaultCategory
+    }
+
+    /// Follows Style: the system's appearance, or always light or dark.
+    private func applyAppearance() {
+        switch prefs?.colorScheme {
+        case "light": NSApp.appearance = NSAppearance(named: .aqua)
+        case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
+        default: NSApp.appearance = nil
+        }
+    }
+
+    /// Marks a conversation read on opening, as Mark as Read says: at
+    /// once, after two seconds while it stays open, or never.
+    fileprivate func markReadOnOpen(_ key: ThreadKey) {
+        guard let mail, listing?.rows.contains(where: { $0.key == key && $0.unread }) == true else { return }
+        let thread = ThreadRef(accountId: key.account, threadId: key.thread)
+        switch prefs?.markRead {
+        case "manually":
+            return
+        case "after-delay":
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(2))
+                guard self.openThread == key else { return }
+                Task.detached { mail.markRead(thread: thread) }
+            }
+        default:
+            Task.detached { mail.markRead(thread: thread) }
         }
     }
 }

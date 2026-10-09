@@ -9,6 +9,7 @@ pub const APP_ID: &str = "io.github.AlbertoBarrago.Iris";
 
 pub mod attachcheck;
 pub mod compose;
+pub mod images;
 pub mod contacts;
 pub mod notify;
 pub mod richtext;

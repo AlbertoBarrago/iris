@@ -16,6 +16,9 @@ use mailrs_store::{accounts, bodies, messages};
 
 mod compose;
 mod mail;
+mod prefs;
+
+pub use prefs::{ChoiceItem, PreferenceChoices, Preferences, SignatureSetting, import_signature};
 
 pub use compose::{ComposeDraft, OutgoingFile, ReplyMode, RichBlock, RichSpan, Sender, Suggestion};
 
@@ -204,6 +207,14 @@ impl Store {
             .into_iter()
             .map(|account| account.email)
             .collect();
+        // Remote pictures load without asking when Preferences say always,
+        // or when every sender in the conversation is on the list of
+        // senders who may load them, as in the GTK app.
+        let senders: Vec<Option<&str>> = metas.iter().map(|m| m.from.as_ref().map(|a| a.email.as_str())).collect();
+        let listed = mailrs_store::image_senders::list(&conn)?;
+        let allow_remote = allow_remote
+            || prefs::loads_remote_images()
+            || (!senders.is_empty() && senders.iter().all(|from| mailrs_appcore::images::allowed(&listed, *from)));
         drop(conn);
         // Cleaned once, kept for the borrow each article takes.
         let cleaned: Vec<Option<Cleaned>> = bodies
