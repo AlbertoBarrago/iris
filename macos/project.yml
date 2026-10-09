@@ -19,13 +19,11 @@ targets:
     sources:
       - path: Iris
     dependencies:
+      # Built first, so the framework and the bindings are fresh before
+      # Xcode reads them; a script inside this target ran too late.
+      - target: IrisCore
       - framework: IrisCore.xcframework
         embed: false
-    preBuildScripts:
-      # The Rust core and its Swift bindings, rebuilt when the core changed.
-      - name: Build the Rust core
-        script: '"$SRCROOT/../scripts/build-ffi.sh" "$( [ "$CONFIGURATION" = Release ] && echo release || echo debug )"'
-        basedOnDependencyAnalysis: false
     settings:
       base:
         # Its own id while the GTK app is the one people use, so the two
@@ -42,3 +40,10 @@ targets:
         # ~/Library/Application Support/iris, which a sandbox would close.
         ENABLE_APP_SANDBOX: NO
         ENABLE_USER_SCRIPT_SANDBOXING: NO
+aggregateTargets:
+  IrisCore:
+    buildScripts:
+      # The Rust core and its Swift bindings, rebuilt when the core changed.
+      - name: Build the Rust core
+        script: '"$SRCROOT/../scripts/build-ffi.sh" "$( [ "$CONFIGURATION" = Release ] && echo release || echo debug )"'
+        basedOnDependencyAnalysis: false

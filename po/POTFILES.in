@@ -1,3 +1,6 @@
+# Every file holding words a person reads. scripts/update-po.sh rebuilds
+# from what it found.
+# the template from the crate roots and warns when this list has drifted
 app/src/add_account.rs
 app/src/add_account/lookup.rs
 app/src/add_account/post.rs
@@ -5,12 +8,12 @@ app/src/app.rs
 app/src/app/sending.rs
 app/src/app/updates.rs
 app/src/assistant/mod.rs
+app/src/assistant/run.rs
 app/src/assistant/run/calendar.rs
 app/src/assistant/run/catalog.rs
 app/src/assistant/run/mail.rs
 app/src/assistant/run/manage.rs
 app/src/assistant/run/queue.rs
-app/src/assistant/run.rs
 app/src/assistant/run/unsubscribe.rs
 app/src/assistant/run/writing.rs
 app/src/assistant/sources/mcp/mod.rs
@@ -32,20 +35,20 @@ app/src/offered.rs
 app/src/open_thread/run/translation.rs
 app/src/permission.rs
 app/src/pgp.rs
-app/src/protection/draft.rs
 app/src/protection.rs
-app/src/render.rs
+app/src/protection/draft.rs
 app/src/rules.rs
 app/src/search.rs
+app/src/servers.rs
 app/src/settings/mod.rs
 app/src/smime.rs
 app/src/templates.rs
 app/src/translation.rs
 app/src/ui/about.rs
 app/src/ui/add_account.rs
+app/src/ui/assistant.rs
 app/src/ui/assistant_mcp_prefs.rs
 app/src/ui/assistant_prefs.rs
-app/src/ui/assistant.rs
 app/src/ui/assistant_skills_prefs.rs
 app/src/ui/assistant_web_prefs.rs
 app/src/ui/autocomplete.rs
@@ -78,6 +81,7 @@ app/src/ui/confirm.rs
 app/src/ui/contact_card.rs
 app/src/ui/contacts_prefs.rs
 app/src/ui/conversation.rs
+app/src/ui/dav_edit.rs
 app/src/ui/find.rs
 app/src/ui/hide_my_email.rs
 app/src/ui/ics_file.rs
@@ -103,12 +107,13 @@ app/src/ui/unsubscribe.rs
 app/src/ui/vacation.rs
 app/src/ui/welcome.rs
 app/src/ui/when.rs
+app/src/ui/window.rs
 app/src/ui/window/across.rs
 app/src/ui/window/arrange.rs
 app/src/ui/window/assistant.rs
 app/src/ui/window/attachments.rs
-app/src/ui/window/categories/chip.rs
 app/src/ui/window/categories.rs
+app/src/ui/window/categories/chip.rs
 app/src/ui/window/detached.rs
 app/src/ui/window/export.rs
 app/src/ui/window/followup.rs
@@ -123,7 +128,6 @@ app/src/ui/window/press.rs
 app/src/ui/window/reminders.rs
 app/src/ui/window/reveal.rs
 app/src/ui/window/save_contacts.rs
-app/src/ui/window.rs
 app/src/ui/window/scheduled.rs
 app/src/ui/window/senders.rs
 app/src/ui/window/shortcuts.rs
@@ -132,39 +136,36 @@ app/src/unsubscribe_page.rs
 app/src/unsubscribe_page/webkit.rs
 domain/src/calendar/clock.rs
 domain/src/category.rs
-domain/src/invitation/recurrence.rs
 domain/src/invitation.rs
+domain/src/invitation/recurrence.rs
 domain/src/lib.rs
+domain/src/sign_in_page.rs
 domain/src/smart.rs
 domain/src/translate.rs
-# Every file holding words a person reads. scripts/update-po.sh rebuilds
-# from what it found.
-domain/src/sign_in_page.rs
-sync/src/account/writes.rs
+render/src/conversation.rs
+render/src/format.rs
 sync/src/account/pop3.rs
-sync/src/actions/labelling.rs
+sync/src/account/writes.rs
 sync/src/actions.rs
+sync/src/actions/labelling.rs
 sync/src/calendar_copy.rs
 sync/src/error.rs
 sync/src/mailbox.rs
 sync/src/passwords.rs
+sync/src/rules/forward.rs
+sync/src/services/caldav.rs
+sync/src/services/finding.rs
 sync/src/services/imap/outgoing.rs
+sync/src/services/local.rs
+sync/src/services/microsoft/calendar.rs
+sync/src/services/microsoft/errors.rs
+sync/src/services/microsoft/outgoing.rs
+sync/src/services/microsoft/rules.rs
+sync/src/services/microsoft/settings.rs
+sync/src/services/microsoft/writes.rs
+sync/src/services/pop3/mod.rs
+sync/src/services/sieve.rs
+sync/src/settings.rs
 sync/src/sign_in.rs
 sync/src/sign_in/browser.rs
 sync/src/triage.rs
-# the template from the crate roots and warns when this list has drifted
-sync/src/rules/forward.rs
-sync/src/services/local.rs
-sync/src/services/sieve.rs
-sync/src/services/microsoft/errors.rs
-sync/src/services/caldav.rs
-sync/src/services/finding.rs
-sync/src/services/pop3/mod.rs
-sync/src/services/microsoft/calendar.rs
-app/src/servers.rs
-app/src/ui/dav_edit.rs
-sync/src/services/microsoft/rules.rs
-sync/src/services/microsoft/outgoing.rs
-sync/src/services/microsoft/settings.rs
-sync/src/services/microsoft/writes.rs
-sync/src/settings.rs

@@ -8,4 +8,12 @@ rust-version.workspace = true
 description = "Mail HTML made safe to show: what the GTK and the SwiftUI front ends both render"
 
 [dependencies]
+mailrs-domain.workspace = true
+mailrs-mime.workspace = true
 ammonia.workspace = true
+chrono.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+mailrs-gmail.workspace = true
+chrono-tz.workspace = true

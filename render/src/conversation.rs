@@ -27,25 +27,9 @@ pub struct Theme {
     /// change of it changes the head, so the page loads whole.
     pub summarize: bool,
     /// The desktop's interface font family as a quoted CSS name
-    /// ([`css_family`]), or empty when it is not known. The page and every
+    /// (the app reads it from GTK's font setting), or empty when it is not known. The page and every
     /// body that names no font of its own read in it.
     pub font: String,
-}
-
-/// The family of a GTK font name such as "Ubuntu Sans 11", quoted for
-/// CSS. Quotes, braces, semicolons, angle brackets and backslashes drop
-/// out, so a setting cannot close the string or the rule it sits in.
-pub fn css_family(gtk_font_name: &str) -> String {
-    let description = gtk::pango::FontDescription::from_string(gtk_font_name);
-    let family = description.family().map(|f| f.to_string()).unwrap_or_default();
-    let clean: String = family
-        .chars()
-        .filter(|c| !matches!(c, '"' | '\'' | '{' | '}' | ';' | '<' | '>' | '\\'))
-        .collect();
-    match clean.trim() {
-        "" => String::new(),
-        name => format!("\"{name}\""),
-    }
 }
 
 pub enum BodyState<'a> {
@@ -122,6 +106,56 @@ pub fn render(conversation: &Conversation, theme: &Theme) -> String {
     }
     html.push_str(TAIL);
     html
+}
+
+/// Whether lower-case HTML loads a picture or a background from the web.
+pub fn loads_remote(lower: &str) -> bool {
+    [
+        "src=\"http",
+        "src='http",
+        "url(http",
+        "url('http",
+        "url(\"http",
+    ]
+    .iter()
+    .any(|mark| lower.contains(mark))
+}
+
+/// Whether lower-case HTML chooses its own colours. Mail that does is
+/// written for a white page: a newsletter's white boxes and dark text only
+/// read against it. Mail that does not, which is most of what a person
+/// writes, takes the window's own colours instead of sitting in a white
+/// slab in a dark window.
+///
+/// A quote's own grey and a border's colour don't count: a reply's
+/// quoted history carries them in every mail client, and it is still a
+/// note.
+pub fn paints_itself(lower: &str) -> bool {
+    let lower = without_quote_tags(lower);
+    let text_colour = ["color:", "color="].iter().any(|mark| {
+        lower
+            .match_indices(mark)
+            .any(|(at, _)| !lower[..at].ends_with('-'))
+    });
+    text_colour
+        || ["bgcolor=", "background", "<table"]
+            .iter()
+            .any(|mark| lower.contains(mark))
+}
+
+/// `lower` with each `<blockquote ...>` opening tag cut down to its name,
+/// so the style a quote carries is left out of [`paints_itself`].
+fn without_quote_tags(lower: &str) -> String {
+    let mut out = String::with_capacity(lower.len());
+    let mut rest = lower;
+    while let Some(at) = rest.find("<blockquote") {
+        out.push_str(&rest[..at]);
+        out.push_str("<blockquote>");
+        rest = &rest[at..];
+        rest = rest.find('>').map_or("", |end| &rest[end + 1..]);
+    }
+    out.push_str(rest);
+    out
 }
 
 /// What closes the page after the last article.
@@ -556,7 +590,7 @@ pub fn shown_in_body(attachment: &mailrs_domain::Attachment, body: &MessageBody)
     }
     body.html
         .as_deref()
-        .is_some_and(|html| crate::compose::refers_to_cid(html, cid))
+        .is_some_and(|html| crate::refers_to_cid(html, cid))
 }
 
 /// "me, Bob Smith, and 2 others".
@@ -733,14 +767,14 @@ outline-color:var(--accent)}";
 /// The page's column: at most this wide, with this much room at each side
 /// of its text. The cards GTK lays above the page (`ui::page_column`)
 /// take the same column, so their edges line up with the text under them.
-pub(crate) const PAGE_MAX_WIDTH: i32 = 980;
-pub(crate) const PAGE_SIDE: i32 = 36;
+pub const PAGE_MAX_WIDTH: i32 = 980;
+pub const PAGE_SIDE: i32 = 36;
 /// At or under this width the page keeps less room at its sides.
-pub(crate) const PAGE_NARROW: i32 = 560;
-pub(crate) const PAGE_NARROW_SIDE: i32 = 14;
+pub const PAGE_NARROW: i32 = 560;
+pub const PAGE_NARROW_SIDE: i32 = 14;
 
 /// The conversation page's colours in one theme.
-pub(crate) struct PagePalette {
+pub struct PagePalette {
     pub bg: &'static str,
     pub fg: &'static str,
     /// Secondary text: counts, addresses, dates, recipients, quotes.
@@ -755,7 +789,7 @@ pub(crate) struct PagePalette {
 /// A message sits on a surface a step away from the page: lighter in a
 /// dark window, darker in a light one, so an open message reads as a
 /// sheet rather than as more page.
-pub(crate) fn page_palette(dark: bool) -> PagePalette {
+pub fn page_palette(dark: bool) -> PagePalette {
     if dark {
         PagePalette {
             bg: "#1e1e21",
@@ -1005,21 +1039,9 @@ mod tests {
     }
 
     #[test]
-    fn the_desktop_font_family_comes_from_gtk_font_name() {
-        assert_eq!(css_family("Ubuntu Sans 11"), "\"Ubuntu Sans\"");
-    }
-
-    #[test]
-    fn a_font_name_cannot_break_out_of_the_stylesheet() {
-        let family = css_family("Evil\";}body{x:<y\\ 11");
-        let inside = &family[1..family.len() - 1];
-        assert!(!inside.contains(['"', '}', '{', ';', '<', '\\']), "{family}");
-    }
-
-    #[test]
     fn the_page_puts_the_desktop_font_first() {
         let css = page_css(&Theme {
-            font: css_family("Ubuntu Sans 11"),
+            font: "\"Ubuntu Sans\"".into(),
             ..theme()
         });
         assert!(css.contains("--ui-font:\"Ubuntu Sans\""), "{css}");

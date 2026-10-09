@@ -446,29 +446,7 @@ fn header_of(text: &str, name: &str) -> String {
         .to_string()
 }
 
-/// Whether `html` points at the inline image `cid` from one of its tags,
-/// such as an image's `src` or a cell's `background`. The whole id has to
-/// match, because `cid:logo` and `cid:logo2` name two different images.
-/// Text that mentions the id, and a comment, point at nothing.
-pub fn refers_to_cid(html: &str, cid: &str) -> bool {
-    let needle = format!("cid:{cid}");
-    let names = |value: &str| {
-        value.match_indices(&needle).any(|(at, _)| {
-            value[at + needle.len()..].chars().next().is_none_or(|c| {
-                !c.is_ascii_alphanumeric() && !matches!(c, '-' | '_' | '.' | '@' | '+')
-            })
-        })
-    };
-    let mut found = false;
-    mailrs_mime::html::walk(html, |piece| {
-        if let mailrs_mime::html::Piece::Tag(tag) = piece
-            && !found
-        {
-            found = tag.values().any(names);
-        }
-    });
-    found
-}
+pub use mailrs_render::refers_to_cid;
 
 /// A file of the message a forward carries, with the bytes fetched for it.
 /// An image the forwarded HTML shows keeps its id, so the `cid:` in that

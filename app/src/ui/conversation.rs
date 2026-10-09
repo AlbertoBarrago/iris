@@ -1582,7 +1582,7 @@ impl ConversationView {
             summarize: self.summarize.get() && !self.detached.get(),
             font: gtk::Settings::default()
                 .and_then(|settings| settings.gtk_font_name())
-                .map(|name| crate::render::css_family(&name))
+                .map(|name| css_family(&name))
                 .unwrap_or_default(),
         };
         let page = open.page(&theme);
@@ -2207,4 +2207,37 @@ fn first_scrolled(widget: &gtk::Widget) -> Option<gtk::ScrolledWindow> {
         child = current.next_sibling();
     }
     None
+}
+
+/// The family of a GTK font name such as "Ubuntu Sans 11", quoted for
+/// CSS. Quotes, braces, semicolons, angle brackets and backslashes drop
+/// out, so a setting cannot close the string or the rule it sits in.
+pub fn css_family(gtk_font_name: &str) -> String {
+    let description = gtk::pango::FontDescription::from_string(gtk_font_name);
+    let family = description.family().map(|f| f.to_string()).unwrap_or_default();
+    let clean: String = family
+        .chars()
+        .filter(|c| !matches!(c, '"' | '\'' | '{' | '}' | ';' | '<' | '>' | '\\'))
+        .collect();
+    match clean.trim() {
+        "" => String::new(),
+        name => format!("\"{name}\""),
+    }
+}
+
+#[cfg(test)]
+mod font_tests {
+    use super::css_family;
+
+    #[test]
+    fn the_desktop_font_family_comes_from_gtk_font_name() {
+        assert_eq!(css_family("Ubuntu Sans 11"), "\"Ubuntu Sans\"");
+    }
+
+    #[test]
+    fn a_font_name_cannot_break_out_of_the_stylesheet() {
+        let family = css_family("Evil\";}body{x:<y\\ 11");
+        let inside = &family[1..family.len() - 1];
+        assert!(!inside.contains(['"', '}', '{', ';', '<', '\\']), "{family}");
+    }
 }

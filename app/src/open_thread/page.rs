@@ -22,7 +22,7 @@ use mailrs_domain::{AccountId, MessageBody, MessageMeta};
 
 use super::{OpenThread, inline};
 use crate::quoted;
-use crate::render::{self, BodyState, Head, MessageView, Sanitized, TAIL, Theme};
+use crate::render::{self, BodyState, Head, MessageView, Sanitized, TAIL, Theme, loads_remote, paints_itself};
 use crate::sanitize::sanitize_html;
 use crate::translation::{Body, Prose};
 
@@ -63,56 +63,6 @@ fn clean(source: &str, pictures: &str) -> Cleaned {
         history: quoted::history_in_html(&html),
         html,
     }
-}
-
-/// Whether lower-case HTML loads a picture or a background from the web.
-fn loads_remote(lower: &str) -> bool {
-    [
-        "src=\"http",
-        "src='http",
-        "url(http",
-        "url('http",
-        "url(\"http",
-    ]
-    .iter()
-    .any(|mark| lower.contains(mark))
-}
-
-/// Whether lower-case HTML chooses its own colours. Mail that does is
-/// written for a white page: a newsletter's white boxes and dark text only
-/// read against it. Mail that does not, which is most of what a person
-/// writes, takes the window's own colours instead of sitting in a white
-/// slab in a dark window.
-///
-/// A quote's own grey and a border's colour don't count: a reply's
-/// quoted history carries them in every mail client, and it is still a
-/// note.
-fn paints_itself(lower: &str) -> bool {
-    let lower = without_quote_tags(lower);
-    let text_colour = ["color:", "color="].iter().any(|mark| {
-        lower
-            .match_indices(mark)
-            .any(|(at, _)| !lower[..at].ends_with('-'))
-    });
-    text_colour
-        || ["bgcolor=", "background", "<table"]
-            .iter()
-            .any(|mark| lower.contains(mark))
-}
-
-/// `lower` with each `<blockquote ...>` opening tag cut down to its name,
-/// so the style a quote carries is left out of [`paints_itself`].
-fn without_quote_tags(lower: &str) -> String {
-    let mut out = String::with_capacity(lower.len());
-    let mut rest = lower;
-    while let Some(at) = rest.find("<blockquote") {
-        out.push_str(&rest[..at]);
-        out.push_str("<blockquote>");
-        rest = &rest[at..];
-        rest = rest.find('>').map_or("", |end| &rest[end + 1..]);
-    }
-    out.push_str(rest);
-    out
 }
 
 /// HTML bodies waiting to be cleaned, each with the start of its picture

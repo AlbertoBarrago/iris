@@ -21,7 +21,7 @@ struct ContentView: View {
                 }
             }
         } detail: {
-            ConversationView(messages: model.messages)
+            ConversationView()
         }
         .alert("Iris could not read the mail", isPresented: .constant(model.problem != nil)) {
             Button("OK") {}

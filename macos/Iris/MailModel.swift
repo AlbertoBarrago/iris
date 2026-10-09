@@ -7,7 +7,9 @@ import Observation
 final class MailModel {
     private(set) var accounts: [AccountRow] = []
     private(set) var threads: [ThreadRow] = []
-    private(set) var messages: [MessageItem] = []
+    /// The open conversation as one page, drawn by the Rust core the way
+    /// the GTK app draws it.
+    private(set) var page: String?
     private(set) var problem: String?
 
     var selectedAccount: Int64? {
@@ -19,9 +21,14 @@ final class MailModel {
 
     private var store: Store?
 
-    /// Where the GTK app keeps the mail store.
+    /// Where the GTK app keeps the mail store, or the store `IRIS_STORE`
+    /// names, such as a demo run's, for comparing the two front ends on
+    /// the same sample mail.
     nonisolated static var storePath: String {
-        FileManager.default.homeDirectoryForCurrentUser
+        if let named = ProcessInfo.processInfo.environment["IRIS_STORE"], !named.isEmpty {
+            return named
+        }
+        return FileManager.default.homeDirectoryForCurrentUser
             .appending(path: "Library/Application Support/iris/mailrs.db")
             .path(percentEncoded: false)
     }
@@ -31,10 +38,19 @@ final class MailModel {
             do {
                 let store = try Store.open(path: MailModel.storePath)
                 let accounts = try store.accounts()
+                // `IRIS_OPEN=<account id>:<thread id>` opens one conversation
+                // at start, for comparing pages with the GTK app's demo.
+                let asked = ProcessInfo.processInfo.environment["IRIS_OPEN"]?
+                    .split(separator: ":", maxSplits: 1).map(String.init)
                 await MainActor.run {
                     self.store = store
                     self.accounts = accounts
-                    self.selectedAccount = accounts.first?.id
+                    if let asked, asked.count == 2, let account = Int64(asked[0]) {
+                        self.selectedAccount = account
+                        self.selectedThread = asked[1]
+                    } else {
+                        self.selectedAccount = accounts.first?.id
+                    }
                 }
             } catch {
                 await MainActor.run { self.problem = "\(error)" }
@@ -59,16 +75,23 @@ final class MailModel {
         }
     }
 
+    /// The colors pages are drawn in, which the window sets from its
+    /// appearance and the system accent.
+    var theme = PageTheme(dark: false, accent: "#007aff", accentText: "#0060df") {
+        didSet { if theme != oldValue { loadConversation() } }
+    }
+
     private func loadConversation() {
         guard let store, let account = selectedAccount, let thread = selectedThread else {
-            messages = []
+            page = nil
             return
         }
+        let theme = theme
         Task.detached {
             do {
-                let messages = try store.conversation(accountId: account, threadId: thread)
+                let page = try store.conversationPage(accountId: account, threadId: thread, theme: theme)
                 await MainActor.run {
-                    if self.selectedThread == thread { self.messages = messages }
+                    if self.selectedThread == thread { self.page = page }
                 }
             } catch {
                 await MainActor.run { self.problem = "\(error)" }

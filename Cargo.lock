@@ -2612,6 +2612,12 @@ name = "mailrs-render"
 version = "1.0.11"
 dependencies = [
  "ammonia",
+ "chrono",
+ "chrono-tz",
+ "mailrs-domain",
+ "mailrs-gmail",
+ "mailrs-mime",
+ "tracing",
 ]
 
 [[package]]

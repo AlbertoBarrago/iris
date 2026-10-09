@@ -74,7 +74,7 @@ pub fn first_weekday() -> Weekday {
 /// Fixes the weekday [`first_weekday`] gives on this thread, as a test
 /// does to see a range built on a known week start rather than whatever
 /// this machine's own locale happens to name.
-#[cfg(test)]
+#[doc(hidden)]
 pub fn set_first_weekday_for_test(day: Weekday) {
     FIRST_WEEKDAY.with(|cell| cell.set(Some(day)));
 }

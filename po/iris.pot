@@ -1404,19 +1404,19 @@ msgstr ""
 msgid "Running a command in the sandbox"
 msgstr ""
 
-#: app/src/compose.rs:614 app/src/compose.rs:2794
+#: app/src/compose.rs:592 app/src/compose.rs:2772
 msgid "Add at least one recipient."
 msgstr ""
 
-#: app/src/compose.rs:623
+#: app/src/compose.rs:601
 msgid "“{address}” is not an email address."
 msgstr ""
 
-#: app/src/compose.rs:871 app/src/compose.rs:2800
+#: app/src/compose.rs:849 app/src/compose.rs:2778
 msgid "Choose a time in the future"
 msgstr ""
 
-#: app/src/compose.rs:1076
+#: app/src/compose.rs:1054
 msgid "On {date}, {sender} wrote:"
 msgstr ""
 
@@ -1540,156 +1540,40 @@ msgstr ""
 msgid "%A %-d %B"
 msgstr ""
 
-#: app/src/format.rs:35
-msgid "%H:%M"
-msgstr ""
-
-#: app/src/format.rs:36 app/src/format.rs:213
-msgid "Yesterday"
-msgstr ""
-
-#: app/src/format.rs:38 app/src/format.rs:214
-msgid "%A"
-msgstr ""
-
-#: app/src/format.rs:39
-msgid "%-d %b"
-msgstr ""
-
-#: app/src/format.rs:40
-msgid "%Y-%m-%d"
-msgstr ""
-
-#: app/src/format.rs:55
-msgid "Today at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:56
-msgid "Yesterday at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:57
-msgid "Tomorrow at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:58 app/src/format.rs:111
-msgid "%a %-d %b at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:59 app/src/format.rs:112
-msgid "%-d %b %Y at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:60
-msgid "%-d %b %Y"
-msgstr ""
-
-#: app/src/format.rs:70
-msgid "%a, %-d %b"
-msgstr ""
-
-#: app/src/format.rs:71
-msgid "%a, %-d %b %Y"
-msgstr ""
-
-#: app/src/format.rs:79 app/src/format.rs:216
-msgid "%A, %-d %B %Y"
-msgstr ""
-
-#: app/src/format.rs:87
-msgid "{date} at {time}"
-msgstr ""
-
-#: app/src/format.rs:108
-msgid "today at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:109
-msgid "tomorrow at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:110
-msgid "%A at %H:%M"
-msgstr ""
-
-#: app/src/format.rs:122
-msgid "Send {when}"
-msgstr ""
-
-#: app/src/format.rs:129
-msgid "In 1 Hour"
-msgstr ""
-
-#: app/src/format.rs:149
-msgid "Tonight at 21:00"
-msgstr ""
-
-#: app/src/format.rs:153
-msgid "Tomorrow at 08:00"
-msgstr ""
-
-#: app/src/format.rs:160
-msgid "Monday at 08:00"
-msgstr ""
-
-#: app/src/format.rs:174
+#: app/src/format.rs:21
 msgid "{date} · All day"
 msgstr ""
 
-#: app/src/format.rs:185
+#: app/src/format.rs:32
 msgid "{date} · {start}"
 msgstr ""
 
-#: app/src/format.rs:192
+#: app/src/format.rs:39
 msgid "{date} {time}"
 msgstr ""
 
-#: app/src/format.rs:200
+#: app/src/format.rs:47
 msgid "{date} · {start}–{end}"
 msgstr ""
 
-#: app/src/format.rs:215
+#: app/src/format.rs:60
+msgid "Yesterday"
+msgstr ""
+
+#: app/src/format.rs:61
+msgid "%A"
+msgstr ""
+
+#: app/src/format.rs:62
 msgid "%A, %-d %B"
 msgstr ""
 
-#: app/src/format.rs:232
+#: app/src/format.rs:63
+msgid "%A, %-d %B %Y"
+msgstr ""
+
+#: app/src/format.rs:79
 msgid "{day} {time}"
-msgstr ""
-
-#: app/src/format.rs:300
-msgid "Blue"
-msgstr ""
-
-#: app/src/format.rs:301
-msgid "Teal"
-msgstr ""
-
-#: app/src/format.rs:302
-msgid "Green"
-msgstr ""
-
-#: app/src/format.rs:303
-msgid "Yellow"
-msgstr ""
-
-#: app/src/format.rs:304
-msgid "Orange"
-msgstr ""
-
-#: app/src/format.rs:305
-msgid "Red"
-msgstr ""
-
-#: app/src/format.rs:306
-msgid "Pink"
-msgstr ""
-
-#: app/src/format.rs:307
-msgid "Purple"
-msgstr ""
-
-#: app/src/format.rs:308
-msgid "Slate"
 msgstr ""
 
 #: app/src/language_names.rs:48
@@ -2641,140 +2525,6 @@ msgstr ""
 
 #: app/src/protection/draft.rs:200 app/src/ui/window.rs:2551
 msgid "Could not open the draft: {reason}"
-msgstr ""
-
-#: app/src/render.rs:161
-msgid "{count} message"
-msgid_plural "{count} messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/render.rs:169
-msgid "Summarize"
-msgstr ""
-
-#: app/src/render.rs:211 app/src/ui/thread_row.rs:359
-msgid "Unknown sender"
-msgstr ""
-
-#: app/src/render.rs:223
-msgid "Show or hide this message"
-msgstr ""
-
-#: app/src/render.rs:225 app/src/ui/contact_card.rs:43
-msgid "Contact"
-msgstr ""
-
-#: app/src/render.rs:230
-msgid "Contact card for {person}"
-msgstr ""
-
-#: app/src/render.rs:289 app/src/ui/thread_row.rs:143
-msgid "Invitation"
-msgstr ""
-
-#: app/src/render.rs:302
-msgid "Loading…"
-msgstr ""
-
-#: app/src/render.rs:307
-msgid "This message could not be loaded: {reason}"
-msgstr ""
-
-#: app/src/render.rs:357
-msgid "Details"
-msgstr ""
-
-#: app/src/render.rs:378
-msgid "from"
-msgstr ""
-
-#: app/src/render.rs:389
-msgid "to"
-msgstr ""
-
-#: app/src/render.rs:391
-msgid "cc"
-msgstr ""
-
-#: app/src/render.rs:393
-msgid "date"
-msgstr ""
-
-#: app/src/render.rs:394
-msgid "subject"
-msgstr ""
-
-#: app/src/render.rs:396
-msgid "mailed-by"
-msgstr ""
-
-#: app/src/render.rs:399
-msgid "signed-by"
-msgstr ""
-
-#: app/src/render.rs:403
-msgid "security"
-msgstr ""
-
-#: app/src/render.rs:405
-msgid "Standard encryption (TLS)"
-msgstr ""
-
-#: app/src/render.rs:410
-msgid "Not encrypted in transit"
-msgstr ""
-
-#: app/src/render.rs:447 app/src/ui/composer/mod.rs:1813
-msgid "{count} attachment"
-msgid_plural "{count} attachments"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/render.rs:479
-msgid "Quick Look"
-msgstr ""
-
-#: app/src/render.rs:480 app/src/ui/window/attachments.rs:329
-#: app/src/ui/window/attachments.rs:335
-msgid "Save to Downloads"
-msgstr ""
-
-#: app/src/render.rs:482
-msgid "Open {file}, {size}"
-msgstr ""
-
-#: app/src/render.rs:489
-msgid "Save {file} to Downloads"
-msgstr ""
-
-#: app/src/render.rs:496
-msgid "Save All ({count})"
-msgid_plural "Save All ({count})"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/render.rs:507
-msgid "Save every attachment to a folder"
-msgstr ""
-
-#: app/src/render.rs:571
-msgid "undisclosed recipients"
-msgstr ""
-
-#: app/src/render.rs:574
-msgid "{named}, and {count} other"
-msgid_plural "{named}, and {count} others"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/render.rs:587
-msgid "me"
-msgstr ""
-
-#: app/src/render.rs:597 app/src/ui/composer/mod.rs:484
-#: app/src/ui/composer/mod.rs:488
-msgid "Show trimmed content"
 msgstr ""
 
 #: app/src/rules.rs:13
@@ -4478,7 +4228,7 @@ msgstr ""
 msgid "Add Google Meet"
 msgstr ""
 
-#: app/src/ui/calendar/editor.rs:1990 app/src/ui/calendar/mod.rs:2270
+#: app/src/ui/calendar/editor.rs:1990 app/src/ui/calendar/mod.rs:2248
 #: app/src/ui/calendar/quick.rs:54
 msgid "Event"
 msgstr ""
@@ -4906,95 +4656,95 @@ msgstr ""
 msgid "Could not add the holidays: {reason}"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:325 app/src/ui/calendar/mod.rs:345
+#: app/src/ui/calendar/mod.rs:324 app/src/ui/calendar/mod.rs:344
 msgid "View"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:360 app/src/ui/calendar/mod.rs:368
-#: app/src/ui/calendar/mod.rs:2258
+#: app/src/ui/calendar/mod.rs:359 app/src/ui/calendar/mod.rs:367
+#: app/src/ui/calendar/mod.rs:2236
 msgid "New Event (N)"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:365
+#: app/src/ui/calendar/mod.rs:364
 msgid "New Focus Time or Out of Office"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:374 app/src/ui/calendar/mod.rs:376
+#: app/src/ui/calendar/mod.rs:373 app/src/ui/calendar/mod.rs:375
 msgid "Search the Calendar (Ctrl+F)"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:379 app/src/ui/calendar/mod.rs:382
+#: app/src/ui/calendar/mod.rs:378 app/src/ui/calendar/mod.rs:381
 msgid "Show Calendars"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:388 app/src/ui/calendar/mod.rs:392
+#: app/src/ui/calendar/mod.rs:387 app/src/ui/calendar/mod.rs:391
 #: app/src/ui/conversation.rs:538 app/src/ui/conversation.rs:542
 msgid "Assistant (Ctrl+J)"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:425 app/src/ui/calendar/mod.rs:427
+#: app/src/ui/calendar/mod.rs:424 app/src/ui/calendar/mod.rs:426
 msgid "Search the Calendar"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:494 app/src/ui/calendar/ports.rs:397
+#: app/src/ui/calendar/mod.rs:493 app/src/ui/calendar/ports.rs:397
 msgid "Loading older events"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:896 app/src/ui/window/shortcuts.rs:581
+#: app/src/ui/calendar/mod.rs:874 app/src/ui/window/shortcuts.rs:581
 msgid "Go to date"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:1295
+#: app/src/ui/calendar/mod.rs:1273
 msgid "Moved “{title}”"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:1296
+#: app/src/ui/calendar/mod.rs:1274
 msgid "Could not move the event: {reason}"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:1425
+#: app/src/ui/calendar/mod.rs:1403
 msgid "All-day events"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:1427
+#: app/src/ui/calendar/mod.rs:1405
 msgid "All-day"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:1699 app/src/ui/calendar/mod.rs:2811
+#: app/src/ui/calendar/mod.rs:1677 app/src/ui/calendar/mod.rs:2789
 #: app/src/ui/calendar/sidebar.rs:314 app/src/ui/calendar/words.rs:373
 #: app/src/ui/preferences.rs:969 app/src/ui/preferences.rs:1130
 msgid "%a"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:1998
+#: app/src/ui/calendar/mod.rs:1976
 msgid "Removed “{title}” from your calendar"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:1999
+#: app/src/ui/calendar/mod.rs:1977
 msgid "Deleted “{title}”"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:2012
+#: app/src/ui/calendar/mod.rs:1990
 msgid "Could not delete the event: {reason}"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:2201
+#: app/src/ui/calendar/mod.rs:2179
 msgid "Could not send your answer: {reason}"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:2260
+#: app/src/ui/calendar/mod.rs:2238
 msgid "None of your calendars take new events"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:2271 app/src/ui/calendar/quick.rs:55
+#: app/src/ui/calendar/mod.rs:2249 app/src/ui/calendar/quick.rs:55
 msgid "Focus Time"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:2272 app/src/ui/calendar/quick.rs:56
+#: app/src/ui/calendar/mod.rs:2250 app/src/ui/calendar/quick.rs:56
 msgid "Out of Office"
 msgstr ""
 
-#: app/src/ui/calendar/mod.rs:2571
+#: app/src/ui/calendar/mod.rs:2549
 msgid "Could not save the event: {reason}"
 msgstr ""
 
@@ -5606,6 +5356,10 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
+#: app/src/ui/composer/mod.rs:484 app/src/ui/composer/mod.rs:488
+msgid "Show trimmed content"
+msgstr ""
+
 #: app/src/ui/composer/mod.rs:509
 msgid "Formatting"
 msgstr ""
@@ -5722,6 +5476,12 @@ msgstr ""
 #: app/src/ui/composer/mod.rs:1808
 msgid "{files}  ·  {size}"
 msgstr ""
+
+#: app/src/ui/composer/mod.rs:1813
+msgid "{count} attachment"
+msgid_plural "{count} attachments"
+msgstr[0] ""
+msgstr[1] ""
 
 #: app/src/ui/composer/mod.rs:1890
 msgid "Bold (Ctrl+B)"
@@ -5905,6 +5665,10 @@ msgstr ""
 
 #: app/src/ui/composer/spell.rs:666
 msgid "Ignore"
+msgstr ""
+
+#: app/src/ui/contact_card.rs:43
+msgid "Contact"
 msgstr ""
 
 #: app/src/ui/contact_card.rs:106
@@ -6629,6 +6393,10 @@ msgstr[1] ""
 msgid "This meeting"
 msgstr ""
 
+#: app/src/ui/invitation/strip.rs:265
+msgid "%H:%M"
+msgstr ""
+
 #: app/src/ui/key_import.rs:34
 msgid "Import…"
 msgstr ""
@@ -6736,6 +6504,38 @@ msgstr[1] ""
 
 #: app/src/ui/key_import.rs:388
 msgid "Could not read {file}: {reason}"
+msgstr ""
+
+#: app/src/ui/mod.rs:420
+msgid "Red"
+msgstr ""
+
+#: app/src/ui/mod.rs:421
+msgid "Orange"
+msgstr ""
+
+#: app/src/ui/mod.rs:422
+msgid "Yellow"
+msgstr ""
+
+#: app/src/ui/mod.rs:423
+msgid "Green"
+msgstr ""
+
+#: app/src/ui/mod.rs:424
+msgid "Teal"
+msgstr ""
+
+#: app/src/ui/mod.rs:425
+msgid "Blue"
+msgstr ""
+
+#: app/src/ui/mod.rs:426
+msgid "Purple"
+msgstr ""
+
+#: app/src/ui/mod.rs:427
+msgid "Pink"
 msgstr ""
 
 #: app/src/ui/mod.rs:428
@@ -7680,6 +7480,10 @@ msgstr ""
 msgid "Muted"
 msgstr ""
 
+#: app/src/ui/thread_row.rs:143
+msgid "Invitation"
+msgstr ""
+
 #: app/src/ui/thread_row.rs:286
 msgid "Unread invitation, {sender}, {subject}, {snippet}"
 msgstr ""
@@ -7694,6 +7498,10 @@ msgstr ""
 
 #: app/src/ui/thread_row.rs:289
 msgid "{sender}, {subject}, {snippet}"
+msgstr ""
+
+#: app/src/ui/thread_row.rs:359
+msgid "Unknown sender"
 msgstr ""
 
 #: app/src/ui/translation.rs:50 app/src/ui/translation.rs:85
@@ -8233,6 +8041,10 @@ msgstr ""
 
 #: app/src/ui/window/attachments.rs:277
 msgid "Could not open {file}"
+msgstr ""
+
+#: app/src/ui/window/attachments.rs:329 app/src/ui/window/attachments.rs:335
+msgid "Save to Downloads"
 msgstr ""
 
 #: app/src/ui/window/attachments.rs:333 app/src/ui/window/attachments.rs:336
@@ -9170,6 +8982,192 @@ msgstr ""
 
 #: domain/src/smart.rs:78
 msgid "Is flagged"
+msgstr ""
+
+#: render/src/conversation.rs:195
+msgid "{count} message"
+msgid_plural "{count} messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: render/src/conversation.rs:203
+msgid "Summarize"
+msgstr ""
+
+#: render/src/conversation.rs:257
+msgid "Show or hide this message"
+msgstr ""
+
+#: render/src/conversation.rs:264
+msgid "Contact card for {person}"
+msgstr ""
+
+#: render/src/conversation.rs:336
+msgid "Loading…"
+msgstr ""
+
+#: render/src/conversation.rs:341
+msgid "This message could not be loaded: {reason}"
+msgstr ""
+
+#: render/src/conversation.rs:391
+msgid "Details"
+msgstr ""
+
+#: render/src/conversation.rs:412
+msgid "from"
+msgstr ""
+
+#: render/src/conversation.rs:423
+msgid "to"
+msgstr ""
+
+#: render/src/conversation.rs:425
+msgid "cc"
+msgstr ""
+
+#: render/src/conversation.rs:427
+msgid "date"
+msgstr ""
+
+#: render/src/conversation.rs:428
+msgid "subject"
+msgstr ""
+
+#: render/src/conversation.rs:430
+msgid "mailed-by"
+msgstr ""
+
+#: render/src/conversation.rs:433
+msgid "signed-by"
+msgstr ""
+
+#: render/src/conversation.rs:437
+msgid "security"
+msgstr ""
+
+#: render/src/conversation.rs:439
+msgid "Standard encryption (TLS)"
+msgstr ""
+
+#: render/src/conversation.rs:444
+msgid "Not encrypted in transit"
+msgstr ""
+
+#: render/src/conversation.rs:513
+msgid "Quick Look"
+msgstr ""
+
+#: render/src/conversation.rs:516
+msgid "Open {file}, {size}"
+msgstr ""
+
+#: render/src/conversation.rs:523
+msgid "Save {file} to Downloads"
+msgstr ""
+
+#: render/src/conversation.rs:530
+msgid "Save All ({count})"
+msgid_plural "Save All ({count})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: render/src/conversation.rs:541
+msgid "Save every attachment to a folder"
+msgstr ""
+
+#: render/src/conversation.rs:605
+msgid "undisclosed recipients"
+msgstr ""
+
+#: render/src/conversation.rs:608
+msgid "{named}, and {count} other"
+msgid_plural "{named}, and {count} others"
+msgstr[0] ""
+msgstr[1] ""
+
+#: render/src/conversation.rs:621
+msgid "me"
+msgstr ""
+
+#: render/src/format.rs:38
+msgid "%-d %b"
+msgstr ""
+
+#: render/src/format.rs:39
+msgid "%Y-%m-%d"
+msgstr ""
+
+#: render/src/format.rs:54
+msgid "Today at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:55
+msgid "Yesterday at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:56
+msgid "Tomorrow at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:57 render/src/format.rs:110
+msgid "%a %-d %b at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:58 render/src/format.rs:111
+msgid "%-d %b %Y at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:59
+msgid "%-d %b %Y"
+msgstr ""
+
+#: render/src/format.rs:69
+msgid "%a, %-d %b"
+msgstr ""
+
+#: render/src/format.rs:70
+msgid "%a, %-d %b %Y"
+msgstr ""
+
+#: render/src/format.rs:86
+msgid "{date} at {time}"
+msgstr ""
+
+#: render/src/format.rs:107
+msgid "today at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:108
+msgid "tomorrow at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:109
+msgid "%A at %H:%M"
+msgstr ""
+
+#: render/src/format.rs:121
+msgid "Send {when}"
+msgstr ""
+
+#: render/src/format.rs:128
+msgid "In 1 Hour"
+msgstr ""
+
+#: render/src/format.rs:148
+msgid "Tonight at 21:00"
+msgstr ""
+
+#: render/src/format.rs:152
+msgid "Tomorrow at 08:00"
+msgstr ""
+
+#: render/src/format.rs:159
+msgid "Monday at 08:00"
+msgstr ""
+
+#: render/src/format.rs:234
+msgid "Slate"
 msgstr ""
 
 #: sync/src/account/writes.rs:776

@@ -1365,19 +1365,19 @@ msgstr "Reading a skill's file"
 msgid "Running a command in the sandbox"
 msgstr "Running a command in the sandbox"
 
-#: app/src/compose.rs:614 app/src/compose.rs:2794
+#: app/src/compose.rs:592 app/src/compose.rs:2772
 msgid "Add at least one recipient."
 msgstr "Add at least one recipient."
 
-#: app/src/compose.rs:623
+#: app/src/compose.rs:601
 msgid "“{address}” is not an email address."
 msgstr "“{address}” is not an email address."
 
-#: app/src/compose.rs:871 app/src/compose.rs:2800
+#: app/src/compose.rs:849 app/src/compose.rs:2778
 msgid "Choose a time in the future"
 msgstr "Choose a time in the future"
 
-#: app/src/compose.rs:1076
+#: app/src/compose.rs:1054
 msgid "On {date}, {sender} wrote:"
 msgstr "On {date}, {sender} wrote:"
 
@@ -1499,157 +1499,41 @@ msgstr "Tomorrow"
 msgid "%A %-d %B"
 msgstr "%A %-d %B"
 
-#: app/src/format.rs:35
-msgid "%H:%M"
-msgstr "%H:%M"
-
-#: app/src/format.rs:36 app/src/format.rs:213
-msgid "Yesterday"
-msgstr "Yesterday"
-
-#: app/src/format.rs:38 app/src/format.rs:214
-msgid "%A"
-msgstr "%A"
-
-#: app/src/format.rs:39
-msgid "%-d %b"
-msgstr "%-d %b"
-
-#: app/src/format.rs:40
-msgid "%Y-%m-%d"
-msgstr "%Y-%m-%d"
-
-#: app/src/format.rs:55
-msgid "Today at %H:%M"
-msgstr "Today at %H:%M"
-
-#: app/src/format.rs:56
-msgid "Yesterday at %H:%M"
-msgstr "Yesterday at %H:%M"
-
-#: app/src/format.rs:57
-msgid "Tomorrow at %H:%M"
-msgstr "Tomorrow at %H:%M"
-
-#: app/src/format.rs:58 app/src/format.rs:111
-msgid "%a %-d %b at %H:%M"
-msgstr "%a %-d %b at %H:%M"
-
-#: app/src/format.rs:59 app/src/format.rs:112
-msgid "%-d %b %Y at %H:%M"
-msgstr "%-d %b %Y at %H:%M"
-
-#: app/src/format.rs:60
-msgid "%-d %b %Y"
-msgstr "%-d %b %Y"
-
-#: app/src/format.rs:70
-msgid "%a, %-d %b"
-msgstr "%a, %-d %b"
-
-#: app/src/format.rs:71
-msgid "%a, %-d %b %Y"
-msgstr "%a, %-d %b %Y"
-
-#: app/src/format.rs:79 app/src/format.rs:216
-msgid "%A, %-d %B %Y"
-msgstr "%A, %-d %B %Y"
-
-#: app/src/format.rs:87
-msgid "{date} at {time}"
-msgstr "{date} at {time}"
-
-#: app/src/format.rs:108
-msgid "today at %H:%M"
-msgstr "today at %H:%M"
-
-#: app/src/format.rs:109
-msgid "tomorrow at %H:%M"
-msgstr "tomorrow at %H:%M"
-
-#: app/src/format.rs:110
-msgid "%A at %H:%M"
-msgstr "%A at %H:%M"
-
-#: app/src/format.rs:122
-msgid "Send {when}"
-msgstr "Send {when}"
-
-#: app/src/format.rs:129
-msgid "In 1 Hour"
-msgstr "In 1 Hour"
-
-#: app/src/format.rs:149
-msgid "Tonight at 21:00"
-msgstr "Tonight at 21:00"
-
-#: app/src/format.rs:153
-msgid "Tomorrow at 08:00"
-msgstr "Tomorrow at 08:00"
-
-#: app/src/format.rs:160
-msgid "Monday at 08:00"
-msgstr "Monday at 08:00"
-
-#: app/src/format.rs:174
+#: app/src/format.rs:21
 msgid "{date} · All day"
 msgstr "{date} · All day"
 
-#: app/src/format.rs:185
+#: app/src/format.rs:32
 msgid "{date} · {start}"
 msgstr "{date} · {start}"
 
-#: app/src/format.rs:192
+#: app/src/format.rs:39
 msgid "{date} {time}"
 msgstr "{date} {time}"
 
-#: app/src/format.rs:200
+#: app/src/format.rs:47
 msgid "{date} · {start}–{end}"
 msgstr "{date} · {start}–{end}"
 
-#: app/src/format.rs:215
+#: app/src/format.rs:60
+msgid "Yesterday"
+msgstr "Yesterday"
+
+#: app/src/format.rs:61
+msgid "%A"
+msgstr "%A"
+
+#: app/src/format.rs:62
 msgid "%A, %-d %B"
 msgstr "%A, %-d %B"
 
-#: app/src/format.rs:232
+#: app/src/format.rs:63
+msgid "%A, %-d %B %Y"
+msgstr "%A, %-d %B %Y"
+
+#: app/src/format.rs:79
 msgid "{day} {time}"
 msgstr "{day} {time}"
-
-#: app/src/format.rs:300
-msgid "Blue"
-msgstr "Blue"
-
-#: app/src/format.rs:301
-msgid "Teal"
-msgstr "Teal"
-
-#: app/src/format.rs:302
-msgid "Green"
-msgstr "Green"
-
-#: app/src/format.rs:303
-msgid "Yellow"
-msgstr "Yellow"
-
-#: app/src/format.rs:304
-msgid "Orange"
-msgstr "Orange"
-
-#: app/src/format.rs:305
-msgid "Red"
-msgstr "Red"
-
-#: app/src/format.rs:306
-msgid "Pink"
-msgstr "Pink"
-
-#: app/src/format.rs:307
-msgid "Purple"
-msgstr "Purple"
-
-#: app/src/format.rs:308
-msgid "Slate"
-msgstr "Slate"
 
 #: app/src/language_names.rs:48
 msgid "{language} ({country})"
@@ -2564,140 +2448,6 @@ msgstr "Could not save: {reason}"
 #: app/src/protection/draft.rs:200 app/src/ui/window.rs:2551
 msgid "Could not open the draft: {reason}"
 msgstr "Could not open the draft: {reason}"
-
-#: app/src/render.rs:161
-msgid "{count} message"
-msgid_plural "{count} messages"
-msgstr[0] "{count} message"
-msgstr[1] "{count} messages"
-
-#: app/src/render.rs:169
-msgid "Summarize"
-msgstr "Summarise"
-
-#: app/src/render.rs:211 app/src/ui/thread_row.rs:359
-msgid "Unknown sender"
-msgstr "Unknown sender"
-
-#: app/src/render.rs:223
-msgid "Show or hide this message"
-msgstr "Show or hide this message"
-
-#: app/src/render.rs:225 app/src/ui/contact_card.rs:43
-msgid "Contact"
-msgstr "Contact"
-
-#: app/src/render.rs:230
-msgid "Contact card for {person}"
-msgstr "Contact card for {person}"
-
-#: app/src/render.rs:289 app/src/ui/thread_row.rs:143
-msgid "Invitation"
-msgstr "Invitation"
-
-#: app/src/render.rs:302
-msgid "Loading…"
-msgstr "Loading…"
-
-#: app/src/render.rs:307
-msgid "This message could not be loaded: {reason}"
-msgstr "This message could not be loaded: {reason}"
-
-#: app/src/render.rs:357
-msgid "Details"
-msgstr "Details"
-
-#: app/src/render.rs:378
-msgid "from"
-msgstr "from"
-
-#: app/src/render.rs:389
-msgid "to"
-msgstr "to"
-
-#: app/src/render.rs:391
-msgid "cc"
-msgstr "cc"
-
-#: app/src/render.rs:393
-msgid "date"
-msgstr "date"
-
-#: app/src/render.rs:394
-msgid "subject"
-msgstr "subject"
-
-#: app/src/render.rs:396
-msgid "mailed-by"
-msgstr "mailed-by"
-
-#: app/src/render.rs:399
-msgid "signed-by"
-msgstr "signed-by"
-
-#: app/src/render.rs:403
-msgid "security"
-msgstr "security"
-
-#: app/src/render.rs:405
-msgid "Standard encryption (TLS)"
-msgstr "Standard encryption (TLS)"
-
-#: app/src/render.rs:410
-msgid "Not encrypted in transit"
-msgstr "Not encrypted in transit"
-
-#: app/src/render.rs:447 app/src/ui/composer/mod.rs:1813
-msgid "{count} attachment"
-msgid_plural "{count} attachments"
-msgstr[0] "{count} attachment"
-msgstr[1] "{count} attachments"
-
-#: app/src/render.rs:479
-msgid "Quick Look"
-msgstr "Quick Look"
-
-#: app/src/render.rs:480 app/src/ui/window/attachments.rs:329
-#: app/src/ui/window/attachments.rs:335
-msgid "Save to Downloads"
-msgstr "Save to Downloads"
-
-#: app/src/render.rs:482
-msgid "Open {file}, {size}"
-msgstr "Open {file}, {size}"
-
-#: app/src/render.rs:489
-msgid "Save {file} to Downloads"
-msgstr "Save {file} to Downloads"
-
-#: app/src/render.rs:496
-msgid "Save All ({count})"
-msgid_plural "Save All ({count})"
-msgstr[0] "Save All ({count})"
-msgstr[1] "Save All ({count})"
-
-#: app/src/render.rs:507
-msgid "Save every attachment to a folder"
-msgstr "Save every attachment to a folder"
-
-#: app/src/render.rs:571
-msgid "undisclosed recipients"
-msgstr "undisclosed recipients"
-
-#: app/src/render.rs:574
-msgid "{named}, and {count} other"
-msgid_plural "{named}, and {count} others"
-msgstr[0] "{named}, and {count} other"
-msgstr[1] "{named}, and {count} others"
-
-#: app/src/render.rs:587
-msgid "me"
-msgstr "me"
-
-#: app/src/render.rs:597 app/src/ui/composer/mod.rs:484
-#: app/src/ui/composer/mod.rs:488
-msgid "Show trimmed content"
-msgstr "Show trimmed content"
 
 #: app/src/rules.rs:13
 msgid "These rules run on this computer while Iris is open."
@@ -4351,7 +4101,7 @@ msgstr "Calendar colour"
 msgid "Add Google Meet"
 msgstr "Add Google Meet"
 
-#: app/src/ui/calendar/editor.rs:1990 app/src/ui/calendar/mod.rs:2270
+#: app/src/ui/calendar/editor.rs:1990 app/src/ui/calendar/mod.rs:2248
 #: app/src/ui/calendar/quick.rs:54
 msgid "Event"
 msgstr "Event"
@@ -4767,95 +4517,95 @@ msgstr "Add holidays in {region}"
 msgid "Could not add the holidays: {reason}"
 msgstr "Could not add the holidays: {reason}"
 
-#: app/src/ui/calendar/mod.rs:325 app/src/ui/calendar/mod.rs:345
+#: app/src/ui/calendar/mod.rs:324 app/src/ui/calendar/mod.rs:344
 msgid "View"
 msgstr "View"
 
-#: app/src/ui/calendar/mod.rs:360 app/src/ui/calendar/mod.rs:368
-#: app/src/ui/calendar/mod.rs:2258
+#: app/src/ui/calendar/mod.rs:359 app/src/ui/calendar/mod.rs:367
+#: app/src/ui/calendar/mod.rs:2236
 msgid "New Event (N)"
 msgstr "New Event (N)"
 
-#: app/src/ui/calendar/mod.rs:365
+#: app/src/ui/calendar/mod.rs:364
 msgid "New Focus Time or Out of Office"
 msgstr "New Focus Time or Out of Office"
 
-#: app/src/ui/calendar/mod.rs:374 app/src/ui/calendar/mod.rs:376
+#: app/src/ui/calendar/mod.rs:373 app/src/ui/calendar/mod.rs:375
 msgid "Search the Calendar (Ctrl+F)"
 msgstr "Search the Calendar (Ctrl+F)"
 
-#: app/src/ui/calendar/mod.rs:379 app/src/ui/calendar/mod.rs:382
+#: app/src/ui/calendar/mod.rs:378 app/src/ui/calendar/mod.rs:381
 msgid "Show Calendars"
 msgstr "Show Calendars"
 
-#: app/src/ui/calendar/mod.rs:388 app/src/ui/calendar/mod.rs:392
+#: app/src/ui/calendar/mod.rs:387 app/src/ui/calendar/mod.rs:391
 #: app/src/ui/conversation.rs:538 app/src/ui/conversation.rs:542
 msgid "Assistant (Ctrl+J)"
 msgstr "Assistant (Ctrl+J)"
 
-#: app/src/ui/calendar/mod.rs:425 app/src/ui/calendar/mod.rs:427
+#: app/src/ui/calendar/mod.rs:424 app/src/ui/calendar/mod.rs:426
 msgid "Search the Calendar"
 msgstr "Search the Calendar"
 
-#: app/src/ui/calendar/mod.rs:494 app/src/ui/calendar/ports.rs:397
+#: app/src/ui/calendar/mod.rs:493 app/src/ui/calendar/ports.rs:397
 msgid "Loading older events"
 msgstr "Loading older events"
 
-#: app/src/ui/calendar/mod.rs:896 app/src/ui/window/shortcuts.rs:581
+#: app/src/ui/calendar/mod.rs:874 app/src/ui/window/shortcuts.rs:581
 msgid "Go to date"
 msgstr "Go to date"
 
-#: app/src/ui/calendar/mod.rs:1295
+#: app/src/ui/calendar/mod.rs:1273
 msgid "Moved “{title}”"
 msgstr "Moved “{title}”"
 
-#: app/src/ui/calendar/mod.rs:1296
+#: app/src/ui/calendar/mod.rs:1274
 msgid "Could not move the event: {reason}"
 msgstr "Could not move the event: {reason}"
 
-#: app/src/ui/calendar/mod.rs:1425
+#: app/src/ui/calendar/mod.rs:1403
 msgid "All-day events"
 msgstr "All-day events"
 
-#: app/src/ui/calendar/mod.rs:1427
+#: app/src/ui/calendar/mod.rs:1405
 msgid "All-day"
 msgstr "All-day"
 
-#: app/src/ui/calendar/mod.rs:1699 app/src/ui/calendar/mod.rs:2811
+#: app/src/ui/calendar/mod.rs:1677 app/src/ui/calendar/mod.rs:2789
 #: app/src/ui/calendar/sidebar.rs:314 app/src/ui/calendar/words.rs:373
 #: app/src/ui/preferences.rs:969 app/src/ui/preferences.rs:1130
 msgid "%a"
 msgstr "%a"
 
-#: app/src/ui/calendar/mod.rs:1998
+#: app/src/ui/calendar/mod.rs:1976
 msgid "Removed “{title}” from your calendar"
 msgstr "Removed “{title}” from your calendar"
 
-#: app/src/ui/calendar/mod.rs:1999
+#: app/src/ui/calendar/mod.rs:1977
 msgid "Deleted “{title}”"
 msgstr "Deleted “{title}”"
 
-#: app/src/ui/calendar/mod.rs:2012
+#: app/src/ui/calendar/mod.rs:1990
 msgid "Could not delete the event: {reason}"
 msgstr "Could not delete the event: {reason}"
 
-#: app/src/ui/calendar/mod.rs:2201
+#: app/src/ui/calendar/mod.rs:2179
 msgid "Could not send your answer: {reason}"
 msgstr "Could not send your answer: {reason}"
 
-#: app/src/ui/calendar/mod.rs:2260
+#: app/src/ui/calendar/mod.rs:2238
 msgid "None of your calendars take new events"
 msgstr "None of your calendars take new events"
 
-#: app/src/ui/calendar/mod.rs:2271 app/src/ui/calendar/quick.rs:55
+#: app/src/ui/calendar/mod.rs:2249 app/src/ui/calendar/quick.rs:55
 msgid "Focus Time"
 msgstr "Focus Time"
 
-#: app/src/ui/calendar/mod.rs:2272 app/src/ui/calendar/quick.rs:56
+#: app/src/ui/calendar/mod.rs:2250 app/src/ui/calendar/quick.rs:56
 msgid "Out of Office"
 msgstr "Out of Office"
 
-#: app/src/ui/calendar/mod.rs:2571
+#: app/src/ui/calendar/mod.rs:2549
 msgid "Could not save the event: {reason}"
 msgstr "Could not save the event: {reason}"
 
@@ -5463,6 +5213,10 @@ msgstr "Bcc"
 msgid "Subject"
 msgstr "Subject"
 
+#: app/src/ui/composer/mod.rs:484 app/src/ui/composer/mod.rs:488
+msgid "Show trimmed content"
+msgstr "Show trimmed content"
+
 #: app/src/ui/composer/mod.rs:509
 msgid "Formatting"
 msgstr "Formatting"
@@ -5579,6 +5333,12 @@ msgstr "Attach Files"
 #: app/src/ui/composer/mod.rs:1808
 msgid "{files}  ·  {size}"
 msgstr "{files}  ·  {size}"
+
+#: app/src/ui/composer/mod.rs:1813
+msgid "{count} attachment"
+msgid_plural "{count} attachments"
+msgstr[0] "{count} attachment"
+msgstr[1] "{count} attachments"
 
 #: app/src/ui/composer/mod.rs:1890
 msgid "Bold (Ctrl+B)"
@@ -5763,6 +5523,10 @@ msgstr "Add to Dictionary"
 #: app/src/ui/composer/spell.rs:666
 msgid "Ignore"
 msgstr "Ignore"
+
+#: app/src/ui/contact_card.rs:43
+msgid "Contact"
+msgstr "Contact"
 
 #: app/src/ui/contact_card.rs:106
 msgid "Email"
@@ -6466,6 +6230,10 @@ msgstr[1] "Clashes with {event} and {count} more"
 msgid "This meeting"
 msgstr "This meeting"
 
+#: app/src/ui/invitation/strip.rs:265
+msgid "%H:%M"
+msgstr "%H:%M"
+
 #: app/src/ui/key_import.rs:34
 msgid "Import…"
 msgstr "Import…"
@@ -6572,6 +6340,38 @@ msgstr[1] "And {count} more"
 #: app/src/ui/key_import.rs:388
 msgid "Could not read {file}: {reason}"
 msgstr "Could not read {file}: {reason}"
+
+#: app/src/ui/mod.rs:420
+msgid "Red"
+msgstr "Red"
+
+#: app/src/ui/mod.rs:421
+msgid "Orange"
+msgstr "Orange"
+
+#: app/src/ui/mod.rs:422
+msgid "Yellow"
+msgstr "Yellow"
+
+#: app/src/ui/mod.rs:423
+msgid "Green"
+msgstr "Green"
+
+#: app/src/ui/mod.rs:424
+msgid "Teal"
+msgstr "Teal"
+
+#: app/src/ui/mod.rs:425
+msgid "Blue"
+msgstr "Blue"
+
+#: app/src/ui/mod.rs:426
+msgid "Purple"
+msgstr "Purple"
+
+#: app/src/ui/mod.rs:427
+msgid "Pink"
+msgstr "Pink"
 
 #: app/src/ui/mod.rs:428
 msgid "Gray"
@@ -7493,6 +7293,10 @@ msgstr "VIP"
 msgid "Muted"
 msgstr "Muted"
 
+#: app/src/ui/thread_row.rs:143
+msgid "Invitation"
+msgstr "Invitation"
+
 #: app/src/ui/thread_row.rs:286
 msgid "Unread invitation, {sender}, {subject}, {snippet}"
 msgstr "Unread invitation, {sender}, {subject}, {snippet}"
@@ -7508,6 +7312,10 @@ msgstr "Invitation, {sender}, {subject}, {snippet}"
 #: app/src/ui/thread_row.rs:289
 msgid "{sender}, {subject}, {snippet}"
 msgstr "{sender}, {subject}, {snippet}"
+
+#: app/src/ui/thread_row.rs:359
+msgid "Unknown sender"
+msgstr "Unknown sender"
 
 #: app/src/ui/translation.rs:50 app/src/ui/translation.rs:85
 #: app/src/ui/translation.rs:125
@@ -8037,6 +7845,10 @@ msgstr "Saved {count} to {folder}. Could not save {files}"
 #: app/src/ui/window/attachments.rs:277
 msgid "Could not open {file}"
 msgstr "Could not open {file}"
+
+#: app/src/ui/window/attachments.rs:329 app/src/ui/window/attachments.rs:335
+msgid "Save to Downloads"
+msgstr "Save to Downloads"
 
 #: app/src/ui/window/attachments.rs:333 app/src/ui/window/attachments.rs:336
 msgid "Open in Another Program"
@@ -8950,6 +8762,192 @@ msgstr "Is unread"
 #: domain/src/smart.rs:78
 msgid "Is flagged"
 msgstr "Is flagged"
+
+#: render/src/conversation.rs:195
+msgid "{count} message"
+msgid_plural "{count} messages"
+msgstr[0] "{count} message"
+msgstr[1] "{count} messages"
+
+#: render/src/conversation.rs:203
+msgid "Summarize"
+msgstr "Summarise"
+
+#: render/src/conversation.rs:257
+msgid "Show or hide this message"
+msgstr "Show or hide this message"
+
+#: render/src/conversation.rs:264
+msgid "Contact card for {person}"
+msgstr "Contact card for {person}"
+
+#: render/src/conversation.rs:336
+msgid "Loading…"
+msgstr "Loading…"
+
+#: render/src/conversation.rs:341
+msgid "This message could not be loaded: {reason}"
+msgstr "This message could not be loaded: {reason}"
+
+#: render/src/conversation.rs:391
+msgid "Details"
+msgstr "Details"
+
+#: render/src/conversation.rs:412
+msgid "from"
+msgstr "from"
+
+#: render/src/conversation.rs:423
+msgid "to"
+msgstr "to"
+
+#: render/src/conversation.rs:425
+msgid "cc"
+msgstr "cc"
+
+#: render/src/conversation.rs:427
+msgid "date"
+msgstr "date"
+
+#: render/src/conversation.rs:428
+msgid "subject"
+msgstr "subject"
+
+#: render/src/conversation.rs:430
+msgid "mailed-by"
+msgstr "mailed-by"
+
+#: render/src/conversation.rs:433
+msgid "signed-by"
+msgstr "signed-by"
+
+#: render/src/conversation.rs:437
+msgid "security"
+msgstr "security"
+
+#: render/src/conversation.rs:439
+msgid "Standard encryption (TLS)"
+msgstr "Standard encryption (TLS)"
+
+#: render/src/conversation.rs:444
+msgid "Not encrypted in transit"
+msgstr "Not encrypted in transit"
+
+#: render/src/conversation.rs:513
+msgid "Quick Look"
+msgstr "Quick Look"
+
+#: render/src/conversation.rs:516
+msgid "Open {file}, {size}"
+msgstr "Open {file}, {size}"
+
+#: render/src/conversation.rs:523
+msgid "Save {file} to Downloads"
+msgstr "Save {file} to Downloads"
+
+#: render/src/conversation.rs:530
+msgid "Save All ({count})"
+msgid_plural "Save All ({count})"
+msgstr[0] "Save All ({count})"
+msgstr[1] "Save All ({count})"
+
+#: render/src/conversation.rs:541
+msgid "Save every attachment to a folder"
+msgstr "Save every attachment to a folder"
+
+#: render/src/conversation.rs:605
+msgid "undisclosed recipients"
+msgstr "undisclosed recipients"
+
+#: render/src/conversation.rs:608
+msgid "{named}, and {count} other"
+msgid_plural "{named}, and {count} others"
+msgstr[0] "{named}, and {count} other"
+msgstr[1] "{named}, and {count} others"
+
+#: render/src/conversation.rs:621
+msgid "me"
+msgstr "me"
+
+#: render/src/format.rs:38
+msgid "%-d %b"
+msgstr "%-d %b"
+
+#: render/src/format.rs:39
+msgid "%Y-%m-%d"
+msgstr "%Y-%m-%d"
+
+#: render/src/format.rs:54
+msgid "Today at %H:%M"
+msgstr "Today at %H:%M"
+
+#: render/src/format.rs:55
+msgid "Yesterday at %H:%M"
+msgstr "Yesterday at %H:%M"
+
+#: render/src/format.rs:56
+msgid "Tomorrow at %H:%M"
+msgstr "Tomorrow at %H:%M"
+
+#: render/src/format.rs:57 render/src/format.rs:110
+msgid "%a %-d %b at %H:%M"
+msgstr "%a %-d %b at %H:%M"
+
+#: render/src/format.rs:58 render/src/format.rs:111
+msgid "%-d %b %Y at %H:%M"
+msgstr "%-d %b %Y at %H:%M"
+
+#: render/src/format.rs:59
+msgid "%-d %b %Y"
+msgstr "%-d %b %Y"
+
+#: render/src/format.rs:69
+msgid "%a, %-d %b"
+msgstr "%a, %-d %b"
+
+#: render/src/format.rs:70
+msgid "%a, %-d %b %Y"
+msgstr "%a, %-d %b %Y"
+
+#: render/src/format.rs:86
+msgid "{date} at {time}"
+msgstr "{date} at {time}"
+
+#: render/src/format.rs:107
+msgid "today at %H:%M"
+msgstr "today at %H:%M"
+
+#: render/src/format.rs:108
+msgid "tomorrow at %H:%M"
+msgstr "tomorrow at %H:%M"
+
+#: render/src/format.rs:109
+msgid "%A at %H:%M"
+msgstr "%A at %H:%M"
+
+#: render/src/format.rs:121
+msgid "Send {when}"
+msgstr "Send {when}"
+
+#: render/src/format.rs:128
+msgid "In 1 Hour"
+msgstr "In 1 Hour"
+
+#: render/src/format.rs:148
+msgid "Tonight at 21:00"
+msgstr "Tonight at 21:00"
+
+#: render/src/format.rs:152
+msgid "Tomorrow at 08:00"
+msgstr "Tomorrow at 08:00"
+
+#: render/src/format.rs:159
+msgid "Monday at 08:00"
+msgstr "Monday at 08:00"
+
+#: render/src/format.rs:234
+msgid "Slate"
+msgstr "Slate"
 
 #: sync/src/account/writes.rs:776
 msgid "{provider} is busy. Still working on {conversations}."

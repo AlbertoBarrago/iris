@@ -1,71 +1,57 @@
+import AppKit
 import SwiftUI
 import WebKit
 
-/// The messages of one conversation: a header for each, the newest open.
+/// The open conversation: one page the Rust core draws, the same page the
+/// GTK app shows, in the window's colors.
 struct ConversationView: View {
-    let messages: [MessageItem]
-    @State private var shown: String?
+    @Environment(MailModel.self) private var model
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        if messages.isEmpty {
-            ContentUnavailableView("No Conversation Selected", systemImage: "envelope")
-        } else {
-            VStack(spacing: 0) {
-                ForEach(messages, id: \.id) { message in
-                    Button {
-                        shown = message.id
-                    } label: {
-                        MessageHeader(message: message, open: message.id == current?.id)
-                    }
-                    .buttonStyle(.plain)
-                    Divider()
-                }
-                if let message = current {
-                    if let page = message.page {
-                        MailPage(html: page)
-                    } else {
-                        ContentUnavailableView(
-                            "Not Downloaded Yet",
-                            systemImage: "arrow.down.circle",
-                            description: Text("Open this conversation in Iris once to fetch it.")
-                        )
-                    }
-                }
+        Group {
+            if let page = model.page {
+                MailPage(html: page)
+            } else {
+                ContentUnavailableView("No Conversation Selected", systemImage: "envelope")
             }
-            .onChange(of: messages.map(\.id)) { shown = nil }
         }
-    }
-
-    private var current: MessageItem? {
-        messages.first { $0.id == shown } ?? messages.last
+        .onAppear { model.theme = PageTheme.current(dark: colorScheme == .dark) }
+        .onChange(of: colorScheme) { model.theme = PageTheme.current(dark: colorScheme == .dark) }
+        .onReceive(NotificationCenter.default.publisher(for: NSColor.systemColorsDidChangeNotification)) { _ in
+            model.theme = PageTheme.current(dark: colorScheme == .dark)
+        }
     }
 }
 
-struct MessageHeader: View {
-    let message: MessageItem
-    let open: Bool
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(message.from).font(open ? .headline : .body)
-                if open {
-                    Text("To: \(message.to)").font(.caption).foregroundStyle(.secondary)
-                }
-            }
-            Spacer()
-            Text(Date(timeIntervalSince1970: Double(message.date) / 1000), format: .dateTime)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 8)
-        .contentShape(Rectangle())
+extension PageTheme {
+    /// The page colors for the current appearance: the system accent, and
+    /// for text the accent moved toward the side of the page that gives it
+    /// contrast.
+    static func current(dark: Bool) -> PageTheme {
+        let accent = NSColor.controlAccentColor.usingColorSpace(.sRGB) ?? .systemBlue
+        let text = (dark ? accent.blended(withFraction: 0.35, of: .white) : accent.blended(withFraction: 0.25, of: .black)) ?? accent
+        return PageTheme(dark: dark, accent: accent.cssHex, accentText: text.cssHex)
     }
 }
 
-/// A message body in a WKWebView of its own. It is the window's own view,
-/// so selection, Copy and scrolling work as they do in any Mac app. Links
+extension NSColor {
+    /// `#rrggbb` for CSS.
+    var cssHex: String {
+        let color = usingColorSpace(.sRGB) ?? self
+        let channel = { (value: CGFloat) in Int((value * 255).rounded()).clamped(to: 0...255) }
+        return String(format: "#%02x%02x%02x", channel(color.redComponent), channel(color.greenComponent), channel(color.blueComponent))
+    }
+}
+
+extension Comparable {
+    func clamped(to range: ClosedRange<Self>) -> Self {
+        min(max(self, range.lowerBound), range.upperBound)
+    }
+}
+
+/// A page in a WKWebView of its own. It is the window's own view, so
+/// selection, Copy and scrolling work as they do in any Mac app. Links
 /// open in the browser; the page itself never navigates.
 struct MailPage: NSViewRepresentable {
     let html: String
@@ -78,6 +64,8 @@ struct MailPage: NSViewRepresentable {
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
+        // The page paints its own background, the window's color.
+        view.underPageBackgroundColor = .windowBackgroundColor
         return view
     }
 

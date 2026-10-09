@@ -69,6 +69,20 @@ pub struct MessageItem {
     pub page: Option<String>,
 }
 
+/// The colors a conversation page is drawn in: the window's appearance
+/// and the system accent, as CSS colors.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct PageTheme {
+    pub dark: bool,
+    pub accent: String,
+    /// The accent where it colors text, which needs more contrast.
+    pub accent_text: String,
+}
+
+/// A body's cleaned HTML, whether it picks its own colors, and where its
+/// quoted history starts and ends.
+type Cleaned = (String, bool, Option<std::ops::Range<usize>>);
+
 /// The mail store, opened to read.
 #[derive(uniffi::Object)]
 pub struct Store {
@@ -117,6 +131,83 @@ impl Store {
                 has_attachments: t.has_attachments,
             })
             .collect())
+    }
+
+    /// One conversation as a whole page, drawn as the GTK app draws it:
+    /// the subject, a header and a body for each message, the unread ones
+    /// and the newest open, quoted history folded away. The page loads
+    /// nothing from the network.
+    pub fn conversation_page(
+        &self,
+        account_id: i64,
+        thread_id: String,
+        theme: PageTheme,
+    ) -> Result<String, CoreError> {
+        use mailrs_render::conversation::{
+            self as page, BodyState, Head, MessageView, Sanitized, Theme,
+        };
+        let conn = self.conn();
+        let metas = messages::thread_messages(&conn, account_id, &thread_id)?;
+        let bodies = metas
+            .iter()
+            .map(|meta| bodies::peek_body(&conn, account_id, &meta.id))
+            .collect::<Result<Vec<_>, _>>()?;
+        let me: Vec<String> = accounts::list_accounts(&conn)?
+            .into_iter()
+            .map(|account| account.email)
+            .collect();
+        drop(conn);
+        // Cleaned once, kept for the borrow each article takes.
+        let cleaned: Vec<Option<Cleaned>> = bodies
+            .iter()
+            .map(|body| {
+                let html = body.as_ref()?.html.as_deref()?;
+                let clean = mailrs_render::sanitize::sanitize_html(html, None);
+                let lower = clean.to_ascii_lowercase();
+                let history = mailrs_render::quoted::history_in_html(&clean);
+                Some((clean, page::paints_itself(&lower), history))
+            })
+            .collect();
+        let theme = Theme {
+            dark: theme.dark,
+            accent: theme.accent,
+            accent_text: theme.accent_text,
+            summarize: false,
+            font: "system-ui".into(),
+        };
+        let subject = metas.first().map(|m| m.subject.clone()).unwrap_or_default();
+        let mut html = page::head(
+            &Head {
+                subject: &subject,
+                count: metas.len(),
+                allow_remote: false,
+            },
+            &theme,
+        );
+        let thumbnails = std::collections::HashMap::new();
+        let photos = std::collections::HashMap::new();
+        let last = metas.len().saturating_sub(1);
+        for (at, meta) in metas.iter().enumerate() {
+            let body = match &bodies[at] {
+                Some(body) => BodyState::Loaded(body),
+                None => BodyState::Loading,
+            };
+            let view = MessageView {
+                meta,
+                body,
+                expanded: at == last || meta.is_unread(),
+                thumbnails: &thumbnails,
+                sanitized: cleaned[at].as_ref().map(|(html, paints, history)| Sanitized {
+                    html,
+                    paints: *paints,
+                    history: history.clone(),
+                }),
+                event_slot: false,
+            };
+            html.push_str(&page::article(&view, &me, &photos));
+        }
+        html.push_str(page::TAIL);
+        Ok(html)
     }
 
     /// The messages of one conversation, oldest first.

@@ -226,7 +226,6 @@ pub struct CalendarView {
     more_anchor: RefCell<Option<gtk::Widget>>,
     /// Watches GNOME's `clock-format` for as long as the page lives;
     /// `None` where its schema is not installed.
-    clock_watch: RefCell<Option<gtk::gio::Settings>>,
     /// The day the view is on; every range is the one around it.
     day: Cell<NaiveDate>,
     kind: Cell<ViewKind>,
@@ -609,7 +608,6 @@ impl CalendarView {
                 more_list,
                 quick,
                 more_anchor: RefCell::new(None),
-                clock_watch: RefCell::new(None),
                 day: Cell::new(today),
                 kind: Cell::new(kind),
                 before_day: Cell::new(match kind {
@@ -718,16 +716,6 @@ impl CalendarView {
         // `app-dark` class the toplevel window carries
         // (`ui::window::track_dark_class`), which reaches this page
         // whichever window it sits in.
-        // Redraws in the new clock as soon as the person flips GNOME's own
-        // setting, not only the next time they navigate. Kept in
-        // `clock_watch` for as long as the view lives, which is what
-        // keeps the watch itself alive.
-        let weak = Rc::downgrade(&view);
-        *view.clock_watch.borrow_mut() = crate::clock_format::watch(move || {
-            if let Some(view) = weak.upgrade() {
-                view.clock_format_changed();
-            }
-        });
         let weak = Rc::downgrade(&view);
         view.more.connect_closed(move |_| {
             let Some(view) = weak.upgrade() else { return };
@@ -772,16 +760,6 @@ impl CalendarView {
         self.show_range();
         self.run.fill_all();
         self.run.read_sidebar(false);
-    }
-
-    /// Redraws everything that shows a time after GNOME's clock format
-    /// changes: the header, the grids' hour labels, which a grid builds
-    /// once, and the times on the cards and in the list, which come from
-    /// the last fill.
-    fn clock_format_changed(self: &Rc<Self>) {
-        self.rebuild_pages();
-        self.show_range();
-        self.run.fill_all();
     }
 
     /// The Refresh action: starts a calendar sync for every account,
