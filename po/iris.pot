@@ -778,22 +778,6 @@ msgstr ""
 msgid "Could not open the draft: {reason}"
 msgstr ""
 
-#: app/src/search.rs:33
-msgid "Subject contains “{words}”"
-msgstr ""
-
-#: app/src/search.rs:40
-msgid "From {person}"
-msgstr ""
-
-#: app/src/search.rs:47
-msgid "To {person}"
-msgstr ""
-
-#: app/src/search.rs:70
-msgid "In {label}"
-msgstr ""
-
 #: app/src/servers.rs:23
 msgid "Not found"
 msgstr ""
@@ -8106,6 +8090,22 @@ msgstr ""
 
 #: appcore/src/rules.rs:286
 msgid "Nothing"
+msgstr ""
+
+#: appcore/src/search.rs:33
+msgid "Subject contains “{words}”"
+msgstr ""
+
+#: appcore/src/search.rs:40
+msgid "From {person}"
+msgstr ""
+
+#: appcore/src/search.rs:47
+msgid "To {person}"
+msgstr ""
+
+#: appcore/src/search.rs:70
+msgid "In {label}"
 msgstr ""
 
 #: appcore/src/settings/mod.rs:233

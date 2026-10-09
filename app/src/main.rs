@@ -39,7 +39,7 @@ use mailrs_appcore::richtext;
 use mailrs_appcore::rules;
 use mailrs_render::sanitize;
 use mailrs_appcore::signature;
-mod search;
+use mailrs_appcore::search;
 mod servers;
 use mailrs_appcore::settings;
 use mailrs_appcore::smime;

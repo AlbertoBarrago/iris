@@ -35,7 +35,7 @@ appcore/src/pgp.rs
 app/src/protection.rs
 app/src/protection/draft.rs
 appcore/src/rules.rs
-app/src/search.rs
+appcore/src/search.rs
 app/src/servers.rs
 appcore/src/smime.rs
 appcore/src/templates.rs

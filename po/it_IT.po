@@ -851,22 +851,6 @@ msgstr "Impossibile salvare: {reason}"
 msgid "Could not open the draft: {reason}"
 msgstr "Impossibile aprire la bozza: {reason}"
 
-#: app/src/search.rs:33
-msgid "Subject contains “{words}”"
-msgstr "L'oggetto contiene “{words}”"
-
-#: app/src/search.rs:40
-msgid "From {person}"
-msgstr "Da {person}"
-
-#: app/src/search.rs:47
-msgid "To {person}"
-msgstr "A {person}"
-
-#: app/src/search.rs:70
-msgid "In {label}"
-msgstr "In {label}"
-
 #: app/src/servers.rs:23
 msgid "Not found"
 msgstr "Non trovato"
@@ -8493,6 +8477,22 @@ msgstr "Inoltra a {address}"
 #: appcore/src/rules.rs:286
 msgid "Nothing"
 msgstr "Niente"
+
+#: appcore/src/search.rs:33
+msgid "Subject contains “{words}”"
+msgstr "L'oggetto contiene “{words}”"
+
+#: appcore/src/search.rs:40
+msgid "From {person}"
+msgstr "Da {person}"
+
+#: appcore/src/search.rs:47
+msgid "To {person}"
+msgstr "A {person}"
+
+#: appcore/src/search.rs:70
+msgid "In {label}"
+msgstr "In {label}"
 
 #: appcore/src/settings/mod.rs:233
 msgid "Local Server"

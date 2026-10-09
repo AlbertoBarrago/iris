@@ -24,6 +24,7 @@ pub mod pgp;
 pub mod protection;
 pub mod richtext;
 pub mod rules;
+pub mod search;
 pub mod settings;
 pub mod signature;
 pub mod smime;

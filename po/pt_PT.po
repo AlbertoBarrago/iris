@@ -854,22 +854,6 @@ msgstr "Não foi possível guardar: {reason}"
 msgid "Could not open the draft: {reason}"
 msgstr "Não foi possível abrir o rascunho: {reason}"
 
-#: app/src/search.rs:33
-msgid "Subject contains “{words}”"
-msgstr "Assunto contém “{words}”"
-
-#: app/src/search.rs:40
-msgid "From {person}"
-msgstr "De {person}"
-
-#: app/src/search.rs:47
-msgid "To {person}"
-msgstr "Para {person}"
-
-#: app/src/search.rs:70
-msgid "In {label}"
-msgstr "Em {label}"
-
 #: app/src/servers.rs:23
 msgid "Not found"
 msgstr "Não encontrado"
@@ -8473,6 +8457,22 @@ msgstr "Reencaminhar para {address}"
 #: appcore/src/rules.rs:286
 msgid "Nothing"
 msgstr "Nada"
+
+#: appcore/src/search.rs:33
+msgid "Subject contains “{words}”"
+msgstr "Assunto contém “{words}”"
+
+#: appcore/src/search.rs:40
+msgid "From {person}"
+msgstr "De {person}"
+
+#: appcore/src/search.rs:47
+msgid "To {person}"
+msgstr "Para {person}"
+
+#: appcore/src/search.rs:70
+msgid "In {label}"
+msgstr "Em {label}"
 
 #: appcore/src/settings/mod.rs:233
 msgid "Local Server"

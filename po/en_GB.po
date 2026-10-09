@@ -751,22 +751,6 @@ msgstr "Could not save: {reason}"
 msgid "Could not open the draft: {reason}"
 msgstr "Could not open the draft: {reason}"
 
-#: app/src/search.rs:33
-msgid "Subject contains “{words}”"
-msgstr "Subject contains “{words}”"
-
-#: app/src/search.rs:40
-msgid "From {person}"
-msgstr "From {person}"
-
-#: app/src/search.rs:47
-msgid "To {person}"
-msgstr "To {person}"
-
-#: app/src/search.rs:70
-msgid "In {label}"
-msgstr "In {label}"
-
 #: app/src/servers.rs:23
 msgid "Not found"
 msgstr "Not found"
@@ -7891,6 +7875,22 @@ msgstr "Forward to {address}"
 #: appcore/src/rules.rs:286
 msgid "Nothing"
 msgstr "Nothing"
+
+#: appcore/src/search.rs:33
+msgid "Subject contains “{words}”"
+msgstr "Subject contains “{words}”"
+
+#: appcore/src/search.rs:40
+msgid "From {person}"
+msgstr "From {person}"
+
+#: appcore/src/search.rs:47
+msgid "To {person}"
+msgstr "To {person}"
+
+#: appcore/src/search.rs:70
+msgid "In {label}"
+msgstr "In {label}"
 
 #: appcore/src/settings/mod.rs:233
 msgid "Local Server"
