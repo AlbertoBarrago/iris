@@ -16,7 +16,7 @@ use mailrs_store::{accounts, bodies, messages};
 
 mod mail;
 
-pub use mail::{CategoryTab, ListRow, Mail, MailboxListing, SidebarItem, bind_language};
+pub use mail::{CategoryTab, ListRow, Mail, MailListener, MailboxListing, SidebarItem, bind_language};
 
 uniffi::setup_scaffolding!();
 

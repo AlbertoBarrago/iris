@@ -11,6 +11,9 @@ final class MailModel {
     /// the GTK app draws it.
     private(set) var page: String?
     private(set) var problem: String?
+    /// Why this window does not sync, when it does not: another copy of
+    /// Iris holds the store.
+    private(set) var notSyncing: String?
 
     var selectedMailbox: String? {
         didSet { if selectedMailbox != oldValue { category = nil; loadList() } }
@@ -56,6 +59,7 @@ final class MailModel {
                 await MainActor.run {
                     self.mail = mail
                     self.store = store
+                    self.startSync()
                     self.sidebar = sidebar
                     self.selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key
                     if let asked, asked.count == 2, let account = Int64(asked[0]) {
@@ -66,6 +70,50 @@ final class MailModel {
                 await MainActor.run { self.problem = "\(error)" }
             }
         }
+    }
+
+    /// Starts the sync engine, and reads the sidebar and the list again a
+    /// moment after each burst of news from it.
+    private func startSync() {
+        guard let mail else { return }
+        let listener = Listener { [weak self] in
+            Task { @MainActor in self?.heardChange() }
+        }
+        do {
+            try mail.startSync(listener: listener)
+            notSyncing = nil
+        } catch {
+            notSyncing = "\(error)"
+        }
+    }
+
+    private var refreshing: Task<Void, Never>?
+
+    /// Waits half a second for the rest of a burst, then reads again.
+    private func heardChange() {
+        refreshing?.cancel()
+        refreshing = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
+            refresh()
+        }
+    }
+
+    /// Reads the sidebar and the shown list again.
+    func refresh() {
+        guard let mail else { return }
+        Task.detached {
+            if let sidebar = try? mail.sidebar() {
+                await MainActor.run {
+                    self.sidebar = sidebar
+                    self.loadList()
+                }
+            }
+        }
+    }
+
+    func checkNow() {
+        mail?.checkNow()
     }
 
     private func loadList() {
@@ -107,4 +155,17 @@ final class MailModel {
 struct ThreadKey: Hashable, Sendable {
     let account: Int64
     let thread: String
+}
+
+/// Hears the Rust core's news on its own threads and hands it on.
+final class Listener: MailListener, @unchecked Sendable {
+    private let heard: @Sendable () -> Void
+
+    init(_ heard: @escaping @Sendable () -> Void) {
+        self.heard = heard
+    }
+
+    func changed(what: String) {
+        heard()
+    }
 }

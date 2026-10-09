@@ -2510,6 +2510,7 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.20",
  "tokio",
+ "tracing",
  "uniffi",
 ]
 
@@ -2675,6 +2676,7 @@ dependencies = [
 name = "mailrs-sync"
 version = "1.0.11"
 dependencies = [
+ "anyhow",
  "async-channel 2.5.0",
  "base64 0.23.1",
  "chrono",

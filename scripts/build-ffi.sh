@@ -16,6 +16,15 @@ release) flag=--release ;;
 *) echo "build-ffi.sh: debug or release, not $profile" >&2; exit 2 ;;
 esac
 
+# The OAuth clients go into the build from packaging/secrets.env, as for
+# the GTK app's scripts; without them Google and Microsoft accounts
+# cannot connect.
+if [ -f packaging/secrets.env ]; then
+    set -a
+    # shellcheck disable=SC1091
+    . packaging/secrets.env
+    set +a
+fi
 # Xcode runs scripts with a PATH of its own, without cargo.
 export PATH="$HOME/.cargo/bin:$PATH"
 cargo +1.98 build -p mailrs-ffi $flag

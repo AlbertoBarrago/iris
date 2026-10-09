@@ -2,8 +2,8 @@
 //! mailbox's conversations, through `mailrs_sync::Mailboxes`, the same
 //! model the GTK window and the assistant read mail through.
 //!
-//! This front end does not sync yet, so the accounts are offline to it:
-//! a mailbox that only Gmail can list, such as Archive, comes back empty.
+//! `Mail::start_sync` runs the sync engine the GTK app runs, with the
+//! same lock on the store, so only one of the two syncs at a time.
 
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -12,20 +12,42 @@ use std::sync::{Arc, Mutex};
 use mailrs_domain::{AccountId, Category, FlagColor, ThreadSummary};
 use mailrs_render::format;
 use mailrs_store::{Db, accounts, labels};
-use mailrs_sync::AccountSync;
+use mailrs_domain::{Account, AccountState, ChangeEvent};
+use mailrs_sync::config::{Config, config_path};
+use mailrs_sync::lock::{LockError, SyncLock};
 use mailrs_sync::mailbox::{Mailboxes, Scope, View};
+use mailrs_sync::passwords::Secrets;
+use mailrs_sync::starting::{self, Connected, Starting};
+use mailrs_sync::{AccountServices, AccountSync, Clients, Connector, SyncEngine};
 use mailrs_sync::{Accounts, Mailbox};
 use mailrs_view::sidebar::{self, Entry, Icon};
 
 use crate::CoreError;
 
-/// No account syncs in this front end yet.
-struct Offline;
+/// The engine, once `Mail::start_sync` started it. Mail actions and
+/// listings that need the server look accounts up here.
+#[derive(Default)]
+struct Running(Mutex<Option<Arc<SyncEngine>>>);
 
-impl Accounts for Offline {
-    fn account(&self, _: AccountId) -> Option<Arc<AccountSync>> {
-        None
+impl Running {
+    fn current(&self) -> Option<Arc<SyncEngine>> {
+        self.0.lock().unwrap_or_else(|p| p.into_inner()).clone()
     }
+}
+
+impl Accounts for Running {
+    fn account(&self, account_id: AccountId) -> Option<Arc<AccountSync>> {
+        self.current()?.account(account_id).ok()
+    }
+}
+
+/// Who hears the engine's news: the window, which reads the sidebar and
+/// the list again.
+#[uniffi::export(with_foreign)]
+pub trait MailListener: Send + Sync {
+    /// Something on screen changed: `what` is `accounts`, `labels`,
+    /// `threads` or `mail`.
+    fn changed(&self, what: String);
 }
 
 /// One line of the sidebar.
@@ -96,7 +118,12 @@ pub struct MailboxListing {
 pub struct Mail {
     runtime: tokio::runtime::Runtime,
     db: Db,
-    mailboxes: Mailboxes<Offline>,
+    /// The folder the store sits in, which the sync lock goes in too.
+    dir: PathBuf,
+    running: Arc<Running>,
+    /// Held while this front end syncs, so the GTK app cannot.
+    lock: Mutex<Option<SyncLock>>,
+    mailboxes: Mailboxes<Running>,
     /// The mailbox behind each key the last sidebar handed out.
     keys: Mutex<HashMap<String, Mailbox>>,
 }
@@ -105,18 +132,93 @@ pub struct Mail {
 impl Mail {
     #[uniffi::constructor]
     pub fn open(path: String) -> Result<Mail, CoreError> {
-        let db = Db::open(&PathBuf::from(path))?;
+        let path = PathBuf::from(path);
+        let db = Db::open(&path)?;
         let runtime = tokio::runtime::Builder::new_multi_thread()
             .worker_threads(2)
+            .thread_name("iris-sync")
+            .thread_stack_size(mailrs_sync::WORKER_STACK)
             .enable_all()
             .build()
             .map_err(|err| CoreError::Store(err.to_string()))?;
+        let running = Arc::new(Running::default());
         Ok(Mail {
-            mailboxes: Mailboxes::new(Arc::new(Offline), db.clone()),
+            mailboxes: Mailboxes::new(Arc::clone(&running), db.clone()),
+            dir: path.parent().map(PathBuf::from).unwrap_or_default(),
+            running,
+            lock: Mutex::new(None),
             runtime,
             db,
             keys: Mutex::new(HashMap::new()),
         })
+    }
+
+    /// Starts syncing every account, as the GTK app does when it opens,
+    /// and tells `listener` what changes. Fails while another copy of Iris
+    /// syncs this store.
+    pub fn start_sync(&self, listener: Arc<dyn MailListener>) -> Result<(), CoreError> {
+        let mut held = self.lock.lock().unwrap_or_else(|p| p.into_inner());
+        if held.is_some() {
+            return Ok(());
+        }
+        let lock = SyncLock::take(&self.dir).map_err(|err| match err {
+            LockError::Held => CoreError::Store(
+                "Another copy of Iris is syncing your mail. Quit it, then try again.".into(),
+            ),
+            other => CoreError::Store(other.to_string()),
+        })?;
+        let config = match config_path().map(|path| Config::load(&path)) {
+            Ok(Ok(config)) => config,
+            Ok(Err(err)) if err.is_missing() => Config::default(),
+            Ok(Err(err)) => return Err(CoreError::Store(err.to_string())),
+            Err(err) => return Err(CoreError::Store(err.to_string())),
+        };
+        let _entered = self.runtime.enter();
+        let (engine, events) = SyncEngine::new(self.db.clone(), config.engine_config());
+        let engine = Arc::new(engine);
+        engine.set_network(true);
+        engine.set_window_open(true);
+        *self.running.0.lock().unwrap_or_else(|p| p.into_inner()) = Some(Arc::clone(&engine));
+        let heard = Arc::clone(&listener);
+        self.runtime.spawn(async move {
+            while let Ok(event) = events.recv().await {
+                heard.changed(what_changed(&event).into());
+            }
+        });
+        let connector = Arc::new(Connector {
+            db: self.db.clone(),
+            config,
+            clients: Clients::built_in(),
+            secrets: Secrets::keyring(),
+        });
+        let port = Arc::new(Port {
+            engine,
+            db: self.db.clone(),
+            listener,
+        });
+        let db = self.db.clone();
+        self.runtime.spawn(async move {
+            let Ok(all) = db.read(accounts::list_accounts).await else { return };
+            let connect = move |account: Account| {
+                let connector = Arc::clone(&connector);
+                async move {
+                    Ok(match connector.connect(&account).await? {
+                        mailrs_sync::Connected::Ready(services) => Connected::Ready(services),
+                        mailrs_sync::Connected::NeedsSignIn(_) => Connected::NeedsSignIn,
+                    })
+                }
+            };
+            starting::start_each(all, connect, port, starting::Waits::APP).await;
+        });
+        *held = Some(lock);
+        Ok(())
+    }
+
+    /// Asks every account to look for new mail now.
+    pub fn check_now(&self) {
+        if let Some(engine) = self.running.current() {
+            engine.poke_all();
+        }
     }
 
     /// The sidebar, with each row's count.
@@ -235,6 +337,41 @@ impl Mail {
             categories,
             empty: listing.empty.title,
         })
+    }
+}
+
+/// Where starting an account lands: the engine, the store, and the window.
+struct Port {
+    engine: Arc<SyncEngine>,
+    db: Db,
+    listener: Arc<dyn MailListener>,
+}
+
+impl Starting<AccountServices> for Port {
+    fn start(&self, account: AccountId, services: AccountServices) {
+        self.engine.start_account(account, services);
+    }
+
+    async fn report(&self, account_id: AccountId, state: AccountState) {
+        let marked = self.db.write(move |c| accounts::set_state(c, account_id, state)).await;
+        if let Err(err) = marked {
+            tracing::warn!(account = account_id, %err, "could not record the account's state");
+        }
+        self.listener.changed("accounts".into());
+    }
+
+    async fn wanted(&self, account_id: AccountId) -> bool {
+        matches!(self.db.read(move |c| accounts::account(c, account_id)).await, Ok(Some(_)))
+    }
+}
+
+/// The word the window hears for an engine event.
+fn what_changed(event: &ChangeEvent) -> &'static str {
+    match event {
+        ChangeEvent::AccountStateChanged { .. } => "accounts",
+        ChangeEvent::LabelsChanged { .. } => "labels",
+        ChangeEvent::NewMail { .. } => "mail",
+        _ => "threads",
     }
 }
 

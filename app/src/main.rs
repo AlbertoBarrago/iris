@@ -42,7 +42,6 @@ mod signature;
 mod search;
 mod servers;
 mod settings;
-mod starting;
 mod smime;
 mod stray_markdown;
 mod templates;

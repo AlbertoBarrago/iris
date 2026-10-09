@@ -7,7 +7,7 @@ use std::time::Duration;
 use mailrs_domain::{Account, AccountId, AccountState};
 
 /// What connecting an account came to, short of an error.
-pub(crate) enum Connected<S> {
+pub enum Connected<S> {
     /// The services to run the account's sync on.
     Ready(S),
     /// Only the person can fix this, by signing in again, so nothing
@@ -18,7 +18,7 @@ pub(crate) enum Connected<S> {
 /// How long one connect may take, and the pauses before trying a failed
 /// one again.
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct Waits {
+pub struct Waits {
     pub connect: Duration,
     pub first_retry: Duration,
     pub longest_retry: Duration,
@@ -28,7 +28,7 @@ impl Waits {
     /// A connect reads the keyring and the store and makes no network
     /// call, and each of those steps gives up after `STEP_WAIT`, so a
     /// minute covers every step with room to spare.
-    pub(crate) const APP: Waits = Waits {
+    pub const APP: Waits = Waits {
         connect: Duration::from_secs(60),
         first_retry: Duration::from_secs(60),
         longest_retry: Duration::from_secs(30 * 60),
@@ -37,7 +37,7 @@ impl Waits {
 
 /// Where starting an account reports to: the engine, the store and the
 /// sidebar in the app, a record in tests.
-pub(crate) trait Starting<S>: Send + Sync + 'static {
+pub trait Starting<S>: Send + Sync + 'static {
     /// Runs the account's sync on `services`.
     fn start(&self, account: AccountId, services: S);
     /// Records the account's state and tells the window.
@@ -53,7 +53,7 @@ pub(crate) trait Starting<S>: Send + Sync + 'static {
 /// tried again after a pause that doubles each time. The accounts used
 /// to start one after another, and one connect that never finished kept
 /// every account after it from syncing.
-pub(crate) async fn start_each<S, P, C, F>(accounts: Vec<Account>, connect: C, port: Arc<P>, waits: Waits)
+pub async fn start_each<S, P, C, F>(accounts: Vec<Account>, connect: C, port: Arc<P>, waits: Waits)
 where
     S: Send + 'static,
     P: Starting<S>,
@@ -108,8 +108,8 @@ where
 /// waiting for the keyring when a keyring read did not answer, so the
 /// sidebar does not blame the provider, else backing off.
 fn waiting_state(err: &anyhow::Error) -> AccountState {
-    match err.downcast_ref::<mailrs_sync::SyncError>() {
-        Some(mailrs_sync::SyncError::NoAnswer(step)) if *step == mailrs_sync::KEYRING => {
+    match err.downcast_ref::<crate::SyncError>() {
+        Some(crate::SyncError::NoAnswer(step)) if *step == crate::KEYRING => {
             AccountState::WaitingForKeyring
         }
         _ => AccountState::BackingOff,
@@ -192,7 +192,7 @@ mod tests {
                         Answer::Ready => Ok(Connected::Ready("services")),
                         Answer::SignIn => Ok(Connected::NeedsSignIn),
                         Answer::Fail => Err(anyhow::anyhow!("the keyring refused")),
-                        Answer::Keyring => Err(mailrs_sync::SyncError::NoAnswer(mailrs_sync::KEYRING).into()),
+                        Answer::Keyring => Err(crate::SyncError::NoAnswer(crate::KEYRING).into()),
                         Answer::Hang => std::future::pending().await,
                     }
                 })

@@ -8,6 +8,13 @@ struct ThreadListView: View {
     var body: some View {
         @Bindable var model = model
         VStack(spacing: 0) {
+            if let reason = model.notSyncing {
+                Label(reason, systemImage: "pause.circle")
+                    .font(.callout)
+                    .padding(10)
+                    .frame(maxWidth: .infinity)
+                    .background(.yellow.opacity(0.15))
+            }
             if let listing = model.listing, !listing.categories.isEmpty {
                 CategoryBar(tabs: listing.categories, selected: $model.category)
                     .padding(.horizontal, 12)
@@ -28,6 +35,7 @@ struct ThreadListView: View {
         .navigationSubtitle(model.listing?.subtitle ?? "")
         .toolbar {
             ToolbarItemGroup {
+                Button("Check for Mail", systemImage: "arrow.clockwise") { model.checkNow() }
                 Button("Search", systemImage: "magnifyingglass") {}
                 Button("New Message", systemImage: "square.and.pencil") {}
             }

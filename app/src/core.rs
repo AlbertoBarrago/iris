@@ -36,7 +36,7 @@ use crate::add_account::Attempt;
 use crate::add_account::lookup::{Check, Heard, check_of_url};
 use crate::assistant::run::{Background, Modules};
 use crate::demo::{self, DemoMail};
-use crate::starting::{self, Connected, Starting};
+use mailrs_sync::starting::{self, Connected, Starting};
 use mailrs_domain::translate::gettext;
 
 /// The store could not be updated to this version, and the copy taken

@@ -1734,7 +1734,7 @@ msgstr "Janela"
 msgid "Check for Updates…"
 msgstr "Procurar atualizações…"
 
-#: app/src/main.rs:69
+#: app/src/main.rs:68
 msgid ""
 "Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
 "\n"
@@ -1757,15 +1757,15 @@ msgstr ""
 "  FICHEIRO.ics   abre um ficheiro de calendário, para adicionar os seus "
 "eventos a um calendário"
 
-#: app/src/main.rs:174
+#: app/src/main.rs:173
 msgid "iris: unknown option {option}"
 msgstr "iris: opção desconhecida {option}"
 
-#: app/src/main.rs:319
+#: app/src/main.rs:318
 msgid "Iris Could Not Start"
 msgstr "O Iris não conseguiu arrancar"
 
-#: app/src/main.rs:324 app/src/ui/about.rs:155
+#: app/src/main.rs:323 app/src/ui/about.rs:155
 msgid "Report a Problem"
 msgstr "Comunicar um problema"
 

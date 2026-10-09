@@ -25,6 +25,7 @@ pub mod passwords;
 pub mod raw_cache;
 pub mod rules;
 pub mod sign_in;
+pub mod starting;
 pub mod services;
 mod settings;
 mod triage;

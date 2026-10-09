@@ -25,6 +25,7 @@ mailrs-view.workspace = true
 chrono.workspace = true
 gettext-rs.workspace = true
 tokio.workspace = true
+tracing.workspace = true
 rusqlite.workspace = true
 thiserror.workspace = true
 uniffi = { version = "0.32.2", features = ["cli"] }

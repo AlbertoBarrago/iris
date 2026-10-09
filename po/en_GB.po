@@ -1595,7 +1595,7 @@ msgstr "Window"
 msgid "Check for Updates…"
 msgstr "Check for Updates…"
 
-#: app/src/main.rs:69
+#: app/src/main.rs:68
 msgid ""
 "Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
 "\n"
@@ -1615,15 +1615,15 @@ msgstr ""
 "  mailto:...     the same as --compose mailto:...\n"
 "  FILE.ics       open a calendar file, to add its events to a calendar"
 
-#: app/src/main.rs:174
+#: app/src/main.rs:173
 msgid "iris: unknown option {option}"
 msgstr "iris: unknown option {option}"
 
-#: app/src/main.rs:319
+#: app/src/main.rs:318
 msgid "Iris Could Not Start"
 msgstr "Iris Could Not Start"
 
-#: app/src/main.rs:324 app/src/ui/about.rs:155
+#: app/src/main.rs:323 app/src/ui/about.rs:155
 msgid "Report a Problem"
 msgstr "Report a Problem"
 
