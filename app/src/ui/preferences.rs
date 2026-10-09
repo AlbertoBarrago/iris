@@ -385,7 +385,11 @@ fn writing_page(
         ))
         .build();
     for account in accounts {
-        let text = settings.signature(&account.email).to_string();
+        let formatted = settings.formatted_signature(&account.email).to_string();
+        let text = match formatted.is_empty() {
+            true => settings.signature(&account.email).to_string(),
+            false => crate::signature::to_text(&formatted),
+        };
         // The subtitle is the signature's first line, which may hold "&"
         // or a Markdown link in angle brackets.
         let row = adw::ExpanderRow::builder()
@@ -427,12 +431,16 @@ fn writing_page(
             .css_classes(["flat"])
             .build();
         row.add_row(&import);
+        let formatted_row = formatted_signature_row(app, &account.email, &view, &row, dialog);
+        row.add_row(&formatted_row.buttons);
+        formatted_row.show(!formatted.is_empty());
         let (weak, account_id, target, toasts) = (
             Rc::downgrade(app),
             account.id,
             view.buffer(),
             dialog.clone(),
         );
+        let shown = Rc::clone(&formatted_row);
         import.connect_clicked(move |button| {
             let Some(app) = weak.upgrade() else { return };
             if app.core.account(account_id).is_none() {
@@ -442,6 +450,7 @@ fn writing_page(
             let settings = app.core.gmail_settings();
             button.set_sensitive(false);
             let (button, target, toasts) = (button.clone(), target.clone(), toasts.clone());
+            let shown = Rc::clone(&shown);
             glib::spawn_future_local(async move {
                 match app
                     .core
@@ -449,6 +458,9 @@ fn writing_page(
                     .await
                 {
                     Ok(Some(signature)) => {
+                        // Saved as Markdown, which puts a formatted
+                        // signature away, so the field opens again.
+                        shown.show(false);
                         target.set_text(&signature);
                         toasts.add_toast(crate::ui::toast(&gettext(
                             "Imported the signature from Gmail",
@@ -466,8 +478,14 @@ fn writing_page(
             });
         });
         let (weak, email, subtitle) = (Rc::downgrade(app), account.email.clone(), row.clone());
+        let filling = Rc::clone(&formatted_row.filling);
         view.buffer().connect_changed(move |buffer| {
             let Some(app) = weak.upgrade() else { return };
+            // The text of a formatted signature, put here to show what it
+            // says, is not a signature written in Markdown.
+            if filling.get() {
+                return;
+            }
             let text = buffer
                 .text(&buffer.start_iter(), &buffer.end_iter(), false)
                 .to_string();
@@ -1286,6 +1304,163 @@ fn sync_combo<T: Copy + 'static>(
         }
     });
     row
+}
+
+/// The buttons that bring in a formatted signature for one address, or
+/// take it away, and the switch they flip on the Markdown field above them.
+struct FormattedRow {
+    buttons: gtk::Box,
+    remove: gtk::Button,
+    note: gtk::Label,
+    view: gtk::TextView,
+    /// Set while the field shows a formatted signature's text, which is
+    /// not an edit for it to save.
+    filling: Rc<Cell<bool>>,
+}
+
+impl FormattedRow {
+    /// Shows the field as it stands with a formatted signature or without:
+    /// read-only, showing that signature's words, or open for Markdown.
+    fn show(&self, formatted: bool) {
+        self.view.set_editable(!formatted);
+        self.view.set_cursor_visible(!formatted);
+        match formatted {
+            true => self.view.add_css_class("dim-label"),
+            false => self.view.remove_css_class("dim-label"),
+        }
+        self.remove.set_visible(formatted);
+        self.note.set_visible(formatted);
+    }
+
+    /// Puts `text` in the field without saving it as a Markdown signature.
+    fn fill(&self, text: &str) {
+        self.filling.set(true);
+        self.view.buffer().set_text(text);
+        self.filling.set(false);
+    }
+}
+
+fn formatted_signature_row(
+    app: &Rc<App>,
+    email: &str,
+    view: &gtk::TextView,
+    row: &adw::ExpanderRow,
+    dialog: &adw::PreferencesDialog,
+) -> Rc<FormattedRow> {
+    let button = |label: String| {
+        gtk::Button::builder()
+            .label(label)
+            .css_classes(["flat"])
+            .build()
+    };
+    let paste = button(gettext("Paste Formatted Signature"));
+    let import = button(gettext("Import from File…"));
+    let remove = button(gettext("Remove Formatted Signature"));
+    let note = gtk::Label::builder()
+        .label(gettext(
+            "This signature goes out as it was made, pictures and layout included.",
+        ))
+        .wrap(true)
+        .xalign(0.0)
+        .hexpand(true)
+        .css_classes(["dim-label", "caption"])
+        .build();
+    let buttons = gtk::Box::builder()
+        .spacing(6)
+        .margin_top(6)
+        .margin_bottom(6)
+        .margin_start(12)
+        .margin_end(6)
+        .build();
+    buttons.append(&note);
+    let spacer = gtk::Box::builder().hexpand(true).build();
+    buttons.append(&spacer);
+    for b in [&remove, &import, &paste] {
+        buttons.append(b);
+    }
+    let formatted = Rc::new(FormattedRow {
+        buttons,
+        remove: remove.clone(),
+        note,
+        view: view.clone(),
+        filling: Rc::new(Cell::new(false)),
+    });
+    // What each button brings in lands the same way: kept, shown, and
+    // said on a toast.
+    let keep: Rc<dyn Fn(Option<String>)> = {
+        let (weak, email, shown, row, toasts) = (
+            Rc::downgrade(app),
+            email.to_string(),
+            Rc::clone(&formatted),
+            row.clone(),
+            dialog.clone(),
+        );
+        Rc::new(move |html: Option<String>| {
+            let Some(app) = weak.upgrade() else { return };
+            let html = html.map(|h| crate::signature::clean(&h)).unwrap_or_default();
+            if html.is_empty() {
+                toasts.add_toast(crate::ui::toast(&gettext(
+                    "There is no formatted signature to bring in",
+                )));
+                return;
+            }
+            let text = crate::signature::to_text(&html);
+            shown.fill(&text);
+            shown.show(true);
+            row.set_subtitle(&preview(&text));
+            app.change_settings(Change::FormattedSignature {
+                email: email.clone(),
+                html,
+            });
+            toasts.add_toast(crate::ui::toast(&gettext("Formatted signature saved")));
+        })
+    };
+    let failed = {
+        let toasts = dialog.clone();
+        move |err: String| {
+            let said = fill(&gettext("Could not import: {reason}"), &[("reason", &err)]);
+            toasts.add_toast(crate::ui::toast(&said));
+        }
+    };
+    let (kept, fail) = (Rc::clone(&keep), failed.clone());
+    paste.connect_clicked(move |button| {
+        let (button, keep, fail) = (button.clone(), Rc::clone(&kept), fail.clone());
+        glib::spawn_future_local(async move {
+            match crate::ui::signature_source::from_clipboard(&button).await {
+                Ok(html) => keep(html),
+                Err(err) => fail(err),
+            }
+        });
+    });
+    let (kept, fail) = (Rc::clone(&keep), failed);
+    import.connect_clicked(move |button| {
+        let (button, keep, fail) = (button.clone(), Rc::clone(&kept), fail.clone());
+        glib::spawn_future_local(async move {
+            let parent = button.root().and_downcast::<gtk::Window>();
+            match crate::ui::signature_source::from_file(parent.as_ref()).await {
+                Ok(Some(html)) => keep(Some(html)),
+                Ok(None) => {}
+                Err(err) => fail(err),
+            }
+        });
+    });
+    let (weak, email, shown, row) = (
+        Rc::downgrade(app),
+        email.to_string(),
+        Rc::clone(&formatted),
+        row.clone(),
+    );
+    remove.connect_clicked(move |_| {
+        let Some(app) = weak.upgrade() else { return };
+        app.change_settings(Change::FormattedSignature {
+            email: email.clone(),
+            html: String::new(),
+        });
+        shown.fill("");
+        shown.show(false);
+        row.set_subtitle(&preview(""));
+    });
+    formatted
 }
 
 /// The first line of a signature, for the row's subtitle.

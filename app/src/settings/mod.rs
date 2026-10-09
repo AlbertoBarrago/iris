@@ -9,6 +9,8 @@ use mailrs_domain::calendar::week::WeekStart;
 use mailrs_domain::translate::{fill_plural, gettext, pgettext};
 use serde::{Deserialize, Serialize};
 
+use crate::compose::SignatureBlock;
+
 mod change;
 mod file;
 pub mod mcp;
@@ -36,6 +38,9 @@ pub struct Settings {
     pub default_account: Option<String>,
     /// Markdown signature per account address.
     pub signatures: BTreeMap<String, String>,
+    /// Formatted signature per account address, as cleaned HTML. An
+    /// address has one written signature at most, in one map or the other.
+    pub formatted_signatures: BTreeMap<String, String>,
     /// How long Undo stays available after Send.
     pub undo_send: UndoSend,
     /// The colour a new flag gets: the last one chosen.
@@ -489,6 +494,7 @@ impl Default for Settings {
             notification_previews: true,
             default_account: None,
             signatures: BTreeMap::new(),
+            formatted_signatures: BTreeMap::new(),
             undo_send: UndoSend::Ten,
             flag_color: mailrs_domain::FlagColor::Red,
             vips: BTreeMap::new(),
@@ -877,6 +883,13 @@ impl Settings {
             .map_or("", String::as_str)
     }
 
+    /// The formatted signature written for `email`, empty when it has none.
+    pub fn formatted_signature(&self, email: &str) -> &str {
+        self.formatted_signatures
+            .get(&email.to_lowercase())
+            .map_or("", String::as_str)
+    }
+
     /// `emails` in the order the user chose; unlisted ones keep theirs, last.
     pub fn ordered<'a>(&self, emails: &[&'a str]) -> Vec<&'a str> {
         let rank = |email: &str| {
@@ -950,18 +963,31 @@ impl Settings {
     }
 
     /// What goes below a message sent from `email`. A signature written here
-    /// wins; failing that, the one Gmail keeps for that send-as address.
-    pub fn signature_for(&self, account: &str, email: &str) -> &str {
+    /// wins, formatted or not; failing that, the one Gmail keeps for that
+    /// send-as address, formatted when it holds more than words.
+    pub fn signature_for(&self, account: &str, email: &str) -> SignatureBlock {
+        let formatted = self.formatted_signature(email);
+        if !formatted.is_empty() {
+            return SignatureBlock::Html(formatted.to_string());
+        }
         let written = self.signature(email);
         if !written.is_empty() {
-            return written;
+            return SignatureBlock::Markdown(written.to_string());
         }
-        self.send_as
+        let Some(gmail) = self
+            .send_as
             .get(&account.to_lowercase())
             .into_iter()
             .flatten()
             .find(|a| a.email.eq_ignore_ascii_case(email))
-            .map_or("", |a| a.signature.as_str())
+        else {
+            return SignatureBlock::default();
+        };
+        let html = crate::signature::clean(&gmail.signature_html);
+        match html.is_empty() {
+            true => SignatureBlock::Markdown(gmail.signature.clone()),
+            false => SignatureBlock::Html(html),
+        }
     }
 
     /// Whether the account's send-as addresses are a day old or were
@@ -1011,8 +1037,22 @@ impl Settings {
         if signature.trim().is_empty() {
             self.signatures.remove(&key);
         } else {
+            self.formatted_signatures.remove(&key);
             self.signatures
                 .insert(key, signature.trim_end().to_string());
+        }
+    }
+
+    /// Keeps `html`, cleaned, as the signature for `email`, in place of a
+    /// Markdown one. HTML that shows nothing once cleaned removes it.
+    pub fn set_formatted_signature(&mut self, email: &str, html: &str) {
+        let key = email.to_lowercase();
+        let html = crate::signature::clean(html);
+        if html.is_empty() {
+            self.formatted_signatures.remove(&key);
+        } else {
+            self.signatures.remove(&key);
+            self.formatted_signatures.insert(key, html);
         }
     }
 }
@@ -1415,12 +1455,14 @@ mod tests {
                     email: "dana@example.com".into(),
                     name: Some("Dana".into()),
                     signature: "Dana".into(),
+                    signature_html: String::new(),
                     default: true,
                 },
                 crate::compose::SendAsAddress {
                     email: "sales@example.com".into(),
                     name: Some("Sales".into()),
                     signature: "The Sales Desk".into(),
+                    signature_html: String::new(),
                     default: false,
                 },
             ],
@@ -1454,13 +1496,50 @@ mod tests {
         );
         assert_eq!(
             settings.signature_for("dana@example.com", "SALES@example.com"),
-            "The Sales Desk"
+            SignatureBlock::Markdown("The Sales Desk".into())
         );
         settings.set_signature("sales@example.com", "Dana, Sales");
         assert_eq!(
             settings.signature_for("dana@example.com", "sales@example.com"),
-            "Dana, Sales"
+            SignatureBlock::Markdown("Dana, Sales".into())
         );
+    }
+
+    #[test]
+    fn a_formatted_signature_takes_the_place_of_the_written_one() {
+        let mut settings = Settings::default();
+        settings.set_signature("dana@example.com", "Dana");
+        settings.set_formatted_signature("Dana@Example.com", "<p><b>Dana</b></p><script>x()</script>");
+        assert_eq!(
+            settings.signature_for("dana@example.com", "dana@example.com"),
+            SignatureBlock::Html("<p><b>Dana</b></p>".into())
+        );
+        assert_eq!(settings.signature("dana@example.com"), "");
+        // Writing one in Markdown again puts the formatted one away.
+        settings.set_signature("dana@example.com", "Dana Reyes");
+        assert_eq!(settings.formatted_signature("dana@example.com"), "");
+        // HTML that shows nothing removes a formatted signature and keeps
+        // the written one.
+        settings.set_formatted_signature("dana@example.com", "<p> </p>");
+        assert_eq!(settings.signature("dana@example.com"), "Dana Reyes");
+    }
+
+    #[test]
+    fn gmail_keeps_a_formatted_signature_when_it_holds_one() {
+        let mut settings = Settings::default();
+        settings.send_as.insert(
+            "dana@example.com".into(),
+            vec![crate::compose::SendAsAddress {
+                email: "dana@example.com".into(),
+                signature: "Dana".into(),
+                signature_html: "<img src=\"https://example.com/logo.png\"><b>Dana</b>".into(),
+                ..Default::default()
+            }],
+        );
+        assert!(matches!(
+            settings.signature_for("dana@example.com", "dana@example.com"),
+            SignatureBlock::Html(html) if html.contains("logo.png")
+        ));
     }
 
     #[test]

@@ -753,6 +753,7 @@ impl<S: Submit, P: Pop3Api> IdentityService for Pop3<S, P> {
             email: self.settings.address.clone(),
             name: None,
             signature: String::new(),
+            signature_html: String::new(),
             default: true,
         }])
     }

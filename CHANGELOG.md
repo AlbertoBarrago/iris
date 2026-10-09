@@ -5,6 +5,16 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ## Unreleased
 
+### New
+
+- A company signature with logos, badges and a table can be pasted or
+  imported in Preferences, and goes out looking the way it was made.
+
+### Fixed
+
+- A Gmail signature with pictures or formatting no longer goes out as
+  plain lines with its pictures missing.
+
 ## 1.0.11 (2026-10-08)
 
 ### Fixed

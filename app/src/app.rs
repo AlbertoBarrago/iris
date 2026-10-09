@@ -518,7 +518,7 @@ impl App {
                 identities.push(Identity {
                     account_id: account.id,
                     account_email: email.to_string(),
-                    signature: settings.signature_for(email, &sender.email).to_string(),
+                    signature: settings.signature_for(email, &sender.email),
                     address: Address {
                         name,
                         email: sender.email.clone(),
@@ -623,6 +623,12 @@ impl App {
                         email: a.email,
                         name: a.name,
                         signature: a.signature,
+                        // Kept only when it holds more than lines of
+                        // words, which the text above already carries.
+                        signature_html: match crate::signature::is_formatted(&a.signature_html) {
+                            true => crate::signature::clean(&a.signature_html),
+                            false => String::new(),
+                        },
                         default: a.default,
                     })
                     .collect();

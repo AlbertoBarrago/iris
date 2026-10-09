@@ -29,6 +29,8 @@ mod macos_bundle;
 #[cfg(target_os = "macos")]
 mod macos_menu;
 #[cfg(target_os = "macos")]
+mod macos_pasteboard;
+#[cfg(target_os = "macos")]
 mod sparkle;
 mod language_names;
 mod locale_time;
@@ -46,6 +48,7 @@ mod render;
 mod richtext;
 mod rules;
 mod sanitize;
+mod signature;
 mod search;
 mod servers;
 mod settings;

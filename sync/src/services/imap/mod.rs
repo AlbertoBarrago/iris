@@ -570,6 +570,7 @@ impl<I: ImapApi, S: Submit> IdentityService for Imap<I, S> {
             email: self.settings.address.clone(),
             name: None,
             signature: String::new(),
+            signature_html: String::new(),
             default: true,
         }])
     }

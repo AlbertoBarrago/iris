@@ -77,6 +77,9 @@ pub struct SendAsAddress {
     pub name: Option<String>,
     /// The signature the server holds for this address, as plain text.
     pub signature: String,
+    /// The same signature as the server holds it, in HTML. Empty when the
+    /// server keeps signatures as text, or none at all.
+    pub signature_html: String,
     /// The address the server sends from when the writer picks none.
     pub default: bool,
 }

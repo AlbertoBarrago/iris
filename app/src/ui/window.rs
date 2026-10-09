@@ -2823,8 +2823,8 @@ impl MainWindow {
                 addresses: vec![crate::compose::SendAsAddress {
                     email: account.email.clone(),
                     name: Some(name),
-                    signature: String::new(),
                     default: true,
+                    ..Default::default()
                 }],
                 at: mailrs_sync::now_millis(),
             });

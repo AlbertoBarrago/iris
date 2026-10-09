@@ -114,6 +114,12 @@ pub enum Change {
         email: String,
         text: String,
     },
+    /// An account's formatted signature, as HTML pasted or imported.
+    /// It replaces the Markdown one; HTML that shows nothing removes it.
+    FormattedSignature {
+        email: String,
+        html: String,
+    },
     /// Adds the address when it is not a VIP yet, removes it when it is.
     ToggleVip {
         email: String,
@@ -345,6 +351,9 @@ impl Change {
                 }
             }
             Change::Signature { email, text } => settings.set_signature(&email, &text),
+            Change::FormattedSignature { email, html } => {
+                settings.set_formatted_signature(&email, &html)
+            }
             Change::ToggleVip { email, name } => {
                 settings.toggle_vip(&email, &name);
             }
@@ -645,6 +654,7 @@ settable! {
         show_declined_events,
         sign_by_default,
         signatures,
+        formatted_signatures,
         smart_mailboxes,
         space,
         spell_languages,
@@ -802,6 +812,7 @@ impl Effects {
             notification_previews,
             default_account,
             signatures,
+            formatted_signatures,
             undo_send,
             flag_color,
             vips,
@@ -854,6 +865,7 @@ impl Effects {
             notification_previews,
             default_account,
             signatures,
+            formatted_signatures,
             undo_send,
             flag_color,
             notify_vips_only,
@@ -1187,6 +1199,10 @@ mod tests {
             Change::Signature {
                 email: "ann@example.com".into(),
                 text: "Ann".into(),
+            },
+            Change::FormattedSignature {
+                email: "ann@example.com".into(),
+                html: "<b>Ann</b>".into(),
             },
             Change::AssistantDetailsExpanded(true),
             Change::UpdateChecked(1_700_000_000),

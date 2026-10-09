@@ -707,7 +707,8 @@ impl<G: GmailApi> AutoReplyService for Google<G> {
 impl<G: GmailApi> IdentityService for Google<G> {
     /// Gmail's send-as list, one `sendAs.list` call. An alias still waiting
     /// on its owner to confirm it is left out, since Gmail would refuse to
-    /// send from it. Signatures come as HTML and leave as text.
+    /// send from it. Signatures come as HTML and leave both as text and
+    /// as they came, for the app to keep a formatted one whole.
     async fn identities(&self) -> Result<Vec<SendAsAddress>, BackendError> {
         Ok(paced(self.gmail.send_as())
             .await?
@@ -717,6 +718,7 @@ impl<G: GmailApi> IdentityService for Google<G> {
                 name: Some(identity.display_name).filter(|n| !n.trim().is_empty()),
                 email: identity.send_as_email,
                 signature: html_to_text(&identity.signature),
+                signature_html: identity.signature,
                 default: identity.is_default,
             })
             .collect())
@@ -768,7 +770,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn identities_are_the_confirmed_addresses_with_their_signatures_as_text() {
+    async fn identities_are_the_confirmed_addresses_with_their_signatures_as_text_and_html() {
         let (gmail, google) = google();
         gmail.with(|s| {
             s.signature = Some("Me\nExample Co".into());
@@ -787,6 +789,7 @@ mod tests {
                 email: "me@example.com".into(),
                 name: Some("Me".into()),
                 signature: "Me\nExample Co".into(),
+                signature_html: "Me<br>Example Co".into(),
                 default: true,
             }]
         );

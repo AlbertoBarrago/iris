@@ -447,6 +447,7 @@ impl<G: GraphApi> IdentityService for Microsoft<G> {
             email: self.settings.address.clone(),
             name: None,
             signature: String::new(),
+            signature_html: String::new(),
             default: true,
         }])
     }

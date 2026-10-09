@@ -77,6 +77,7 @@ async fn the_account_sends_as_its_own_address() {
             email: "me@example.com".into(),
             name: None,
             signature: String::new(),
+            signature_html: String::new(),
             default: true,
         }]
     );

@@ -148,14 +148,14 @@ impl App {
 
     /// `draft` with the signature of the address it comes from. Gmail keeps
     /// one per send-as address, so a reply from an alias is signed as that
-    /// alias.
+    /// alias. A formatted signature rides beside the words rather than in
+    /// them.
     fn signed(&self, mut draft: Draft) -> Draft {
         let account = self.account_email(draft.account_id);
         let settings = self.settings.borrow();
-        draft.markdown = crate::compose::with_signature(
-            &draft.markdown,
-            settings.signature_for(&account, &draft.from.email),
-        );
+        let signature = settings.signature_for(&account, &draft.from.email);
+        draft.markdown = crate::compose::with_signature(&draft.markdown, signature.markdown());
+        draft.signature = signature.html().map(str::to_string);
         draft
     }
 

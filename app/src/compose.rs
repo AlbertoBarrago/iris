@@ -36,6 +36,11 @@ pub struct SendAsAddress {
     /// Gmail's signature for this address as plain text, empty when it has none.
     #[serde(skip_serializing_if = "String::is_empty")]
     pub signature: String,
+    /// The same signature as Gmail keeps it, in HTML, when it holds more
+    /// than lines of words: a picture, a table, a link or a color. Empty
+    /// otherwise, and then `signature` is the one that goes out.
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub signature_html: String,
     /// The address Gmail sends from when the writer picks none.
     #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub default: bool,
@@ -50,11 +55,50 @@ pub struct Identity {
     /// The account this address belongs to, which groups the From row.
     pub account_email: String,
     pub address: Address,
-    /// What goes below the message, as Markdown. Empty when there is none.
-    pub signature: String,
+    /// What goes below the message.
+    pub signature: SignatureBlock,
     /// Gmail's own choice for the account, used when nothing else points
     /// at an address.
     pub default: bool,
+}
+
+/// The signature one address signs with, in one of the two forms it can
+/// take. Lines of words go into the editor as Markdown, where the writer
+/// can change them for one message. A formatted signature, with pictures
+/// and a table holding them in place, cannot survive that trip, so it
+/// stays a block of HTML beside the editor and goes out as it is (see
+/// `crate::signature`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SignatureBlock {
+    /// Markdown, empty when the address has no signature.
+    Markdown(String),
+    /// Cleaned HTML, never empty.
+    Html(String),
+}
+
+impl Default for SignatureBlock {
+    fn default() -> Self {
+        SignatureBlock::Markdown(String::new())
+    }
+}
+
+impl SignatureBlock {
+    /// The lines this signature puts into the editor: none for a
+    /// formatted one.
+    pub fn markdown(&self) -> &str {
+        match self {
+            SignatureBlock::Markdown(text) => text,
+            SignatureBlock::Html(_) => "",
+        }
+    }
+
+    /// The block this signature puts beside the editor, if it is one.
+    pub fn html(&self) -> Option<&str> {
+        match self {
+            SignatureBlock::Markdown(_) => None,
+            SignatureBlock::Html(html) => Some(html),
+        }
+    }
 }
 
 /// The address a reply to `original` comes from: whichever of `mine` the
@@ -278,6 +322,22 @@ pub fn preview_page(title: &str, body: &str, dark: bool) -> String {
     )
 }
 
+/// A formatted signature as a page of its own, for the composer to show
+/// under the editor. It is the writer's own signature, so the pictures it
+/// names on the web load, which a whole message in the preview may not
+/// do. It stays light in a dark window: a logo is drawn for white, and
+/// the dark preview's inverting filter would turn it into a negative.
+pub fn signature_page(title: &str, body: &str) -> String {
+    format!(
+        "<!doctype html><html><head><meta charset=\"utf-8\">\
+         <meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'none'; \
+         style-src 'unsafe-inline'; img-src data: https:; font-src data:\">\
+         <title>{}</title><style>body{{margin:12px 20px;background:#fff;color:#000}}</style></head><body>{}</body></html>",
+        richtext::escape(title),
+        crate::sanitize::sanitize_html(body, None)
+    )
+}
+
 /// Splits a saved draft's HTML at the forwarded message, if it holds one.
 /// Returns what the writer wrote and the forwarded block as it stands.
 fn split_forwarded_html(html: &str) -> (String, Option<String>) {
@@ -493,6 +553,11 @@ pub struct Draft {
     /// which puts them in `markdown`, or drops them.
     #[serde(default)]
     pub quoted: Option<String>,
+    /// A formatted signature, as cleaned HTML, which goes out under the
+    /// writer's words and above the quote or the forwarded message. A
+    /// signature written in Markdown is part of `markdown` instead.
+    #[serde(default)]
+    pub signature: Option<String>,
     /// The Gmail draft this composer saves into.
     pub draft_id: Option<String>,
     /// When a scheduled draft is due to go out.
@@ -534,6 +599,7 @@ impl Draft {
             attachments: vec![],
             forwarded: None,
             quoted: None,
+            signature: None,
             draft_id: None,
             send_at: None,
             sign: false,
@@ -596,6 +662,24 @@ impl Draft {
                 (text, html)
             }
         };
+        // A formatted signature saved with the draft goes back beside the
+        // editor, and its lines come out of the text part with it.
+        let (text, html) = match html.as_deref().and_then(cut_signature) {
+            Some((html, signature)) => {
+                let lines = crate::signature::to_text(&signature);
+                let text = match signature_starts_at(&text, &lines) {
+                    Some(at) => text[..at].trim_end().to_string(),
+                    None => text,
+                };
+                let signature = crate::signature::clean(&signature);
+                self.signature = (!signature.is_empty()).then_some(signature);
+                (text, Some(html))
+            }
+            None => {
+                self.signature = None;
+                (text, html)
+            }
+        };
         self.markdown = text;
         self.rich = html
             .filter(|html| !html.trim().is_empty())
@@ -632,6 +716,10 @@ impl Draft {
             None => self.markdown.contains(&needle),
         };
         written
+            || self
+                .signature
+                .as_deref()
+                .is_some_and(|html| refers_to_cid(html, cid))
             || self
                 .forwarded
                 .as_ref()
@@ -1302,9 +1390,9 @@ pub fn build(draft: &Draft, date_secs: i64, message_id: &str) -> Result<Built, S
 
 /// The RFC 822 bytes for `draft`.
 pub fn build_mime(draft: &Draft, date_secs: i64, message_id: &str) -> Result<Vec<u8>, String> {
-    let (text, html) = written(draft, Purpose::Send);
+    let (text, html, pictures) = written(draft, Purpose::Send);
     envelope(draft, date_secs, message_id)
-        .body(body_tree(draft, text, html))
+        .body(body_tree(draft, text, html, &pictures))
         .write_to_vec()
         .map_err(|e| e.to_string())
 }
@@ -1317,9 +1405,9 @@ pub fn build_saved_draft(
     date_secs: i64,
     message_id: &str,
 ) -> Result<Vec<u8>, String> {
-    let (text, html) = written(draft, Purpose::Keep);
+    let (text, html, pictures) = written(draft, Purpose::Keep);
     envelope(draft, date_secs, message_id)
-        .body(body_tree(draft, text, html))
+        .body(body_tree(draft, text, html, &pictures))
         .write_to_vec()
         .map_err(|e| e.to_string())
 }
@@ -1338,10 +1426,10 @@ pub fn build_saved_body_part(draft: &Draft) -> Result<Vec<u8>, String> {
 }
 
 fn body_part(draft: &Draft, purpose: Purpose) -> Result<Vec<u8>, String> {
-    let (text, html) = written(draft, purpose);
+    let (text, html, pictures) = written(draft, purpose);
     let mut out = Vec::new();
     MessageBuilder::new()
-        .body(body_tree(draft, text, html))
+        .body(body_tree(draft, text, html, &pictures))
         .write_body(&mut out)
         .map_err(|e| e.to_string())?;
     Ok(out)
@@ -1399,24 +1487,101 @@ enum Purpose {
 /// with it unfolded and untouched. A draft kept in Gmail renders the words
 /// and the quote apart, with [`QUOTE_MARK`] between them, so reopening it
 /// can fold the quote again.
-fn written(draft: &Draft, purpose: Purpose) -> (String, String) {
+///
+/// The pictures a formatted signature carries inside itself come back
+/// beside the two, to go out as parts of their own.
+fn written(draft: &Draft, purpose: Purpose) -> (String, String, Vec<OutgoingAttachment>) {
+    let (signature, pictures) = match &draft.signature {
+        Some(html) => {
+            let (html, pictures) = crate::signature::lift_pictures(html);
+            (Some(html), pictures)
+        }
+        None => (None, Vec::new()),
+    };
     let (mut text, mut html) = written_body(
         &draft.markdown,
         draft.rich.as_ref(),
         draft.quoted.as_deref(),
+        signature.as_deref(),
         purpose,
     );
     if let Some(forwarded) = &draft.forwarded {
         text.push_str(&forwarded.to_plain());
         html.push_str(&forwarded.to_html());
     }
+    (text, html, pictures)
+}
+
+/// The HTML a message goes out with for these words, this formatted
+/// signature and this folded quote, without anything forwarded. The
+/// composer's preview shows it.
+pub fn html_to_send(
+    markdown: &str,
+    rich: Option<&RichBody>,
+    quoted: Option<&str>,
+    signature: Option<&str>,
+) -> String {
+    written_body(markdown, rich, quoted, signature, Purpose::Send).1
+}
+
+/// Where a formatted signature starts and ends in a saved draft's HTML,
+/// so the draft reopens with the block beside the editor rather than in
+/// it. Only [`build_saved_draft`] writes them.
+const SIGNATURE_START: &str = "<!-- mailrs-signature -->";
+const SIGNATURE_END: &str = "<!-- /mailrs-signature -->";
+/// The box a formatted signature goes out in, which sets it a line apart
+/// from the words above it.
+const SIGNATURE_OPEN: &str = "<div style=\"margin-top:1em\">";
+
+/// [`written_body`] with a formatted signature: the words, the signature,
+/// then the quote. The text part carries the signature as lines under the
+/// usual `-- `, where every mail client looks for one.
+fn signed_body(
+    markdown: &str,
+    rich: Option<&RichBody>,
+    quoted: Option<&str>,
+    signature: &str,
+    purpose: Purpose,
+) -> (String, String) {
+    let (words, words_html) = written_body(markdown, rich, None, None, purpose);
+    let mut text = format!(
+        "{}{}",
+        words.trim_end(),
+        signature_block(&crate::signature::to_text(signature))
+    );
+    let block = format!("{SIGNATURE_OPEN}{signature}</div>");
+    let mut html = match purpose {
+        Purpose::Send => format!("{words_html}{block}"),
+        Purpose::Keep => format!("{words_html}{SIGNATURE_START}{block}{SIGNATURE_END}"),
+    };
+    if let Some(quoted) = quoted {
+        text.push_str("\n\n");
+        text.push_str(quoted);
+        let history = match rich {
+            Some(_) => RichBody::from_markdown(quoted).to_html(),
+            None => markdown_to_html(quoted),
+        };
+        if purpose == Purpose::Keep {
+            html.push_str(QUOTE_MARK);
+        }
+        html.push_str(&history);
+    }
     (text, html)
 }
 
-/// The HTML a message goes out with for these words and this folded
-/// quote, without anything forwarded. The composer's preview shows it.
-pub fn html_to_send(markdown: &str, rich: Option<&RichBody>, quoted: Option<&str>) -> String {
-    written_body(markdown, rich, quoted, Purpose::Send).1
+/// A saved draft's HTML without its formatted signature, and the
+/// signature. `None` when the draft was saved without one.
+fn cut_signature(html: &str) -> Option<(String, String)> {
+    let start = html.find(SIGNATURE_START)?;
+    let inner_at = start + SIGNATURE_START.len();
+    let end = inner_at + html[inner_at..].find(SIGNATURE_END)?;
+    let inner = &html[inner_at..end];
+    let inner = inner
+        .strip_prefix(SIGNATURE_OPEN)
+        .and_then(|i| i.strip_suffix("</div>"))
+        .unwrap_or(inner);
+    let rest = format!("{}{}", &html[..start], &html[end + SIGNATURE_END.len()..]);
+    Some((rest, inner.to_string()))
 }
 
 /// [`written`] without the forwarded message.
@@ -1424,8 +1589,12 @@ fn written_body(
     markdown: &str,
     rich: Option<&RichBody>,
     quoted: Option<&str>,
+    signature: Option<&str>,
     purpose: Purpose,
 ) -> (String, String) {
+    if let Some(signature) = signature {
+        return signed_body(markdown, rich, quoted, signature, purpose);
+    }
     match (rich, quoted) {
         (Some(rich), None) => (rich.to_plain(), rich.to_html()),
         (None, None) => (markdown.to_string(), markdown_to_html(markdown)),
@@ -1493,8 +1662,15 @@ fn envelope<'a>(draft: &'a Draft, date_secs: i64, message_id: &str) -> MessageBu
 /// beside the text in `multipart/mixed` resolves in Gmail's web client and
 /// nowhere near everywhere else. A `multipart/mixed` around that holds the
 /// files the writer attached. Each wrapper appears only when it has
-/// something to hold.
-fn body_tree<'a>(draft: &'a Draft, text: String, html: String) -> MimePart<'a> {
+/// something to hold. `pictures` are the ones a formatted signature
+/// carried inside itself, which sit in `multipart/related` beside the
+/// writer's own.
+fn body_tree<'a>(
+    draft: &'a Draft,
+    text: String,
+    html: String,
+    pictures: &'a [OutgoingAttachment],
+) -> MimePart<'a> {
     let mut body = MimePart::new(
         "multipart/alternative",
         vec![
@@ -1502,7 +1678,7 @@ fn body_tree<'a>(draft: &'a Draft, text: String, html: String) -> MimePart<'a> {
             MimePart::new("text/html", html),
         ],
     );
-    let shown: Vec<&OutgoingAttachment> = draft
+    let mut shown: Vec<&OutgoingAttachment> = draft
         .attachments
         .iter()
         .filter(|a| {
@@ -1511,6 +1687,13 @@ fn body_tree<'a>(draft: &'a Draft, text: String, html: String) -> MimePart<'a> {
                 .is_some_and(|cid| draft.shows_image(cid))
         })
         .collect();
+    // A reopened draft holds its signature's pictures as attachments
+    // already, under the names lifting them gives again.
+    let lifted: Vec<&OutgoingAttachment> = pictures
+        .iter()
+        .filter(|p| !shown.iter().any(|a| a.content_id == p.content_id))
+        .collect();
+    shown.extend(lifted);
     if !shown.is_empty() {
         let mut parts = Vec::with_capacity(shown.len() + 1);
         parts.push(body);
@@ -1734,7 +1917,7 @@ mod tests {
             account_id: account,
             account_email: format!("own{account}@example.com"),
             address: addr(None, email),
-            signature: signature.to_string(),
+            signature: SignatureBlock::Markdown(signature.to_string()),
             default,
         }
     }
@@ -2795,6 +2978,73 @@ mod tests {
         let (text, html) = parts(&build_mime(&dropped, 0, "id@example.com").unwrap());
         assert!(!text.contains("wrote:"), "{text}");
         assert!(!html.contains("Noon works"), "{html}");
+    }
+
+    /// A company signature with a logo on the web, a badge carried inside
+    /// it, and a phone row in a table.
+    fn company_signature() -> String {
+        let badge = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, b"badge");
+        crate::signature::clean(&format!(
+            "<table><tr><td><img src=\"https://example.com/phone.png\"></td>\
+             <td>SS +39 079 000 0001</td></tr></table>\
+             <p><img src=\"https://example.com/logo.png\" alt=\"Logo\"></p>\
+             <p><img src=\"data:image/png;base64,{badge}\" alt=\"ISO 9001\"></p>\
+             <p>Visit our <b>coworking space</b></p>"
+        ))
+    }
+
+    #[test]
+    fn a_formatted_signature_goes_out_whole_between_the_words_and_the_quote() {
+        let mut draft = folded_reply();
+        draft.markdown = "Thanks.".into();
+        draft.signature = Some(company_signature());
+        let raw = build_mime(&draft, 0, "id@example.com").unwrap();
+        let (text, html) = parts(&raw);
+        // The text part signs off the way every client reads a signature.
+        let signed = text.find("Thanks.\n\n-- \nSS +39 079 000 0001").expect(&text);
+        assert!(text.find("Visit our coworking space").unwrap() > signed, "{text}");
+        assert!(text.find("wrote:").unwrap() > signed, "{text}");
+        // The HTML keeps the table, the bold phrase and the logo's address,
+        // in order: words, signature, quote.
+        let words = html.find("Thanks.").unwrap();
+        let table = html.find("<table>").expect(&html);
+        let quote = html.find("Noon works").unwrap();
+        assert!(words < table && table < quote, "{html}");
+        assert!(html.contains("src=\"https://example.com/logo.png\""), "{html}");
+        assert!(html.contains("<b>coworking space</b>"), "{html}");
+        // The badge carried inside the signature goes out as a part of its
+        // own, which every client shows, and the HTML names it by cid.
+        assert!(!html.contains("data:image"), "{html}");
+        let parsed = MessageParser::default().parse(&raw).unwrap();
+        let badge = parsed
+            .attachments()
+            .find(|part| part.contents() == b"badge")
+            .expect("the badge travels as a part");
+        let cid = badge.content_id().unwrap();
+        assert!(html.contains(&format!("cid:{cid}")), "{html}");
+        assert!(raw.windows(17).any(|w| w == b"multipart/related"));
+    }
+
+    #[test]
+    fn a_draft_reopens_with_its_formatted_signature_beside_the_words() {
+        let mut draft = folded_reply();
+        draft.markdown = "Thanks.".into();
+        draft.signature = Some(company_signature());
+        let (reopened, _) = saved_and_reopened(&draft);
+        assert_eq!(reopened.markdown, "Thanks.");
+        assert!(reopened.quoted.as_deref().unwrap().contains("Noon works"));
+        let signature = reopened.signature.expect("the signature came back");
+        assert!(signature.contains("<table>"), "{signature}");
+        assert!(signature.contains("coworking space"), "{signature}");
+        // Words the editor shows never hold the signature's lines.
+        assert!(!reopened.rich.unwrap().to_plain().contains("SS +39"));
+    }
+
+    #[test]
+    fn a_draft_saved_without_a_formatted_signature_reopens_without_one() {
+        let (reopened, _) = saved_and_reopened(&folded_reply());
+        assert_eq!(reopened.signature, None);
+        assert!(reopened.markdown.ends_with("-- \nDana"), "{}", reopened.markdown);
     }
 
     #[test]

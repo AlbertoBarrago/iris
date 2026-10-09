@@ -37,6 +37,7 @@ pub mod roving;
 pub mod rules;
 pub mod search_suggest;
 pub mod sidebar;
+pub mod signature_source;
 pub mod smart_editor;
 pub mod templates;
 pub mod texture;

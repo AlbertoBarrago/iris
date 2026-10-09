@@ -185,6 +185,11 @@ pub struct Composer {
     /// under the editor. The page is made the first time it is asked for.
     forward_box: gtk::Box,
     forward_page: RefCell<Option<webkit::WebView>>,
+    /// A formatted signature, shown read-only under the editor as it goes
+    /// out, with its × to leave it off this message. The page is made the
+    /// first time there is one to show.
+    signature_box: gtk::Box,
+    signature_page: RefCell<Option<webkit::WebView>>,
     send: adw::SplitButton,
     /// Sign and Encrypt, check items in the More menu, which this
     /// computer's gpg and gpgsm answer for. Both stay out of the menu when
@@ -522,6 +527,37 @@ impl Composer {
             .build();
         name(&forward_box, &gettext("Forwarded Message"));
         forward_box.append(&line());
+        let signature_box = gtk::Box::builder()
+            .orientation(gtk::Orientation::Vertical)
+            .accessible_role(gtk::AccessibleRole::Group)
+            .height_request(180)
+            .visible(false)
+            .build();
+        name(&signature_box, &gettext("Signature"));
+        signature_box.append(&line());
+        let drop_signature = gtk::Button::builder()
+            .icon_name("window-close-symbolic")
+            .tooltip_text(gettext("Remove Signature"))
+            .css_classes(["flat", "circular"])
+            .halign(gtk::Align::End)
+            .margin_top(4)
+            .margin_end(10)
+            .build();
+        name(&drop_signature, &gettext("Remove Signature"));
+        let signature_head = gtk::Box::builder().spacing(6).margin_start(20).build();
+        signature_head.append(
+            &gtk::Label::builder()
+                .label(gettext("Signature"))
+                .css_classes(["dim-label", "caption"])
+                .hexpand(true)
+                .xalign(0.0)
+                .build(),
+        );
+        signature_head.append(&drop_signature);
+        signature_box.append(&signature_head);
+        // The signature goes out between the words and the quote or the
+        // forwarded message, so it sits there on screen too.
+        content.append(&signature_box);
         content.append(&forward_box);
         content.append(&files);
         let toolbar = adw::ToolbarView::new();
@@ -601,6 +637,8 @@ impl Composer {
             unfolded: RefCell::new(None),
             forward_box,
             forward_page: RefCell::new(None),
+            signature_box,
+            signature_page: RefCell::new(None),
             send,
             sign,
             encrypt,
@@ -641,6 +679,13 @@ impl Composer {
         composer.wire_history();
         composer.wire_markdown();
         composer.refresh_history();
+        composer.refresh_signature();
+        let weak = Rc::downgrade(&composer);
+        drop_signature.connect_clicked(move |_| {
+            if let Some(c) = weak.upgrade() {
+                c.drop_signature();
+            }
+        });
         composer.fill_format_bar(&format_bar);
         composer.accept_images();
         composer.check_send();
@@ -999,13 +1044,21 @@ impl Composer {
     /// The body as HTML, with the folded quote or the message it forwards
     /// under it, as it goes out.
     fn html(&self) -> String {
-        let quoted = self.base.borrow().quoted.clone();
-        let mut html = match quoted {
-            Some(quoted) => {
+        let (quoted, signature) = {
+            let base = self.base.borrow();
+            (base.quoted.clone(), base.signature.clone())
+        };
+        let mut html = match (&quoted, &signature) {
+            (None, None) => self.editor.html(),
+            _ => {
                 let written = self.editor.written();
-                html_to_send(&written.markdown, written.rich.as_ref(), Some(&quoted))
+                html_to_send(
+                    &written.markdown,
+                    written.rich.as_ref(),
+                    quoted.as_deref(),
+                    signature.as_deref(),
+                )
             }
-            None => self.editor.html(),
         };
         if let Some(forwarded) = &self.base.borrow().forwarded {
             html.push_str(&forwarded.to_html());
@@ -1256,9 +1309,75 @@ impl Composer {
         if old.signature == new.signature {
             return;
         }
-        if self.editor.swap_signature(&old.signature, &new.signature) {
+        // A formatted signature follows the address the same way the
+        // written lines do: only while it is still the one the old address
+        // put there, so one the writer took off stays off.
+        let swapped = {
+            let mut base = self.base.borrow_mut();
+            let follows = base.signature.as_deref() == old.signature.html();
+            if follows {
+                base.signature = new.signature.html().map(str::to_string);
+            }
+            follows
+        };
+        if swapped {
+            self.refresh_signature();
+        }
+        let lines = self
+            .editor
+            .swap_signature(old.signature.markdown(), new.signature.markdown());
+        if swapped || lines {
             self.check_send();
         }
+    }
+
+    /// Shows the formatted signature under the editor, or hides the place
+    /// for it when the message has none.
+    fn refresh_signature(&self) {
+        let html = self.base.borrow().signature.clone();
+        let Some(html) = html else {
+            self.signature_box.set_visible(false);
+            return;
+        };
+        let page = self.signature_page.borrow().clone();
+        let page = page.unwrap_or_else(|| {
+            let page = sealed_view();
+            self.signature_box.append(&page);
+            self.signature_page.replace(Some(page.clone()));
+            page
+        });
+        let body = self.with_inline_images(html);
+        page.load_html(
+            &crate::compose::signature_page(&gettext("Signature"), &body),
+            None,
+        );
+        self.signature_box.set_visible(true);
+    }
+
+    /// Leaves the formatted signature off this message, and offers it
+    /// back on a toast.
+    fn drop_signature(self: &Rc<Self>) {
+        let Some(dropped) = self.base.borrow_mut().signature.take() else {
+            return;
+        };
+        self.dirty.set(true);
+        self.refresh_signature();
+        self.body.grab_focus();
+        let toast = adw::Toast::builder()
+            .title(gettext("Signature removed"))
+            .button_label(gettext("Undo"))
+            .build();
+        let kept = RefCell::new(Some(dropped));
+        let weak = Rc::downgrade(self);
+        toast.connect_button_clicked(move |_| {
+            let (Some(c), Some(back)) = (weak.upgrade(), kept.take()) else {
+                return;
+            };
+            c.base.borrow_mut().signature = Some(back);
+            c.dirty.set(true);
+            c.refresh_signature();
+        });
+        self.toasts.add_toast(toast);
     }
 
     /// Underlines misspellings as the writer types, when a dictionary is
