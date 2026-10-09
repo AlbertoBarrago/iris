@@ -107,6 +107,24 @@ pub struct ActionDone {
     pub failed: Option<String>,
 }
 
+/// A file of a message: an attachment, or a picture its body shows.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct FilePart {
+    pub filename: String,
+    pub mime_type: String,
+    pub data: Vec<u8>,
+}
+
+/// An attachment as the page lists it, for saving them all.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct AttachmentInfo {
+    /// Its place among the message's attachments, as the page's links
+    /// name it.
+    pub index: u32,
+    pub filename: String,
+    pub size: i64,
+}
+
 /// One category tab over an inbox.
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
 pub struct CategoryTab {
@@ -301,6 +319,7 @@ impl Mail {
     /// Returns how many came.
     pub fn fetch_bodies(&self, thread: ThreadRef) -> Result<u32, CoreError> {
         let Some(sync) = self.running.account(thread.account_id) else {
+            tracing::warn!(account = thread.account_id, "no sync running for the account; bodies stay missing");
             return Ok(0);
         };
         let (db, account_id, thread_id) = (self.db.clone(), thread.account_id, thread.thread_id);
@@ -316,6 +335,7 @@ impl Mail {
                     Ok(missing)
                 })
                 .await?;
+            tracing::info!(account = account_id, missing = missing.len(), "fetching bodies");
             let mut came = 0;
             for id in missing {
                 match sync.body(&id).await {
@@ -326,6 +346,59 @@ impl Mail {
             Ok(came)
         })
         .map_err(|err: mailrs_store::StoreError| CoreError::Store(err.to_string()))
+    }
+
+    /// The attachment at `index` of a message, fetched from the cache or
+    /// the server.
+    pub fn attachment(&self, account_id: i64, message_id: String, index: u32) -> Result<FilePart, CoreError> {
+        let body = self.stored_body(account_id, &message_id)?;
+        let part = body
+            .attachments
+            .get(index as usize)
+            .cloned()
+            .ok_or_else(|| CoreError::Store("That attachment is not in the message.".into()))?;
+        let data = self.fetch_part(account_id, message_id, part.part_id.clone())?;
+        Ok(FilePart {
+            filename: part.filename,
+            mime_type: part.mime_type,
+            data,
+        })
+    }
+
+    /// The picture a message's body names by `cid`, or `None` when the
+    /// message has no such picture.
+    pub fn picture(&self, account_id: i64, message_id: String, cid: String) -> Result<Option<FilePart>, CoreError> {
+        let body = self.stored_body(account_id, &message_id)?;
+        let Some(part) = body
+            .attachments
+            .into_iter()
+            .find(|a| a.content_id.as_deref() == Some(cid.as_str()))
+        else {
+            return Ok(None);
+        };
+        let data = self.fetch_part(account_id, message_id, part.part_id.clone())?;
+        Ok(Some(FilePart {
+            filename: part.filename,
+            mime_type: part.mime_type,
+            data,
+        }))
+    }
+
+    /// The attachments the page lists for a message: every file but the
+    /// pictures its body shows.
+    pub fn attachments(&self, account_id: i64, message_id: String) -> Result<Vec<AttachmentInfo>, CoreError> {
+        let body = self.stored_body(account_id, &message_id)?;
+        Ok(body
+            .attachments
+            .iter()
+            .enumerate()
+            .filter(|(_, a)| !mailrs_render::conversation::shown_in_body(a, &body))
+            .map(|(index, a)| AttachmentInfo {
+                index: index as u32,
+                filename: a.filename.clone(),
+                size: a.size,
+            })
+            .collect())
     }
 
     /// Asks every account to look for new mail now.
@@ -465,6 +538,23 @@ impl Mail {
 }
 
 impl Mail {
+    /// The body the store holds for a message, which names its files.
+    fn stored_body(&self, account_id: i64, message_id: &str) -> Result<mailrs_domain::MessageBody, CoreError> {
+        let (db, id) = (self.db.clone(), message_id.to_string());
+        self.run(async move { db.read(move |c| mailrs_store::bodies::peek_body(c, account_id, &id)).await })?
+            .ok_or_else(|| CoreError::Store("The message has not been fetched yet.".into()))
+    }
+
+    /// One part of a message, through the account's sync.
+    fn fetch_part(&self, account_id: i64, message_id: String, part_path: String) -> Result<Vec<u8>, CoreError> {
+        let sync = self
+            .running
+            .account(account_id)
+            .ok_or_else(|| CoreError::Store("The account is not connected.".into()))?;
+        self.run(async move { sync.attachment(&message_id, &part_path).await })
+            .map_err(|err| CoreError::Store(err.to_string()))
+    }
+
     /// Runs `work` on the runtime's own threads and waits for it. The sync
     /// code needs the large stacks those threads get
     /// (`mailrs_sync::WORKER_STACK`): run on the Swift thread that called,
@@ -615,6 +705,32 @@ fn flag_hex(color: FlagColor) -> &'static str {
         FlagColor::Purple => "#af52de",
         FlagColor::Gray => "#8e8e93",
     }
+}
+
+/// Sends the core's log lines to `~/Library/Logs/Iris/iris-next.log`,
+/// where Console.app finds them: an app opened from the Dock has nowhere
+/// to send standard error. Called once, at start.
+#[uniffi::export]
+pub fn start_logging() {
+    let Some(home) = std::env::var_os("HOME") else { return };
+    let folder = PathBuf::from(home).join("Library/Logs/Iris");
+    if std::fs::create_dir_all(&folder).is_err() {
+        return;
+    }
+    let path = folder.join("iris-next.log");
+    if std::fs::metadata(&path).is_ok_and(|meta| meta.len() > 5 * 1024 * 1024) {
+        let _ = std::fs::rename(&path, folder.join("iris-next.log.1"));
+    }
+    let Ok(file) = std::fs::OpenOptions::new().create(true).append(true).open(&path) else {
+        return;
+    };
+    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
+    let _ = tracing_subscriber::fmt()
+        .with_ansi(false)
+        .with_env_filter(filter)
+        .with_writer(Mutex::new(file))
+        .try_init();
 }
 
 /// `text` in the interface's language, from the same catalogs the GTK app

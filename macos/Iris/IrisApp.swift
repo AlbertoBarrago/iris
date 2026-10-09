@@ -7,6 +7,7 @@ struct IrisApp: App {
     @State private var model = MailModel()
 
     init() {
+        startLogging()
         // The words come from the same catalogs the GTK app reads, in the
         // language macOS puts first.
         let locale = Bundle.main.resourceURL?.appending(path: "locale").path(percentEncoded: false) ?? ""

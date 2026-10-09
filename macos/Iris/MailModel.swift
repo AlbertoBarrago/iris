@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 
@@ -180,10 +181,118 @@ final class MailModel {
         let text = url.absoluteString
         if let id = text.removingPrefix("mailrs:toggle/") {
             toggleMessage(id)
+        } else if let rest = text.removingPrefix("mailrs:preview/"), let (id, index) = Self.fileLink(rest) {
+            openAttachment(message: id, index: index)
+        } else if let rest = text.removingPrefix("mailrs:attachment/"), let (id, index) = Self.fileLink(rest) {
+            saveAttachment(message: id, index: index)
+        } else if let id = text.removingPrefix("mailrs:attachments/") {
+            saveAllAttachments(message: id.removingPercentEncoding ?? id)
         } else if let address = text.removingPrefix("mailrs:contact/") ?? text.removingPrefix("mailto:") {
             ContactMenu.show(for: address.components(separatedBy: "?")[0].removingPercentEncoding ?? address)
         }
     }
+
+    /// `<message>/<index>` from an attachment's link.
+    private static func fileLink(_ rest: String) -> (String, UInt32)? {
+        let parts = rest.split(separator: "/", maxSplits: 1).map(String.init)
+        guard parts.count == 2, let index = UInt32(parts[1]) else { return nil }
+        return (parts[0].removingPercentEncoding ?? parts[0], index)
+    }
+
+    /// Fetches an attachment of the open conversation off the main thread.
+    private func withAttachment(message: String, index: UInt32, then: @escaping @MainActor (FilePart) -> Void) {
+        guard let mail, let account = openThread?.account else { return }
+        Task.detached {
+            do {
+                let part = try mail.attachment(accountId: account, messageId: message, index: index)
+                await MainActor.run { then(part) }
+            } catch {
+                await MainActor.run { self.toast = Toast(words: "\(error)", undo: false) }
+            }
+        }
+    }
+
+    /// Opens an attachment with the app the Mac picks for its kind, from a
+    /// copy in the temporary folder.
+    func openAttachment(message: String, index: UInt32) {
+        withAttachment(message: message, index: index) { part in
+            let folder = FileManager.default.temporaryDirectory.appending(path: "Iris Attachments", directoryHint: .isDirectory)
+            try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            let file = folder.appending(path: Self.safeName(part.filename))
+            do {
+                try Data(part.data).write(to: file)
+                NSWorkspace.shared.open(file)
+            } catch {
+                self.toast = Toast(words: "\(error)", undo: false)
+            }
+        }
+    }
+
+    /// Saves an attachment to Downloads, as the GTK app's download button does.
+    func saveAttachment(message: String, index: UInt32) {
+        withAttachment(message: message, index: index) { part in
+            let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+            let file = Self.unused(downloads.appending(path: Self.safeName(part.filename)))
+            do {
+                try Data(part.data).write(to: file)
+                self.toast = Toast(words: tr("Saved {file} to Downloads").replacingOccurrences(of: "{file}", with: file.lastPathComponent), undo: false)
+            } catch {
+                self.toast = Toast(words: tr("Could not save {file}: {reason}")
+                    .replacingOccurrences(of: "{file}", with: part.filename)
+                    .replacingOccurrences(of: "{reason}", with: error.localizedDescription), undo: false)
+            }
+        }
+    }
+
+    /// Saves every attachment of a message into a folder the person picks.
+    func saveAllAttachments(message: String) {
+        guard let mail, let account = openThread?.account else { return }
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.canCreateDirectories = true
+        panel.prompt = tr("Save")
+        panel.message = tr("Choose a Folder")
+        guard panel.runModal() == .OK, let folder = panel.url else { return }
+        Task.detached {
+            do {
+                let listed = try mail.attachments(accountId: account, messageId: message)
+                for item in listed {
+                    let part = try mail.attachment(accountId: account, messageId: message, index: item.index)
+                    try Data(part.data).write(to: Self.unused(folder.appending(path: Self.safeName(part.filename))))
+                }
+                await MainActor.run {
+                    self.toast = Toast(words: tr("Saved {file}").replacingOccurrences(of: "{file}", with: folder.lastPathComponent), undo: false)
+                }
+            } catch {
+                await MainActor.run { self.toast = Toast(words: "\(error)", undo: false) }
+            }
+        }
+    }
+
+    /// A file name that cannot climb out of the folder it is saved in.
+    nonisolated private static func safeName(_ name: String) -> String {
+        let cleaned = name.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-")
+        return cleaned.isEmpty || cleaned.hasPrefix(".") ? "attachment" + cleaned : cleaned
+    }
+
+    /// `file`, or `file 2`, `file 3` and on, whichever is free.
+    nonisolated private static func unused(_ file: URL) -> URL {
+        var candidate = file
+        var number = 2
+        let stem = file.deletingPathExtension().lastPathComponent
+        let ext = file.pathExtension
+        while FileManager.default.fileExists(atPath: candidate.path(percentEncoded: false)) {
+            let name = ext.isEmpty ? "\(stem) \(number)" : "\(stem) \(number).\(ext)"
+            candidate = file.deletingLastPathComponent().appending(path: name)
+            number += 1
+        }
+        return candidate
+    }
+
+    /// The handler the page's pictures come through, made once the store
+    /// is open.
+    var pictures: PictureScheme { PictureScheme(mail: mail) }
 
     /// Loads the pictures on the web in the open conversation.
     func loadImages() {

@@ -16,7 +16,7 @@ use mailrs_store::{accounts, bodies, messages};
 
 mod mail;
 
-pub use mail::{Action, ActionDone, ThreadRef, CategoryTab, ListRow, Mail, MailListener, MailboxListing, SidebarItem, bind_language, translate};
+pub use mail::{Action, ActionDone, AttachmentInfo, FilePart, ThreadRef, CategoryTab, ListRow, Mail, MailListener, MailboxListing, SidebarItem, bind_language, start_logging, translate};
 
 uniffi::setup_scaffolding!();
 
@@ -205,9 +205,13 @@ impl Store {
         // Cleaned once, kept for the borrow each article takes.
         let cleaned: Vec<Option<Cleaned>> = bodies
             .iter()
-            .map(|body| {
+            .zip(&metas)
+            .map(|(body, meta)| {
                 let html = body.as_ref()?.html.as_deref()?;
-                let clean = mailrs_render::sanitize::sanitize_html(html, None);
+                // Pictures the body names by cid: come through the page's
+                // own scheme, which the app answers from the message.
+                let pictures = format!("mailrs-cid:{account_id}/{}/0/", mailrs_render::escape_cid(&meta.id));
+                let clean = mailrs_render::sanitize::sanitize_html(html, Some(&pictures));
                 let lower = clean.to_ascii_lowercase();
                 let history = mailrs_render::quoted::history_in_html(&clean);
                 Some((clean, page::paints_itself(&lower), history))

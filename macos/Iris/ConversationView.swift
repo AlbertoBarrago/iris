@@ -25,7 +25,7 @@ struct ConversationView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                         .padding(10)
                     }
-                    MailPage(html: page.html) { url in model.followLink(url) }
+                    MailPage(html: page.html, pictures: model.pictures) { url in model.followLink(url) }
                 }
             } else {
                 ContentUnavailableView(tr("No Conversation Selected"), systemImage: "envelope")
@@ -105,6 +105,8 @@ extension Comparable {
 /// open in the browser; the page itself never navigates.
 struct MailPage: NSViewRepresentable {
     let html: String
+    /// Answers the page's `mailrs-cid:` requests for pictures in the mail.
+    var pictures: PictureScheme? = nil
     /// What a click on one of the page's own `mailrs:` links asks for.
     var onLink: (URL) -> Void = { _ in }
 
@@ -114,6 +116,9 @@ struct MailPage: NSViewRepresentable {
         let configuration = WKWebViewConfiguration()
         configuration.websiteDataStore = .nonPersistent()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+        if let pictures {
+            configuration.setURLSchemeHandler(pictures, forURLScheme: "mailrs-cid")
+        }
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
         // The page paints its own background, the window's color.
@@ -226,4 +231,65 @@ final class MenuAction: NSObject {
     }
 
     @objc private func fire() { run() }
+}
+
+/// Gives the page the pictures its mail names by `cid:`, asked for at
+/// `mailrs-cid:<account>/<message>/<version>/<content id>`. The bytes come
+/// from the Rust core, which fetches the part from the cache or the
+/// server, and never enter the page's own HTML.
+@MainActor
+final class PictureScheme: NSObject, WKURLSchemeHandler {
+    private let mail: Mail?
+    /// Requests the page took back, which must not be answered.
+    private var stopped = Set<ObjectIdentifier>()
+
+    init(mail: Mail?) {
+        self.mail = mail
+    }
+
+    func webView(_ webView: WKWebView, start task: any WKURLSchemeTask) {
+        guard let mail, let url = task.request.url, let address = Self.address(url) else {
+            task.didFailWithError(URLError(.fileDoesNotExist))
+            return
+        }
+        // WebKit hands the task over on the main thread and wants its
+        // answer there; the box carries it across the fetch.
+        let asked = Asked(task: task)
+        Task.detached {
+            let part = try? mail.picture(accountId: address.account, messageId: address.message, cid: address.cid)
+            await self.answer(asked, url: url, part: part ?? nil)
+        }
+    }
+
+    func webView(_ webView: WKWebView, stop task: any WKURLSchemeTask) {
+        stopped.insert(ObjectIdentifier(task))
+    }
+
+    private func answer(_ asked: Asked, url: URL, part: FilePart?) {
+        let task = asked.task
+        guard !stopped.contains(ObjectIdentifier(task)) else { return }
+        guard let part else {
+            task.didFailWithError(URLError(.fileDoesNotExist))
+            return
+        }
+        let response = URLResponse(url: url, mimeType: part.mimeType, expectedContentLength: part.data.count, textEncodingName: nil)
+        task.didReceive(response)
+        task.didReceive(Data(part.data))
+        task.didFinish()
+    }
+
+    /// Reads `mailrs-cid:<account>/<message>/<version>/<content id>`.
+    private static func address(_ url: URL) -> (account: Int64, message: String, cid: String)? {
+        guard let rest = url.absoluteString.removingPrefix("mailrs-cid:") else { return nil }
+        let parts = rest.split(separator: "/", maxSplits: 3).map(String.init)
+        guard parts.count == 4, let account = Int64(parts[0]) else { return nil }
+        let decode = { (text: String) in text.removingPercentEncoding ?? text }
+        return (account, decode(parts[1]), decode(parts[3]))
+    }
+}
+
+/// A WebKit task carried to a background fetch and back to the main
+/// thread, where alone it is touched.
+private struct Asked: @unchecked Sendable {
+    let task: any WKURLSchemeTask
 }
