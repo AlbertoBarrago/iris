@@ -1,0 +1,33 @@
+[package]
+name = "mailrs-appcore"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "What Iris does between the windows and the engine, free of any toolkit: writing mail, signatures, rich text"
+
+[dependencies]
+mailrs-domain.workspace = true
+mailrs-gmail.workspace = true
+mailrs-mime.workspace = true
+mailrs-render.workspace = true
+mailrs-sync.workspace = true
+ammonia.workspace = true
+base64.workspace = true
+chrono.workspace = true
+mail-builder.workspace = true
+pulldown-cmark.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+tracing.workspace = true
+notify-rust.workspace = true
+async-channel.workspace = true
+url.workspace = true
+
+[dev-dependencies]
+mailrs-sync = { workspace = true, features = ["fake"] }
+mail-parser.workspace = true
+serde_json.workspace = true
+tempfile.workspace = true

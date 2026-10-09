@@ -7,9 +7,9 @@ mod text_contrast;
 mod add_account;
 mod app;
 mod assistant;
-mod attachcheck;
+use mailrs_appcore::attachcheck;
 use mailrs_render::clock as clock_format;
-mod compose;
+use mailrs_appcore::compose;
 mod contacts;
 mod core;
 mod demo;
@@ -27,7 +27,7 @@ mod sparkle;
 mod language_names;
 use mailrs_render::locale_time;
 mod logging;
-mod notify;
+use mailrs_appcore::notify;
 mod offered;
 mod open_thread;
 mod permission;
@@ -35,15 +35,15 @@ mod pgp;
 use mailrs_render::quoted;
 mod protection;
 use mailrs_render::conversation as render;
-mod richtext;
+use mailrs_appcore::richtext;
 mod rules;
 use mailrs_render::sanitize;
-mod signature;
+use mailrs_appcore::signature;
 mod search;
 mod servers;
-mod settings;
+use mailrs_appcore::settings;
 mod smime;
-mod stray_markdown;
+use mailrs_appcore::stray_markdown;
 mod templates;
 mod translation;
 mod ui;
@@ -61,7 +61,7 @@ use mailrs_domain::translate::{fill, gettext};
 
 use settings::Settings;
 
-pub const APP_ID: &str = "io.github.AlbertoBarrago.Iris";
+pub use mailrs_appcore::APP_ID;
 
 fn usage() -> String {
     gettext(

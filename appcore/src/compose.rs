@@ -19,8 +19,8 @@ use pulldown_cmark::{Event, Options, Parser, html};
 use serde::{Deserialize, Serialize};
 
 use crate::attachcheck::{self, Promise};
-use crate::format::full_date;
-use crate::protection::Standard;
+use mailrs_render::format::full_date;
+use crate::standard::Standard;
 use crate::richtext::{self, Block, RichBody};
 use mailrs_domain::translate::{fill, gettext};
 
@@ -318,7 +318,7 @@ pub fn preview_page(title: &str, body: &str, dark: bool) -> String {
          <title>{}</title><style>body{{margin:24px;{}}}</style></head><body>{}</body></html>",
         richtext::escape(title),
         if dark { "background:#1e1e1e;filter:invert(0.92) hue-rotate(180deg)" } else { "background:#fff" },
-        crate::sanitize::sanitize_html(body, None)
+        mailrs_render::sanitize::sanitize_html(body, None)
     )
 }
 
@@ -334,7 +334,7 @@ pub fn signature_page(title: &str, body: &str) -> String {
          style-src 'unsafe-inline'; img-src data: https:; font-src data:\">\
          <title>{}</title><style>body{{margin:12px 20px;background:#fff;color:#000}}</style></head><body>{}</body></html>",
         richtext::escape(title),
-        crate::sanitize::sanitize_html(body, None)
+        mailrs_render::sanitize::sanitize_html(body, None)
     )
 }
 

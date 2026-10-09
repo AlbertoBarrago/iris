@@ -2368,6 +2368,7 @@ dependencies = [
  "mail-builder",
  "mail-parser",
  "mailrs-ai",
+ "mailrs-appcore",
  "mailrs-discover",
  "mailrs-domain",
  "mailrs-gmail",
@@ -2418,6 +2419,31 @@ dependencies = [
  "tokio",
  "tracing",
  "wiremock",
+]
+
+[[package]]
+name = "mailrs-appcore"
+version = "1.0.11"
+dependencies = [
+ "ammonia",
+ "async-channel 2.5.0",
+ "base64 0.23.1",
+ "chrono",
+ "mail-builder",
+ "mail-parser",
+ "mailrs-domain",
+ "mailrs-gmail",
+ "mailrs-mime",
+ "mailrs-render",
+ "mailrs-sync",
+ "notify-rust",
+ "pulldown-cmark",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "toml",
+ "tracing",
+ "url",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 //! The MCP servers the person adds on the AI page, as the settings file
 //! keeps them. The assistant starts and talks to them
-//! (`crate::assistant::sources::mcp`); this is only what is saved, so the
+//! (the app's `assistant::sources::mcp`); this is only what is saved, so the
 //! settings depend on nothing the assistant runs.
 
 use std::collections::BTreeMap;

@@ -1504,22 +1504,6 @@ msgstr "Leggo un file di una skill"
 msgid "Running a command in the sandbox"
 msgstr "Eseguo un comando nella sandbox"
 
-#: app/src/compose.rs:592 app/src/compose.rs:2772
-msgid "Add at least one recipient."
-msgstr "Aggiungi almeno un destinatario."
-
-#: app/src/compose.rs:601
-msgid "“{address}” is not an email address."
-msgstr "“{address}” non è un indirizzo email."
-
-#: app/src/compose.rs:849 app/src/compose.rs:2778
-msgid "Choose a time in the future"
-msgstr "Scegli un orario nel futuro"
-
-#: app/src/compose.rs:1054
-msgid "On {date}, {sender} wrote:"
-msgstr "Il giorno {date}, {sender} ha scritto:"
-
 #: app/src/contacts.rs:96
 msgid "from mail"
 msgstr "dalla posta"
@@ -1738,50 +1722,6 @@ msgstr "Impossibile avviare Iris"
 #: app/src/main.rs:323 app/src/ui/about.rs:155
 msgid "Report a Problem"
 msgstr "Segnala un problema"
-
-#: app/src/notify.rs:48 app/src/ui/conversation.rs:407
-#: app/src/ui/conversation.rs:564 app/src/ui/conversation.rs:1134
-#: app/src/ui/window/message_menu.rs:125 app/src/ui/window/shortcuts.rs:402
-msgid "Archive"
-msgstr "Archivia"
-
-#: app/src/notify.rs:49 app/src/ui/conversation.rs:408
-#: app/src/ui/conversation.rs:1178 app/src/ui/preferences.rs:160
-#: app/src/ui/rules.rs:370 app/src/ui/window/message_menu.rs:128
-msgid "Mark as Read"
-msgstr "Segna come letto"
-
-#: app/src/notify.rs:50 app/src/ui/calendar/manage.rs:292
-#: app/src/ui/calendar/popover.rs:211 app/src/ui/calendar/popover.rs:213
-#: app/src/ui/calendar/popover.rs:713 app/src/ui/calendar/scope.rs:112
-#: app/src/ui/conversation.rs:550 app/src/ui/hide_my_email.rs:289
-#: app/src/ui/queued.rs:58 app/src/ui/templates.rs:149
-#: app/src/ui/window/arrange.rs:106 app/src/ui/window/organize.rs:204
-msgid "Delete"
-msgstr "Elimina"
-
-#: app/src/notify.rs:51 app/src/ui/conversation.rs:558
-#: app/src/ui/window/message_menu.rs:122 app/src/ui/window/shortcuts.rs:481
-msgid "Reply"
-msgstr "Rispondi"
-
-#: app/src/notify.rs:111 app/src/notify.rs:150
-msgid "{count} new message"
-msgid_plural "{count} new messages"
-msgstr[0] "{count} nuovo messaggio"
-msgstr[1] "{count} nuovi messaggi"
-
-#: app/src/notify.rs:126 app/src/ui/window/shortcuts.rs:473
-msgid "New message"
-msgstr "Nuovo messaggio"
-
-#: app/src/notify.rs:156
-msgid "From {senders}"
-msgstr "Da {senders}"
-
-#: app/src/notify.rs:200 app/src/ui/window.rs:2511
-msgid "Open"
-msgstr "Apri"
 
 #: app/src/offered.rs:237 app/src/ui/window/shortcuts.rs:460
 msgid "Labels"
@@ -2365,15 +2305,15 @@ msgstr "Questo file non contiene alcuna chiave OpenPGP."
 msgid "gpg failed: {reason}"
 msgstr "gpg non è riuscito: {reason}"
 
-#: app/src/protection.rs:123
+#: app/src/protection.rs:116
 msgid "{smime} {pgp}"
 msgstr "{smime} {pgp}"
 
-#: app/src/protection.rs:136
+#: app/src/protection.rs:129
 msgid "This computer has nothing to encrypt with."
 msgstr "Questo computer non ha nulla con cui cifrare."
 
-#: app/src/protection.rs:143
+#: app/src/protection.rs:136
 msgid ""
 "S/MIME names every recipient inside an encrypted message, so a blind copy "
 "would not stay blind."
@@ -2381,44 +2321,44 @@ msgstr ""
 "S/MIME indica ogni destinatario all'interno di un messaggio cifrato, quindi "
 "una copia nascosta non resterebbe nascosta."
 
-#: app/src/protection.rs:301
+#: app/src/protection.rs:294
 msgid "Signed"
 msgstr "Firmato"
 
-#: app/src/protection.rs:302
+#: app/src/protection.rs:295
 msgid "Encrypted"
 msgstr "Cifrato"
 
-#: app/src/protection.rs:303
+#: app/src/protection.rs:296
 msgid "Signed and encrypted"
 msgstr "Firmato e cifrato"
 
-#: app/src/protection.rs:312
+#: app/src/protection.rs:305
 msgid "Encrypt this message to the recipients' keys"
 msgstr "Cifra questo messaggio con le chiavi dei destinatari"
 
-#: app/src/protection.rs:313
+#: app/src/protection.rs:306
 msgid "Encrypt this message to the recipients' certificates"
 msgstr "Cifra questo messaggio con i certificati dei destinatari"
 
-#: app/src/protection.rs:339
+#: app/src/protection.rs:332
 msgid "gpg holds no key and gpgsm no trusted certificate for {addresses}."
 msgstr ""
 "gpg non ha alcuna chiave e gpgsm alcun certificato attendibile per "
 "{addresses}."
 
-#: app/src/protection.rs:347
+#: app/src/protection.rs:340
 msgid "A message goes out under one standard or the other. {pgp} {smime}"
 msgstr "Un messaggio parte con l'uno o l'altro standard. {pgp} {smime}"
 
-#: app/src/protection.rs:607
+#: app/src/protection.rs:600
 msgid ""
 "This key does not name {sender}, the address the message says it is from."
 msgstr ""
 "Questa chiave non indica {sender}, l'indirizzo da cui il messaggio dice di "
 "provenire."
 
-#: app/src/protection.rs:611
+#: app/src/protection.rs:604
 msgid ""
 "This certificate does not name {sender}, the address the message says it is "
 "from."
@@ -2426,83 +2366,83 @@ msgstr ""
 "Questo certificato non indica {sender}, l'indirizzo da cui il messaggio dice "
 "di provenire."
 
-#: app/src/protection.rs:620
+#: app/src/protection.rs:613
 msgid "Signed by {signer}"
 msgstr "Firmato da {signer}"
 
-#: app/src/protection.rs:626
+#: app/src/protection.rs:619
 msgid "This message changed after it was signed"
 msgstr "Questo messaggio è cambiato dopo essere stato firmato"
 
-#: app/src/protection.rs:628
+#: app/src/protection.rs:621
 msgid "The signature of {signer} does not match what arrived."
 msgstr "La firma di {signer} non corrisponde a ciò che è arrivato."
 
-#: app/src/protection.rs:635
+#: app/src/protection.rs:628
 msgid "Signed by {signer}, whose key has expired"
 msgstr "Firmato da {signer}, la cui chiave è scaduta"
 
-#: app/src/protection.rs:639
+#: app/src/protection.rs:632
 msgid "The text is as it was written, and the key behind it ran out."
 msgstr ""
 "Il testo è come è stato scritto, ma la chiave che lo garantisce è scaduta."
 
-#: app/src/protection.rs:645
+#: app/src/protection.rs:638
 msgid "Signed by {signer}, whose certificate has run out"
 msgstr "Firmato da {signer}, il cui certificato è scaduto"
 
-#: app/src/protection.rs:649
+#: app/src/protection.rs:642
 msgid ""
 "The text is as it was written, and the certificate behind it has expired."
 msgstr ""
 "Il testo è come è stato scritto, ma il certificato che lo garantisce è "
 "scaduto."
 
-#: app/src/protection.rs:655
+#: app/src/protection.rs:648
 msgid "Signed by {signer}, who took this key back"
 msgstr "Firmato da {signer}, che ha revocato questa chiave"
 
-#: app/src/protection.rs:659
+#: app/src/protection.rs:652
 msgid "The owner revoked it, so it says nothing about who wrote this."
 msgstr ""
 "Il proprietario l'ha revocata, quindi non dice nulla su chi ha scritto "
 "questo."
 
-#: app/src/protection.rs:665
+#: app/src/protection.rs:658
 msgid "Signed by {signer}, whose certificate was taken back"
 msgstr "Firmato da {signer}, il cui certificato è stato revocato"
 
-#: app/src/protection.rs:669
+#: app/src/protection.rs:662
 msgid "Whoever issued it revoked it, so it says nothing about who wrote this."
 msgstr ""
 "Chi l'ha emesso l'ha revocato, quindi non dice nulla su chi ha scritto "
 "questo."
 
-#: app/src/protection.rs:675
+#: app/src/protection.rs:668
 msgid "Signed by {signer}, and the signature has run out"
 msgstr "Firmato da {signer}, ma la firma è scaduta"
 
-#: app/src/protection.rs:679
+#: app/src/protection.rs:672
 msgid "It carried a date to stop being good on, and that date has passed."
 msgstr "Aveva una data di scadenza, e quella data è passata."
 
-#: app/src/protection.rs:684
+#: app/src/protection.rs:677
 msgid "Signed by a key this computer does not hold"
 msgstr "Firmato con una chiave che questo computer non possiede"
 
-#: app/src/protection.rs:686
+#: app/src/protection.rs:679
 msgid "Nothing here can check it. Ask gpg for key {key}."
 msgstr "Qui nulla può verificarla. Chiedi a gpg la chiave {key}."
 
-#: app/src/protection.rs:693
+#: app/src/protection.rs:686
 msgid "it names"
 msgstr "indica"
 
-#: app/src/protection.rs:699
+#: app/src/protection.rs:692
 msgid "Signed by a certificate this computer does not hold"
 msgstr "Firmato con un certificato che questo computer non possiede"
 
-#: app/src/protection.rs:701
+#: app/src/protection.rs:694
 msgid ""
 "The message carried none either, so there is nothing here to check it "
 "against."
@@ -2510,86 +2450,86 @@ msgstr ""
 "Nemmeno il messaggio ne conteneva uno, quindi qui non c'è nulla con cui "
 "verificarla."
 
-#: app/src/protection.rs:707
+#: app/src/protection.rs:700
 msgid "gpg could not check this signature"
 msgstr "gpg non è riuscito a verificare questa firma"
 
-#: app/src/protection.rs:712
+#: app/src/protection.rs:705
 msgid "gpgsm could not check this signature"
 msgstr "gpgsm non è riuscito a verificare questa firma"
 
-#: app/src/protection.rs:735
+#: app/src/protection.rs:728
 msgid "Encrypted, and signed by {signer}"
 msgstr "Cifrato e firmato da {signer}"
 
-#: app/src/protection.rs:744
+#: app/src/protection.rs:737
 msgid "Encrypted. {what}"
 msgstr "Cifrato. {what}"
 
-#: app/src/protection.rs:750
+#: app/src/protection.rs:743
 msgid "This message arrived encrypted"
 msgstr "Questo messaggio è arrivato cifrato"
 
-#: app/src/protection.rs:752
+#: app/src/protection.rs:745
 msgid "Nobody signed it, so it says nothing about who sent it."
 msgstr "Nessuno l'ha firmato, quindi non dice nulla su chi l'ha inviato."
 
-#: app/src/protection.rs:760
+#: app/src/protection.rs:753
 msgid "{detail} {files}"
 msgstr "{detail} {files}"
 
-#: app/src/protection.rs:774
+#: app/src/protection.rs:767
 msgid "This message is encrypted to a key you do not hold"
 msgstr "Questo messaggio è cifrato per una chiave che non possiedi"
 
-#: app/src/protection.rs:776
+#: app/src/protection.rs:769
 msgid "Whoever sent it used a key gpg has no secret half of."
 msgstr ""
 "Chi l'ha inviato ha usato una chiave di cui gpg non ha la parte segreta."
 
-#: app/src/protection.rs:781
+#: app/src/protection.rs:774
 msgid "This message is encrypted to a certificate you do not hold"
 msgstr "Questo messaggio è cifrato per un certificato che non possiedi"
 
-#: app/src/protection.rs:783
+#: app/src/protection.rs:776
 msgid "Whoever sent it used a certificate gpgsm has no secret key for."
 msgstr ""
 "Chi l'ha inviato ha usato un certificato per cui gpgsm non ha la chiave "
 "segreta."
 
-#: app/src/protection.rs:789
+#: app/src/protection.rs:782
 msgid "This message says it is OpenPGP and is not"
 msgstr "Questo messaggio dice di essere OpenPGP ma non lo è"
 
-#: app/src/protection.rs:790
+#: app/src/protection.rs:783
 msgid "This message says it is S/MIME and is not"
 msgstr "Questo messaggio dice di essere S/MIME ma non lo è"
 
-#: app/src/protection.rs:793
+#: app/src/protection.rs:786
 msgid "Its parts are not where a signed or encrypted message keeps them."
 msgstr "Le sue parti non sono dove un messaggio firmato o cifrato le tiene."
 
-#: app/src/protection.rs:799
+#: app/src/protection.rs:792
 msgid "gpg could not open this message"
 msgstr "gpg non è riuscito ad aprire questo messaggio"
 
-#: app/src/protection.rs:800
+#: app/src/protection.rs:793
 msgid "gpgsm could not open this message"
 msgstr "gpgsm non è riuscito ad aprire questo messaggio"
 
-#: app/src/protection.rs:813
+#: app/src/protection.rs:806
 msgid "You marked this key as one not to trust."
 msgstr "Hai segnato questa chiave come non attendibile."
 
-#: app/src/protection.rs:814
+#: app/src/protection.rs:807
 msgid "This is one of your own keys."
 msgstr "Questa è una delle tue chiavi."
 
-#: app/src/protection.rs:815
+#: app/src/protection.rs:808
 msgid "You have vouched for this key."
 msgstr "Hai garantito per questa chiave."
 
-#: app/src/protection.rs:817
+#: app/src/protection.rs:810
 msgid ""
 "Only people you partly trust have vouched for this key, so it is not fully "
 "checked."
@@ -2597,11 +2537,11 @@ msgstr ""
 "Solo persone di cui ti fidi in parte hanno garantito per questa chiave, "
 "quindi non è verificata del tutto."
 
-#: app/src/protection.rs:820
+#: app/src/protection.rs:813
 msgid "Nobody has vouched for this key, so it names no one."
 msgstr "Nessuno ha garantito per questa chiave, quindi non identifica nessuno."
 
-#: app/src/protection.rs:823
+#: app/src/protection.rs:816
 msgid ""
 "Its certificate leads back to an authority you trust, but this computer "
 "could not check whether it was revoked."
@@ -2609,47 +2549,47 @@ msgstr ""
 "Il suo certificato risale a un'autorità di cui ti fidi, ma questo computer "
 "non ha potuto verificare se è stato revocato."
 
-#: app/src/protection.rs:827
+#: app/src/protection.rs:820
 msgid "Its certificate leads back to an authority you trust."
 msgstr "Il suo certificato risale a un'autorità di cui ti fidi."
 
-#: app/src/protection.rs:830
+#: app/src/protection.rs:823
 msgid "Its certificate leads back to nobody you trust, so it names no one."
 msgstr ""
 "Il suo certificato non risale a nessuno di cui ti fidi, quindi non "
 "identifica nessuno."
 
-#: app/src/protection.rs:833
+#: app/src/protection.rs:826
 msgid "Nothing here says who that certificate belongs to."
 msgstr "Qui nulla indica a chi appartiene quel certificato."
 
-#: app/src/protection.rs:869
+#: app/src/protection.rs:862
 msgid "key {key}"
 msgstr "chiave {key}"
 
-#: app/src/protection.rs:872
+#: app/src/protection.rs:865
 msgid "a key gpg would not name"
 msgstr "una chiave che gpg non identifica"
 
-#: app/src/protection.rs:873
+#: app/src/protection.rs:866
 msgid "a certificate gpgsm would not name"
 msgstr "un certificato che gpgsm non identifica"
 
-#: app/src/protection.rs:884
+#: app/src/protection.rs:877
 msgid "It carries a file, kept in this window only."
 msgstr "Contiene un file, conservato solo in questa finestra."
 
-#: app/src/protection.rs:886
+#: app/src/protection.rs:879
 msgid "It carries {count} file, kept in this window only."
 msgid_plural "It carries {count} files, kept in this window only."
 msgstr[0] "Contiene {count} file, conservato solo in questa finestra."
 msgstr[1] "Contiene {count} file, conservati solo in questa finestra."
 
-#: app/src/protection.rs:917
+#: app/src/protection.rs:910
 msgid "{names} or {last}"
 msgstr "{names} o {last}"
 
-#: app/src/protection.rs:929
+#: app/src/protection.rs:922
 msgid "{names} and {last}"
 msgstr "{names} e {last}"
 
@@ -2822,196 +2762,6 @@ msgstr "Su questo computer, mentre Iris è aperto"
 #: app/src/servers.rs:40
 msgid "On the server"
 msgstr "Sul server"
-
-#: app/src/settings/mod.rs:232 app/src/settings/mod.rs:407
-#: app/src/settings/mod.rs:701 app/src/ui/assistant_mcp_prefs.rs:184
-msgid "Off"
-msgstr "Disattivato"
-
-#: app/src/settings/mod.rs:233
-msgid "Local Server"
-msgstr "Server locale"
-
-#: app/src/settings/mod.rs:234
-msgid "Anthropic API"
-msgstr "API Anthropic"
-
-#: app/src/settings/mod.rs:235
-msgid "Claude Subscription"
-msgstr "Abbonamento Claude"
-
-#. The header in both spaces carries a button for this now (R12);
-#. the menu item stays too, so Ctrl+J shows here as well.
-#: app/src/settings/mod.rs:260 app/src/ui/assistant.rs:99
-#: app/src/ui/window.rs:2991
-msgid "Assistant"
-msgstr "Assistente"
-
-#: app/src/settings/mod.rs:261
-msgid "Translation"
-msgstr "Traduzione"
-
-#. The assistant's running label says "Unsubscribing" too, and
-#. means the act rather than the feature, which Portuguese
-#. words differently.
-#: app/src/settings/mod.rs:265
-msgctxt "ai feature"
-msgid "Unsubscribing"
-msgstr "Annullamento iscrizioni"
-
-#: app/src/settings/mod.rs:271
-msgid "Answers questions and acts on your mail"
-msgstr "Risponde alle domande e agisce sulla tua posta"
-
-#: app/src/settings/mod.rs:272
-msgid "Translates a message when you ask"
-msgstr "Traduce un messaggio quando lo chiedi"
-
-#: app/src/settings/mod.rs:274
-msgid "Reads a newsletter's unsubscribe page when the rules cannot"
-msgstr ""
-"Legge la pagina di annullamento iscrizione di una newsletter quando le "
-"regole non bastano"
-
-#: app/src/settings/mod.rs:312
-msgid "Same as the Assistant"
-msgstr "Come l'Assistente"
-
-#: app/src/settings/mod.rs:408
-msgid "Claude's own only"
-msgstr "Solo quella di Claude"
-
-#: app/src/settings/mod.rs:409
-msgid "Brave Search"
-msgstr "Brave Search"
-
-#: app/src/settings/mod.rs:410
-msgid "SearXNG"
-msgstr "SearXNG"
-
-#: app/src/settings/mod.rs:548
-msgid "Rich text"
-msgstr "Testo formattato"
-
-#: app/src/settings/mod.rs:549
-msgid "Markdown"
-msgstr "Markdown"
-
-#: app/src/settings/mod.rs:568
-msgid "Automatic"
-msgstr "Automatico"
-
-#: app/src/settings/mod.rs:569 app/src/ui/calendar/editor.rs:2029
-msgid "Monday"
-msgstr "Lunedì"
-
-#: app/src/settings/mod.rs:570 app/src/ui/calendar/editor.rs:2035
-msgid "Sunday"
-msgstr "Domenica"
-
-#: app/src/settings/mod.rs:608
-msgid "When opened"
-msgstr "All'apertura"
-
-#: app/src/settings/mod.rs:609
-msgid "After 2 seconds"
-msgstr "Dopo 2 secondi"
-
-#: app/src/settings/mod.rs:610
-msgid "Only when I choose"
-msgstr "Solo quando lo scelgo"
-
-#: app/src/settings/mod.rs:626
-msgid "Ask each time"
-msgstr "Chiedi ogni volta"
-
-#: app/src/settings/mod.rs:627
-msgid "Always load"
-msgstr "Carica sempre"
-
-#: app/src/settings/mod.rs:661
-msgid "Small"
-msgstr "Piccolo"
-
-#: app/src/settings/mod.rs:662
-msgid "Default"
-msgstr "Predefinito"
-
-#: app/src/settings/mod.rs:663
-msgid "Large"
-msgstr "Grande"
-
-#: app/src/settings/mod.rs:664
-msgid "Larger"
-msgstr "Più grande"
-
-#: app/src/settings/mod.rs:702
-msgid "5 seconds"
-msgstr "5 secondi"
-
-#: app/src/settings/mod.rs:703
-msgid "10 seconds"
-msgstr "10 secondi"
-
-#: app/src/settings/mod.rs:704
-msgid "20 seconds"
-msgstr "20 secondi"
-
-#: app/src/settings/mod.rs:705
-msgid "30 seconds"
-msgstr "30 secondi"
-
-#: app/src/settings/mod.rs:722
-msgid "Follow system"
-msgstr "Come il sistema"
-
-#: app/src/settings/mod.rs:723
-msgid "Light"
-msgstr "Chiaro"
-
-#: app/src/settings/mod.rs:724
-msgid "Dark"
-msgstr "Scuro"
-
-#: app/src/settings/mod.rs:758
-msgid "Every second"
-msgid_plural "Every {count} seconds"
-msgstr[0] "Ogni secondo"
-msgstr[1] "Ogni {count} secondi"
-
-#: app/src/settings/mod.rs:766
-msgid "Every minute"
-msgid_plural "Every {count} minutes"
-msgstr[0] "Ogni minuto"
-msgstr[1] "Ogni {count} minuti"
-
-#: app/src/settings/mod.rs:783
-msgid "2 weeks"
-msgstr "2 settimane"
-
-#: app/src/settings/mod.rs:784
-msgid "30 days"
-msgstr "30 giorni"
-
-#: app/src/settings/mod.rs:785
-msgid "90 days"
-msgstr "90 giorni"
-
-#: app/src/settings/mod.rs:786
-msgid "1 year"
-msgstr "1 anno"
-
-#: app/src/settings/mod.rs:793
-msgid "256 MB"
-msgstr "256 MB"
-
-#: app/src/settings/mod.rs:794
-msgid "1 GB"
-msgstr "1 GB"
-
-#: app/src/settings/mod.rs:795
-msgid "4 GB"
-msgstr "4 GB"
 
 #: app/src/smime.rs:93
 msgid "Add a recipient whose certificate gpgsm trusts."
@@ -3547,6 +3297,12 @@ msgstr "Imposta una risposta automatica per la prossima settimana"
 msgid "Draft a reply to the open conversation"
 msgstr "Scrivi una bozza di risposta alla conversazione aperta"
 
+#. The header in both spaces carries a button for this now (R12);
+#. the menu item stays too, so Ctrl+J shows here as well.
+#: app/src/ui/assistant.rs:99 app/src/ui/window.rs:2991
+msgid "Assistant"
+msgstr "Assistente"
+
 #: app/src/ui/assistant.rs:102 app/src/ui/assistant.rs:104
 msgid "New Chat"
 msgstr "Nuova chat"
@@ -3678,6 +3434,10 @@ msgstr "Rimuovi {server}"
 #: app/src/ui/assistant_mcp_prefs.rs:153
 msgid "Removed {server}"
 msgstr "{server} rimosso"
+
+#: app/src/ui/assistant_mcp_prefs.rs:184
+msgid "Off"
+msgstr "Disattivato"
 
 #: app/src/ui/assistant_mcp_prefs.rs:223
 msgid "Starts when the assistant needs it"
@@ -4474,6 +4234,10 @@ msgid_plural "years"
 msgstr[0] "anno"
 msgstr[1] "anni"
 
+#: app/src/ui/calendar/editor.rs:2029
+msgid "Monday"
+msgstr "Lunedì"
+
 #: app/src/ui/calendar/editor.rs:2030
 msgid "Tuesday"
 msgstr "Martedì"
@@ -4493,6 +4257,10 @@ msgstr "Venerdì"
 #: app/src/ui/calendar/editor.rs:2034
 msgid "Saturday"
 msgstr "Sabato"
+
+#: app/src/ui/calendar/editor.rs:2035
+msgid "Sunday"
+msgstr "Domenica"
 
 #: app/src/ui/calendar/editor.rs:2046
 msgid "Lavender"
@@ -4792,6 +4560,15 @@ msgstr "Impossibile rinominare il calendario: {reason}"
 #: app/src/ui/calendar/manage.rs:290
 msgid "Delete “{calendar}”?"
 msgstr "Eliminare “{calendar}”?"
+
+#: app/src/ui/calendar/manage.rs:292 app/src/ui/calendar/popover.rs:211
+#: app/src/ui/calendar/popover.rs:213 app/src/ui/calendar/popover.rs:713
+#: app/src/ui/calendar/scope.rs:112 app/src/ui/conversation.rs:550
+#: app/src/ui/hide_my_email.rs:289 app/src/ui/queued.rs:58
+#: app/src/ui/templates.rs:149 app/src/ui/window/arrange.rs:106
+#: app/src/ui/window/organize.rs:204
+msgid "Delete"
+msgstr "Elimina"
 
 #: app/src/ui/calendar/manage.rs:299
 msgid "Deleted “{calendar}”"
@@ -5864,6 +5641,18 @@ msgstr "Carica immagini"
 msgid "This message is from a mailing list"
 msgstr "Questo messaggio proviene da una mailing list"
 
+#: app/src/ui/conversation.rs:407 app/src/ui/conversation.rs:564
+#: app/src/ui/conversation.rs:1134 app/src/ui/window/message_menu.rs:125
+#: app/src/ui/window/shortcuts.rs:402
+msgid "Archive"
+msgstr "Archivia"
+
+#: app/src/ui/conversation.rs:408 app/src/ui/conversation.rs:1178
+#: app/src/ui/preferences.rs:160 app/src/ui/rules.rs:370
+#: app/src/ui/window/message_menu.rs:128
+msgid "Mark as Read"
+msgstr "Segna come letto"
+
 #: app/src/ui/conversation.rs:409 app/src/ui/conversation.rs:1185
 #: app/src/ui/window/message_menu.rs:130
 msgid "Flag"
@@ -5944,6 +5733,11 @@ msgstr "Altre azioni"
 #: app/src/ui/conversation.rs:549 app/src/ui/queued.rs:56
 msgid "Send Now"
 msgstr "Invia ora"
+
+#: app/src/ui/conversation.rs:558 app/src/ui/window/message_menu.rs:122
+#: app/src/ui/window/shortcuts.rs:481
+msgid "Reply"
+msgstr "Rispondi"
 
 #: app/src/ui/conversation.rs:559 app/src/ui/window/message_menu.rs:123
 msgid "Reply All"
@@ -7974,6 +7768,10 @@ msgstr "Download di {file}…"
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
+#: app/src/ui/window.rs:2511
+msgid "Open"
+msgstr "Apri"
+
 #: app/src/ui/window.rs:2526 app/src/ui/window/attachments.rs:234
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
@@ -8674,6 +8472,10 @@ msgstr "Segna come letto o non letto"
 msgid "Mute or unmute"
 msgstr "Silenzia o riattiva"
 
+#: app/src/ui/window/shortcuts.rs:473
+msgid "New message"
+msgstr "Nuovo messaggio"
+
 #: app/src/ui/window/shortcuts.rs:486
 msgid "Reply all"
 msgstr "Rispondi a tutti"
@@ -8818,6 +8620,202 @@ msgstr "la vista non c'è più"
 #: app/src/unsubscribe_page/webkit.rs:404
 msgid "the plan would type something other than the address"
 msgstr "il piano scriverebbe qualcosa di diverso dall'indirizzo"
+
+#: appcore/src/compose.rs:592 appcore/src/compose.rs:2772
+msgid "Add at least one recipient."
+msgstr "Aggiungi almeno un destinatario."
+
+#: appcore/src/compose.rs:601
+msgid "“{address}” is not an email address."
+msgstr "“{address}” non è un indirizzo email."
+
+#: appcore/src/compose.rs:849 appcore/src/compose.rs:2778
+msgid "Choose a time in the future"
+msgstr "Scegli un orario nel futuro"
+
+#: appcore/src/compose.rs:1054
+msgid "On {date}, {sender} wrote:"
+msgstr "Il giorno {date}, {sender} ha scritto:"
+
+#: appcore/src/notify.rs:111 appcore/src/notify.rs:150
+msgid "{count} new message"
+msgid_plural "{count} new messages"
+msgstr[0] "{count} nuovo messaggio"
+msgstr[1] "{count} nuovi messaggi"
+
+#: appcore/src/notify.rs:156
+msgid "From {senders}"
+msgstr "Da {senders}"
+
+#: appcore/src/settings/mod.rs:233
+msgid "Local Server"
+msgstr "Server locale"
+
+#: appcore/src/settings/mod.rs:234
+msgid "Anthropic API"
+msgstr "API Anthropic"
+
+#: appcore/src/settings/mod.rs:235
+msgid "Claude Subscription"
+msgstr "Abbonamento Claude"
+
+#: appcore/src/settings/mod.rs:261
+msgid "Translation"
+msgstr "Traduzione"
+
+#. The assistant's running label says "Unsubscribing" too, and
+#. means the act rather than the feature, which Portuguese
+#. words differently.
+#: appcore/src/settings/mod.rs:265
+msgctxt "ai feature"
+msgid "Unsubscribing"
+msgstr "Annullamento iscrizioni"
+
+#: appcore/src/settings/mod.rs:271
+msgid "Answers questions and acts on your mail"
+msgstr "Risponde alle domande e agisce sulla tua posta"
+
+#: appcore/src/settings/mod.rs:272
+msgid "Translates a message when you ask"
+msgstr "Traduce un messaggio quando lo chiedi"
+
+#: appcore/src/settings/mod.rs:274
+msgid "Reads a newsletter's unsubscribe page when the rules cannot"
+msgstr ""
+"Legge la pagina di annullamento iscrizione di una newsletter quando le "
+"regole non bastano"
+
+#: appcore/src/settings/mod.rs:312
+msgid "Same as the Assistant"
+msgstr "Come l'Assistente"
+
+#: appcore/src/settings/mod.rs:408
+msgid "Claude's own only"
+msgstr "Solo quella di Claude"
+
+#: appcore/src/settings/mod.rs:409
+msgid "Brave Search"
+msgstr "Brave Search"
+
+#: appcore/src/settings/mod.rs:410
+msgid "SearXNG"
+msgstr "SearXNG"
+
+#: appcore/src/settings/mod.rs:548
+msgid "Rich text"
+msgstr "Testo formattato"
+
+#: appcore/src/settings/mod.rs:549
+msgid "Markdown"
+msgstr "Markdown"
+
+#: appcore/src/settings/mod.rs:568
+msgid "Automatic"
+msgstr "Automatico"
+
+#: appcore/src/settings/mod.rs:608
+msgid "When opened"
+msgstr "All'apertura"
+
+#: appcore/src/settings/mod.rs:609
+msgid "After 2 seconds"
+msgstr "Dopo 2 secondi"
+
+#: appcore/src/settings/mod.rs:610
+msgid "Only when I choose"
+msgstr "Solo quando lo scelgo"
+
+#: appcore/src/settings/mod.rs:626
+msgid "Ask each time"
+msgstr "Chiedi ogni volta"
+
+#: appcore/src/settings/mod.rs:627
+msgid "Always load"
+msgstr "Carica sempre"
+
+#: appcore/src/settings/mod.rs:661
+msgid "Small"
+msgstr "Piccolo"
+
+#: appcore/src/settings/mod.rs:662
+msgid "Default"
+msgstr "Predefinito"
+
+#: appcore/src/settings/mod.rs:663
+msgid "Large"
+msgstr "Grande"
+
+#: appcore/src/settings/mod.rs:664
+msgid "Larger"
+msgstr "Più grande"
+
+#: appcore/src/settings/mod.rs:702
+msgid "5 seconds"
+msgstr "5 secondi"
+
+#: appcore/src/settings/mod.rs:703
+msgid "10 seconds"
+msgstr "10 secondi"
+
+#: appcore/src/settings/mod.rs:704
+msgid "20 seconds"
+msgstr "20 secondi"
+
+#: appcore/src/settings/mod.rs:705
+msgid "30 seconds"
+msgstr "30 secondi"
+
+#: appcore/src/settings/mod.rs:722
+msgid "Follow system"
+msgstr "Come il sistema"
+
+#: appcore/src/settings/mod.rs:723
+msgid "Light"
+msgstr "Chiaro"
+
+#: appcore/src/settings/mod.rs:724
+msgid "Dark"
+msgstr "Scuro"
+
+#: appcore/src/settings/mod.rs:758
+msgid "Every second"
+msgid_plural "Every {count} seconds"
+msgstr[0] "Ogni secondo"
+msgstr[1] "Ogni {count} secondi"
+
+#: appcore/src/settings/mod.rs:766
+msgid "Every minute"
+msgid_plural "Every {count} minutes"
+msgstr[0] "Ogni minuto"
+msgstr[1] "Ogni {count} minuti"
+
+#: appcore/src/settings/mod.rs:783
+msgid "2 weeks"
+msgstr "2 settimane"
+
+#: appcore/src/settings/mod.rs:784
+msgid "30 days"
+msgstr "30 giorni"
+
+#: appcore/src/settings/mod.rs:785
+msgid "90 days"
+msgstr "90 giorni"
+
+#: appcore/src/settings/mod.rs:786
+msgid "1 year"
+msgstr "1 anno"
+
+#: appcore/src/settings/mod.rs:793
+msgid "256 MB"
+msgstr "256 MB"
+
+#: appcore/src/settings/mod.rs:794
+msgid "1 GB"
+msgstr "1 GB"
+
+#: appcore/src/settings/mod.rs:795
+msgid "4 GB"
+msgstr "4 GB"
 
 #. A leading zero on the hour would read "03:05 PM" where every
 #. 12-hour clock on the desktop reads "3:05 PM".

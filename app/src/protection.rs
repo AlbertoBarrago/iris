@@ -16,7 +16,6 @@ pub mod run;
 use mail_parser::MessageParser;
 use mailrs_domain::translate::{fill, fill_plural, gettext};
 use mailrs_domain::{MessageBody, Protection};
-use serde::{Deserialize, Serialize};
 
 use crate::compose::Draft;
 use crate::core::Core;
@@ -75,13 +74,7 @@ pub enum Engine {
     Smime(smime::Opening),
 }
 
-/// Which standard a message goes out under.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Standard {
-    #[default]
-    Pgp,
-    Smime,
-}
+pub use mailrs_appcore::standard::Standard;
 
 /// What each engine holds for a set of addresses. An engine this computer
 /// does not have answers nothing at all, which is not the same as holding

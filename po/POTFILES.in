@@ -22,7 +22,7 @@ app/src/assistant/sources/skills/sandbox.rs
 app/src/assistant/sources/skills/shell.rs
 app/src/assistant/sources/web.rs
 app/src/assistant/turn.rs
-app/src/compose.rs
+appcore/src/compose.rs
 app/src/contacts.rs
 app/src/core.rs
 app/src/event_reminders/notice.rs
@@ -30,7 +30,7 @@ app/src/format.rs
 app/src/language_names.rs
 app/src/macos_menu.rs
 app/src/main.rs
-app/src/notify.rs
+appcore/src/notify.rs
 app/src/offered.rs
 app/src/open_thread/run/translation.rs
 app/src/permission.rs
@@ -40,7 +40,7 @@ app/src/protection/draft.rs
 app/src/rules.rs
 app/src/search.rs
 app/src/servers.rs
-app/src/settings/mod.rs
+appcore/src/settings/mod.rs
 app/src/smime.rs
 app/src/templates.rs
 app/src/translation.rs
