@@ -17,9 +17,10 @@
 # The bundle carries Sparkle, which checks IRIS_APPCAST_URL for updates. The
 # script also writes target/dmg/appcast.xml for every DMG in target/dmg,
 # signed with the EdDSA key Sparkle's generate_keys keeps in the login
-# Keychain, each pointing at IRIS_DOWNLOAD_URL. Upload the new DMG and the
-# appcast there. Sparkle offers a DMG only when its CFBundleVersion, the
-# version in Cargo.toml, is newer than the running one.
+# Keychain, each pointing at IRIS_DOWNLOAD_URL, by default this version's
+# GitHub release. scripts/macos-publish.sh puts them there. Sparkle offers a
+# DMG only when its CFBundleVersion, the version in Cargo.toml, is newer
+# than the running one.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -36,7 +37,7 @@ done
 
 version="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)"
 appcast_url="${IRIS_APPCAST_URL:-https://albz.it/iris/appcast.xml}"
-download_url="${IRIS_DOWNLOAD_URL:-https://albz.it/iris/}"
+download_url="${IRIS_DOWNLOAD_URL:-https://github.com/AlbertoBarrago/iris/releases/download/v$version/}"
 
 # Sparkle, fetched once into target/ and checked against its known digest.
 sparkle_version=2.10.0
@@ -109,8 +110,8 @@ rm -rf "$staging"
 # The testers' installer goes up beside the DMGs.
 cp packaging/macos/install.sh "$out/install.sh"
 # The feed offers the newest build alone, with deltas from the three
-# before it, so the site keeps one DMG and testers download a few MB.
+# before it, all on this version's release, and testers download a few MB.
 "$sparkle/bin/generate_appcast" --download-url-prefix "$download_url" \
     --maximum-versions 1 --maximum-deltas 3 "$out" >&2
 echo "$dmg (macOS $minimum or later, Apple silicon)"
-echo "Publish it with: scripts/macos-publish.sh ~/Projects/albertobarrago.github.io"
+echo "Publish it with: scripts/macos-publish.sh"
