@@ -36,9 +36,9 @@ credit Penguin Mail, as the GPL asks of a modified copy.
   `refactor:`, `chore:`), not AGENTS.md's prefix-free style.
 - Present a plan and wait for confirmation before implementing, despite
   AGENTS.md's "decide on taste and keep going".
-- `po/it_IT.po` is kept complete like `po/pt_PT.po`: translate every
-  new string into both in the same change. The owner reads the UI in
-  Italian too.
+- `po/it_IT.po` is kept complete: translate every new string into it in
+  the same change. The owner reads the UI in Italian. `po/pt_PT.po` is
+  no longer kept up: its new strings stay in English.
 - Something that does not work on macOS gets made to work the macOS way
   (AppKit, Launch Services, the Keychain, `SMAppService`, Sparkle), not
   worked around.
