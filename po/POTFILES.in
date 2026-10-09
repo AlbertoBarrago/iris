@@ -96,6 +96,7 @@ app/src/ui/preferences.rs
 app/src/ui/queued.rs
 app/src/ui/rules.rs
 app/src/ui/sidebar.rs
+view/src/done.rs
 view/src/sections.rs
 app/src/ui/signature_source.rs
 app/src/ui/smart_editor.rs

@@ -11,30 +11,56 @@ struct ConversationView: View {
     var body: some View {
         Group {
             if let page = model.page {
-                MailPage(html: page)
+                VStack(spacing: 0) {
+                    if page.remoteHidden {
+                        HStack {
+                            Text(tr("Remote images are hidden to protect your privacy"))
+                            Spacer()
+                            Button(tr("Load Images")) { model.loadImages() }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        .padding(10)
+                    }
+                    MailPage(html: page.html)
+                }
             } else {
-                ContentUnavailableView("No Conversation Selected", systemImage: "envelope")
+                ContentUnavailableView(tr("No Conversation Selected"), systemImage: "envelope")
             }
         }
         .toolbar {
-            // The actions arrive with syncing; the bar is already where
-            // the GTK app has it.
+            // Reply and Forward arrive with the composer.
             ToolbarItemGroup {
-                Button("Reply", systemImage: "arrowshape.turn.up.left") {}
-                Button("Reply All", systemImage: "arrowshape.turn.up.left.2") {}
-                Button("Forward", systemImage: "arrowshape.turn.up.right") {}
+                Group {
+                    Button(tr("Reply"), systemImage: "arrowshape.turn.up.left") {}
+                        .keyboardShortcut("r", modifiers: .command)
+                    Button(tr("Reply All"), systemImage: "arrowshape.turn.up.left.2") {}
+                        .keyboardShortcut("r", modifiers: [.command, .shift])
+                    Button(tr("Forward"), systemImage: "arrowshape.turn.up.right") {}
+                        .keyboardShortcut("f", modifiers: [.command, .shift])
+                }
+                .disabled(true)
             }
             ToolbarItemGroup {
-                Button("Archive", systemImage: "archivebox") {}
-                Button("Delete", systemImage: "trash") {}
-                Button("Junk", systemImage: "xmark.bin") {}
+                Group {
+                    Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive) }
+                        .keyboardShortcut("a", modifiers: [.command, .option])
+                    Button(tr("Delete"), systemImage: "trash") { model.perform(.trash) }
+                    Button(tr("Junk"), systemImage: "xmark.bin") { model.perform(.junk) }
+                        .keyboardShortcut("j", modifiers: [.command, .shift])
+                }
+                .disabled(model.selection.isEmpty)
             }
             ToolbarItemGroup {
-                Button("Label", systemImage: "tag") {}
-                Button("Flag", systemImage: "flag") {}
+                Group {
+                    Button(tr("Mark as Read"), systemImage: "envelope.badge") { model.toggleRead() }
+                        .keyboardShortcut("u", modifiers: [.command, .shift])
+                    FlagMenu()
+                }
+                .disabled(model.selection.isEmpty)
             }
         }
-        .disabled(model.page == nil)
         .onAppear { model.theme = PageTheme.current(dark: colorScheme == .dark) }
         .onChange(of: colorScheme) { model.theme = PageTheme.current(dark: colorScheme == .dark) }
         .onReceive(NotificationCenter.default.publisher(for: NSColor.systemColorsDidChangeNotification)) { _ in

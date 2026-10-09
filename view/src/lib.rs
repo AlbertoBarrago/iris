@@ -3,6 +3,7 @@
 //! order and the nesting of labels follow one set of rules, with plain
 //! tests over each.
 
+pub mod done;
 pub mod sections;
 pub mod sidebar;
 pub mod tree;

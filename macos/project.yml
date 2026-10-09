@@ -41,11 +41,20 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.AlbertoBarrago.Iris.Next
         PRODUCT_NAME: Iris Next
         GENERATE_INFOPLIST_FILE: YES
+        # The winged envelope, from scripts/macos-icon.sh.
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: Iris Next
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
-        CODE_SIGN_IDENTITY: "-"
+        # The identity the GTK app's bundle carries, which stays the same
+        # from one build to the next. The Keychain ties "Always Allow" to
+        # the signature, and an ad-hoc one changes with every build, so
+        # each build asked for the Keychain again and accounts waited.
+        CODE_SIGN_IDENTITY: albz Code Signing
+        CODE_SIGN_STYLE: Manual
+        # One binary, which the stable signature covers whole.
+        ENABLE_DEBUG_DYLIB: NO
         # The prototype reads the store the GTK app keeps in
         # ~/Library/Application Support/iris, which a sandbox would close.
         ENABLE_APP_SANDBOX: NO

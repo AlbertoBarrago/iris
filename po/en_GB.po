@@ -1667,7 +1667,7 @@ msgstr "New message"
 msgid "From {senders}"
 msgstr "From {senders}"
 
-#: app/src/notify.rs:200 app/src/ui/window.rs:2633
+#: app/src/notify.rs:200 app/src/ui/window.rs:2511
 msgid "Open"
 msgstr "Open"
 
@@ -2445,7 +2445,7 @@ msgstr "That account is not connected."
 msgid "Could not save: {reason}"
 msgstr "Could not save: {reason}"
 
-#: app/src/protection/draft.rs:200 app/src/ui/window.rs:2551
+#: app/src/protection/draft.rs:200 app/src/ui/window.rs:2429
 msgid "Could not open the draft: {reason}"
 msgstr "Could not open the draft: {reason}"
 
@@ -2608,7 +2608,7 @@ msgstr "Claude Subscription"
 #. The header in both spaces carries a button for this now (R12);
 #. the menu item stays too, so Ctrl+J shows here as well.
 #: app/src/settings/mod.rs:260 app/src/ui/assistant.rs:99
-#: app/src/ui/window.rs:3113
+#: app/src/ui/window.rs:2991
 msgid "Assistant"
 msgstr "Assistant"
 
@@ -2928,7 +2928,7 @@ msgstr "Website"
 msgid "License"
 msgstr "Licence"
 
-#: app/src/ui/about.rs:177 app/src/ui/window.rs:3130
+#: app/src/ui/about.rs:177 app/src/ui/window.rs:3008
 msgid "About Iris"
 msgstr "About Iris"
 
@@ -3037,7 +3037,7 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: app/src/ui/add_account.rs:895 app/src/ui/add_account.rs:988
-#: app/src/ui/add_account.rs:2284 app/src/ui/window.rs:1212
+#: app/src/ui/add_account.rs:2284 app/src/ui/window.rs:1090
 msgid "Sign In"
 msgstr "Sign In"
 
@@ -3117,7 +3117,7 @@ msgstr "Not Now"
 #: app/src/ui/add_account.rs:1159 app/src/ui/calendar/editor.rs:1606
 #: app/src/ui/calendar/sidebar.rs:922 app/src/ui/contacts_prefs.rs:314
 #: app/src/ui/invitation.rs:461 app/src/ui/permission.rs:42
-#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1291
+#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1169
 msgid "Grant Access"
 msgstr "Grant Access"
 
@@ -3246,7 +3246,7 @@ msgstr "{account} is ready"
 msgid "This server cannot tell its messages apart, so Iris cannot download from it safely."
 msgstr "This server cannot tell its messages apart, so Iris cannot download from it safely."
 
-#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3198
+#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3076
 msgid "Summarize this conversation"
 msgstr "Summarise this conversation"
 
@@ -3372,7 +3372,7 @@ msgstr "Edit {server}"
 
 #: app/src/ui/assistant_mcp_prefs.rs:121 app/src/ui/calendar/editor.rs:1639
 #: app/src/ui/composer/mod.rs:1849 app/src/ui/composer/recipients.rs:315
-#: app/src/ui/window.rs:2902
+#: app/src/ui/window.rs:2780
 msgid "Remove"
 msgstr "Remove"
 
@@ -5955,7 +5955,7 @@ msgstr "Could not delete the address: {reason}"
 msgid "Allow Hide My Email"
 msgstr "Allow Hide My Email"
 
-#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3246
+#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3124
 msgid "Add an account first"
 msgstr "Add an account first"
 
@@ -6259,7 +6259,7 @@ msgid "All Files"
 msgstr "All Files"
 
 #: app/src/ui/key_import.rs:213 app/src/ui/key_import.rs:217
-#: app/src/ui/window.rs:3655
+#: app/src/ui/window.rs:3533
 msgid "Close"
 msgstr "Close"
 
@@ -7074,7 +7074,7 @@ msgstr "Signature…"
 msgid "Rules…"
 msgstr "Rules…"
 
-#: app/src/ui/sidebar.rs:1841 app/src/ui/window.rs:3120
+#: app/src/ui/sidebar.rs:1841 app/src/ui/window.rs:2998
 msgid "Hide My Email…"
 msgstr "Hide My Email…"
 
@@ -7281,7 +7281,7 @@ msgstr "Search mail"
 msgid "VIP"
 msgstr "VIP"
 
-#: app/src/ui/thread_row.rs:121 app/src/ui/window.rs:391
+#: app/src/ui/thread_row.rs:121
 msgid "Muted"
 msgstr "Muted"
 
@@ -7480,317 +7480,187 @@ msgstr "Add your first account"
 msgid "Choose where your mail lives. You can add more later from the main menu."
 msgstr "Choose where your mail lives. You can add more later from the main menu."
 
-#: app/src/ui/window.rs:272
+#: app/src/ui/window.rs:273
 msgid "Deleted forever"
 msgstr "Deleted forever"
 
-#: app/src/ui/window.rs:274
+#: app/src/ui/window.rs:275
 msgid "Deleted {count} conversation forever"
 msgid_plural "Deleted {count} conversations forever"
 msgstr[0] "Deleted {count} conversation forever"
 msgstr[1] "Deleted {count} conversations forever"
 
-#: app/src/ui/window.rs:280
+#: app/src/ui/window.rs:281
 msgid "Deleted {count} message forever"
 msgid_plural "Deleted {count} messages forever"
 msgstr[0] "Deleted {count} message forever"
 msgstr[1] "Deleted {count} messages forever"
 
-#: app/src/ui/window.rs:293
+#: app/src/ui/window.rs:294
 msgid "{label}, on this mail"
 msgstr "{label}, on this mail"
 
-#: app/src/ui/window.rs:322
+#: app/src/ui/window.rs:323
 msgid "Added {person} to VIPs"
 msgstr "Added {person} to VIPs"
 
-#: app/src/ui/window.rs:323
+#: app/src/ui/window.rs:324
 msgid "Removed {person} from VIPs"
 msgstr "Removed {person} from VIPs"
 
-#: app/src/ui/window.rs:329
+#: app/src/ui/window.rs:330
 msgid "Could not load mail: {reason}"
 msgstr "Could not load mail: {reason}"
 
-#: app/src/ui/window.rs:339
+#: app/src/ui/window.rs:340
 msgid "Added {account}. Downloading mail…"
 msgstr "Added {account}. Downloading mail…"
 
-#: app/src/ui/window.rs:343 app/src/ui/window.rs:2692
+#: app/src/ui/window.rs:344 app/src/ui/window.rs:2570
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 
-#: app/src/ui/window.rs:362
+#: app/src/ui/window.rs:363
 msgid "Made a folder called “{name}” on {provider} for archived mail"
 msgstr "Made a folder called “{name}” on {provider} for archived mail"
 
-#: app/src/ui/window.rs:371
-msgid "Flagged red"
-msgstr "Flagged red"
-
-#: app/src/ui/window.rs:372
-msgid "Flagged orange"
-msgstr "Flagged orange"
-
-#: app/src/ui/window.rs:373
-msgid "Flagged yellow"
-msgstr "Flagged yellow"
-
-#: app/src/ui/window.rs:374
-msgid "Flagged green"
-msgstr "Flagged green"
-
-#: app/src/ui/window.rs:375
-msgid "Flagged blue"
-msgstr "Flagged blue"
-
-#: app/src/ui/window.rs:376
-msgid "Flagged purple"
-msgstr "Flagged purple"
-
-#: app/src/ui/window.rs:377
-msgid "Flagged gray"
-msgstr "Flagged grey"
-
-#: app/src/ui/window.rs:388 app/src/ui/window.rs:486
-msgid "Labels changed"
-msgstr "Labels changed"
-
-#: app/src/ui/window.rs:392
-msgid "Unmuted"
-msgstr "Unmuted"
-
-#: app/src/ui/window.rs:394
-msgid "Muted {count} conversation"
-msgid_plural "Muted {count} conversations"
-msgstr[0] "Muted {count} conversation"
-msgstr[1] "Muted {count} conversations"
-
-#: app/src/ui/window.rs:400
-msgid "Muted {count} message"
-msgid_plural "Muted {count} messages"
-msgstr[0] "Muted {count} message"
-msgstr[1] "Muted {count} messages"
-
-#: app/src/ui/window.rs:406
-msgid "Unmuted {count} conversation"
-msgid_plural "Unmuted {count} conversations"
-msgstr[0] "Unmuted {count} conversation"
-msgstr[1] "Unmuted {count} conversations"
-
-#: app/src/ui/window.rs:412
-msgid "Unmuted {count} message"
-msgid_plural "Unmuted {count} messages"
-msgstr[0] "Unmuted {count} message"
-msgstr[1] "Unmuted {count} messages"
-
-#: app/src/ui/window.rs:422
-msgid "Dismissed {count} follow-up"
-msgid_plural "Dismissed {count} follow-ups"
-msgstr[0] "Dismissed {count} follow-up"
-msgstr[1] "Dismissed {count} follow-ups"
-
-#: app/src/ui/window.rs:431
-msgid "Archived"
-msgstr "Archived"
-
-#: app/src/ui/window.rs:433
-msgid "Archived {count} conversation"
-msgid_plural "Archived {count} conversations"
-msgstr[0] "Archived {count} conversation"
-msgstr[1] "Archived {count} conversations"
-
-#: app/src/ui/window.rs:439
-msgid "Archived {count} message"
-msgid_plural "Archived {count} messages"
-msgstr[0] "Archived {count} message"
-msgstr[1] "Archived {count} messages"
-
-#: app/src/ui/window.rs:444
-msgid "Moved to Trash"
-msgstr "Moved to Trash"
-
-#: app/src/ui/window.rs:446
-msgid "Moved {count} conversation to Trash"
-msgid_plural "Moved {count} conversations to Trash"
-msgstr[0] "Moved {count} conversation to Trash"
-msgstr[1] "Moved {count} conversations to Trash"
-
-#: app/src/ui/window.rs:452
-msgid "Moved {count} message to Trash"
-msgid_plural "Moved {count} messages to Trash"
-msgstr[0] "Moved {count} message to Trash"
-msgstr[1] "Moved {count} messages to Trash"
-
-#: app/src/ui/window.rs:457
-msgid "Marked as junk"
-msgstr "Marked as junk"
-
-#: app/src/ui/window.rs:459
-msgid "Marked {count} conversation as junk"
-msgid_plural "Marked {count} conversations as junk"
-msgstr[0] "Marked {count} conversation as junk"
-msgstr[1] "Marked {count} conversations as junk"
-
-#: app/src/ui/window.rs:465
-msgid "Marked {count} message as junk"
-msgid_plural "Marked {count} messages as junk"
-msgstr[0] "Marked {count} message as junk"
-msgstr[1] "Marked {count} messages as junk"
-
-#: app/src/ui/window.rs:470
-msgid "Moved to the Inbox"
-msgstr "Moved to the Inbox"
-
-#: app/src/ui/window.rs:472
-msgid "Moved {count} conversation to the Inbox"
-msgid_plural "Moved {count} conversations to the Inbox"
-msgstr[0] "Moved {count} conversation to the Inbox"
-msgstr[1] "Moved {count} conversations to the Inbox"
-
-#: app/src/ui/window.rs:478
-msgid "Moved {count} message to the Inbox"
-msgid_plural "Moved {count} messages to the Inbox"
-msgstr[0] "Moved {count} message to the Inbox"
-msgstr[1] "Moved {count} messages to the Inbox"
-
-#: app/src/ui/window.rs:543
+#: app/src/ui/window.rs:421
 msgid "Resize the message list"
 msgstr "Resize the message list"
 
-#: app/src/ui/window.rs:712
+#: app/src/ui/window.rs:590
 msgid "Resize the assistant"
 msgstr "Resize the assistant"
 
-#: app/src/ui/window.rs:806
+#: app/src/ui/window.rs:684
 msgid "Iris (Demo)"
 msgstr "Iris (Demo)"
 
-#: app/src/ui/window.rs:1147
+#: app/src/ui/window.rs:1025
 msgid "Could not read accounts: {reason}"
 msgstr "Could not read accounts: {reason}"
 
-#: app/src/ui/window.rs:1209
+#: app/src/ui/window.rs:1087
 msgid "Sign in again to keep {account} syncing"
 msgstr "Sign in again to keep {account} syncing"
 
-#: app/src/ui/window.rs:1906
+#: app/src/ui/window.rs:1784
 msgid "Could not delete the mail: {reason}"
 msgstr "Could not delete the mail: {reason}"
 
-#: app/src/ui/window.rs:1990
+#: app/src/ui/window.rs:1868
 msgid "Turn On the {service}"
 msgstr "Turn On the {service}"
 
-#: app/src/ui/window.rs:1993
+#: app/src/ui/window.rs:1871
 msgid "The Google Cloud project Iris signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
 msgstr "The Google Cloud project Iris signs in with has the {service} switched off, so Google refuses before it can ask for your permission. Turn it on, wait a minute, and try again."
 
-#: app/src/ui/window.rs:1999
+#: app/src/ui/window.rs:1877
 msgid "Open Google Cloud"
 msgstr "Open Google Cloud"
 
-#: app/src/ui/window.rs:2115
+#: app/src/ui/window.rs:1993
 msgid "Nothing to undo"
 msgstr "Nothing to undo"
 
-#: app/src/ui/window.rs:2121
+#: app/src/ui/window.rs:1999
 msgid "{action} undone"
 msgstr "{action} undone"
 
-#: app/src/ui/window.rs:2347
+#: app/src/ui/window.rs:2225
 msgid "Select mail from one account to tag it."
 msgstr "Select mail from one account to tag it."
 
-#: app/src/ui/window.rs:2359
+#: app/src/ui/window.rs:2237
 msgid "This account has no tags yet. Make one in Outlook."
 msgstr "This account has no tags yet. Make one in Outlook."
 
-#: app/src/ui/window.rs:2498
+#: app/src/ui/window.rs:2376
 msgid "Could not include {file}: {reason}"
 msgstr "Could not include {file}: {reason}"
 
-#: app/src/ui/window.rs:2609
+#: app/src/ui/window.rs:2487
 msgid "Downloading {file}…"
 msgstr "Downloading {file}…"
 
-#: app/src/ui/window.rs:2630 app/src/ui/window/attachments.rs:229
+#: app/src/ui/window.rs:2508 app/src/ui/window/attachments.rs:229
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: app/src/ui/window.rs:2648 app/src/ui/window/attachments.rs:234
+#: app/src/ui/window.rs:2526 app/src/ui/window/attachments.rs:234
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: app/src/ui/window.rs:2791
+#: app/src/ui/window.rs:2669
 msgid "Continue in your browser"
 msgstr "Continue in your browser"
 
-#: app/src/ui/window.rs:2818
+#: app/src/ui/window.rs:2696
 msgid "This copy of Iris was built without Google sign-in."
 msgstr "This copy of Iris was built without Google sign-in."
 
-#: app/src/ui/window.rs:2826
+#: app/src/ui/window.rs:2704
 msgid "Get a Release"
 msgstr "Get a Release"
 
-#: app/src/ui/window.rs:2898
+#: app/src/ui/window.rs:2776
 msgid "Remove {account}?"
 msgstr "Remove {account}?"
 
-#: app/src/ui/window.rs:2913
+#: app/src/ui/window.rs:2791
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: app/src/ui/window.rs:2915
+#: app/src/ui/window.rs:2793
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: app/src/ui/window.rs:3100
+#: app/src/ui/window.rs:2978
 msgid "Refresh"
 msgstr "Refresh"
 
-#: app/src/ui/window.rs:3104
+#: app/src/ui/window.rs:2982
 msgid "Show Declined Events"
 msgstr "Show Declined Events"
 
-#: app/src/ui/window.rs:3119
+#: app/src/ui/window.rs:2997
 msgid "New Smart Mailbox…"
 msgstr "New Smart Mailbox…"
 
-#: app/src/ui/window.rs:3128 app/src/ui/window/shortcuts.rs:616
+#: app/src/ui/window.rs:3006 app/src/ui/window/shortcuts.rs:616
 msgid "Preferences"
 msgstr "Preferences"
 
-#: app/src/ui/window.rs:3129
+#: app/src/ui/window.rs:3007
 msgid "Keyboard Shortcuts"
 msgstr "Keyboard Shortcuts"
 
-#: app/src/ui/window.rs:3131 app/src/ui/window/shortcuts.rs:639
+#: app/src/ui/window.rs:3009 app/src/ui/window/shortcuts.rs:639
 msgid "Quit"
 msgstr "Quit"
 
-#: app/src/ui/window.rs:3137 app/src/ui/window.rs:3139
+#: app/src/ui/window.rs:3015 app/src/ui/window.rs:3017
 msgid "Main Menu"
 msgstr "Main Menu"
 
-#: app/src/ui/window.rs:3519
+#: app/src/ui/window.rs:3397
 msgid "Open a message from the person first"
 msgstr "Open a message from the person first"
 
-#: app/src/ui/window.rs:3595
+#: app/src/ui/window.rs:3473
 msgid "Iris shows the new language after a restart"
 msgstr "Iris shows the new language after a restart"
 
-#: app/src/ui/window.rs:3597
+#: app/src/ui/window.rs:3475
 msgid "Restart"
 msgstr "Restart"
 
-#: app/src/ui/window.rs:3630
+#: app/src/ui/window.rs:3508
 msgid "Messages That Will Not Download"
 msgstr "Messages That Will Not Download"
 
-#: app/src/ui/window.rs:3632
+#: app/src/ui/window.rs:3510
 msgid "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
 msgstr "Iris could not download these from {address}'s server. It tries again at each check, except for a message too large to download."
 
@@ -9401,6 +9271,136 @@ msgstr "Mark as not junk"
 #: sync/src/triage.rs:70
 msgid "Move to {folder}"
 msgstr "Move to {folder}"
+
+#: view/src/done.rs:12
+msgid "Flagged red"
+msgstr "Flagged red"
+
+#: view/src/done.rs:13
+msgid "Flagged orange"
+msgstr "Flagged orange"
+
+#: view/src/done.rs:14
+msgid "Flagged yellow"
+msgstr "Flagged yellow"
+
+#: view/src/done.rs:15
+msgid "Flagged green"
+msgstr "Flagged green"
+
+#: view/src/done.rs:16
+msgid "Flagged blue"
+msgstr "Flagged blue"
+
+#: view/src/done.rs:17
+msgid "Flagged purple"
+msgstr "Flagged purple"
+
+#: view/src/done.rs:18
+msgid "Flagged gray"
+msgstr "Flagged grey"
+
+#: view/src/done.rs:29 view/src/done.rs:127
+msgid "Labels changed"
+msgstr "Labels changed"
+
+#: view/src/done.rs:33
+msgid "Unmuted"
+msgstr "Unmuted"
+
+#: view/src/done.rs:35
+msgid "Muted {count} conversation"
+msgid_plural "Muted {count} conversations"
+msgstr[0] "Muted {count} conversation"
+msgstr[1] "Muted {count} conversations"
+
+#: view/src/done.rs:41
+msgid "Muted {count} message"
+msgid_plural "Muted {count} messages"
+msgstr[0] "Muted {count} message"
+msgstr[1] "Muted {count} messages"
+
+#: view/src/done.rs:47
+msgid "Unmuted {count} conversation"
+msgid_plural "Unmuted {count} conversations"
+msgstr[0] "Unmuted {count} conversation"
+msgstr[1] "Unmuted {count} conversations"
+
+#: view/src/done.rs:53
+msgid "Unmuted {count} message"
+msgid_plural "Unmuted {count} messages"
+msgstr[0] "Unmuted {count} message"
+msgstr[1] "Unmuted {count} messages"
+
+#: view/src/done.rs:63
+msgid "Dismissed {count} follow-up"
+msgid_plural "Dismissed {count} follow-ups"
+msgstr[0] "Dismissed {count} follow-up"
+msgstr[1] "Dismissed {count} follow-ups"
+
+#: view/src/done.rs:72
+msgid "Archived"
+msgstr "Archived"
+
+#: view/src/done.rs:74
+msgid "Archived {count} conversation"
+msgid_plural "Archived {count} conversations"
+msgstr[0] "Archived {count} conversation"
+msgstr[1] "Archived {count} conversations"
+
+#: view/src/done.rs:80
+msgid "Archived {count} message"
+msgid_plural "Archived {count} messages"
+msgstr[0] "Archived {count} message"
+msgstr[1] "Archived {count} messages"
+
+#: view/src/done.rs:85
+msgid "Moved to Trash"
+msgstr "Moved to Trash"
+
+#: view/src/done.rs:87
+msgid "Moved {count} conversation to Trash"
+msgid_plural "Moved {count} conversations to Trash"
+msgstr[0] "Moved {count} conversation to Trash"
+msgstr[1] "Moved {count} conversations to Trash"
+
+#: view/src/done.rs:93
+msgid "Moved {count} message to Trash"
+msgid_plural "Moved {count} messages to Trash"
+msgstr[0] "Moved {count} message to Trash"
+msgstr[1] "Moved {count} messages to Trash"
+
+#: view/src/done.rs:98
+msgid "Marked as junk"
+msgstr "Marked as junk"
+
+#: view/src/done.rs:100
+msgid "Marked {count} conversation as junk"
+msgid_plural "Marked {count} conversations as junk"
+msgstr[0] "Marked {count} conversation as junk"
+msgstr[1] "Marked {count} conversations as junk"
+
+#: view/src/done.rs:106
+msgid "Marked {count} message as junk"
+msgid_plural "Marked {count} messages as junk"
+msgstr[0] "Marked {count} message as junk"
+msgstr[1] "Marked {count} messages as junk"
+
+#: view/src/done.rs:111
+msgid "Moved to the Inbox"
+msgstr "Moved to the Inbox"
+
+#: view/src/done.rs:113
+msgid "Moved {count} conversation to the Inbox"
+msgid_plural "Moved {count} conversations to the Inbox"
+msgstr[0] "Moved {count} conversation to the Inbox"
+msgstr[1] "Moved {count} conversations to the Inbox"
+
+#: view/src/done.rs:119
+msgid "Moved {count} message to the Inbox"
+msgid_plural "Moved {count} messages to the Inbox"
+msgstr[0] "Moved {count} message to the Inbox"
+msgstr[1] "Moved {count} messages to the Inbox"
 
 #: view/src/sections.rs:26
 msgid "Favorites"

@@ -4,6 +4,7 @@ import SwiftUI
 /// open conversation, laid out as the GTK app lays them out.
 struct ContentView: View {
     @Environment(MailModel.self) private var model
+    @Environment(\.undoManager) private var undoManager
 
     var body: some View {
         NavigationSplitView {
@@ -15,6 +16,8 @@ struct ContentView: View {
         } detail: {
             ConversationView()
         }
+        .onAppear { model.undoManager = undoManager }
+        .onChange(of: undoManager) { model.undoManager = undoManager }
         .alert("Iris could not read the mail", isPresented: .constant(model.problem != nil)) {
             Button("OK") {}
         } message: {

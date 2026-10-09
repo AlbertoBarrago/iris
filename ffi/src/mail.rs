@@ -19,7 +19,9 @@ use mailrs_sync::mailbox::{Mailboxes, Scope, View};
 use mailrs_sync::passwords::Secrets;
 use mailrs_sync::starting::{self, Connected, Starting};
 use mailrs_sync::{AccountServices, AccountSync, Clients, Connector, SyncEngine};
-use mailrs_sync::{Accounts, Mailbox};
+use mailrs_domain::Target;
+use mailrs_sync::OneClick;
+use mailrs_sync::{Accounts, History, MailAction, MailActions, Mailbox, MovedFrom, TriageAction};
 use mailrs_view::sidebar::{self, Entry, Icon};
 
 use crate::CoreError;
@@ -69,6 +71,40 @@ pub struct SidebarItem {
     pub count: i64,
     /// The account's own color, for an account's line.
     pub account_color: Option<String>,
+}
+
+/// A conversation an action is taken on.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct ThreadRef {
+    pub account_id: i64,
+    pub thread_id: String,
+}
+
+/// What the person asked to do with the conversations picked.
+#[derive(Debug, Clone, PartialEq, uniffi::Enum)]
+pub enum Action {
+    Archive,
+    Trash,
+    Untrash,
+    Junk,
+    NotJunk,
+    MarkRead,
+    MarkUnread,
+    /// A flag of this color, `red`, `orange`, `yellow`, `green`, `blue`,
+    /// `purple` or `gray`; `None` takes the flag off.
+    Flag { color: Option<String> },
+    Mute,
+    Unmute,
+}
+
+/// What came of an action, for the toast that offers Undo.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct ActionDone {
+    /// What the toast says, such as "Archived"; empty for none.
+    pub words: String,
+    pub done: u32,
+    /// The first failure's words, when something failed.
+    pub failed: Option<String>,
 }
 
 /// One category tab over an inbox.
@@ -123,7 +159,8 @@ pub struct Mail {
     running: Arc<Running>,
     /// Held while this front end syncs, so the GTK app cannot.
     lock: Mutex<Option<SyncLock>>,
-    mailboxes: Mailboxes<Running>,
+    mailboxes: Arc<Mailboxes<Running>>,
+    actions: Arc<MailActions<Running>>,
     /// The mailbox behind each key the last sidebar handed out.
     keys: Mutex<HashMap<String, Mailbox>>,
 }
@@ -143,7 +180,8 @@ impl Mail {
             .map_err(|err| CoreError::Store(err.to_string()))?;
         let running = Arc::new(Running::default());
         Ok(Mail {
-            mailboxes: Mailboxes::new(Arc::clone(&running), db.clone()),
+            mailboxes: Arc::new(Mailboxes::new(Arc::clone(&running), db.clone())),
+            actions: Arc::new(MailActions::new(Arc::clone(&running), db.clone(), OneClick::Web)),
             dir: path.parent().map(PathBuf::from).unwrap_or_default(),
             running,
             lock: Mutex::new(None),
@@ -214,6 +252,49 @@ impl Mail {
         Ok(())
     }
 
+    /// Runs `action` on `threads`, taken from the mailbox `from` names, and
+    /// puts it on the undo stack.
+    pub fn act(&self, threads: Vec<ThreadRef>, action: Action, from: Option<String>) -> ActionDone {
+        let action = mail_action(action);
+        let moved = from
+            .and_then(|key| self.mailbox(&key))
+            .map(|m| m.moved_from())
+            .unwrap_or_else(MovedFrom::nowhere);
+        let targets: Vec<Target> = threads.into_iter().map(target).collect();
+        let (actions, given) = (Arc::clone(&self.actions), action.clone());
+        let outcome = self.run(async move { actions.run_from(&targets, given, History::Record, &moved).await });
+        self.mailboxes.forget_remote();
+        ActionDone {
+            words: mailrs_view::done::done_message(&action, outcome.done.len(), true).unwrap_or_default(),
+            done: outcome.done.len() as u32,
+            failed: outcome.failed.first().map(|f| f.error.clone()),
+        }
+    }
+
+    /// Marks a conversation the person opened as read, with no place on
+    /// the undo stack, as opening it in the GTK app does.
+    pub fn mark_read(&self, thread: ThreadRef) {
+        let targets = vec![target(thread)];
+        let action = MailAction::Triage(TriageAction::MarkRead);
+        let actions = Arc::clone(&self.actions);
+        self.run(async move {
+            actions.run_from(&targets, action, History::Skip, &MovedFrom::nowhere()).await
+        });
+    }
+
+    /// Reverses the newest action on the undo stack; `None` when there is
+    /// none.
+    pub fn undo(&self) -> Option<ActionDone> {
+        let actions = Arc::clone(&self.actions);
+        let undone = self.run(async move { actions.undo().await })?;
+        self.mailboxes.forget_remote();
+        Some(ActionDone {
+            words: undone.words,
+            done: undone.outcome.done.len() as u32,
+            failed: undone.outcome.failed.first().map(|f| f.error.clone()),
+        })
+    }
+
     /// Asks every account to look for new mail now.
     pub fn check_now(&self) {
         if let Some(engine) = self.running.current() {
@@ -223,20 +304,25 @@ impl Mail {
 
     /// The sidebar, with each row's count.
     pub fn sidebar(&self) -> Result<Vec<SidebarItem>, CoreError> {
-        let accounts_and_labels = self.runtime.block_on(self.db.read(|c| {
+        let db = self.db.clone();
+        let accounts_and_labels = self.run(async move { db.read(|c| {
             let mut out = Vec::new();
             for account in accounts::list_accounts(c)? {
                 let labels = labels::list_labels(c, account.id)?;
                 out.push((account, labels));
             }
             Ok(out)
-        }))?;
+        }).await })?;
         let entries = sidebar::entries(&accounts_and_labels, &HashMap::new());
         let counted = sidebar::counted(&entries);
         let view = view(None);
+        let mailboxes = Arc::clone(&self.mailboxes);
         let counts = self
-            .runtime
-            .block_on(self.mailboxes.counts(&counted, &Mailbox::Unified(mailrs_sync::mailbox::Standard::Inbox), &view))
+            .run(async move {
+                mailboxes
+                    .counts(&counted, &Mailbox::Unified(mailrs_sync::mailbox::Standard::Inbox), &view)
+                    .await
+            })
             .map_err(|err| CoreError::Store(err.to_string()))?;
         let emails: HashMap<AccountId, String> =
             accounts_and_labels.iter().map(|(a, _)| (a.id, a.email.clone())).collect();
@@ -303,20 +389,25 @@ impl Mail {
             .as_deref()
             .and_then(Category::from_key)
             .filter(|_| mailbox.takes_categories());
-        let accounts = self.runtime.block_on(self.db.read(accounts::list_accounts))?;
+        let db = self.db.clone();
+        let accounts = self.run(async move { db.read(accounts::list_accounts).await })?;
         let view = view(category);
+        let (mailboxes, shown, asked) = (Arc::clone(&self.mailboxes), mailbox.clone(), view.clone());
         let listing = self
-            .runtime
-            .block_on(self.mailboxes.list(&mailbox, &Scope::over(accounts), &view, mailrs_sync::mailbox::Loaded::nothing()))
+            .run(async move {
+                mailboxes
+                    .list(&shown, &Scope::over(accounts), &asked, mailrs_sync::mailbox::Loaded::nothing())
+                    .await
+            })
             .map_err(|err| CoreError::Store(err.to_string()))?;
         let categories = match mailbox.takes_categories() {
             true => {
                 // The tabs are counted over the inbox as a whole, which a
                 // category in the view asks for.
                 let whole = self::view(Some(Category::All));
+                let (mailboxes, shown) = (Arc::clone(&self.mailboxes), mailbox.clone());
                 let counts = self
-                    .runtime
-                    .block_on(self.mailboxes.counts(&[], &mailbox, &whole))
+                    .run(async move { mailboxes.counts(&[], &shown, &whole).await })
                     .map_err(|err| CoreError::Store(err.to_string()))?;
                 Category::ALL
                     .into_iter()
@@ -337,6 +428,23 @@ impl Mail {
             categories,
             empty: listing.empty.title,
         })
+    }
+}
+
+impl Mail {
+    /// Runs `work` on the runtime's own threads and waits for it. The sync
+    /// code needs the large stacks those threads get
+    /// (`mailrs_sync::WORKER_STACK`): run on the Swift thread that called,
+    /// an action overflowed its stack and took the app down.
+    fn run<T: Send + 'static>(&self, work: impl std::future::Future<Output = T> + Send + 'static) -> T {
+        self.runtime
+            .block_on(self.runtime.spawn(work))
+            .unwrap_or_else(|err| std::panic::resume_unwind(err.into_panic()))
+    }
+
+    /// The mailbox behind a key the last sidebar handed out.
+    fn mailbox(&self, key: &str) -> Option<Mailbox> {
+        self.keys.lock().unwrap_or_else(|p| p.into_inner()).get(key).cloned()
     }
 }
 
@@ -372,6 +480,35 @@ fn what_changed(event: &ChangeEvent) -> &'static str {
         ChangeEvent::LabelsChanged { .. } => "labels",
         ChangeEvent::NewMail { .. } => "mail",
         _ => "threads",
+    }
+}
+
+fn target(thread: ThreadRef) -> Target {
+    Target {
+        account_id: thread.account_id,
+        thread_id: thread.thread_id,
+        message_id: None,
+    }
+}
+
+fn mail_action(action: Action) -> MailAction {
+    let triage = |t| MailAction::Triage(t);
+    match action {
+        Action::Archive => triage(TriageAction::Archive),
+        Action::Trash => triage(TriageAction::Trash),
+        Action::Untrash => triage(TriageAction::Untrash),
+        Action::Junk => triage(TriageAction::Junk),
+        Action::NotJunk => triage(TriageAction::NotJunk),
+        Action::MarkRead => triage(TriageAction::MarkRead),
+        Action::MarkUnread => triage(TriageAction::MarkUnread),
+        Action::Flag { color } => MailAction::Flag(color.map(|name| {
+            FlagColor::ALL
+                .into_iter()
+                .find(|c| c.as_str() == name)
+                .unwrap_or(FlagColor::Red)
+        })),
+        Action::Mute => MailAction::Mute { muted: true },
+        Action::Unmute => MailAction::Mute { muted: false },
     }
 }
 
@@ -445,6 +582,14 @@ fn flag_hex(color: FlagColor) -> &'static str {
         FlagColor::Purple => "#af52de",
         FlagColor::Gray => "#8e8e93",
     }
+}
+
+/// `text` in the interface's language, from the same catalogs the GTK app
+/// reads. The SwiftUI views word their buttons through this, so a word
+/// already translated for the GTK app needs no second translation.
+#[uniffi::export]
+pub fn translate(text: String) -> String {
+    gettextrs::gettext(text)
 }
 
 /// Binds the interface's words to the catalogs in `locale_dir`, in

@@ -9,7 +9,9 @@ final class MailModel {
     private(set) var listing: MailboxListing?
     /// The open conversation as one page, drawn by the Rust core the way
     /// the GTK app draws it.
-    private(set) var page: String?
+    private(set) var page: ConversationPage?
+    /// Conversations whose pictures on the web the person chose to load.
+    private var remoteAllowed: Set<ThreadKey> = []
     private(set) var problem: String?
     /// Why this window does not sync, when it does not: another copy of
     /// Iris holds the store.
@@ -21,9 +23,24 @@ final class MailModel {
     var category: String? {
         didSet { if category != oldValue { loadList() } }
     }
-    var selectedThread: ThreadKey? {
-        didSet { if selectedThread != oldValue { loadConversation() } }
+    /// The conversations picked in the list; one of them opens.
+    var selection: Set<ThreadKey> = [] {
+        didSet { if openThread != Self.single(oldValue) { loadConversation() } }
     }
+
+    /// The conversation on screen: the one picked, when only one is.
+    var openThread: ThreadKey? { Self.single(selection) }
+
+    private static func single(_ keys: Set<ThreadKey>) -> ThreadKey? {
+        keys.count == 1 ? keys.first : nil
+    }
+
+    /// The toast over the list after an action, with Undo.
+    private(set) var toast: Toast?
+
+    /// The window's undo manager, so ⌘Z and Edit > Undo reverse a mail
+    /// action the way they reverse anything in a Mac app.
+    weak var undoManager: UndoManager?
 
     /// The colors pages are drawn in, which the window sets from its
     /// appearance and the system accent.
@@ -63,7 +80,7 @@ final class MailModel {
                     self.sidebar = sidebar
                     self.selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key
                     if let asked, asked.count == 2, let account = Int64(asked[0]) {
-                        self.selectedThread = ThreadKey(account: account, thread: asked[1])
+                        self.selection = [ThreadKey(account: account, thread: asked[1])]
                     }
                 }
             } catch {
@@ -116,6 +133,74 @@ final class MailModel {
         mail?.checkNow()
     }
 
+    /// Runs `action` on `keys`, or on the conversations picked, puts it on
+    /// the window's undo stack and says what it did.
+    func perform(_ action: Action, on keys: Set<ThreadKey>? = nil) {
+        guard let mail else { return }
+        let picked = keys ?? selection
+        guard !picked.isEmpty else { return }
+        let threads = picked.map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
+        let from = selectedMailbox
+        if keys == nil, Self.leavesList(action) { selection = [] }
+        Task.detached {
+            let done = mail.act(threads: threads, action: action, from: from)
+            await MainActor.run { self.finished(done, undoable: true) }
+        }
+    }
+
+    /// Loads the pictures on the web in the open conversation.
+    func loadImages() {
+        guard let key = openThread else { return }
+        remoteAllowed.insert(key)
+        loadConversation()
+    }
+
+    /// Marks the conversations picked read, or unread when every one of
+    /// them is read already.
+    func toggleRead() {
+        let rows = listing?.rows.filter { selection.contains(ThreadKey(account: $0.accountId, thread: $0.threadId)) } ?? []
+        perform(rows.contains { $0.unread } ? .markRead : .markUnread)
+    }
+
+    /// Reverses the newest mail action.
+    func undo() {
+        guard let mail else { return }
+        Task.detached {
+            let done = mail.undo()
+            await MainActor.run {
+                if let done { self.finished(done, undoable: false) }
+            }
+        }
+    }
+
+    private func finished(_ done: ActionDone, undoable: Bool) {
+        if let failed = done.failed {
+            toast = Toast(words: failed, undo: false)
+        } else if !done.words.isEmpty {
+            toast = Toast(words: done.words, undo: undoable)
+            if undoable, let undoManager {
+                undoManager.registerUndo(withTarget: self) { model in model.undo() }
+                undoManager.setActionName(done.words)
+            }
+        }
+        refresh()
+        let shown = toast
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(5))
+            if self.toast == shown { self.toast = nil }
+        }
+    }
+
+    func dismissToast() { toast = nil }
+
+    /// Whether an action takes the mail out of the list on screen.
+    private static func leavesList(_ action: Action) -> Bool {
+        switch action {
+        case .archive, .trash, .junk, .mute: true
+        default: false
+        }
+    }
+
     private func loadList() {
         guard let mail, let key = selectedMailbox else { return }
         let category = category
@@ -133,22 +218,35 @@ final class MailModel {
     }
 
     private func loadConversation() {
-        guard let store, let key = selectedThread else {
+        guard let store, let key = openThread else {
             page = nil
             return
         }
+        // Opening a conversation reads it, as in the GTK app; the list
+        // hears of it from the engine.
+        if let mail, listing?.rows.contains(where: { $0.key == key && $0.unread }) == true {
+            Task.detached { mail.markRead(thread: ThreadRef(accountId: key.account, threadId: key.thread)) }
+        }
         let theme = theme
+        let remote = remoteAllowed.contains(key)
         Task.detached {
             do {
-                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme)
+                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote)
                 await MainActor.run {
-                    if self.selectedThread == key { self.page = page }
+                    if self.openThread == key { self.page = page }
                 }
             } catch {
                 await MainActor.run { self.problem = "\(error)" }
             }
         }
     }
+}
+
+/// What a toast says, and whether it offers Undo.
+struct Toast: Equatable {
+    let id = UUID()
+    let words: String
+    let undo: Bool
 }
 
 /// A conversation, by the account it belongs to and its id.

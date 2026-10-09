@@ -20,24 +20,59 @@ struct ThreadListView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
             }
-            List(model.listing?.rows ?? [], id: \.self, selection: $model.selectedThread) { row in
+            // Rows are known by their conversation, the same key the
+            // selection holds, so a click selects the row under it.
+            List(model.listing?.rows ?? [], id: \.key, selection: $model.selection) { row in
+                let key = row.key
                 ThreadRowView(row: row)
-                    .tag(ThreadKey(account: row.accountId, thread: row.threadId))
+                    .swipeActions(edge: .leading) {
+                        Button(row.unread ? tr("Mark as Read") : tr("Mark as Unread"), systemImage: row.unread ? "envelope.open" : "envelope.badge") {
+                            model.perform(row.unread ? .markRead : .markUnread, on: [key])
+                        }
+                        .tint(.blue)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        Button(tr("Delete"), systemImage: "trash", role: .destructive) { model.perform(.trash, on: [key]) }
+                        Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: [key]) }
+                            .tint(.purple)
+                    }
             }
             .listStyle(.inset)
+            .contextMenu(forSelectionType: ThreadKey.self) { keys in
+                MailActionsMenu(keys: keys)
+            }
+            .onDeleteCommand { model.perform(.trash) }
+            // The GTK app's one-key shortcuts while the list has the keys.
+            .onKeyPress(characters: ["e", "u", "M"]) { press in
+                switch press.characters {
+                case "e": model.perform(.archive)
+                case "u": model.toggleRead()
+                case "M": model.perform(.mute)
+                default: return .ignored
+                }
+                return .handled
+            }
             .overlay {
                 if let listing = model.listing, listing.rows.isEmpty {
                     ContentUnavailableView(listing.empty, systemImage: "tray")
                 }
             }
         }
+        .overlay(alignment: .bottom) {
+            if let toast = model.toast {
+                ToastView(toast: toast)
+                    .padding(.bottom, 16)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.snappy, value: model.toast)
         .navigationTitle(model.listing?.title ?? "")
         .navigationSubtitle(model.listing?.subtitle ?? "")
         .toolbar {
             ToolbarItemGroup {
-                Button("Check for Mail", systemImage: "arrow.clockwise") { model.checkNow() }
-                Button("Search", systemImage: "magnifyingglass") {}
-                Button("New Message", systemImage: "square.and.pencil") {}
+                Button(tr("Check for Mail"), systemImage: "arrow.clockwise") { model.checkNow() }
+                Button(tr("Search"), systemImage: "magnifyingglass") {}
+                Button(tr("New Message"), systemImage: "square.and.pencil") {}
             }
         }
     }
@@ -165,4 +200,80 @@ struct FlowLayout: Layout {
             line = max(line, size.height)
         }
     }
+}
+
+/// The actions a right click offers on the conversations under it.
+struct MailActionsMenu: View {
+    @Environment(MailModel.self) private var model
+    let keys: Set<ThreadKey>
+
+    var body: some View {
+        Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: keys) }
+        Button(tr("Delete"), systemImage: "trash") { model.perform(.trash, on: keys) }
+        Button(tr("Junk"), systemImage: "xmark.bin") { model.perform(.junk, on: keys) }
+        Divider()
+        Button(tr("Mark as Read"), systemImage: "envelope.open") { model.perform(.markRead, on: keys) }
+        Button(tr("Mark as Unread"), systemImage: "envelope.badge") { model.perform(.markUnread, on: keys) }
+        Divider()
+        FlagMenu(keys: keys)
+        Button(tr("Mute"), systemImage: "speaker.slash") { model.perform(.mute, on: keys) }
+    }
+}
+
+/// Flag with a color, or take the flag off.
+struct FlagMenu: View {
+    @Environment(MailModel.self) private var model
+    var keys: Set<ThreadKey>? = nil
+
+    static let colors: [(String, String, String)] = [
+        ("red", tr("Red"), "#ff3b30"), ("orange", tr("Orange"), "#ff9500"), ("yellow", tr("Yellow"), "#ffcc00"),
+        ("green", tr("Green"), "#34c759"), ("blue", tr("Blue"), "#007aff"), ("purple", tr("Purple"), "#af52de"),
+        ("gray", tr("Gray"), "#8e8e93"),
+    ]
+
+    var body: some View {
+        Menu(tr("Flag"), systemImage: "flag") {
+            ForEach(Self.colors, id: \.0) { key, name, hex in
+                Button {
+                    model.perform(.flag(color: key), on: keys)
+                } label: {
+                    Label { Text(name) } icon: { Image(systemName: "flag.fill").foregroundStyle(Color(hex: hex) ?? .red) }
+                }
+            }
+            Divider()
+            Button(tr("Clear Flag")) { model.perform(.flag(color: nil), on: keys) }
+        }
+    }
+}
+
+/// What an action did, and Undo, floating over the bottom of the list.
+struct ToastView: View {
+    @Environment(MailModel.self) private var model
+    let toast: Toast
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Text(toast.words).fontWeight(.semibold)
+            if toast.undo {
+                Button(tr("Undo")) { model.undo(); model.dismissToast() }
+                    .buttonStyle(.borderless)
+                    .fontWeight(.semibold)
+            }
+            Button {
+                model.dismissToast()
+            } label: {
+                Image(systemName: "xmark")
+            }
+            .buttonStyle(.borderless)
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 10)
+        .background(.regularMaterial, in: Capsule())
+        .shadow(radius: 8, y: 2)
+    }
+}
+
+extension ListRow {
+    /// The conversation this row stands for.
+    var key: ThreadKey { ThreadKey(account: accountId, thread: threadId) }
 }

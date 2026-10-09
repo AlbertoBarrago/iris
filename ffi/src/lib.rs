@@ -16,7 +16,7 @@ use mailrs_store::{accounts, bodies, messages};
 
 mod mail;
 
-pub use mail::{CategoryTab, ListRow, Mail, MailListener, MailboxListing, SidebarItem, bind_language};
+pub use mail::{Action, ActionDone, ThreadRef, CategoryTab, ListRow, Mail, MailListener, MailboxListing, SidebarItem, bind_language, translate};
 
 uniffi::setup_scaffolding!();
 
@@ -87,6 +87,14 @@ pub struct PageTheme {
 /// quoted history starts and ends.
 type Cleaned = (String, bool, Option<std::ops::Range<usize>>);
 
+/// A conversation's page, and whether its mail names pictures on the web
+/// that the page left out.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct ConversationPage {
+    pub html: String,
+    pub remote_hidden: bool,
+}
+
 /// The mail store, opened to read.
 #[derive(uniffi::Object)]
 pub struct Store {
@@ -141,17 +149,44 @@ impl Store {
     /// the subject, a header and a body for each message, the unread ones
     /// and the newest open, quoted history folded away. The page loads
     /// nothing from the network.
+    ///
+    /// With `allow_remote`, pictures and styles on the web load too, as the
+    /// GTK app's Load Images does.
     pub fn conversation_page(
         &self,
         account_id: i64,
         thread_id: String,
         theme: PageTheme,
-    ) -> Result<String, CoreError> {
+        allow_remote: bool,
+    ) -> Result<ConversationPage, CoreError> {
+        // Cleaning a deeply nested newsletter recurses far, more than a
+        // Swift task's thread holds, so the page is drawn on a thread with
+        // the sync code's stack.
+        std::thread::scope(|scope| {
+            std::thread::Builder::new()
+                .stack_size(16 * 1024 * 1024)
+                .spawn_scoped(scope, || self.draw(account_id, &thread_id, theme, allow_remote))
+                .map_err(|err| CoreError::Store(err.to_string()))?
+                .join()
+                .unwrap_or_else(|panic| std::panic::resume_unwind(panic))
+        })
+    }
+
+}
+
+impl Store {
+    fn draw(
+        &self,
+        account_id: i64,
+        thread_id: &str,
+        theme: PageTheme,
+        allow_remote: bool,
+    ) -> Result<ConversationPage, CoreError> {
         use mailrs_render::conversation::{
             self as page, BodyState, Head, MessageView, Sanitized, Theme,
         };
         let conn = self.conn();
-        let metas = messages::thread_messages(&conn, account_id, &thread_id)?;
+        let metas = messages::thread_messages(&conn, account_id, thread_id)?;
         let bodies = metas
             .iter()
             .map(|meta| bodies::peek_body(&conn, account_id, &meta.id))
@@ -184,10 +219,15 @@ impl Store {
             &Head {
                 subject: &subject,
                 count: metas.len(),
-                allow_remote: false,
+                allow_remote,
             },
             &theme,
         );
+        let remote_hidden = !allow_remote
+            && cleaned
+                .iter()
+                .flatten()
+                .any(|(html, _, _)| page::loads_remote(&html.to_ascii_lowercase()));
         let thumbnails = std::collections::HashMap::new();
         let photos = std::collections::HashMap::new();
         let last = metas.len().saturating_sub(1);
@@ -211,8 +251,12 @@ impl Store {
             html.push_str(&page::article(&view, &me, &photos));
         }
         html.push_str(page::TAIL);
-        Ok(html)
+        Ok(ConversationPage { html, remote_hidden })
     }
+}
+
+#[uniffi::export]
+impl Store {
 
     /// The messages of one conversation, oldest first.
     pub fn conversation(&self, account_id: i64, thread_id: String) -> Result<Vec<MessageItem>, CoreError> {

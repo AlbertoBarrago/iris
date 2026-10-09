@@ -23,3 +23,8 @@ struct IrisApp: App {
         .defaultSize(width: 1100, height: 720)
     }
 }
+
+/// `text` in the interface's language, from the GTK app's catalogs.
+func tr(_ text: String) -> String {
+    translate(text: text)
+}
