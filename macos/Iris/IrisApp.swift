@@ -6,6 +6,14 @@ import SwiftUI
 struct IrisApp: App {
     @State private var model = MailModel()
 
+    init() {
+        // The words come from the same catalogs the GTK app reads, in the
+        // language macOS puts first.
+        let locale = Bundle.main.resourceURL?.appending(path: "locale").path(percentEncoded: false) ?? ""
+        let language = Locale.preferredLanguages.first?.replacingOccurrences(of: "-", with: "_") ?? ""
+        bindLanguage(localeDir: locale, language: language)
+    }
+
     var body: some Scene {
         WindowGroup("Iris") {
             ContentView()

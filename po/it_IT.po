@@ -7519,7 +7519,7 @@ msgstr "Sostituisci"
 msgid "Stop the message from going out"
 msgstr "Impedisci l'invio del messaggio"
 
-#: app/src/ui/sidebar.rs:372 app/src/ui/sidebar/sections.rs:26
+#: app/src/ui/sidebar.rs:372
 msgid "Mailboxes"
 msgstr "Caselle"
 
@@ -7661,18 +7661,6 @@ msgstr ""
 "La sincronizzazione si è interrotta dopo un errore; riavvia Iris per "
 "riprovare"
 
-#: app/src/ui/sidebar/sections.rs:25
-msgid "Favorites"
-msgstr "Preferiti"
-
-#: app/src/ui/sidebar/sections.rs:27
-msgid "Smart Mailboxes"
-msgstr "Caselle smart"
-
-#: app/src/ui/sidebar/sections.rs:28 app/src/ui/smart_editor.rs:43
-msgid "Accounts"
-msgstr "Account"
-
 #: app/src/ui/signature_source.rs:21
 msgid "Web Pages"
 msgstr "Pagine web"
@@ -7692,6 +7680,10 @@ msgstr "La lettura del file si è interrotta."
 #: app/src/ui/smart_editor.rs:39
 msgid "All Accounts"
 msgstr "Tutti gli account"
+
+#: app/src/ui/smart_editor.rs:43
+msgid "Accounts"
+msgstr "Account"
 
 #: app/src/ui/smart_editor.rs:54
 msgid "Match"
@@ -10085,6 +10077,14 @@ msgstr "Segna come non indesiderata"
 #: sync/src/triage.rs:70
 msgid "Move to {folder}"
 msgstr "Sposta in {folder}"
+
+#: view/src/sections.rs:26
+msgid "Favorites"
+msgstr "Preferiti"
+
+#: view/src/sections.rs:28
+msgid "Smart Mailboxes"
+msgstr "Caselle smart"
 
 #~ msgid "Mail and calendar for Linux"
 #~ msgstr "Posta e calendario per Linux"

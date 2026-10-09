@@ -7172,7 +7172,7 @@ msgstr ""
 msgid "Stop the message from going out"
 msgstr ""
 
-#: app/src/ui/sidebar.rs:372 app/src/ui/sidebar/sections.rs:26
+#: app/src/ui/sidebar.rs:372
 msgid "Mailboxes"
 msgstr ""
 
@@ -7312,18 +7312,6 @@ msgstr ""
 msgid "Syncing stopped after an error; restart Iris to try again"
 msgstr ""
 
-#: app/src/ui/sidebar/sections.rs:25
-msgid "Favorites"
-msgstr ""
-
-#: app/src/ui/sidebar/sections.rs:27
-msgid "Smart Mailboxes"
-msgstr ""
-
-#: app/src/ui/sidebar/sections.rs:28 app/src/ui/smart_editor.rs:43
-msgid "Accounts"
-msgstr ""
-
 #: app/src/ui/signature_source.rs:21
 msgid "Web Pages"
 msgstr ""
@@ -7342,6 +7330,10 @@ msgstr ""
 
 #: app/src/ui/smart_editor.rs:39
 msgid "All Accounts"
+msgstr ""
+
+#: app/src/ui/smart_editor.rs:43
+msgid "Accounts"
 msgstr ""
 
 #: app/src/ui/smart_editor.rs:54
@@ -9648,4 +9640,12 @@ msgstr ""
 
 #: sync/src/triage.rs:70
 msgid "Move to {folder}"
+msgstr ""
+
+#: view/src/sections.rs:26
+msgid "Favorites"
+msgstr ""
+
+#: view/src/sections.rs:28
+msgid "Smart Mailboxes"
 msgstr ""

@@ -1,8 +1,8 @@
 //! Mailboxes: the unified views, then one section per account.
 
 mod keys;
-mod sections;
-pub(crate) mod tree;
+use mailrs_view::sections;
+pub(crate) use mailrs_view::tree;
 
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, HashSet};

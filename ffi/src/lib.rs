@@ -14,6 +14,10 @@ use mailrs_domain::{MailSet, Role};
 use mailrs_store::threads::{self, ThreadFilter};
 use mailrs_store::{accounts, bodies, messages};
 
+mod mail;
+
+pub use mail::{CategoryTab, ListRow, Mail, MailboxListing, SidebarItem, bind_language};
+
 uniffi::setup_scaffolding!();
 
 /// What can go wrong reading the store, in words for the person.

@@ -5,20 +5,30 @@ import Observation
 @MainActor
 @Observable
 final class MailModel {
-    private(set) var accounts: [AccountRow] = []
-    private(set) var threads: [ThreadRow] = []
+    private(set) var sidebar: [SidebarItem] = []
+    private(set) var listing: MailboxListing?
     /// The open conversation as one page, drawn by the Rust core the way
     /// the GTK app draws it.
     private(set) var page: String?
     private(set) var problem: String?
 
-    var selectedAccount: Int64? {
-        didSet { if selectedAccount != oldValue { loadInbox() } }
+    var selectedMailbox: String? {
+        didSet { if selectedMailbox != oldValue { category = nil; loadList() } }
     }
-    var selectedThread: String? {
+    var category: String? {
+        didSet { if category != oldValue { loadList() } }
+    }
+    var selectedThread: ThreadKey? {
         didSet { if selectedThread != oldValue { loadConversation() } }
     }
 
+    /// The colors pages are drawn in, which the window sets from its
+    /// appearance and the system accent.
+    var theme = PageTheme(dark: false, accent: "#007aff", accentText: "#0060df") {
+        didSet { if theme != oldValue { loadConversation() } }
+    }
+
+    private var mail: Mail?
     private var store: Store?
 
     /// Where the GTK app keeps the mail store, or the store `IRIS_STORE`
@@ -36,20 +46,20 @@ final class MailModel {
     func open() {
         Task.detached {
             do {
+                let mail = try Mail.open(path: MailModel.storePath)
                 let store = try Store.open(path: MailModel.storePath)
-                let accounts = try store.accounts()
+                let sidebar = try mail.sidebar()
                 // `IRIS_OPEN=<account id>:<thread id>` opens one conversation
                 // at start, for comparing pages with the GTK app's demo.
                 let asked = ProcessInfo.processInfo.environment["IRIS_OPEN"]?
                     .split(separator: ":", maxSplits: 1).map(String.init)
                 await MainActor.run {
+                    self.mail = mail
                     self.store = store
-                    self.accounts = accounts
+                    self.sidebar = sidebar
+                    self.selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key
                     if let asked, asked.count == 2, let account = Int64(asked[0]) {
-                        self.selectedAccount = account
-                        self.selectedThread = asked[1]
-                    } else {
-                        self.selectedAccount = accounts.first?.id
+                        self.selectedThread = ThreadKey(account: account, thread: asked[1])
                     }
                 }
             } catch {
@@ -58,16 +68,15 @@ final class MailModel {
         }
     }
 
-    private func loadInbox() {
-        guard let store, let account = selectedAccount else { return }
-        threads = []
-        selectedThread = nil
+    private func loadList() {
+        guard let mail, let key = selectedMailbox else { return }
+        let category = category
         Task.detached {
             do {
-                let threads = try store.inbox(accountId: account, offset: 0, limit: 200)
+                let listing = try mail.list(key: key, category: category)
                 await MainActor.run {
-                    // The person may have picked another account meanwhile.
-                    if self.selectedAccount == account { self.threads = threads }
+                    // The person may have picked another mailbox meanwhile.
+                    if self.selectedMailbox == key, self.category == category { self.listing = listing }
                 }
             } catch {
                 await MainActor.run { self.problem = "\(error)" }
@@ -75,27 +84,27 @@ final class MailModel {
         }
     }
 
-    /// The colors pages are drawn in, which the window sets from its
-    /// appearance and the system accent.
-    var theme = PageTheme(dark: false, accent: "#007aff", accentText: "#0060df") {
-        didSet { if theme != oldValue { loadConversation() } }
-    }
-
     private func loadConversation() {
-        guard let store, let account = selectedAccount, let thread = selectedThread else {
+        guard let store, let key = selectedThread else {
             page = nil
             return
         }
         let theme = theme
         Task.detached {
             do {
-                let page = try store.conversationPage(accountId: account, threadId: thread, theme: theme)
+                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme)
                 await MainActor.run {
-                    if self.selectedThread == thread { self.page = page }
+                    if self.selectedThread == key { self.page = page }
                 }
             } catch {
                 await MainActor.run { self.problem = "\(error)" }
             }
         }
     }
+}
+
+/// A conversation, by the account it belongs to and its id.
+struct ThreadKey: Hashable, Sendable {
+    let account: Int64
+    let thread: String
 }

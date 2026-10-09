@@ -1,0 +1,12 @@
+[package]
+name = "mailrs-view"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "What the windows show, free of any toolkit: the sidebar's sections and rows, which both front ends lay out"
+
+[dependencies]
+mailrs-domain.workspace = true
+mailrs-sync.workspace = true

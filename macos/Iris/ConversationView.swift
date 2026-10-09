@@ -16,6 +16,25 @@ struct ConversationView: View {
                 ContentUnavailableView("No Conversation Selected", systemImage: "envelope")
             }
         }
+        .toolbar {
+            // The actions arrive with syncing; the bar is already where
+            // the GTK app has it.
+            ToolbarItemGroup {
+                Button("Reply", systemImage: "arrowshape.turn.up.left") {}
+                Button("Reply All", systemImage: "arrowshape.turn.up.left.2") {}
+                Button("Forward", systemImage: "arrowshape.turn.up.right") {}
+            }
+            ToolbarItemGroup {
+                Button("Archive", systemImage: "archivebox") {}
+                Button("Delete", systemImage: "trash") {}
+                Button("Junk", systemImage: "xmark.bin") {}
+            }
+            ToolbarItemGroup {
+                Button("Label", systemImage: "tag") {}
+                Button("Flag", systemImage: "flag") {}
+            }
+        }
+        .disabled(model.page == nil)
         .onAppear { model.theme = PageTheme.current(dark: colorScheme == .dark) }
         .onChange(of: colorScheme) { model.theme = PageTheme.current(dark: colorScheme == .dark) }
         .onReceive(NotificationCenter.default.publisher(for: NSColor.systemColorsDidChangeNotification)) { _ in

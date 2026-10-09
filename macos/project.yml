@@ -18,12 +18,22 @@ targets:
     platform: macOS
     sources:
       - path: Iris
+      # The GTK app's catalogs, which scripts/update-po.sh compiles; the
+      # app reads them from Contents/Resources/locale.
+      - path: ../target/locale
+        type: folder
+        buildPhase: resources
     dependencies:
-      # Built first, so the framework and the bindings are fresh before
-      # Xcode reads them; a script inside this target ran too late.
+      # Built first, so the library and the bindings are fresh before the
+      # Swift sources compile against them.
       - target: IrisCore
-      - framework: IrisCore.xcframework
-        embed: false
+      # What the Rust core reaches through the system: the network's
+      # configuration, TLS and the Keychain.
+      - sdk: SystemConfiguration.framework
+      - sdk: Security.framework
+      - sdk: CoreFoundation.framework
+      - sdk: libiconv.tbd
+      - sdk: libresolv.tbd
     settings:
       base:
         # Its own id while the GTK app is the one people use, so the two
@@ -40,6 +50,15 @@ targets:
         # ~/Library/Application Support/iris, which a sandbox would close.
         ENABLE_APP_SANDBOX: NO
         ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # The core's module map and header, and the static library, read
+        # straight from the build tree that scripts/build-ffi.sh fills.
+        SWIFT_INCLUDE_PATHS: $(SRCROOT)/../target/ffi/headers
+        OTHER_LDFLAGS: $(SRCROOT)/../target/$(IRIS_CORE_PROFILE)/libmailrs_ffi.a
+      configs:
+        Debug:
+          IRIS_CORE_PROFILE: debug
+        Release:
+          IRIS_CORE_PROFILE: release
 aggregateTargets:
   IrisCore:
     buildScripts:

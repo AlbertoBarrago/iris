@@ -8,7 +8,8 @@
 use mailrs_domain::Folder;
 use mailrs_domain::translate::gettext;
 
-use crate::ui::{Mailbox, Standard};
+use mailrs_sync::Mailbox;
+use mailrs_sync::mailbox::Standard;
 
 /// A heading in the sidebar.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

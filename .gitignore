@@ -26,6 +26,5 @@ __pycache__/
 # The SwiftUI front end: XcodeGen writes the project, scripts/build-ffi.sh
 # the core's framework and bindings.
 /macos/Iris.xcodeproj/
-/macos/IrisCore.xcframework/
 /macos/Iris/Generated/
 /macos/build/

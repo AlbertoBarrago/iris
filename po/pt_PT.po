@@ -7501,7 +7501,7 @@ msgstr "Substituir"
 msgid "Stop the message from going out"
 msgstr "Impedir que a mensagem saia"
 
-#: app/src/ui/sidebar.rs:372 app/src/ui/sidebar/sections.rs:26
+#: app/src/ui/sidebar.rs:372
 msgid "Mailboxes"
 msgstr "Caixas de correio"
 
@@ -7642,18 +7642,6 @@ msgid "Syncing stopped after an error; restart Iris to try again"
 msgstr ""
 "A sincronização parou depois de um erro; reinicie o Iris para tentar de novo"
 
-#: app/src/ui/sidebar/sections.rs:25
-msgid "Favorites"
-msgstr "Favoritos"
-
-#: app/src/ui/sidebar/sections.rs:27
-msgid "Smart Mailboxes"
-msgstr "Caixas inteligentes"
-
-#: app/src/ui/sidebar/sections.rs:28 app/src/ui/smart_editor.rs:43
-msgid "Accounts"
-msgstr "Contas"
-
 #: app/src/ui/signature_source.rs:21
 msgid "Web Pages"
 msgstr "Páginas Web"
@@ -7673,6 +7661,10 @@ msgstr "A leitura do ficheiro parou."
 #: app/src/ui/smart_editor.rs:39
 msgid "All Accounts"
 msgstr "Todas as contas"
+
+#: app/src/ui/smart_editor.rs:43
+msgid "Accounts"
+msgstr "Contas"
 
 #: app/src/ui/smart_editor.rs:54
 msgid "Match"
@@ -10061,6 +10053,14 @@ msgstr "Marcar como não sendo spam"
 #: sync/src/triage.rs:70
 msgid "Move to {folder}"
 msgstr "Mover para {folder}"
+
+#: view/src/sections.rs:26
+msgid "Favorites"
+msgstr "Favoritos"
+
+#: view/src/sections.rs:28
+msgid "Smart Mailboxes"
+msgstr "Caixas inteligentes"
 
 #~ msgid "Mail and calendar for Linux"
 #~ msgstr "Correio e calendário para Linux"

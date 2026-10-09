@@ -2379,6 +2379,7 @@ dependencies = [
  "mailrs-smime",
  "mailrs-store",
  "mailrs-sync",
+ "mailrs-view",
  "mailrs-webkit",
  "notify-rust",
  "objc2",
@@ -2498,12 +2499,17 @@ dependencies = [
 name = "mailrs-ffi"
 version = "1.0.11"
 dependencies = [
+ "chrono",
+ "gettext-rs",
  "mailrs-domain",
  "mailrs-render",
  "mailrs-store",
+ "mailrs-sync",
+ "mailrs-view",
  "rusqlite",
  "tempfile",
  "thiserror 2.0.20",
+ "tokio",
  "uniffi",
 ]
 
@@ -2711,6 +2717,14 @@ dependencies = [
  "serde_json",
  "tempfile",
  "tokio",
+]
+
+[[package]]
+name = "mailrs-view"
+version = "1.0.11"
+dependencies = [
+ "mailrs-domain",
+ "mailrs-sync",
 ]
 
 [[package]]
