@@ -7,6 +7,7 @@ import WebKit
 struct ConversationView: View {
     @Environment(MailModel.self) private var model
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(AssistantModel.self) private var assistant
 
     var body: some View {
         Group {
@@ -64,6 +65,13 @@ struct ConversationView: View {
                     FlagMenu()
                 }
                 .disabled(model.selection.isEmpty)
+            }
+            // The assistant is not a mail action: it sits alone at the
+            // toolbar's far right.
+            ToolbarSpacer(.flexible)
+            ToolbarItem {
+                Button(tr("Assistant"), systemImage: "sparkles") { assistant.shown.toggle() }
+                    .help(tr("Assistant"))
             }
         }
         .onAppear { model.theme = PageTheme.current(dark: colorScheme == .dark) }

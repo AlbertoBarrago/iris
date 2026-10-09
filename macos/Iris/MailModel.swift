@@ -645,6 +645,41 @@ extension MailModel {
     }
 }
 
+// MARK: Assistant
+
+extension MailModel {
+    /// The assistant of this window, once the store is open.
+    func makeAssistant(window: AssistantWindow) -> Assistant? {
+        mail?.assistant(window: window)
+    }
+
+    /// What the window shows, which the assistant reads as "this
+    /// conversation" and "the selected mail".
+    var assistantScreen: AssistantScreen {
+        let open = openThread
+        let subject = open.flatMap { key in listing?.rows.first { $0.key == key }?.subject } ?? ""
+        return AssistantScreen(
+            mailbox: listing?.title ?? "",
+            open: open.map { ThreadRef(accountId: $0.account, threadId: $0.thread) },
+            openSubject: subject,
+            selected: selection.map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
+        )
+    }
+
+    /// Opens a composer on a message someone else started, such as the
+    /// assistant.
+    func openComposer(_ draft: ComposeDraft) {
+        let key = UUID()
+        kept[key] = draft
+        composeAsked = ComposeRequest(kind: .restore, restore: key)
+    }
+
+    /// Opens one conversation, wherever it is.
+    func show(account: Int64, thread: String) {
+        selection = [ThreadKey(account: account, thread: thread)]
+    }
+}
+
 /// What a toast says, and whether it offers Undo.
 struct Toast: Equatable {
     let id = UUID()

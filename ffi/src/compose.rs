@@ -332,10 +332,21 @@ impl Mail {
         people
     }
 
+    /// A blank message from `account_id`'s own address, unsigned.
+    pub(crate) fn blank(&self, account_id: i64) -> Result<Draft, CoreError> {
+        let senders = self.senders()?;
+        let sender = senders
+            .iter()
+            .find(|s| s.account_id == account_id)
+            .cloned()
+            .ok_or_else(|| CoreError::Store(gettext("That account is not connected.")))?;
+        Ok(Draft::new(sender.account_id, address(&sender)))
+    }
+
     /// `draft` with the signature of the address it comes from, as the GTK
     /// app signs a message it starts: Markdown lines under the words, or a
     /// formatted signature beside them.
-    fn signed(&self, mut draft: Draft) -> Draft {
+    pub(crate) fn signed(&self, mut draft: Draft) -> Draft {
         let settings = Settings::load(&Settings::default_path());
         let (db, id) = (self.db.clone(), draft.account_id);
         let account = self
@@ -351,7 +362,7 @@ impl Mail {
     }
 
     /// The draft as the composer shows it.
-    fn shown(&self, draft: Draft) -> ComposeDraft {
+    pub(crate) fn shown(&self, draft: Draft) -> ComposeDraft {
         ComposeDraft {
             account_id: draft.account_id,
             from: draft.from.email.clone(),
@@ -461,7 +472,7 @@ fn address(sender: &Sender) -> Address {
 }
 
 /// The outbox's row for a message ready to go, as the GTK app writes it.
-fn queued(draft: &Draft, raw: Vec<u8>) -> Queued {
+pub(crate) fn queued(draft: &Draft, raw: Vec<u8>) -> Queued {
     let recipients = draft
         .to
         .iter()

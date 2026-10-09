@@ -14,6 +14,7 @@ use mailrs_domain::{MailSet, Role};
 use mailrs_store::threads::{self, ThreadFilter};
 use mailrs_store::{accounts, bodies, messages};
 
+mod assistant;
 mod compose;
 mod mail;
 mod prefs;

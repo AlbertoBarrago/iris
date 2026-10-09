@@ -2540,11 +2540,15 @@ dependencies = [
 name = "mailrs-ffi"
 version = "1.0.11"
 dependencies = [
+ "async-channel 2.5.0",
  "chrono",
+ "futures",
  "gettext-rs",
+ "mailrs-ai",
  "mailrs-appcore",
  "mailrs-domain",
  "mailrs-mime",
+ "mailrs-pgp",
  "mailrs-render",
  "mailrs-store",
  "mailrs-sync",

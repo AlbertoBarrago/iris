@@ -18,7 +18,7 @@ use mailrs_sync::lock::{LockError, SyncLock};
 use mailrs_sync::mailbox::{Mailboxes, Scope, View};
 use mailrs_sync::passwords::Secrets;
 use mailrs_sync::starting::{self, Connected, Starting};
-use mailrs_sync::{AccountServices, AccountSync, Clients, Connector, SyncEngine};
+use mailrs_sync::{AccountServices, Clients, Connector, SyncEngine};
 use mailrs_domain::Target;
 use mailrs_sync::OneClick;
 use mailrs_sync::{Accounts, History, MailAction, MailActions, Mailbox, MovedFrom, TriageAction};
@@ -26,22 +26,7 @@ use mailrs_view::sidebar::{self, Entry, Icon};
 
 use crate::CoreError;
 
-/// The engine, once `Mail::start_sync` started it. Mail actions and
-/// listings that need the server look accounts up here.
-#[derive(Default)]
-pub(crate) struct Running(Mutex<Option<Arc<SyncEngine>>>);
-
-impl Running {
-    fn current(&self) -> Option<Arc<SyncEngine>> {
-        self.0.lock().unwrap_or_else(|p| p.into_inner()).clone()
-    }
-}
-
-impl Accounts for Running {
-    fn account(&self, account_id: AccountId) -> Option<Arc<AccountSync>> {
-        self.current()?.account(account_id).ok()
-    }
-}
+pub(crate) use mailrs_appcore::engine::RunningEngine as Running;
 
 /// Who hears the engine's news: the window, which reads the sidebar and
 /// the list again.
@@ -176,15 +161,15 @@ pub struct MailboxListing {
 /// The mail store, opened as the app opens it, with the mailboxes over it.
 #[derive(uniffi::Object)]
 pub struct Mail {
-    runtime: tokio::runtime::Runtime,
+    pub(crate) runtime: tokio::runtime::Runtime,
     pub(crate) db: Db,
     /// The folder the store sits in, which the sync lock goes in too.
     dir: PathBuf,
     pub(crate) running: Arc<Running>,
     /// Held while this front end syncs, so the GTK app cannot.
     lock: Mutex<Option<SyncLock>>,
-    mailboxes: Arc<Mailboxes<Running>>,
-    actions: Arc<MailActions<Running>>,
+    pub(crate) mailboxes: Arc<Mailboxes<Running>>,
+    pub(crate) actions: Arc<MailActions<Running>>,
     /// The mailbox behind each key the last sidebar handed out.
     keys: Mutex<HashMap<String, Mailbox>>,
     /// Everyone a recipient field can offer, read once.
@@ -247,7 +232,7 @@ impl Mail {
         let engine = Arc::new(engine);
         engine.set_network(true);
         engine.set_window_open(true);
-        *self.running.0.lock().unwrap_or_else(|p| p.into_inner()) = Some(Arc::clone(&engine));
+        self.running.replace(Some(Arc::clone(&engine)));
         let heard = Arc::clone(&listener);
         self.runtime.spawn(async move {
             while let Ok(event) = events.recv().await {
@@ -587,7 +572,7 @@ impl Mail {
         if self.lock.lock().unwrap_or_else(|p| p.into_inner()).is_none() {
             return Ok(());
         }
-        if let Some(engine) = self.running.0.lock().unwrap_or_else(|p| p.into_inner()).take() {
+        if let Some(engine) = self.running.replace(None) {
             engine.shutdown();
         }
         *self.lock.lock().unwrap_or_else(|p| p.into_inner()) = None;
