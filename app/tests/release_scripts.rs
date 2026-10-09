@@ -1,12 +1,8 @@
-//! The shell scripts a release runs: `changelog.sh`, which writes the
-//! release notes, and `stage.sh` with `install-files.sh`, which lay out the
-//! tarball and install it.
+//! The release notes script: `changelog.sh`, which `macos-publish.sh`
+//! runs for the notes of each GitHub release.
 
-use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
-
-const ID: &str = "io.github.AlbertoBarrago.Iris";
 
 fn scripts() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../scripts")
@@ -19,31 +15,6 @@ fn succeeded(output: &Output) -> String {
         String::from_utf8_lossy(&output.stderr)
     );
     String::from_utf8(output.stdout.clone()).unwrap()
-}
-
-/// The media types a desktop entry says it opens.
-fn mime_types(entry: &str) -> Vec<&str> {
-    entry
-        .lines()
-        .find_map(|line| line.strip_prefix("MimeType="))
-        .map(|types| types.split(';').filter(|t| !t.is_empty()).collect())
-        .unwrap_or_default()
-}
-
-/// Files offers Iris for an `.ics` file only when the launcher
-/// names `text/calendar`, and for a link to a mail address only with the
-/// `mailto` handler. The launcher passes the file as `%u`, which the
-/// app's command line reads.
-#[test]
-fn the_launcher_opens_calendar_files_and_mail_links() {
-    let entry = std::fs::read_to_string(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join(format!("data/{ID}.desktop")),
-    )
-    .unwrap();
-    let types = mime_types(&entry);
-    assert!(types.contains(&"text/calendar"), "{entry}");
-    assert!(types.contains(&"x-scheme-handler/mailto"), "{entry}");
-    assert!(entry.contains("\nExec=iris %u\n"), "{entry}");
 }
 
 const CHANGELOG: &str = "# Changelog
@@ -97,7 +68,7 @@ fn a_changelog_section_is_its_body_without_the_blank_lines_around_it() {
     assert_eq!(succeeded(&section("Unreleased")), "");
 }
 
-/// The release workflow writes the notes with this command, so a version
+/// The publish script writes the notes with this command, so a version
 /// with no section must fail the run rather than publish empty notes. A
 /// prefix of a version is not that version.
 #[test]
@@ -106,97 +77,5 @@ fn a_version_with_no_changelog_section_fails() {
         let output = section(version);
         assert!(!output.status.success(), "{version} found a section");
         assert!(output.stdout.is_empty(), "{version}");
-    }
-}
-
-/// Stages a build the way the release workflow does, packs it the way
-/// `package.sh` packs the tarball, and installs it with the tarball's own
-/// `./install-files.sh .`, as its README says.
-#[test]
-fn a_staged_tree_installs_from_the_tarball_folder() {
-    let dir = tempfile::tempdir().unwrap();
-    let target = dir.path().join("target");
-    std::fs::create_dir_all(target.join("release")).unwrap();
-    for name in ["iris", "iris-cli"] {
-        let binary = target.join("release").join(name);
-        std::fs::write(&binary, format!("#!/bin/sh\necho {name}\n")).unwrap();
-        std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
-    }
-    let folder = dir.path().join("iris-9.9.9-x86_64");
-    succeeded(
-        &Command::new(scripts().join("stage.sh"))
-            .arg(&folder)
-            .env("CARGO_TARGET_DIR", &target)
-            .output()
-            .unwrap(),
-    );
-    assert!(
-        folder
-            .join(format!("share/metainfo/{ID}.metainfo.xml"))
-            .is_file()
-    );
-    std::fs::copy(
-        scripts().join("install-files.sh"),
-        folder.join("install-files.sh"),
-    )
-    .unwrap();
-
-    let prefix = dir.path().join("prefix");
-    let home = dir.path().join("home");
-    succeeded(
-        &Command::new("bash")
-            .args(["install-files.sh", "."])
-            .current_dir(&folder)
-            .env("PREFIX", &prefix)
-            .env("HOME", &home)
-            .env_remove("NO_AUTOSTART")
-            .output()
-            .unwrap(),
-    );
-
-    for name in ["iris", "iris-cli"] {
-        let installed = prefix.join("bin").join(name);
-        assert_eq!(
-            std::fs::read_to_string(&installed).unwrap(),
-            format!("#!/bin/sh\necho {name}\n")
-        );
-        let mode = std::fs::metadata(&installed).unwrap().permissions().mode();
-        assert_eq!(mode & 0o777, 0o755, "{name}");
-    }
-    let icons = prefix.join("share/icons/hicolor");
-    assert!(icons.join(format!("scalable/apps/{ID}.svg")).is_file());
-    assert!(
-        icons
-            .join(format!("symbolic/apps/{ID}-symbolic.svg"))
-            .is_file()
-    );
-
-    // The launcher starts the installed file, since ~/.local/bin is not on
-    // the PATH a desktop session starts with.
-    let exe = format!("\"{}\"", prefix.join("bin/iris").display());
-    let launcher =
-        std::fs::read_to_string(prefix.join(format!("share/applications/{ID}.desktop"))).unwrap();
-    assert!(
-        launcher.contains(&format!("\nExec={exe} %u\n")),
-        "{launcher}"
-    );
-    assert!(!launcher.contains("Exec=iris"), "{launcher}");
-    assert!(mime_types(&launcher).contains(&"text/calendar"), "{launcher}");
-    let login =
-        std::fs::read_to_string(home.join(format!(".config/autostart/{ID}.desktop"))).unwrap();
-    assert!(
-        login.contains(&format!("\nExec={exe} --background\n")),
-        "{login}"
-    );
-
-    // Without msgfmt stage.sh leaves the translations out on purpose.
-    let has_msgfmt = Command::new("msgfmt").arg("--version").output().is_ok();
-    if has_msgfmt {
-        assert!(
-            prefix
-                .join("share/locale/pt_PT/LC_MESSAGES/iris.mo")
-                .is_file()
-        );
-        assert!(launcher.contains("Name[pt_PT]="), "{launcher}");
     }
 }

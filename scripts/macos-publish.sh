@@ -35,11 +35,8 @@ grep -q "url=\"$download/$dmg\"" "$feed" ||
 notes="$(mktemp)"
 work="$(mktemp -d)"
 trap 'rm -rf "$notes" "$work"' EXIT
-awk -v heading="## $version " '
-    index($0, heading) == 1 { found = 1; next }
-    found && /^## / { exit }
-    found { print }
-' CHANGELOG.md > "$notes"
+scripts/changelog.sh section "$version" > "$notes" ||
+    { echo "CHANGELOG.md has no section for $version" >&2; exit 1; }
 assets=()
 for file in $files; do
     assets+=("target/dmg/$file")
