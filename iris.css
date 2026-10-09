@@ -1,0 +1,172 @@
+/* Iris pages on albz.it: the app's night-violet band and iridescent wing,
+   on a page that follows the reader's light or dark preference. */
+:root {
+  --night: #1b1340;
+  --violet: #5b3fd1;
+  --paper: #fbf7f0;
+  --wing: linear-gradient(90deg, #5ad1e8, #8b6cf0 32%, #f07ab8 68%, #f5c46b);
+  --bg: #f7f5fc;
+  --surface: #ffffff;
+  --text: #1d1734;
+  --dim: #5c5675;
+  --line: #e4e0f2;
+  --accent: #5b3fd1;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #110d26;
+    --surface: #1a1536;
+    --text: #ece9f7;
+    --dim: #a9a3c4;
+    --line: #2c2552;
+    --accent: #b8a6ff;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Adwaita Sans", Cantarell, system-ui, sans-serif;
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+code {
+  font: 0.88em ui-monospace, "SF Mono", Menlo, monospace;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-inline: 20px; }
+
+/* The band */
+.band {
+  background:
+    radial-gradient(1200px 400px at 15% -10%, rgba(139, 108, 240, 0.35), transparent 60%),
+    linear-gradient(180deg, #4a36b0, #2c2070 70%, var(--night));
+  color: var(--paper);
+  padding-block: 28px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.band::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: var(--wing);
+  opacity: 0.9;
+}
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.nav a { color: var(--paper); text-decoration: none; opacity: 0.85; font-size: 15px; }
+.nav a:hover { opacity: 1; text-decoration: underline; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; }
+.brand img { width: 32px; height: 32px; }
+
+.hero { display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; margin-top: 56px; }
+.hero img { width: min(220px, 38vw); height: auto; filter: drop-shadow(0 18px 40px rgba(8, 5, 30, 0.55)); }
+.hero h1 { margin: 0; font-size: clamp(44px, 9vw, 84px); line-height: 1; letter-spacing: -0.03em; font-weight: 850; }
+.hero .tag {
+  margin: 14px 0 0;
+  font-size: clamp(18px, 2.6vw, 22px);
+  line-height: 1.4;
+  color: rgba(251, 247, 240, 0.86);
+  max-width: 30ch;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(251, 247, 240, 0.12);
+  border: 1px solid rgba(251, 247, 240, 0.22);
+  font-size: 14px;
+  font-weight: 600;
+}
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #f5c46b; box-shadow: 0 0 10px #f5c46b; }
+
+@media (max-width: 600px) {
+  .hero { grid-template-columns: 1fr; text-align: center; gap: 24px; margin-top: 36px; }
+  .hero img { margin: 0 auto; }
+  .hero .tag { margin-inline: auto; }
+  .download { justify-content: center; }
+}
+
+/* Content */
+main { padding-block: 56px 40px; }
+.lede { font-size: 19px; color: var(--dim); max-width: 62ch; margin: 0 0 40px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px 22px;
+}
+.card h3 { margin: 0 0 6px; font-size: 17px; line-height: 1.35; display: flex; align-items: flex-start; gap: 10px; }
+.card h3::before { content: ""; width: 10px; height: 10px; margin-top: 0.42em; border-radius: 3px; background: var(--wing); flex: none; }
+.card p { margin: 0; color: var(--dim); font-size: 15px; }
+
+h2 { font-size: 24px; letter-spacing: -0.01em; margin: 48px 0 12px; }
+.note { color: var(--dim); }
+
+footer { border-top: 1px solid var(--line); padding-block: 24px 40px; color: var(--dim); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+/* The privacy page */
+.doc { max-width: 72ch; }
+.doc h2 { font-size: 21px; margin-top: 40px; }
+.doc li { margin-bottom: 8px; }
+.doc ul { padding-left: 22px; }
+.band.slim { padding-block: 24px 40px; }
+.band.slim h1 { margin: 36px 0 0; font-size: clamp(32px, 6vw, 48px); letter-spacing: -0.02em; }
+
+/* The download button under the hero's pill. */
+.download { margin: 22px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.download .button {
+  display: inline-block;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: #1d1547;
+  font-weight: 700;
+  text-decoration: none;
+}
+.download .button:hover { filter: brightness(0.95); }
+.download span { color: rgba(251, 247, 240, 0.78); font-size: 14px; }
+
+/* A Terminal command to copy. */
+.command {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(139, 108, 240, 0.12);
+  border: 1px solid rgba(139, 108, 240, 0.28);
+  overflow-x: auto;
+  font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+}
+.command code { background: none; padding: 0; border: 0; font: inherit; }
+
+/* The Copy button inside a command block. */
+.command { position: relative; padding-right: 84px; }
+.command .copy {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: 600 13px/1.4 inherit;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+  cursor: pointer;
+}
+.command .copy:hover { border-color: var(--accent); color: var(--accent); }
+.command .copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.command code { white-space: pre-wrap; overflow-wrap: anywhere; }

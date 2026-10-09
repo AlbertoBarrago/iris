@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Iris</title>
+        <item>
+            <title>1.0.11</title>
+            <pubDate>Thu, 08 Oct 2026 18:10:27 +0200</pubDate>
+            <sparkle:version>1.0.11</sparkle:version>
+            <sparkle:shortVersionString>1.0.11</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/AlbertoBarrago/iris/releases/download/v1.0.11/Iris-1.0.11.dmg" length="44979155" type="application/octet-stream" sparkle:edSignature="7UsFCcbmAUh4rM+Qghdj5S1vG3jAP0gyNdivxA/CQcCEA6SbB8f/dIhNCUjxqBXpwJwVPg7NB1zOR3zTO7CFAw=="/>
+            <sparkle:deltas>
+                <enclosure url="https://github.com/AlbertoBarrago/iris/releases/download/v1.0.11/Iris1.0.11-1.0.10.delta" sparkle:deltaFrom="1.0.10" length="2835726" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="976336" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="2DNnQCrC91cRyeZ+frQ9co4TfWWDtoDYacmPeFkcdvS51dxmUTuGzsoLToKMirerjE7IiMAs8yPRR4NRkY+1Aw=="/>
+                <enclosure url="https://github.com/AlbertoBarrago/iris/releases/download/v1.0.11/Iris1.0.11-1.0.9.delta" sparkle:deltaFrom="1.0.9" length="3768106" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="976336" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="JGBpI62X24DbEaXDkoAKsLTZiPb7IHypS1U50byaDiNuQISxtJb51xk/VIh1xDkFdEGttDrvKD/upLAy2UEDAA=="/>
+                <enclosure url="https://github.com/AlbertoBarrago/iris/releases/download/v1.0.11/Iris1.0.11-1.0.8.delta" sparkle:deltaFrom="1.0.8" length="3790310" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="976336" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="3ubTkr8mczBKGoZBdQNslP7oBnSRrMShy9IGM0k+UtnDqfnP8E8gwG52naaAKupAelk41yKWY6pEQKQye9UVBg=="/>
+            </sparkle:deltas>
+        </item>
+    </channel>
+</rss>
