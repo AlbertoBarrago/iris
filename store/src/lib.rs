@@ -39,7 +39,7 @@ pub mod window;
 
 pub use db::Db;
 pub use error::{Result, StoreError};
-pub use schema::{open_connection, open_in_memory, schema_version};
+pub use schema::{open_connection, open_in_memory, open_read_only, schema_version};
 
 #[cfg(test)]
 pub(crate) mod testing {

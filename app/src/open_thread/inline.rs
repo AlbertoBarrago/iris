@@ -80,20 +80,6 @@ pub fn prefix(account_id: AccountId, message_id: &str, version: u32) -> String {
     format!("{SCHEME}:{account_id}/{message_id}/{version}/")
 }
 
-/// A content id as it goes into an address: letters, digits and `-._~@`
-/// as they are, every other byte as `%XX`.
-pub fn escape(cid: &str) -> String {
-    let mut out = String::with_capacity(cid.len());
-    for byte in cid.bytes() {
-        match byte {
-            b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'.' | b'_' | b'~' | b'@' => {
-                out.push(byte as char)
-            }
-            _ => out.push_str(&format!("%{byte:02X}")),
-        }
-    }
-    out
-}
 
 fn unescape(escaped: &str) -> Option<String> {
     let mut bytes = Vec::with_capacity(escaped.len());
@@ -179,7 +165,8 @@ impl OpenThread {
 
 #[cfg(test)]
 mod tests {
-    use super::{Address, escape, prefix};
+    use super::{Address, prefix};
+    use mailrs_render::escape_cid as escape;
 
     #[test]
     fn an_address_reads_back_what_was_written() {

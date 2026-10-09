@@ -37,7 +37,7 @@ mod protection;
 mod render;
 mod richtext;
 mod rules;
-mod sanitize;
+use mailrs_render::sanitize;
 mod signature;
 mod search;
 mod servers;

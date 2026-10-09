@@ -59,7 +59,7 @@ pub fn sanitize_html(html: &str, pictures: Option<&str>) -> String {
         .add_clean_content_tags(&["title"])
         .add_generic_attributes(&LAYOUT_ATTRIBUTES)
         // The marks other clients put on quoted history, which the page
-        // folds away (see `crate::quoted`). Each body sits in its own
+        // folds away (see the app's `quoted` module). Each body sits in its own
         // shadow root, so the ids cannot clash with the page's.
         .add_tag_attribute_values("blockquote", "type", &["cite"])
         .add_tag_attribute_values("div", "id", &["appendonsend", "divRplyFwdMsg"])
@@ -621,7 +621,7 @@ fn filter_url<'u>(
     if let Some(cid) = lower.strip_prefix("cid:") {
         let key = &value.trim_start()[value.trim_start().len() - cid.len()..];
         let pictures = pictures.filter(|_| element == "img" && !key.is_empty())?;
-        let address = format!("{pictures}{}", crate::open_thread::inline::escape(key));
+        let address = format!("{pictures}{}", crate::escape_cid(key));
         return Some(Cow::Owned(address));
     }
     if lower.starts_with("data:") {
@@ -896,7 +896,7 @@ mod body_tests {
     /// dropped the tag and the page's own font showed instead.
     #[test]
     fn the_body_tag_s_styles_move_to_the_wrapper() {
-        let out = clean(include_str!("demo/github-ci.html"));
+        let out = clean(include_str!("../../app/src/demo/github-ci.html"));
         let body = style_of(&out, "mailrs-body");
         assert!(
             body.contains("font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica"),

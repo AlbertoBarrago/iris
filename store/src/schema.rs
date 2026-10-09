@@ -1002,6 +1002,27 @@ pub fn schema_version(conn: &Connection) -> Result<i64> {
 /// The size in bytes the write-ahead log is cut back to after a checkpoint.
 const JOURNAL_SIZE_LIMIT: i64 = 16 << 20;
 
+/// Opens the store at `path` to read, never to write: no migration, no
+/// write-ahead log of its own, and an error rather than a guess when the
+/// store is at a version this build does not know. A second front end
+/// reads the mail this way while the app that syncs it keeps writing.
+pub fn open_read_only(path: &Path) -> Result<Connection> {
+    let conn = Connection::open_with_flags(
+        path,
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX,
+    )?;
+    conn.busy_timeout(Duration::from_secs(5))?;
+    register_functions(&conn)?;
+    let found = schema_version(&conn)?;
+    if usize::try_from(found).ok() != Some(MIGRATIONS.len()) {
+        return Err(StoreError::OtherVersion {
+            found,
+            wanted: MIGRATIONS.len(),
+        });
+    }
+    Ok(conn)
+}
+
 pub(crate) fn configure(conn: &Connection) -> Result<()> {
     conn.busy_timeout(Duration::from_secs(5))?;
     conn.pragma_update(None, "foreign_keys", true)?;
@@ -1011,6 +1032,11 @@ pub(crate) fn configure(conn: &Connection) -> Result<()> {
     // and SQLite keeps the file at its largest size unless told a limit
     // to cut it back to after a checkpoint.
     conn.pragma_update(None, "journal_size_limit", JOURNAL_SIZE_LIMIT)?;
+    register_functions(conn)
+}
+
+/// The SQL functions the queries call, which every connection needs.
+fn register_functions(conn: &Connection) -> Result<()> {
     // SQLite's `lower` folds ASCII letters alone, so a search for "élia"
     // would miss "Élia". Query trees fold text through this instead.
     conn.create_scalar_function(

@@ -1,0 +1,28 @@
+[package]
+name = "mailrs-ffi"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "The Rust core of Iris as the SwiftUI front end calls it, through UniFFI"
+
+[lib]
+# The static library links into the app; the dynamic one is what
+# uniffi-bindgen reads the interface from.
+crate-type = ["staticlib", "cdylib", "lib"]
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+
+[dependencies]
+mailrs-domain.workspace = true
+mailrs-store.workspace = true
+mailrs-render.workspace = true
+rusqlite.workspace = true
+thiserror.workspace = true
+uniffi = { version = "0.32.2", features = ["cli"] }
+
+[dev-dependencies]
+tempfile.workspace = true

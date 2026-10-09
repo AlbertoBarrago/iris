@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["domain", "mime", "gmail", "graph", "discover", "imap", "dav", "sieve", "pop3", "store", "sync", "pgp", "smime", "ai", "cli", "app", "testmail", "webkit"]
+members = ["domain", "mime", "gmail", "graph", "discover", "imap", "dav", "sieve", "pop3", "store", "sync", "pgp", "smime", "ai", "cli", "app", "testmail", "webkit", "render", "ffi"]
 
 [workspace.package]
 version = "1.0.11"
@@ -24,6 +24,7 @@ mailrs-sync = { path = "sync" }
 mailrs-pgp = { path = "pgp" }
 mailrs-smime = { path = "smime" }
 mailrs-ai = { path = "ai" }
+mailrs-render = { path = "render" }
 mailrs-testmail = { path = "testmail" }
 
 adw = { package = "libadwaita", version = "0.9.2", features = ["v1_8"] }

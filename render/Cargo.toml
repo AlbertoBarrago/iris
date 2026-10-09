@@ -1,0 +1,11 @@
+[package]
+name = "mailrs-render"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Mail HTML made safe to show: what the GTK and the SwiftUI front ends both render"
+
+[dependencies]
+ammonia.workspace = true

@@ -24,6 +24,7 @@ mailrs-sync = { workspace = true, features = ["fake"] }
 mailrs-ai.workspace = true
 mailrs-pgp.workspace = true
 mailrs-smime.workspace = true
+mailrs-render.workspace = true
 adw.workspace = true
 ammonia.workspace = true
 anyhow.workspace = true

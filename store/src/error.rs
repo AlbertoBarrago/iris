@@ -17,6 +17,10 @@ pub enum StoreError {
         kept: PathBuf,
         reason: String,
     },
+    /// A reader that cannot write found the store at another version than
+    /// this build knows; the app that writes it has to update it first.
+    #[error("the mail store is at version {found}, and this build reads version {wanted}")]
+    OtherVersion { found: i64, wanted: usize },
 }
 
 pub type Result<T, E = StoreError> = std::result::Result<T, E>;
