@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Tests, clippy, translations
+    # Iris is a macOS app on Apple silicon, so the gate runs where it does.
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # GTK and libadwaita come from Homebrew, as on a developer's Mac;
+      # gettext brings xgettext and msgmerge for update-po.sh.
+      - name: Install build dependencies
+        run: brew install gtk4 libadwaita adwaita-icon-theme pkgconf gettext
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98 --profile minimal --component clippy
+          rustup default 1.98
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      # update-po.sh reads the Rust sources with xtr. The cache restored
+      # above keeps ~/.cargo/bin, so cargo install usually finds it there
+      # and has nothing to build.
+      - name: Install xtr
+        run: cargo install --locked xtr --version 0.1.11
+      - name: Tests
+        run: cargo test --workspace
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Translation template is current
+        run: scripts/update-po.sh --check
