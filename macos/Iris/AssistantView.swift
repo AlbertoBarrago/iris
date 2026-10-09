@@ -199,6 +199,7 @@ struct AssistantPane: View {
     static let width: CGFloat = 380
 
     @Environment(AssistantModel.self) private var assistant
+    @Environment(\.openSettings) private var openSettings
     @State private var text = ""
     @FocusState private var typing: Bool
 
@@ -252,8 +253,11 @@ struct AssistantPane: View {
             Text(tr("Use a local model from LM Studio, Ollama, or any server with OpenAI's API. You can also use an Anthropic API key or your Claude subscription."))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
-            SettingsLink { Text(tr("Choose a Model")) }
-                .buttonStyle(.borderedProminent)
+            Button(tr("Choose a Model")) {
+                UserDefaults.standard.set("ai", forKey: SettingsView.tabKey)
+                openSettings()
+            }
+            .buttonStyle(.borderedProminent)
             Spacer()
         }
         .padding(24)

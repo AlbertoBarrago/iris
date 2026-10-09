@@ -46,7 +46,7 @@ struct IrisApp: App {
         }
         .defaultSize(width: 720, height: 620)
         Settings {
-            SettingsView().environment(model)
+            SettingsView().environment(model).environment(assistant)
         }
         .windowResizability(.contentMinSize)
     }

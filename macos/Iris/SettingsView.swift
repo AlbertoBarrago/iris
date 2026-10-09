@@ -5,18 +5,32 @@ import UniformTypeIdentifiers
 /// Iris's Settings window (⌘,), with the GTK Preferences' pages as tabs
 /// and its words. Every change lands in the same settings file at once.
 struct SettingsView: View {
+    /// The tab on show, kept so Settings opens where it was left, and so
+    /// the assistant's Choose a Model can open it on the AI page.
+    @AppStorage(SettingsView.tabKey) private var tab = "general"
+
+    static let tabKey = "settingsTab"
+
     var body: some View {
-        TabView {
+        TabView(selection: $tab) {
             GeneralSettings()
                 .tabItem { Label(tr("General"), systemImage: "gearshape") }
+                .tag("general")
             WritingSettings()
                 .tabItem { Label(tr("Writing"), systemImage: "square.and.pencil") }
+                .tag("writing")
             CalendarSettings()
                 .tabItem { Label(tr("Calendar"), systemImage: "calendar") }
+                .tag("calendar")
             SyncSettingsView()
                 .tabItem { Label(tr("Sync"), systemImage: "arrow.triangle.2.circlepath") }
+                .tag("sync")
+            AISettings()
+                .tabItem { Label(tr("AI"), systemImage: "sparkles") }
+                .tag("ai")
             LanguageSettings()
                 .tabItem { Label(tr("Language"), systemImage: "globe") }
+                .tag("language")
         }
         .frame(minWidth: 520, idealWidth: 620, maxWidth: .infinity, minHeight: 420, idealHeight: 640, maxHeight: .infinity)
         .background(Resizable())

@@ -714,3 +714,43 @@ extension String {
         hasPrefix(prefix) ? String(dropFirst(prefix.count)) : nil
     }
 }
+
+// MARK: AI settings
+
+extension MailModel {
+    func aiPreferences() -> AiPreferences? { mail?.aiPreferences() }
+
+    func aiChoices() -> AiChoices? { mail?.aiChoices() }
+
+    /// Runs one AI settings change, and says what went wrong if it did.
+    func changeAi(_ change: (Mail) throws -> Void) {
+        guard let mail else { return }
+        do {
+            try change(mail)
+        } catch {
+            toast = Toast(words: "\(error)", undo: false)
+        }
+    }
+
+    /// Keeps a key in the Keychain, off the main thread: macOS may stop to
+    /// ask whether Iris may use it.
+    func saveAiKey(_ name: String, _ value: String) async throws {
+        guard let mail else { return }
+        try await Task.detached { try mail.saveAiKey(name: name, value: value) }.value
+    }
+
+    func testAi(_ provider: String) async throws -> String {
+        guard let mail else { return "" }
+        return try await Task.detached { try mail.testAi(provider: provider) }.value
+    }
+
+    func listAiModels(_ provider: String) async throws -> ModelListing? {
+        guard let mail else { return nil }
+        return try await Task.detached { try mail.listAiModels(provider: provider) }.value
+    }
+
+    func findAi() async -> [FoundModel] {
+        guard let mail else { return [] }
+        return await Task.detached { mail.findAi() }.value
+    }
+}

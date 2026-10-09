@@ -347,11 +347,11 @@ fn numbers(choices: Vec<(i64, String)>) -> Vec<NumberChoice> {
         .collect()
 }
 
-fn load() -> Settings {
+pub(crate) fn load() -> Settings {
     Settings::load(&Settings::default_path())
 }
 
-fn save(change: Change) -> Result<(), CoreError> {
+pub(crate) fn save(change: Change) -> Result<(), CoreError> {
     let path = Settings::default_path();
     let mut settings = Settings::load(&path);
     change.apply_to(&mut settings);
@@ -359,19 +359,19 @@ fn save(change: Change) -> Result<(), CoreError> {
 }
 
 /// The key the settings file keeps a choice under.
-fn key<T: Serialize>(value: &T) -> String {
+pub(crate) fn key<T: Serialize>(value: &T) -> String {
     serde_json::to_value(value)
         .ok()
         .and_then(|v| v.as_str().map(str::to_string))
         .unwrap_or_default()
 }
 
-fn parse<T: DeserializeOwned>(key: &str) -> Result<T, CoreError> {
+pub(crate) fn parse<T: DeserializeOwned>(key: &str) -> Result<T, CoreError> {
     serde_json::from_value(serde_json::Value::String(key.to_string()))
         .map_err(|_| CoreError::Store(format!("{key} is not one of the choices")))
 }
 
-fn choices<T: Choice + Serialize>() -> Vec<ChoiceItem> {
+pub(crate) fn choices<T: Choice + Serialize>() -> Vec<ChoiceItem> {
     T::ALL
         .iter()
         .map(|choice| ChoiceItem {
