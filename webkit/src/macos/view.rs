@@ -584,6 +584,30 @@ impl WebView {
         self.evaluate_javascript(script, None, None, gtk::gio::Cancellable::NONE, |_| {});
     }
 
+    /// Runs one of the Edit menu's commands on the page, as webkit6's
+    /// `execute_editing_command` does: `"Copy"`, `"Cut"`, `"Paste"`,
+    /// `"SelectAll"`, `"Undo"` or `"Redo"`. GTK takes every key on macOS and
+    /// answers ⌘C itself, so the page hears of it only through here.
+    pub fn execute_editing_command(&self, command: &str) {
+        let selector = match command {
+            "Copy" => sel!(copy:),
+            "Cut" => sel!(cut:),
+            "Paste" => sel!(paste:),
+            "SelectAll" => sel!(selectAll:),
+            "Undo" => sel!(undo:),
+            "Redo" => sel!(redo:),
+            _ => {
+                tracing::warn!(command, "an editing command the page does not know");
+                return;
+            }
+        };
+        let Some(page) = self.imp().page.borrow().clone() else { return };
+        let none: Option<&AnyObject> = None;
+        // SAFETY: each of these is an NSResponder action WKWebView takes,
+        // with the sender as its one argument.
+        let _: () = unsafe { msg_send![&*page, performSelector: selector, withObject: none] };
+    }
+
     /// The page, made now if it was not yet.
     pub(crate) fn page(&self) -> Retained<Page> {
         if let Some(page) = self.imp().page.borrow().as_ref() {
@@ -970,6 +994,24 @@ define_class!(
     pub(crate) struct Page;
 
     impl Page {
+        /// A click in the page gives it the keys, as a click does in any
+        /// Mac view. GTK's window passes the click on to the page but keeps
+        /// itself first responder, so without this the Edit menu's Copy
+        /// went to GTK and the selection on the page never reached the
+        /// clipboard.
+        #[unsafe(method(mouseDown:))]
+        fn mouse_down(&self, event: &objc2_app_kit::NSEvent) {
+            if let Some(window) = self.window() {
+                let me: &objc2_app_kit::NSResponder = self;
+                let first = window.firstResponder();
+                let already = first.as_deref().is_some_and(|first| std::ptr::eq(first, me));
+                if !already {
+                    window.makeFirstResponder(Some(me));
+                }
+            }
+            let _: () = unsafe { msg_send![super(self), mouseDown: event] };
+        }
+
         #[unsafe(method(becomeFirstResponder))]
         fn become_first_responder(&self) -> bool {
             let took: bool = unsafe { msg_send![super(self), becomeFirstResponder] };

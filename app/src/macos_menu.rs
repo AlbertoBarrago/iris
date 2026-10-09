@@ -220,17 +220,41 @@ impl Reopener {
 /// editing messages through the responder chain; when nothing there
 /// answers, the keys are GTK's and its widget gets the matching action.
 fn edit(selector: Sel, gtk_action: &str) {
+    let focus = active_window().and_then(|window| GtkWindowExt::focus(&window));
+    // The mail page has the keys whenever GTK's focus is on its view. GTK
+    // answers the key itself, so the command goes to the page by name.
+    if let Some(page) = focus.as_ref().and_then(|f| f.downcast_ref::<webkit::WebView>())
+        && let Some(command) = editing_command(selector)
+    {
+        page.execute_editing_command(command);
+        return;
+    }
     if let Some(mtm) = MainThreadMarker::new() {
         let handled = unsafe { NSApplication::sharedApplication(mtm).sendAction_to_from(selector, None, None) };
         if handled {
             return;
         }
     }
-    let Some(focus) = active_window().and_then(|window| GtkWindowExt::focus(&window)) else {
+    let Some(focus) = focus else {
         return;
     };
     // A widget without the action, such as a button, has nothing to edit.
     let _ = focus.activate_action(gtk_action, None::<&glib::Variant>);
+}
+
+/// The name webkit6 gives the Edit menu command `selector` stands for.
+fn editing_command(selector: Sel) -> Option<&'static str> {
+    [
+        (sel!(copy:), "Copy"),
+        (sel!(cut:), "Cut"),
+        (sel!(paste:), "Paste"),
+        (sel!(selectAll:), "SelectAll"),
+        (sel!(undo:), "Undo"),
+        (sel!(redo:), "Redo"),
+    ]
+    .into_iter()
+    .find(|(known, _)| *known == selector)
+    .map(|(_, name)| name)
 }
 
 /// Asks macOS to open `mailto:` links in Iris. macOS shows its own
