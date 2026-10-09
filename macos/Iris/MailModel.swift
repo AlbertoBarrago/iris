@@ -141,6 +141,10 @@ final class MailModel {
         mail?.checkNow()
     }
 
+    func checkAccount(_ id: Int64) {
+        mail?.checkAccount(accountId: id)
+    }
+
     /// Runs `action` on `keys`, or on the conversations picked, puts it on
     /// the window's undo stack and says what it did.
     func perform(_ action: Action, on keys: Set<ThreadKey>? = nil) {

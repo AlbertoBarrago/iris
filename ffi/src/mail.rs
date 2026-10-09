@@ -71,6 +71,12 @@ pub struct SidebarItem {
     pub count: i64,
     /// The account's own color, for an account's line.
     pub account_color: Option<String>,
+    /// The account a line or a mailbox belongs to; `None` for the unified
+    /// ones and the headings.
+    pub account_id: Option<i64>,
+    /// An account's state, for its line: `ok`, `bootstrapping`,
+    /// `needs_reauth`, `backing_off`, `offline`, and so on.
+    pub state: String,
 }
 
 /// A conversation an action is taken on.
@@ -401,6 +407,13 @@ impl Mail {
             .collect())
     }
 
+    /// Asks one account to look for new mail now.
+    pub fn check_account(&self, account_id: i64) {
+        if let Some(engine) = self.running.current() {
+            engine.poke(account_id);
+        }
+    }
+
     /// Asks every account to look for new mail now.
     pub fn check_now(&self) {
         if let Some(engine) = self.running.current() {
@@ -430,8 +443,10 @@ impl Mail {
                     .await
             })
             .map_err(|err| CoreError::Store(err.to_string()))?;
-        let emails: HashMap<AccountId, String> =
-            accounts_and_labels.iter().map(|(a, _)| (a.id, a.email.clone())).collect();
+        let emails: HashMap<AccountId, (String, AccountState)> = accounts_and_labels
+            .iter()
+            .map(|(a, _)| (a.id, (a.email.clone(), a.state)))
+            .collect();
         let mut keys = HashMap::new();
         let mut items = Vec::new();
         for entry in entries {
@@ -445,16 +460,20 @@ impl Mail {
                     depth: 0,
                     count: 0,
                     account_color: None,
+                    account_id: None,
+                    state: String::new(),
                 }),
                 Entry::Account(id) => items.push(SidebarItem {
                     kind: "account".into(),
-                    key: String::new(),
-                    title: emails.get(&id).cloned().unwrap_or_default(),
+                    key: format!("account-{id}"),
+                    title: emails.get(&id).map(|(email, _)| email.clone()).unwrap_or_default(),
                     icon: String::new(),
                     color: None,
                     depth: 0,
                     count: 0,
                     account_color: Some(format::PALETTE[format::account_color_index(id)].to_string()),
+                    account_id: Some(id),
+                    state: emails.get(&id).map(|(_, state)| state.as_str().to_string()).unwrap_or_default(),
                 }),
                 Entry::Mailbox(row) => {
                     let count = counts.mailboxes.get(&row.mailbox).copied().unwrap_or(0);
@@ -467,12 +486,14 @@ impl Mail {
                     items.push(SidebarItem {
                         kind: "mailbox".into(),
                         key,
+                        account_id: row.mailbox.account(),
                         title: row.title,
                         icon: icon.into(),
                         color: row.color.or(flag),
                         depth: row.depth,
                         count,
                         account_color: None,
+                        state: String::new(),
                     });
                 }
             }

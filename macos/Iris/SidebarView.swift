@@ -1,34 +1,143 @@
 import SwiftUI
 
-/// The sidebar the Rust core lays out: headings, the mailboxes for every
-/// account together, then each account with its own.
+/// The sidebar the Rust core lays out: the mailboxes for every account
+/// together under their headings, then each account with its own. Every
+/// heading and every account folds away, as a Mac sidebar's sections do,
+/// and stays folded the next time.
 struct SidebarView: View {
     @Environment(MailModel.self) private var model
+    /// The keys of the sections and accounts folded away, one per line.
+    @AppStorage("sidebar.folded") private var folded = ""
 
     var body: some View {
         @Bindable var model = model
         List(selection: $model.selectedMailbox) {
-            ForEach(Array(model.sidebar.enumerated()), id: \.offset) { _, item in
-                switch item.kind {
-                case "heading":
-                    Text(item.title.uppercased())
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 10)
-                        .selectionDisabled()
-                case "account":
-                    HStack(spacing: 6) {
-                        Circle().fill(Color(hex: item.accountColor) ?? .accentColor).frame(width: 8, height: 8)
-                        Text(item.title).lineLimit(1)
+            ForEach(SidebarSection.group(model.sidebar)) { section in
+                Section(isExpanded: open(section.key)) {
+                    ForEach(section.rows, id: \.key) { item in
+                        MailboxRow(item: item).tag(item.key)
                     }
-                    .padding(.top, 6)
-                    .selectionDisabled()
-                default:
-                    MailboxRow(item: item).tag(item.key)
+                    ForEach(section.accounts) { account in
+                        DisclosureGroup(isExpanded: open(account.line.key)) {
+                            ForEach(account.rows, id: \.key) { item in
+                                MailboxRow(item: item).tag(item.key)
+                            }
+                        } label: {
+                            AccountLine(item: account.line)
+                        }
+                    }
+                } header: {
+                    Text(section.title)
                 }
             }
         }
         .listStyle(.sidebar)
+    }
+
+    /// Whether `key` is open, and a way to fold or unfold it.
+    private func open(_ key: String) -> Binding<Bool> {
+        Binding {
+            !folded.split(separator: "\n").contains(Substring(key))
+        } set: { isOpen in
+            var keys = Set(folded.split(separator: "\n").map(String.init))
+            if isOpen { keys.remove(key) } else { keys.insert(key) }
+            folded = keys.sorted().joined(separator: "\n")
+        }
+    }
+}
+
+/// One heading of the sidebar with what sits under it.
+struct SidebarSection: Identifiable {
+    let key: String
+    let title: String
+    var rows: [SidebarItem] = []
+    var accounts: [AccountGroup] = []
+    var id: String { key }
+
+    /// The core's flat list, read into headings, accounts and their rows.
+    static func group(_ items: [SidebarItem]) -> [SidebarSection] {
+        var sections: [SidebarSection] = []
+        for item in items {
+            switch item.kind {
+            case "heading":
+                sections.append(SidebarSection(key: "section-\(item.title)", title: item.title))
+            case "account":
+                sections[sections.count - 1].accounts.append(AccountGroup(line: item))
+            default:
+                guard !sections.isEmpty else { continue }
+                if sections[sections.count - 1].accounts.isEmpty {
+                    sections[sections.count - 1].rows.append(item)
+                } else {
+                    let last = sections[sections.count - 1].accounts.count - 1
+                    sections[sections.count - 1].accounts[last].rows.append(item)
+                }
+            }
+        }
+        return sections
+    }
+}
+
+/// An account's line and its own mailboxes.
+struct AccountGroup: Identifiable {
+    let line: SidebarItem
+    var rows: [SidebarItem] = []
+    var id: String { line.key }
+}
+
+/// An account's line: its color, its address, how its sync is doing, and
+/// the account's own actions on a right click.
+struct AccountLine: View {
+    @Environment(MailModel.self) private var model
+    let item: SidebarItem
+    @State private var hovering = false
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Circle().fill(Color(hex: item.accountColor) ?? .accentColor).frame(width: 8, height: 8)
+            Text(item.title).lineLimit(1)
+            Spacer(minLength: 4)
+            if let (symbol, words) = state {
+                Image(systemName: symbol).foregroundStyle(.secondary).help(words)
+            }
+        }
+        .padding(.vertical, 2)
+        .padding(.horizontal, 4)
+        .background(RoundedRectangle(cornerRadius: 6).fill(hovering ? Color.primary.opacity(0.07) : .clear))
+        .onHover { hovering = $0 }
+        .help(item.title)
+        .contextMenu {
+            Button(tr("Check for Mail")) {
+                if let id = item.accountId { model.checkAccount(id) }
+            }
+            Divider()
+            // These come with Preferences in this front end.
+            Group {
+                Button(tr("Automatic Reply…")) {}
+                Button(tr("Signature…")) {}
+                Button(tr("Rules…")) {}
+                Button(tr("Hide My Email…")) {}
+                Divider()
+                Button(tr("Rename…")) {}
+                Button(tr("Move Up")) {}
+                Button(tr("Move Down")) {}
+                Divider()
+                Button(tr("Sign In Again…")) {}
+                Divider()
+                Button(tr("Remove Account…")) {}
+            }
+            .disabled(true)
+        }
+    }
+
+    /// The mark beside an account whose sync needs attention.
+    private var state: (String, String)? {
+        switch item.state {
+        case "needs_reauth": ("exclamationmark.triangle", tr("Sign in again to keep syncing"))
+        case "offline": ("wifi.slash", tr("Offline"))
+        case "backing_off", "waiting_for_keyring": ("clock.arrow.circlepath", item.state)
+        case "bootstrapping": ("arrow.triangle.2.circlepath", item.state)
+        default: nil
+        }
     }
 }
 
@@ -50,7 +159,9 @@ struct MailboxRow: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.leading, CGFloat(item.depth) * 14)
+        // An account's group indents its rows already; only what nests
+        // deeper, or a flag color under Flagged, steps in further.
+        .padding(.leading, CGFloat(item.accountId == nil ? Int(item.depth) : max(Int(item.depth) - 1, 0)) * 14)
     }
 
     /// The SF Symbol for what a row's icon stands for.
