@@ -10,7 +10,9 @@ struct ConversationView: View {
 
     var body: some View {
         Group {
-            if let page = model.page {
+            if model.selection.count > 1 {
+                SeveralSelected()
+            } else if let page = model.page {
                 VStack(spacing: 0) {
                     if page.remoteHidden {
                         HStack {
@@ -23,7 +25,7 @@ struct ConversationView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                         .padding(10)
                     }
-                    MailPage(html: page.html)
+                    MailPage(html: page.html) { url in model.followLink(url) }
                 }
             } else {
                 ContentUnavailableView(tr("No Conversation Selected"), systemImage: "envelope")
@@ -54,7 +56,10 @@ struct ConversationView: View {
             }
             ToolbarItemGroup {
                 Group {
-                    Button(tr("Mark as Read"), systemImage: "envelope.badge") { model.toggleRead() }
+                    Button(
+                        model.selectionIsRead ? tr("Mark as Unread") : tr("Mark as Read"),
+                        systemImage: model.selectionIsRead ? "envelope.badge" : "envelope.open"
+                    ) { model.toggleRead() }
                         .keyboardShortcut("u", modifiers: [.command, .shift])
                     FlagMenu()
                 }
@@ -100,8 +105,10 @@ extension Comparable {
 /// open in the browser; the page itself never navigates.
 struct MailPage: NSViewRepresentable {
     let html: String
+    /// What a click on one of the page's own `mailrs:` links asks for.
+    var onLink: (URL) -> Void = { _ in }
 
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeCoordinator() -> Coordinator { Coordinator(onLink: onLink) }
 
     func makeNSView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -122,6 +129,11 @@ struct MailPage: NSViewRepresentable {
 
     final class Coordinator: NSObject, WKNavigationDelegate {
         var loaded: String?
+        let onLink: (URL) -> Void
+
+        init(onLink: @escaping (URL) -> Void) {
+            self.onLink = onLink
+        }
 
         func webView(
             _ webView: WKWebView,
@@ -133,9 +145,85 @@ struct MailPage: NSViewRepresentable {
                 return
             }
             decisionHandler(.cancel)
-            if ["http", "https", "mailto"].contains(url.scheme?.lowercased() ?? "") {
-                NSWorkspace.shared.open(url)
+            switch url.scheme?.lowercased() {
+            case "http", "https": NSWorkspace.shared.open(url)
+            case "mailrs", "mailto": onLink(url)
+            default: break
             }
         }
     }
+}
+
+/// What the reading pane shows while several conversations are picked:
+/// how to act on all of them at once, as the GTK app's pane says.
+struct SeveralSelected: View {
+    @Environment(MailModel.self) private var model
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Image(systemName: "tray.full")
+                .font(.system(size: 56))
+                .foregroundStyle(.secondary)
+            Text(tr("Several Conversations Selected"))
+                .font(.title2.weight(.bold))
+            Text(tr("Actions and shortcuts apply to all of them. Esc clears the selection."))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            FlowLayout(spacing: 10) {
+                Button(tr("Archive")) { model.perform(.archive) }
+                    .buttonStyle(.borderedProminent)
+                Button(model.selectionIsRead ? tr("Mark as Unread") : tr("Mark as Read")) { model.toggleRead() }
+                Button(tr("Flag")) { model.perform(.flag(color: "red")) }
+                Button(tr("Mute")) { model.perform(.mute) }
+                Button(tr("Junk")) { model.perform(.junk) }
+                Button(tr("Move to Trash")) { model.perform(.trash) }
+            }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.capsule)
+            .controlSize(.large)
+            .frame(maxWidth: 520)
+        }
+        .padding(40)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+/// What a click on an address offers, as a menu where the pointer is.
+/// New Message waits for the composer.
+@MainActor
+enum ContactMenu {
+    static func show(for address: String) {
+        let menu = NSMenu()
+        let title = NSMenuItem(title: address, action: nil, keyEquivalent: "")
+        title.isEnabled = false
+        menu.addItem(title)
+        menu.addItem(.separator())
+        let copy = MenuAction(title: tr("Copy Address")) {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(address, forType: .string)
+        }
+        menu.addItem(copy.item)
+        let write = NSMenuItem(title: tr("New Message"), action: nil, keyEquivalent: "")
+        write.isEnabled = false
+        menu.addItem(write)
+        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        _ = copy
+    }
+}
+
+/// A menu item that runs a closure, kept alive by the item itself.
+final class MenuAction: NSObject {
+    let item: NSMenuItem
+    private let run: () -> Void
+
+    init(title: String, run: @escaping () -> Void) {
+        self.run = run
+        item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        super.init()
+        item.target = self
+        item.action = #selector(fire)
+        item.representedObject = self
+    }
+
+    @objc private func fire() { run() }
 }

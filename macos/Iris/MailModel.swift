@@ -12,6 +12,8 @@ final class MailModel {
     private(set) var page: ConversationPage?
     /// Conversations whose pictures on the web the person chose to load.
     private var remoteAllowed: Set<ThreadKey> = []
+    /// Messages of the open conversation the person opened or closed.
+    private var toggled: [String] = []
     private(set) var problem: String?
     /// Why this window does not sync, when it does not: another copy of
     /// Iris holds the store.
@@ -25,7 +27,12 @@ final class MailModel {
     }
     /// The conversations picked in the list; one of them opens.
     var selection: Set<ThreadKey> = [] {
-        didSet { if openThread != Self.single(oldValue) { loadConversation() } }
+        didSet {
+            if openThread != Self.single(oldValue) {
+                toggled = []
+                loadConversation()
+            }
+        }
     }
 
     /// The conversation on screen: the one picked, when only one is.
@@ -148,6 +155,36 @@ final class MailModel {
         }
     }
 
+    /// Opens or closes one message of the open conversation, as a click on
+    /// its header does.
+    func toggleMessage(_ id: String) {
+        if let at = toggled.firstIndex(of: id) {
+            toggled.remove(at: at)
+        } else {
+            toggled.append(id)
+        }
+        loadConversation()
+    }
+
+    /// Whether every conversation picked is read already, which turns
+    /// Mark as Read into Mark as Unread.
+    var selectionIsRead: Bool {
+        let rows = listing?.rows.filter { selection.contains($0.key) } ?? []
+        return !rows.isEmpty && !rows.contains { $0.unread }
+    }
+
+    /// Follows a link of the page's own: a message's header opens or
+    /// closes it, a sender's name or picture offers what can be done with
+    /// the address.
+    func followLink(_ url: URL) {
+        let text = url.absoluteString
+        if let id = text.removingPrefix("mailrs:toggle/") {
+            toggleMessage(id)
+        } else if let address = text.removingPrefix("mailrs:contact/") ?? text.removingPrefix("mailto:") {
+            ContactMenu.show(for: address.components(separatedBy: "?")[0].removingPercentEncoding ?? address)
+        }
+    }
+
     /// Loads the pictures on the web in the open conversation.
     func loadImages() {
         guard let key = openThread else { return }
@@ -158,8 +195,7 @@ final class MailModel {
     /// Marks the conversations picked read, or unread when every one of
     /// them is read already.
     func toggleRead() {
-        let rows = listing?.rows.filter { selection.contains(ThreadKey(account: $0.accountId, thread: $0.threadId)) } ?? []
-        perform(rows.contains { $0.unread } ? .markRead : .markUnread)
+        perform(selectionIsRead ? .markUnread : .markRead)
     }
 
     /// Reverses the newest mail action.
@@ -229,9 +265,10 @@ final class MailModel {
         }
         let theme = theme
         let remote = remoteAllowed.contains(key)
+        let toggled = toggled
         Task.detached {
             do {
-                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote)
+                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, toggled: toggled)
                 await MainActor.run {
                     if self.openThread == key { self.page = page }
                 }
@@ -265,5 +302,12 @@ final class Listener: MailListener, @unchecked Sendable {
 
     func changed(what: String) {
         heard()
+    }
+}
+
+extension String {
+    /// What follows `prefix`, when the string starts with it.
+    func removingPrefix(_ prefix: String) -> String? {
+        hasPrefix(prefix) ? String(dropFirst(prefix.count)) : nil
     }
 }

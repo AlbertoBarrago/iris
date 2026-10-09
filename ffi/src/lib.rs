@@ -151,13 +151,16 @@ impl Store {
     /// nothing from the network.
     ///
     /// With `allow_remote`, pictures and styles on the web load too, as the
-    /// GTK app's Load Images does.
+    /// GTK app's Load Images does. The messages `toggled` names are drawn
+    /// the other way round: closed where they would open, open where they
+    /// would stay closed.
     pub fn conversation_page(
         &self,
         account_id: i64,
         thread_id: String,
         theme: PageTheme,
         allow_remote: bool,
+        toggled: Vec<String>,
     ) -> Result<ConversationPage, CoreError> {
         // Cleaning a deeply nested newsletter recurses far, more than a
         // Swift task's thread holds, so the page is drawn on a thread with
@@ -165,7 +168,7 @@ impl Store {
         std::thread::scope(|scope| {
             std::thread::Builder::new()
                 .stack_size(16 * 1024 * 1024)
-                .spawn_scoped(scope, || self.draw(account_id, &thread_id, theme, allow_remote))
+                .spawn_scoped(scope, || self.draw(account_id, &thread_id, theme, allow_remote, &toggled))
                 .map_err(|err| CoreError::Store(err.to_string()))?
                 .join()
                 .unwrap_or_else(|panic| std::panic::resume_unwind(panic))
@@ -181,6 +184,7 @@ impl Store {
         thread_id: &str,
         theme: PageTheme,
         allow_remote: bool,
+        toggled: &[String],
     ) -> Result<ConversationPage, CoreError> {
         use mailrs_render::conversation::{
             self as page, BodyState, Head, MessageView, Sanitized, Theme,
@@ -239,7 +243,7 @@ impl Store {
             let view = MessageView {
                 meta,
                 body,
-                expanded: at == last || meta.is_unread(),
+                expanded: (at == last || meta.is_unread()) != toggled.contains(&meta.id),
                 thumbnails: &thumbnails,
                 sanitized: cleaned[at].as_ref().map(|(html, paints, history)| Sanitized {
                     html,

@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// The conversations of the mailbox picked: its title and unread count,
@@ -42,6 +43,7 @@ struct ThreadListView: View {
                 MailActionsMenu(keys: keys)
             }
             .onDeleteCommand { model.perform(.trash) }
+            .onExitCommand { model.selection = [] }
             // The GTK app's one-key shortcuts while the list has the keys.
             .onKeyPress(characters: ["e", "u", "M"]) { press in
                 switch press.characters {
@@ -58,14 +60,6 @@ struct ThreadListView: View {
                 }
             }
         }
-        .overlay(alignment: .bottom) {
-            if let toast = model.toast {
-                ToastView(toast: toast)
-                    .padding(.bottom, 16)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-        }
-        .animation(.snappy, value: model.toast)
         .navigationTitle(model.listing?.title ?? "")
         .navigationSubtitle(model.listing?.subtitle ?? "")
         .toolbar {
@@ -140,7 +134,7 @@ struct ThreadRowView: View {
                         Image(systemName: "paperclip").foregroundStyle(.secondary)
                     }
                     if let flag = row.flag {
-                        Image(systemName: "flag.fill").foregroundStyle(Color(hex: flag) ?? .red)
+                        FlagImage.colored(flag)
                     }
                     Text(row.date)
                         .font(.callout.monospacedDigit())
@@ -237,7 +231,7 @@ struct FlagMenu: View {
                 Button {
                     model.perform(.flag(color: key), on: keys)
                 } label: {
-                    Label { Text(name) } icon: { Image(systemName: "flag.fill").foregroundStyle(Color(hex: hex) ?? .red) }
+                    Label { Text(name) } icon: { FlagImage.colored(hex) }
                 }
             }
             Divider()
@@ -246,7 +240,8 @@ struct FlagMenu: View {
     }
 }
 
-/// What an action did, and Undo, floating over the bottom of the list.
+/// What an action did, and Undo, floating in the window's top right
+/// corner, where a Mac shows its notifications.
 struct ToastView: View {
     @Environment(MailModel.self) private var model
     let toast: Toast
@@ -276,4 +271,21 @@ struct ToastView: View {
 extension ListRow {
     /// The conversation this row stands for.
     var key: ThreadKey { ThreadKey(account: accountId, thread: threadId) }
+}
+
+/// A flag in its own color. A Mac menu draws an SF Symbol as a template,
+/// in one color, whatever color the view asks for, so the flag is drawn
+/// into an image that keeps its color.
+enum FlagImage {
+    static func colored(_ hex: String) -> Image {
+        let color = NSColor(Color(hex: hex) ?? .red)
+        let configuration = NSImage.SymbolConfiguration(paletteColors: [color])
+        guard let symbol = NSImage(systemSymbolName: "flag.fill", accessibilityDescription: nil)?
+            .withSymbolConfiguration(configuration)
+        else {
+            return Image(systemName: "flag.fill")
+        }
+        symbol.isTemplate = false
+        return Image(nsImage: symbol)
+    }
 }

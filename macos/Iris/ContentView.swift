@@ -16,6 +16,15 @@ struct ContentView: View {
         } detail: {
             ConversationView()
         }
+        .overlay(alignment: .topTrailing) {
+            if let toast = model.toast {
+                ToastView(toast: toast)
+                    .padding(.top, 8)
+                    .padding(.trailing, 16)
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
+        }
+        .animation(.snappy, value: model.toast)
         .onAppear { model.undoManager = undoManager }
         .onChange(of: undoManager) { model.undoManager = undoManager }
         .alert("Iris could not read the mail", isPresented: .constant(model.problem != nil)) {
