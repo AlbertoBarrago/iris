@@ -3,6 +3,11 @@
 What a screen reader gets from Iris, how to check it, and what is
 still out of a keyboard's reach.
 
+GTK reaches VoiceOver on macOS only through its AccessKit backend, and
+the GTK Iris builds against, Homebrew's, has that backend turned off. So
+VoiceOver does not read the window's controls yet. The names below are in
+place for when it does.
+
 ## Names
 
 Every control a person acts on carries a name in the accessible tree. A
@@ -12,7 +17,7 @@ them:
 
 - `name` sets the name.
 - `name_with_shortcut` takes a tooltip that ends in its keys, such as
-  `Archive (E or Ctrl+Alt+A)`, and splits it: the words become the name
+  `Archive (E or ⌥⌘A)`, and splits it: the words become the name
   and the keys a property of their own.
 - `describe` adds the line read after the name.
 - `labelled_by` ties a field to the word standing beside it.
@@ -86,7 +91,7 @@ Tab comes back to the button you left it on. `ui::roving` holds this, and
 a click on a button leaves the focus in the text.
 
 Every formatting button has a shortcut as well, Insert Image included
-(Ctrl+Shift+P). The headings and block styles have none and are reached
+(⇧⌘P). The headings and block styles have none and are reached
 through More Formatting, the last button on the bar.
 
 The chips in an address field stay out of the Tab chain too, so crossing
@@ -163,14 +168,14 @@ readers. In a week or a month each event names its day, such as
 T goes to today; D, W and M switch to Day, Week and Month; Left and
 Right step to the previous or next range. After a change of view or
 range, the focus goes to the first event on screen, or to Today when
-there is none. Ctrl+F opens the calendar's own search bar, which wins
+there is none. ⌘F opens the calendar's own search bar, which wins
 over the main window's search while the calendar shows. N opens quick
 create at the focused slot in Day or Week, or at nine in the morning on
 the focused day in Month; the narrow list has no grid to point quick
 create at, so N opens the editor there instead. It does nothing while
 no calendar takes new events, the same as the New Event button beside
 the header. Every one of these gives way while a text field, such as
-search, has the focus. The main menu's Assistant item, and ⌘J (Ctrl+J on Linux), open
+search, has the focus. The main menu's Assistant item, and ⌘J, open
 the assistant in either space.
 
 A double click opens the popover on its first click and the editor on
@@ -182,37 +187,20 @@ answers, such as the mockup draws, has neither.
 
 In Day and Week, a drag of a card has a keyboard path beside it: with
 the focus on a card the account may move, Shift+Up and Shift+Down move
-it a quarter hour earlier or later, and Shift+Alt+Up and Shift+Alt+Down
+it a quarter hour earlier or later, and Shift+Option+Up and Shift+Option+Down
 shorten or lengthen it by the same step. A card that offers this says so
 in the line read after its name.
 
 ## Checking it
 
-```
-scripts/a11y-names.sh
-```
-
-opens the demo on a hidden display, walks the accessible tree over
-AT-SPI, and names every control that would be announced as nothing. It
-exits 1 while anything is unnamed. A menu is in the tree only while it
-is open, so on the hidden display the script also right-clicks every
-row it can scroll to and presses every button that opens a menu, then
-opens each submenu, and reads the items of each menu it sees. It
-reaches the menus of the main window this way, but not the message
-menu, which the page opens, nor the composer's menus. It also switches
-to the calendar and walks Day, Week, Month and the list a narrow
-window shows, opens an invitation's popover in Week and a crowded day's
-"N more" list in Month, reads the main menu there, Show Declined Events
-included, opens the New Event button and the editor it shows, expands
-its More section, walks it, then opens the Repeats row's Custom Repeat
-page and walks that too before closing the editor, and reports the
-calendar's own line of controls apart from the mail walk's. `--here`
-reads the copy already on your screen instead, which is how to check a
-dialog or the composer: open it, then run the script.
+Nothing checks the names on macOS yet. The check walked the accessible
+tree over AT-SPI, which macOS does not have, so a new control needs its
+name set by hand through the helpers above, and a test of the function
+that words it when a count or a state decides the words.
 
 ## What the keyboard cannot reach
 
 Nothing known. The last four gaps closed in September 2026: the row
 menus open with Menu or Shift+F10, the formatting bar is one tab stop,
-Insert Image has Ctrl+Shift+P, and the arrow keys reach every recipient
+Insert Image has ⇧⌘P, and the arrow keys reach every recipient
 chip. Write a new gap down here when you find one, with why it was left.

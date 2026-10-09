@@ -1,8 +1,8 @@
 # Iris
 
-Mail and calendar for Linux, in Rust: GTK4, libadwaita, WebKitGTK 6, a tray
-icon, several accounts synced into SQLite. Targets Ubuntu 26.04 and Rust
-1.98. The crate map is in `CONTRIBUTING.md` under "How it is built"; the words
+Mail and calendar for macOS, in Rust: GTK4, libadwaita, WKWebView behind
+webkit6's API, a Dock badge, several accounts synced into SQLite. Targets
+macOS 26 on Apple silicon and Rust 1.98. The crate map is in `CONTRIBUTING.md` under "How it is built"; the words
 the code uses are in `CONTEXT.md`. Read both before changing behaviour.
 
 ## Where to look
@@ -21,15 +21,19 @@ the code uses are in `CONTEXT.md`. Read both before changing behaviour.
 
 ## The gate
 
-A change is done when all four pass on the tree you are about to commit,
+A change is done when all three pass on the tree you are about to commit,
 run after your last edit:
 
 ```sh
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
 scripts/update-po.sh --check      # stale? run scripts/update-po.sh, commit the result
-scripts/a11y-names.sh             # only when you touched the UI; exits 1 on an unnamed control
 ```
+
+A change to the UI also names every control it adds (`crate::ui::name`).
+VoiceOver does not read GTK's controls yet, since Homebrew builds GTK
+without AccessKit, but the names are what it will read; see
+`docs/accessibility.md`.
 
 Any edit to a file holding translatable strings moves line numbers in
 `po/iris.pot`, so `--check` goes stale from edits that change no
@@ -37,21 +41,18 @@ words. Run it last.
 
 Read exit statuses from the command itself. `cargo test | tail` reports
 `tail`'s status; use `${pipestatus[1]}` in zsh, or send the output to a
-file and check `$?`. Never pipe `scripts/a11y-names.sh`: its Xvfb child
-holds the pipe open and the command hangs.
+file and check `$?`.
 
-Installing for the owner: `NO_AUTOSTART=1 scripts/install.sh`.
+Installing for the owner: `scripts/macos-install.sh`, which builds a
+signed `Iris.app` into `/Applications`.
 
 ## Testing traps
 
-- **One GTK test per test binary.** GTK belongs to the thread that
-  starts it and the harness gives each test its own thread, so a second
-  test calling `gtk::init()` crashes the binary with SIGSEGV. The one
-  that exists is in `app/src/ui/composer/richbuffer.rs`; fold new GTK
-  checks into it, or test the logic without widgets. Its checks run on
-  a thread that never ends: WebKit takes that thread as its main thread,
-  and when it ended WebKit sometimes deadlocked tearing down its run
-  loop, which hung the whole suite.
+- **No GTK in tests.** GTK on macOS starts only on the process's main
+  thread, and the test harness runs each test on a thread of its own, so
+  a test that calls `gtk::init()` cannot run. The one that exists, in
+  `app/src/ui/composer/richbuffer.rs`, is `#[ignore]`d for that reason.
+  Test the logic without widgets.
 - **Picture decoding.** GDK decodes PNG, JPEG and TIFF in this process;
   every other format, and every gdk-pixbuf load or save, goes to
   glycin's sandboxed loader. Go through `app/src/ui/texture.rs` rather
@@ -69,12 +70,14 @@ Installing for the owner: `NO_AUTOSTART=1 scripts/install.sh`.
   names a pinentry script that answers from the fixture
   (`smime/tests/import.rs`), so nobody is asked.
 - **Sandbox tests** for skill scripts run real `bwrap` and skip when it
-  is missing or cannot start, as in an unprivileged container.
+  is missing, which on macOS it always is: skill scripts do not run on
+  macOS until the sandbox moves to the Mac's own.
   `IRIS_REQUIRE_SANDBOX=1` turns the skip into a failure.
 - **Docker tests** (`testmail/`, `imap/tests/dovecot*.rs`,
   `sync/tests/dovecot.rs`) start Dovecot and Mailpit and skip when Docker
-  is missing or cannot start. `IRIS_REQUIRE_IMAP=1` turns the skip
-  into a failure; CI's `imap` job sets it and the gate does not. The tests
+  is missing or cannot start (on the owner's Mac, Docker runs through
+  Colima). `IRIS_REQUIRE_IMAP=1` turns the skip into a failure; the gate
+  does not set it. The tests
   never pull an image (`docker create --pull never`); run
   `scripts/test-images.sh` once on a new computer. Radicale serves the
   CalDAV and CardDAV tests, and `Profile::Sieve` Dovecot's ManageSieve. The
@@ -93,16 +96,13 @@ Installing for the owner: `NO_AUTOSTART=1 scripts/install.sh`.
 
 ## Seeing the UI
 
-`cargo run -p mailrs -- --demo` opens three sample accounts in a
-throwaway store; nothing talks to Google. With no display, run it under
-`Xvfb` and `dbus-run-session`; `scripts/a11y-names.sh` shows the full
-recipe, including waiting for the window to reach the accessibility bus.
-Take screenshots of the hidden display with `scripts/demo-shot.sh out.png`
-(`--run drive.py` clicks or types first). It takes down the accessibility
-registry it starts; a hand-made recipe leaves one running for every shot.
-The scripts also set `GNUPGHOME` to a folder in their sandbox. A recipe
-that only moves `HOME` still reaches the owner's own gpg-agent, and a
-secret key it imports lands in their keyring.
+`scripts/dev-macos.sh --demo` builds and opens three sample accounts in a
+throwaway store; nothing talks to Google. It quits the copy already
+running first, so it takes over the owner's screen: say so before running
+it. `screencapture -o -l <window id> out.png` takes a picture of one
+window. A recipe that moves `HOME` still reaches the owner's own
+gpg-agent unless it sets `GNUPGHOME` too, and a secret key it imports
+lands in their keyring.
 Render SVGs with `rsvg-convert`: ImageMagick mangles gradients and makes
 a good icon look broken.
 
@@ -159,8 +159,9 @@ A change someone using the app would notice gets a line under
 `### Improved` or `### Fixed`. Write it for that person: what they can now
 do or what stopped going wrong, in plain words, one line. "Search finds
 mail in every account again", not "Pass the account filter through to the
-listing". Refactors, tests, CI and docs get no line. `scripts/release.sh`
-turns the section into the release notes.
+listing". Refactors, tests, CI and docs get no line.
+`scripts/macos-publish.sh` turns the version's section into the release
+notes, through `scripts/changelog.sh section`.
 
 ## Commits
 

@@ -2,18 +2,18 @@
 
 # Iris
 
-Mail and calendar for macOS and Linux, written in Rust.
+Mail and calendar for macOS, written in Rust.
 
 [![CI](https://github.com/AlbertoBarrago/iris/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbertoBarrago/iris/actions/workflows/ci.yml)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Rust 1.98](https://img.shields.io/badge/rust-1.98-orange?logo=rust)](https://www.rust-lang.org)
 [![GTK 4 and libadwaita 1.8](https://img.shields.io/badge/GTK_4-libadwaita_1.8-4a86cf?logo=gnome)](https://gnome.pages.gitlab.gnome.org/libadwaita/)
 
-[Status](#status) · [Features](#features) · [Build](#build) · [Usage](#usage) · [Based on Penguin Mail](#based-on-penguin-mail)
+[Status](#status) · [Features](#features) · [Install](#install) · [Build](#build) · [Usage](#usage) · [Based on Penguin Mail](#based-on-penguin-mail)
 
 </div>
 
-Iris is mail and calendar for your own computer. It reads Gmail accounts,
+Iris is mail and calendar for your Mac. It reads Gmail accounts,
 Microsoft accounts (Outlook.com, Hotmail, Live and Microsoft 365) and any
 IMAP and SMTP account, such as Fastmail, iCloud and Yahoo, and finds the
 server settings for you. It shows your accounts in one inbox or one at a
@@ -21,16 +21,20 @@ time, and keeps your mail on your own computer. Gmail and Google Calendar
 accounts talk to Google directly, and Microsoft accounts talk to Microsoft
 Graph, so no other server sees your mail.
 
-Iris is a fork of [Penguin Mail](https://github.com/c9dev/penguin-mail), a
-GTK and libadwaita mail client for Linux. Iris keeps Linux working and adds
-macOS as a first-class platform.
+Iris began as a modified version of
+[Penguin Mail](https://github.com/c9dev/penguin-mail), a GTK and libadwaita
+mail client for Linux, and is now a macOS app of its own.
 
 ## Status
 
-| Platform | State |
-|---|---|
-| macOS | Works. An `Iris.app` with a Dock badge for unread mail, a menu bar, Command shortcuts and secrets in the Keychain. Test builds come as a DMG; see [Install on macOS](#install-on-macos). |
-| Linux | Works, as Penguin Mail 1.0 does. Builds from source only for now: Iris publishes no packages yet. |
+Iris runs on a Mac with Apple silicon and macOS 26 or later, as an
+`Iris.app` with a Dock badge for unread mail, a menu bar, Command shortcuts
+and secrets in the Keychain. Builds come as a DMG and update themselves
+through Sparkle; see [Install](#install).
+
+A few features are not on macOS yet: a skill's scripts (the sandbox they
+run in is Linux's bubblewrap), the Archive, Mark as Read, Delete and Reply
+buttons on new-mail notifications, and starting at login.
 
 A build signs in to Google and Microsoft only with OAuth clients compiled
 in. The test DMGs carry Iris's own; a build from source needs yours, as
@@ -73,7 +77,7 @@ and an IMAP account its rules over ManageSieve.
   written to or heard from.
 - **Undo Send and Send Later.** Sent mail waits a few seconds with an Undo
   button. Send Later schedules a message, which goes out on time while
-  Iris runs, even in the tray.
+  Iris runs, even with its window closed.
 - **An Outbox.** A message that cannot go out waits on this computer through
   a quit and a restart, and Iris tries again on a widening interval
   and as soon as the network comes back. Problems another try would not fix,
@@ -84,8 +88,7 @@ and an IMAP account its rules over ManageSieve.
 
 ### Organizing
 
-- **Select several at once** with Command-click (Ctrl+click on Linux),
-  Shift-click or ⌘A, then archive, trash, junk, flag, mark or label them
+- **Select several at once** with Command-click, Shift-click or ⌘A, then archive, trash, junk, flag, mark or label them
   together. ⌘Z undoes each one.
 - **One message at a time.** Right-click a message inside a conversation
   to reply to it, archive it, trash it, mark it, flag it, label it or
@@ -147,7 +150,7 @@ Gmail runs all four, so they work with your computer off.
 
 ### The assistant
 
-An assistant pane (⌘J, or Ctrl+J on Linux) summarizes, sorts, cleans up, drafts replies and
+An assistant pane (⌘J) summarizes, sorts, cleans up, drafts replies and
 changes settings such as an automatic reply, using the app's own tools. It
 also reads and changes your Google Calendar, finds free time, looks people
 up in your contacts, and reads attachments.
@@ -163,39 +166,39 @@ up in your contacts, and reads attachments.
   Search or your own SearXNG.
 - **MCP servers** you add give it more tools, and **skills** teach it your
   routines. A skill's scripts run in a sandbox with no access to your mail,
-  keys or home folder.
+  keys or home folder; that sandbox is not on macOS yet, so scripts do not
+  run there, while a skill's instructions do.
 
 It asks before it sends mail, changes Gmail settings or your calendar, or
 uses a tool from outside the app, and it is off until you pick a model.
 [docs/assistant.md](docs/assistant.md) covers setup.
 
-### On the desktop
+### On the Mac
 
-- **On macOS**, the unread count on the Dock icon, the app's menu in the
-  menu bar, and Preferences in a window of its own. Closing the window
-  keeps Iris running, and a click on the Dock icon brings it back.
-- **On Linux**, an unread count in the tray, and new-mail notifications
-  with Archive, Mark Read, Delete and Reply buttons. In the tray Iris
-  uses about 55 MB: a minute after you close the window, it restarts
-  itself in the background to give back the memory the window used.
+- **The unread count on the Dock icon**, the app's menu in the menu bar,
+  and Preferences in a window of its own. Closing the window keeps Iris
+  running, and a click on the Dock icon brings it back.
+- **New-mail notifications.** A click opens the conversation; the Archive,
+  Mark as Read, Delete and Reply buttons are not on macOS yet.
 - **Panes you size.** Drag the edge of the message list or the assistant;
   a double click puts it back. Iris remembers the widths and the window's
   size.
-- **Apple Mail's shortcuts**, with Command on macOS and Ctrl on Linux, plus
-  Gmail's single keys.
+- **Apple Mail's shortcuts**, plus Gmail's single keys.
 - **English, European Portuguese and Italian**, chosen in Preferences, with
   the window's controls named for screen readers.
 
+## Install
 
-## Install on macOS
-
-Test builds are for a Mac with Apple silicon and macOS 26 or later. The
+Builds are for a Mac with Apple silicon and macOS 26 or later. The
 quickest way in is the installer, which fetches the newest build, puts it in
 Applications and opens it:
 
 ```sh
 curl -fsSL https://albz.it/iris/install.sh | sh
 ```
+
+The DMG is also on the
+[releases page](https://github.com/AlbertoBarrago/iris/releases).
 
 The builds are signed with the author's own certificate, not yet with an
 Apple Developer ID. A copy installed this way opens at once; a DMG
@@ -212,10 +215,9 @@ Iris then updates itself through Sparkle: it checks once a day, and
 
 ## Build
 
-You need Rust 1.98.
-
-On macOS, install GTK and libadwaita from Homebrew, then build and run, or
-install into `/Applications`:
+You need Rust 1.98 (`cargo +1.98` when your default toolchain is older).
+Install GTK and libadwaita from Homebrew, then build and run, or install
+into `/Applications`:
 
 ```sh
 brew install gtk4 libadwaita adwaita-icon-theme librsvg gettext pkgconf
@@ -227,16 +229,9 @@ scripts/macos-install.sh          # build a release and install Iris.app
 `macos-install.sh` builds an app that loads GTK from Homebrew, so it runs on
 the Mac that built it. `scripts/macos-dmg.sh` builds the test DMG instead,
 in `target/dmg/`: the app carries GTK and its libraries inside, so it runs
-on a Mac without Homebrew, on the macOS Homebrew built them for or later. Short on disk, build with
+on a Mac without Homebrew, on the macOS Homebrew built them for or later.
+Short on disk, build with
 `CARGO_PROFILE_DEV_DEBUG=line-tables-only CARGO_INCREMENTAL=0`.
-
-On Linux, install the development packages, then build and install into
-`~/.local`:
-
-```sh
-sudo apt install libgtk-4-dev libadwaita-1-dev libwebkitgtk-6.0-dev libglib2.0-dev-bin gettext
-scripts/install.sh
-```
 
 To sign in to Google and Microsoft, compile your own OAuth clients in:
 
@@ -255,7 +250,8 @@ layout of the crates.
 ### Try it without an account
 
 ```sh
-iris --demo
+scripts/dev-macos.sh --demo
+/Applications/Iris.app/Contents/MacOS/iris --demo   # an installed copy
 ```
 
 The demo opens three sample accounts in a throwaway store. Search, triage,
@@ -264,9 +260,8 @@ talks to Google.
 
 ### Keyboard
 
-Apple Mail's shortcuts work as they do in Mail. The table writes them as a
-Mac does; on Linux, Ctrl takes ⌘'s place, Alt ⌥'s and Shift ⇧'s. Gmail's
-single keys work whenever you are not typing. ⌘? lists every shortcut.
+Apple Mail's shortcuts work as they do in Mail. Gmail's single keys work
+whenever you are not typing. ⌘? lists every shortcut.
 
 | Key | Action | Key | Action |
 |---|---|---|---|
@@ -285,27 +280,17 @@ single keys work whenever you are not typing. ⌘? lists every shortcut.
 
 ### Command line
 
+The app's binary is `Iris.app/Contents/MacOS/iris`:
+
 ```sh
-iris --background             # start in the tray, no window
+iris --background             # start without opening a window
 iris --compose                # new message
 iris mailto:ann@example.com   # new message to Ann
 iris --version
 ```
 
-To make Iris open `mailto:` links on Linux:
-
-```sh
-xdg-mime default io.github.AlbertoBarrago.Iris.desktop x-scheme-handler/mailto
-```
-
-On Linux, the running app answers D-Bus actions, for custom shortcuts:
-
-```sh
-gdbus call --session --dest io.github.AlbertoBarrago.Iris --object-path /io/github/AlbertoBarrago/Iris \
-    --method org.gtk.Actions.Activate show-window [] {}
-```
-
-The actions are `show-window`, `hide-window`, `compose`, `check` and `quit`.
+`Iris.app` registers for `mailto:` links. To make it the app that opens
+them, choose it as the default email reader in Mail's settings.
 
 `iris-cli` drives the same sync core without a window: `account add`,
 `sync`, `threads`, `show`, `triage` and `export`.
@@ -314,18 +299,16 @@ The actions are `show-window`, `hide-window`, `compose`, `check` and `quit`.
 
 - Iris talks to Google's APIs straight from your computer. No
   Iris server sits in between.
-- Refresh tokens live in the macOS Keychain or the Linux keyring. The config file holds sync
+- Refresh tokens live in the macOS Keychain. The config file holds sync
   settings and, for accounts added through the old setup page, their Google
   client ID and secret, readable by you alone.
-- Mail is cached in `~/Library/Application Support/iris` on macOS and
-  `~/.local/share/iris` on Linux: the last 30 days plus everything in your
+- Mail is cached in `~/Library/Application Support/iris`: the last 30 days plus everything in your
   inbox. Opening an older thread fetches it on demand.
 - The assistant is off until you pick a model. A local model keeps mail on
   your computer; the Anthropic API and Claude Code send what the assistant
-  reads to Anthropic. API keys live in the system keyring.
+  reads to Anthropic. API keys live in the Keychain.
 
 The full policy is in [docs/privacy-policy.md](docs/privacy-policy.md).
-
 
 ## Roadmap
 
@@ -334,8 +317,7 @@ Keychain; a DMG that carries its own GTK and updates through Sparkle; the
 winged-envelope identity; Google and Microsoft clients; the Italian
 translation.
 
-1. **Start at login on macOS** through `SMAppService`; the switch in
-   Preferences only works on Linux today.
+1. **Start at login** through `SMAppService`.
 2. **A Developer ID and notarization**, so the DMG opens without the
    Privacy & Security step.
 3. **macOS before 26 and Intel Macs**, with GTK built for them rather
@@ -353,11 +335,10 @@ Questions, bug reports and ideas are welcome in
 ## Based on Penguin Mail
 
 Iris is a modified version of
-[Penguin Mail](https://github.com/c9dev/penguin-mail) by c9dev, forked from
-its 1.0.0 release. The original work and its copyright belong to its
-authors; the changes since the fork are Iris's. Fixes from Penguin Mail are
-merged back where they apply, and the release history before the fork is in
-[CHANGELOG.md](CHANGELOG.md).
+[Penguin Mail](https://github.com/c9dev/penguin-mail) by David Santos,
+starting from its 1.0.0 release. The original work and its copyright belong
+to its authors; the changes since then are Iris's, published by Alberto
+Barrago. The release history before Iris is in [CHANGELOG.md](CHANGELOG.md).
 
 Iris has its own icon and artwork, a winged envelope; the penguin is
 Penguin Mail's.

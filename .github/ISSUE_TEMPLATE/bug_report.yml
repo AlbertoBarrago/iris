@@ -12,8 +12,8 @@ body:
     id: version
     attributes:
       label: Version
-      description: The output of `iris --version`.
-      placeholder: iris 0.1.0
+      description: The version **About Iris**, in the Iris menu, shows.
+      placeholder: 1.0.11
     validations:
       required: true
   - type: dropdown
@@ -21,9 +21,9 @@ body:
     attributes:
       label: How you installed it
       options:
-        - The .deb from a release
-        - The tarball or zip from a release
-        - Built from source with scripts/install.sh
+        - The install script from albz.it/iris
+        - The DMG from a release
+        - Built from source with scripts/macos-install.sh or scripts/dev-macos.sh
         - Other
     validations:
       required: true
@@ -31,8 +31,8 @@ body:
     id: system
     attributes:
       label: System
-      description: Distribution and version, and the desktop you use.
-      placeholder: Ubuntu 26.04, GNOME 50
+      description: The macOS version and your Mac's model.
+      placeholder: macOS 26.0, MacBook Air M3
     validations:
       required: true
   - type: textarea
@@ -44,9 +44,9 @@ body:
         then list what you did, one step per line. Name the buttons and keys you used.
       placeholder: |
         1. Start Iris with one Gmail account and the window closed
-        2. Click the tray icon to open the window
+        2. Click Iris in the Dock to open the window
         3. Open a conversation that has a PDF attachment
-        4. Press Ctrl+S on the attachment
+        4. Click Save to Downloads on the attachment
     validations:
       required: true
   - type: dropdown
@@ -64,7 +64,7 @@ body:
     attributes:
       label: Does it happen in the demo?
       description: |
-        `iris --demo` opens sample accounts that never touch Gmail. If the bug shows
+        `/Applications/Iris.app/Contents/MacOS/iris --demo`, run in Terminal, opens sample accounts that never touch Gmail. If the bug shows
         there, anyone can reproduce it without your mail.
       options:
         - "Yes"
@@ -102,8 +102,9 @@ body:
     attributes:
       label: Log
       description: |
-        The app's lines from around the time it happened, from
-        `journalctl --user --since "10 minutes ago" | grep -i iris`.
+        Iris writes its log to standard error. Quit it, start it from Terminal with
+        `/Applications/Iris.app/Contents/MacOS/iris 2> ~/Desktop/iris.log`,
+        make the problem happen, and paste the lines from around that time.
         Iris masks email addresses in its log, but read the lines
         before pasting: a subject or a name can still show.
       render: text

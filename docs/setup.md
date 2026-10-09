@@ -24,7 +24,7 @@ the server settings for you and says what the provider needs, such as an app
 password for iCloud, Fastmail or Yahoo, with a link to the page where you make
 one. If it can't find them, **Enter Server Settings** lets you type the
 incoming (IMAP) and outgoing (SMTP) servers yourself. The password goes to
-the macOS Keychain or your desktop's keyring, never into a file.
+the macOS Keychain, never into a file.
 
 The account appears in the sidebar and starts downloading.
 
@@ -53,7 +53,7 @@ names what it lacks, until you go through Google's screen once more. Mail
 keeps syncing throughout.
 
 Accounts you added through the old setup page signed in with a Google Cloud
-client of your own, kept in `~/.config/iris/config.toml`. They keep
+client of your own, kept in `config.toml`. They keep
 working. The next time one of them signs in again, it moves to the app's own
 client, and the `[oauth]` section can go once none of them uses it.
 
@@ -61,8 +61,7 @@ client, and the `[oauth]` section can go once none of them uses it.
 
 Iris needs no config file. To change how often it checks for mail,
 how many days of mail it keeps, or how much message text it caches, write
-`config.toml` in `~/Library/Application Support/iris/` on macOS or
-`~/.config/iris/` on Linux:
+`config.toml` in `~/Library/Application Support/iris/`:
 
 ```toml
 # These are the defaults.
@@ -72,9 +71,7 @@ window_days = 30
 body_cache_mb = 1024
 ```
 
-Iris keeps your refresh tokens in the macOS Keychain or the GNOME
-keyring, not in this file. The Flatpak keeps them in its own store instead, through the Secret
-portal; see "Which package" below.
+Iris keeps your refresh tokens in the macOS Keychain, not in this file.
 
 ## Building your own copy
 
@@ -85,10 +82,9 @@ project's client, from these variables:
 - `IRIS_GOOGLE_CLIENT_SECRET`
 - `IRIS_MICROSOFT_CLIENT_ID`
 
-The release workflow takes them from the secrets
-`IRIS_GOOGLE_CLIENT_ID`, `IRIS_GOOGLE_CLIENT_SECRET` and
-`MICROSOFT_CLIENT_ID`. `scripts/install.sh` reads them from
-`packaging/secrets.env` when that file exists. A copy built without them
+`scripts/dev-macos.sh`, `scripts/macos-install.sh` and
+`scripts/macos-dmg.sh` read them from `packaging/secrets.env` when that
+file exists. A copy built without them
 works in every other way and says so when you try to add a Google account.
 A copy built without the Microsoft one hides Microsoft in Add Account.
 
@@ -147,9 +143,10 @@ cargo run --release -p mailrs-cli -- triage you@gmail.com <thread-id> archive
 
 ## On macOS
 
-Iris on a Mac is `Iris.app`. A test build comes as a DMG; a build from
-source comes from `scripts/macos-install.sh`, which loads GTK from Homebrew
-and so runs on the Mac that built it.
+Iris is `Iris.app`, for a Mac with Apple silicon and macOS 26 or later. A
+release comes as a DMG; a build from source comes from
+`scripts/macos-install.sh`, which loads GTK from Homebrew and so runs on
+the Mac that built it.
 
 - **Updates.** A copy installed from a DMG updates itself through Sparkle:
   it checks once a day, asks before it installs, and **Check for
@@ -158,98 +155,26 @@ and so runs on the Mac that built it.
 - **Secrets.** Refresh tokens, IMAP passwords and the assistant's keys sit
   in the login Keychain. macOS asks once whether Iris may read them; choose
   Always Allow.
-- **Unread mail** shows on the Dock icon, as there is no tray. Closing the
-  window keeps Iris running, and a click on the Dock icon brings the window
-  back.
-- **Start at login** does nothing on macOS yet. Add Iris under System
-  Settings > General > Login Items meanwhile.
-- **Skills.** A skill's instructions work, but its scripts do not run:
-  they need bubblewrap's sandbox, which macOS lacks.
-- **Shortcuts** take Command where Linux takes Control.
-
-## Which package
-
-The packages below are Linux's.
-
-Every package is the same app, built with a cargo feature that says what
-kind it is (`packaging-rpm`, `packaging-arch`, `packaging-flatpak`,
-`packaging-snap`, or none for the .deb and the tarball). The feature
-decides where updates come from and whether skills run.
-
-| | .deb | rpm | Arch | Flatpak | Snap |
-|---|---|---|---|---|---|
-| Updates | Install in the app, or the apt repository | the dnf repository | pacman, by hand | Flathub | Snap Store |
-| GnuPG | system | system | system | runtime's `gpg`, on `~/.gnupg` | snap's `gpg`, on a keyring inside the snap |
-| Assistant skills | yes | yes | yes | no | no |
-| Claude Code, MCP servers run as a command | yes | yes | yes | no | no |
-| Tray icon | yes | yes | yes | yes | yes |
-| Start at login | autostart file | autostart file | autostart file | Background portal | snapd autostart |
-
-- **Updates.** The .deb checks GitHub once a day and offers Install,
-  which downloads the new .deb and installs it through apt; `apt upgrade`
-  brings the same version from the apt repository. The tarball updates
-  itself the same way, into its own folder. The rpm leaves updates to
-  dnf, and the Arch package to pacman, though there is no Arch
-  repository yet, so that means downloading and installing the new
-  `.pkg.tar.zst` by hand; see `packaging/aur/PKGBUILD` for what an AUR
-  package would add. The Flatpak and the snap leave updates to their
-  store. Preferences and the About window say which applies.
-- **GnuPG.** The Flatpak reaches two places for signing and encryption:
-  `~/.gnupg`, read and written, and the gpg-agent socket folder under
-  `$XDG_RUNTIME_DIR/gnupg`, read-only, so your own agent and pinentry
-  handle passphrases. It also talks to the tray and the notification
-  daemon, and writes to Downloads; the manifest says why for each. The
-  snap's `gpg` and `gpgsm` use a keyring of their own inside the snap, in
-  `~/snap/iris/current/.gnupg`, so the OpenPGP keys and S/MIME
-  certificates in `~/.gnupg` do not appear there. The app has no way yet
-  to import them, so signing and decrypting with your existing keys and
-  certificates does not work in the snap yet.
-- **Secrets.** Outside a sandbox, Google's refresh tokens, an IMAP
-  password, and the assistant's API keys and MCP tokens sit in the
-  desktop's keyring, service `mailrs` or `iris-imap`. The
-  Flatpak keeps them in its own encrypted file instead, through the
-  Secret portal, so no other app on the desktop can read them; the snap
-  still uses the desktop's keyring, the same as the .deb. The snap reaches
-  it only once you run `snap connect iris:password-manager-service`
-  and restart the app. Until then it cannot save a sign-in, and a bar
-  across the top of the window says so and gives the command.
-- **Skills.** A skill's scripts run under bubblewrap, which cannot start
-  inside Flatpak's or a strict snap's sandbox. Running them without one
-  would hand a skill your mail and keys, so both packages turn skills off
-  and say so under Preferences, AI, Skills.
-- **Programs on your system.** Claude Code, and an MCP server you add as a
-  command, run as programs on your computer. The Flatpak and the snap
-  cannot see those programs. A local model, the Anthropic API and MCP
-  servers you reach by address work in every package.
-- **No AppImage.** WebKit draws HTML mail in helper processes it
-  sandboxes with bubblewrap, and that sandbox mounts your system's `/usr`,
-  where helpers bundled in an AppImage find none of their libraries.
+- **Unread mail** shows on the Dock icon. Closing the window keeps Iris
+  running, and a click on the Dock icon brings the window back.
+- **Start at login** is not on macOS yet. Add Iris under System Settings >
+  General > Login Items meanwhile.
+- **Notifications** for new mail open the conversation when clicked; their
+  Archive, Mark as Read, Delete and Reply buttons are not on macOS yet.
+- **Skills.** A skill's instructions work, but its scripts do not run on
+  macOS yet: they need bubblewrap's sandbox, which is Linux only.
 
 ## Where things live
 
-| What | Linux | macOS | Override |
-|---|---|---|---|
-| Config | `~/.config/iris/config.toml` | `~/Library/Application Support/iris/config.toml` | `MAILRS_CONFIG` |
-| Preferences | `~/.config/iris/settings.toml` | `~/Library/Application Support/iris/settings.toml` | `MAILRS_SETTINGS` |
-| Mail cache | `~/.local/share/iris/mailrs.db` | `~/Library/Application Support/iris/mailrs.db` | `MAILRS_DATA_DIR` |
-| Refresh tokens | GNOME keyring, service `mailrs`, one entry per address | login Keychain, the same service | |
+| What | Where | Override |
+|---|---|---|
+| Config | `~/Library/Application Support/iris/config.toml` | `MAILRS_CONFIG` |
+| Preferences | `~/Library/Application Support/iris/settings.toml` | `MAILRS_SETTINGS` |
+| Mail cache | `~/Library/Application Support/iris/mailrs.db` | `MAILRS_DATA_DIR` |
+| Refresh tokens | login Keychain, service `mailrs`, one entry per address | |
 
-The keyring service keeps the app's old name, mailrs, so accounts added
-before the rename stay signed in. The Flatpak keeps refresh tokens, IMAP
-passwords and AI keys in its own file through the Secret portal instead;
-see "Which package" above. A Flatpak installed before this file moved
-those secrets there cannot read what it left in the desktop's keyring, so
-its accounts ask you to sign in again once, and any IMAP password or AI
-key needs typing in again too.
-
-The Flatpak keeps its config and mail under
-`~/.var/app/io.github.AlbertoBarrago.Iris/`, in `config/iris` and
-`data/iris`, and the snap under `~/snap/iris/current/`, in
-`.config/iris` and `.local/share/iris`. Moving from the
-.deb to one of them starts with an empty store; copy `config.toml` across
-to keep your sync settings, then add each account again, since the list
-of accounts lives in the store.
+The Keychain service keeps the app's old name, mailrs.
 
 `iris-cli account remove you@gmail.com` deletes an account's local mail and
-its keyring entry. To revoke access on Google's side as well, use
+its Keychain entry. To revoke access on Google's side as well, use
 <https://myaccount.google.com/permissions>.

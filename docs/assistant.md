@@ -1,6 +1,6 @@
 # The assistant
 
-Press ⌘J (Ctrl+J on Linux), or the sparkle button above the message list, to open the
+Press ⌘J, or the sparkle button above the message list, to open the
 assistant on the right. Ask it about your mail in plain words:
 
 - "Summarize what came in today."
@@ -39,7 +39,7 @@ Iris runs them on this computer while it is open, and the
 assistant says which when it lists them. It looks people up in your address book,
 by name, address or organisation, and gets back their addresses, phone
 number and organisation. It acts through the app too, so ⌘Z
-(Ctrl+Z on Linux) undoes what it archived, trashed, flagged, muted, or marked. It can also
+undoes what it archived, trashed, flagged, muted, or marked. It can also
 take a change back itself, yours or its own, from the same undo stack
 ⌘Z reads, one change at a time, newest first.
 
@@ -63,7 +63,8 @@ Downloads keeps its name and the new one gets a number; a file you named
 is replaced only after the question says so.
 
 It reads an attachment as text when the file is plain text, a web page or
-a PDF. PDFs need `pdftotext`, which the `poppler-utils` package installs;
+a PDF. PDFs need poppler's `pdftotext` (`brew install poppler`) on the `PATH`
+Iris starts with;
 other files, such as pictures, it can name but not read.
 
 It lists the newsletters you have had in the last three months, with how
@@ -164,7 +165,7 @@ model works, a line at the bottom says what it is doing now.
 
 ## Pick a model
 
-Open Preferences (Ctrl+,) and go to the AI page. It has two groups:
+Open Preferences (⌘,) and go to the AI page. It has two groups:
 
 - **Connections** holds each place a model can run: a local server, the
   Anthropic API, and your Claude subscription. Set up each one once, with
@@ -241,7 +242,7 @@ message. Pick how under **Web Search** on the AI page:
 - **Brave Search**: Claude still uses Anthropic's search, and a local
   model searches with Brave. Get a key at
   [brave.com/search/api](https://brave.com/search/api/) and paste it into
-  **Brave Search API Key**. It goes into the keyring.
+  **Brave Search API Key**. It goes into the Keychain.
 - **SearXNG**: a local model searches with a SearXNG server you run or
   trust. Enter its address, such as `http://localhost:8080`. Iris
   asks SearXNG for JSON, which a fresh install does not serve: add `json`
@@ -276,7 +277,7 @@ Environment variables are saved in the settings file, so a server that
 takes a secret there keeps it in that file.
 
 **URL** reaches a server over HTTP. Paste its address, and its bearer
-token if it takes one; the token goes to the keyring:
+token if it takes one; the token goes to the Keychain:
 
 ```
 https://mcp.example.com/mcp
@@ -382,8 +383,10 @@ the exact command. **Always Allow** covers that exact command in that
 skill, and any other command asks again. The **Always Allowed** list on
 the AI page shows each allowed command and takes it back. The command
 runs in a sandbox made with
-[bubblewrap](https://github.com/containers/bubblewrap), which must be
-installed (`sudo apt install bubblewrap`). Inside the sandbox, the command:
+[bubblewrap](https://github.com/containers/bubblewrap), which is Linux
+only, so scripts do not run on macOS yet: the assistant still reads a
+skill's instructions and its other files, and offers no command to run.
+Inside the sandbox, the command:
 
 - can read the system's programs and libraries, and the skill's own
   folder at `/skill`;
@@ -401,7 +404,7 @@ message it read. A script sees only what the assistant hands it.
 
 ## Keys and privacy
 
-API keys live in the GNOME keyring, under the service `mailrs-ai`. The
+API keys live in the macOS Keychain, under the service `mailrs-ai`. The
 settings file never holds them.
 
 A local server keeps your mail on your computer. The Anthropic API and
@@ -419,7 +422,7 @@ from your request and can include what the assistant read in your mail.
 
 Skill scripts run on this computer, in the sandbox described under
 Scripts, and send nothing anywhere unless you allowed that skill the
-network.
+network. On macOS they do not run yet.
 
 The assistant treats mail as data. Its instructions tell it never to follow
 instructions written inside an email, and the approval cards stop a message

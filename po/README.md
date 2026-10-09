@@ -33,19 +33,12 @@ is behind the template.
 3. Translate. `msgstr ""` means untranslated, and the app then shows the
    English behind it, so a half-finished file is safe to commit.
 
-4. Build and install it. `scripts/update-po.sh` writes `LINGUAS`, which is
-   how `msgfmt --desktop` finds your language for the launcher's own name
-   and description:
-
-   ```
-   scripts/update-po.sh     # compiles into target/locale, for a build-tree run
-   scripts/install.sh       # installs into <prefix>/share/locale
-   ```
-
-   On macOS, `scripts/macos-bundle.sh` compiles every `.po` into
+4. Build it. `scripts/update-po.sh` adds the language to `LINGUAS` and
+   compiles every `.po` into `target/locale`, for a build-tree run.
+   `scripts/macos-bundle.sh` compiles every `.po` into
    `Iris.app/Contents/Resources/locale` each time it builds the app, so
-   `scripts/dev-macos.sh` and `scripts/macos-install.sh` carry the new
-   language with no other step.
+   `scripts/dev-macos.sh`, `scripts/macos-install.sh` and
+   `scripts/macos-dmg.sh` carry the new language with no other step.
 
    Iris offers a language in Preferences only once its catalogue
    is installed, and reads the choice as it starts, so pick one and

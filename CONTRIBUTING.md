@@ -9,7 +9,7 @@ a problem, build the app, or read how it works.
 
 Bug reports and ideas are welcome in
 [Issues](https://github.com/AlbertoBarrago/iris/issues). A useful bug
-report says which version you run (`iris --version`), what you did,
+report says which version you run (**About Iris** in the Iris menu), what you did,
 what you expected, and what happened instead. Leave out message content
 and addresses you would not post in public.
 
@@ -18,47 +18,21 @@ opening an issue.
 
 ## Building from source
 
-You need Rust 1.98 and the development packages. On Linux:
-
-```sh
-sudo apt install libgtk-4-dev libadwaita-1-dev libwebkitgtk-6.0-dev libglib2.0-dev-bin gettext
-scripts/install.sh
-```
-
-On macOS, install GTK from Homebrew and run the app from its bundle:
+Iris builds on a Mac with Apple silicon and macOS 26 or later. You need
+Rust 1.98 (`cargo +1.98` when your default toolchain is older) and GTK from
+Homebrew. `scripts/dev-macos.sh` builds the app and runs it from its bundle:
 
 ```sh
 brew install gtk4 libadwaita adwaita-icon-theme librsvg gettext pkgconf
-scripts/dev-macos.sh
+scripts/dev-macos.sh              # with your accounts
+scripts/dev-macos.sh --demo       # on sample accounts
 ```
 
-Every crate but the app (`mailrs`) builds and tests on macOS with
-`cargo test --workspace --exclude mailrs`. Eight of the app's own tests
-fail on macOS (paths under the assistant, the demo folder, the GTK
-composer test, the install script) and pass on Linux.
-
-On Linux, `scripts/install.sh` builds and installs into `~/.local`. `scripts/uninstall.sh` removes it
-again and leaves your mail and settings alone. A copy built from source
-signs in to Google only with a Google client compiled in;
-[docs/setup.md](docs/setup.md#building-your-own-copy) says how to give it
-one. `cargo run -p mailrs -- --demo` opens the app on sample accounts, with
-no client needed.
-
-### The Flatpak
-
-Iris is not on Flathub. To build and install the Flatpak from
-this repository:
-
-```sh
-flatpak-builder --user --install --force-clean build-dir \
-  packaging/flatpak/io.github.AlbertoBarrago.Iris.yml
-```
-
-The manifest here carries no Google client, so this Flatpak cannot sign in
-to Gmail; `flatpak run io.github.AlbertoBarrago.Iris --demo` shows the app on
-sample data. It reads and writes `~/.gnupg` and reaches your gpg-agent, so
-signing and encryption use your own keys, and it keeps its mail and
-settings under `~/.var/app/io.github.AlbertoBarrago.Iris`.
+`scripts/macos-install.sh` builds a release and installs it as
+`/Applications/Iris.app`, loading GTK from Homebrew. A copy built from
+source signs in to Google and Microsoft only with OAuth clients compiled
+in; [docs/setup.md](docs/setup.md#building-your-own-copy) says how to give
+it one. The demo needs no client.
 
 ## How it is built
 
@@ -66,6 +40,9 @@ settings under `~/.var/app/io.github.AlbertoBarrago.Iris`.
 domain/   shared types, Gmail's label names, categories
 mime/     reading mail: charsets, address lists, HTML to text
 gmail/    Gmail REST client, OAuth, quota limiter
+graph/    Microsoft Graph client and Microsoft's sign-in
+imap/     IMAP and SMTP clients for one account
+pop3/     POP3 client
 discover/ from an address to its mail servers: the provider table, MX,
           autoconfig files, SRV records and a probe
 dav/      CalDAV and CardDAV: WebDAV's XML, a client, and calendars and
@@ -78,8 +55,10 @@ pgp/      OpenPGP mail through the person's own gpg
 smime/    S/MIME mail through their gpgsm
 ai/       model providers, tool calls, the Claude Code bridge
 cli/      iris-cli
+webkit/   webkit6's API, as the app uses it, over WKWebView
 app/      the GTK 4 and libadwaita app, with the calendar view in
           app/src/ui/calendar/
+testmail/ Dovecot and Mailpit in Docker, for the IMAP and SMTP tests
 ```
 
 Windows and dialogs stay thin. Archiving, flagging, listing a mailbox and
@@ -100,42 +79,23 @@ out, the account re-lists its mail and removes anything deleted in the gap.
 cargo test --workspace                                # no network
 cargo clippy --workspace --all-targets -- -D warnings
 scripts/update-po.sh --check                          # translation template current
-scripts/a11y-names.sh                                 # every control has a name
 ```
 
-CI runs those four on every push, in an Ubuntu 26.04 container set up by
-`scripts/ci-deps.sh`, validates the AppStream metainfo and the desktop
-entry, and builds and starts the Flatpak. The OpenPGP and S/MIME tests
+CI runs those three on a macOS runner on every push to `main` and every pull request
+(`.github/workflows/ci.yml`). The OpenPGP and S/MIME tests
 build a throwaway GnuPG keyring and skip when `gpg` or `gpgsm` is missing.
-`IRIS_REQUIRE_CRYPTO=1`, which CI sets, turns that skip into a
-failure. The IMAP and SMTP tests start Dovecot and Mailpit in Docker and
-skip without it; a separate CI job runs them on the runner with
-`IRIS_REQUIRE_IMAP=1`.
+`IRIS_REQUIRE_CRYPTO=1` turns that skip into a failure. The IMAP and SMTP
+tests start Dovecot and Mailpit in Docker and skip without it (Colima
+gives a Mac one); `scripts/test-images.sh` pulls their images once, and
+`IRIS_REQUIRE_IMAP=1` turns the skip into a failure. The one GTK test, in
+the composer, is ignored on macOS, where GTK starts only on the main
+thread and the test harness keeps that thread for itself.
 
 Release builds mask email addresses in the log, as `d…@example.com`.
 Debug builds keep them whole, and `IRIS_LOG_DETAILS=1` does the
 same for an installed copy while you look into a problem.
 
-## Screenshots and the demo video
-
-`scripts/screenshots.sh` retakes every picture in `docs/screenshots` from
-the demo, on a hidden display, in about four minutes.
-
-`scripts/demo-video.sh` records the tour the README links to. It starts
-GNOME Shell headless in a throwaway session, with its own home, D-Bus and
-PipeWire, and records the shell's virtual monitor. A shell extension
-loaded only in that session moves a pointer and presses keys, so the
-video shows a cursor reaching each control, which the tour finds through
-the accessibility tree. The result lands in `target/demo-video`: an MP4, a
-WebM, and `poster.png`, which goes to `docs/screenshots/tour.png`.
-`scripts/demo-video.sh probe` writes the accessibility tree at each stop
-instead, for when a change to the UI breaks the tour.
-
-Both run on the demo's sample accounts, and nothing talks to Google.
-
 ## Releasing
-
-### macOS
 
 1. Bump `version` in `Cargo.toml` and write the `## Unreleased` section
    of `CHANGELOG.md` into a release. Sparkle offers a new DMG only when its
@@ -146,6 +106,7 @@ Both run on the demo's sample accounts, and nothing talks to Google.
    Keychain. Keep the older DMGs there, so the feed keeps listing them.
 3. Commit the release and push `main`, then run `scripts/macos-publish.sh`.
    It creates the GitHub release `v<version>` with the DMG and its deltas,
+   its notes taken from the changelog by `scripts/changelog.sh section`,
    and pushes `site/`, the appcast and `install.sh` to the `gh-pages`
    branch, which GitHub Pages serves at `https://albz.it/iris/`.
    `IRIS_DOWNLOAD_URL` and `IRIS_APPCAST_URL` change where the feed and the
@@ -154,41 +115,7 @@ Both run on the demo's sample accounts, and nothing talks to Google.
 Every copy installed from a DMG checks the feed once a day, and
 **Check for Updates…** in the Iris menu checks at once.
 
-### Linux
-
-`scripts/release.sh` bumps the version, opens the changelog draft in your
-editor, writes the store listings' release notes with
-`scripts/metainfo.sh`, runs the checks, then commits, tags and pushes. If
-the push fails, it takes the tag back off and keeps the release commit,
-and running it again pushes that commit.
-
-The tag starts the release workflow:
-
-- It builds the `.deb`, tarball and zip on Ubuntu 26.04, the rpm on
-  Fedora 43, and the Arch package in an archlinux container, starts each
-  installed copy on a hidden display, and publishes them with the
-  changelog once CI has passed on the tagged commit.
-- The release's `SHA256SUMS` goes out signed as `SHA256SUMS.asc`, with the
-  `APT_SIGNING_KEY` secret that also signs the repositories.
-- It builds the snap and sends it to the Snap Store's edge channel once the
-  `SNAPCRAFT_STORE_CREDENTIALS` secret exists.
-- Every package gets the Google client from the
-  `IRIS_GOOGLE_CLIENT_ID` and `IRIS_GOOGLE_CLIENT_SECRET`
-  secrets. For the snap, the workflow writes them into
-  `snap/snapcraft.yaml` before it builds.
-
-When the release is out, the Package repositories workflow rebuilds the apt
-and dnf repositories on GitHub Pages from the five newest releases with
-`scripts/apt-repo.sh` and `scripts/rpm-repo.sh`. Run it from the Actions
-tab to publish again without a release.
-
-Flathub, once Iris is there, builds from its own repository,
-flathub/io.github.AlbertoBarrago.Iris. `scripts/flatpak-sources.sh --flathub
-vX.Y.Z <dir>` writes the manifest, `cargo-sources.json` and `flathub.json`
-for a pull request there, with the Google client from
-`packaging/secrets.env`.
-
-## Licence
+## License
 
 The code is GPL-3.0-or-later. You may fork it, change it, and publish
-your changes under the same licence.
+your changes under the same license.

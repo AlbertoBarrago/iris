@@ -1,8 +1,8 @@
 # Iris privacy policy
 
-Last updated: 7 October 2026
+Last updated: 9 October 2026
 
-Iris is a mail and calendar app for macOS and Linux, published by Alberto
+Iris is a mail and calendar app for macOS, published by Alberto
 Barrago (albz). It is a modified version of Penguin Mail, and like it, it
 works with Google accounts, through Google's APIs, with Microsoft accounts,
 through Microsoft Graph, and with other mail providers over IMAP and SMTP.
@@ -92,9 +92,9 @@ system's keychain, as described below.
   advertising.
 - Iris connects to Google's Gmail, People, Calendar and Drive APIs,
   to Microsoft Graph and Microsoft's sign-in service for a Microsoft
-  account, and to
-  GitHub once a day, on Linux, to check for a new version of the app. The update check
-  sends nothing about you or your mail.
+  account, to albz.it once a day to check for a new version of the app,
+  and to GitHub to download one. The update check sends nothing about you
+  or your mail.
 - When you choose to load remote images in a message, your computer fetches
   those images from wherever the sender hosted them. When you click
   Unsubscribe, Iris contacts the address the mailing list gave for
@@ -156,17 +156,14 @@ system's keychain, as described below.
   sees your Google or Microsoft password.
 - **Sign-in tokens.** Google's and Microsoft's refresh tokens, an IMAP account's password,
   any assistant API keys, and the tokens of MCP servers you add are stored
-  in your system's keychain: the macOS Keychain, or on Linux your desktop's
-  keyring (GNOME Keyring or another Secret Service). Both encrypt them with
-  your login password. On Linux the Flatpak keeps them in
-  its own encrypted store instead, through the Secret portal, so no other
-  app on your desktop can read them. Short-lived access tokens are kept in
+  in the macOS Keychain, which encrypts them with your login password.
+  Short-lived access tokens are kept in
   memory only and never written to disk.
 - **Files on disk.** The folders Iris keeps its data in are readable
   by your user account alone, and its configuration file is written the
   same way. Iris does not add its own encryption to the local mail
-  database, so we recommend turning on full-disk encryption: FileVault on
-  macOS, or the encryption Ubuntu offers during installation.
+  database, so we recommend turning on FileVault, macOS's full-disk
+  encryption.
 - **Logs.** Iris writes problems to its log so they can be
   diagnosed. It masks email addresses there, keeping only their first
   letter and domain, and it never logs message text or sign-in tokens.
@@ -177,9 +174,9 @@ system's keychain, as described below.
 - **Encryption and signatures.** OpenPGP and S/MIME are handled by your own
   GnuPG installation. Iris never holds your private keys or asks
   for their passphrases.
-- **Updates.** On Linux, new versions are downloaded from GitHub over HTTPS
-  and checked against a published SHA-256 checksum before they are
-  installed. On macOS the app does not update itself.
+- **Updates.** New versions come through Sparkle over HTTPS, and each
+  download is checked against the release's signature before it is
+  installed. Sparkle asks before it installs one.
 - **Security reports.** Vulnerabilities can be reported privately by email
   to albertobarrago@gmail.com.
 
@@ -188,8 +185,7 @@ system's keychain, as described below.
 Your data stays on your computer until you remove it. Removing an account in
 Iris deletes its downloaded mail and its sign-in token from your
 computer. Removing the app and deleting its folders removes everything else:
-`~/Library/Application Support/iris` and `~/.cache/iris` on macOS, or
-`~/.local/share/iris`, `~/.config/iris` and `~/.cache/iris` on Linux.
+`~/Library/Application Support/iris` and `~/.cache/iris`.
 To revoke Iris's access on Google's side, visit
 https://myaccount.google.com/permissions. On Microsoft's side, visit
 https://account.live.com/consent/Manage for a personal account, or your

@@ -1,6 +1,6 @@
 ---
 name: Iris
-description: A beautiful and functional mail and calendar client for Linux
+description: A beautiful and functional mail and calendar client for macOS
 colors:
   accent: "#e8660c"
   accent-dark: "#ff7a1a"
@@ -33,38 +33,38 @@ colors:
   calendar-pink: "#c061cb"
 typography:
   display:
-    fontFamily: "Ubuntu Sans, Cantarell, sans-serif"
+    fontFamily: "SF Pro, -apple-system, sans-serif"
     fontSize: "22px"
     fontWeight: 800
     lineHeight: 1.2
   headline:
-    fontFamily: "Ubuntu Sans, Cantarell, sans-serif"
+    fontFamily: "SF Pro, -apple-system, sans-serif"
     fontSize: "20px"
     fontWeight: 800
     lineHeight: 1.2
   title:
-    fontFamily: "Ubuntu Sans, Cantarell, sans-serif"
+    fontFamily: "SF Pro, -apple-system, sans-serif"
     fontSize: "15px"
     fontWeight: 800
     lineHeight: 1.3
   body:
-    fontFamily: "Ubuntu Sans, Cantarell, sans-serif"
+    fontFamily: "SF Pro, -apple-system, sans-serif"
     fontSize: "14.5px"
     fontWeight: 400
     lineHeight: 1.6
   body-strong:
-    fontFamily: "Ubuntu Sans, Cantarell, sans-serif"
+    fontFamily: "SF Pro, -apple-system, sans-serif"
     fontSize: "14px"
     fontWeight: 700
     lineHeight: 1.35
   meta:
-    fontFamily: "Ubuntu Sans, Cantarell, sans-serif"
+    fontFamily: "SF Pro, -apple-system, sans-serif"
     fontSize: "12.5px"
     fontWeight: 500
     lineHeight: 1.35
     fontFeature: "tnum"
   label:
-    fontFamily: "Ubuntu Sans, Cantarell, sans-serif"
+    fontFamily: "SF Pro, -apple-system, sans-serif"
     fontSize: "11.5px"
     fontWeight: 700
     letterSpacing: "0.04em"
@@ -144,7 +144,7 @@ layers, content is the only thing with colour, and a single accent marks where y
 
 It is made the GNOME way. The polish lives in what libadwaita already gives, done with care: exact spacing, soft
 tints instead of new ornament, capsules that group what belongs together, motion that follows the hand and stops
-when GNOME's animations are off. A person should not be able to tell where libadwaita ends and Iris begins.
+when the system's animations are off. A person should not be able to tell where libadwaita ends and Iris begins.
 
 The same materials build both screens. A selected conversation and a calendar event are the same object, a soft
 tinted card with a bar of colour, so moving between Mail and Calendar feels like turning to another page of the
@@ -163,8 +163,8 @@ same notebook.
 A cool, near-neutral grey scale with one warm accent and GNOME's palette reserved for calendars.
 
 ### Primary
-- **Desktop Accent** (Ember Orange on the owner's desktop): the accent the person set in GNOME's settings.
-  The app never picks its own. It fills the one primary button in a place, the chosen category chip, today's
+- **Desktop Accent** (Ember Orange on the owner's desktop): the accent the person set in macOS's System Settings,
+  which libadwaita follows. The app never picks its own. It fills the one primary button in a place, the chosen category chip, today's
   date in the mini month, the time-now line, the Undo Send pill, unread dots and unread times. Every design
   artefact shows it as orange, the default.
 
@@ -184,7 +184,7 @@ GNOME's own palette, used only as a calendar's or event's colour: **Blue**, **Gr
 these hues at 85 % over the window.
 
 ### Named Rules
-**The Desktop Accent Rule.** The accent is whatever GNOME's settings say. Draw it with libadwaita's accent
+**The Desktop Accent Rule.** The accent is whatever the system's settings say. Draw it with libadwaita's accent
 variables (`--accent-bg-color`, `--accent-color`), never a fixed hex; the hex above is the reference value only.
 
 **The One Filled Control Rule.** A region holds at most one control filled with the accent: Yes in an answer row,
@@ -195,19 +195,19 @@ the selected chip, New Event. Everything else is capsule grey.
 
 ## Typography
 
-**Body Font:** the system font (Ubuntu Sans on the target desktop, Cantarell elsewhere). No second family.
+**Body Font:** the system font (SF Pro on macOS). No second family.
 
 **Character:** one family doing everything through weight and size, as GNOME apps do: heavy weights (800) for
 the few things that name a place, regular for reading, tabular figures wherever times line up.
 
 ### Hierarchy
 - **Display** (800, 22px, 1.2): a conversation's subject above its messages.
-- **Headline** (800, 20–21px, 1.2): the calendar's range title, "September" with the year beside it in Faint Ink
+- **Headline** (800, 20-21px, 1.2): the calendar's range title, "September" with the year beside it in Faint Ink
   at 400 and the week number smaller still.
 - **Title** (800, 15px): a sender's name in a message header; an event's title in its popover (17px).
 - **Body** (400, 14.5px, 1.6): message text, capped by the reading pane's width.
 - **Body strong** (700, 14px): sender names and subjects in the list (800 and 700 when unread), sidebar rows
-  (500, 700 when selected), event titles on cards (12–12.5px, 700).
+  (500, 700 when selected), event titles on cards (12-12.5px, 700).
 - **Meta** (500, 12.5px, tabular figures): times, snippets, "To:" lines, event times (11px on cards).
 - **Label** (700, 11.5px, 0.04em, capitals): section labels (FAVORITES, MAILBOXES, ACCOUNTS, YOUR AFTERNOON,
   WAITING FOR YOUR ANSWER), weekday names on day headings (11px, 0.06em), ALL-DAY (9.5px).
@@ -226,7 +226,7 @@ the list or the calendar's header, and the view card. Mail has sidebar, list (ab
 Calendar has sidebar and the grid card, set 10px in from the sidebar and the window's end.
 
 Spacing runs on a 4px base: 8 and 12 between related things, 16 inside cards, 24 between groups, 36 as the
-reading pane's side margin. Rows in the sidebar are 32–34px apart; list rows 92px; hour rows 52px.
+reading pane's side margin. Rows in the sidebar are 32-34px apart; list rows 92px; hour rows 52px.
 
 Narrow windows follow libadwaita's breakpoints: the sidebar collapses at 960sp, the assistant overlays at 1100sp,
 and at 620sp Mail shows one pane at a time and Calendar drops Week and Month for the agenda.
@@ -291,7 +291,7 @@ events waiting to be saved carry a small clock. The selected conversation in the
 invitation's afternoon strip are this same card.
 
 ### Popovers
-14–16px corners, Popover White or Raised Slate, the Floating shadow, an arrow pointing at what opened it. Content
+14-16px corners, Popover White or Raised Slate, the Floating shadow, an arrow pointing at what opened it. Content
 in order: colour bar and title, time in words, detail rows with small symbolic icons, then full-width actions.
 
 ### Navigation
@@ -302,12 +302,12 @@ one capsule.
 ## Do's and Don'ts
 
 ### Do:
-- **Do** take the accent from GNOME's settings through libadwaita's variables.
+- **Do** take the accent from the system's settings through libadwaita's variables.
 - **Do** tint selection and events at 14 % in light and 24 % in dark, with ink text on top.
 - **Do** group related actions in one pill capsule, keeping every tooltip, accessible name and shortcut.
 - **Do** end text that does not fit with an ellipsis on one line; never cut a line in half.
 - **Do** give every time and count tabular figures.
-- **Do** turn slides and springs into a 150ms cross-fade when GNOME's animations are off, and keep springs
+- **Do** turn slides and springs into a 150ms cross-fade when the system's animations are off, and keep springs
   critically damped (no bounce) everywhere else.
 - **Do** test every screen in light and dark.
 

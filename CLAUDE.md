@@ -4,33 +4,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
-`AGENTS.md` above is upstream's agent guide (the gate, testing traps, how
-the code is shaped, string and changelog rules) and applies here. The rest
-of this file covers what differs in Iris, and wins where the two disagree.
+`AGENTS.md` above is the agent guide (the gate, testing traps, how the
+code is shaped, string and changelog rules). The rest of this file covers
+the owner's own workflow, and wins where the two disagree.
 
 ## What this repo is
 
-Iris is a fork of [Penguin Mail](https://github.com/c9dev/penguin-mail)
-1.0.0, rebranded and being ported to macOS while Linux keeps working.
+Iris is a mail and calendar app for macOS, in Rust with GTK4 and
+libadwaita. It started from [Penguin Mail](https://github.com/c9dev/penguin-mail)
+1.0.0, a Linux app by David Santos; the first commit imports that tree,
+and Iris has been its own project since. The About window and the README
+credit Penguin Mail, as the GPL asks of a modified copy.
 
-- Remotes: `origin` is `AlbertoBarrago/iris`, `upstream` is
-  `c9dev/penguin-mail`. Pull upstream fixes with
-  `jj git fetch --remote upstream`, then rebase or merge onto `main`.
+- Remote: `origin` is `AlbertoBarrago/iris`, public. There is no upstream
+  to merge from.
 - App ID `io.github.AlbertoBarrago.Iris`, binaries `iris` and `iris-cli`,
   env vars `IRIS_*`, mail headers `X-Iris-*`.
-- Kept on purpose, to keep upstream merges cheap: the crate names
-  `mailrs-*` (the app package is `mailrs`), the SQLite functions
-  `penguin_fold` and `penguin_notes_text`, and the historical IDs
-  `dev.penguinmail.PenguinMail` and `dev.mailrs.Mailrs` used by the
-  migrations in `app/src/old_id.rs` and `scripts/install-files.sh`.
-- Left as upstream's: `CHANGELOG.md` before the fork and the apt signing
-  key in `packaging/apt/`. Iris is published by Alberto Barrago (albz,
-  albertobarrago@gmail.com); the About window and the README credit
-  Penguin Mail, as the GPL asks of a modified copy.
+- Names that stay as they are because renaming them buys nothing: the
+  crate names `mailrs-*` (the app package is `mailrs`) and the SQLite
+  functions `penguin_fold` and `penguin_notes_text`.
+- `CHANGELOG.md` before the fork is Penguin Mail's. Iris is published by
+  Alberto Barrago (albz, albertobarrago@gmail.com).
 - Iris has its own identity, the winged envelope (see AGENTS.md's icon
-  section and `scripts/iris-art.py`); the penguin is upstream's.
+  section and `scripts/iris-art.py`).
 
-## Workflow overrides
+## Workflow
 
 - VCS is `jj`, colocated with git. Work directly on `main`, no bookmarks
   per feature. Push only when asked.
@@ -41,9 +39,9 @@ Iris is a fork of [Penguin Mail](https://github.com/c9dev/penguin-mail)
 - `po/it_IT.po` is kept complete like `po/pt_PT.po`: translate every
   new string into both in the same change. The owner reads the UI in
   Italian too.
-- `.github/workflows` and `packaging/` are inherited and inactive for
-  Iris (no apt, rpm, snap or Flatpak publishing yet). Flag before
-  changing them.
+- Something that does not work on macOS gets made to work the macOS way
+  (AppKit, Launch Services, the Keychain, `SMAppService`, Sparkle), not
+  worked around.
 
 ## Commands
 
@@ -51,47 +49,40 @@ The workspace needs Rust 1.98. If the default toolchain is older, use
 `cargo +1.98`.
 
 ```sh
-scripts/dev-macos.sh [--demo]                       # macOS: build, quit the old copy, run
-cargo test --workspace                              # full suite (Linux)
-cargo test --workspace --exclude mailrs             # macOS today: everything but the GTK app
+scripts/dev-macos.sh [--demo]                       # build, quit the old copy, run
+cargo test --workspace                              # full suite
 cargo test -p mailrs-sync some_test_name            # one test, by crate and name filter
 cargo clippy --workspace --all-targets -- -D warnings
 scripts/update-po.sh --check                        # run last; any edit to a file with strings moves .pot line numbers
 cargo run -p mailrs -- --demo                       # the app on sample accounts, no sign-in
 ```
 
+Releases: `scripts/macos-dmg.sh`, commit and push, then
+`scripts/macos-publish.sh` (GitHub release plus the page and the
+appcast on GitHub Pages, served at https://albz.it/iris/). See
+CONTRIBUTING.md, "Releasing".
+
 Google and Microsoft sign-in need OAuth clients compiled in through
 `IRIS_GOOGLE_CLIENT_ID`, `IRIS_GOOGLE_CLIENT_SECRET` and
-`IRIS_MICROSOFT_CLIENT_ID` (see `gmail/src/oauth.rs`). Iris has none of
-its own yet.
+`IRIS_MICROSOFT_CLIENT_ID` (see `gmail/src/oauth.rs`). Local builds read
+them from `packaging/secrets.env`, which is gitignored.
 
-## macOS port
+## macOS specifics
 
-Platform-specific code is confined to the `app` crate and two secret
-stores; the other crates build and test on macOS as they are.
-
-- The app names `webkit` only through the facade crate `webkit/`
-  (`mailrs-webkit`): webkit6 re-exported on Linux, and on macOS the same
-  API over a WKWebView laid on the GTK window (`webkit/src/macos/`).
-  WebKitGTK does not run on macOS; Homebrew's `webkitgtk` is a Linux-only
-  GTK 3 build. When the app starts calling a webkit6 method the shim
-  lacks, add it there with webkit6's exact signature rather than a `cfg`
-  in the app.
-- `ksni` (`app/src/tray.rs`) is a D-Bus StatusNotifierItem: no macOS
-  equivalent, gate it out first, menu bar item later.
-- `app/src/autostart.rs` writes an XDG autostart `.desktop` file; macOS
-  needs a LaunchAgent or `SMAppService`.
-- `app/src/update/` installs through apt, `pkexec` and tarballs; disable
-  on macOS.
+- The app names `webkit` only through the crate `webkit/`
+  (`mailrs-webkit`): webkit6's API, which the app was written against,
+  over a WKWebView laid on the GTK window (`webkit/src/macos/`).
+  WebKitGTK does not run on macOS. When the app starts calling a webkit6
+  method the crate lacks, add it there with webkit6's exact signature.
+- AppKit work lives in the `macos_*` modules of the app (`macos_menu`,
+  `macos_bundle`, `macos_pasteboard`), `dock.rs`, `sparkle.rs` and
+  `file_type.rs` (media types through `UTType`).
 - Secrets go through `keyring` in `gmail/src/token_store.rs` and
-  `sync/src/passwords.rs`; its default features already use the macOS
-  Keychain. `oo7` and the Secret portal are Flatpak only
-  (`packaging-flatpak` feature).
-- macOS development needs `brew install gtk4 libadwaita
-  adwaita-icon-theme pkgconf`. Low on disk, build with
+  `sync/src/passwords.rs`, which stores them in the Keychain.
+- Not on macOS yet, each to be made to work the macOS way: Start at
+  login (`SMAppService`), the action buttons on new-mail notifications
+  (`UNUserNotificationCenter` categories), and the sandbox for skill
+  scripts, which is bubblewrap today.
+- Development needs `brew install gtk4 libadwaita adwaita-icon-theme
+  pkgconf`. Low on disk, build with
   `CARGO_PROFILE_DEV_DEBUG=line-tables-only CARGO_INCREMENTAL=0`.
-- `app/src/packaging.rs` says which Linux package a build is for; macOS
-  needs its own case.
-
-Keep each of these behind `cfg(target_os = ...)` so Linux behavior and
-upstream merges stay untouched.
