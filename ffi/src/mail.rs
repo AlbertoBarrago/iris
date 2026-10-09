@@ -295,6 +295,39 @@ impl Mail {
         })
     }
 
+    /// Fetches the bodies of `thread`'s messages that are not in the store
+    /// yet, from the cache or the server, as opening it in the GTK app
+    /// does. They land in the store, where the next page reads them.
+    /// Returns how many came.
+    pub fn fetch_bodies(&self, thread: ThreadRef) -> Result<u32, CoreError> {
+        let Some(sync) = self.running.account(thread.account_id) else {
+            return Ok(0);
+        };
+        let (db, account_id, thread_id) = (self.db.clone(), thread.account_id, thread.thread_id);
+        self.run(async move {
+            let missing: Vec<String> = db
+                .read(move |c| {
+                    let mut missing = Vec::new();
+                    for meta in mailrs_store::messages::thread_messages(c, account_id, &thread_id)? {
+                        if mailrs_store::bodies::peek_body(c, account_id, &meta.id)?.is_none() {
+                            missing.push(meta.id);
+                        }
+                    }
+                    Ok(missing)
+                })
+                .await?;
+            let mut came = 0;
+            for id in missing {
+                match sync.body(&id).await {
+                    Ok(_) => came += 1,
+                    Err(err) => tracing::warn!(error = %err, "could not fetch a message body"),
+                }
+            }
+            Ok(came)
+        })
+        .map_err(|err: mailrs_store::StoreError| CoreError::Store(err.to_string()))
+    }
+
     /// Asks every account to look for new mail now.
     pub fn check_now(&self) {
         if let Some(engine) = self.running.current() {

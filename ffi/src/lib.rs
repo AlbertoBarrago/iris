@@ -93,6 +93,8 @@ type Cleaned = (String, bool, Option<std::ops::Range<usize>>);
 pub struct ConversationPage {
     pub html: String,
     pub remote_hidden: bool,
+    /// Some message's body has not been fetched yet, and shows as loading.
+    pub bodies_missing: bool,
 }
 
 /// The mail store, opened to read.
@@ -255,7 +257,12 @@ impl Store {
             html.push_str(&page::article(&view, &me, &photos));
         }
         html.push_str(page::TAIL);
-        Ok(ConversationPage { html, remote_hidden })
+        let bodies_missing = bodies.iter().any(Option::is_none);
+        Ok(ConversationPage {
+            html,
+            remote_hidden,
+            bodies_missing,
+        })
     }
 }
 

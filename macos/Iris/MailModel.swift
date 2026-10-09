@@ -272,6 +272,16 @@ final class MailModel {
                 await MainActor.run {
                     if self.openThread == key { self.page = page }
                 }
+                // Bodies not fetched yet come from the server, and the page
+                // is drawn again once they are in.
+                if page.bodiesMissing, let mail = await self.mail {
+                    let came = (try? mail.fetchBodies(thread: ThreadRef(accountId: key.account, threadId: key.thread))) ?? 0
+                    if came > 0 {
+                        await MainActor.run {
+                            if self.openThread == key { self.loadConversation() }
+                        }
+                    }
+                }
             } catch {
                 await MainActor.run { self.problem = "\(error)" }
             }
