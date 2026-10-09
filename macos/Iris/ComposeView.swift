@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import WebKit
 
 /// What a composer window opens on: a new message, a reply, a forward, or
@@ -26,6 +27,7 @@ struct ComposeView: View {
     @State private var showCopies = false
     @State private var showQuote = false
     @State private var problem: String?
+    @State private var editor = RichController()
 
     var body: some View {
         Group {
@@ -45,7 +47,20 @@ struct ComposeView: View {
         ))
         .navigationTitle(draft.map { $0.subject.isEmpty ? tr("New Message") : $0.subject } ?? tr("New Message"))
         .task { await load() }
+        .onDrop(of: [.fileURL], isTargeted: nil) { providers in
+            for provider in providers {
+                _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                    if let url { Task { @MainActor in attach([url]) } }
+                }
+            }
+            return true
+        }
         .toolbar {
+            ToolbarItem {
+                Button(macKeys(tr("Attach Files (Ctrl+Shift+A)")), systemImage: "paperclip") { pickFiles() }
+                    .keyboardShortcut("a", modifiers: [.command, .shift])
+                    .disabled(draft == nil)
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button(tr("Send"), systemImage: "paperplane.fill") { send() }
                     .keyboardShortcut(.return, modifiers: .command)
@@ -104,16 +119,35 @@ struct ComposeView: View {
             }
             .padding(14)
             Divider()
+            FormatBar(controller: editor)
+            Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    TextEditor(text: draft.body)
-                        .font(.body)
-                        .scrollDisabled(true)
-                        // The words sit on the window, as in Mail, not on a
-                        // field of their own color.
-                        .scrollContentBackground(.hidden)
-                        .background(.clear)
-                        .frame(minHeight: 160)
+                    RichEditor(
+                        blocks: Binding(get: { draft.wrappedValue.rich ?? [] }, set: { draft.wrappedValue.rich = $0 }),
+                        controller: editor
+                    )
+                    .frame(minHeight: 200)
+                    if !draft.wrappedValue.attachments.isEmpty {
+                        FlowLayout(spacing: 8) {
+                            ForEach(Array(draft.wrappedValue.attachments.enumerated()), id: \.offset) { index, file in
+                                HStack(spacing: 6) {
+                                    Image(systemName: "doc")
+                                    Text(file.filename).lineLimit(1)
+                                    Text(ByteCountFormatter.string(fromByteCount: Int64(file.data.count), countStyle: .file))
+                                        .foregroundStyle(.secondary)
+                                    Button(tr("Remove {file}").replacingOccurrences(of: "{file}", with: file.filename), systemImage: "xmark") {
+                                        draft.wrappedValue.attachments.remove(at: index)
+                                    }
+                                    .labelStyle(.iconOnly)
+                                    .buttonStyle(.borderless)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Capsule().fill(Color.secondary.opacity(0.15)))
+                            }
+                        }
+                    }
                     if let signature = draft.wrappedValue.signatureHtml {
                         SignaturePreview(html: signature)
                             .frame(height: 180)
@@ -164,6 +198,25 @@ struct ComposeView: View {
             saved = draft
         } catch {
             problem = "\(error)"
+        }
+    }
+
+    /// Picks files to attach with the Mac's open panel.
+    private func pickFiles() {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.prompt = tr("Attach Files")
+        guard panel.runModal() == .OK else { return }
+        attach(panel.urls)
+    }
+
+    /// Adds files to the message, each with the type the Mac knows it by.
+    private func attach(_ urls: [URL]) {
+        for url in urls {
+            guard let data = try? Data(contentsOf: url) else { continue }
+            let type = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
+            draft?.attachments.append(OutgoingFile(filename: url.lastPathComponent, mimeType: type, data: data, contentId: nil))
         }
     }
 

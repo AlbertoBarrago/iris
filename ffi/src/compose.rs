@@ -6,6 +6,7 @@
 use std::sync::Arc;
 
 use mailrs_appcore::compose::{self, Draft, ReplyKind};
+use mailrs_appcore::richtext::{Block, BlockKind, RichBody, Span, Style};
 use mailrs_appcore::settings::Settings;
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{Address, MessageMeta};
@@ -45,6 +46,44 @@ pub struct ComposeDraft {
     pub signature_html: Option<String>,
     /// The original a forward carries, as HTML, shown read-only.
     pub forwarded_html: Option<String>,
+    /// The words as the rich editor holds them. When set they decide what
+    /// goes out, and `body` is only their plain text.
+    pub rich: Option<Vec<RichBlock>>,
+    /// Files going out with the message.
+    pub attachments: Vec<OutgoingFile>,
+}
+
+/// One line of the rich editor: `paragraph`, `heading`, `bullet`,
+/// `numbered`, `quote` or `code`.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct RichBlock {
+    pub kind: String,
+    /// A heading's level, 1 to 3; 0 otherwise.
+    pub level: u8,
+    pub spans: Vec<RichSpan>,
+}
+
+/// A run of text sharing one style, one link or one picture.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct RichSpan {
+    pub text: String,
+    pub bold: bool,
+    pub italic: bool,
+    pub strike: bool,
+    pub code: bool,
+    pub link: Option<String>,
+    /// A picture's source, such as `cid:…`; `text` is then its alt text.
+    pub image: Option<String>,
+}
+
+/// A file the writer attached. With a `content_id` it is a picture the
+/// words show.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct OutgoingFile {
+    pub filename: String,
+    pub mime_type: String,
+    pub data: Vec<u8>,
+    pub content_id: Option<String>,
 }
 
 /// A person a recipient field can offer.
@@ -257,8 +296,21 @@ impl Mail {
         draft.cc = compose::parse_recipients(&composed.cc);
         draft.bcc = compose::parse_recipients(&composed.bcc);
         draft.subject = composed.subject.trim().to_string();
-        draft.markdown = composed.body;
-        draft.rich = None;
+        draft.rich = composed.rich.map(rich_body);
+        draft.markdown = match &draft.rich {
+            Some(rich) => rich.to_markdown(),
+            None => composed.body,
+        };
+        draft.attachments = composed
+            .attachments
+            .into_iter()
+            .map(|file| compose::OutgoingAttachment {
+                filename: file.filename,
+                mime_type: file.mime_type,
+                data: file.data,
+                content_id: file.content_id,
+            })
+            .collect();
         draft.quoted = composed.quoted;
         draft.signature = composed.signature_html;
         Ok(draft)
@@ -311,11 +363,95 @@ impl Mail {
             quoted: draft.quoted.clone(),
             signature_html: draft.signature.clone(),
             forwarded_html: draft.forwarded.as_ref().map(|f| f.to_html()),
+            rich: Some(rich_blocks(
+                draft
+                    .rich
+                    .clone()
+                    .unwrap_or_else(|| RichBody::from_markdown(&draft.markdown)),
+            )),
+            attachments: draft
+                .attachments
+                .iter()
+                .map(|a| OutgoingFile {
+                    filename: a.filename.clone(),
+                    mime_type: a.mime_type.clone(),
+                    data: a.data.clone(),
+                    content_id: a.content_id.clone(),
+                })
+                .collect(),
             draft: serde_json::to_string(&draft).unwrap_or_default(),
         }
     }
 }
 
+
+/// The editor's lines as the core's rich body.
+fn rich_body(blocks: Vec<RichBlock>) -> RichBody {
+    RichBody {
+        blocks: blocks
+            .into_iter()
+            .map(|block| Block {
+                kind: match block.kind.as_str() {
+                    "heading" => BlockKind::Heading(block.level.clamp(1, 3)),
+                    "bullet" => BlockKind::Bullet,
+                    "numbered" => BlockKind::Numbered,
+                    "quote" => BlockKind::Quote,
+                    "code" => BlockKind::Code,
+                    _ => BlockKind::Paragraph,
+                },
+                spans: block
+                    .spans
+                    .into_iter()
+                    .map(|span| Span {
+                        text: span.text,
+                        style: Style {
+                            bold: span.bold,
+                            italic: span.italic,
+                            strike: span.strike,
+                            code: span.code,
+                        },
+                        link: span.link,
+                        image: span.image,
+                    })
+                    .collect(),
+            })
+            .collect(),
+    }
+}
+
+/// The core's rich body as the editor's lines.
+fn rich_blocks(body: RichBody) -> Vec<RichBlock> {
+    body.blocks
+        .into_iter()
+        .map(|block| {
+            let (kind, level) = match block.kind {
+                BlockKind::Paragraph => ("paragraph", 0),
+                BlockKind::Heading(level) => ("heading", level),
+                BlockKind::Bullet => ("bullet", 0),
+                BlockKind::Numbered => ("numbered", 0),
+                BlockKind::Quote => ("quote", 0),
+                BlockKind::Code => ("code", 0),
+            };
+            RichBlock {
+                kind: kind.into(),
+                level,
+                spans: block
+                    .spans
+                    .into_iter()
+                    .map(|span| RichSpan {
+                        text: span.text,
+                        bold: span.style.bold,
+                        italic: span.style.italic,
+                        strike: span.style.strike,
+                        code: span.style.code,
+                        link: span.link,
+                        image: span.image,
+                    })
+                    .collect(),
+            }
+        })
+        .collect()
+}
 
 fn address(sender: &Sender) -> Address {
     Address {

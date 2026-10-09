@@ -9054,7 +9054,7 @@ msgstr "Está por ler"
 msgid "Is flagged"
 msgstr "Está marcada"
 
-#: ffi/src/compose.rs:100
+#: ffi/src/compose.rs:139
 #, fuzzy
 #| msgid "Add an account first"
 msgid "Add an account to write mail."

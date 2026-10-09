@@ -8672,7 +8672,7 @@ msgstr ""
 msgid "Is flagged"
 msgstr ""
 
-#: ffi/src/compose.rs:100
+#: ffi/src/compose.rs:139
 msgid "Add an account to write mail."
 msgstr ""
 

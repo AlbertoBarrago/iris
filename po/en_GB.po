@@ -8451,7 +8451,7 @@ msgstr "Is unread"
 msgid "Is flagged"
 msgstr "Is flagged"
 
-#: ffi/src/compose.rs:100
+#: ffi/src/compose.rs:139
 msgid "Add an account to write mail."
 msgstr "Add an account to write mail."
 

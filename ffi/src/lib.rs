@@ -17,7 +17,7 @@ use mailrs_store::{accounts, bodies, messages};
 mod compose;
 mod mail;
 
-pub use compose::{ComposeDraft, ReplyMode, Sender, Suggestion};
+pub use compose::{ComposeDraft, OutgoingFile, ReplyMode, RichBlock, RichSpan, Sender, Suggestion};
 
 pub use mail::{Action, ActionDone, AttachmentInfo, FilePart, ThreadRef, CategoryTab, ListRow, Mail, MailListener, MailboxListing, SidebarItem, bind_language, start_logging, translate};
 
