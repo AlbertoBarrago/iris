@@ -175,6 +175,7 @@ impl Store {
         theme: PageTheme,
         allow_remote: bool,
         toggled: Vec<String>,
+        open_all: bool,
     ) -> Result<ConversationPage, CoreError> {
         // Cleaning a deeply nested newsletter recurses far, more than a
         // Swift task's thread holds, so the page is drawn on a thread with
@@ -182,7 +183,7 @@ impl Store {
         std::thread::scope(|scope| {
             std::thread::Builder::new()
                 .stack_size(16 * 1024 * 1024)
-                .spawn_scoped(scope, || self.draw(account_id, &thread_id, theme, allow_remote, &toggled))
+                .spawn_scoped(scope, || self.draw(account_id, &thread_id, theme, allow_remote, &toggled, open_all))
                 .map_err(|err| CoreError::Store(err.to_string()))?
                 .join()
                 .unwrap_or_else(|panic| std::panic::resume_unwind(panic))
@@ -199,6 +200,7 @@ impl Store {
         theme: PageTheme,
         allow_remote: bool,
         toggled: &[String],
+        open_all: bool,
     ) -> Result<ConversationPage, CoreError> {
         use mailrs_render::conversation::{
             self as page, BodyState, Head, MessageView, Sanitized, Theme,
@@ -269,7 +271,9 @@ impl Store {
             let view = MessageView {
                 meta,
                 body,
-                expanded: (at == last || meta.is_unread()) != toggled.contains(&meta.id),
+                // Find in the conversation opens every message, so it
+                // finds what a closed one holds, as the GTK app's does.
+                expanded: open_all || (at == last || meta.is_unread()) != toggled.contains(&meta.id),
                 thumbnails: &thumbnails,
                 sanitized: cleaned[at].as_ref().map(|(html, paints, history)| Sanitized {
                     html,

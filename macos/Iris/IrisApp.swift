@@ -36,6 +36,15 @@ struct IrisApp: App {
                 Divider()
                 Button(tr("Add Account…")) { model.addAccount = AddAccountRequest() }
             }
+            CommandGroup(replacing: .printItem) {
+                Button(tr("Print…")) { PagePrinter.print(model.finder.view) }
+                    .keyboardShortcut("p")
+                    .disabled(model.openThread == nil)
+            }
+            CommandGroup(after: .textEditing) {
+                Button(tr("Search")) { Finding.find(model) }
+                    .keyboardShortcut("f")
+            }
             CommandGroup(after: .sidebar) {
                 Button(tr("Assistant")) { assistant.shown.toggle() }
                     .keyboardShortcut("j")

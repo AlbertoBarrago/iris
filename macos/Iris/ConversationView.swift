@@ -25,7 +25,11 @@ struct ConversationView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                         .padding(10)
                     }
-                    MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1) { url in model.followLink(url) }
+                    if model.findShown {
+                        FindBar()
+                        Divider()
+                    }
+                    MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1, finder: model.finder) { url in model.followLink(url) }
                 }
             } else {
                 ContentUnavailableView(tr("No Conversation Selected"), systemImage: "envelope")
@@ -118,10 +122,12 @@ struct MailPage: NSViewRepresentable {
     var pictures: PictureScheme? = nil
     /// How much the page is magnified, from Preferences' Text Size.
     var zoom: Double = 1
+    /// Finds in the page, for the find bar.
+    var finder: PageFinder? = nil
     /// What a click on one of the page's own `mailrs:` links asks for.
     var onLink: (URL) -> Void = { _ in }
 
-    func makeCoordinator() -> Coordinator { Coordinator(onLink: onLink) }
+    func makeCoordinator() -> Coordinator { Coordinator(onLink: onLink, finder: finder) }
 
     func makeNSView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -134,11 +140,13 @@ struct MailPage: NSViewRepresentable {
         view.navigationDelegate = context.coordinator
         // The page paints its own background, the window's color.
         view.underPageBackgroundColor = .windowBackgroundColor
+        finder?.view = view
         return view
     }
 
     func updateNSView(_ view: WKWebView, context: Context) {
         if view.pageZoom != zoom { view.pageZoom = zoom }
+        finder?.view = view
         guard context.coordinator.loaded != html else { return }
         context.coordinator.loaded = html
         view.loadHTMLString(html, baseURL: nil)
@@ -147,9 +155,16 @@ struct MailPage: NSViewRepresentable {
     final class Coordinator: NSObject, WKNavigationDelegate {
         var loaded: String?
         let onLink: (URL) -> Void
+        weak var finder: PageFinder?
 
-        init(onLink: @escaping (URL) -> Void) {
+        init(onLink: @escaping (URL) -> Void, finder: PageFinder?) {
             self.onLink = onLink
+            self.finder = finder
+        }
+
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            let finder = finder
+            Task { @MainActor in finder?.pageLoaded() }
         }
 
         func webView(

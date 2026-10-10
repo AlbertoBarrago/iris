@@ -58,7 +58,9 @@ final class MailModel {
         didSet {
             if openThread != Self.single(oldValue) {
                 toggled = []
-                loadConversation()
+                // Another conversation closes the find bar and drops its
+                // query; closing it draws the page, so it is drawn once.
+                if findShown { findShown = false } else { loadConversation() }
                 if let open = openThread { notifier?.seen(account: open.account, thread: open.thread) }
             }
         }
@@ -244,6 +246,18 @@ final class MailModel {
             await MainActor.run { self.finished(done, undoable: true) }
         }
     }
+
+    // MARK: Find in the conversation
+
+    /// Whether the find bar shows over the conversation. While it does,
+    /// every message is open, so it finds what a closed one holds; closing
+    /// it closes them again.
+    var findShown = false {
+        didSet { if findShown != oldValue { loadConversation() } }
+    }
+
+    /// Asks the open page to find; the page view answers it.
+    let finder = PageFinder()
 
     // MARK: Labels and folders
 
@@ -713,9 +727,10 @@ final class MailModel {
         let theme = theme
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
         let toggled = toggled
+        let openAll = findShown
         Task.detached {
             do {
-                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, toggled: toggled)
+                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, toggled: toggled, openAll: openAll)
                 await MainActor.run {
                     if self.openThread == key { self.page = page }
                 }
