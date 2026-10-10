@@ -13,6 +13,7 @@ mailrs-discover.workspace = true
 mailrs-domain.workspace = true
 mailrs-gmail.workspace = true
 mailrs-graph.workspace = true
+mailrs-imap.workspace = true
 mailrs-mime.workspace = true
 mailrs-pgp.workspace = true
 mailrs-smime.workspace = true

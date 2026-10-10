@@ -4,7 +4,7 @@
 mod accent_contrast;
 #[cfg(test)]
 mod text_contrast;
-mod add_account;
+use mailrs_appcore::add_account;
 mod app;
 use mailrs_appcore::assistant;
 use mailrs_appcore::attachcheck;

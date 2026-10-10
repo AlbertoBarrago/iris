@@ -7,6 +7,7 @@
 /// know Iris by.
 pub const APP_ID: &str = "io.github.AlbertoBarrago.Iris";
 
+pub mod add_account;
 pub mod assistant;
 pub mod attachcheck;
 pub mod compose;

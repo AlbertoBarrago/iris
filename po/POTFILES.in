@@ -1,9 +1,9 @@
 # Every file holding words a person reads. scripts/update-po.sh rebuilds
 # from what it found.
 # the template from the crate roots and warns when this list has drifted
-app/src/add_account.rs
-app/src/add_account/lookup.rs
-app/src/add_account/post.rs
+appcore/src/add_account.rs
+appcore/src/add_account/lookup.rs
+appcore/src/add_account/post.rs
 app/src/app.rs
 app/src/app/sending.rs
 app/src/app/updates.rs

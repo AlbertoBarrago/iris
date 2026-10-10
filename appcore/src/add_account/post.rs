@@ -693,7 +693,7 @@ mod tests {
 
     #[test]
     fn every_logo_a_stamp_names_ships_in_the_resources() {
-        let manifest = include_str!("../../data/iris.gresource.xml");
+        let manifest = include_str!("../../../app/data/iris.gresource.xml");
         for name in ["Google", "Microsoft", "iCloud Mail"] {
             let logo = stamp_for(name).logo.expect(name);
             let listed = manifest
