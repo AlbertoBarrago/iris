@@ -23,7 +23,7 @@ credit Penguin Mail, as the GPL asks of a modified copy.
 - Names that stay as they are because renaming them buys nothing: the
   crate names `mailrs-*` (the app package is `mailrs`) and the SQLite
   functions `penguin_fold` and `penguin_notes_text`.
-- `CHANGELOG.md` before the fork is Penguin Mail's. Iris is published by
+- `CHANGELOG.md` starts at Iris 1.0.1, its first release. Iris is published by
   Alberto Barrago (albz, albertobarrago@gmail.com).
 - Iris has its own identity, the winged envelope (see AGENTS.md's icon
   section and `scripts/iris-art.py`).
@@ -37,8 +37,7 @@ credit Penguin Mail, as the GPL asks of a modified copy.
 - Present a plan and wait for confirmation before implementing, despite
   AGENTS.md's "decide on taste and keep going".
 - `po/it_IT.po` is kept complete: translate every new string into it in
-  the same change. The owner reads the UI in Italian. `po/pt_PT.po` is
-  no longer kept up: its new strings stay in English.
+  the same change. The owner reads the UI in Italian.
 - Something that does not work on macOS gets made to work the macOS way
   (AppKit, Launch Services, the Keychain, `SMAppService`, Sparkle), not
   worked around.

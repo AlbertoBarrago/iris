@@ -54,8 +54,8 @@ macOS yet.
   servers; skills, whose scripts do not run on macOS yet; every change asks first unless the person chose Always
   Allow.
 - Not on macOS yet: buttons on new-mail notifications, and starting at login.
-- Languages: American English source strings, British English generated from them, European Portuguese and
-  Italian kept complete.
+- Languages: American English source strings, British English generated from them, and Italian kept
+  complete.
 - Terms are defined in `CONTEXT.md`; the code's rules are in `AGENTS.md`.
 
 ## Brand Commitments
@@ -93,5 +93,5 @@ macOS yet.
 
 Every control has an accessible name, though VoiceOver does not read GTK's controls on macOS yet. Keyboard
 shortcuts cover the main actions and are listed in the Keyboard Shortcuts dialog. Motion follows the system's
-animations setting. The interface ships in American English, British English, European Portuguese and Italian. Details in
+animations setting. The interface ships in American English, British English and Italian. Details in
 `docs/accessibility.md`.

@@ -512,10 +512,10 @@ async fn a_submission_that_times_out_fails() {
 }
 
 /// A failure lands in "Could not unsubscribe from {sender}: {reason}",
-/// so a reason left in English would sit inside a Portuguese sentence.
+/// so a reason left in English would sit inside an Italian sentence.
 #[test]
 fn every_reason_a_page_gives_is_translated() {
-    const PT: &str = include_str!("../../../po/pt_PT.po");
+    const IT: &str = include_str!("../../../po/it_IT.po");
     for english in [
         "the page took longer than 20 seconds",
         "the page did not load: {reason}",
@@ -525,12 +525,12 @@ fn every_reason_a_page_gives_is_translated() {
         "the plan would type something other than the address",
     ] {
         let entry = format!("msgid \"{english}\"\nmsgstr \"");
-        let at = PT
+        let at = IT
             .find(&entry)
-            .unwrap_or_else(|| panic!("pt_PT.po lacks {english:?}"));
+            .unwrap_or_else(|| panic!("it_IT.po lacks {english:?}"));
         assert!(
-            !PT[at + entry.len()..].starts_with('"'),
-            "pt_PT.po leaves {english:?} untranslated"
+            !IT[at + entry.len()..].starts_with('"'),
+            "it_IT.po leaves {english:?} untranslated"
         );
     }
 }

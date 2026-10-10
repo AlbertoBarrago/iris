@@ -20,7 +20,7 @@
 - [ ] `cargo clippy --workspace --all-targets -- -D warnings` passes
 - [ ] `scripts/update-po.sh --check` passes, run after the last edit
 - [ ] `scripts/a11y-names.sh` passes, if the UI changed
-- [ ] New user-facing strings go through `translate` and have a `po/pt_PT.po` translation
+- [ ] New user-facing strings go through `translate` and have a `po/it_IT.po` translation
 - [ ] New domain words are in `CONTEXT.md`
 - [ ] No tokens, real addresses, or real mail in code, tests, or screenshots
 - [ ] The change is mine to give under GPL-3.0-or-later

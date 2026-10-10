@@ -182,7 +182,7 @@ uses a tool from outside the app, and it is off until you pick a model.
   a double click puts it back. Iris remembers the widths and the window's
   size.
 - **Apple Mail's shortcuts**, plus Gmail's single keys.
-- **English, European Portuguese and Italian**, chosen in Preferences, with
+- **English and Italian**, chosen in Preferences, with
   the window's controls named for screen readers.
 
 ## Install

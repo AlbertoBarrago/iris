@@ -44,8 +44,8 @@ is behind the template.
    is installed, and reads the choice as it starts, so pick one and
    restart.
 
-European Portuguese (`pt_PT`) and Italian (`it_IT`) are kept complete:
-a change that adds a string translates it into both.
+Italian (`it_IT`) is kept complete: a change that adds a string
+translates it in the same change.
 
 ## Keeping a language up to date
 
@@ -81,8 +81,8 @@ looks for it again when it reopens a saved draft. The `From:`, `Date:`,
 same way.
 
 A date pattern made only of `%` codes, such as `%-d %b`, is in the
-template so a language can reorder it or add words, as Portuguese does
+template so a language can reorder it or add words, as Spanish would
 with `%-d de %B`. Leave the names to the codes: `%A`, `%a`, `%B` and `%b`
 come out in the language of your catalogue, taken from its `Language`
 header, whatever `LC_TIME` says. Check that header names your locale, such
-as `pt_PT`; a bare `de` gets the names of `de_DE`.
+as `it_IT`; a bare `de` gets the names of `de_DE`.
