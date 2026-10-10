@@ -17,6 +17,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ### Fixed
 
+- Send Later works on Microsoft accounts: a scheduled message used to
+  fail at its hour and wait in the Outbox.
 - Search keeps working when an account cannot connect, such as while it
   waits for the Keychain; it used to stop answering after the first one.
 - A Gmail signature with pictures or formatting no longer goes out as

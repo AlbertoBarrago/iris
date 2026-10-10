@@ -316,3 +316,19 @@ async fn a_full_listing_expands_the_size() {
     assert!(pairs["$expand"].contains("Integer 0x0E08"));
     assert!(pairs["$select"].contains("internetMessageHeaders"));
 }
+
+#[tokio::test]
+async fn sending_a_draft_says_its_empty_body_is_empty() {
+    let server = MockServer::start().await;
+    common::token_endpoint(&server, "r").await;
+    // Graph answers 411 Length Required to a POST with no Content-Length.
+    Mock::given(method("POST"))
+        .and(path("/v1.0/me/messages/draft-1/send"))
+        .respond_with(|request: &Request| match request.headers.get("content-length") {
+            Some(length) if length == "0" => ResponseTemplate::new(202),
+            _ => ResponseTemplate::new(411),
+        })
+        .mount(&server)
+        .await;
+    common::graph(&server).send_draft("draft-1").await.unwrap();
+}

@@ -519,6 +519,11 @@ impl Graph {
             request = match &call.body {
                 Some(Body::Json(value)) => request.json(value),
                 Some(Body::Text(text)) => request.body(text.clone()),
+                // Graph's front door answers 411 to a POST that names no
+                // length, as sending a draft is: say the body is empty.
+                None if matches!(call.method, Method::Post | Method::Patch) => {
+                    request.header(reqwest::header::CONTENT_LENGTH, "0")
+                }
                 None => request,
             };
             let response = request.send().await.map_err(network)?;
