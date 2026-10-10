@@ -11,7 +11,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use anyhow::{Context, Result, anyhow, bail};
-use mailrs_discover::{Found, Net, RealNet, Security, SrvRecord};
+use mailrs_discover::{Found, RealNet};
 use mailrs_domain::{Account, AccountId, AccountState, ChangeEvent, Provider, Target};
 use mailrs_pgp::{Pgp, PgpError};
 use mailrs_smime::{Smime, SmimeError};
@@ -21,18 +21,16 @@ use mailrs_sync::config::{Config, config_path, data_dir, migrate_old_dirs};
 use mailrs_sync::lock::{LockError, SyncLock};
 use mailrs_sync::passwords::{PasswordStore, Passwords, Secrets};
 use mailrs_sync::services::finding;
-use mailrs_sync::sign_in::{
-    Browser, NewImap, NewPop3, Wanted, check_pop3, imap_signed_in, in_browser, pop3_signed_in,
-};
+use mailrs_sync::sign_in::{Browser, Wanted};
 use mailrs_sync::{
     AccountServices, AccountSettings, AccountSync, Accounts, BackendError, Clients, ContactBook,
     Connector, Failure, History, Invitations, MailAction, MailActions, Mailboxes, MovedFrom,
-    OneClick, Outbox, Outcome, SyncEngine, SyncError, Undone, connect_imap, connect_pop3,
-    now_millis, pop3_servers_for, servers_for,
+    OneClick, Outbox, Outcome, SyncEngine, SyncError, Undone, now_millis,
 };
 
 use crate::add_account::Attempt;
-use crate::add_account::lookup::{Check, Heard, check_of_url};
+use crate::add_account::lookup::Heard;
+use mailrs_appcore::accounts as shared;
 use crate::assistant::run::{Background, Modules};
 use crate::demo::{self, DemoMail};
 use mailrs_sync::starting::{self, Connected, Starting};
@@ -693,18 +691,10 @@ impl Core {
         let connector = self.connector();
         let calendar_copy = self.calendar_copy();
         self.call(async move {
-            let run = in_browser(&connector, browser, wanted, move |url: &str| {
+            let open = move |url: &str| {
                 let _ = urls.try_send(url.to_string());
-            });
-            let waited = tokio::select! {
-                waited = tokio::time::timeout(BROWSER_WAIT, run) => waited,
-                _ = cancel.recv() => bail!(gettext("Canceled.")),
             };
-            let signed = waited.map_err(|_| {
-                anyhow!(gettext(
-                    "Gave up waiting for the browser after five minutes."
-                ))
-            })??;
+            let signed = shared::sign_in_in_browser(&connector, browser, wanted, open, cancel).await?;
             engine.start_account(signed.account.id, signed.services);
             // The sign-in may have granted the calendar permission, so the
             // copy stops waiting out an earlier refusal.
@@ -721,17 +711,8 @@ impl Core {
     /// the lookup page.
     pub async fn discover(&self, address: String, heard: async_channel::Sender<Heard>) -> Result<Found> {
         let demo = self.demo;
-        self.call(async move {
-            let found = match demo {
-                true => mailrs_discover::find(&Watched { net: Offline, heard }, &address).await,
-                false => {
-                    let net = RealNet::new()?;
-                    mailrs_discover::find(&Watched { net, heard }, &address).await
-                }
-            };
-            Ok::<_, anyhow::Error>(found)
-        })
-        .await
+        self.call(async move { shared::discover(&address, heard, demo).await })
+            .await
     }
 
     /// Signs in to an IMAP account: tries the login on both servers, then
@@ -750,29 +731,7 @@ impl Core {
         let (db, passwords) = (self.db.clone(), Arc::clone(&self.secrets.passwords));
         let window_days = self.config.borrow().engine_config().window_days;
         self.call(async move {
-            let Attempt {
-                address,
-                provider_name,
-                incoming,
-                smtp,
-                incoming_login,
-                smtp_login,
-                password,
-                ..
-            } = attempt;
-            // `check` reports which server refused, as a `CheckError` the
-            // dialog reads back out of the `anyhow::Error`.
-            let checked =
-                mailrs_imap::check(&incoming, &smtp, &incoming_login, &smtp_login, &password)
-                    .await?;
-            let new = NewImap {
-                address,
-                provider_name,
-                servers: servers_for(&incoming, &checked.imap_user, &smtp, &checked.smtp_user),
-                password,
-            };
-            let account = imap_signed_in(&db, Arc::clone(&passwords), new, now_millis()).await?;
-            let services = connect_imap(&db, passwords, &account, window_days).await?;
+            let (account, services) = shared::sign_in_imap(&db, passwords, window_days, attempt).await?;
             engine.start_account(account.id, services);
             Ok::<_, anyhow::Error>(account)
         })
@@ -794,29 +753,7 @@ impl Core {
             .ok_or_else(|| anyhow!("sync is not running"))?;
         let (db, passwords) = (self.db.clone(), Arc::clone(&self.secrets.passwords));
         self.call(async move {
-            let Attempt {
-                address,
-                provider_name,
-                incoming,
-                smtp,
-                incoming_login,
-                smtp_login,
-                password,
-                pop3_remove,
-                ..
-            } = attempt;
-            let pop3_user = check_pop3(&incoming, &incoming_login, &password).await?;
-            let smtp_user =
-                mailrs_imap::check_smtp(&smtp, &pop3_user, &smtp_login, &password).await?;
-            let new = NewPop3 {
-                address,
-                provider_name,
-                servers: pop3_servers_for(&incoming, &pop3_user, &smtp, &smtp_user),
-                remove: pop3_remove,
-                password,
-            };
-            let account = pop3_signed_in(&db, Arc::clone(&passwords), new, now_millis()).await?;
-            let services = connect_pop3(&db, passwords, &account).await?;
+            let (account, services) = shared::sign_in_pop3(&db, passwords, attempt).await?;
             engine.start_account(account.id, services);
             Ok::<_, anyhow::Error>(account)
         })
@@ -972,15 +909,10 @@ impl Core {
         // its mail goes with it.
         self.actions.forget_account(account.id);
         let (db, secrets) = (self.db.clone(), self.secrets.clone());
-        self.call(async move {
-            let id = account.id;
-            db.write(move |c| accounts::delete_account(c, id)).await?;
-            // The demo's secrets live in memory, so this never reaches the
-            // person's keyring.
-            secrets.forget(&account).await?;
-            Ok::<_, anyhow::Error>(())
-        })
-        .await
+        // The demo's secrets live in memory, so this never reaches the
+        // person's keyring.
+        self.call(async move { shared::forget_account(&db, &secrets, account).await })
+            .await
     }
 }
 
@@ -1136,70 +1068,7 @@ impl Starting<AccountServices> for EnginePort {
     }
 }
 
-/// A network that answers nothing, for the demo: discovery then finds
-/// what the provider table knows and sends nothing anywhere.
-struct Offline;
-
-impl Net for Offline {
-    async fn mx(&self, _domain: &str) -> Vec<String> {
-        Vec::new()
-    }
-
-    async fn srv(&self, _name: &str) -> Vec<SrvRecord> {
-        Vec::new()
-    }
-
-    async fn get(&self, _url: &str) -> Option<String> {
-        None
-    }
-
-    async fn reaches(&self, _host: &str, _port: u16, _security: Security) -> bool {
-        false
-    }
-}
-
-/// How long a browser sign-in waits for the person to finish on the
-/// provider's page. The waiting page counts it down.
-pub const BROWSER_WAIT: std::time::Duration = std::time::Duration::from_secs(300);
-
-/// A network that tells the lookup page each time discovery asks it
-/// something and each time the answer comes back. The page reads nothing
-/// else from it, so the answers themselves never leave discovery.
-struct Watched<N> {
-    net: N,
-    heard: async_channel::Sender<Heard>,
-}
-
-impl<N: Net> Watched<N> {
-    async fn asking<T>(&self, check: Check, ask: impl Future<Output = T>, found: impl Fn(&T) -> bool) -> T {
-        let _ = self.heard.try_send(Heard::Asked(check));
-        let answer = ask.await;
-        let _ = self.heard.try_send(Heard::Answered(check, found(&answer)));
-        answer
-    }
-}
-
-impl<N: Net> Net for Watched<N> {
-    async fn mx(&self, domain: &str) -> Vec<String> {
-        self.asking(Check::Mx, self.net.mx(domain), |hosts| !hosts.is_empty())
-            .await
-    }
-
-    async fn srv(&self, name: &str) -> Vec<SrvRecord> {
-        self.asking(Check::Common, self.net.srv(name), |records| !records.is_empty())
-            .await
-    }
-
-    async fn get(&self, url: &str) -> Option<String> {
-        self.asking(check_of_url(url), self.net.get(url), Option::is_some)
-            .await
-    }
-
-    async fn reaches(&self, host: &str, port: u16, security: Security) -> bool {
-        self.asking(Check::Common, self.net.reaches(host, port, security), |ok| *ok)
-            .await
-    }
-}
+pub use shared::BROWSER_WAIT;
 
 #[cfg(test)]
 mod tests {
