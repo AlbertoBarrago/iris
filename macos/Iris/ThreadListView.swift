@@ -42,7 +42,7 @@ struct ThreadListView: View {
                         .tint(.blue)
                     }
                     .swipeActions(edge: .trailing) {
-                        Button(tr("Delete"), systemImage: "trash", role: .destructive) { model.perform(.trash, on: [key]) }
+                        Button(model.deleteWords, systemImage: "trash", role: .destructive) { model.perform(.trash, on: [key]) }
                         Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: [key]) }
                             .tint(.purple)
                     }
@@ -221,7 +221,7 @@ struct MailActionsMenu: View {
 
     var body: some View {
         Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: keys) }
-        Button(tr("Delete"), systemImage: "trash") { model.perform(.trash, on: keys) }
+        Button(model.deleteWords, systemImage: "trash") { model.perform(.trash, on: keys) }
         Button(tr("Junk"), systemImage: "xmark.bin") { model.perform(.junk, on: keys) }
         Divider()
         Button(tr("Mark as Read"), systemImage: "envelope.open") { model.perform(.markRead, on: keys) }
@@ -229,6 +229,7 @@ struct MailActionsMenu: View {
         Divider()
         FlagMenu(keys: keys)
         FilingSubmenu(keys: keys)
+        RemindMenu(keys: keys)
         Button(tr("Mute"), systemImage: "speaker.slash") { model.perform(.mute, on: keys) }
     }
 }

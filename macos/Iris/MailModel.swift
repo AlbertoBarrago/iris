@@ -58,6 +58,7 @@ final class MailModel {
         didSet {
             if openThread != Self.single(oldValue) {
                 toggled = []
+                openHoldsDraft = false
                 // Another conversation closes the find bar and drops its
                 // query; closing it draws the page, so it is drawn once.
                 if findShown { findShown = false } else { loadConversation() }
@@ -246,6 +247,10 @@ final class MailModel {
             await MainActor.run { self.finished(done, undoable: true) }
         }
     }
+
+    /// The open conversation ends in a draft: the window offers Edit
+    /// Draft in place of replying.
+    private(set) var openHoldsDraft = false
 
     // MARK: Find in the conversation
 
@@ -545,6 +550,11 @@ final class MailModel {
                 }
                 let mode: ReplyMode = request.kind == .reply ? .reply : request.kind == .replyAll ? .replyAll : .forward
                 return try mail.replyDraft(accountId: account, threadId: thread, mode: mode)
+            case .editDraft:
+                guard let account = request.account, let thread = request.thread else {
+                    return try mail.newDraft(accountId: account)
+                }
+                return try mail.editDraft(accountId: account, threadId: thread)
             default:
                 return try mail.newDraft(accountId: account)
             }
@@ -614,6 +624,42 @@ final class MailModel {
                 }
             }
         }
+    }
+
+    /// Keeps the message to go out at `at`. A message the core refuses
+    /// comes back in its composer, as one Send refuses does.
+    func sendLater(_ draft: ComposeDraft, at: Int64) {
+        guard let mail else { return }
+        Task.detached {
+            do {
+                let said = try mail.sendLater(composed: draft, at: at)
+                await MainActor.run {
+                    self.toast = Toast(words: said, undo: false)
+                    self.refresh()
+                }
+            } catch {
+                await MainActor.run {
+                    let key = UUID()
+                    self.kept[key] = draft
+                    self.composeAsked = ComposeRequest(kind: .restore, restore: key)
+                    self.toast = Toast(words: "\(error)", undo: false)
+                }
+            }
+        }
+    }
+
+    /// The times Send Later and Remind Me offer, read as the menu opens.
+    func sendLaterTimes() -> [TimeChoice] { mail?.sendLaterTimes() ?? [] }
+    func remindTimes() -> [TimeChoice] { mail?.remindTimes() ?? [] }
+
+    /// Whether the list shows Send Later or Remind Me, where Delete
+    /// cancels the sending or the reminder.
+    var inSendLater: Bool { selectedMailbox == "Scheduled" }
+    var inReminders: Bool { selectedMailbox == "Reminders" }
+
+    /// What Delete does in the list on screen, in words.
+    var deleteWords: String {
+        inSendLater ? tr("Cancel Send") : inReminders ? tr("Cancel Reminder") : tr("Delete")
     }
 
     /// Stops a message waiting to go and brings it back in its composer.
@@ -731,8 +777,12 @@ final class MailModel {
         Task.detached {
             do {
                 let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, toggled: toggled, openAll: openAll)
+                let draft = await self.mail?.holdsDraft(accountId: key.account, threadId: key.thread) ?? false
                 await MainActor.run {
-                    if self.openThread == key { self.page = page }
+                    if self.openThread == key {
+                        self.page = page
+                        self.openHoldsDraft = draft
+                    }
                 }
                 // Bodies not fetched yet come from the server, and the page
                 // is drawn again once they are in.

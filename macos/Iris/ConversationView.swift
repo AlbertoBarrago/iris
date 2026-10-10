@@ -37,6 +37,14 @@ struct ConversationView: View {
         }
         .toolbar {
             // Reply and Forward arrive with the composer.
+            if model.openHoldsDraft {
+                // A draft is edited, not answered, as in the GTK app.
+                ToolbarItem {
+                    Button(tr("Edit Draft"), systemImage: "pencil") { answer(.editDraft) }
+                        .keyboardShortcut("e", modifiers: .command)
+                        .disabled(model.openThread == nil)
+                }
+            } else {
             ToolbarItemGroup {
                 Group {
                     Button(tr("Reply"), systemImage: "arrowshape.turn.up.left") { answer(.reply) }
@@ -48,11 +56,12 @@ struct ConversationView: View {
                 }
                 .disabled(model.openThread == nil)
             }
+            }
             ToolbarItemGroup {
                 Group {
                     Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive) }
                         .keyboardShortcut("a", modifiers: [.command, .option])
-                    Button(tr("Delete"), systemImage: "trash") { model.perform(.trash) }
+                    Button(model.deleteWords, systemImage: model.inSendLater || model.inReminders ? "xmark.circle" : "trash") { model.perform(.trash) }
                     Button(tr("Junk"), systemImage: "xmark.bin") { model.perform(.junk) }
                         .keyboardShortcut("j", modifiers: [.command, .shift])
                 }
@@ -66,6 +75,7 @@ struct ConversationView: View {
                     ) { model.toggleRead() }
                         .keyboardShortcut("u", modifiers: [.command, .shift])
                     FlagMenu()
+                    RemindMenu()
                     FilingButton()
                 }
                 .disabled(model.selection.isEmpty)

@@ -205,6 +205,52 @@ impl Mail {
         Ok(self.shown(draft))
     }
 
+    /// Whether the conversation ends in a draft, which the window offers
+    /// to edit in place of replying, as the GTK app's Edit Draft.
+    pub fn holds_draft(&self, account_id: i64, thread_id: String) -> bool {
+        self.newest_draft(account_id, &thread_id).ok().flatten().is_some()
+    }
+
+    /// The conversation's newest draft, reopened in a composer as it was
+    /// saved: its recipients, Bcc, reply headers and files come from the
+    /// message as the server holds it, and a draft Send Later waits on
+    /// keeps its hour.
+    pub fn edit_draft(&self, account_id: i64, thread_id: String) -> Result<ComposeDraft, CoreError> {
+        let (message, in_thread) = self
+            .newest_draft(account_id, &thread_id)?
+            .ok_or_else(|| CoreError::Store("There is no draft in this conversation.".into()))?;
+        let sync = self
+            .running
+            .account(account_id)
+            .ok_or_else(|| CoreError::Store(gettext("That account is not connected.")))?;
+        let could_not = |err: &dyn std::fmt::Display| {
+            CoreError::Store(fill(&gettext("Could not open the draft: {reason}"), &[("reason", &err.to_string())]))
+        };
+        let (s, id) = (Arc::clone(&sync), message.id.clone());
+        let draft_id = self.run(async move { s.draft_id_for(&id).await }).map_err(|e| could_not(&e))?;
+        // Only the message as the server holds it carries the Bcc, the
+        // reply headers and the bytes of the files.
+        let (s, id) = (Arc::clone(&sync), message.id.clone());
+        let raw = self.run(async move { s.raw_message(&id).await }).map_err(|e| could_not(&e))?;
+        let mut draft = self.blank(account_id)?;
+        match mailrs_appcore::protection::draft::standard_of(&raw) {
+            None => mailrs_appcore::protection::draft::reopen_plain(&raw, &mut draft),
+            // Iris Next does not reach gpg or gpgsm yet.
+            Some(_) => return Err(CoreError::Store(mailrs_appcore::pgp::explain(&mailrs_pgp::PgpError::NoGpg))),
+        }
+        draft.thread_id = in_thread.then_some(thread_id);
+        if let Some(id) = draft_id.clone() {
+            let outbox = Outbox::new(Arc::clone(&self.running), self.db.clone());
+            draft.send_at = self
+                .run(async move { outbox.find_draft(account_id, &id).await })
+                .ok()
+                .flatten()
+                .map(|queued| queued.send_at);
+        }
+        draft.draft_id = draft_id;
+        Ok(self.shown(draft))
+    }
+
     /// Deletes the draft the composer saved before, when it was discarded.
     pub fn delete_draft(&self, composed: ComposeDraft) {
         let Ok(draft) = serde_json::from_str::<Draft>(&composed.draft) else { return };
@@ -277,6 +323,38 @@ impl Mail {
     }
 }
 
+#[uniffi::export]
+impl Mail {
+    /// Keeps what the composer holds to go out at `at`, as Send Later: a
+    /// server draft and the hour here, or the bytes here alone while the
+    /// server is out of reach. Says when it goes, or why it was refused.
+    pub fn send_later(&self, composed: ComposeDraft, at: i64) -> Result<String, CoreError> {
+        let draft = self.draft_from(composed)?;
+        if let Some(problem) = draft.problem() {
+            return Err(CoreError::Store(problem));
+        }
+        let message_id = compose::new_message_id(&draft.from.email);
+        let raw = compose::build_mime(&draft, mailrs_sync::now_millis() / 1000, &message_id).map_err(|err| {
+            CoreError::Store(fill(&gettext("Could not build the message: {reason}"), &[("reason", &err)]))
+        })?;
+        let mut message = queued(&draft, raw);
+        message.send_at = at;
+        let outbox = Arc::new(Outbox::new(Arc::clone(&self.running), self.db.clone()));
+        let refused = |reason: String| CoreError::Store(fill(&gettext("Not scheduled: {reason}"), &[("reason", &reason)]));
+        match self.run(async move { outbox.schedule(message).await }) {
+            Ok(Posted::Refused(problem)) => Err(refused(problem)),
+            Ok(_) => {
+                self.changed("threads");
+                Ok(fill(
+                    &gettext("Will send {when}"),
+                    &[("when", &mailrs_appcore::format::future_date(at, chrono::Local::now()))],
+                ))
+            }
+            Err(err) => Err(refused(err.to_string())),
+        }
+    }
+}
+
 impl Mail {
     /// The core's draft with what the composer edited laid over it.
     fn draft_from(&self, composed: ComposeDraft) -> Result<Draft, CoreError> {
@@ -330,6 +408,19 @@ impl Mail {
         );
         *held = Some(Arc::clone(&people));
         people
+    }
+
+    /// The newest message of the conversation that is a draft, and whether
+    /// the conversation holds other mail too.
+    fn newest_draft(&self, account_id: i64, thread_id: &str) -> Result<Option<(MessageMeta, bool)>, CoreError> {
+        let (db, id) = (self.db.clone(), thread_id.to_string());
+        let all = self.run(async move { db.read(move |c| messages::thread_messages(c, account_id, &id)).await })?;
+        let several = all.len() > 1;
+        Ok(all
+            .into_iter()
+            .rev()
+            .find(|m| m.in_role(mailrs_domain::Role::Drafts))
+            .map(|m| (m, several)))
     }
 
     /// A blank message from `account_id`'s own address, unsigned.

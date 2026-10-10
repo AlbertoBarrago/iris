@@ -153,22 +153,38 @@ pub(crate) async fn announce(db: Db, account_id: i64, ids: Vec<String>, listener
         }
     };
     let news = worth_announcing(&settings, found);
-    let notices = notify::notices(&news, settings.notification_previews);
-    tracing::info!(account = account_id, news = news.len(), notices = notices.len(), "new mail");
-    if !notices.is_empty() {
-        listener.new_mail(
-            notices
-                .into_iter()
-                .map(|notice| MailNotice {
-                    title: notice.title,
-                    body: notice.body,
-                    account_id: notice.target.as_ref().map(|t| t.account_id),
-                    thread_id: notice.target.as_ref().map(|t| t.thread_id.clone()),
-                    message_id: notice.target.and_then(|t| t.message_id),
-                })
-                .collect(),
-        );
+    tracing::info!(account = account_id, news = news.len(), "new mail");
+    tell(&news, settings.notification_previews, &listener);
+}
+
+/// Announces conversations a reminder brought back, each by its newest
+/// message, as the GTK app does.
+pub(crate) fn announce_returned(newest: Vec<MessageMeta>, listener: &Arc<dyn MailListener>) {
+    let settings = Settings::load(&Settings::default_path());
+    if settings.notifications {
+        for message in newest {
+            tell(std::slice::from_ref(&message), settings.notification_previews, listener);
+        }
     }
+}
+
+fn tell(messages: &[MessageMeta], previews: bool, listener: &Arc<dyn MailListener>) {
+    let notices = notify::notices(messages, previews);
+    if notices.is_empty() {
+        return;
+    }
+    listener.new_mail(
+        notices
+            .into_iter()
+            .map(|notice| MailNotice {
+                title: notice.title,
+                body: notice.body,
+                account_id: notice.target.as_ref().map(|t| t.account_id),
+                thread_id: notice.target.as_ref().map(|t| t.thread_id.clone()),
+                message_id: notice.target.and_then(|t| t.message_id),
+            })
+            .collect(),
+    );
 }
 
 /// The new mail a notification is for: still unread in the inbox, and from

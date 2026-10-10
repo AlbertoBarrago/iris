@@ -24,6 +24,8 @@ use mailrs_sync::OneClick;
 use mailrs_sync::{Accounts, History, MailAction, MailActions, Mailbox, MovedFrom, TriageAction};
 use mailrs_view::sidebar::{self, Entry, Icon};
 
+use mailrs_domain::translate::{fill, gettext};
+
 use crate::CoreError;
 use crate::account_menu;
 use mailrs_appcore::settings::Settings;
@@ -90,6 +92,18 @@ pub enum Action {
     Flag { color: Option<String> },
     Mute,
     Unmute,
+    /// Archive now and bring back, unread, at `at` (milliseconds).
+    Remind { at: i64 },
+    /// Drop the reminder and put the conversation back in the inbox now.
+    CancelReminder,
+}
+
+/// When something happens later, with the words a menu shows for it.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct TimeChoice {
+    pub label: String,
+    /// Milliseconds since the epoch.
+    pub at: i64,
 }
 
 /// What came of an action, for the toast that offers Undo.
@@ -268,6 +282,7 @@ impl Mail {
             Arc::clone(&self.running),
             Arc::clone(&engine),
             self.db.clone(),
+            Arc::clone(&self.actions),
             Arc::clone(&listener),
         ));
         let connector = Arc::new(Connector {
@@ -302,20 +317,113 @@ impl Mail {
     /// Runs `action` on `threads`, taken from the mailbox `from` names, and
     /// puts it on the undo stack.
     pub fn act(&self, threads: Vec<ThreadRef>, action: Action, from: Option<String>) -> ActionDone {
+        let from = from.and_then(|key| self.mailbox(&key));
+        // Delete in Send Later stops the message going out, and in Remind
+        // Me drops the reminder, as the GTK app's Trash does there.
+        let action = match (action, &from) {
+            (Action::Trash, Some(Mailbox::Scheduled)) => return self.cancel_send(threads),
+            // An Outbox row is a message waiting here, not mail on the
+            // server: Delete drops it, as the GTK app's Outbox does.
+            (Action::Trash, Some(Mailbox::Outbox)) => return self.drop_waiting(threads),
+            (Action::Trash, Some(Mailbox::Reminders)) => Action::CancelReminder,
+            (action, _) => action,
+        };
+        let said = match &action {
+            Action::Remind { at } => Some(fill(
+                &gettext("Will remind you {when}"),
+                &[("when", &format::future_date(*at, chrono::Local::now()))],
+            )),
+            Action::CancelReminder => Some(gettext("Back in the Inbox")),
+            _ => None,
+        };
         let action = mail_action(action);
-        let moved = from
-            .and_then(|key| self.mailbox(&key))
-            .map(|m| m.moved_from())
-            .unwrap_or_else(MovedFrom::nowhere);
+        let moved = from.map(|m| m.moved_from()).unwrap_or_else(MovedFrom::nowhere);
         let targets: Vec<Target> = threads.into_iter().map(target).collect();
         let (actions, given) = (Arc::clone(&self.actions), action.clone());
         let outcome = self.run(async move { actions.run_from(&targets, given, History::Record, &moved).await });
         self.mailboxes.forget_remote();
+        let words = match said {
+            Some(said) if !outcome.done.is_empty() => said,
+            _ => mailrs_view::done::done_message(&action, outcome.done.len(), true).unwrap_or_default(),
+        };
         ActionDone {
-            words: mailrs_view::done::done_message(&action, outcome.done.len(), true).unwrap_or_default(),
+            words,
             done: outcome.done.len() as u32,
             failed: outcome.failed.first().map(|f| f.error.clone()),
         }
+    }
+
+    /// Stops the Send Later messages `threads` stand for: each goes back
+    /// to Drafts, or stays waiting when the server is out of reach.
+    fn cancel_send(&self, threads: Vec<ThreadRef>) -> ActionDone {
+        let targets: Vec<Target> = threads.into_iter().map(target).collect();
+        let outbox = mailrs_sync::outbox::Outbox::new(Arc::clone(&self.running), self.db.clone());
+        match self.run(async move { outbox.cancel_scheduled(&targets).await }) {
+            Ok(cancelled) => {
+                self.mailboxes.forget_remote();
+                ActionDone {
+                    words: mailrs_appcore::send_later::cancelled_line(cancelled.in_drafts, 0, cancelled.unsaved.len()),
+                    done: cancelled.in_drafts as u32,
+                    failed: None,
+                }
+            }
+            Err(err) => ActionDone {
+                words: String::new(),
+                done: 0,
+                failed: Some(fill(&gettext("Could not cancel: {reason}"), &[("reason", &err.to_string())])),
+            },
+        }
+    }
+
+    /// Drops the Outbox messages `threads` stand for: nothing goes out and
+    /// nothing is kept.
+    fn drop_waiting(&self, threads: Vec<ThreadRef>) -> ActionDone {
+        let targets: Vec<Target> = threads.into_iter().map(target).collect();
+        let outbox = mailrs_sync::outbox::Outbox::new(Arc::clone(&self.running), self.db.clone());
+        let dropped = self.run(async move {
+            let waiting = outbox.named(&targets).await?;
+            for item in &waiting {
+                outbox.drop_one(item.id).await?;
+            }
+            Ok::<usize, mailrs_sync::SyncError>(waiting.len())
+        });
+        match dropped {
+            Ok(count) => {
+                self.mailboxes.forget_remote();
+                self.changed("threads");
+                ActionDone {
+                    words: match count {
+                        0 => String::new(),
+                        1 => gettext("Deleted. It will not be sent."),
+                        _ => gettext("Deleted. They will not be sent."),
+                    },
+                    done: count as u32,
+                    failed: None,
+                }
+            }
+            Err(err) => ActionDone {
+                words: String::new(),
+                done: 0,
+                failed: Some(fill(&gettext("Could not delete: {reason}"), &[("reason", &err.to_string())])),
+            },
+        }
+    }
+
+    /// The times Remind Me offers: an hour from now, tonight, tomorrow
+    /// morning, next Monday.
+    pub fn remind_times(&self) -> Vec<TimeChoice> {
+        times(format::remind_presets(chrono::Local::now()))
+    }
+
+    /// The times Send Later offers: tonight, tomorrow morning, next
+    /// Monday.
+    pub fn send_later_times(&self) -> Vec<TimeChoice> {
+        times(format::send_later_presets(chrono::Local::now()))
+    }
+
+    /// When `at` falls, as a toast says it: "tomorrow at 08:00".
+    pub fn when_words(&self, at: i64) -> String {
+        format::future_date(at, chrono::Local::now())
     }
 
     /// Marks a conversation the person opened as read, with no place on
@@ -767,13 +875,25 @@ impl Starting<AccountServices> for Port {
 }
 
 /// The word the window hears for an engine event.
+fn times(presets: Vec<(String, i64)>) -> Vec<TimeChoice> {
+    presets.into_iter().map(|(label, at)| TimeChoice { label, at }).collect()
+}
+
 /// How often the Outbox is tried, as the GTK app's scheduler does.
 const SEND_DUE_EVERY: std::time::Duration = std::time::Duration::from_secs(30);
 
 /// Sends what waits in the Outbox, every half minute while `engine` runs:
 /// a message that met an account still starting, or one Send Later holds
-/// until its hour. Ends once the engine is stopped or replaced.
-async fn send_due(running: Arc<Running>, engine: Arc<SyncEngine>, db: Db, listener: Arc<dyn MailListener>) {
+/// until its hour. Brings back the conversations whose reminder is due,
+/// unread, with a notification. Ends once the engine is stopped or
+/// replaced.
+async fn send_due(
+    running: Arc<Running>,
+    engine: Arc<SyncEngine>,
+    db: Db,
+    actions: Arc<MailActions<Running>>,
+    listener: Arc<dyn MailListener>,
+) {
     let outbox = mailrs_sync::outbox::Outbox::new(Arc::clone(&running), db);
     let mut every = tokio::time::interval(SEND_DUE_EVERY);
     loop {
@@ -795,6 +915,15 @@ async fn send_due(running: Arc<Running>, engine: Arc<SyncEngine>, db: Db, listen
                 }
             }
             Err(err) => tracing::warn!(error = %err, "the outbox could not be emptied; will retry"),
+        }
+        match actions.return_due(mailrs_sync::now_millis()).await {
+            Ok(returned) if !returned.is_empty() => {
+                tracing::info!(returned = returned.len(), "reminders brought conversations back");
+                crate::notify::announce_returned(returned.into_iter().filter_map(|r| r.newest).collect(), &listener);
+                listener.changed("threads".into());
+            }
+            Ok(_) => {}
+            Err(err) => tracing::warn!(error = %err, "could not read the reminders that are due"),
         }
     }
 }
@@ -840,6 +969,8 @@ fn mail_action(action: Action) -> MailAction {
         })),
         Action::Mute => MailAction::Mute { muted: true },
         Action::Unmute => MailAction::Mute { muted: false },
+        Action::Remind { at } => MailAction::Remind { at },
+        Action::CancelReminder => MailAction::CancelReminder,
     }
 }
 

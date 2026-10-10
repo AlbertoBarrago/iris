@@ -5,7 +5,7 @@ import WebKit
 /// What a composer window opens on: a new message, a reply, a forward, or
 /// a message that Undo Send brought back.
 struct ComposeRequest: Codable, Hashable {
-    enum Kind: String, Codable { case new, reply, replyAll, forward, restore }
+    enum Kind: String, Codable { case new, reply, replyAll, forward, restore, editDraft }
     var kind: Kind
     var account: Int64?
     var thread: String?
@@ -26,6 +26,11 @@ struct ComposeView: View {
     @State private var senders: [Sender] = []
     @State private var showCopies = false
     @State private var showQuote = false
+    /// Send Later's "Choose a Time…" is open.
+    @State private var choosingTime = false
+    /// The time picked there, sent once its sheet has gone: closing the
+    /// composer while the sheet shows would close the sheet instead.
+    @State private var pickedTime: Int64?
     @State private var problem: String?
     @State private var editor = RichController()
 
@@ -55,6 +60,18 @@ struct ComposeView: View {
             }
             return true
         }
+        .sheet(isPresented: $choosingTime, onDismiss: {
+            if let at = pickedTime {
+                pickedTime = nil
+                sendLater(at)
+            }
+        }) {
+            TimePickerSheet(
+                title: tr("Send Later"),
+                explanation: tr("Iris sends it at this time while it runs, even in the tray."),
+                confirm: tr("Schedule")
+            ) { at in pickedTime = at }
+        }
         .toolbar {
             ToolbarItem {
                 Button(macKeys(tr("Attach Files (Ctrl+Shift+A)")), systemImage: "paperclip") { pickFiles() }
@@ -62,9 +79,23 @@ struct ComposeView: View {
                     .disabled(draft == nil)
             }
             ToolbarItem(placement: .primaryAction) {
-                Button(tr("Send"), systemImage: "paperplane.fill") { send() }
-                    .keyboardShortcut(.return, modifiers: .command)
-                    .disabled(draft == nil)
+                // Send, with Send Later behind its arrow, as the GTK
+                // composer's split button.
+                Menu {
+                    ForEach(model.sendLaterTimes(), id: \.at) { time in
+                        Button(time.label) { sendLater(time.at) }
+                    }
+                    Divider()
+                    Button(tr("Choose a Time…")) { choosingTime = true }
+                } label: {
+                    Label(tr("Send"), systemImage: "paperplane.fill")
+                } primaryAction: {
+                    send()
+                }
+                .menuIndicator(.visible)
+                .help(tr("Send Later"))
+                .keyboardShortcut(.return, modifiers: .command)
+                .disabled(draft == nil)
             }
         }
     }
@@ -218,6 +249,14 @@ struct ComposeView: View {
             let type = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
             draft?.attachments.append(OutgoingFile(filename: url.lastPathComponent, mimeType: type, data: data, contentId: nil))
         }
+    }
+
+    /// Keeps the message to go out at `at`, and closes.
+    private func sendLater(_ at: Int64) {
+        guard let draft else { return }
+        model.sendLater(draft, at: at)
+        saved = draft
+        dismiss()
     }
 
     private func send() {
