@@ -245,6 +245,74 @@ final class MailModel {
         }
     }
 
+    // MARK: Labels and folders
+
+    /// Whether the label picker over the conversation is open; L opens it.
+    var filingShown = false
+
+    private func refs(_ keys: Set<ThreadKey>?) -> [ThreadRef] {
+        (keys ?? selection).map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
+    }
+
+    /// The label picker for `keys`, or the conversations picked.
+    func filingMenu(for keys: Set<ThreadKey>? = nil) -> FilingMenu? {
+        try? mail?.filingMenu(threads: refs(keys))
+    }
+
+    /// Puts the row's label on, takes it off, or moves the mail to the
+    /// row's folder, with Undo.
+    func file(_ row: FilingRow, on keys: Set<ThreadKey>? = nil) {
+        guard let mail else { return }
+        let threads = refs(keys)
+        guard !threads.isEmpty else { return }
+        let from = selectedMailbox
+        Task.detached {
+            let done = mail.file(threads: threads, id: row.id, name: row.name, applied: row.applied, from: from)
+            await MainActor.run { self.finished(done, undoable: true) }
+        }
+    }
+
+    /// Makes a label called `name` on the picked mail's account, then puts
+    /// the mail under it.
+    func createLabel(_ name: String, on keys: Set<ThreadKey>? = nil) {
+        guard let mail, let account = (keys ?? selection).first?.account else { return }
+        let name = name.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        Task.detached {
+            do {
+                let row = try mail.createLabel(accountId: account, name: name)
+                await MainActor.run { self.file(row, on: keys) }
+            } catch {
+                await MainActor.run { self.toast = Toast(words: "\(error)", undo: false) }
+            }
+        }
+    }
+
+    /// Mail dragged from the list onto the sidebar mailbox `to`.
+    func drop(_ keys: [ThreadKey], on to: String) {
+        guard let mail, !keys.isEmpty else { return }
+        let threads = keys.map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
+        let from = selectedMailbox
+        Task.detached {
+            let done = Result { try mail.dropOn(threads: threads, from: from, to: to) }
+            await MainActor.run {
+                switch done {
+                case .success(let done): self.finished(done, undoable: true)
+                case .failure(let error): self.toast = Toast(words: "\(error)", undo: false)
+                }
+            }
+        }
+    }
+
+    /// The flag every one of `keys` wears, as its color, when they share
+    /// one; the flag menu ticks it.
+    func sharedFlag(of keys: Set<ThreadKey>? = nil) -> String? {
+        let picked = keys ?? selection
+        let flags = Set((listing?.rows ?? []).filter { picked.contains($0.key) }.map(\.flag))
+        guard flags.count == 1, let flag = flags.first else { return nil }
+        return flag
+    }
+
     /// Opens or closes one message of the open conversation, as a click on
     /// its header does.
     func toggleMessage(_ id: String) {

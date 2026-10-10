@@ -233,7 +233,9 @@ struct AccountLine: View {
 }
 
 struct MailboxRow: View {
+    @Environment(MailModel.self) private var model
     let item: SidebarItem
+    @State private var targeted = false
 
     var body: some View {
         HStack {
@@ -253,6 +255,15 @@ struct MailboxRow: View {
         // An account's group indents its rows already; only what nests
         // deeper, or a flag color under Flagged, steps in further.
         .padding(.leading, CGFloat(item.accountId == nil ? Int(item.depth) : max(Int(item.depth) - 1, 0)) * 14)
+        // Mail dragged from the list lands here; the core decides what a
+        // drop on this mailbox does, or says why it cannot.
+        .dropDestination(for: String.self) { texts, _ in
+            let keys = texts.flatMap(DraggedThreads.decode)
+            guard !keys.isEmpty else { return false }
+            model.drop(keys, on: item.key)
+            return true
+        } isTargeted: { targeted = $0 }
+        .background(targeted ? Color.accentColor.opacity(0.25) : .clear, in: RoundedRectangle(cornerRadius: 6))
     }
 
     /// The SF Symbol for what a row's icon stands for.

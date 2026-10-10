@@ -32,6 +32,9 @@ struct ThreadListView: View {
             List(model.listing?.rows ?? [], id: \.key, selection: $model.selection) { row in
                 let key = row.key
                 ThreadRowView(row: row)
+                    // A drag from a picked row carries the whole selection,
+                    // as Mail's list does; from any other row, that row.
+                    .draggable(DraggedThreads.encode(model.selection.contains(key) ? Array(model.selection) : [key]))
                     .swipeActions(edge: .leading) {
                         Button(row.unread ? tr("Mark as Read") : tr("Mark as Unread"), systemImage: row.unread ? "envelope.open" : "envelope.badge") {
                             model.perform(row.unread ? .markRead : .markUnread, on: [key])
@@ -51,11 +54,12 @@ struct ThreadListView: View {
             .onDeleteCommand { model.perform(.trash) }
             .onExitCommand { model.selection = [] }
             // The GTK app's one-key shortcuts while the list has the keys.
-            .onKeyPress(characters: ["e", "u", "M"]) { press in
+            .onKeyPress(characters: ["e", "u", "M", "l"]) { press in
                 switch press.characters {
                 case "e": model.perform(.archive)
                 case "u": model.toggleRead()
                 case "M": model.perform(.mute)
+                case "l" where !model.selection.isEmpty: model.filingShown = true
                 default: return .ignored
                 }
                 return .handled
@@ -224,6 +228,7 @@ struct MailActionsMenu: View {
         Button(tr("Mark as Unread"), systemImage: "envelope.badge") { model.perform(.markUnread, on: keys) }
         Divider()
         FlagMenu(keys: keys)
+        FilingSubmenu(keys: keys)
         Button(tr("Mute"), systemImage: "speaker.slash") { model.perform(.mute, on: keys) }
     }
 }
@@ -240,11 +245,11 @@ struct FlagMenu: View {
     ]
 
     var body: some View {
-        Menu(tr("Flag"), systemImage: "flag") {
+        // The flag the mail already wears shows ticked.
+        let worn = model.sharedFlag(of: keys)
+        Menu(tr("Flag"), systemImage: worn == nil ? "flag" : "flag.fill") {
             ForEach(Self.colors, id: \.0) { key, name, hex in
-                Button {
-                    model.perform(.flag(color: key), on: keys)
-                } label: {
+                Toggle(isOn: Binding(get: { worn == hex }, set: { _ in model.perform(.flag(color: key), on: keys) })) {
                     Label { Text(name) } icon: { FlagImage.colored(hex) }
                 }
             }

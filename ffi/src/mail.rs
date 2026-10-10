@@ -731,7 +731,7 @@ impl Mail {
     }
 
     /// The mailbox behind a key the last sidebar handed out.
-    fn mailbox(&self, key: &str) -> Option<Mailbox> {
+    pub(crate) fn mailbox(&self, key: &str) -> Option<Mailbox> {
         self.keys.lock().unwrap_or_else(|p| p.into_inner()).get(key).cloned()
     }
 }

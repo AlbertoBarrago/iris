@@ -19,6 +19,7 @@ mod account_setup;
 mod ai_prefs;
 mod assistant;
 mod compose;
+mod filing;
 mod mail;
 mod notify;
 mod prefs;

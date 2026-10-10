@@ -62,6 +62,7 @@ struct ConversationView: View {
                     ) { model.toggleRead() }
                         .keyboardShortcut("u", modifiers: [.command, .shift])
                     FlagMenu()
+                    FilingButton()
                 }
                 .disabled(model.selection.isEmpty)
             }
@@ -166,6 +167,24 @@ struct MailPage: NSViewRepresentable {
             case "mailrs", "mailto": onLink(url)
             default: break
             }
+        }
+    }
+}
+
+/// The Labels button, or Move to Folder on an account that files in
+/// folders, with its picker; L opens it from the list.
+struct FilingButton: View {
+    @Environment(MailModel.self) private var model
+
+    var body: some View {
+        @Bindable var model = model
+        let menu = model.selection.isEmpty ? nil : model.filingMenu()
+        Button(menu?.name ?? tr("Labels"), systemImage: menu?.folders == true ? "folder" : "tag") {
+            model.filingShown.toggle()
+        }
+        .help(menu?.tooltip ?? "")
+        .popover(isPresented: $model.filingShown, arrowEdge: .bottom) {
+            FilingPicker()
         }
     }
 }
