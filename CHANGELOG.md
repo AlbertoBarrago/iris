@@ -10,6 +10,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 - A company signature with logos, badges and a table can be pasted or
   imported in Preferences, and goes out looking the way it was made.
 
+### Improved
+
+- Search suggestions show the address when one name writes from
+  several, such as a shop's info@ and no-reply@.
+
 ### Fixed
 
 - Search keeps working when an account cannot connect, such as while it

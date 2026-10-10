@@ -8096,15 +8096,15 @@ msgstr ""
 msgid "Subject contains “{words}”"
 msgstr ""
 
-#: appcore/src/search.rs:40
+#: appcore/src/search.rs:49
 msgid "From {person}"
 msgstr ""
 
-#: appcore/src/search.rs:47
+#: appcore/src/search.rs:55
 msgid "To {person}"
 msgstr ""
 
-#: appcore/src/search.rs:70
+#: appcore/src/search.rs:78
 msgid "In {label}"
 msgstr ""
 
@@ -9239,61 +9239,61 @@ msgstr ""
 msgid "This smart mailbox has no conditions"
 msgstr ""
 
-#: sync/src/mailbox.rs:1115
+#: sync/src/mailbox.rs:1120
 msgid "Results for {account} come from the mail on this computer alone"
 msgstr ""
 
-#: sync/src/mailbox.rs:1127
+#: sync/src/mailbox.rs:1132
 msgid "Could not load mail for {account}: {reason}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1248
+#: sync/src/mailbox.rs:1253
 msgid "Returns {when}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1291 sync/src/mailbox.rs:1373
+#: sync/src/mailbox.rs:1296 sync/src/mailbox.rs:1378
 msgid "No recipients"
 msgstr ""
 
-#: sync/src/mailbox.rs:1294 sync/src/mailbox.rs:1376
+#: sync/src/mailbox.rs:1299 sync/src/mailbox.rs:1381
 msgid "To {recipients}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1336
+#: sync/src/mailbox.rs:1341
 msgid "{count} unread · {category}"
 msgid_plural "{count} unread · {category}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sync/src/mailbox.rs:1341
+#: sync/src/mailbox.rs:1346
 msgid "{count} unread"
 msgid_plural "{count} unread"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sync/src/mailbox.rs:1348
+#: sync/src/mailbox.rs:1353
 msgid "Sent yesterday, no reply yet"
 msgstr ""
 
-#: sync/src/mailbox.rs:1350
+#: sync/src/mailbox.rs:1355
 msgid "Sent {days} day ago, no reply yet"
 msgid_plural "Sent {days} days ago, no reply yet"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sync/src/mailbox.rs:1388
+#: sync/src/mailbox.rs:1393
 msgid "Sends {when}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1392
+#: sync/src/mailbox.rs:1397
 msgid "Not sent"
 msgstr ""
 
-#: sync/src/mailbox.rs:1399
+#: sync/src/mailbox.rs:1404
 msgid "{problem}. Trying again {when}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1406
+#: sync/src/mailbox.rs:1411
 msgid "{problem}. Iris stopped trying"
 msgstr ""
 

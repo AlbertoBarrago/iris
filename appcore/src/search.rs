@@ -34,17 +34,25 @@ pub fn suggestions(text: &str, contacts: &[Person], labels: &[String]) -> Vec<Su
         query: with(format!("subject:{word}")),
     }];
     let people = suggest(contacts, word, &[], 4, None);
+    // A sender who writes from several addresses, such as a shop's info@
+    // and no-reply@, would show one name several times; the address
+    // tells those rows apart.
+    let shown = |person: &Person| match person.name.as_deref() {
+        Some(name) if people.iter().filter(|p| p.name.as_deref() == Some(name)).count() > 1 => {
+            format!("{name} <{}>", person.email)
+        }
+        Some(name) => name.to_string(),
+        None => person.email.clone(),
+    };
     for person in &people {
-        let name = person.name.as_deref().unwrap_or(&person.email);
         out.push(Suggestion {
-            label: fill(&gettext("From {person}"), &[("person", name)]),
+            label: fill(&gettext("From {person}"), &[("person", &shown(person))]),
             query: with(format!("from:{}", person.email)),
         });
     }
     if let Some(first) = people.first() {
-        let name = first.name.as_deref().unwrap_or(&first.email);
         out.push(Suggestion {
-            label: fill(&gettext("To {person}"), &[("person", name)]),
+            label: fill(&gettext("To {person}"), &[("person", &shown(first))]),
             query: with(format!("to:{}", first.email)),
         });
     }
@@ -107,5 +115,25 @@ mod tests {
         assert!(suggestions("invoice ", &contacts, &labels).is_empty());
         assert!(suggestions("from:an", &contacts, &labels).is_empty());
         assert!(suggestions("a", &contacts, &labels).is_empty());
+    }
+
+    #[test]
+    fn a_name_with_several_addresses_shows_each_address() {
+        let person = |email: &str| Person {
+            name: Some("Deliveroo".into()),
+            email: email.into(),
+            organization: None,
+            photo_file: None,
+            accounts: vec![1],
+            score: 3,
+            last_seen: 0,
+        };
+        let contacts = [person("info@deliveroo.it"), person("no-reply@deliveroo.it")];
+        let labels: Vec<String> = suggestions("deli", &contacts, &[])
+            .into_iter()
+            .map(|s| s.label)
+            .collect();
+        assert!(labels.contains(&"From Deliveroo <info@deliveroo.it>".to_string()));
+        assert!(labels.contains(&"From Deliveroo <no-reply@deliveroo.it>".to_string()));
     }
 }
