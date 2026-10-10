@@ -5711,52 +5711,13 @@ msgstr ""
 msgid "Could not open the conversation to reply to it"
 msgstr "Impossibile aprire la conversazione per rispondere"
 
-#: app/src/ui/window/scheduled.rs:97
+#: app/src/ui/window/scheduled.rs:98
 msgid "Sending…"
 msgstr "Invio…"
 
-#: app/src/ui/window/scheduled.rs:197
+#: app/src/ui/window/scheduled.rs:198
 msgid "Could not cancel: {reason}"
 msgstr "Impossibile annullare: {reason}"
-
-#: app/src/ui/window/scheduled.rs:255
-msgid ""
-"Gmail is out of reach and Iris cannot reopen a message, so it stays in Send "
-"Later."
-msgstr ""
-"Gmail non è raggiungibile e Iris non può riaprire un messaggio, quindi resta "
-"in Invia più tardi."
-
-#: app/src/ui/window/scheduled.rs:258
-msgid ""
-"Won't be sent. Gmail is out of reach, so the message is open for you to save."
-msgstr ""
-"Non verrà inviato. Gmail non è raggiungibile, quindi il messaggio è aperto "
-"per poterlo salvare."
-
-#: app/src/ui/window/scheduled.rs:261
-msgid ""
-"Won't be sent. Gmail is out of reach, so the messages are open for you to "
-"save."
-msgstr ""
-"Non verranno inviati. Gmail non è raggiungibile, quindi i messaggi sono "
-"aperti per poterli salvare."
-
-#: app/src/ui/window/scheduled.rs:263
-msgid "Won't be sent. The message is in Drafts."
-msgstr "Non verrà inviato. Il messaggio è in Bozze."
-
-#: app/src/ui/window/scheduled.rs:264
-msgid "Won't be sent. The messages are in Drafts."
-msgstr "Non verranno inviati. I messaggi sono in Bozze."
-
-#: app/src/ui/window/scheduled.rs:266
-msgid ""
-"Won't be sent. Some are in Drafts, and the ones Gmail could not take are "
-"open for you to save."
-msgstr ""
-"Non verranno inviati. Alcuni sono in Bozze, e quelli che Gmail non ha potuto "
-"prendere sono aperti per poterli salvare."
 
 #: app/src/ui/window/senders.rs:42
 msgid "this list"
@@ -8485,6 +8446,45 @@ msgstr "A {person}"
 #: appcore/src/search.rs:78
 msgid "In {label}"
 msgstr "In {label}"
+
+#: appcore/src/send_later.rs:11
+msgid ""
+"Gmail is out of reach and Iris cannot reopen a message, so it stays in Send "
+"Later."
+msgstr ""
+"Gmail non è raggiungibile e Iris non può riaprire un messaggio, quindi resta "
+"in Invia più tardi."
+
+#: appcore/src/send_later.rs:14
+msgid ""
+"Won't be sent. Gmail is out of reach, so the message is open for you to save."
+msgstr ""
+"Non verrà inviato. Gmail non è raggiungibile, quindi il messaggio è aperto "
+"per poterlo salvare."
+
+#: appcore/src/send_later.rs:17
+msgid ""
+"Won't be sent. Gmail is out of reach, so the messages are open for you to "
+"save."
+msgstr ""
+"Non verranno inviati. Gmail non è raggiungibile, quindi i messaggi sono "
+"aperti per poterli salvare."
+
+#: appcore/src/send_later.rs:19
+msgid "Won't be sent. The message is in Drafts."
+msgstr "Non verrà inviato. Il messaggio è in Bozze."
+
+#: appcore/src/send_later.rs:20
+msgid "Won't be sent. The messages are in Drafts."
+msgstr "Non verranno inviati. I messaggi sono in Bozze."
+
+#: appcore/src/send_later.rs:22
+msgid ""
+"Won't be sent. Some are in Drafts, and the ones Gmail could not take are "
+"open for you to save."
+msgstr ""
+"Non verranno inviati. Alcuni sono in Bozze, e quelli che Gmail non ha potuto "
+"prendere sono aperti per poterli salvare."
 
 #: appcore/src/settings/mod.rs:233
 msgid "Local Server"

@@ -5504,43 +5504,12 @@ msgstr ""
 msgid "Could not open the conversation to reply to it"
 msgstr ""
 
-#: app/src/ui/window/scheduled.rs:97
+#: app/src/ui/window/scheduled.rs:98
 msgid "Sending…"
 msgstr ""
 
-#: app/src/ui/window/scheduled.rs:197
+#: app/src/ui/window/scheduled.rs:198
 msgid "Could not cancel: {reason}"
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:255
-msgid ""
-"Gmail is out of reach and Iris cannot reopen a message, so it stays in Send "
-"Later."
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:258
-msgid ""
-"Won't be sent. Gmail is out of reach, so the message is open for you to save."
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:261
-msgid ""
-"Won't be sent. Gmail is out of reach, so the messages are open for you to "
-"save."
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:263
-msgid "Won't be sent. The message is in Drafts."
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:264
-msgid "Won't be sent. The messages are in Drafts."
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:266
-msgid ""
-"Won't be sent. Some are in Drafts, and the ones Gmail could not take are "
-"open for you to save."
 msgstr ""
 
 #: app/src/ui/window/senders.rs:42
@@ -8098,6 +8067,37 @@ msgstr ""
 
 #: appcore/src/search.rs:78
 msgid "In {label}"
+msgstr ""
+
+#: appcore/src/send_later.rs:11
+msgid ""
+"Gmail is out of reach and Iris cannot reopen a message, so it stays in Send "
+"Later."
+msgstr ""
+
+#: appcore/src/send_later.rs:14
+msgid ""
+"Won't be sent. Gmail is out of reach, so the message is open for you to save."
+msgstr ""
+
+#: appcore/src/send_later.rs:17
+msgid ""
+"Won't be sent. Gmail is out of reach, so the messages are open for you to "
+"save."
+msgstr ""
+
+#: appcore/src/send_later.rs:19
+msgid "Won't be sent. The message is in Drafts."
+msgstr ""
+
+#: appcore/src/send_later.rs:20
+msgid "Won't be sent. The messages are in Drafts."
+msgstr ""
+
+#: appcore/src/send_later.rs:22
+msgid ""
+"Won't be sent. Some are in Drafts, and the ones Gmail could not take are "
+"open for you to save."
 msgstr ""
 
 #: appcore/src/settings/mod.rs:233

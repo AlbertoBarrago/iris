@@ -5703,52 +5703,13 @@ msgstr ""
 msgid "Could not open the conversation to reply to it"
 msgstr "Não foi possível abrir a conversa para lhe responder"
 
-#: app/src/ui/window/scheduled.rs:97
+#: app/src/ui/window/scheduled.rs:98
 msgid "Sending…"
 msgstr "A enviar…"
 
-#: app/src/ui/window/scheduled.rs:197
+#: app/src/ui/window/scheduled.rs:198
 msgid "Could not cancel: {reason}"
 msgstr "Não foi possível cancelar: {reason}"
-
-#: app/src/ui/window/scheduled.rs:255
-msgid ""
-"Gmail is out of reach and Iris cannot reopen a message, so it stays in Send "
-"Later."
-msgstr ""
-"O Gmail está inacessível e o Iris não consegue reabrir uma mensagem, por "
-"isso ela continua em Enviar mais tarde."
-
-#: app/src/ui/window/scheduled.rs:258
-msgid ""
-"Won't be sent. Gmail is out of reach, so the message is open for you to save."
-msgstr ""
-"Não vai ser enviada. O Gmail está inacessível, por isso a mensagem ficou "
-"aberta para a guardar."
-
-#: app/src/ui/window/scheduled.rs:261
-msgid ""
-"Won't be sent. Gmail is out of reach, so the messages are open for you to "
-"save."
-msgstr ""
-"Não vão ser enviadas. O Gmail está inacessível, por isso as mensagens "
-"ficaram abertas para as guardar."
-
-#: app/src/ui/window/scheduled.rs:263
-msgid "Won't be sent. The message is in Drafts."
-msgstr "Não vai ser enviada. A mensagem está nos rascunhos."
-
-#: app/src/ui/window/scheduled.rs:264
-msgid "Won't be sent. The messages are in Drafts."
-msgstr "Não vão ser enviadas. As mensagens estão nos rascunhos."
-
-#: app/src/ui/window/scheduled.rs:266
-msgid ""
-"Won't be sent. Some are in Drafts, and the ones Gmail could not take are "
-"open for you to save."
-msgstr ""
-"Não vão ser enviadas. Algumas estão nos rascunhos, e as que o Gmail não "
-"aceitou ficaram abertas para as guardar."
 
 #: app/src/ui/window/senders.rs:42
 msgid "this list"
@@ -8465,6 +8426,45 @@ msgstr "Para {person}"
 #: appcore/src/search.rs:78
 msgid "In {label}"
 msgstr "Em {label}"
+
+#: appcore/src/send_later.rs:11
+msgid ""
+"Gmail is out of reach and Iris cannot reopen a message, so it stays in Send "
+"Later."
+msgstr ""
+"O Gmail está inacessível e o Iris não consegue reabrir uma mensagem, por "
+"isso ela continua em Enviar mais tarde."
+
+#: appcore/src/send_later.rs:14
+msgid ""
+"Won't be sent. Gmail is out of reach, so the message is open for you to save."
+msgstr ""
+"Não vai ser enviada. O Gmail está inacessível, por isso a mensagem ficou "
+"aberta para a guardar."
+
+#: appcore/src/send_later.rs:17
+msgid ""
+"Won't be sent. Gmail is out of reach, so the messages are open for you to "
+"save."
+msgstr ""
+"Não vão ser enviadas. O Gmail está inacessível, por isso as mensagens "
+"ficaram abertas para as guardar."
+
+#: appcore/src/send_later.rs:19
+msgid "Won't be sent. The message is in Drafts."
+msgstr "Não vai ser enviada. A mensagem está nos rascunhos."
+
+#: appcore/src/send_later.rs:20
+msgid "Won't be sent. The messages are in Drafts."
+msgstr "Não vão ser enviadas. As mensagens estão nos rascunhos."
+
+#: appcore/src/send_later.rs:22
+msgid ""
+"Won't be sent. Some are in Drafts, and the ones Gmail could not take are "
+"open for you to save."
+msgstr ""
+"Não vão ser enviadas. Algumas estão nos rascunhos, e as que o Gmail não "
+"aceitou ficaram abertas para as guardar."
 
 #: appcore/src/settings/mod.rs:233
 msgid "Local Server"

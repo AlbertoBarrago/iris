@@ -29,6 +29,7 @@ pub mod protection;
 pub mod richtext;
 pub mod rules;
 pub mod search;
+pub mod send_later;
 pub mod settings;
 pub mod signature;
 pub mod smime;

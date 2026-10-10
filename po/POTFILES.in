@@ -174,4 +174,5 @@ sync/src/triage.rs
 view/src/done.rs
 view/src/sections.rs
 appcore/src/protection.rs
+appcore/src/send_later.rs
 appcore/src/unsubscribe_page.rs
