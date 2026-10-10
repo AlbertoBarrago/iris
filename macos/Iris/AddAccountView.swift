@@ -6,6 +6,8 @@ import SwiftUI
 struct AddAccountRequest: Identifiable, Equatable {
     let id = UUID()
     var tile: String? = nil
+    /// The account to sign in again, rather than a new one.
+    var again: Int64? = nil
 }
 
 /// Add Account, step by step as the GTK dialog goes: pick a provider,
@@ -50,7 +52,8 @@ struct AddAccountView: View {
                 case .address(let tile): addressPage(tile)
                 case .lookup(let checks): lookup(checks)
                 case .password(let page, let failure):
-                    PasswordStep(page: page, failure: failure, busy: busy, signIn: signIn, servers: openServers)
+                    PasswordStep(page: page, failure: failure, busy: busy, asksName: request.again == nil,
+                                 signIn: signIn, servers: openServers)
                 case .servers(let form):
                     ServersStep(form: form, setup: setup, said: said, busy: busy) { use($0) }
                 case .browser(let browser):
@@ -231,7 +234,9 @@ struct AddAccountView: View {
     }
 
     private var canGoBack: Bool {
-        switch screen {
+        // Signing in again starts on its own page, with nowhere to go back.
+        if request.again != nil { return false }
+        return switch screen {
         case .address, .password, .servers, .closed: true
         default: false
         }
@@ -241,7 +246,12 @@ struct AddAccountView: View {
 
     private func start() {
         setup = model.accountSetup()
-        if let tile = request.tile { choose(tile) }
+        if let again = request.again, let setup {
+            address = model.accountLook(again)?.email ?? ""
+            landed(Result { try setup.signInAgain(accountId: again) })
+        } else if let tile = request.tile {
+            choose(tile)
+        }
     }
 
     private func reset() {
@@ -366,6 +376,11 @@ struct AddAccountView: View {
     }
 
     private func added(_ email: String, _ id: Int64) {
+        if request.again != nil {
+            model.signedInAgain(email)
+            dismiss()
+            return
+        }
         model.accountAdded()
         screen = .added(email, id)
     }
@@ -468,6 +483,9 @@ private struct PasswordStep: View {
     let page: PasswordPage
     let failure: FailureCard?
     let busy: Bool
+    /// A new account asks for the person's name; one signing in again
+    /// keeps the one it has.
+    let asksName: Bool
     let signIn: (String, String) -> Void
     let servers: () -> Void
     @State private var password = ""
@@ -499,7 +517,9 @@ private struct PasswordStep: View {
                     }
                 }
             }
-            TextField(tr("Your Name"), text: $name).textFieldStyle(.roundedBorder)
+            if asksName {
+                TextField(tr("Your Name"), text: $name).textFieldStyle(.roundedBorder)
+            }
             if let failure {
                 FailureView(card: failure)
             }

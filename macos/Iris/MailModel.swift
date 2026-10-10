@@ -72,6 +72,7 @@ final class MailModel {
 
     /// The toast over the list after an action, with Undo.
     private(set) var toast: Toast?
+    @ObservationIgnored private var palette: [AccountColorChoice] = []
 
     /// The window's undo manager, so ⌘Z and Edit > Undo reverse a mail
     /// action the way they reverse anything in a Mac app.
@@ -928,6 +929,48 @@ extension MailModel {
                 }
             }
         }
+    }
+
+    // MARK: The account menu
+
+    /// The account menu's state for one account.
+    func accountLook(_ id: Int64) -> AccountLook? { try? mail?.accountLook(accountId: id) }
+
+    /// The colours the account menu offers, read once.
+    var accountPalette: [AccountColorChoice] {
+        if palette.isEmpty, let mail { palette = mail.accountPalette() }
+        return palette
+    }
+
+    func renameAccount(_ id: Int64, to name: String) {
+        changeAccount { try $0.renameAccount(accountId: id, name: name) }
+    }
+
+    func colorAccount(_ id: Int64, index: Int) {
+        changeAccount { try $0.colorAccount(accountId: id, index: UInt32(index)) }
+    }
+
+    func moveAccount(_ id: Int64, step: Int32) {
+        changeAccount { try $0.moveAccount(accountId: id, step: step) }
+    }
+
+    /// Runs one account menu change, then reads the sidebar and the list
+    /// again at once for the new name, colour or place.
+    private func changeAccount(_ change: (Mail) throws -> Void) {
+        guard let mail else { return }
+        do {
+            try change(mail)
+            refresh()
+        } catch {
+            toast = Toast(words: "\(error)", undo: false)
+        }
+    }
+
+    /// An account signed in again: says so, and reads the sidebar for its
+    /// state.
+    func signedInAgain(_ email: String) {
+        toast = Toast(words: tr("{account} is signed in again.").replacingOccurrences(of: "{account}", with: email), undo: false)
+        refresh()
     }
 
     /// Reads whether the store has accounts, and the sidebar, and moves

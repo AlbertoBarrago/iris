@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// The sidebar the Rust core lays out: the mailboxes for every account
@@ -94,6 +95,9 @@ struct AccountLine: View {
     @Binding var isOpen: Bool
     @State private var hovering = false
     @State private var removing: RemoveQuestion?
+    @State private var renaming = false
+    @State private var newName = ""
+    @State private var renamingEmail = ""
 
     var body: some View {
         HStack(spacing: 6) {
@@ -129,6 +133,22 @@ struct AccountLine: View {
         } message: {
             Text(removing?.body ?? "")
         }
+        .alert(tr("Name This Account"), isPresented: $renaming) {
+            TextField(renamingEmail, text: $newName)
+            Button(tr("Cancel"), role: .cancel) {}
+            Button(tr("Save")) {
+                if let id = item.accountId { model.renameAccount(id, to: newName) }
+            }
+            .keyboardShortcut(.defaultAction)
+        } message: {
+            Text(tr("The sidebar shows the name instead of the address. Leave it empty for the address."))
+        }
+    }
+
+    /// Where the account sits among the others in the sidebar.
+    private var place: (first: Bool, last: Bool) {
+        let accounts = model.sidebar.filter { $0.kind == "account" }
+        return (accounts.first?.key == item.key, accounts.last?.key == item.key)
     }
 
     @ViewBuilder private var menu: some View {
@@ -142,18 +162,62 @@ struct AccountLine: View {
                 Button(tr("Signature…")) {}
                 Button(tr("Rules…")) {}
                 Button(tr("Hide My Email…")) {}
-                Divider()
-                Button(tr("Rename…")) {}
-                Button(tr("Move Up")) {}
-                Button(tr("Move Down")) {}
-                Divider()
-                Button(tr("Sign In Again…")) {}
             }
             .disabled(true)
+            Divider()
+            Button(tr("Rename…")) {
+                let look = item.accountId.flatMap { model.accountLook($0) }
+                newName = look?.name ?? ""
+                renamingEmail = look?.email ?? item.title
+                renaming = true
+            }
+            Menu(tr("Color")) {
+                ForEach(Array(model.accountPalette.enumerated()), id: \.offset) { index, choice in
+                    Button {
+                        if let id = item.accountId { model.colorAccount(id, index: index) }
+                    } label: {
+                        Label {
+                            Text(choice.name)
+                        } icon: {
+                            Image(nsImage: Self.swatch(choice.hex, chosen: choice.hex == item.accountColor))
+                        }
+                    }
+                }
+            }
+            Button(tr("Move Up")) {
+                if let id = item.accountId { model.moveAccount(id, step: -1) }
+            }
+            .disabled(place.first)
+            Button(tr("Move Down")) {
+                if let id = item.accountId { model.moveAccount(id, step: 1) }
+            }
+            .disabled(place.last)
+            Divider()
+            Button(tr("Sign In Again…")) {
+                if let id = item.accountId { model.addAccount = AddAccountRequest(again: id) }
+            }
             Divider()
             Button(tr("Remove Account…")) {
                 if let id = item.accountId { removing = model.removeAccountQuestion(id) }
             }
+    }
+
+    /// A colour's dot for the menu, which draws a picture but no SwiftUI
+    /// shape. The chosen colour gets a ring.
+    private static func swatch(_ hex: String, chosen: Bool) -> NSImage {
+        let image = NSImage(size: NSSize(width: 14, height: 14), flipped: false) { rect in
+            let color = Color(hex: hex).map(NSColor.init) ?? .gray
+            color.setFill()
+            NSBezierPath(ovalIn: rect.insetBy(dx: chosen ? 3 : 1.5, dy: chosen ? 3 : 1.5)).fill()
+            if chosen {
+                color.setStroke()
+                let ring = NSBezierPath(ovalIn: rect.insetBy(dx: 0.75, dy: 0.75))
+                ring.lineWidth = 1.2
+                ring.stroke()
+            }
+            return true
+        }
+        return image
     }
 
     /// The mark beside an account whose sync needs attention.

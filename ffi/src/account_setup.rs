@@ -16,7 +16,7 @@ use mailrs_appcore::settings::{Change, Settings};
 use mailrs_discover::{Security, Server};
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{Account, Provider, RemoveSetting};
-use mailrs_store::accounts;
+use mailrs_store::{accounts, servers};
 use mailrs_sync::passwords::Secrets;
 use mailrs_sync::sign_in::Wanted;
 use mailrs_sync::{Clients, Connector};
@@ -229,6 +229,8 @@ struct State {
     proposal: Option<Proposal>,
     /// Sending on it, or dropping it, stops a browser sign-in's wait.
     cancel: Option<async_channel::Sender<()>>,
+    /// The account signing in again, rather than a new one.
+    again: Option<String>,
 }
 
 #[uniffi::export]
@@ -287,7 +289,7 @@ impl Mail {
 }
 
 impl Mail {
-    fn account_row(&self, account_id: i64) -> Result<Account, CoreError> {
+    pub(crate) fn account_row(&self, account_id: i64) -> Result<Account, CoreError> {
         let db = self.db.clone();
         self.run(async move { db.read(move |c| accounts::account(c, account_id)).await })?
             .ok_or_else(|| CoreError::Store("That account is no longer here.".into()))
@@ -467,6 +469,7 @@ impl AccountSetup {
                 Ok((account, services)) => {
                     engine.start_account(account.id, services);
                     keep_send_as_name(&account, &name);
+                    self.signed_in_again(&account.email);
                     self.mail.changed("accounts");
                     return Ok(SignInAnswer::Added {
                         account_id: account.id,
@@ -531,11 +534,56 @@ impl AccountSetup {
         if let Some(name) = &signed.name {
             keep_send_as_name(&signed.account, name);
         }
+        self.signed_in_again(&signed.account.email);
         self.mail.changed("accounts");
         Ok(SignInAnswer::Added {
             account_id: signed.account.id,
             email: signed.account.email,
         })
+    }
+
+    /// Starts signing account `account_id` in again: in the browser for
+    /// Google and Microsoft, else on the password page with the servers
+    /// it has kept, or Server Settings when it kept none.
+    pub fn sign_in_again(&self, account_id: i64) -> Result<SetupStep, CoreError> {
+        let account = self.mail.account_row(account_id)?;
+        let address = Address::parse(&account.email).ok_or_else(|| CoreError::Store(add_account::not_an_address()))?;
+        self.lock().again = Some(account.email.clone());
+        if let Some(browser) = Browser::of(account.provider) {
+            return Ok(SetupStep::Browser {
+                browser: browser_key(browser).into(),
+            });
+        }
+        let db = self.mail.db.clone();
+        let kept = self.mail.run(async move {
+            db.read(move |c| {
+                if let Some(servers) = servers::load(c, account_id)? {
+                    return Ok(Some(add_account::Kept::Imap(servers)));
+                }
+                let Some(servers) = servers::load_pop3(c, account_id)? else {
+                    return Ok(None);
+                };
+                let remove = accounts::pop3_remove(c, account_id)?;
+                Ok(Some(add_account::Kept::Pop3(servers, remove)))
+            })
+            .await
+        })?;
+        let mut state = self.lock();
+        state.address = Some(address.clone());
+        match kept {
+            Some(kept) => {
+                let proposal = add_account::saved_proposal(&account, &kept);
+                let page = password_page(&address, &proposal);
+                state.proposal = Some(proposal);
+                Ok(SetupStep::Password { page })
+            }
+            None => {
+                let proposal = add_account::guess(&address);
+                let form = form(&proposal, None);
+                state.proposal = Some(proposal);
+                Ok(SetupStep::Servers { form })
+            }
+        }
     }
 
     /// Stops waiting for the browser.
@@ -605,6 +653,20 @@ impl AccountSetup {
 }
 
 impl AccountSetup {
+    /// An account that signed in again asks Gmail for its send-as
+    /// addresses at once, as the GTK app does.
+    fn signed_in_again(&self, email: &str) {
+        if self.lock().again.as_deref() != Some(email) {
+            return;
+        }
+        let path = Settings::default_path();
+        let mut settings = Settings::load(&path);
+        Change::SignedInAgain { account: email.to_string() }.apply_to(&mut settings);
+        if let Err(err) = settings.save(&path) {
+            tracing::warn!(error = %err, "could not note an account signed in again");
+        }
+    }
+
     fn lock(&self) -> std::sync::MutexGuard<'_, State> {
         self.state.lock().unwrap_or_else(|p| p.into_inner())
     }

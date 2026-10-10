@@ -25,6 +25,8 @@ use mailrs_sync::{Accounts, History, MailAction, MailActions, Mailbox, MovedFrom
 use mailrs_view::sidebar::{self, Entry, Icon};
 
 use crate::CoreError;
+use crate::account_menu;
+use mailrs_appcore::settings::Settings;
 
 pub(crate) use mailrs_appcore::engine::RunningEngine as Running;
 
@@ -184,6 +186,9 @@ pub struct Mail {
     pub(crate) people: Mutex<Option<Arc<Vec<mailrs_store::contacts::Suggestion>>>>,
     /// Who hears the engine, kept to start it again after a change.
     listener: Mutex<Option<Arc<dyn MailListener>>>,
+    /// Each account's colour, as the last sidebar read it from
+    /// Preferences, for the list's rows.
+    account_colors: Mutex<HashMap<AccountId, String>>,
 }
 
 #[uniffi::export]
@@ -210,6 +215,7 @@ impl Mail {
             db,
             keys: Mutex::new(HashMap::new()),
             people: Mutex::new(None),
+            account_colors: Mutex::new(HashMap::new()),
             listener: Mutex::new(None),
         })
     }
@@ -424,9 +430,14 @@ impl Mail {
     /// The sidebar, with each row's count.
     pub fn sidebar(&self) -> Result<Vec<SidebarItem>, CoreError> {
         let db = self.db.clone();
-        let accounts_and_labels = self.run(async move { db.read(|c| {
+        let settings = Settings::load(&Settings::default_path());
+        let listed = self.run(async move { db.read(accounts::list_accounts).await })?;
+        let listed = account_menu::ordered(&settings, listed);
+        *self.account_colors.lock().unwrap_or_else(|p| p.into_inner()) = account_menu::colors(&settings, &listed);
+        let db = self.db.clone();
+        let accounts_and_labels = self.run(async move { db.read(move |c| {
             let mut out = Vec::new();
-            for account in accounts::list_accounts(c)? {
+            for account in listed {
                 let labels = labels::list_labels(c, account.id)?;
                 out.push((account, labels));
             }
@@ -445,8 +456,12 @@ impl Mail {
             .map_err(|err| CoreError::Store(err.to_string()))?;
         let emails: HashMap<AccountId, (String, AccountState)> = accounts_and_labels
             .iter()
-            .map(|(a, _)| (a.id, (a.email.clone(), a.state)))
+            .map(|(a, _)| {
+                let shown = settings.account_names.get(&a.email).cloned().unwrap_or_else(|| a.email.clone());
+                (a.id, (shown, a.state))
+            })
             .collect();
+        let colors = self.account_colors.lock().unwrap_or_else(|p| p.into_inner()).clone();
         let mut keys = HashMap::new();
         let mut items = Vec::new();
         for entry in entries {
@@ -471,7 +486,7 @@ impl Mail {
                     color: None,
                     depth: 0,
                     count: 0,
-                    account_color: Some(format::PALETTE[format::account_color_index(id)].to_string()),
+                    account_color: colors.get(&id).cloned(),
                     account_id: Some(id),
                     state: emails.get(&id).map(|(_, state)| state.as_str().to_string()).unwrap_or_default(),
                 }),
@@ -556,10 +571,11 @@ impl Mail {
             })?;
         tracing::info!(rows = listing.rows.len(), ?account_id, "searched the stored mail");
         let now = chrono::Local::now();
+        let colors = self.account_colors.lock().unwrap_or_else(|p| p.into_inner()).clone();
         Ok(MailboxListing {
             title: listing.title,
             subtitle: listing.subtitle,
-            rows: listing.rows.iter().map(|t| row(t, now)).collect(),
+            rows: listing.rows.iter().map(|t| row(t, now, &colors)).collect(),
             categories: Vec::new(),
             empty: listing.empty.title,
         })
@@ -634,10 +650,11 @@ impl Mail {
             false => Vec::new(),
         };
         let now = chrono::Local::now();
+        let colors = self.account_colors.lock().unwrap_or_else(|p| p.into_inner()).clone();
         Ok(MailboxListing {
             title: listing.title,
             subtitle: listing.subtitle,
-            rows: listing.rows.iter().map(|t| row(t, now)).collect(),
+            rows: listing.rows.iter().map(|t| row(t, now, &colors)).collect(),
             categories,
             empty: listing.empty.title,
         })
@@ -780,7 +797,7 @@ fn view(category: Option<Category>) -> View {
     }
 }
 
-fn row(thread: &ThreadSummary, now: chrono::DateTime<chrono::Local>) -> ListRow {
+fn row(thread: &ThreadSummary, now: chrono::DateTime<chrono::Local>, colors: &HashMap<AccountId, String>) -> ListRow {
     let sender = if thread.from.trim().is_empty() {
         thread.from_email.clone()
     } else {
@@ -791,7 +808,10 @@ fn row(thread: &ThreadSummary, now: chrono::DateTime<chrono::Local>) -> ListRow 
         thread_id: thread.id.clone(),
         initials: format::initials(&sender),
         avatar_color: format::PALETTE[format::avatar_hue(&sender, &thread.from_email)].to_string(),
-        account_color: format::PALETTE[format::account_color_index(thread.account_id)].to_string(),
+        account_color: colors
+            .get(&thread.account_id)
+            .cloned()
+            .unwrap_or_else(|| format::PALETTE[format::account_color_index(thread.account_id)].to_string()),
         sender,
         sender_email: thread.from_email.clone(),
         subject: thread.subject.clone(),
