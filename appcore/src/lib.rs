@@ -14,6 +14,7 @@ pub mod attachcheck;
 pub mod compose;
 pub mod contacts;
 pub mod dirs;
+pub mod dock;
 pub mod engine;
 pub mod file_type;
 pub mod format;

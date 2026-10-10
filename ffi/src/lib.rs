@@ -20,6 +20,7 @@ mod ai_prefs;
 mod assistant;
 mod compose;
 mod mail;
+mod notify;
 mod prefs;
 
 pub use prefs::{ChoiceItem, PreferenceChoices, Preferences, SignatureSetting, import_signature};

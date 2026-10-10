@@ -1,5 +1,7 @@
 //! The Dock icon's badge: the unread count of every inbox.
 
+use mailrs_appcore::dock::badge_label;
+
 /// How long the badge waits for a burst of changes to end before it counts.
 pub const RECOUNT_AFTER: std::time::Duration = std::time::Duration::from_millis(500);
 
@@ -18,16 +20,6 @@ impl Burst {
     /// The run is starting, so a request from here on needs one of its own.
     pub fn start(&self) {
         self.0.set(false);
-    }
-}
-
-/// What the badge reads for `unread` conversations: nothing at none, and a
-/// capped figure past what the Dock's small red disc fits.
-pub fn badge_label(unread: i64) -> Option<String> {
-    match unread {
-        ..=0 => None,
-        1..=999 => Some(unread.to_string()),
-        _ => Some("999+".to_string()),
     }
 }
 
@@ -51,7 +43,7 @@ pub fn set_badge(unread: i64) {
 
 #[cfg(test)]
 mod tests {
-    use super::{Burst, badge_label};
+    use super::Burst;
 
     #[test]
     fn a_burst_of_changes_counts_once() {
@@ -63,17 +55,5 @@ mod tests {
             burst.claim(),
             "a change after the count starts counts again"
         );
-    }
-
-    #[test]
-    fn no_unread_mail_leaves_the_icon_bare() {
-        assert_eq!(badge_label(0), None);
-    }
-
-    #[test]
-    fn the_badge_counts_up_to_what_it_fits() {
-        assert_eq!(badge_label(1).as_deref(), Some("1"));
-        assert_eq!(badge_label(999).as_deref(), Some("999"));
-        assert_eq!(badge_label(1500).as_deref(), Some("999+"));
     }
 }

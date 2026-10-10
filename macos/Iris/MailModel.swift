@@ -59,6 +59,7 @@ final class MailModel {
             if openThread != Self.single(oldValue) {
                 toggled = []
                 loadConversation()
+                if let open = openThread { notifier?.seen(account: open.account, thread: open.thread) }
             }
         }
     }
@@ -73,6 +74,7 @@ final class MailModel {
     /// The toast over the list after an action, with Undo.
     private(set) var toast: Toast?
     @ObservationIgnored private var palette: [AccountColorChoice] = []
+    @ObservationIgnored private var notifier: Notifier?
 
     /// The window's undo manager, so ⌘Z and Edit > Undo reverse a mail
     /// action the way they reverse anything in a Mac app.
@@ -115,6 +117,7 @@ final class MailModel {
                 let mail = try Mail.open(path: MailModel.storePath)
                 let store = try Store.open(path: MailModel.storePath)
                 let sidebar = try mail.sidebar()
+                let badge = mail.dockBadge()
                 // `IRIS_OPEN=<account id>:<thread id>` opens one conversation
                 // at start, for comparing pages with the GTK app's demo.
                 let asked = ProcessInfo.processInfo.environment["IRIS_OPEN"]?
@@ -125,6 +128,7 @@ final class MailModel {
                     self.readPrefs()
                     self.startSync()
                     self.sidebar = sidebar
+                    NSApp.dockTile.badgeLabel = badge
                     self.noAccounts = mail.hasNoAccounts()
                     self.selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key
                     if let asked, asked.count == 2, let account = Int64(asked[0]) {
@@ -141,8 +145,13 @@ final class MailModel {
     /// moment after each burst of news from it.
     private func startSync() {
         guard let mail else { return }
+        let notifier = Notifier(model: self)
+        notifier.start()
+        self.notifier = notifier
         let listener = Listener { [weak self] in
             Task { @MainActor in self?.heardChange() }
+        } news: { [weak self] notices in
+            Task { @MainActor in self?.announce(notices) }
         }
         do {
             try mail.startSync(listener: listener)
@@ -164,14 +173,50 @@ final class MailModel {
         }
     }
 
-    /// Reads the sidebar and the shown list again.
+    /// Reads the sidebar, the shown list and the Dock's badge again.
     func refresh() {
         guard let mail else { return }
         Task.detached {
+            let badge = mail.dockBadge()
+            await MainActor.run { NSApp.dockTile.badgeLabel = badge }
             if let sidebar = try? mail.sidebar() {
                 await MainActor.run {
                     self.sidebar = sidebar
                     self.loadList()
+                }
+            }
+        }
+    }
+
+    // MARK: Notifications
+
+    private func announce(_ notices: [MailNotice]) {
+        guard let mail else { return }
+        notifier?.show(notices, buttons: mail.noticeButtons())
+    }
+
+    /// A click on a notification: Iris comes forward on the conversation,
+    /// in its account's inbox.
+    func openFromNotice(account: Int64, thread: String) {
+        NSApp.activate()
+        openInbox(of: account)
+        selection = [ThreadKey(account: account, thread: thread)]
+    }
+
+    /// A button on a notification. Reply opens the composer; the others
+    /// change the mail, with Undo, unless it moved on since.
+    func noticeChose(account: Int64, thread: String, message: String, button: String) {
+        guard let mail else { return }
+        Task.detached {
+            let answer = Result { try mail.noticeChose(accountId: account, threadId: thread, messageId: message, button: button) }
+            await MainActor.run {
+                switch answer {
+                case .success(.reply):
+                    self.openFromNotice(account: account, thread: thread)
+                    self.composeAsked = ComposeRequest(kind: .reply, account: account, thread: thread)
+                case .success(.done(let done)): self.finished(done, undoable: true)
+                case .success(.nothing): break
+                case .failure(let error): self.toast = Toast(words: "\(error)", undo: false)
                 }
             }
         }
@@ -763,13 +808,19 @@ struct ThreadKey: Hashable, Sendable {
 /// Hears the Rust core's news on its own threads and hands it on.
 final class Listener: MailListener, @unchecked Sendable {
     private let heard: @Sendable () -> Void
+    private let news: @Sendable ([MailNotice]) -> Void
 
-    init(_ heard: @escaping @Sendable () -> Void) {
+    init(_ heard: @escaping @Sendable () -> Void, news: @escaping @Sendable ([MailNotice]) -> Void) {
         self.heard = heard
+        self.news = news
     }
 
     func changed(what: String) {
         heard()
+    }
+
+    func newMail(notices: [MailNotice]) {
+        news(notices)
     }
 }
 

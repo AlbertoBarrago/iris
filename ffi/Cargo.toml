@@ -41,4 +41,5 @@ thiserror.workspace = true
 uniffi = { version = "0.32.2", features = ["cli"] }
 
 [dev-dependencies]
+mailrs-sync = { workspace = true, features = ["fake"] }
 tempfile.workspace = true

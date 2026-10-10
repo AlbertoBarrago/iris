@@ -34,7 +34,7 @@ impl Button {
     ];
 
     /// The action key the daemon sends back when the button is clicked.
-    fn key(self) -> &'static str {
+    pub fn key(self) -> &'static str {
         match self {
             Button::Archive => "archive",
             Button::MarkRead => "mark-read",
@@ -95,77 +95,97 @@ pub fn still_applies(button: Button, message: &MessageMeta) -> bool {
     }
 }
 
-/// Shows notifications for `messages`: one each for up to three, one
-/// summary beyond that. Clicking one sends its thread to `chosen`, as does
-/// each of `buttons`. With `previews` off, notifications say only how much
+/// One notification to show: its title, its body and the message a click
+/// opens, when it names one.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Notice {
+    pub title: String,
+    pub body: String,
+    pub target: Option<Target>,
+}
+
+/// What to say about `messages`: one notice each for up to three, one
+/// summary beyond that. With `previews` off, a notice says only how much
 /// mail arrived.
+pub fn notices(messages: &[MessageMeta], previews: bool) -> Vec<Notice> {
+    let count = messages.len();
+    let how_many = || {
+        fill_plural(
+            "{count} new message",
+            "{count} new messages",
+            count,
+            &[("count", &count.to_string())],
+        )
+    };
+    if count == 0 {
+        return Vec::new();
+    }
+    if !previews {
+        return vec![Notice {
+            title: how_many(),
+            body: String::new(),
+            target: (count == 1).then(|| target_of(&messages[0])),
+        }];
+    }
+    if count <= 3 {
+        return messages
+            .iter()
+            .map(|message| {
+                let sender = message
+                    .from
+                    .as_ref()
+                    .map(|a| a.display().to_string())
+                    .unwrap_or_else(|| gettext("New message"));
+                let subject = if message.subject.trim().is_empty() {
+                    gettext("(no subject)")
+                } else {
+                    message.subject.clone()
+                };
+                Notice {
+                    title: sender,
+                    body: format!("{subject}\n{}", message.snippet),
+                    target: Some(target_of(message)),
+                }
+            })
+            .collect();
+    }
+    let senders: Vec<String> = messages
+        .iter()
+        .filter_map(|m| m.from.as_ref().map(|a| a.display().to_string()))
+        .take(3)
+        .collect();
+    vec![Notice {
+        title: how_many(),
+        body: fill(
+            &gettext("From {senders}"),
+            &[("senders", &senders.join(", "))],
+        ),
+        target: None,
+    }]
+}
+
+/// Shows notifications for `messages`, as [`notices`] words them.
+/// Clicking one sends its thread to `chosen`, as does each of `buttons`.
 pub fn announce(
     messages: Vec<MessageMeta>,
     previews: bool,
     buttons: Vec<Button>,
     chosen: async_channel::Sender<Request>,
 ) {
-    if !previews {
-        let count = messages.len();
-        let summary = fill_plural(
-            "{count} new message",
-            "{count} new messages",
-            count,
-            &[("count", &count.to_string())],
-        );
-        let target = (messages.len() == 1).then(|| target_of(&messages[0]));
-        show(summary, String::new(), target, buttons, chosen);
-        return;
-    }
-    if messages.len() <= 3 {
-        for message in messages {
-            let sender = message
-                .from
-                .as_ref()
-                .map(|a| a.display().to_string())
-                .unwrap_or_else(|| gettext("New message"));
-            let subject = if message.subject.trim().is_empty() {
-                gettext("(no subject)")
-            } else {
-                message.subject.clone()
-            };
-            let body = format!("{subject}\n{}", message.snippet);
-            show(
-                sender,
-                body,
-                Some(target_of(&message)),
-                buttons.clone(),
-                chosen.clone(),
-            );
-        }
-    } else {
-        let senders: Vec<String> = messages
-            .iter()
-            .filter_map(|m| m.from.as_ref().map(|a| a.display().to_string()))
-            .take(3)
-            .collect();
-        let count = messages.len();
+    for notice in notices(&messages, previews) {
         show(
-            fill_plural(
-                "{count} new message",
-                "{count} new messages",
-                count,
-                &[("count", &count.to_string())],
-            ),
-            fill(
-                &gettext("From {senders}"),
-                &[("senders", &senders.join(", "))],
-            ),
-            None,
-            buttons,
-            chosen,
+            notice.title,
+            notice.body,
+            notice.target,
+            buttons.clone(),
+            chosen.clone(),
         );
     }
 }
 
 /// The message a notification announced, not its whole thread: archiving
 /// from a notification should leave the replies the reader has not seen.
-fn target_of(message: &MessageMeta) -> Target {
+pub fn target_of(message: &MessageMeta) -> Target {
     Target {
         account_id: message.account_id,
         thread_id: message.thread_id.clone(),
@@ -293,6 +313,27 @@ mod tests {
             Some(MailAction::Triage(TriageAction::Trash))
         );
         assert_eq!(Button::Reply.action(), None);
+    }
+
+    #[test]
+    fn up_to_three_messages_each_get_a_notice_and_more_get_one() {
+        use mailrs_sync::fake::meta;
+        let three: Vec<MessageMeta> = (0..3)
+            .map(|i| meta(&format!("m{i}"), "t1", 0, &["INBOX", "UNREAD"]))
+            .collect();
+        let shown = notices(&three, true);
+        assert_eq!(shown.len(), 3);
+        assert!(shown.iter().all(|n| n.target.is_some()));
+        let four: Vec<MessageMeta> = (0..4)
+            .map(|i| meta(&format!("m{i}"), "t1", 0, &["INBOX", "UNREAD"]))
+            .collect();
+        let summary = notices(&four, true);
+        assert_eq!(summary.len(), 1);
+        assert_eq!(summary[0].target, None, "a summary opens no one message");
+        let quiet = notices(&three[..1], false);
+        assert_eq!((quiet.len(), quiet[0].body.as_str()), (1, ""));
+        assert!(quiet[0].target.is_some(), "one message still opens on a click");
+        assert!(notices(&[], true).is_empty());
     }
 
     #[test]

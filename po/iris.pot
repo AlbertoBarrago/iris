@@ -7199,13 +7199,13 @@ msgstr ""
 msgid "Gray"
 msgstr ""
 
-#: appcore/src/notify.rs:111 appcore/src/notify.rs:150
+#: appcore/src/notify.rs:114
 msgid "{count} new message"
 msgid_plural "{count} new messages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/notify.rs:156
+#: appcore/src/notify.rs:160
 msgid "From {senders}"
 msgstr ""
 

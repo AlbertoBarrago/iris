@@ -37,6 +37,8 @@ pub trait MailListener: Send + Sync {
     /// Something on screen changed: `what` is `accounts`, `labels`,
     /// `threads` or `mail`.
     fn changed(&self, what: String);
+    /// New mail worth a notification arrived, worded as Preferences asks.
+    fn new_mail(&self, notices: Vec<crate::notify::MailNotice>);
 }
 
 /// One line of the sidebar.
@@ -248,11 +250,26 @@ impl Mail {
         engine.set_window_open(true);
         self.running.replace(Some(Arc::clone(&engine)));
         let heard = Arc::clone(&listener);
+        let db = self.db.clone();
         self.runtime.spawn(async move {
             while let Ok(event) = events.recv().await {
                 heard.changed(what_changed(&event).into());
+                if let ChangeEvent::NewMail { account_id, message_ids } = &event {
+                    tokio::spawn(crate::notify::announce(
+                        db.clone(),
+                        *account_id,
+                        message_ids.clone(),
+                        Arc::clone(&heard),
+                    ));
+                }
             }
         });
+        self.runtime.spawn(send_due(
+            Arc::clone(&self.running),
+            Arc::clone(&engine),
+            self.db.clone(),
+            Arc::clone(&listener),
+        ));
         let connector = Arc::new(Connector {
             db: self.db.clone(),
             config,
@@ -745,6 +762,38 @@ impl Starting<AccountServices> for Port {
 }
 
 /// The word the window hears for an engine event.
+/// How often the Outbox is tried, as the GTK app's scheduler does.
+const SEND_DUE_EVERY: std::time::Duration = std::time::Duration::from_secs(30);
+
+/// Sends what waits in the Outbox, every half minute while `engine` runs:
+/// a message that met an account still starting, or one Send Later holds
+/// until its hour. Ends once the engine is stopped or replaced.
+async fn send_due(running: Arc<Running>, engine: Arc<SyncEngine>, db: Db, listener: Arc<dyn MailListener>) {
+    let outbox = mailrs_sync::outbox::Outbox::new(Arc::clone(&running), db);
+    let mut every = tokio::time::interval(SEND_DUE_EVERY);
+    loop {
+        every.tick().await;
+        if !running.current().is_some_and(|now| Arc::ptr_eq(&now, &engine)) {
+            return;
+        }
+        match outbox.send_due(mailrs_sync::now_millis()).await {
+            Ok(drained) => {
+                for message in &drained.sent {
+                    tracing::info!(account = message.account_id, "sent a message that waited in the Outbox");
+                    engine.poke(message.account_id);
+                }
+                for message in &drained.stuck {
+                    tracing::warn!(account = message.account_id, "a message stays in the Outbox");
+                }
+                if drained.changed {
+                    listener.changed("threads".into());
+                }
+            }
+            Err(err) => tracing::warn!(error = %err, "the outbox could not be emptied; will retry"),
+        }
+    }
+}
+
 fn what_changed(event: &ChangeEvent) -> &'static str {
     match event {
         ChangeEvent::AccountStateChanged { .. } => "accounts",
