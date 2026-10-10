@@ -144,3 +144,85 @@ enum DraggedThreads {
         }
     }
 }
+
+/// A label's own menu in the sidebar, on a right click: Rename, New Label
+/// Inside, Color, Move Up and Down, and Delete, as the GTK sidebar's.
+struct LabelMenu: ViewModifier {
+    @Environment(MailModel.self) private var model
+    let item: SidebarItem
+
+    @State private var look: LabelLook?
+    @State private var renaming = false
+    @State private var nesting = false
+    @State private var deleting = false
+    @State private var name = ""
+
+    func body(content: Content) -> some View {
+        if item.icon == "label" {
+            content
+                .contextMenu { menu }
+                .alert(look?.renameHeading ?? "", isPresented: $renaming) {
+                    TextField(look?.newPrompt ?? "", text: $name)
+                    Button(tr("Cancel"), role: .cancel) {}
+                    Button(tr("Rename")) { model.renameLabel(item.key, to: name) }
+                        .keyboardShortcut(.defaultAction)
+                } message: {
+                    Text(look?.renameBody ?? "")
+                }
+                .alert(look?.newHeading ?? "", isPresented: $nesting) {
+                    TextField(look?.newPrompt ?? "", text: $name)
+                    Button(tr("Cancel"), role: .cancel) {}
+                    Button(tr("Create")) {
+                        if let account = look?.accountId { model.newLabel(account: account, name: name) }
+                    }
+                    .keyboardShortcut(.defaultAction)
+                }
+                .alert(look?.deleteTitle ?? "", isPresented: $deleting) {
+                    Button(tr("Cancel"), role: .cancel) {}
+                    Button(tr("Delete"), role: .destructive) { model.deleteLabel(item.key) }
+                } message: {
+                    Text(look?.deleteBody ?? "")
+                }
+        } else {
+            content
+        }
+    }
+
+    @ViewBuilder private var menu: some View {
+        let current = model.labelLook(item.key)
+        Button(tr("Rename…")) {
+            look = current
+            name = current?.name ?? ""
+            renaming = true
+        }
+        Button(current?.newInsideItem ?? tr("New Label Inside…")) {
+            look = current
+            // The slash nests the new label under this one.
+            name = (current?.name ?? "") + "/"
+            nesting = true
+        }
+        Menu(tr("Color")) {
+            ForEach(Array((current?.colors ?? []).enumerated()), id: \.offset) { index, choice in
+                Button {
+                    model.colorLabel(item.key, index: index)
+                } label: {
+                    Label { Text(choice.name) } icon: { FlagImage.dot(choice.hex) }
+                }
+            }
+        }
+        if current?.canMoveUp == true || current?.canMoveDown == true {
+            Divider()
+            if current?.canMoveUp == true {
+                Button(tr("Move Up")) { model.moveLabel(item.key, step: -1) }
+            }
+            if current?.canMoveDown == true {
+                Button(tr("Move Down")) { model.moveLabel(item.key, step: 1) }
+            }
+        }
+        Divider()
+        Button(tr("Delete…")) {
+            look = current
+            deleting = true
+        }
+    }
+}

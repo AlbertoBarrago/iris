@@ -7,11 +7,14 @@ use std::collections::{BTreeMap, HashSet};
 use std::sync::Arc;
 
 use mailrs_appcore::moving::{self, moved_to};
+use mailrs_appcore::label_colors::{LABEL_COLORS, label_color_name};
 use mailrs_appcore::offered::{Filing, offers_for};
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{AccountId, LabelKind, Target};
 use mailrs_store::{labels, messages};
 use mailrs_sync::{Accounts, History, MailAction, MovedFrom, Offers, TriageAction};
+
+use mailrs_view::tree::{self, Placement};
 
 use crate::CoreError;
 use crate::mail::{ActionDone, Mail, ThreadRef};
@@ -51,8 +54,132 @@ pub struct FilingRow {
     pub described: String,
 }
 
+/// What a label's menu in the sidebar needs: its words, its colours and
+/// where it can move.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct LabelLook {
+    pub account_id: i64,
+    /// Its whole name, `Work/Tax`, as Rename starts from.
+    pub name: String,
+    pub rename_heading: String,
+    pub rename_body: String,
+    pub new_inside_item: String,
+    pub new_heading: String,
+    pub new_prompt: String,
+    pub delete_title: String,
+    pub delete_body: String,
+    pub colors: Vec<LabelColorChoice>,
+    pub can_move_up: bool,
+    pub can_move_down: bool,
+}
+
+/// One colour of Gmail's label palette.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct LabelColorChoice {
+    pub name: String,
+    /// `#rrggbb`.
+    pub hex: String,
+}
+
 #[uniffi::export]
 impl Mail {
+    /// The menu of the label behind the sidebar's `key`.
+    pub fn label_look(&self, key: String) -> Result<LabelLook, CoreError> {
+        let (account_id, label_id) = self.label_of(&key)?;
+        let all = self.all_labels(account_id)?;
+        let order = self.label_positions(account_id)?;
+        let rows = tree::label_rows(&all, &order);
+        let moves = tree::moves(&rows, &label_id);
+        let name = all.iter().find(|l| l.id == label_id).map(|l| l.name.clone()).unwrap_or_default();
+        let filing = Filing::of([self.offers(account_id)]);
+        Ok(LabelLook {
+            account_id,
+            delete_title: fill(&gettext("Delete “{name}”?"), &[("name", &shown_name(&name))]),
+            name,
+            rename_heading: filing.rename_heading(),
+            rename_body: filing.rename_body(),
+            new_inside_item: filing.new_inside_item(),
+            new_heading: filing.new_heading(),
+            new_prompt: gettext("Name, or Parent/Name to nest it"),
+            delete_body: filing.delete_body(),
+            colors: LABEL_COLORS
+                .iter()
+                .enumerate()
+                .map(|(index, (hex, _))| LabelColorChoice {
+                    name: label_color_name(index),
+                    hex: hex.to_string(),
+                })
+                .collect(),
+            can_move_up: moves.up,
+            can_move_down: moves.down,
+        })
+    }
+
+    /// Renames the label behind `key`; a slash nests it under another.
+    pub fn rename_label(&self, key: String, name: String) -> Result<(), CoreError> {
+        let (account_id, label_id) = self.label_of(&key)?;
+        let name = name.trim().to_string();
+        if name.is_empty() {
+            return Ok(());
+        }
+        let sync = self.connected(account_id)?;
+        let filing = Filing::of([self.offers(account_id)]);
+        self.run(async move { sync.rename_label(&label_id, &name).await })
+            .map_err(|err| failed(&filing.rename_failed(), &err))
+    }
+
+    /// Deletes the label behind `key`, and says so.
+    pub fn delete_label(&self, key: String) -> Result<String, CoreError> {
+        let (account_id, label_id) = self.label_of(&key)?;
+        let name = self.all_labels(account_id)?.into_iter().find(|l| l.id == label_id).map(|l| l.name).unwrap_or_default();
+        let sync = self.connected(account_id)?;
+        let filing = Filing::of([self.offers(account_id)]);
+        self.run(async move { sync.delete_label(&label_id).await })
+            .map_err(|err| failed(&filing.delete_failed(), &err))?;
+        Ok(fill(&gettext("Deleted “{name}”"), &[("name", &shown_name(&name))]))
+    }
+
+    /// Gives the label behind `key` colour `index` of Gmail's palette.
+    pub fn color_label(&self, key: String, index: u32) -> Result<(), CoreError> {
+        let (account_id, label_id) = self.label_of(&key)?;
+        let Some((background, text)) = LABEL_COLORS.get(index as usize) else {
+            return Ok(());
+        };
+        let color = mailrs_gmail::LabelColor {
+            background_color: background.to_string(),
+            text_color: text.to_string(),
+        };
+        let sync = self.connected(account_id)?;
+        self.run(async move { sync.set_label_color(&label_id, color).await })
+            .map_err(|err| failed(&gettext("Could not change the color: {reason}"), &err))
+    }
+
+    /// Moves the label behind `key` one place up (`-1`) or down (`1`)
+    /// among its siblings.
+    pub fn move_label(&self, key: String, step: i32) -> Result<(), CoreError> {
+        let (account_id, label_id) = self.label_of(&key)?;
+        let all = self.all_labels(account_id)?;
+        let order = self.label_positions(account_id)?;
+        let rows = tree::label_rows(&all, &order);
+        let Some(Placement { name, order }) = tree::step(&rows, &label_id, step.signum()) else {
+            return Ok(());
+        };
+        let sync = self.connected(account_id)?;
+        let filing = Filing::of([self.offers(account_id)]);
+        self.run(async move { sync.place_label(&label_id, &name, &order).await })
+            .map_err(|err| failed(&filing.rename_failed(), &err))
+    }
+
+    /// Makes a label on `account_id` from the sidebar, with no mail to
+    /// file under it.
+    pub fn new_label(&self, account_id: i64, name: String) -> Result<(), CoreError> {
+        let name = name.trim().to_string();
+        if name.is_empty() {
+            return Ok(());
+        }
+        self.create_label(account_id, name).map(|_| ())
+    }
+
     /// The picker for `threads`: the account's labels with those already
     /// on a single conversation ticked, or the label names every account
     /// holds for mail from several.
@@ -137,10 +264,7 @@ impl Mail {
     /// Makes a label, or a folder on a folder account, called `name` on
     /// `account_id`, and answers its row.
     pub fn create_label(&self, account_id: i64, name: String) -> Result<FilingRow, CoreError> {
-        let sync = self
-            .running
-            .account(account_id)
-            .ok_or_else(|| CoreError::Store(gettext("That account is not connected")))?;
+        let sync = self.connected(account_id)?;
         let label = self
             .run(async move { sync.create_label(&name).await })
             .map_err(|err| CoreError::Store(err.to_string()))?;
@@ -163,8 +287,33 @@ impl Mail {
 }
 
 impl Mail {
+    /// The account and the label id behind a sidebar key.
+    fn label_of(&self, key: &str) -> Result<(AccountId, String), CoreError> {
+        match self.mailbox(key) {
+            Some(mailrs_sync::Mailbox::Label { account_id, label_id, .. }) => Ok((account_id, label_id)),
+            _ => Err(CoreError::Store("That label is no longer in the sidebar.".into())),
+        }
+    }
+
+    fn connected(&self, account_id: AccountId) -> Result<Arc<mailrs_sync::AccountSync>, CoreError> {
+        self.running
+            .account(account_id)
+            .ok_or_else(|| CoreError::Store(gettext("That account is not connected")))
+    }
+
+    fn all_labels(&self, account_id: AccountId) -> Result<Vec<mailrs_domain::Label>, CoreError> {
+        let db = self.db.clone();
+        Ok(self.run(async move { db.read(move |c| labels::list_labels(c, account_id)).await })?)
+    }
+
+    /// Where the person put each label among its siblings, by label id.
+    pub(crate) fn label_positions(&self, account_id: AccountId) -> Result<std::collections::HashMap<String, i64>, CoreError> {
+        let db = self.db.clone();
+        Ok(self.run(async move { db.read(move |c| labels::positions(c, account_id)).await })?)
+    }
+
     /// What `account_id` offers, or everything while it has not started.
-    fn offers(&self, account_id: AccountId) -> Offers {
+    pub(crate) fn offers(&self, account_id: AccountId) -> Offers {
         let running = self.running.account(account_id);
         offers_for(running.as_ref().map(|sync| sync.services()))
     }
@@ -202,6 +351,11 @@ impl Mail {
             failed: outcome.failed.first().map(|f| f.error.clone()),
         }
     }
+}
+
+/// `words` with the server's `reason` in it.
+fn failed(words: &str, reason: &impl std::fmt::Display) -> CoreError {
+    CoreError::Store(fill(words, &[("reason", &reason.to_string())]))
 }
 
 fn target(thread: ThreadRef) -> Target {

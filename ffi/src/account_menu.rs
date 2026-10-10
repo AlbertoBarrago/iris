@@ -23,6 +23,11 @@ pub struct AccountLook {
     pub colors: Vec<AccountColorChoice>,
     pub can_move_up: bool,
     pub can_move_down: bool,
+    /// "New Label…", or "New Folder…" on an account that files in
+    /// folders, with its dialog's heading and prompt.
+    pub new_label_item: String,
+    pub new_label_heading: String,
+    pub new_label_prompt: String,
 }
 
 /// One colour of the account palette.
@@ -42,7 +47,11 @@ impl Mail {
         let all = self.all_accounts()?;
         let order = ordered(&settings, all);
         let at = order.iter().position(|a| a.id == account_id).unwrap_or(0);
+        let filing = mailrs_appcore::offered::Filing::of([self.offers(account_id)]);
         Ok(AccountLook {
+            new_label_item: filing.new_item(),
+            new_label_heading: filing.new_heading(),
+            new_label_prompt: mailrs_domain::translate::gettext("Name, or Parent/Name to nest it"),
             name: settings.account_names.get(&account.email).cloned().unwrap_or_default(),
             color: color_index(&settings, &account) as u32,
             colors: palette(),

@@ -304,6 +304,48 @@ final class MailModel {
         }
     }
 
+    // MARK: The label menu
+
+    func labelLook(_ key: String) -> LabelLook? { try? mail?.labelLook(key: key) }
+
+    func renameLabel(_ key: String, to name: String) {
+        changeLabels { try $0.renameLabel(key: key, name: name); return nil }
+    }
+
+    func deleteLabel(_ key: String) {
+        if selectedMailbox == key { selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key }
+        changeLabels { try $0.deleteLabel(key: key) }
+    }
+
+    func colorLabel(_ key: String, index: Int) {
+        changeLabels { try $0.colorLabel(key: key, index: UInt32(index)); return nil }
+    }
+
+    func moveLabel(_ key: String, step: Int32) {
+        changeLabels { try $0.moveLabel(key: key, step: step); return nil }
+    }
+
+    func newLabel(account: Int64, name: String) {
+        changeLabels { try $0.newLabel(accountId: account, name: name); return nil }
+    }
+
+    /// Runs one label change off the main thread, since it waits on the
+    /// server, then reads the sidebar again and says what it did or why
+    /// it could not.
+    private func changeLabels(_ change: @escaping @Sendable (Mail) throws -> String?) {
+        guard let mail else { return }
+        Task.detached {
+            let done = Result { try change(mail) }
+            await MainActor.run {
+                switch done {
+                case .success(let words): if let words { self.toast = Toast(words: words, undo: false) }
+                case .failure(let error): self.toast = Toast(words: "\(error)", undo: false)
+                }
+                self.refresh()
+            }
+        }
+    }
+
     /// The flag every one of `keys` wears, as its color, when they share
     /// one; the flag menu ticks it.
     func sharedFlag(of keys: Set<ThreadKey>? = nil) -> String? {
@@ -498,7 +540,10 @@ final class MailModel {
     /// Saves a composer's draft on the server.
     func saveDraft(_ draft: ComposeDraft) async throws -> ComposeDraft {
         guard let mail else { return draft }
-        return try await Task.detached { try mail.saveDraft(composed: draft) }.value
+        let kept = try await Task.detached { try mail.saveDraft(composed: draft) }.value
+        // Drafts shows it now, not at the next sync's news.
+        refresh()
+        return kept
     }
 
     /// Deletes the server's copy of a discarded draft, when there is one.

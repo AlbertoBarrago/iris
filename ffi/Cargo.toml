@@ -18,6 +18,7 @@ path = "src/bin/uniffi-bindgen.rs"
 
 [dependencies]
 mailrs-ai.workspace = true
+mailrs-gmail.workspace = true
 mailrs-discover.workspace = true
 mailrs-domain.workspace = true
 mailrs-pgp.workspace = true

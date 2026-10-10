@@ -98,6 +98,10 @@ struct AccountLine: View {
     @State private var renaming = false
     @State private var newName = ""
     @State private var renamingEmail = ""
+    @State private var makingLabel = false
+    @State private var newLabelName = ""
+    /// The account menu's words, read when the menu is built.
+    private var look: AccountLook? { item.accountId.flatMap { model.accountLook($0) } }
 
     var body: some View {
         HStack(spacing: 6) {
@@ -133,6 +137,14 @@ struct AccountLine: View {
         } message: {
             Text(removing?.body ?? "")
         }
+        .alert(look?.newLabelHeading ?? tr("New Label"), isPresented: $makingLabel) {
+            TextField(look?.newLabelPrompt ?? "", text: $newLabelName)
+            Button(tr("Cancel"), role: .cancel) {}
+            Button(tr("Create")) {
+                if let id = item.accountId { model.newLabel(account: id, name: newLabelName) }
+            }
+            .keyboardShortcut(.defaultAction)
+        }
         .alert(tr("Name This Account"), isPresented: $renaming) {
             TextField(renamingEmail, text: $newName)
             Button(tr("Cancel"), role: .cancel) {}
@@ -165,6 +177,10 @@ struct AccountLine: View {
             }
             .disabled(true)
             Divider()
+            Button(look?.newLabelItem ?? tr("New Label…")) {
+                newLabelName = ""
+                makingLabel = true
+            }
             Button(tr("Rename…")) {
                 let look = item.accountId.flatMap { model.accountLook($0) }
                 newName = look?.name ?? ""
@@ -264,6 +280,7 @@ struct MailboxRow: View {
             return true
         } isTargeted: { targeted = $0 }
         .background(targeted ? Color.accentColor.opacity(0.25) : .clear, in: RoundedRectangle(cornerRadius: 6))
+        .modifier(LabelMenu(item: item))
     }
 
     /// The SF Symbol for what a row's icon stands for.

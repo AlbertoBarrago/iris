@@ -460,7 +460,12 @@ impl Mail {
             }
             Ok(out)
         }).await })?;
-        let entries = sidebar::entries(&accounts_and_labels, &HashMap::new());
+        // Each account's labels in the order the person put them in.
+        let mut order = HashMap::new();
+        for (account, _) in &accounts_and_labels {
+            order.insert(account.id, self.label_positions(account.id).unwrap_or_default());
+        }
+        let entries = sidebar::entries(&accounts_and_labels, &order);
         let counted = sidebar::counted(&entries);
         let view = view(None);
         let mailboxes = Arc::clone(&self.mailboxes);
@@ -863,7 +868,13 @@ fn row(thread: &ThreadSummary, now: chrono::DateTime<chrono::Local>, colors: &Ha
             .unwrap_or_else(|| format::PALETTE[format::account_color_index(thread.account_id)].to_string()),
         sender,
         sender_email: thread.from_email.clone(),
-        subject: thread.subject.clone(),
+        // A draft not given a subject yet would show a blank line, as the
+        // GTK list does not.
+        subject: if thread.subject.trim().is_empty() {
+            mailrs_domain::translate::gettext("(no subject)")
+        } else {
+            thread.subject.clone()
+        },
         snippet: thread.snippet.clone(),
         date: format::relative_date(thread.last_message_at, now),
         unread: thread.unread,

@@ -309,6 +309,19 @@ enum FlagImage {
         symbol.isTemplate = false
         return Image(nsImage: symbol)
     }
+
+    /// A dot in its own color, for a label color in a menu.
+    static func dot(_ hex: String) -> Image {
+        let color = NSColor(Color(hex: hex) ?? .gray)
+        let configuration = NSImage.SymbolConfiguration(paletteColors: [color])
+        guard let symbol = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: nil)?
+            .withSymbolConfiguration(configuration)
+        else {
+            return Image(systemName: "circle.fill")
+        }
+        symbol.isTemplate = false
+        return Image(nsImage: symbol)
+    }
 }
 
 /// The search bar over the list: AppKit's own field, with its clear

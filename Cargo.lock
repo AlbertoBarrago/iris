@@ -2549,6 +2549,7 @@ dependencies = [
  "mailrs-appcore",
  "mailrs-discover",
  "mailrs-domain",
+ "mailrs-gmail",
  "mailrs-mime",
  "mailrs-pgp",
  "mailrs-render",
