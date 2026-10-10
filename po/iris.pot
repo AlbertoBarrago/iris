@@ -3213,7 +3213,7 @@ msgid "Not Junk (Ctrl+Shift+J)"
 msgstr ""
 
 #: app/src/ui/conversation.rs:1121 app/src/ui/window/message_menu.rs:127
-#: app/src/ui/window/press.rs:425
+#: app/src/ui/window/press.rs:393
 msgid "Delete Forever"
 msgstr ""
 
@@ -3804,22 +3804,6 @@ msgstr[1] ""
 msgid "Could not read {file}: {reason}"
 msgstr ""
 
-#: app/src/ui/moving.rs:40
-msgid "The mail is already there"
-msgstr ""
-
-#: app/src/ui/moving.rs:57
-msgid "Move it from the Trash to the Inbox first"
-msgstr ""
-
-#: app/src/ui/moving.rs:93
-msgid "The mail is already in All Mail"
-msgstr ""
-
-#: app/src/ui/moving.rs:98
-msgid "Mail cannot go there"
-msgstr ""
-
 #: app/src/ui/pgp.rs:105
 msgid "Checked"
 msgstr ""
@@ -4275,7 +4259,7 @@ msgstr ""
 msgid "No signature"
 msgstr ""
 
-#: app/src/ui/queued.rs:65 app/src/ui/window/press.rs:439
+#: app/src/ui/queued.rs:65 app/src/ui/window/press.rs:407
 msgid "Cancel Send"
 msgstr ""
 
@@ -5434,53 +5418,45 @@ msgstr ""
 msgid "Will remind you {when}"
 msgstr ""
 
-#: app/src/ui/window/press.rs:334
-msgid "Drop mail on its own account's mailboxes"
-msgstr ""
-
-#: app/src/ui/window/press.rs:367
-msgid "Moved to {mailbox}"
-msgstr ""
-
-#: app/src/ui/window/press.rs:380
+#: app/src/ui/window/press.rs:348
 msgid "Delete This Conversation Forever?"
 msgstr ""
 
-#: app/src/ui/window/press.rs:382
+#: app/src/ui/window/press.rs:350
 msgid "Delete {count} Conversation Forever?"
 msgid_plural "Delete {count} Conversations Forever?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/src/ui/window/press.rs:387
+#: app/src/ui/window/press.rs:355
 msgid "Delete This Message Forever?"
 msgstr ""
 
-#: app/src/ui/window/press.rs:389
+#: app/src/ui/window/press.rs:357
 msgid "Delete {count} Message Forever?"
 msgid_plural "Delete {count} Messages Forever?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/src/ui/window/press.rs:397
+#: app/src/ui/window/press.rs:365
 msgid "{provider} deletes it from every device and cannot bring it back."
 msgstr ""
 
-#: app/src/ui/window/press.rs:401
+#: app/src/ui/window/press.rs:369
 msgid "{provider} deletes them from every device and cannot bring them back."
 msgstr ""
 
-#: app/src/ui/window/press.rs:404
+#: app/src/ui/window/press.rs:372
 msgid "The server deletes it from every device and cannot bring it back."
 msgstr ""
 
-#: app/src/ui/window/press.rs:406
+#: app/src/ui/window/press.rs:374
 msgid ""
 "Each account's server deletes them from every device and cannot bring them "
 "back."
 msgstr ""
 
-#: app/src/ui/window/press.rs:414
+#: app/src/ui/window/press.rs:382
 msgid ""
 "Mail in {accounts} stays in the Trash, since its server cannot delete mail "
 "for good."
@@ -5490,31 +5466,31 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/src/ui/window/press.rs:439
+#: app/src/ui/window/press.rs:407
 msgid "Cancel Send (Delete)"
 msgstr ""
 
-#: app/src/ui/window/press.rs:441
+#: app/src/ui/window/press.rs:409
 msgid "Delete from Outbox"
 msgstr ""
 
-#: app/src/ui/window/press.rs:442
+#: app/src/ui/window/press.rs:410
 msgid "Delete from Outbox (Delete)"
 msgstr ""
 
-#: app/src/ui/window/press.rs:445
+#: app/src/ui/window/press.rs:413
 msgid "Cancel Reminder"
 msgstr ""
 
-#: app/src/ui/window/press.rs:446
+#: app/src/ui/window/press.rs:414
 msgid "Cancel Reminder (Delete)"
 msgstr ""
 
-#: app/src/ui/window/press.rs:449
+#: app/src/ui/window/press.rs:417
 msgid "Dismiss Follow-Up"
 msgstr ""
 
-#: app/src/ui/window/press.rs:450
+#: app/src/ui/window/press.rs:418
 msgid "Dismiss Follow-Up (Delete)"
 msgstr ""
 
@@ -7197,6 +7173,30 @@ msgstr ""
 
 #: appcore/src/label_colors.rs:30
 msgid "Gray"
+msgstr ""
+
+#: appcore/src/moving.rs:40
+msgid "The mail is already there"
+msgstr ""
+
+#: appcore/src/moving.rs:57
+msgid "Move it from the Trash to the Inbox first"
+msgstr ""
+
+#: appcore/src/moving.rs:93
+msgid "The mail is already in All Mail"
+msgstr ""
+
+#: appcore/src/moving.rs:98
+msgid "Mail cannot go there"
+msgstr ""
+
+#: appcore/src/moving.rs:119
+msgid "Drop mail on its own account's mailboxes"
+msgstr ""
+
+#: appcore/src/moving.rs:144
+msgid "Moved to {mailbox}"
 msgstr ""
 
 #: appcore/src/notify.rs:114

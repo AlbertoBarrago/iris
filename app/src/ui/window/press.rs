@@ -12,6 +12,7 @@
 
 use mailrs_domain::translate::{fill, fill_plural, gettext};
 use mailrs_domain::{Account, AccountId, FlagColor, Target};
+use mailrs_appcore::moving::{self, moved_to};
 use mailrs_sync::{History, MailAction, MovedFrom, Offers, TriageAction};
 
 use super::aftermath;
@@ -19,7 +20,6 @@ use super::reach::Reach;
 use super::triage::{Cancel, Decision, decide};
 use crate::ui::Mailbox;
 use crate::ui::conversation::Action;
-use crate::ui::moving::move_action;
 use crate::wanted::Answer;
 
 /// A mail button, and the keys and menu items that stand for one.
@@ -328,43 +328,11 @@ fn dropped(
     accounts: &[Reached],
     act: impl Fn(MailAction, History, Option<String>) -> Step,
 ) -> Step {
-    if let Mailbox::Label { account_id, .. } | Mailbox::Standard { account_id, .. } = to
-        && targets.iter().any(|t| t.account_id != *account_id)
-    {
-        return Step::Refuse(gettext("Drop mail on its own account's mailboxes"));
+    let moves = |id| accounts.iter().any(|a| a.account_id == id && a.moves);
+    match moving::dropped(targets, from, to, moves) {
+        Ok((action, words)) => act(action, History::Record, words),
+        Err(reason) => Step::Refuse(reason),
     }
-    if let Mailbox::Flag(color) = to {
-        return act(MailAction::Flag(Some(*color)), History::Record, None);
-    }
-    let triage = match move_action(from, to) {
-        Ok(triage) => triage,
-        Err(reason) => return Step::Refuse(reason),
-    };
-    // A folder account keeps a message in one folder, so mail dropped on
-    // a folder moves there from wherever the list showed it, Flagged and
-    // a search included, where a label account only adds the label.
-    let triage = match (triage, to) {
-        (TriageAction::Relabel { .. }, Mailbox::Label { account_id, label_id, .. })
-            if accounts.iter().any(|a| a.account_id == *account_id && a.moves) =>
-        {
-            TriageAction::MoveTo(label_id.clone())
-        }
-        (triage, _) => triage,
-    };
-    let words = matches!(
-        triage,
-        TriageAction::AddLabel(_)
-            | TriageAction::RemoveLabel(_)
-            | TriageAction::MoveTo(_)
-            | TriageAction::Relabel { .. }
-    )
-    .then(|| moved_to(&to.title()));
-    act(MailAction::Triage(triage), History::Record, words)
-}
-
-/// The toast after mail went into the mailbox named `name`.
-fn moved_to(name: &str) -> String {
-    fill(&gettext("Moved to {mailbox}"), &[("mailbox", name)])
 }
 
 /// The question before Delete Forever, which names how much goes and who

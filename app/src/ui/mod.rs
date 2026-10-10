@@ -26,7 +26,6 @@ pub mod ics_file;
 pub mod invitation;
 pub mod key_import;
 pub mod list_feed;
-pub mod moving;
 pub mod narrow_header;
 pub mod permission;
 pub mod platform_keys;

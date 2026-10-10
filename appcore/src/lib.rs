@@ -20,6 +20,7 @@ pub mod file_type;
 pub mod format;
 pub mod images;
 pub mod label_colors;
+pub mod moving;
 pub mod notify;
 pub mod offered;
 pub mod permission;

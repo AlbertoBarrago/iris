@@ -1,12 +1,12 @@
 //! What dragging mail onto a mailbox does. Moves follow Apple Mail: the
 //! mail gains the mailbox it lands on and leaves the one it came from.
+//! Both front ends ask here, so a drop does the same in either.
 
-use mailrs_sync::TriageAction;
+use mailrs_sync::mailbox::Standard;
+use mailrs_sync::{MailAction, Mailbox, TriageAction};
 
-use mailrs_domain::translate::gettext;
-use mailrs_domain::{Folder, MailSet, Role};
-
-use super::{Mailbox, Standard};
+use mailrs_domain::translate::{fill, gettext};
+use mailrs_domain::{AccountId, Folder, MailSet, Role, Target};
 
 /// The mail set a move takes mail out of, when leaving `mailbox` means
 /// losing one: the inbox, Muted or a person's label. Flagged, Sent and
@@ -101,6 +101,47 @@ pub fn move_action(from: &Mailbox, to: &Mailbox) -> Result<TriageAction, String>
         Some(from) => Ok(relabel(vec![dest], vec![from])),
         None => Ok(relabel(vec![dest], vec![])),
     }
+}
+
+/// What dropping `targets`, listed in `from`, on `to` does, with the
+/// toast that says so, or why it cannot. `moves` says whether an account's
+/// server keeps a message in one folder, so mail moves between folders
+/// rather than gaining labels.
+pub fn dropped(
+    targets: &[Target],
+    from: &Mailbox,
+    to: &Mailbox,
+    moves: impl Fn(AccountId) -> bool,
+) -> Result<(MailAction, Option<String>), String> {
+    if let Mailbox::Label { account_id, .. } | Mailbox::Standard { account_id, .. } = to
+        && targets.iter().any(|t| t.account_id != *account_id)
+    {
+        return Err(gettext("Drop mail on its own account's mailboxes"));
+    }
+    if let Mailbox::Flag(color) = to {
+        return Ok((MailAction::Flag(Some(*color)), None));
+    }
+    let triage = move_action(from, to)?;
+    // A folder account keeps a message in one folder, so mail dropped on
+    // a folder moves there from wherever the list showed it, Flagged and
+    // a search included, where a label account only adds the label.
+    let triage = match (triage, to) {
+        (TriageAction::Relabel { .. }, Mailbox::Label { account_id, label_id, .. }) if moves(*account_id) => {
+            TriageAction::MoveTo(label_id.clone())
+        }
+        (triage, _) => triage,
+    };
+    let words = matches!(
+        triage,
+        TriageAction::AddLabel(_) | TriageAction::RemoveLabel(_) | TriageAction::MoveTo(_) | TriageAction::Relabel { .. }
+    )
+    .then(|| moved_to(&to.title()));
+    Ok((MailAction::Triage(triage), words))
+}
+
+/// The toast after mail went into the mailbox named `name`.
+pub fn moved_to(name: &str) -> String {
+    fill(&gettext("Moved to {mailbox}"), &[("mailbox", name)])
 }
 
 #[cfg(test)]

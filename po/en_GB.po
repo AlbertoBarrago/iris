@@ -3154,7 +3154,7 @@ msgid "Not Junk (Ctrl+Shift+J)"
 msgstr "Not Junk (Ctrl+Shift+J)"
 
 #: app/src/ui/conversation.rs:1121 app/src/ui/window/message_menu.rs:127
-#: app/src/ui/window/press.rs:425
+#: app/src/ui/window/press.rs:393
 msgid "Delete Forever"
 msgstr "Delete Forever"
 
@@ -3729,22 +3729,6 @@ msgstr[1] "And {count} more"
 msgid "Could not read {file}: {reason}"
 msgstr "Could not read {file}: {reason}"
 
-#: app/src/ui/moving.rs:40
-msgid "The mail is already there"
-msgstr "The mail is already there"
-
-#: app/src/ui/moving.rs:57
-msgid "Move it from the Trash to the Inbox first"
-msgstr "Move it from the Trash to the Inbox first"
-
-#: app/src/ui/moving.rs:93
-msgid "The mail is already in All Mail"
-msgstr "The mail is already in All Mail"
-
-#: app/src/ui/moving.rs:98
-msgid "Mail cannot go there"
-msgstr "Mail cannot go there"
-
 #: app/src/ui/pgp.rs:105
 msgid "Checked"
 msgstr "Checked"
@@ -4186,7 +4170,7 @@ msgstr "Formatted signature saved"
 msgid "No signature"
 msgstr "No signature"
 
-#: app/src/ui/queued.rs:65 app/src/ui/window/press.rs:439
+#: app/src/ui/queued.rs:65 app/src/ui/window/press.rs:407
 msgid "Cancel Send"
 msgstr "Cancel Send"
 
@@ -5326,81 +5310,73 @@ msgstr "Back in the Inbox"
 msgid "Will remind you {when}"
 msgstr "Will remind you {when}"
 
-#: app/src/ui/window/press.rs:334
-msgid "Drop mail on its own account's mailboxes"
-msgstr "Drop mail on its own account's mailboxes"
-
-#: app/src/ui/window/press.rs:367
-msgid "Moved to {mailbox}"
-msgstr "Moved to {mailbox}"
-
-#: app/src/ui/window/press.rs:380
+#: app/src/ui/window/press.rs:348
 msgid "Delete This Conversation Forever?"
 msgstr "Delete This Conversation Forever?"
 
-#: app/src/ui/window/press.rs:382
+#: app/src/ui/window/press.rs:350
 msgid "Delete {count} Conversation Forever?"
 msgid_plural "Delete {count} Conversations Forever?"
 msgstr[0] "Delete {count} Conversation Forever?"
 msgstr[1] "Delete {count} Conversations Forever?"
 
-#: app/src/ui/window/press.rs:387
+#: app/src/ui/window/press.rs:355
 msgid "Delete This Message Forever?"
 msgstr "Delete This Message Forever?"
 
-#: app/src/ui/window/press.rs:389
+#: app/src/ui/window/press.rs:357
 msgid "Delete {count} Message Forever?"
 msgid_plural "Delete {count} Messages Forever?"
 msgstr[0] "Delete {count} Message Forever?"
 msgstr[1] "Delete {count} Messages Forever?"
 
-#: app/src/ui/window/press.rs:397
+#: app/src/ui/window/press.rs:365
 msgid "{provider} deletes it from every device and cannot bring it back."
 msgstr "{provider} deletes it from every device and cannot bring it back."
 
-#: app/src/ui/window/press.rs:401
+#: app/src/ui/window/press.rs:369
 msgid "{provider} deletes them from every device and cannot bring them back."
 msgstr "{provider} deletes them from every device and cannot bring them back."
 
-#: app/src/ui/window/press.rs:404
+#: app/src/ui/window/press.rs:372
 msgid "The server deletes it from every device and cannot bring it back."
 msgstr "The server deletes it from every device and cannot bring it back."
 
-#: app/src/ui/window/press.rs:406
+#: app/src/ui/window/press.rs:374
 msgid "Each account's server deletes them from every device and cannot bring them back."
 msgstr "Each account's server deletes them from every device and cannot bring them back."
 
-#: app/src/ui/window/press.rs:414
+#: app/src/ui/window/press.rs:382
 msgid "Mail in {accounts} stays in the Trash, since its server cannot delete mail for good."
 msgid_plural "Mail in {accounts} stays in the Trash, since their servers cannot delete mail for good."
 msgstr[0] "Mail in {accounts} stays in the Trash, since its server cannot delete mail for good."
 msgstr[1] "Mail in {accounts} stays in the Trash, since their servers cannot delete mail for good."
 
-#: app/src/ui/window/press.rs:439
+#: app/src/ui/window/press.rs:407
 msgid "Cancel Send (Delete)"
 msgstr "Cancel Send (Delete)"
 
-#: app/src/ui/window/press.rs:441
+#: app/src/ui/window/press.rs:409
 msgid "Delete from Outbox"
 msgstr "Delete from Outbox"
 
-#: app/src/ui/window/press.rs:442
+#: app/src/ui/window/press.rs:410
 msgid "Delete from Outbox (Delete)"
 msgstr "Delete from Outbox (Delete)"
 
-#: app/src/ui/window/press.rs:445
+#: app/src/ui/window/press.rs:413
 msgid "Cancel Reminder"
 msgstr "Cancel Reminder"
 
-#: app/src/ui/window/press.rs:446
+#: app/src/ui/window/press.rs:414
 msgid "Cancel Reminder (Delete)"
 msgstr "Cancel Reminder (Delete)"
 
-#: app/src/ui/window/press.rs:449
+#: app/src/ui/window/press.rs:417
 msgid "Dismiss Follow-Up"
 msgstr "Dismiss Follow-Up"
 
-#: app/src/ui/window/press.rs:450
+#: app/src/ui/window/press.rs:418
 msgid "Dismiss Follow-Up (Delete)"
 msgstr "Dismiss Follow-Up (Delete)"
 
@@ -7027,6 +7003,30 @@ msgstr "Pink"
 #: appcore/src/label_colors.rs:30
 msgid "Gray"
 msgstr "Grey"
+
+#: appcore/src/moving.rs:40
+msgid "The mail is already there"
+msgstr "The mail is already there"
+
+#: appcore/src/moving.rs:57
+msgid "Move it from the Trash to the Inbox first"
+msgstr "Move it from the Trash to the Inbox first"
+
+#: appcore/src/moving.rs:93
+msgid "The mail is already in All Mail"
+msgstr "The mail is already in All Mail"
+
+#: appcore/src/moving.rs:98
+msgid "Mail cannot go there"
+msgstr "Mail cannot go there"
+
+#: appcore/src/moving.rs:119
+msgid "Drop mail on its own account's mailboxes"
+msgstr "Drop mail on its own account's mailboxes"
+
+#: appcore/src/moving.rs:144
+msgid "Moved to {mailbox}"
+msgstr "Moved to {mailbox}"
 
 #: appcore/src/notify.rs:114
 msgid "{count} new message"
