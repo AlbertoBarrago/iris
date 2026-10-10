@@ -458,6 +458,32 @@ async fn a_gmail_folder_and_a_search_come_from_gmail_not_the_store() {
     assert!(!ids(&stored).contains(&"t5".to_string()));
 }
 
+/// An account that is not syncing, as one waiting on the keyring is, has
+/// no server to ask. The search used to ask it again forever without
+/// yielding, which held a runtime thread for good.
+#[tokio::test]
+async fn a_search_over_an_account_not_syncing_ends_and_says_so() {
+    let h = seeded().await;
+    let lists = Mailboxes::new(Arc::new(Connected(HashMap::new())), h.db.clone());
+    let search = Mailbox::Search {
+        query: "plans".into(),
+        account_id: None,
+    };
+    let listed = tokio::time::timeout(
+        std::time::Duration::from_secs(5),
+        lists.list(&search, &scope(&h), &view(), Loaded::nothing()),
+    )
+    .await
+    .expect("the search ends")
+    .expect("the search lists");
+    assert!(listed.rows.is_empty());
+    assert!(!listed.more);
+    assert_eq!(
+        listed.notices,
+        ["Results for me@example.com come from the mail on this computer alone"]
+    );
+}
+
 #[tokio::test]
 async fn a_page_says_when_more_rows_follow() {
     let h = seeded().await;

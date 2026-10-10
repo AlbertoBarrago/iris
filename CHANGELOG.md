@@ -12,6 +12,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ### Fixed
 
+- Search keeps working when an account cannot connect, such as while it
+  waits for the Keychain; it used to stop answering after the first one.
 - A Gmail signature with pictures or formatting no longer goes out as
   plain lines with its pictures missing.
 - Attached files go out with their exact type, such as `text/plain` for

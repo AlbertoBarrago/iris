@@ -1082,8 +1082,13 @@ impl<A: Accounts> Mailboxes<A> {
                 let sync = self.accounts.account(account.id);
                 let query = listing.query.clone();
                 async move {
+                    // An account that is not syncing has no server to
+                    // ask, and a page left unlisted would be asked again
+                    // at once, forever. It is done for this listing; the
+                    // reader sees the stored search's rows meanwhile.
                     let Some(sync) = sync else {
-                        return Ok((page, false));
+                        page.listed = true;
+                        return Ok((page, true));
                     };
                     let mut store_only = false;
                     if stop.stopped() {
