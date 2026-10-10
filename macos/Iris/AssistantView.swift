@@ -215,6 +215,10 @@ struct AssistantPane: View {
                 entry
             }
         }
+        .toolbar {
+            ToolbarSpacer(.flexible)
+            ToolbarItem { AssistantButton() }
+        }
         .onAppear {
             assistant.refresh()
             typing = true
@@ -511,5 +515,17 @@ private struct LeaveSheet: View {
             .padding(20)
             .frame(width: 440)
         }
+    }
+}
+
+/// Opens and closes the assistant's pane. It is declared on the pane,
+/// and macOS keeps an inspector's toolbar items at the toolbar's far
+/// right whether the pane is open or closed, so it always comes last.
+struct AssistantButton: View {
+    @Environment(AssistantModel.self) private var assistant
+
+    var body: some View {
+        Button(tr("Assistant"), systemImage: "sparkles") { assistant.shown.toggle() }
+            .help(tr("Assistant"))
     }
 }

@@ -5,7 +5,6 @@ import SwiftUI
 /// the category tabs over an inbox, and one row per conversation.
 struct ThreadListView: View {
     @Environment(MailModel.self) private var model
-    @State private var searchShown = false
 
     var body: some View {
         @Bindable var model = model
@@ -16,6 +15,12 @@ struct ThreadListView: View {
                     .padding(10)
                     .frame(maxWidth: .infinity)
                     .background(.yellow.opacity(0.15))
+            }
+            if model.searchOpen {
+                MailSearchField()
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                Divider()
             }
             if let listing = model.listing, !listing.categories.isEmpty {
                 CategoryBar(tabs: listing.categories, selected: $model.category)
@@ -61,25 +66,18 @@ struct ThreadListView: View {
                 }
             }
         }
-        .searchable(text: $model.searchText, isPresented: $searchShown, placement: .toolbar, prompt: tr("Search mail"))
-        .searchSuggestions {
-            ForEach(model.suggestions, id: \.query) { suggestion in
-                Text(suggestion.label).searchCompletion(suggestion.query)
-            }
-        }
-        .onSubmit(of: .search) { model.searchNow() }
-        .background {
-            // ⌘F goes to the search field, as in the GTK app.
-            Button(tr("Search")) { searchShown = true }
-                .keyboardShortcut("f")
-                .opacity(0)
-                .accessibilityHidden(true)
-        }
         .navigationTitle(model.listing?.title ?? "")
         .navigationSubtitle(model.listing?.subtitle ?? "")
         .toolbar {
             ToolbarItemGroup {
                 Button(tr("Check for Mail"), systemImage: "arrow.clockwise") { model.checkNow() }
+                // As in the GTK app: the magnifier opens a search bar over
+                // the list. ⌘F opens it too.
+                Toggle(isOn: $model.searchOpen) {
+                    Label(tr("Search"), systemImage: "magnifyingglass")
+                }
+                .keyboardShortcut("f")
+                .help(tr("Search mail"))
                 Button(tr("New Message"), systemImage: "square.and.pencil") {
                     model.composeAsked = ComposeRequest(kind: .new)
                 }
@@ -305,5 +303,105 @@ enum FlagImage {
         }
         symbol.isTemplate = false
         return Image(nsImage: symbol)
+    }
+}
+
+/// The search bar over the list: AppKit's own field, with its clear
+/// button. Typing searches after a pause, Return at once; Escape in an
+/// empty field closes the bar. It takes the keys as it opens. The core's
+/// suggestions show under it while it has them.
+struct MailSearchField: View {
+    @Environment(MailModel.self) private var model
+    @State private var editing = false
+
+    var body: some View {
+        @Bindable var model = model
+        SearchFieldBox(text: $model.searchText, editing: $editing, placeholder: tr("Search mail")) {
+            model.searchNow()
+            model.dismissSuggestions()
+        } cancel: {
+            model.searchOpen = false
+        }
+        .popover(isPresented: Binding(
+            get: { editing && !model.suggestions.isEmpty },
+            set: { if !$0 { model.dismissSuggestions() } }
+        ), arrowEdge: .bottom) {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(model.suggestions, id: \.query) { suggestion in
+                    Button {
+                        model.searchText = suggestion.query
+                        model.searchNow()
+                        model.dismissSuggestions()
+                    } label: {
+                        Text(suggestion.label)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.vertical, 6)
+            .frame(width: 260)
+        }
+    }
+}
+
+/// An `NSSearchField` bound to `text`, which takes the keys once it is
+/// in a window. `submit` runs on Return, `cancel` on Escape when the
+/// field is already empty.
+private struct SearchFieldBox: NSViewRepresentable {
+    @Binding var text: String
+    @Binding var editing: Bool
+    let placeholder: String
+    let submit: () -> Void
+    let cancel: () -> Void
+
+    func makeNSView(context: Context) -> NSSearchField {
+        let field = NSSearchField()
+        field.placeholderString = placeholder
+        field.sendsSearchStringImmediately = true
+        field.delegate = context.coordinator
+        field.target = context.coordinator
+        field.action = #selector(Coordinator.changed(_:))
+        DispatchQueue.main.async { field.window?.makeFirstResponder(field) }
+        return field
+    }
+
+    func updateNSView(_ field: NSSearchField, context: Context) {
+        context.coordinator.parent = self
+        if field.stringValue != text { field.stringValue = text }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, NSSearchFieldDelegate {
+        var parent: SearchFieldBox
+
+        init(_ parent: SearchFieldBox) {
+            self.parent = parent
+        }
+
+        @objc func changed(_ field: NSSearchField) {
+            if parent.text != field.stringValue { parent.text = field.stringValue }
+        }
+
+        func controlTextDidBeginEditing(_ note: Notification) { parent.editing = true }
+
+        func controlTextDidEndEditing(_ note: Notification) { parent.editing = false }
+
+        func control(_ control: NSControl, textView: NSTextView, doCommandBy selector: Selector) -> Bool {
+            switch selector {
+            case #selector(NSResponder.insertNewline(_:)):
+                parent.submit()
+                return true
+            case #selector(NSResponder.cancelOperation(_:)) where parent.text.isEmpty:
+                parent.cancel()
+                return true
+            default:
+                return false
+            }
+        }
     }
 }

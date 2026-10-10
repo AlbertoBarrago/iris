@@ -521,17 +521,48 @@ impl Mail {
 
     /// The conversations that `query` finds, in Gmail's search language,
     /// in the account of the mailbox `scope_key` names, or in every
-    /// account when that mailbox spans them. The servers answer, as they
-    /// do in the GTK app's search.
-    pub fn search(&self, query: String, scope_key: Option<String>) -> Result<MailboxListing, CoreError> {
+    /// account when that mailbox spans them. With `servers` the servers
+    /// answer; without, the mail kept on this Mac does, at once and
+    /// whether or not the accounts are connected. The GTK app shows the
+    /// second while it waits for the first.
+    pub fn search(&self, query: String, scope_key: Option<String>, servers: bool) -> Result<MailboxListing, CoreError> {
         let account_id = scope_key.as_deref().and_then(|key| self.mailbox(key)).and_then(|m| m.account());
-        self.listing(
-            Mailbox::Search {
-                query: query.trim().to_string(),
-                account_id,
-            },
-            None,
-        )
+        let mailbox = Mailbox::Search {
+            query: query.trim().to_string(),
+            account_id,
+        };
+        if servers {
+            let found = self.listing(mailbox, None);
+            match &found {
+                Ok(listing) => tracing::info!(rows = listing.rows.len(), ?account_id, "searched the servers"),
+                Err(err) => tracing::warn!(error = %err, "could not search the servers"),
+            }
+            return found;
+        }
+        let settings = mailrs_appcore::settings::Settings::load(&mailrs_appcore::settings::Settings::default_path());
+        let view = View {
+            threading: settings.threading,
+            ..view(None)
+        };
+        let db = self.db.clone();
+        let accounts = self.run(async move { db.read(accounts::list_accounts).await })?;
+        let mailboxes = Arc::clone(&self.mailboxes);
+        let query = query.trim().to_string();
+        let listing = self
+            .run(async move { mailboxes.stored_search(&query, account_id, &Scope::over(accounts), &view).await })
+            .map_err(|err| {
+                tracing::warn!(error = %err, "could not search the stored mail");
+                CoreError::Store(err.to_string())
+            })?;
+        tracing::info!(rows = listing.rows.len(), ?account_id, "searched the stored mail");
+        let now = chrono::Local::now();
+        Ok(MailboxListing {
+            title: listing.title,
+            subtitle: listing.subtitle,
+            rows: listing.rows.iter().map(|t| row(t, now)).collect(),
+            categories: Vec::new(),
+            empty: listing.empty.title,
+        })
     }
 
     /// Searches to offer while `text` is typed: the subject, people it

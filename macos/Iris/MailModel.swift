@@ -23,11 +23,18 @@ final class MailModel {
     var selectedMailbox: String? {
         didSet {
             guard selectedMailbox != oldValue else { return }
-            // Picking a mailbox ends a search, as in the GTK app.
+            // Picking a mailbox ends a search and closes its bar, as in
+            // the GTK app.
             if searching != nil { searchText = "" }
+            searchOpen = false
             category = openingCategory
             loadList()
         }
+    }
+    /// Whether the search bar shows over the list. Closing it ends the
+    /// search.
+    var searchOpen = false {
+        didSet { if !searchOpen, oldValue { searchText = "" } }
     }
     /// What the search field holds. A pause in the typing runs it.
     var searchText = "" {
@@ -37,6 +44,9 @@ final class MailModel {
     private(set) var searching: String? {
         didSet { if searching != oldValue { loadList() } }
     }
+    /// Whether the search on screen goes to the servers too, or only to
+    /// the mail kept on this Mac.
+    private var searchServers = false
     /// Searches to offer for what the field holds.
     private(set) var suggestions: [SearchSuggestion] = []
     private var pause: Task<Void, Never>?
@@ -478,15 +488,28 @@ final class MailModel {
     fileprivate func loadList() {
         guard let mail, let key = selectedMailbox else { return }
         if let query = searching {
+            // The mail on this Mac answers first, then the servers, as in
+            // the GTK app. When the servers find nothing, as when the
+            // accounts are not connected, the stored rows stay.
+            let servers = searchServers
             Task.detached {
-                do {
-                    let listing = try mail.search(query: query, scopeKey: key)
+                let stored = try? mail.search(query: query, scopeKey: key, servers: false)
+                if let stored {
                     await MainActor.run {
-                        if self.searching == query { self.listing = listing }
+                        if self.searching == query { self.listing = stored }
+                    }
+                }
+                guard servers else { return }
+                do {
+                    let found = try mail.search(query: query, scopeKey: key, servers: true)
+                    await MainActor.run {
+                        guard self.searching == query else { return }
+                        if found.rows.isEmpty, let stored, !stored.rows.isEmpty { return }
+                        self.listing = found
                     }
                 } catch {
                     await MainActor.run {
-                        if self.searching == query { self.toast = Toast(words: "\(error)", undo: false) }
+                        if self.searching == query, stored == nil { self.toast = Toast(words: "\(error)", undo: false) }
                     }
                 }
             }
@@ -794,9 +817,10 @@ extension MailModel {
 
 extension MailModel {
     /// The field changed. Clearing it puts the mailbox back; otherwise
-    /// the search runs once the typing pauses, from three letters on,
-    /// since fewer match nearly everything and each costs the servers a
-    /// request. The pause and the floor are the GTK app's
+    /// the search runs once the typing pauses. The mail on this Mac
+    /// answers from the first letter; the servers hear it from three on,
+    /// since fewer match nearly everything and each costs a request. The
+    /// pause and the floor are the GTK app's
     /// (`mailrs_appcore::search::typing`).
     fileprivate func typed() {
         pause?.cancel()
@@ -806,19 +830,33 @@ extension MailModel {
             searching = nil
             return
         }
-        guard text.count >= 3 else { return }
         pause = Task {
             try? await Task.sleep(for: .milliseconds(300))
             guard !Task.isCancelled else { return }
-            searching = text
+            run(text, servers: text.count >= 3)
         }
     }
 
-    /// Return in the field: search at once, however short the text.
+    /// Hides the suggestions until the text changes again.
+    func dismissSuggestions() {
+        suggestions = []
+    }
+
+    /// Return in the field: search the servers too, at once, however
+    /// short the text.
     func searchNow() {
         pause?.cancel()
         let text = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        searching = text.isEmpty ? nil : text
+        guard !text.isEmpty else {
+            searching = nil
+            return
+        }
+        run(text, servers: true)
+    }
+
+    private func run(_ text: String, servers: Bool) {
+        searchServers = servers
+        if searching == text { loadList() } else { searching = text }
     }
 
     /// Reads the suggestions for `text` off the main thread: the first
