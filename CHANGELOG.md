@@ -19,6 +19,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- The button that shows a message's hidden quoted lines has its three
+  dots in the middle.
 - Send Later works on Microsoft accounts: a scheduled message used to
   fail at its hour and wait in the Outbox.
 - Search keeps working when an account cannot connect, such as while it

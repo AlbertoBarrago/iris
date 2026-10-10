@@ -751,9 +751,12 @@ a:focus-visible{outline:2px solid var(--accent,#1c71d8);outline-offset:2px}";
 /// in the page for a text body and in the shadow root for an HTML one.
 const TRIMMED_CSS: &str = "details.trimmed{margin:10px 0 0}\
 details.trimmed[open]>summary{margin-bottom:10px}\
-details.trimmed>summary{display:inline-block;list-style:none;padding:0 7px;height:12px;border-radius:6px;\
-background:#e8eaed;color:#5f6368;font:700 11px/10px sans-serif;letter-spacing:1px;cursor:pointer;\
-user-select:none;white-space:nowrap;vertical-align:middle;transition:background-color 120ms ease}\
+details.trimmed>summary{display:inline-block;position:relative;list-style:none;width:26px;height:12px;\
+padding:0;border-radius:6px;background:#e8eaed;color:#5f6368;font-size:0;cursor:pointer;\
+user-select:none;vertical-align:middle;transition:background-color 120ms ease}\
+details.trimmed>summary::before{content:\"\";position:absolute;left:50%;top:50%;width:3px;height:3px;\
+margin:-1.5px 0 0 -1.5px;border-radius:50%;background:currentColor;\
+box-shadow:-5px 0 currentColor,5px 0 currentColor}\
 details.trimmed>summary::-webkit-details-marker{display:none}\
 details.trimmed>summary:hover{background:#dadce0}\
 details.trimmed>summary:focus-visible{outline:2px solid #1c71d8;outline-offset:2px}\
