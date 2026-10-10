@@ -58,6 +58,12 @@ struct ContentView: View {
                 model.composeAsked = nil
             }
         }
+        .onChange(of: model.windowAsked) {
+            if let key = model.windowAsked {
+                openWindow(id: "conversation", value: key)
+                model.windowAsked = nil
+            }
+        }
         .onChange(of: undoManager) { model.undoManager = undoManager }
         .alert("Iris could not read the mail", isPresented: .constant(model.problem != nil)) {
             Button("OK") {}

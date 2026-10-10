@@ -45,6 +45,10 @@ struct IrisApp: App {
                 Button(tr("Search")) { Finding.find(model) }
                     .keyboardShortcut("f")
             }
+            CommandGroup(after: .newItem) {
+                Button(tr("Open in New Window")) { model.openInWindow() }
+                    .keyboardShortcut("o")
+            }
             CommandGroup(after: .sidebar) {
                 Button(tr("Assistant")) { assistant.shown.toggle() }
                     .keyboardShortcut("j")
@@ -56,6 +60,14 @@ struct IrisApp: App {
             }
         }
         .defaultSize(width: 720, height: 620)
+        // A conversation in a window of its own, as a double click on its
+        // row opens it in the GTK app.
+        WindowGroup(id: "conversation", for: ThreadKey.self) { $key in
+            if let key {
+                ConversationWindow(key: key).environment(model)
+            }
+        }
+        .defaultSize(width: 820, height: 760)
         Settings {
             SettingsView().environment(model).environment(assistant)
         }

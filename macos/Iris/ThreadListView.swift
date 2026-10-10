@@ -50,6 +50,10 @@ struct ThreadListView: View {
             .listStyle(.inset)
             .contextMenu(forSelectionType: ThreadKey.self) { keys in
                 MailActionsMenu(keys: keys)
+            } primaryAction: { keys in
+                // A double click or Return opens the conversation in a
+                // window of its own, as in the GTK app.
+                for key in keys { model.openInWindow(key) }
             }
             .onDeleteCommand { model.perform(.trash) }
             .onExitCommand { model.selection = [] }

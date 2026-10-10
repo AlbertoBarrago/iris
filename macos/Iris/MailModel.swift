@@ -395,16 +395,18 @@ final class MailModel {
     /// Follows a link of the page's own: a message's header opens or
     /// closes it, a sender's name or picture offers what can be done with
     /// the address.
-    func followLink(_ url: URL) {
+    /// `account` names the conversation's account when the page is not
+    /// the main window's, such as a conversation in its own window.
+    func followLink(_ url: URL, account: Int64? = nil) {
         let text = url.absoluteString
         if let id = text.removingPrefix("mailrs:toggle/") {
             toggleMessage(id)
         } else if let rest = text.removingPrefix("mailrs:preview/"), let (id, index) = Self.fileLink(rest) {
-            openAttachment(message: id, index: index)
+            openAttachment(message: id, index: index, account: account)
         } else if let rest = text.removingPrefix("mailrs:attachment/"), let (id, index) = Self.fileLink(rest) {
-            saveAttachment(message: id, index: index)
+            saveAttachment(message: id, index: index, account: account)
         } else if let id = text.removingPrefix("mailrs:attachments/") {
-            saveAllAttachments(message: id.removingPercentEncoding ?? id)
+            saveAllAttachments(message: id.removingPercentEncoding ?? id, account: account)
         } else if let address = text.removingPrefix("mailrs:contact/") ?? text.removingPrefix("mailto:") {
             ContactMenu.show(for: address.components(separatedBy: "?")[0].removingPercentEncoding ?? address)
         }
@@ -418,8 +420,8 @@ final class MailModel {
     }
 
     /// Fetches an attachment of the open conversation off the main thread.
-    private func withAttachment(message: String, index: UInt32, then: @escaping @MainActor (FilePart) -> Void) {
-        guard let mail, let account = openThread?.account else { return }
+    private func withAttachment(message: String, index: UInt32, account: Int64? = nil, then: @escaping @MainActor (FilePart) -> Void) {
+        guard let mail, let account = account ?? openThread?.account else { return }
         Task.detached {
             do {
                 let part = try mail.attachment(accountId: account, messageId: message, index: index)
@@ -432,8 +434,8 @@ final class MailModel {
 
     /// Opens an attachment with the app the Mac picks for its kind, from a
     /// copy in the temporary folder.
-    func openAttachment(message: String, index: UInt32) {
-        withAttachment(message: message, index: index) { part in
+    func openAttachment(message: String, index: UInt32, account: Int64? = nil) {
+        withAttachment(message: message, index: index, account: account) { part in
             let folder = FileManager.default.temporaryDirectory.appending(path: "Iris Attachments", directoryHint: .isDirectory)
             try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             let file = folder.appending(path: Self.safeName(part.filename))
@@ -447,8 +449,8 @@ final class MailModel {
     }
 
     /// Saves an attachment to Downloads, as the GTK app's download button does.
-    func saveAttachment(message: String, index: UInt32) {
-        withAttachment(message: message, index: index) { part in
+    func saveAttachment(message: String, index: UInt32, account: Int64? = nil) {
+        withAttachment(message: message, index: index, account: account) { part in
             let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
             let file = Self.unused(downloads.appending(path: Self.safeName(part.filename)))
             do {
@@ -463,8 +465,8 @@ final class MailModel {
     }
 
     /// Saves every attachment of a message into a folder the person picks.
-    func saveAllAttachments(message: String) {
-        guard let mail, let account = openThread?.account else { return }
+    func saveAllAttachments(message: String, account: Int64? = nil) {
+        guard let mail, let account = account ?? openThread?.account else { return }
         let panel = NSOpenPanel()
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
@@ -511,6 +513,48 @@ final class MailModel {
     /// The handler the page's pictures come through, made once the store
     /// is open.
     var pictures: PictureScheme { PictureScheme(mail: mail) }
+
+    // MARK: A conversation in its own window
+
+    /// A conversation to open in a window of its own; the window answers.
+    var windowAsked: ThreadKey?
+
+    /// Opens `key` in its own window, as a double click on its row does
+    /// in the GTK app.
+    func openInWindow(_ key: ThreadKey? = nil) {
+        guard let key = key ?? openThread else {
+            toast = Toast(words: tr("Open a conversation first"), undo: false)
+            return
+        }
+        windowAsked = key
+    }
+
+    /// The page of `key` for its own window, with `toggled` messages
+    /// opened or closed, and marks it read as opening it here does.
+    func windowPage(_ key: ThreadKey, toggled: [String]) async -> ConversationPage? {
+        guard let store else { return nil }
+        markReadOnOpen(key)
+        let theme = theme
+        let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
+        let page = try? await Task.detached {
+            try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, toggled: toggled, openAll: false)
+        }.value
+        // Bodies not fetched yet come from the server; the window asks
+        // again once they are in.
+        if let page, page.bodiesMissing, let mail {
+            let came = await Task.detached {
+                (try? mail.fetchBodies(thread: ThreadRef(accountId: key.account, threadId: key.thread))) ?? 0
+            }.value
+            if came > 0 { return await windowPage(key, toggled: toggled) }
+        }
+        return page
+    }
+
+    /// The subject a window for `key` is titled with.
+    func windowTitle(_ key: ThreadKey) -> String {
+        let subject = listing?.rows.first { $0.key == key }?.subject ?? ""
+        return subject.isEmpty ? tr("Conversation") : subject
+    }
 
     /// Loads the pictures on the web in the open conversation.
     func loadImages() {
@@ -978,7 +1022,7 @@ struct Toast: Equatable {
 }
 
 /// A conversation, by the account it belongs to and its id.
-struct ThreadKey: Hashable, Sendable {
+struct ThreadKey: Hashable, Sendable, Codable {
     let account: Int64
     let thread: String
 }
