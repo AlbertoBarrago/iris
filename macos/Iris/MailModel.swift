@@ -89,7 +89,7 @@ final class MailModel {
         didSet { if theme != oldValue { loadConversation() } }
     }
 
-    fileprivate var mail: Mail?
+    private(set) var mail: Mail?
     private var store: Store?
 
     /// Preferences as they stand, read again after each change. Shared
@@ -186,6 +186,7 @@ final class MailModel {
                 await MainActor.run {
                     self.sidebar = sidebar
                     self.loadList()
+                    if self.space == .calendar { self.loadCalendar() }
                 }
             }
         }
@@ -245,6 +246,44 @@ final class MailModel {
         Task.detached {
             let done = mail.act(threads: threads, action: action, from: from)
             await MainActor.run { self.finished(done, undoable: true) }
+        }
+    }
+
+    // MARK: Calendar state (see CalendarView.swift)
+
+    /// Which space the window shows, as the GTK window remembers it.
+    var space: Space = Space(rawValue: UserDefaults.standard.string(forKey: "space") ?? "") ?? .mail {
+        didSet {
+            UserDefaults.standard.set(space.rawValue, forKey: "space")
+            if space == .calendar { loadCalendar() }
+        }
+    }
+    /// The month the grid shows, by its first day.
+    var calendarMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date())) ?? Date()
+    private(set) var monthView: MonthView?
+    private(set) var calendarAccounts: [CalendarAccount] = []
+    /// The event a double click opened.
+    var openedEvent: EventDetails?
+    /// How many lines of events a week row holds at the window's height.
+    var monthRows: UInt32 = 3 {
+        didSet { if monthRows != oldValue { loadCalendar() } }
+    }
+
+    /// Reads the calendars and the month shown again.
+    func loadCalendar() {
+        guard let mail else { return }
+        let parts = Calendar.current.dateComponents([.year, .month], from: calendarMonth)
+        let (year, month, rows) = (Int32(parts.year ?? 2026), UInt32(parts.month ?? 1), monthRows)
+        // The locale's own first weekday, counted from Monday as the core
+        // counts: Foundation counts from Sunday, as 1.
+        let first = UInt32((Calendar.current.firstWeekday + 5) % 7)
+        Task.detached {
+            let accounts = (try? mail.calendarAccounts()) ?? []
+            let view = try? mail.monthView(year: year, month: month, localeFirst: first, rows: rows)
+            await MainActor.run {
+                self.calendarAccounts = accounts
+                if let view { self.monthView = view }
+            }
         }
     }
 

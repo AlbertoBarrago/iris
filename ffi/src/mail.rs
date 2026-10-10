@@ -202,6 +202,8 @@ pub struct Mail {
     pub(crate) people: Mutex<Option<Arc<Vec<mailrs_store::contacts::Suggestion>>>>,
     /// Who hears the engine, kept to start it again after a change.
     listener: Mutex<Option<Arc<dyn MailListener>>>,
+    /// The local copy of every account's calendars.
+    pub(crate) calendar: Arc<mailrs_sync::calendar_copy::CalendarCopy<Running>>,
     /// Each account's colour, as the last sidebar read it from
     /// Preferences, for the list's rows.
     account_colors: Mutex<HashMap<AccountId, String>>,
@@ -221,7 +223,15 @@ impl Mail {
             .build()
             .map_err(|err| CoreError::Store(err.to_string()))?;
         let running = Arc::new(Running::default());
+        let calendar = Arc::new(mailrs_sync::calendar_copy::CalendarCopy::new(Arc::clone(&running), db.clone()));
+        // A calendar change still waiting on its Undo when the app last
+        // stopped has nothing left to close over it, so it is queued before
+        // anything reads or sends its account, as the GTK app does.
+        if let Err(err) = runtime.block_on(calendar.recover_holds()) {
+            tracing::warn!(%err, "could not queue the calendar changes left waiting");
+        }
         Ok(Mail {
+            calendar,
             mailboxes: Arc::new(Mailboxes::new(Arc::clone(&running), db.clone())),
             actions: Arc::new(MailActions::new(Arc::clone(&running), db.clone(), OneClick::Web)),
             dir: path.parent().map(PathBuf::from).unwrap_or_default(),
@@ -283,6 +293,13 @@ impl Mail {
             Arc::clone(&engine),
             self.db.clone(),
             Arc::clone(&self.actions),
+            Arc::clone(&listener),
+        ));
+        self.runtime.spawn(crate::calendar::keep_fresh(
+            Arc::clone(&self.calendar),
+            Arc::clone(&self.running),
+            Arc::clone(&engine),
+            self.db.clone(),
             Arc::clone(&listener),
         ));
         let connector = Arc::new(Connector {

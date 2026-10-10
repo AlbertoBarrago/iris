@@ -23,14 +23,27 @@ struct ContentView: View {
     }
 
     private var mail: some View {
-        NavigationSplitView {
-            SidebarView()
-                .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 340)
-        } content: {
-            ThreadListView()
-                .navigationSplitViewColumnWidth(min: 340, ideal: 440, max: 560)
-        } detail: {
-            ConversationView()
+        Group {
+            // Mail and Calendar, the two spaces the switch at the top of
+            // the sidebar flips between, as the GTK window's.
+            if model.space == .calendar {
+                NavigationSplitView {
+                    CalendarSidebar()
+                        .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 340)
+                } detail: {
+                    MonthGrid()
+                }
+            } else {
+                NavigationSplitView {
+                    SidebarView()
+                        .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 340)
+                } content: {
+                    ThreadListView()
+                        .navigationSplitViewColumnWidth(min: 340, ideal: 440, max: 560)
+                } detail: {
+                    ConversationView()
+                }
+            }
         }
         // The assistant takes room of its own on the right: the window
         // grows by the pane's width as it opens, so the list and the

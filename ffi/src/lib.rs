@@ -18,6 +18,7 @@ mod account_menu;
 mod account_setup;
 mod ai_prefs;
 mod assistant;
+mod calendar;
 mod compose;
 mod filing;
 mod mail;

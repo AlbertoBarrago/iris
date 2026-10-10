@@ -33,6 +33,7 @@ struct SidebarView: View {
             }
         }
         .listStyle(.sidebar)
+        .safeAreaInset(edge: .top) { SpaceSwitch() }
     }
 
     /// Whether `key` is open, and a way to fold or unfold it.

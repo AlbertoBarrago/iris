@@ -50,6 +50,12 @@ struct IrisApp: App {
                     .keyboardShortcut("o")
             }
             CommandGroup(after: .sidebar) {
+                // The GTK app's Alt+1 and Alt+2.
+                Button(tr("Mail")) { model.space = .mail }
+                    .keyboardShortcut("1", modifiers: .option)
+                Button(tr("Calendar")) { model.space = .calendar }
+                    .keyboardShortcut("2", modifiers: .option)
+                Divider()
                 Button(tr("Assistant")) { assistant.shown.toggle() }
                     .keyboardShortcut("j")
             }
