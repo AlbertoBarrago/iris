@@ -331,7 +331,7 @@ pub(crate) fn loads_remote_images() -> bool {
     load().remote_images == RemoteImages::Always
 }
 
-fn read_config() -> Result<Config, CoreError> {
+pub(crate) fn read_config() -> Result<Config, CoreError> {
     let path = config_path().map_err(|err| CoreError::Store(err.to_string()))?;
     match Config::load(&path) {
         Ok(config) => Ok(config),

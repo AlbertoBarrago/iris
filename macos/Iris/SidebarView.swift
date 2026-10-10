@@ -93,6 +93,7 @@ struct AccountLine: View {
     /// or unfolds them, and does nothing else.
     @Binding var isOpen: Bool
     @State private var hovering = false
+    @State private var removing: RemoveQuestion?
 
     var body: some View {
         HStack(spacing: 6) {
@@ -120,6 +121,14 @@ struct AccountLine: View {
         .onHover { hovering = $0 }
         .help(item.title)
         .contextMenu { menu }
+        .alert(removing?.title ?? "", isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } })) {
+            Button(tr("Cancel"), role: .cancel) {}
+            Button(tr("Remove"), role: .destructive) {
+                if let question = removing, let id = item.accountId { model.removeAccount(question, id: id) }
+            }
+        } message: {
+            Text(removing?.body ?? "")
+        }
     }
 
     @ViewBuilder private var menu: some View {
@@ -139,10 +148,12 @@ struct AccountLine: View {
                 Button(tr("Move Down")) {}
                 Divider()
                 Button(tr("Sign In Again…")) {}
-                Divider()
-                Button(tr("Remove Account…")) {}
             }
             .disabled(true)
+            Divider()
+            Button(tr("Remove Account…")) {
+                if let id = item.accountId { removing = model.removeAccountQuestion(id) }
+            }
     }
 
     /// The mark beside an account whose sync needs attention.

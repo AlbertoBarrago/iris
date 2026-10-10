@@ -23,6 +23,14 @@ targets:
       - path: ../target/locale
         type: folder
         buildPhase: resources
+      # The Add Account band's poses and the providers' logos, the same
+      # files the GTK app bundles.
+      - path: ../app/data/band
+        type: folder
+        buildPhase: resources
+      - path: ../app/data/logos
+        type: folder
+        buildPhase: resources
     dependencies:
       # Built first, so the library and the bindings are fresh before the
       # Swift sources compile against them.

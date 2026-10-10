@@ -645,6 +645,14 @@ impl Mail {
 }
 
 impl Mail {
+    /// Tells the window that `what` changed, as the engine's news does.
+    pub(crate) fn changed(&self, what: &str) {
+        let listener = self.listener.lock().unwrap_or_else(|p| p.into_inner()).clone();
+        if let Some(listener) = listener {
+            listener.changed(what.to_string());
+        }
+    }
+
     /// Stops the engine and starts it again, so it reads `config.toml`
     /// anew. Does nothing while this copy does not sync.
     pub(crate) fn restart_sync(&self) -> Result<(), CoreError> {

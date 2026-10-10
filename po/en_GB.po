@@ -15,492 +15,6 @@ msgstr ""
 "Language: en_GB\n"
 "X-Language-Name: English (United Kingdom)\n"
 
-#: app/src/add_account.rs:113
-msgid "Did you mean {address}?"
-msgstr "Did you mean {address}?"
-
-#: app/src/add_account.rs:147
-msgid "Type the whole address, such as dana@example.com."
-msgstr "Type the whole address, such as dana@example.com."
-
-#: app/src/add_account.rs:254
-msgid "Leave on Server"
-msgstr "Leave on Server"
-
-#: app/src/add_account.rs:255
-msgid "Remove After Downloading"
-msgstr "Remove After Downloading"
-
-#: app/src/add_account.rs:257
-msgid "Remove After {count} Day"
-msgid_plural "Remove After {count} Days"
-msgstr[0] "Remove After {count} Day"
-msgstr[1] "Remove After {count} Days"
-
-#: app/src/add_account.rs:285
-msgid "This copy of Iris was built without Microsoft sign-in."
-msgstr "This copy of Iris was built without Microsoft sign-in."
-
-#: app/src/add_account.rs:305
-msgid "{provider} has no IMAP, so other mail apps cannot reach it."
-msgstr "{provider} has no IMAP, so other mail apps cannot reach it."
-
-#: app/src/add_account.rs:312
-msgid "Iris cannot reach {provider} yet."
-msgstr "Iris cannot reach {provider} yet."
-
-#: app/src/add_account.rs:429
-msgid "{provider} also offers POP3"
-msgstr "{provider} also offers POP3"
-
-#: app/src/add_account.rs:438
-msgid "Incoming"
-msgstr "Incoming"
-
-#: app/src/add_account.rs:439
-msgid "Incoming over {protocol}"
-msgstr "Incoming over {protocol}"
-
-#: app/src/add_account.rs:447
-msgid "Iris found no mail servers for {domain}. Enter them below."
-msgstr "Iris found no mail servers for {domain}. Enter them below."
-
-#: app/src/add_account.rs:472
-msgid "{provider} needs an app password."
-msgstr "{provider} needs an app password."
-
-#: app/src/add_account.rs:474
-msgid "With two-step sign-in on, {provider} needs an app password."
-msgstr "With two-step sign-in on, {provider} needs an app password."
-
-#: app/src/add_account.rs:480
-msgid "Make one in {provider}'s settings."
-msgstr "Make one in {provider}'s settings."
-
-#: app/src/add_account.rs:490
-msgid "App Password"
-msgstr "App Password"
-
-#: app/src/add_account.rs:491
-msgid "Password"
-msgstr "Password"
-
-#: app/src/add_account.rs:526
-msgid "{host} · port {port} · {security}"
-msgstr "{host} · port {port} · {security}"
-
-#: app/src/add_account.rs:543 app/src/add_account.rs:547
-msgid "{first} and {host}"
-msgstr "{first} and {host}"
-
-#: app/src/add_account.rs:555
-msgid "{first} and {second}"
-msgstr "{first} and {second}"
-
-#: app/src/add_account.rs:563
-msgid "{hosts} · {security}"
-msgstr "{hosts} · {security}"
-
-#: app/src/add_account.rs:573
-msgid "Iris's own list knows this provider. Nothing has left this computer."
-msgstr "Iris's own list knows this provider. Nothing has left this computer."
-
-#: app/src/add_account.rs:575
-msgid "Found by its mail servers. Nothing else was asked."
-msgstr "Found by its mail servers. Nothing else was asked."
-
-#: app/src/add_account.rs:577
-msgid "Found in the domain's own settings."
-msgstr "Found in the domain's own settings."
-
-#: app/src/add_account.rs:579
-msgid "Found in Mozilla's provider list."
-msgstr "Found in Mozilla's provider list."
-
-#: app/src/add_account.rs:580
-msgid "Found by trying common server names."
-msgstr "Found by trying common server names."
-
-#: app/src/add_account.rs:581
-msgid "The servers you gave."
-msgstr "The servers you gave."
-
-#: app/src/add_account.rs:590
-msgid "{time} left"
-msgstr "{time} left"
-
-#: app/src/add_account.rs:599
-msgid "two"
-msgstr "two"
-
-#: app/src/add_account.rs:600
-msgid "three"
-msgstr "three"
-
-#: app/src/add_account.rs:601
-msgid "four"
-msgstr "four"
-
-#: app/src/add_account.rs:602
-msgid "five"
-msgstr "five"
-
-#: app/src/add_account.rs:603
-msgid "six"
-msgstr "six"
-
-#: app/src/add_account.rs:604
-msgid "seven"
-msgstr "seven"
-
-#: app/src/add_account.rs:605
-msgid "eight"
-msgstr "eight"
-
-#: app/src/add_account.rs:606
-msgid "nine"
-msgstr "nine"
-
-#: app/src/add_account.rs:617
-msgid "Waiting"
-msgstr "Waiting"
-
-#: app/src/add_account.rs:618
-msgid "Empty"
-msgstr "Empty"
-
-#: app/src/add_account.rs:622
-msgid "{count} conversation"
-msgid_plural "{count} conversations"
-msgstr[0] "{count} conversation"
-msgstr[1] "{count} conversations"
-
-#: app/src/add_account.rs:744
-msgid "Could not sign in"
-msgstr "Could not sign in"
-
-#: app/src/add_account.rs:757
-msgid "Could not sign in: {reason}"
-msgstr "Could not sign in: {reason}"
-
-#: app/src/add_account.rs:764
-msgid "The server refused the password."
-msgstr "The server refused the password."
-
-#: app/src/add_account.rs:772
-msgid "IMAP is off for this account."
-msgstr "IMAP is off for this account."
-
-#: app/src/add_account.rs:775
-msgid "IMAP is off for this account"
-msgstr "IMAP is off for this account"
-
-#: app/src/add_account.rs:778
-msgid "Turn on IMAP in {provider}'s settings, then choose Sign In."
-msgstr "Turn on IMAP in {provider}'s settings, then choose Sign In."
-
-#: app/src/add_account.rs:781
-msgid "Turn on IMAP in your mail settings, then choose Sign In."
-msgstr "Turn on IMAP in your mail settings, then choose Sign In."
-
-#: app/src/add_account.rs:789
-msgid "The server's certificate does not match {host}."
-msgstr "The server's certificate does not match {host}."
-
-#: app/src/add_account.rs:794
-msgid "The certificate does not match"
-msgstr "The certificate does not match"
-
-#: app/src/add_account.rs:800
-msgid "Could not reach {host}: {reason}"
-msgstr "Could not reach {host}: {reason}"
-
-#: app/src/add_account.rs:804
-msgid "No answer on port {port}"
-msgstr "No answer on port {port}"
-
-#: app/src/add_account.rs:808
-msgid "The server did not answer. Check the server name and port, or try again when you are online."
-msgstr "The server did not answer. Check the server name and port, or try again when you are online."
-
-#: app/src/add_account.rs:828
-msgid "{host} answered but turned down another connection. Try again in a few minutes."
-msgstr "{host} answered but turned down another connection. Try again in a few minutes."
-
-#: app/src/add_account.rs:832
-msgid "Too many connections"
-msgstr "Too many connections"
-
-#: app/src/add_account.rs:838
-msgid "{host} answered in a way this app cannot work with."
-msgstr "{host} answered in a way this app cannot work with."
-
-#: app/src/add_account.rs:849
-msgid "This app cannot send these sign-in details to the server."
-msgstr "This app cannot send these sign-in details to the server."
-
-#: app/src/add_account.rs:875
-msgid "{provider} refused the password"
-msgstr "{provider} refused the password"
-
-#: app/src/add_account.rs:878
-msgid "The server refused the password"
-msgstr "The server refused the password"
-
-#: app/src/add_account.rs:886
-msgid "{provider} wants an app password here, not your website password. Make one, paste it above, then choose Sign In."
-msgstr "{provider} wants an app password here, not your website password. Make one, paste it above, then choose Sign In."
-
-#: app/src/add_account.rs:890
-msgid "Check the password, then choose Sign In."
-msgstr "Check the password, then choose Sign In."
-
-#: app/src/add_account.rs:907
-msgid "The server said: {reason}"
-msgstr "The server said: {reason}"
-
-#: app/src/add_account.rs:927
-msgid "Make an App Password"
-msgstr "Make an App Password"
-
-#: app/src/add_account.rs:931
-msgid "Turn On IMAP"
-msgstr "Turn On IMAP"
-
-#: app/src/add_account.rs:1077
-msgid "{host} is not a server name."
-msgstr "{host} is not a server name."
-
-#: app/src/add_account.rs:1083
-msgid "Type the incoming server's name."
-msgstr "Type the incoming server's name."
-
-#: app/src/add_account.rs:1084
-msgid "Type the outgoing server's name."
-msgstr "Type the outgoing server's name."
-
-#: app/src/add_account.rs:1210
-msgid "Mail is downloading. You can close this window."
-msgstr "Mail is downloading. You can close this window."
-
-#: app/src/add_account.rs:1211 app/src/add_account.rs:1240
-msgid "Your mail is here."
-msgstr "Your mail is here."
-
-#: app/src/add_account.rs:1225
-msgid "Your organization did not allow one of the permissions Iris asked for, so this feature stays off:"
-msgid_plural "Your organization did not allow {count} of the permissions Iris asked for, so these features stay off:"
-msgstr[0] "Your organisation did not allow one of the permissions Iris asked for, so this feature stays off:"
-msgstr[1] "Your organisation did not allow {count} of the permissions Iris asked for, so these features stay off:"
-
-#: app/src/add_account.rs:1232
-msgid "You left one box unticked on Google's page, so this feature stays off:"
-msgid_plural "You left {count} boxes unticked on Google's page, so these features stay off:"
-msgstr[0] "You left one box unticked on Google's page, so this feature stays off:"
-msgstr[1] "You left {count} boxes unticked on Google's page, so these features stay off:"
-
-#: app/src/add_account.rs:1239
-msgid "Mail is downloading."
-msgstr "Mail is downloading."
-
-#: app/src/add_account.rs:1259
-msgid "Newest mail comes first. Older mail keeps coming in the background, even with the window closed."
-msgstr "Newest mail comes first. Older mail keeps coming in the background, even with the window closed."
-
-#: app/src/add_account.rs:1261
-msgid "Iris keeps checking for new mail, even with the window closed."
-msgstr "Iris keeps checking for new mail, even with the window closed."
-
-#: app/src/add_account.rs:1271
-msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
-msgstr "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
-
-#: app/src/add_account.rs:1274
-msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
-msgstr "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
-
-#: app/src/add_account.rs:1277
-msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
-msgid_plural "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
-msgstr[0] "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
-msgstr[1] "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
-
-#: app/src/add_account.rs:1293
-msgid "Iris needs the password for {address} again."
-msgstr "Iris needs the password for {address} again."
-
-#: app/src/add_account/lookup.rs:33
-msgid "Iris's own list"
-msgstr "Iris's own list"
-
-#: app/src/add_account/lookup.rs:34
-msgid "Mail servers (MX)"
-msgstr "Mail servers (MX)"
-
-#: app/src/add_account/lookup.rs:35
-msgid "{domain}'s own settings"
-msgstr "{domain}'s own settings"
-
-#: app/src/add_account/lookup.rs:36
-msgid "Mozilla's provider list"
-msgstr "Mozilla's provider list"
-
-#: app/src/add_account/lookup.rs:37
-msgid "Common server names"
-msgstr "Common server names"
-
-#: app/src/add_account/lookup.rs:80
-msgid "Not listed"
-msgstr "Not listed"
-
-#: app/src/add_account/lookup.rs:81
-msgid "Waits for MX"
-msgstr "Waits for MX"
-
-#: app/src/add_account/lookup.rs:82
-msgid "Asking…"
-msgstr "Asking…"
-
-#: app/src/add_account/lookup.rs:83
-msgid "Answered"
-msgstr "Answered"
-
-#: app/src/add_account/lookup.rs:84
-msgid "Nothing there"
-msgstr "Nothing there"
-
-#: app/src/add_account/post.rs:67
-msgid "Ready to sign in"
-msgstr "Ready to sign in"
-
-#: app/src/add_account/post.rs:68
-msgid "Waiting for your browser"
-msgstr "Waiting for your browser"
-
-#: app/src/add_account/post.rs:69
-msgid "Looking for your mail servers"
-msgstr "Looking for your mail servers"
-
-#: app/src/add_account/post.rs:70
-msgid "Sign-in stopped"
-msgstr "Sign-in stopped"
-
-#: app/src/add_account/post.rs:71
-msgid "The server does not answer"
-msgstr "The server does not answer"
-
-#: app/src/add_account/post.rs:72
-msgid "Your account is added"
-msgstr "Your account is added"
-
-#: app/src/add_account/post.rs:76
-msgid "{state}, {provider}"
-msgstr "{state}, {provider}"
-
-#: app/src/add_account/post.rs:233
-msgid "Choose your {provider} account."
-msgstr "Choose your {provider} account."
-
-#: app/src/add_account/post.rs:236
-msgid "If {provider} says it has not verified the app, choose Advanced, then Go to Iris."
-msgstr "If {provider} says it has not verified the app, choose Advanced, then Go to Iris."
-
-#: app/src/add_account/post.rs:240
-msgid "Leave every box ticked and choose Continue."
-msgstr "Leave every box ticked and choose Continue."
-
-#: app/src/add_account/post.rs:243
-msgid "Choose or type your Microsoft account."
-msgstr "Choose or type your Microsoft account."
-
-#: app/src/add_account/post.rs:244
-msgid "Read what Iris asks for and choose Accept."
-msgstr "Read what Iris asks for and choose Accept."
-
-#: app/src/add_account/post.rs:259
-msgid "Other"
-msgstr "Other"
-
-#: app/src/add_account/post.rs:265
-msgid "Gmail, Workspace"
-msgstr "Gmail, Workspace"
-
-#: app/src/add_account/post.rs:266
-msgid "Outlook, 365"
-msgstr "Outlook, 365"
-
-#: app/src/add_account/post.rs:268
-msgid "Custom domains too"
-msgstr "Custom domains too"
-
-#: app/src/add_account/post.rs:270
-msgid "Any server"
-msgstr "Any server"
-
-#: app/src/add_account/post.rs:310
-msgid "{title}, {subtitle}"
-msgstr "{title}, {subtitle}"
-
-#: app/src/add_account/post.rs:315
-msgid "{tile}, signs in through your browser"
-msgstr "{tile}, signs in through your browser"
-
-#: app/src/add_account/post.rs:381
-msgid "Iris's own list knows this address. Nothing has left this computer."
-msgstr "Iris's own list knows this address. Nothing has left this computer."
-
-#: app/src/add_account/post.rs:399
-msgid "This copy cannot sign in to Microsoft"
-msgstr "This copy cannot sign in to Microsoft"
-
-#: app/src/add_account/post.rs:406
-msgid "{provider} has no IMAP"
-msgstr "{provider} has no IMAP"
-
-#: app/src/add_account/post.rs:408
-msgid "{provider} keeps its mail in its own apps, so other mail apps cannot reach it. Use another address instead."
-msgstr "{provider} keeps its mail in its own apps, so other mail apps cannot reach it. Use another address instead."
-
-#: app/src/add_account/post.rs:412
-msgid "Iris cannot reach {provider} yet"
-msgstr "Iris cannot reach {provider} yet"
-
-#: app/src/add_account/post.rs:414
-msgid "{provider} lets other mail apps in only through an app of its own, which Iris does not support yet. Use another address instead."
-msgstr "{provider} lets other mail apps in only through an app of its own, which Iris does not support yet. Use another address instead."
-
-#: app/src/add_account/post.rs:439
-msgid "{provider} needs an app password"
-msgstr "{provider} needs an app password"
-
-#: app/src/add_account/post.rs:441
-msgid "With two-step sign-in on, {provider} needs an app password"
-msgstr "With two-step sign-in on, {provider} needs an app password"
-
-#: app/src/add_account/post.rs:450
-msgid "On the next page, paste an app-specific password from your Apple Account page, not your Apple password."
-msgstr "On the next page, paste an app-specific password from your Apple Account page, not your Apple password."
-
-#: app/src/add_account/post.rs:453
-msgid "Open Apple Account Page"
-msgstr "Open Apple Account Page"
-
-#: app/src/add_account/post.rs:461
-msgid "On the next page, paste an app password from {provider}'s settings, not your {provider} password."
-msgstr "On the next page, paste an app password from {provider}'s settings, not your {provider} password."
-
-#: app/src/add_account/post.rs:466
-msgid "Open {provider}'s Settings"
-msgstr "Open {provider}'s Settings"
-
-#: app/src/add_account/post.rs:487
-msgid "{provider} signs in through your browser"
-msgstr "{provider} signs in through your browser"
-
-#: app/src/add_account/post.rs:489
-msgid "Continue opens {provider}'s sign-in page in your browser."
-msgstr "Continue opens {provider}'s sign-in page in your browser."
-
 #: app/src/app.rs:349
 msgid "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
 msgstr "Your preferences could not be read, so Iris started from the defaults. The old file is kept as {file}."
@@ -557,25 +71,17 @@ msgstr "your message"
 msgid "“{subject}”"
 msgstr "“{subject}”"
 
-#: app/src/core.rs:183
+#: app/src/core.rs:181
 msgid "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then open Iris again."
 msgstr "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then open Iris again."
 
-#: app/src/core.rs:195
+#: app/src/core.rs:193
 msgid "Iris could not update its mail store, and kept the old one."
 msgstr "Iris could not update its mail store, and kept the old one."
 
-#: app/src/core.rs:687 app/src/core.rs:744 app/src/core.rs:789
+#: app/src/core.rs:685 app/src/core.rs:725 app/src/core.rs:748
 msgid "Demo mode cannot add real accounts."
 msgstr "Demo mode cannot add real accounts."
-
-#: app/src/core.rs:701
-msgid "Canceled."
-msgstr "Cancelled."
-
-#: app/src/core.rs:705
-msgid "Gave up waiting for the browser after five minutes."
-msgstr "Gave up waiting for the browser after five minutes."
 
 #: app/src/event_reminders/notice.rs:31
 msgid "Join"
@@ -955,6 +461,10 @@ msgstr "Only the domain leaves this computer, never your full address."
 msgid "Sign In in Your Browser"
 msgstr "Sign In in Your Browser"
 
+#: app/src/ui/add_account.rs:769
+msgid "Waiting for your browser"
+msgstr "Waiting for your browser"
+
 #: app/src/ui/add_account.rs:778
 msgid "Time left"
 msgstr "Time left"
@@ -999,9 +509,17 @@ msgstr "Sign In"
 msgid "Your Name"
 msgstr "Your Name"
 
+#: app/src/ui/add_account.rs:905 app/src/ui/add_account.rs:907
+msgid "Password"
+msgstr "Password"
+
 #: app/src/ui/add_account.rs:922 app/src/ui/add_account.rs:1473
 msgid "Server Settings"
 msgstr "Server Settings"
+
+#: app/src/ui/add_account.rs:935
+msgid "Incoming"
+msgstr "Incoming"
 
 #: app/src/ui/add_account.rs:946 app/src/ui/add_account.rs:2367
 msgid "Outgoing"
@@ -1152,6 +670,14 @@ msgstr "Sign in to {domain}"
 msgid "{domain} uses {provider}"
 msgstr "{domain} uses {provider}"
 
+#: app/src/ui/add_account.rs:2158
+msgid "Open {provider}'s Settings"
+msgstr "Open {provider}'s Settings"
+
+#: app/src/ui/add_account.rs:2165
+msgid "{provider} needs an app password"
+msgstr "{provider} needs an app password"
+
 #: app/src/ui/add_account.rs:2168
 msgid "Not your {provider} website password. Make one with mail access in {provider}'s settings and paste it here."
 msgstr "Not your {provider} website password. Make one with mail access in {provider}'s settings and paste it here."
@@ -1167,6 +693,10 @@ msgstr "Could not reach {host}"
 #: app/src/ui/add_account.rs:2388
 msgid "Your password was not sent."
 msgstr "Your password was not sent."
+
+#: app/src/ui/add_account.rs:2578 app/src/ui/add_account.rs:2687
+msgid "Could not sign in"
+msgstr "Could not sign in"
 
 #: app/src/ui/add_account.rs:2596
 msgid "Sign in with {provider} in your browser"
@@ -5060,6 +4590,10 @@ msgstr "Delete Template"
 msgid "Delete {template}"
 msgstr "Delete {template}"
 
+#: app/src/ui/templates.rs:135
+msgid "Empty"
+msgstr "Empty"
+
 #: app/src/ui/templates.rs:147
 msgid "Delete {name}?"
 msgstr "Delete {name}?"
@@ -5368,6 +4902,10 @@ msgstr "Open"
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
+#: app/src/ui/window.rs:2655
+msgid "This copy of Iris was built without Microsoft sign-in."
+msgstr "This copy of Iris was built without Microsoft sign-in."
+
 #: app/src/ui/window.rs:2669
 msgid "Continue in your browser"
 msgstr "Continue in your browser"
@@ -5551,6 +5089,12 @@ msgstr "Save as an .eml file"
 #: app/src/ui/window/detached.rs:250
 msgid "Save Message"
 msgstr "Save Message"
+
+#: app/src/ui/window/export.rs:37
+msgid "{count} conversation"
+msgid_plural "{count} conversations"
+msgstr[0] "{count} conversation"
+msgstr[1] "{count} conversations"
 
 #: app/src/ui/window/export.rs:79 app/src/ui/window/export.rs:142
 msgid "Export Mail"
@@ -6151,6 +5695,454 @@ msgstr "the view went away"
 #: app/src/unsubscribe_page/webkit.rs:404
 msgid "the plan would type something other than the address"
 msgstr "the plan would type something other than the address"
+
+#: appcore/src/add_account.rs:113
+msgid "Did you mean {address}?"
+msgstr "Did you mean {address}?"
+
+#: appcore/src/add_account.rs:147
+msgid "Type the whole address, such as dana@example.com."
+msgstr "Type the whole address, such as dana@example.com."
+
+#: appcore/src/add_account.rs:254
+msgid "Leave on Server"
+msgstr "Leave on Server"
+
+#: appcore/src/add_account.rs:255
+msgid "Remove After Downloading"
+msgstr "Remove After Downloading"
+
+#: appcore/src/add_account.rs:257
+msgid "Remove After {count} Day"
+msgid_plural "Remove After {count} Days"
+msgstr[0] "Remove After {count} Day"
+msgstr[1] "Remove After {count} Days"
+
+#: appcore/src/add_account.rs:305
+msgid "{provider} has no IMAP, so other mail apps cannot reach it."
+msgstr "{provider} has no IMAP, so other mail apps cannot reach it."
+
+#: appcore/src/add_account.rs:312
+msgid "Iris cannot reach {provider} yet."
+msgstr "Iris cannot reach {provider} yet."
+
+#: appcore/src/add_account.rs:429
+msgid "{provider} also offers POP3"
+msgstr "{provider} also offers POP3"
+
+#: appcore/src/add_account.rs:439
+msgid "Incoming over {protocol}"
+msgstr "Incoming over {protocol}"
+
+#: appcore/src/add_account.rs:447
+msgid "Iris found no mail servers for {domain}. Enter them below."
+msgstr "Iris found no mail servers for {domain}. Enter them below."
+
+#: appcore/src/add_account.rs:472
+msgid "{provider} needs an app password."
+msgstr "{provider} needs an app password."
+
+#: appcore/src/add_account.rs:474
+msgid "With two-step sign-in on, {provider} needs an app password."
+msgstr "With two-step sign-in on, {provider} needs an app password."
+
+#: appcore/src/add_account.rs:480
+msgid "Make one in {provider}'s settings."
+msgstr "Make one in {provider}'s settings."
+
+#: appcore/src/add_account.rs:490
+msgid "App Password"
+msgstr "App Password"
+
+#: appcore/src/add_account.rs:526
+msgid "{host} · port {port} · {security}"
+msgstr "{host} · port {port} · {security}"
+
+#: appcore/src/add_account.rs:543 appcore/src/add_account.rs:547
+msgid "{first} and {host}"
+msgstr "{first} and {host}"
+
+#: appcore/src/add_account.rs:555
+msgid "{first} and {second}"
+msgstr "{first} and {second}"
+
+#: appcore/src/add_account.rs:563
+msgid "{hosts} · {security}"
+msgstr "{hosts} · {security}"
+
+#: appcore/src/add_account.rs:573
+msgid "Iris's own list knows this provider. Nothing has left this computer."
+msgstr "Iris's own list knows this provider. Nothing has left this computer."
+
+#: appcore/src/add_account.rs:575
+msgid "Found by its mail servers. Nothing else was asked."
+msgstr "Found by its mail servers. Nothing else was asked."
+
+#: appcore/src/add_account.rs:577
+msgid "Found in the domain's own settings."
+msgstr "Found in the domain's own settings."
+
+#: appcore/src/add_account.rs:579
+msgid "Found in Mozilla's provider list."
+msgstr "Found in Mozilla's provider list."
+
+#: appcore/src/add_account.rs:580
+msgid "Found by trying common server names."
+msgstr "Found by trying common server names."
+
+#: appcore/src/add_account.rs:581
+msgid "The servers you gave."
+msgstr "The servers you gave."
+
+#: appcore/src/add_account.rs:590
+msgid "{time} left"
+msgstr "{time} left"
+
+#: appcore/src/add_account.rs:599
+msgid "two"
+msgstr "two"
+
+#: appcore/src/add_account.rs:600
+msgid "three"
+msgstr "three"
+
+#: appcore/src/add_account.rs:601
+msgid "four"
+msgstr "four"
+
+#: appcore/src/add_account.rs:602
+msgid "five"
+msgstr "five"
+
+#: appcore/src/add_account.rs:603
+msgid "six"
+msgstr "six"
+
+#: appcore/src/add_account.rs:604
+msgid "seven"
+msgstr "seven"
+
+#: appcore/src/add_account.rs:605
+msgid "eight"
+msgstr "eight"
+
+#: appcore/src/add_account.rs:606
+msgid "nine"
+msgstr "nine"
+
+#: appcore/src/add_account.rs:617
+msgid "Waiting"
+msgstr "Waiting"
+
+#: appcore/src/add_account.rs:757
+msgid "Could not sign in: {reason}"
+msgstr "Could not sign in: {reason}"
+
+#: appcore/src/add_account.rs:764
+msgid "The server refused the password."
+msgstr "The server refused the password."
+
+#: appcore/src/add_account.rs:772
+msgid "IMAP is off for this account."
+msgstr "IMAP is off for this account."
+
+#: appcore/src/add_account.rs:775
+msgid "IMAP is off for this account"
+msgstr "IMAP is off for this account"
+
+#: appcore/src/add_account.rs:778
+msgid "Turn on IMAP in {provider}'s settings, then choose Sign In."
+msgstr "Turn on IMAP in {provider}'s settings, then choose Sign In."
+
+#: appcore/src/add_account.rs:781
+msgid "Turn on IMAP in your mail settings, then choose Sign In."
+msgstr "Turn on IMAP in your mail settings, then choose Sign In."
+
+#: appcore/src/add_account.rs:789
+msgid "The server's certificate does not match {host}."
+msgstr "The server's certificate does not match {host}."
+
+#: appcore/src/add_account.rs:794
+msgid "The certificate does not match"
+msgstr "The certificate does not match"
+
+#: appcore/src/add_account.rs:800
+msgid "Could not reach {host}: {reason}"
+msgstr "Could not reach {host}: {reason}"
+
+#: appcore/src/add_account.rs:804
+msgid "No answer on port {port}"
+msgstr "No answer on port {port}"
+
+#: appcore/src/add_account.rs:808
+msgid "The server did not answer. Check the server name and port, or try again when you are online."
+msgstr "The server did not answer. Check the server name and port, or try again when you are online."
+
+#: appcore/src/add_account.rs:828
+msgid "{host} answered but turned down another connection. Try again in a few minutes."
+msgstr "{host} answered but turned down another connection. Try again in a few minutes."
+
+#: appcore/src/add_account.rs:832
+msgid "Too many connections"
+msgstr "Too many connections"
+
+#: appcore/src/add_account.rs:838
+msgid "{host} answered in a way this app cannot work with."
+msgstr "{host} answered in a way this app cannot work with."
+
+#: appcore/src/add_account.rs:849
+msgid "This app cannot send these sign-in details to the server."
+msgstr "This app cannot send these sign-in details to the server."
+
+#: appcore/src/add_account.rs:875
+msgid "{provider} refused the password"
+msgstr "{provider} refused the password"
+
+#: appcore/src/add_account.rs:878
+msgid "The server refused the password"
+msgstr "The server refused the password"
+
+#: appcore/src/add_account.rs:886
+msgid "{provider} wants an app password here, not your website password. Make one, paste it above, then choose Sign In."
+msgstr "{provider} wants an app password here, not your website password. Make one, paste it above, then choose Sign In."
+
+#: appcore/src/add_account.rs:890
+msgid "Check the password, then choose Sign In."
+msgstr "Check the password, then choose Sign In."
+
+#: appcore/src/add_account.rs:907
+msgid "The server said: {reason}"
+msgstr "The server said: {reason}"
+
+#: appcore/src/add_account.rs:927
+msgid "Make an App Password"
+msgstr "Make an App Password"
+
+#: appcore/src/add_account.rs:931
+msgid "Turn On IMAP"
+msgstr "Turn On IMAP"
+
+#: appcore/src/add_account.rs:1077
+msgid "{host} is not a server name."
+msgstr "{host} is not a server name."
+
+#: appcore/src/add_account.rs:1083
+msgid "Type the incoming server's name."
+msgstr "Type the incoming server's name."
+
+#: appcore/src/add_account.rs:1084
+msgid "Type the outgoing server's name."
+msgstr "Type the outgoing server's name."
+
+#: appcore/src/add_account.rs:1210
+msgid "Mail is downloading. You can close this window."
+msgstr "Mail is downloading. You can close this window."
+
+#: appcore/src/add_account.rs:1211 appcore/src/add_account.rs:1240
+msgid "Your mail is here."
+msgstr "Your mail is here."
+
+#: appcore/src/add_account.rs:1225
+msgid "Your organization did not allow one of the permissions Iris asked for, so this feature stays off:"
+msgid_plural "Your organization did not allow {count} of the permissions Iris asked for, so these features stay off:"
+msgstr[0] "Your organisation did not allow one of the permissions Iris asked for, so this feature stays off:"
+msgstr[1] "Your organisation did not allow {count} of the permissions Iris asked for, so these features stay off:"
+
+#: appcore/src/add_account.rs:1232
+msgid "You left one box unticked on Google's page, so this feature stays off:"
+msgid_plural "You left {count} boxes unticked on Google's page, so these features stay off:"
+msgstr[0] "You left one box unticked on Google's page, so this feature stays off:"
+msgstr[1] "You left {count} boxes unticked on Google's page, so these features stay off:"
+
+#: appcore/src/add_account.rs:1239
+msgid "Mail is downloading."
+msgstr "Mail is downloading."
+
+#: appcore/src/add_account.rs:1259
+msgid "Newest mail comes first. Older mail keeps coming in the background, even with the window closed."
+msgstr "Newest mail comes first. Older mail keeps coming in the background, even with the window closed."
+
+#: appcore/src/add_account.rs:1261
+msgid "Iris keeps checking for new mail, even with the window closed."
+msgstr "Iris keeps checking for new mail, even with the window closed."
+
+#: appcore/src/add_account.rs:1271
+msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
+msgstr "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. Mail stays on the server."
+
+#: appcore/src/add_account.rs:1274
+msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
+msgstr "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server after downloading it."
+
+#: appcore/src/add_account.rs:1277
+msgid "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
+msgid_plural "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
+msgstr[0] "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} day after downloading it."
+msgstr[1] "Iris downloads the server's mail into Inbox and keeps checking in the background, even with the window closed. It removes each message from the server {days} days after downloading it."
+
+#: appcore/src/add_account.rs:1293
+msgid "Iris needs the password for {address} again."
+msgstr "Iris needs the password for {address} again."
+
+#: appcore/src/add_account/lookup.rs:33
+msgid "Iris's own list"
+msgstr "Iris's own list"
+
+#: appcore/src/add_account/lookup.rs:34
+msgid "Mail servers (MX)"
+msgstr "Mail servers (MX)"
+
+#: appcore/src/add_account/lookup.rs:35
+msgid "{domain}'s own settings"
+msgstr "{domain}'s own settings"
+
+#: appcore/src/add_account/lookup.rs:36
+msgid "Mozilla's provider list"
+msgstr "Mozilla's provider list"
+
+#: appcore/src/add_account/lookup.rs:37
+msgid "Common server names"
+msgstr "Common server names"
+
+#: appcore/src/add_account/lookup.rs:80
+msgid "Not listed"
+msgstr "Not listed"
+
+#: appcore/src/add_account/lookup.rs:81
+msgid "Waits for MX"
+msgstr "Waits for MX"
+
+#: appcore/src/add_account/lookup.rs:82
+msgid "Asking…"
+msgstr "Asking…"
+
+#: appcore/src/add_account/lookup.rs:83
+msgid "Answered"
+msgstr "Answered"
+
+#: appcore/src/add_account/lookup.rs:84
+msgid "Nothing there"
+msgstr "Nothing there"
+
+#: appcore/src/add_account/post.rs:67
+msgid "Ready to sign in"
+msgstr "Ready to sign in"
+
+#: appcore/src/add_account/post.rs:69
+msgid "Looking for your mail servers"
+msgstr "Looking for your mail servers"
+
+#: appcore/src/add_account/post.rs:70
+msgid "Sign-in stopped"
+msgstr "Sign-in stopped"
+
+#: appcore/src/add_account/post.rs:71
+msgid "The server does not answer"
+msgstr "The server does not answer"
+
+#: appcore/src/add_account/post.rs:72
+msgid "Your account is added"
+msgstr "Your account is added"
+
+#: appcore/src/add_account/post.rs:76
+msgid "{state}, {provider}"
+msgstr "{state}, {provider}"
+
+#: appcore/src/add_account/post.rs:233
+msgid "Choose your {provider} account."
+msgstr "Choose your {provider} account."
+
+#: appcore/src/add_account/post.rs:236
+msgid "If {provider} says it has not verified the app, choose Advanced, then Go to Iris."
+msgstr "If {provider} says it has not verified the app, choose Advanced, then Go to Iris."
+
+#: appcore/src/add_account/post.rs:240
+msgid "Leave every box ticked and choose Continue."
+msgstr "Leave every box ticked and choose Continue."
+
+#: appcore/src/add_account/post.rs:243
+msgid "Choose or type your Microsoft account."
+msgstr "Choose or type your Microsoft account."
+
+#: appcore/src/add_account/post.rs:244
+msgid "Read what Iris asks for and choose Accept."
+msgstr "Read what Iris asks for and choose Accept."
+
+#: appcore/src/add_account/post.rs:259
+msgid "Other"
+msgstr "Other"
+
+#: appcore/src/add_account/post.rs:265
+msgid "Gmail, Workspace"
+msgstr "Gmail, Workspace"
+
+#: appcore/src/add_account/post.rs:266
+msgid "Outlook, 365"
+msgstr "Outlook, 365"
+
+#: appcore/src/add_account/post.rs:268
+msgid "Custom domains too"
+msgstr "Custom domains too"
+
+#: appcore/src/add_account/post.rs:270
+msgid "Any server"
+msgstr "Any server"
+
+#: appcore/src/add_account/post.rs:310
+msgid "{title}, {subtitle}"
+msgstr "{title}, {subtitle}"
+
+#: appcore/src/add_account/post.rs:315
+msgid "{tile}, signs in through your browser"
+msgstr "{tile}, signs in through your browser"
+
+#: appcore/src/add_account/post.rs:381
+msgid "Iris's own list knows this address. Nothing has left this computer."
+msgstr "Iris's own list knows this address. Nothing has left this computer."
+
+#: appcore/src/add_account/post.rs:399
+msgid "This copy cannot sign in to Microsoft"
+msgstr "This copy cannot sign in to Microsoft"
+
+#: appcore/src/add_account/post.rs:406
+msgid "{provider} has no IMAP"
+msgstr "{provider} has no IMAP"
+
+#: appcore/src/add_account/post.rs:408
+msgid "{provider} keeps its mail in its own apps, so other mail apps cannot reach it. Use another address instead."
+msgstr "{provider} keeps its mail in its own apps, so other mail apps cannot reach it. Use another address instead."
+
+#: appcore/src/add_account/post.rs:412
+msgid "Iris cannot reach {provider} yet"
+msgstr "Iris cannot reach {provider} yet"
+
+#: appcore/src/add_account/post.rs:414
+msgid "{provider} lets other mail apps in only through an app of its own, which Iris does not support yet. Use another address instead."
+msgstr "{provider} lets other mail apps in only through an app of its own, which Iris does not support yet. Use another address instead."
+
+#: appcore/src/add_account/post.rs:441
+msgid "With two-step sign-in on, {provider} needs an app password"
+msgstr "With two-step sign-in on, {provider} needs an app password"
+
+#: appcore/src/add_account/post.rs:450
+msgid "On the next page, paste an app-specific password from your Apple Account page, not your Apple password."
+msgstr "On the next page, paste an app-specific password from your Apple Account page, not your Apple password."
+
+#: appcore/src/add_account/post.rs:453
+msgid "Open Apple Account Page"
+msgstr "Open Apple Account Page"
+
+#: appcore/src/add_account/post.rs:461
+msgid "On the next page, paste an app password from {provider}'s settings, not your {provider} password."
+msgstr "On the next page, paste an app password from {provider}'s settings, not your {provider} password."
+
+#: appcore/src/add_account/post.rs:487
+msgid "{provider} signs in through your browser"
+msgstr "{provider} signs in through your browser"
+
+#: appcore/src/add_account/post.rs:489
+msgid "Continue opens {provider}'s sign-in page in your browser."
+msgstr "Continue opens {provider}'s sign-in page in your browser."
 
 #: appcore/src/assistant/mod.rs:119
 msgid "The assistant is off. Choose a model in Preferences."

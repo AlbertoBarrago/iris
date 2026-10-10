@@ -88,6 +88,11 @@ final class MailModel {
 
     /// Preferences as they stand, read again after each change. Shared
     /// with the GTK app's settings file.
+    /// Whether the store holds no account yet: the window shows the
+    /// welcome page then.
+    private(set) var noAccounts = false
+    /// Asks for the Add Account sheet.
+    var addAccount: AddAccountRequest?
     private(set) var prefs: Preferences?
     private(set) var choices: PreferenceChoices?
 
@@ -119,6 +124,7 @@ final class MailModel {
                     self.readPrefs()
                     self.startSync()
                     self.sidebar = sidebar
+                    self.noAccounts = mail.hasNoAccounts()
                     self.selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key
                     if let asked, asked.count == 2, let account = Int64(asked[0]) {
                         self.selection = [ThreadKey(account: account, thread: asked[1])]
@@ -867,6 +873,76 @@ extension MailModel {
             let found = mail.searchSuggestions(text: text)
             await MainActor.run {
                 if self.searchText == text { self.suggestions = found }
+            }
+        }
+    }
+}
+
+// MARK: Accounts
+
+extension MailModel {
+    /// A fresh walk through Add Account.
+    func accountSetup() -> AccountSetup? { mail?.accountSetup() }
+
+    /// A new account is running: read the sidebar and the welcome page's
+    /// question again.
+    func accountAdded() {
+        readAccounts()
+    }
+
+    /// Shows the inbox of the account `id` once the sidebar lists it.
+    func openInbox(of id: Int64) {
+        guard let mail else { return }
+        Task.detached {
+            let sidebar = (try? mail.sidebar()) ?? []
+            await MainActor.run {
+                self.sidebar = sidebar
+                self.noAccounts = false
+                if let inbox = sidebar.first(where: { $0.accountId == id && $0.icon == "inbox" }) {
+                    self.selectedMailbox = inbox.key
+                }
+            }
+        }
+    }
+
+    func removeAccountQuestion(_ id: Int64) -> RemoveQuestion? {
+        try? mail?.removeAccountQuestion(accountId: id)
+    }
+
+    /// Removes the account, off the main thread, and says how it went.
+    func removeAccount(_ question: RemoveQuestion, id: Int64) {
+        guard let mail else { return }
+        if openThread?.account == id { selection = [] }
+        Task.detached {
+            do {
+                try mail.removeAccount(accountId: id)
+                await MainActor.run {
+                    self.toast = Toast(words: tr("Removed {account}").replacingOccurrences(of: "{account}", with: question.email), undo: false)
+                    self.readAccounts()
+                }
+            } catch {
+                await MainActor.run {
+                    self.toast = Toast(words: tr("Could not remove {account}: {reason}")
+                        .replacingOccurrences(of: "{account}", with: question.email)
+                        .replacingOccurrences(of: "{reason}", with: "\(error)"), undo: false)
+                }
+            }
+        }
+    }
+
+    /// Reads whether the store has accounts, and the sidebar, and moves
+    /// off a mailbox that left it.
+    func readAccounts() {
+        guard let mail else { return }
+        Task.detached {
+            let none = mail.hasNoAccounts()
+            let sidebar = (try? mail.sidebar()) ?? []
+            await MainActor.run {
+                self.noAccounts = none
+                self.sidebar = sidebar
+                if self.selectedMailbox == nil || !sidebar.contains(where: { $0.key == self.selectedMailbox }) {
+                    self.selectedMailbox = sidebar.first { $0.kind == "mailbox" }?.key
+                }
             }
         }
     }

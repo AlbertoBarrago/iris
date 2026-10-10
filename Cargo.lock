@@ -2547,6 +2547,7 @@ dependencies = [
  "gettext-rs",
  "mailrs-ai",
  "mailrs-appcore",
+ "mailrs-discover",
  "mailrs-domain",
  "mailrs-mime",
  "mailrs-pgp",

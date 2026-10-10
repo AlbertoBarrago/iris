@@ -10,6 +10,19 @@ struct ContentView: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
+        Group {
+            if model.noAccounts {
+                WelcomeView()
+            } else {
+                mail
+            }
+        }
+        .sheet(item: Bindable(model).addAccount) { request in
+            AddAccountView(request: request).environment(model)
+        }
+    }
+
+    private var mail: some View {
         NavigationSplitView {
             SidebarView()
                 .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 340)

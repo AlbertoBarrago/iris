@@ -33,6 +33,8 @@ struct IrisApp: App {
             CommandGroup(replacing: .newItem) {
                 Button(tr("New Message")) { model.composeAsked = ComposeRequest(kind: .new) }
                     .keyboardShortcut("n")
+                Divider()
+                Button(tr("Add Account…")) { model.addAccount = AddAccountRequest() }
             }
             CommandGroup(after: .sidebar) {
                 Button(tr("Assistant")) { assistant.shown.toggle() }
