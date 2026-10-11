@@ -16,6 +16,7 @@ struct AISettings: View {
                 AssistantRows(ai: ai, providers: choices.providers, changed: reload)
                 ConnectionRows(ai: ai, changed: reload)
                 FoundRows(changed: reload)
+                UsedForRows()
                 Section(tr("Safety")) {
                     toggle(tr("Ask Before Acting"),
                            tr("Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"),
@@ -443,5 +444,71 @@ private struct AllowedRows: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+}
+
+/// Used For: the model each feature besides the assistant runs on, as
+/// the GTK AI page has it. A feature can follow the assistant or take a
+/// connection and a model of its own.
+private struct UsedForRows: View {
+    @Environment(MailModel.self) private var model
+    @State private var features: [FeatureUse] = []
+
+    var body: some View {
+        Section {
+            ForEach(features, id: \.feature) { feature in
+                Picker(selection: Binding(
+                    get: { feature.current },
+                    set: { set(feature, choice: $0, model: "") }
+                )) {
+                    ForEach(feature.choices, id: \.key) { Text($0.label).tag($0.key) }
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(feature.label)
+                        Text(feature.description).font(.callout).foregroundStyle(.secondary)
+                    }
+                }
+                if feature.current != "same" {
+                    ModelField(feature: feature) { set(feature, choice: feature.current, model: $0) }
+                }
+            }
+        } header: {
+            Text(tr("Used For"))
+        } footer: {
+            Text(tr("Each feature sends what it reads to the model chosen for it.")).foregroundStyle(.secondary)
+        }
+        .onAppear { load() }
+    }
+
+    private func load() {
+        features = model.mail?.aiFeatures() ?? []
+    }
+
+    private func set(_ feature: FeatureUse, choice: String, model name: String) {
+        do {
+            try model.mail?.setFeatureUse(feature: feature.feature, choice: choice, model: name)
+        } catch {
+            model.say("\(error)")
+        }
+        load()
+    }
+}
+
+/// A feature's model, saved when the field is left or Return pressed.
+private struct ModelField: View {
+    let feature: FeatureUse
+    let save: (String) -> Void
+    @State private var text: String
+
+    init(feature: FeatureUse, save: @escaping (String) -> Void) {
+        self.feature = feature
+        self.save = save
+        _text = State(initialValue: feature.model)
+    }
+
+    var body: some View {
+        TextField(tr("Model"), text: $text)
+            .onSubmit { save(text) }
+            .onDisappear { if text != feature.model { save(text) } }
     }
 }

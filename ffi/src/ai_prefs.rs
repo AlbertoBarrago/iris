@@ -43,6 +43,22 @@ pub struct AiChoices {
     pub web_search: Vec<ChoiceItem>,
 }
 
+/// One feature besides the assistant, and the model it runs on.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct FeatureUse {
+    /// `translation` or `unsubscribe`.
+    pub feature: String,
+    pub label: String,
+    pub description: String,
+    /// "Same as the Assistant", then each connection, by key.
+    pub choices: Vec<ChoiceItem>,
+    /// The choice it is on: `same`, or a connection's key.
+    pub current: String,
+    /// The model on that connection; empty when it follows the
+    /// assistant.
+    pub model: String,
+}
+
 /// One model a connection offers.
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
 pub struct ModelChoice {
@@ -74,8 +90,74 @@ pub struct FoundModel {
     pub models: Vec<String>,
 }
 
+/// A feature by the key Swift names it with.
+fn feature_of(key: &str) -> Option<Feature> {
+    match key {
+        "translation" => Some(Feature::Translation),
+        "unsubscribe" => Some(Feature::Unsubscribe),
+        _ => None,
+    }
+}
+
+/// The key of a feature's choice: `same`, or the connection's key.
+fn use_key(choice: &Use) -> String {
+    match choice {
+        Use::SameAsAssistant => "same".into(),
+        Use::Model { connection, .. } => key(connection),
+    }
+}
+
 #[uniffi::export]
 impl Mail {
+    /// The features besides the assistant, each with its model, as the
+    /// GTK AI page's Used For group lists them.
+    pub fn ai_features(&self) -> Vec<FeatureUse> {
+        let ai = load().ai;
+        [("translation", Feature::Translation), ("unsubscribe", Feature::Unsubscribe)]
+            .into_iter()
+            .map(|(name, feature)| {
+                let current = ai.use_for(feature);
+                FeatureUse {
+                    feature: name.into(),
+                    label: feature.label(),
+                    description: feature.description(),
+                    choices: feature
+                        .choices()
+                        .iter()
+                        .map(|choice| ChoiceItem {
+                            key: use_key(choice),
+                            label: choice.label(),
+                        })
+                        .collect(),
+                    current: use_key(&current),
+                    model: match current {
+                        Use::Model { model, .. } => model,
+                        Use::SameAsAssistant => String::new(),
+                    },
+                }
+            })
+            .collect()
+    }
+
+    /// Puts `feature` on `choice` (`same` or a connection's key) with
+    /// `model`. Moving to another connection with no model starts from
+    /// the assistant's model there, as the GTK row does.
+    pub fn set_feature_use(&self, feature: String, choice: String, model: String) -> Result<(), CoreError> {
+        let feature = feature_of(&feature).ok_or_else(|| CoreError::Store(format!("not a feature: {feature}")))?;
+        let choice = match choice.as_str() {
+            "same" => Use::SameAsAssistant,
+            other => {
+                let connection: AiProvider = parse(other)?;
+                let model = match model.trim() {
+                    "" => load().ai.model_on(connection).to_string(),
+                    given => given.to_string(),
+                };
+                Use::Model { connection, model }
+            }
+        };
+        save(Change::Ai(AiChange::Use { feature, choice }))
+    }
+
     pub fn ai_preferences(&self) -> AiPreferences {
         let settings = load();
         let ai = &settings.ai;
