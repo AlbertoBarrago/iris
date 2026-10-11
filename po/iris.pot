@@ -1347,20 +1347,6 @@ msgstr ""
 msgid "{title}, {start} to {end}, {calendar}"
 msgstr ""
 
-#: app/src/ui/calendar/draft.rs:103 app/src/ui/calendar/editor.rs:1992
-#: app/src/ui/calendar/kinds.rs:59
-msgid "Out of office"
-msgstr ""
-
-#: app/src/ui/calendar/draft.rs:104 app/src/ui/calendar/editor.rs:1991
-#: app/src/ui/calendar/kinds.rs:60
-msgid "Focus time"
-msgstr ""
-
-#: app/src/ui/calendar/draft.rs:373
-msgid "Declined because I am out of office"
-msgstr ""
-
 #: app/src/ui/calendar/editor.rs:174
 msgid "New Event"
 msgstr ""
@@ -1631,6 +1617,14 @@ msgstr ""
 #: app/src/ui/calendar/editor.rs:1990 app/src/ui/calendar/mod.rs:2248
 #: app/src/ui/calendar/quick.rs:54
 msgid "Event"
+msgstr ""
+
+#: app/src/ui/calendar/editor.rs:1991 app/src/ui/calendar/kinds.rs:60
+msgid "Focus time"
+msgstr ""
+
+#: app/src/ui/calendar/editor.rs:1992 app/src/ui/calendar/kinds.rs:59
+msgid "Out of office"
 msgstr ""
 
 #: app/src/ui/calendar/editor.rs:2014
@@ -6972,6 +6966,10 @@ msgstr ""
 
 #: appcore/src/assistant/turn.rs:286
 msgid "Running a command in the sandbox"
+msgstr ""
+
+#: appcore/src/calendar_draft.rs:373
+msgid "Declined because I am out of office"
 msgstr ""
 
 #: appcore/src/compose.rs:592 appcore/src/compose.rs:2772

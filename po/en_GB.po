@@ -1312,20 +1312,6 @@ msgstr "{title}, all day, {calendar}"
 msgid "{title}, {start} to {end}, {calendar}"
 msgstr "{title}, {start} to {end}, {calendar}"
 
-#: app/src/ui/calendar/draft.rs:103 app/src/ui/calendar/editor.rs:1992
-#: app/src/ui/calendar/kinds.rs:59
-msgid "Out of office"
-msgstr "Out of office"
-
-#: app/src/ui/calendar/draft.rs:104 app/src/ui/calendar/editor.rs:1991
-#: app/src/ui/calendar/kinds.rs:60
-msgid "Focus time"
-msgstr "Focus time"
-
-#: app/src/ui/calendar/draft.rs:373
-msgid "Declined because I am out of office"
-msgstr "Declined because I am out of office"
-
 #: app/src/ui/calendar/editor.rs:174
 msgid "New Event"
 msgstr "New Event"
@@ -1595,6 +1581,14 @@ msgstr "Add Google Meet"
 #: app/src/ui/calendar/quick.rs:54
 msgid "Event"
 msgstr "Event"
+
+#: app/src/ui/calendar/editor.rs:1991 app/src/ui/calendar/kinds.rs:60
+msgid "Focus time"
+msgstr "Focus time"
+
+#: app/src/ui/calendar/editor.rs:1992 app/src/ui/calendar/kinds.rs:59
+msgid "Out of office"
+msgstr "Out of office"
 
 #: app/src/ui/calendar/editor.rs:2014
 msgid "day"
@@ -6809,6 +6803,10 @@ msgstr "Reading a skill's file"
 #: appcore/src/assistant/turn.rs:286
 msgid "Running a command in the sandbox"
 msgstr "Running a command in the sandbox"
+
+#: appcore/src/calendar_draft.rs:373
+msgid "Declined because I am out of office"
+msgstr "Declined because I am out of office"
 
 #: appcore/src/compose.rs:592 appcore/src/compose.rs:2772
 msgid "Add at least one recipient."

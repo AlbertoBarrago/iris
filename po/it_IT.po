@@ -1423,20 +1423,6 @@ msgstr "{title}, tutto il giorno, {calendar}"
 msgid "{title}, {start} to {end}, {calendar}"
 msgstr "{title}, da {start} a {end}, {calendar}"
 
-#: app/src/ui/calendar/draft.rs:103 app/src/ui/calendar/editor.rs:1992
-#: app/src/ui/calendar/kinds.rs:59
-msgid "Out of office"
-msgstr "Fuori sede"
-
-#: app/src/ui/calendar/draft.rs:104 app/src/ui/calendar/editor.rs:1991
-#: app/src/ui/calendar/kinds.rs:60
-msgid "Focus time"
-msgstr "Tempo per concentrarsi"
-
-#: app/src/ui/calendar/draft.rs:373
-msgid "Declined because I am out of office"
-msgstr "Rifiutato perché sono fuori sede"
-
 #: app/src/ui/calendar/editor.rs:174
 msgid "New Event"
 msgstr "Nuovo evento"
@@ -1710,6 +1696,14 @@ msgstr "Aggiungi Google Meet"
 #: app/src/ui/calendar/quick.rs:54
 msgid "Event"
 msgstr "Evento"
+
+#: app/src/ui/calendar/editor.rs:1991 app/src/ui/calendar/kinds.rs:60
+msgid "Focus time"
+msgstr "Tempo per concentrarsi"
+
+#: app/src/ui/calendar/editor.rs:1992 app/src/ui/calendar/kinds.rs:59
+msgid "Out of office"
+msgstr "Fuori sede"
 
 #: app/src/ui/calendar/editor.rs:2014
 msgid "day"
@@ -7275,6 +7269,10 @@ msgstr "Leggo un file di una skill"
 #: appcore/src/assistant/turn.rs:286
 msgid "Running a command in the sandbox"
 msgstr "Eseguo un comando nella sandbox"
+
+#: appcore/src/calendar_draft.rs:373
+msgid "Declined because I am out of office"
+msgstr "Rifiutato perché sono fuori sede"
 
 #: appcore/src/compose.rs:592 appcore/src/compose.rs:2772
 msgid "Add at least one recipient."

@@ -23,6 +23,7 @@ mailrs-sync.workspace = true
 ammonia.workspace = true
 base64.workspace = true
 chrono.workspace = true
+chrono-tz.workspace = true
 mail-builder.workspace = true
 pulldown-cmark.workspace = true
 serde.workspace = true

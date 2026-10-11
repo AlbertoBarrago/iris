@@ -52,7 +52,7 @@ app/src/ui/autocomplete.rs
 app/src/ui/calendar/agenda.rs
 app/src/ui/calendar/attachments.rs
 app/src/ui/calendar/block.rs
-app/src/ui/calendar/draft.rs
+appcore/src/calendar_draft.rs
 app/src/ui/calendar/editor.rs
 app/src/ui/calendar/holidays.rs
 app/src/ui/calendar/kinds.rs
