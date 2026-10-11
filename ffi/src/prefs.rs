@@ -5,7 +5,7 @@
 
 use mailrs_appcore::notify::Button;
 use mailrs_appcore::settings::{
-    Change, Choice, ColorScheme, ComposeFormat, MarkRead, RemoteImages, Settings, TextSize, UndoSend,
+    Change, Choice, ColorScheme, ComposeFormat, MarkRead, NoticeTime, RemoteImages, Settings, TextSize, UndoSend,
     cache_choices, nearest, poll_choices, window_choices,
 };
 use mailrs_domain::Category;
@@ -44,6 +44,9 @@ pub struct Preferences {
     pub undo_send: String,
     /// How long Undo Send waits, in seconds.
     pub undo_seconds: u32,
+    /// How long a notice stays, by key and in seconds.
+    pub notice_time: String,
+    pub notice_seconds: u32,
     pub check_attachments: bool,
     pub default_account: Option<String>,
     pub language: String,
@@ -98,6 +101,10 @@ pub struct PreferenceChoices {
     pub color_scheme: Vec<ChoiceItem>,
     pub compose_format: Vec<ChoiceItem>,
     pub undo_send: Vec<ChoiceItem>,
+    pub notice_time: Vec<ChoiceItem>,
+    /// The notice setting's name and the line under it.
+    pub notice_title: String,
+    pub notice_subtitle: String,
     pub default_category: Vec<ChoiceItem>,
     pub week_start: Vec<ChoiceItem>,
     pub notification_buttons: Vec<ChoiceItem>,
@@ -134,6 +141,8 @@ impl Mail {
             compose_format: key(&s.compose_format),
             undo_send: key(&s.undo_send),
             undo_seconds: s.undo_send.seconds(),
+            notice_time: key(&s.notice_time),
+            notice_seconds: s.notice_time.seconds(),
             check_attachments: s.check_attachments,
             default_account: s.default_account.clone(),
             language: s.language.clone(),
@@ -157,6 +166,9 @@ impl Mail {
             color_scheme: choices::<ColorScheme>(),
             compose_format: choices::<ComposeFormat>(),
             undo_send: choices::<UndoSend>(),
+            notice_time: choices::<NoticeTime>(),
+            notice_title: NoticeTime::words().0,
+            notice_subtitle: NoticeTime::words().1,
             default_category: choices::<Category>(),
             week_start: choices::<WeekStart>(),
             notification_buttons: Button::ALL
@@ -189,6 +201,7 @@ impl Mail {
             "notify_vips_only" => Change::NotifyVipsOnly(on()),
             "compose_format" => Change::ComposeFormat(parse(&value)?),
             "undo_send" => Change::UndoSend(parse(&value)?),
+            "notice_time" => Change::NoticeTime(parse(&value)?),
             "check_attachments" => Change::CheckAttachments(on()),
             "default_account" => Change::DefaultAccount(Some(value).filter(|v| !v.is_empty())),
             "language" => Change::Language(value),

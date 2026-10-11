@@ -8374,173 +8374,185 @@ msgstr ""
 "Non verranno inviati. Alcuni sono in Bozze, e quelli che Gmail non ha potuto "
 "prendere sono aperti per poterli salvare."
 
-#: appcore/src/settings/mod.rs:233
+#: appcore/src/settings/mod.rs:235
 msgid "Local Server"
 msgstr "Server locale"
 
-#: appcore/src/settings/mod.rs:234
+#: appcore/src/settings/mod.rs:236
 msgid "Anthropic API"
 msgstr "API Anthropic"
 
-#: appcore/src/settings/mod.rs:235
+#: appcore/src/settings/mod.rs:237
 msgid "Claude Subscription"
 msgstr "Abbonamento Claude"
 
-#: appcore/src/settings/mod.rs:261
+#: appcore/src/settings/mod.rs:263
 msgid "Translation"
 msgstr "Traduzione"
 
 #. The assistant's running label says "Unsubscribing" too, and
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: appcore/src/settings/mod.rs:265
+#: appcore/src/settings/mod.rs:267
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr "Annullamento iscrizioni"
 
-#: appcore/src/settings/mod.rs:271
+#: appcore/src/settings/mod.rs:273
 msgid "Answers questions and acts on your mail"
 msgstr "Risponde alle domande e agisce sulla tua posta"
 
-#: appcore/src/settings/mod.rs:272
+#: appcore/src/settings/mod.rs:274
 msgid "Translates a message when you ask"
 msgstr "Traduce un messaggio quando lo chiedi"
 
-#: appcore/src/settings/mod.rs:274
+#: appcore/src/settings/mod.rs:276
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr ""
 "Legge la pagina di annullamento iscrizione di una newsletter quando le "
 "regole non bastano"
 
-#: appcore/src/settings/mod.rs:312
+#: appcore/src/settings/mod.rs:314
 msgid "Same as the Assistant"
 msgstr "Come l'Assistente"
 
-#: appcore/src/settings/mod.rs:408
+#: appcore/src/settings/mod.rs:410
 msgid "Claude's own only"
 msgstr "Solo quella di Claude"
 
-#: appcore/src/settings/mod.rs:409
+#: appcore/src/settings/mod.rs:411
 msgid "Brave Search"
 msgstr "Brave Search"
 
-#: appcore/src/settings/mod.rs:410
+#: appcore/src/settings/mod.rs:412
 msgid "SearXNG"
 msgstr "SearXNG"
 
-#: appcore/src/settings/mod.rs:548
+#: appcore/src/settings/mod.rs:551
 msgid "Rich text"
 msgstr "Testo formattato"
 
-#: appcore/src/settings/mod.rs:549
+#: appcore/src/settings/mod.rs:552
 msgid "Markdown"
 msgstr "Markdown"
 
-#: appcore/src/settings/mod.rs:568
+#: appcore/src/settings/mod.rs:571
 msgid "Automatic"
 msgstr "Automatico"
 
-#: appcore/src/settings/mod.rs:608
+#: appcore/src/settings/mod.rs:611
 msgid "When opened"
 msgstr "All'apertura"
 
-#: appcore/src/settings/mod.rs:609
+#: appcore/src/settings/mod.rs:612
 msgid "After 2 seconds"
 msgstr "Dopo 2 secondi"
 
-#: appcore/src/settings/mod.rs:610
+#: appcore/src/settings/mod.rs:613
 msgid "Only when I choose"
 msgstr "Solo quando lo scelgo"
 
-#: appcore/src/settings/mod.rs:626
+#: appcore/src/settings/mod.rs:629
 msgid "Ask each time"
 msgstr "Chiedi ogni volta"
 
-#: appcore/src/settings/mod.rs:627
+#: appcore/src/settings/mod.rs:630
 msgid "Always load"
 msgstr "Carica sempre"
 
-#: appcore/src/settings/mod.rs:661
+#: appcore/src/settings/mod.rs:664
 msgid "Small"
 msgstr "Piccolo"
 
-#: appcore/src/settings/mod.rs:662
+#: appcore/src/settings/mod.rs:665
 msgid "Default"
 msgstr "Predefinito"
 
-#: appcore/src/settings/mod.rs:663
+#: appcore/src/settings/mod.rs:666
 msgid "Large"
 msgstr "Grande"
 
-#: appcore/src/settings/mod.rs:664
+#: appcore/src/settings/mod.rs:667
 msgid "Larger"
 msgstr "Più grande"
 
-#: appcore/src/settings/mod.rs:702
+#: appcore/src/settings/mod.rs:705 appcore/src/settings/mod.rs:748
 msgid "5 seconds"
 msgstr "5 secondi"
 
-#: appcore/src/settings/mod.rs:703
+#: appcore/src/settings/mod.rs:706 appcore/src/settings/mod.rs:749
 msgid "10 seconds"
 msgstr "10 secondi"
 
-#: appcore/src/settings/mod.rs:704
+#: appcore/src/settings/mod.rs:707 appcore/src/settings/mod.rs:750
 msgid "20 seconds"
 msgstr "20 secondi"
 
-#: appcore/src/settings/mod.rs:705
+#: appcore/src/settings/mod.rs:708
 msgid "30 seconds"
 msgstr "30 secondi"
 
-#: appcore/src/settings/mod.rs:722
+#: appcore/src/settings/mod.rs:728
+msgid "Notices Stay For"
+msgstr "Gli avvisi restano per"
+
+#: appcore/src/settings/mod.rs:729
+msgid "How long a notice in the window's corner stays before it goes"
+msgstr "Quanto resta un avviso nell'angolo della finestra prima di sparire"
+
+#: appcore/src/settings/mod.rs:747
+msgid "3 seconds"
+msgstr "3 secondi"
+
+#: appcore/src/settings/mod.rs:767
 msgid "Follow system"
 msgstr "Come il sistema"
 
-#: appcore/src/settings/mod.rs:723
+#: appcore/src/settings/mod.rs:768
 msgid "Light"
 msgstr "Chiaro"
 
-#: appcore/src/settings/mod.rs:724
+#: appcore/src/settings/mod.rs:769
 msgid "Dark"
 msgstr "Scuro"
 
-#: appcore/src/settings/mod.rs:758
+#: appcore/src/settings/mod.rs:803
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] "Ogni secondo"
 msgstr[1] "Ogni {count} secondi"
 
-#: appcore/src/settings/mod.rs:766
+#: appcore/src/settings/mod.rs:811
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] "Ogni minuto"
 msgstr[1] "Ogni {count} minuti"
 
-#: appcore/src/settings/mod.rs:783
+#: appcore/src/settings/mod.rs:828
 msgid "2 weeks"
 msgstr "2 settimane"
 
-#: appcore/src/settings/mod.rs:784
+#: appcore/src/settings/mod.rs:829
 msgid "30 days"
 msgstr "30 giorni"
 
-#: appcore/src/settings/mod.rs:785
+#: appcore/src/settings/mod.rs:830
 msgid "90 days"
 msgstr "90 giorni"
 
-#: appcore/src/settings/mod.rs:786
+#: appcore/src/settings/mod.rs:831
 msgid "1 year"
 msgstr "1 anno"
 
-#: appcore/src/settings/mod.rs:793
+#: appcore/src/settings/mod.rs:838
 msgid "256 MB"
 msgstr "256 MB"
 
-#: appcore/src/settings/mod.rs:794
+#: appcore/src/settings/mod.rs:839
 msgid "1 GB"
 msgstr "1 GB"
 
-#: appcore/src/settings/mod.rs:795
+#: appcore/src/settings/mod.rs:840
 msgid "4 GB"
 msgstr "4 GB"
 
@@ -9074,13 +9086,13 @@ msgstr "Aggiungi un account per scrivere."
 msgid "The event is no longer on the calendar"
 msgstr "L'evento non è più nel calendario"
 
-#: ffi/src/mail_invitation.rs:252
+#: ffi/src/mail_invitation.rs:255
 msgid "The {service} is switched off for Iris, so your answer went by email"
 msgstr ""
 "Il servizio {service} è disattivato per Iris, quindi la risposta è partita "
 "per email"
 
-#: ffi/src/mail_invitation.rs:277
+#: ffi/src/mail_invitation.rs:280
 msgid "This invitation has no time to move"
 msgstr "Questo invito non ha un orario da spostare"
 

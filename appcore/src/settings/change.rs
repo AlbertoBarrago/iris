@@ -41,6 +41,7 @@ pub enum Change {
     /// Notifications before calendar events.
     EventReminders(bool),
     UndoSend(UndoSend),
+    NoticeTime(super::NoticeTime),
     /// The address new messages come from; `None` means the first account.
     DefaultAccount(Option<String>),
     InboxCategories(bool),
@@ -272,6 +273,7 @@ impl Change {
             }
             Change::EventReminders(on) => settings.event_reminders = on,
             Change::UndoSend(delay) => settings.undo_send = delay,
+            Change::NoticeTime(time) => settings.notice_time = time,
             Change::DefaultAccount(email) => settings.default_account = email,
             Change::InboxCategories(on) => settings.inbox_categories = on,
             Change::DefaultCategory(category) => settings.default_category = category,
@@ -609,6 +611,8 @@ settable! {
         // The composer reads this as a message goes out, so the assistant
         // has no business turning the warning off.
         check_attachments,
+        // How long Iris Next's notices stay is the person's own taste.
+        notice_time,
         // Whether the app asks GitHub for new releases is the person's
         // call, made in Preferences.
         check_for_updates,
@@ -805,6 +809,7 @@ impl Effects {
             signatures,
             formatted_signatures,
             undo_send,
+            notice_time,
             flag_color,
             vips,
             notify_vips_only,
@@ -856,6 +861,8 @@ impl Effects {
             signatures,
             formatted_signatures,
             undo_send,
+            // Iris Next reads this as each notice goes up.
+            notice_time,
             flag_color,
             notify_vips_only,
             notification_buttons,

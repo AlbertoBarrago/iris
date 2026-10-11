@@ -128,6 +128,8 @@ private struct GeneralSettings: View {
                 }
                 Section(tr("Appearance")) {
                     ChoicePicker(title: tr("Style"), name: "color_scheme", current: prefs.colorScheme, items: choices.colorScheme)
+                    ChoicePicker(title: choices.noticeTitle, subtitle: choices.noticeSubtitle,
+                                 name: "notice_time", current: prefs.noticeTime, items: choices.noticeTime)
                 }
                 Section(tr("Notifications")) {
                     Switch(title: tr("Notify About New Mail"), name: "notifications", value: prefs.notifications)

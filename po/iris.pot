@@ -7990,171 +7990,183 @@ msgid ""
 "open for you to save."
 msgstr ""
 
-#: appcore/src/settings/mod.rs:233
+#: appcore/src/settings/mod.rs:235
 msgid "Local Server"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:234
+#: appcore/src/settings/mod.rs:236
 msgid "Anthropic API"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:235
+#: appcore/src/settings/mod.rs:237
 msgid "Claude Subscription"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:261
+#: appcore/src/settings/mod.rs:263
 msgid "Translation"
 msgstr ""
 
 #. The assistant's running label says "Unsubscribing" too, and
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: appcore/src/settings/mod.rs:265
+#: appcore/src/settings/mod.rs:267
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:271
+#: appcore/src/settings/mod.rs:273
 msgid "Answers questions and acts on your mail"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:272
+#: appcore/src/settings/mod.rs:274
 msgid "Translates a message when you ask"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:274
+#: appcore/src/settings/mod.rs:276
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:312
+#: appcore/src/settings/mod.rs:314
 msgid "Same as the Assistant"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:408
+#: appcore/src/settings/mod.rs:410
 msgid "Claude's own only"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:409
+#: appcore/src/settings/mod.rs:411
 msgid "Brave Search"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:410
+#: appcore/src/settings/mod.rs:412
 msgid "SearXNG"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:548
+#: appcore/src/settings/mod.rs:551
 msgid "Rich text"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:549
+#: appcore/src/settings/mod.rs:552
 msgid "Markdown"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:568
+#: appcore/src/settings/mod.rs:571
 msgid "Automatic"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:608
+#: appcore/src/settings/mod.rs:611
 msgid "When opened"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:609
+#: appcore/src/settings/mod.rs:612
 msgid "After 2 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:610
+#: appcore/src/settings/mod.rs:613
 msgid "Only when I choose"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:626
+#: appcore/src/settings/mod.rs:629
 msgid "Ask each time"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:627
+#: appcore/src/settings/mod.rs:630
 msgid "Always load"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:661
+#: appcore/src/settings/mod.rs:664
 msgid "Small"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:662
+#: appcore/src/settings/mod.rs:665
 msgid "Default"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:663
+#: appcore/src/settings/mod.rs:666
 msgid "Large"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:664
+#: appcore/src/settings/mod.rs:667
 msgid "Larger"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:702
+#: appcore/src/settings/mod.rs:705 appcore/src/settings/mod.rs:748
 msgid "5 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:703
+#: appcore/src/settings/mod.rs:706 appcore/src/settings/mod.rs:749
 msgid "10 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:704
+#: appcore/src/settings/mod.rs:707 appcore/src/settings/mod.rs:750
 msgid "20 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:705
+#: appcore/src/settings/mod.rs:708
 msgid "30 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:722
+#: appcore/src/settings/mod.rs:728
+msgid "Notices Stay For"
+msgstr ""
+
+#: appcore/src/settings/mod.rs:729
+msgid "How long a notice in the window's corner stays before it goes"
+msgstr ""
+
+#: appcore/src/settings/mod.rs:747
+msgid "3 seconds"
+msgstr ""
+
+#: appcore/src/settings/mod.rs:767
 msgid "Follow system"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:723
+#: appcore/src/settings/mod.rs:768
 msgid "Light"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:724
+#: appcore/src/settings/mod.rs:769
 msgid "Dark"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:758
+#: appcore/src/settings/mod.rs:803
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/settings/mod.rs:766
+#: appcore/src/settings/mod.rs:811
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/settings/mod.rs:783
+#: appcore/src/settings/mod.rs:828
 msgid "2 weeks"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:784
+#: appcore/src/settings/mod.rs:829
 msgid "30 days"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:785
+#: appcore/src/settings/mod.rs:830
 msgid "90 days"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:786
+#: appcore/src/settings/mod.rs:831
 msgid "1 year"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:793
+#: appcore/src/settings/mod.rs:838
 msgid "256 MB"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:794
+#: appcore/src/settings/mod.rs:839
 msgid "1 GB"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:795
+#: appcore/src/settings/mod.rs:840
 msgid "4 GB"
 msgstr ""
 
@@ -8671,11 +8683,11 @@ msgstr ""
 msgid "The event is no longer on the calendar"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:252
+#: ffi/src/mail_invitation.rs:255
 msgid "The {service} is switched off for Iris, so your answer went by email"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:277
+#: ffi/src/mail_invitation.rs:280
 msgid "This invitation has no time to move"
 msgstr ""
 

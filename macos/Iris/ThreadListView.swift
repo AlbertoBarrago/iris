@@ -316,7 +316,8 @@ struct ToastView: View {
         // its own clock: the toast goes once the message does.
         .task(id: TimerKey(toast: toast.id, hovering: hovering)) {
             guard toast.undoSend == nil, !hovering else { return }
-            try? await Task.sleep(for: .seconds(toast.offer != nil ? 10 : toast.undo ? 8 : 5))
+            let base = Int(model.prefs?.noticeSeconds ?? 5)
+            try? await Task.sleep(for: .seconds(toast.offer != nil ? base * 2 : toast.undo ? base + 3 : base))
             if !Task.isCancelled, model.toast?.id == toast.id { model.dismissToast() }
         }
     }
