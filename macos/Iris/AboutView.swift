@@ -19,9 +19,6 @@ struct AboutView: View {
                     .padding(.bottom, 6)
                 Text(words.name).font(.largeTitle.weight(.bold))
                 Link(words.author, destination: URL(string: words.authorUrl)!)
-                Text(basedOn)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
                 Text(versionWords(version: version))
                     .foregroundStyle(.secondary)
                     .padding(.top, 4)
@@ -60,7 +57,7 @@ struct AboutView: View {
                 .padding(.top, 16)
 
                 VStack(spacing: 0) {
-                    ForEach(Array(words.links.enumerated()), id: \.offset) { index, link in
+                    ForEach(Array(links.enumerated()), id: \.offset) { index, link in
                         if index > 0 { Divider() }
                         Button {
                             if let url = URL(string: link.url) { openURL(url) }
@@ -90,16 +87,15 @@ struct AboutView: View {
         .frame(width: 400, height: 640)
     }
 
-    /// "Based on Penguin Mail", the name a link as the GTK window has it:
-    /// Iris is a modified Penguin Mail, which the GPL asks a copy to say.
-    private var basedOn: AttributedString {
-        let parts = words.basedOn.components(separatedBy: "{app}")
-        var out = AttributedString(parts.first ?? "")
-        var name = AttributedString(words.upstream)
-        name.link = URL(string: words.upstreamUrl)
-        out.append(name)
-        if parts.count > 1 { out.append(AttributedString(parts[1])) }
-        return out
+    /// The links, with Penguin Mail's beside the licence at the end: Iris
+    /// is a modified Penguin Mail, and the credit sits with the terms that
+    /// ask for it rather than under the name.
+    private var links: [AboutLink] {
+        words.links + [AboutLink(
+            title: words.basedOn.replacingOccurrences(of: "{app}", with: words.upstream),
+            subtitle: "",
+            url: words.upstreamUrl
+        )]
     }
 
     private var version: String {
