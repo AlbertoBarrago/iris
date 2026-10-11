@@ -2,6 +2,12 @@
 
 Terms the code and its docs use for Gmail mail. The `domain` crate holds the code for each.
 
+Some entries still name the code of the GTK window that Iris 1.1 replaced
+with the Swift app: paths under `mailrs::ui`, `MainWindow`,
+`ConversationView`, `mailrs::open_thread` and the like. The terms hold;
+where the code now lives is `appcore`, `ffi` and `macos/Iris`, and those
+entries get their new names as they are next touched.
+
 ## Glossary
 
 **System label**: a label Gmail defines, with the same id in every account, such as `INBOX`, `SPAM`, `UNREAD`, and the category labels. `mailrs_gmail::labels` names them and maps each to a role, a keyword or a category; only the Google adapter and the Gmail fake read them. _Avoid_: system folder.

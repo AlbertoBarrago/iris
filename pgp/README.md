@@ -17,7 +17,7 @@ that fails on send.
 
 Every call blocks. gpg may put a pinentry in front of the person, who takes
 as long as they take, so these run on a thread of their own, like the store's
-calls do, and never on the GTK thread.
+calls do, and never on the window's main thread.
 
 ## Reading a message that arrived
 

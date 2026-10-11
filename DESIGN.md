@@ -136,15 +136,15 @@ and mail refresh plans build it. Re-run /impeccable document once they ship, to 
 
 ## Overview
 
-**Creative North Star: "The Quiet Desk, made the GNOME way"**
+**Creative North Star: "The Quiet Desk, made the Mac way"**
 
 Iris is a desk you work at all day: mail in one drawer, the calendar in the other, one switch at the top
 of the sidebar between them. Nothing on it asks for attention it has not earned. Surfaces are quiet greys in
 layers, content is the only thing with colour, and a single accent marks where you are and what the next step is.
 
-It is made the GNOME way. The polish lives in what libadwaita already gives, done with care: exact spacing, soft
-tints instead of new ornament, capsules that group what belongs together, motion that follows the hand and stops
-when the system's animations are off. A person should not be able to tell where libadwaita ends and Iris begins.
+It is made the Mac way. The polish lives in what SwiftUI and AppKit already give, done with care: exact spacing,
+soft tints instead of new ornament, capsules that group what belongs together, motion that follows the hand and
+stops when the system reduces motion. A person should not be able to tell where macOS ends and Iris begins.
 
 The same materials build both screens. A selected conversation and a calendar event are the same object, a soft
 tinted card with a bar of colour, so moving between Mail and Calendar feels like turning to another page of the
@@ -160,11 +160,11 @@ same notebook.
 
 ## Colors
 
-A cool, near-neutral grey scale with one warm accent and GNOME's palette reserved for calendars.
+A cool, near-neutral grey scale with one warm accent and a fixed palette reserved for calendars.
 
 ### Primary
 - **Desktop Accent** (Ember Orange on the owner's desktop): the accent the person set in macOS's System Settings,
-  which libadwaita follows. The app never picks its own. It fills the one primary button in a place, the chosen category chip, today's
+  which SwiftUI's `accentColor` follows. The app never picks its own. It fills the one primary button in a place, the chosen category chip, today's
   date in the mini month, the time-now line, the Undo Send pill, unread dots and unread times. Every design
   artefact shows it as orange, the default.
 
@@ -179,13 +179,14 @@ A cool, near-neutral grey scale with one warm accent and GNOME's palette reserve
   subtitles; section labels, hour labels and dates outside the month.
 
 ### Calendar colours
-GNOME's own palette, used only as a calendar's or event's colour: **Blue**, **Green**, **Purple**, **Red**,
+A fixed palette, used only as a calendar's or event's colour: **Blue**, **Green**, **Purple**, **Red**,
 **Yellow**, **Teal**, **Pink**, plus the accent orange for the primary calendar. Avatars without a photo take
 these hues at 85 % over the window.
 
 ### Named Rules
-**The Desktop Accent Rule.** The accent is whatever the system's settings say. Draw it with libadwaita's accent
-variables (`--accent-bg-color`, `--accent-color`), never a fixed hex; the hex above is the reference value only.
+**The Desktop Accent Rule.** The accent is whatever the system's settings say. Draw it with `Color.accentColor`
+(and `NSColor.controlAccentColor` for the conversation page), never a fixed hex; the hex above is the reference
+value only.
 
 **The One Filled Control Rule.** A region holds at most one control filled with the accent: Yes in an answer row,
 the selected chip, New Event. Everything else is capsule grey.
@@ -197,7 +198,7 @@ the selected chip, New Event. Everything else is capsule grey.
 
 **Body Font:** the system font (SF Pro on macOS). No second family.
 
-**Character:** one family doing everything through weight and size, as GNOME apps do: heavy weights (800) for
+**Character:** one family doing everything through weight and size, as Mac apps do: heavy weights (800) for
 the few things that name a place, regular for reading, tabular figures wherever times line up.
 
 ### Hierarchy
@@ -228,8 +229,8 @@ Calendar has sidebar and the grid card, set 10px in from the sidebar and the win
 Spacing runs on a 4px base: 8 and 12 between related things, 16 inside cards, 24 between groups, 36 as the
 reading pane's side margin. Rows in the sidebar are 32-34px apart; list rows 92px; hour rows 52px.
 
-Narrow windows follow libadwaita's breakpoints: the sidebar collapses at 960sp, the assistant overlays at 1100sp,
-and at 620sp Mail shows one pane at a time and Calendar drops Week and Month for the agenda.
+Narrow windows follow SwiftUI's split view: the sidebar collapses as the window narrows, and the assistant's
+inspector closes before the list gives up its room.
 
 ### Named Rules
 **The Hairline Rule.** Hairlines mark hours and separate list rows, starting where the text starts, never at the
@@ -302,7 +303,7 @@ one capsule.
 ## Do's and Don'ts
 
 ### Do:
-- **Do** take the accent from the system's settings through libadwaita's variables.
+- **Do** take the accent from the system's settings through `Color.accentColor`.
 - **Do** tint selection and events at 14 % in light and 24 % in dark, with ink text on top.
 - **Do** group related actions in one pill capsule, keeping every tooltip, accessible name and shortcut.
 - **Do** end text that does not fit with an ellipsis on one line; never cut a line in half.
@@ -316,5 +317,5 @@ one capsule.
 - **Don't** fill more than one control per region with the accent.
 - **Don't** put text on a full-strength calendar colour.
 - **Don't** draw boxes round groups or give page cards a shadow.
-- **Don't** use libadwaita's grey selection in the sidebar or the list; selection is the accent tint.
-- **Don't** invent controls GNOME already has; libadwaita's widget comes first.
+- **Don't** use a grey selection in the sidebar or the list; selection is the accent tint.
+- **Don't** invent controls macOS already has; the system's own control comes first.

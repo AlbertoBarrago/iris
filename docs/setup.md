@@ -145,8 +145,8 @@ cargo run --release -p mailrs-cli -- triage you@gmail.com <thread-id> archive
 
 Iris is `Iris.app`, for a Mac with Apple silicon and macOS 26 or later. A
 release comes as a DMG; a build from source comes from
-`scripts/macos-install.sh`, which loads GTK from Homebrew and so runs on
-the Mac that built it.
+`scripts/macos-install.sh`, which builds a release with Xcode and installs
+it in `/Applications`.
 
 - **Updates.** A copy installed from a DMG updates itself through Sparkle:
   it checks once a day, asks before it installs, and **Check for

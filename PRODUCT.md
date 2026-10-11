@@ -6,10 +6,9 @@
 
 web
 
-Iris is a macOS app in Rust with GTK 4 and libadwaita, not a web app. The schema has no value for a GTK desktop
-app, so this records the nearest one. Its styling is GTK CSS (`app/data/style.css`). libadwaita's own patterns and
-the GNOME Human Interface Guidelines govern the design, not web conventions; the menu bar, the Dock and the
-shortcuts follow macOS.
+Iris is a native macOS app, SwiftUI and AppKit over a Rust core, not a web app. The schema has no value for a
+desktop app, so this records the nearest one. Apple's Human Interface Guidelines and the system's own controls
+govern the design, not web conventions.
 
 ## Users
 
@@ -26,8 +25,8 @@ browser and the older clients because it is both nicer to use and more capable.
 
 ## Positioning
 
-- **At home on the Mac, and fast.** A libadwaita app with the Mac's menu bar, Dock badge and Command shortcuts,
-  reading from a local copy so mail opens in milliseconds.
+- **At home on the Mac, and fast.** A native SwiftUI app with the Mac's menus, Dock badge, shortcuts, notifications
+  and Login Items, reading from a local copy so mail opens in milliseconds.
 - **Private by default.** Remote images blocked until asked for, mail kept on this computer, OpenPGP and S/MIME
   through the person's own GnuPG, no tracking.
 - **An assistant that acts.** It searches, sorts, drafts, unsubscribes and changes settings, asks before it acts,
@@ -40,8 +39,7 @@ browser and the older clients because it is both nicer to use and more capable.
 A Mac with Apple silicon and macOS 26 or later, with the app running on after its window closes and syncing in the
 background. Installed from a DMG or the install script at https://albz.it/iris/, and updated through Sparkle. Gmail,
 Microsoft, IMAP and SMTP, and POP3 accounts today, with CalDAV and CardDAV for calendars and contacts. Keyboard-only
-use is supported; every control is named for screen readers, though VoiceOver does not read GTK's controls on
-macOS yet.
+use is supported, and VoiceOver reads the system's controls.
 
 ## Capabilities and Constraints
 
@@ -53,7 +51,8 @@ macOS yet.
 - Assistant: models from Anthropic, OpenAI-compatible servers, local servers or a Claude subscription; MCP
   servers; skills, whose scripts do not run on macOS yet; every change asks first unless the person chose Always
   Allow.
-- Not on macOS yet: buttons on new-mail notifications, and starting at login.
+- Not back since the move to SwiftUI: Smart Mailboxes, mbox and `.eml` export, View Source, Categorize Sender,
+  and the demo accounts.
 - Languages: American English source strings, British English generated from them, and Italian kept
   complete.
 - Terms are defined in `CONTEXT.md`; the code's rules are in `AGENTS.md`.
@@ -63,24 +62,24 @@ macOS yet.
 - **The icon idiom.** The app icon is a winged envelope: a cream envelope in a night-violet frame with an
   iridescent wing rising from behind its top-left corner, set on a macOS squircle. `scripts/iris-art.py` draws it
   and the Add Account poses, and new artwork follows that idiom.
-- **The accent is the system's.** The app follows the accent color set in macOS's System Settings, through
-  libadwaita, and has no accent setting of its own. Mockups and screenshots use orange.
+- **The accent is the system's.** The app follows the accent color set in macOS's System Settings and has no
+  accent setting of its own. Mockups and screenshots use orange.
 - **Plain-spoken voice.** Every string, comment, doc and commit follows the stop-slop and unslop rules: plain
   statements, no filler, no hype.
-- **libadwaita first.** libadwaita patterns and the GNOME Human Interface Guidelines win over custom interface,
-  and macOS's conventions win for the menu bar, the Dock and the shortcuts.
+- **The system first.** SwiftUI and AppKit's own controls and Apple's Human Interface Guidelines win over custom
+  interface.
 
 ## Evidence on Hand
 
-- Screenshots of the real app in `docs/screenshots/` (inbox, dark, categories, composer, assistant, flags, VIPs,
+- Screenshots of the earlier GTK app in `docs/screenshots/` (inbox, dark, categories, composer, assistant, flags, VIPs,
   selection, send later, rules, preferences, phone width, welcome, Hide My Email, automatic reply).
 - Approved mockups of the calendar and the refreshed mail screen in `docs/superpowers/specs/calendar-mockup/`.
 - No user counts, reviews, testimonials, press or benchmarks against other clients exist. Do not invent any.
 
 ## Product Principles
 
-1. **Belong on the Mac.** Follow libadwaita's patterns before inventing new ones, and the Mac's where the system
-   sets them; the app should feel like part of the system.
+1. **Belong on the Mac.** Follow the Mac's own patterns before inventing new ones; the app should feel like part of
+   the system.
 2. **The person's mail stays theirs.** Keep it on the computer, load nothing remote without asking, and never let
    the assistant act without consent.
 3. **Fast because it is local.** Read from the copy on disk; the network is for keeping it fresh, not for showing
@@ -91,7 +90,7 @@ macOS yet.
 
 ## Accessibility & Inclusion
 
-Every control has an accessible name, though VoiceOver does not read GTK's controls on macOS yet. Keyboard
-shortcuts cover the main actions and are listed in the Keyboard Shortcuts dialog. Motion follows the system's
+Every control has an accessible name VoiceOver reads. Keyboard shortcuts cover the main actions and show in the
+menus. Motion follows the system's
 animations setting. The interface ships in American English, British English and Italian. Details in
 `docs/accessibility.md`.
