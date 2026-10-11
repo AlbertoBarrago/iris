@@ -51,6 +51,9 @@ pub struct ComposeDraft {
     pub rich: Option<Vec<RichBlock>>,
     /// Files going out with the message.
     pub attachments: Vec<OutgoingFile>,
+    /// Whether it goes out signed, and encrypted, with gpg or gpgsm.
+    pub sign: bool,
+    pub encrypt: bool,
 }
 
 /// One line of the rich editor: `paragraph`, `heading`, `bullet`,
@@ -194,9 +197,14 @@ impl Mail {
             .ok_or_else(|| CoreError::Store("The account is not connected.".into()))?;
         let message_id = compose::new_message_id(&draft.from.email);
         let date = mailrs_sync::now_millis() / 1000;
-        let raw = compose::build_saved_draft(&draft, date, &message_id).map_err(|err| {
-            CoreError::Store(fill(&gettext("Could not build the message: {reason}"), &[("reason", &err)]))
-        })?;
+        // A message to go out encrypted is never kept readable on the
+        // server, so its draft is encrypted to the writer.
+        let raw = match draft.encrypt {
+            true => self.sealed_draft(&draft, date, &message_id)?,
+            false => compose::build_saved_draft(&draft, date, &message_id).map_err(|err| {
+                CoreError::Store(fill(&gettext("Could not build the message: {reason}"), &[("reason", &err)]))
+            })?,
+        };
         let (thread, old) = (draft.thread_id.clone(), draft.draft_id.clone());
         let saved = self
             .run(async move { sync.save_draft(raw, thread, old).await })
@@ -235,8 +243,7 @@ impl Mail {
         let mut draft = self.blank(account_id)?;
         match mailrs_appcore::protection::draft::standard_of(&raw) {
             None => mailrs_appcore::protection::draft::reopen_plain(&raw, &mut draft),
-            // Iris Next does not reach gpg or gpgsm yet.
-            Some(_) => return Err(CoreError::Store(mailrs_appcore::pgp::explain(&mailrs_pgp::PgpError::NoGpg))),
+            Some(standard) => self.reopen_sealed(&raw, standard, &mut draft)?,
         }
         draft.thread_id = in_thread.then_some(thread_id);
         if let Some(id) = draft_id.clone() {
@@ -302,11 +309,8 @@ impl Mail {
         if let Some(problem) = draft.problem() {
             return Err(CoreError::Store(problem));
         }
-        let message_id = compose::new_message_id(&draft.from.email);
-        let date = mailrs_sync::now_millis() / 1000;
-        let raw = compose::build_mime(&draft, date, &message_id).map_err(|err| {
-            CoreError::Store(fill(&gettext("Could not build the message: {reason}"), &[("reason", &err)]))
-        })?;
+        let mut draft = draft;
+        let raw = self.raw_for(&mut draft)?;
         let queued = queued(&draft, raw);
         let outbox = Arc::new(Outbox::new(Arc::clone(&self.running), self.db.clone()));
         let posted = self
@@ -333,10 +337,8 @@ impl Mail {
         if let Some(problem) = draft.problem() {
             return Err(CoreError::Store(problem));
         }
-        let message_id = compose::new_message_id(&draft.from.email);
-        let raw = compose::build_mime(&draft, mailrs_sync::now_millis() / 1000, &message_id).map_err(|err| {
-            CoreError::Store(fill(&gettext("Could not build the message: {reason}"), &[("reason", &err)]))
-        })?;
+        let mut draft = draft;
+        let raw = self.raw_for(&mut draft)?;
         let mut message = queued(&draft, raw);
         message.send_at = at;
         let outbox = Arc::new(Outbox::new(Arc::clone(&self.running), self.db.clone()));
@@ -391,6 +393,8 @@ impl Mail {
             .collect();
         draft.quoted = composed.quoted;
         draft.signature = composed.signature_html;
+        draft.sign = composed.sign;
+        draft.encrypt = composed.encrypt;
         Ok(draft)
     }
 
@@ -431,7 +435,11 @@ impl Mail {
             .find(|s| s.account_id == account_id)
             .cloned()
             .ok_or_else(|| CoreError::Store(gettext("That account is not connected.")))?;
-        Ok(Draft::new(sender.account_id, address(&sender)))
+        let mut draft = Draft::new(sender.account_id, address(&sender));
+        // Preferences may say to sign every message; the composer can
+        // still turn it off for this one.
+        draft.sign = Settings::load(&Settings::default_path()).sign_by_default;
+        Ok(draft)
     }
 
     /// `draft` with the signature of the address it comes from, as the GTK
@@ -481,6 +489,8 @@ impl Mail {
                     content_id: a.content_id.clone(),
                 })
                 .collect(),
+            sign: draft.sign,
+            encrypt: draft.encrypt,
             draft: serde_json::to_string(&draft).unwrap_or_default(),
         }
     }

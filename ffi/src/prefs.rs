@@ -212,6 +212,8 @@ impl Mail {
             "undo_send" => Change::UndoSend(parse(&value)?),
             "notice_time" => Change::NoticeTime(parse(&value)?),
             "check_attachments" => Change::CheckAttachments(on()),
+            "sign_by_default" => Change::SignByDefault(on()),
+            "encrypt_when_possible" => Change::EncryptWhenPossible(on()),
             "default_account" => Change::DefaultAccount(Some(value).filter(|v| !v.is_empty())),
             "language" => Change::Language(value),
             "default_category" => Change::DefaultCategory(parse(&value)?),

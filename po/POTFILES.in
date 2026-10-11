@@ -192,3 +192,4 @@ ffi/src/rules.rs
 ffi/src/prefs.rs
 ffi/src/about.rs
 ffi/src/protection.rs
+appcore/src/key_import.rs

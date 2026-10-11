@@ -36,6 +36,8 @@ struct ComposeView: View {
     @State private var problem: String?
     @State private var editor = RichController()
     @State private var templates: [TemplateItem] = []
+    /// What Sign and Encrypt can do for the recipients as they stand.
+    @State private var protection: ProtectionState?
     @State private var savingTemplate = false
     @State private var templateName = ""
 
@@ -86,7 +88,38 @@ struct ComposeView: View {
             Text(tr("Placeholders such as {{first_name}} fill in each time you use it."))
         }
         .onReceive(NotificationCenter.default.publisher(for: .templatesChanged)) { _ in loadTemplates() }
+        .task(id: recipientsKey) {
+            // Asked once the typing pauses, as the GTK composer does.
+            try? await Task.sleep(for: .milliseconds(400))
+            guard !Task.isCancelled else { return }
+            checkKeys()
+        }
         .toolbar {
+            ToolbarItem {
+                // Sign and Encrypt, as the GTK composer's More menu has
+                // them. Encrypt works only once every recipient has a key
+                // or certificate here, and says why not otherwise.
+                Menu {
+                    Toggle(tr("Sign"), isOn: Binding(
+                        get: { draft?.sign ?? false },
+                        set: { draft?.sign = $0 }
+                    ))
+                    .disabled(!(protection?.canSign ?? false))
+                    Toggle(tr("Encrypt"), isOn: Binding(
+                        get: { draft?.encrypt ?? false },
+                        set: { draft?.encrypt = $0 }
+                    ))
+                    .disabled(!(protection?.canEncrypt ?? false) && !(draft?.encrypt ?? false))
+                    if let note = protection?.encryptNote, !note.isEmpty {
+                        Divider()
+                        Text(note)
+                    }
+                } label: {
+                    Label(shieldWords, systemImage: shieldSymbol)
+                }
+                .help(shieldWords)
+                .disabled(draft == nil)
+            }
             ToolbarItem {
                 Menu {
                     if templates.isEmpty {
@@ -267,6 +300,47 @@ struct ComposeView: View {
     }
 
     /// Picks files to attach with the Mac's open panel.
+    private var recipientsKey: String {
+        guard let draft else { return "" }
+        return [draft.to, draft.cc, draft.bcc].joined(separator: "|")
+    }
+
+    /// Asks what gpg and gpgsm hold for the recipients. Preferences may
+    /// say to encrypt whenever everyone can read it.
+    private func checkKeys() {
+        guard let mail = model.mail, let draft else { return }
+        let (to, cc, bcc) = (draft.to, draft.cc, draft.bcc)
+        Task.detached {
+            let state = mail.protectionState(to: to, cc: cc, bcc: bcc)
+            await MainActor.run {
+                protection = state
+                if state.encryptWhenPossible, state.canEncrypt, self.draft?.encrypt == false {
+                    self.draft?.encrypt = true
+                }
+                if !state.canEncrypt, self.draft?.encrypt == true, state.encryptWhenPossible {
+                    self.draft?.encrypt = false
+                }
+            }
+        }
+    }
+
+    private var shieldWords: String {
+        switch (draft?.sign ?? false, draft?.encrypt ?? false) {
+        case (true, true): tr("Signed and encrypted")
+        case (false, true): tr("Encrypted")
+        case (true, false): tr("Signed")
+        default: tr("Encrypt")
+        }
+    }
+
+    private var shieldSymbol: String {
+        switch (draft?.sign ?? false, draft?.encrypt ?? false) {
+        case (_, true): "lock.fill"
+        case (true, false): "checkmark.seal"
+        default: "lock.open"
+        }
+    }
+
     private func loadTemplates() {
         templates = (try? model.mail?.templates()) ?? []
     }

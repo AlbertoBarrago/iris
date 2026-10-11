@@ -428,7 +428,7 @@ msgid "Copy Link"
 msgstr "Copia link"
 
 #: app/src/ui/add_account.rs:802 app/src/ui/add_account.rs:927
-#: app/src/ui/key_import.rs:213
+#: app/src/ui/key_import.rs:214
 msgid "Try Again"
 msgstr "Riprova"
 
@@ -3533,116 +3533,34 @@ msgstr "Scegli un orario…"
 msgid "No reply yet"
 msgstr "Ancora nessuna risposta"
 
-#: app/src/ui/key_import.rs:34
+#: app/src/ui/key_import.rs:35
 msgid "Import…"
 msgstr "Importa…"
 
-#: app/src/ui/key_import.rs:43 app/src/ui/key_import.rs:83
+#: app/src/ui/key_import.rs:44 app/src/ui/key_import.rs:84
 msgid "Import OpenPGP Keys"
 msgstr "Importa chiavi OpenPGP"
 
-#: app/src/ui/key_import.rs:44 app/src/ui/key_import.rs:88
+#: app/src/ui/key_import.rs:45 app/src/ui/key_import.rs:89
 msgid "Import S/MIME Certificates"
 msgstr "Importa certificati S/MIME"
 
-#: app/src/ui/key_import.rs:84
+#: app/src/ui/key_import.rs:85
 msgid "OpenPGP Keys"
 msgstr "Chiavi OpenPGP"
 
-#: app/src/ui/key_import.rs:89
+#: app/src/ui/key_import.rs:90
 msgid "Certificates"
 msgstr "Certificati"
 
-#: app/src/ui/key_import.rs:99
+#: app/src/ui/key_import.rs:100
 msgid "All Files"
 msgstr "Tutti i file"
 
-#: app/src/ui/key_import.rs:213 app/src/ui/key_import.rs:217
+#: app/src/ui/key_import.rs:214 app/src/ui/key_import.rs:218
 #: app/src/ui/window.rs:3525
 msgid "Close"
 msgstr "Chiudi"
-
-#: app/src/ui/key_import.rs:279
-msgid "Key Not Imported"
-msgstr "Chiave non importata"
-
-#: app/src/ui/key_import.rs:280
-msgid "Certificate Not Imported"
-msgstr "Certificato non importato"
-
-#: app/src/ui/key_import.rs:298
-msgid "Already Imported"
-msgstr "Già importato"
-
-#: app/src/ui/key_import.rs:300
-msgid "Key Imported"
-msgid_plural "{count} Keys Imported"
-msgstr[0] "Chiave importata"
-msgstr[1] "{count} chiavi importate"
-
-#: app/src/ui/key_import.rs:306
-msgid "Certificate Imported"
-msgid_plural "{count} Certificates Imported"
-msgstr[0] "Certificato importato"
-msgstr[1] "{count} certificati importati"
-
-#: app/src/ui/key_import.rs:313
-msgid "gpg already holds everything in this file."
-msgstr "gpg contiene già tutto ciò che c'è in questo file."
-
-#: app/src/ui/key_import.rs:314
-msgid "gpgsm already holds everything in this file."
-msgstr "gpgsm contiene già tutto ciò che c'è in questo file."
-
-#: app/src/ui/key_import.rs:316
-msgid ""
-"You can sign and decrypt with the secret key now. gpg asks for its "
-"passphrase the first time."
-msgstr ""
-"Ora puoi firmare e decifrare con la chiave segreta. gpg ti chiederà la "
-"passphrase la prima volta."
-
-#: app/src/ui/key_import.rs:319
-msgid "You can sign and decrypt with the secret key now."
-msgstr "Ora puoi firmare e decifrare con la chiave segreta."
-
-#: app/src/ui/key_import.rs:321
-msgid "You can encrypt to this person and check their signatures."
-msgid_plural "You can encrypt to these people and check their signatures."
-msgstr[0] "Ora puoi cifrare per questa persona e verificarne le firme."
-msgstr[1] "Ora puoi cifrare per queste persone e verificarne le firme."
-
-#: app/src/ui/key_import.rs:327
-msgid "Iris can check signatures made with this certificate."
-msgid_plural "Iris can check signatures made with these certificates."
-msgstr[0] "Iris può verificare le firme fatte con questo certificato."
-msgstr[1] "Iris può verificare le firme fatte con questi certificati."
-
-#: app/src/ui/key_import.rs:350
-msgid "New, with secret key"
-msgstr "Nuova, con chiave segreta"
-
-#: app/src/ui/key_import.rs:351
-msgid "New"
-msgstr "Nuova"
-
-#: app/src/ui/key_import.rs:352
-msgid "Updated"
-msgstr "Aggiornata"
-
-#: app/src/ui/key_import.rs:353
-msgid "Already here"
-msgstr "Già presente"
-
-#: app/src/ui/key_import.rs:378
-msgid "And {count} more"
-msgid_plural "And {count} more"
-msgstr[0] "E {count} altro"
-msgstr[1] "E altri {count}"
-
-#: app/src/ui/key_import.rs:388
-msgid "Could not read {file}: {reason}"
-msgstr "Impossibile leggere {file}: {reason}"
 
 #: app/src/ui/pgp.rs:105
 msgid "Checked"
@@ -7300,6 +7218,88 @@ msgstr "Questa riunione"
 msgid "%H:%M"
 msgstr "%H:%M"
 
+#: appcore/src/key_import.rs:62
+msgid "Key Not Imported"
+msgstr "Chiave non importata"
+
+#: appcore/src/key_import.rs:63
+msgid "Certificate Not Imported"
+msgstr "Certificato non importato"
+
+#: appcore/src/key_import.rs:81
+msgid "Already Imported"
+msgstr "Già importato"
+
+#: appcore/src/key_import.rs:83
+msgid "Key Imported"
+msgid_plural "{count} Keys Imported"
+msgstr[0] "Chiave importata"
+msgstr[1] "{count} chiavi importate"
+
+#: appcore/src/key_import.rs:89
+msgid "Certificate Imported"
+msgid_plural "{count} Certificates Imported"
+msgstr[0] "Certificato importato"
+msgstr[1] "{count} certificati importati"
+
+#: appcore/src/key_import.rs:96
+msgid "gpg already holds everything in this file."
+msgstr "gpg contiene già tutto ciò che c'è in questo file."
+
+#: appcore/src/key_import.rs:97
+msgid "gpgsm already holds everything in this file."
+msgstr "gpgsm contiene già tutto ciò che c'è in questo file."
+
+#: appcore/src/key_import.rs:99
+msgid ""
+"You can sign and decrypt with the secret key now. gpg asks for its "
+"passphrase the first time."
+msgstr ""
+"Ora puoi firmare e decifrare con la chiave segreta. gpg ti chiederà la "
+"passphrase la prima volta."
+
+#: appcore/src/key_import.rs:102
+msgid "You can sign and decrypt with the secret key now."
+msgstr "Ora puoi firmare e decifrare con la chiave segreta."
+
+#: appcore/src/key_import.rs:104
+msgid "You can encrypt to this person and check their signatures."
+msgid_plural "You can encrypt to these people and check their signatures."
+msgstr[0] "Ora puoi cifrare per questa persona e verificarne le firme."
+msgstr[1] "Ora puoi cifrare per queste persone e verificarne le firme."
+
+#: appcore/src/key_import.rs:110
+msgid "Iris can check signatures made with this certificate."
+msgid_plural "Iris can check signatures made with these certificates."
+msgstr[0] "Iris può verificare le firme fatte con questo certificato."
+msgstr[1] "Iris può verificare le firme fatte con questi certificati."
+
+#: appcore/src/key_import.rs:133
+msgid "New, with secret key"
+msgstr "Nuova, con chiave segreta"
+
+#: appcore/src/key_import.rs:134
+msgid "New"
+msgstr "Nuova"
+
+#: appcore/src/key_import.rs:135
+msgid "Updated"
+msgstr "Aggiornata"
+
+#: appcore/src/key_import.rs:136
+msgid "Already here"
+msgstr "Già presente"
+
+#: appcore/src/key_import.rs:161
+msgid "And {count} more"
+msgid_plural "And {count} more"
+msgstr[0] "E {count} altro"
+msgstr[1] "E altri {count}"
+
+#: appcore/src/key_import.rs:171
+msgid "Could not read {file}: {reason}"
+msgstr "Impossibile leggere {file}: {reason}"
+
 #: appcore/src/label_colors.rs:22
 msgid "Red"
 msgstr "Rosso"
@@ -9096,13 +9096,14 @@ msgstr "senza nuvole tra te e chi ti scrive."
 
 #: ffi/src/about.rs:56
 msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
-msgstr "Se Iris ti alleggerisce un po' la giornata, lasciale una stella su GitHub."
+msgstr ""
+"Se Iris ti alleggerisce un po' la giornata, lasciale una stella su GitHub."
 
 #: ffi/src/about.rs:57
 msgid "Star on GitHub"
 msgstr "Una stella su GitHub"
 
-#: ffi/src/compose.rs:139
+#: ffi/src/compose.rs:142
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."
 

@@ -264,6 +264,7 @@ private struct WritingSettings: View {
                     }
                 }
                 TemplatesSection()
+                ProtectionSection()
             }
             .formStyle(.grouped)
             .onAppear { signatures = model.signatures() }
