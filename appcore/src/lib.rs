@@ -16,6 +16,7 @@ pub mod contacts;
 pub mod dirs;
 pub mod dock;
 pub mod engine;
+pub mod event_question;
 pub mod file_type;
 pub mod format;
 pub mod images;

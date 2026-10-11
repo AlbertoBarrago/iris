@@ -1,4 +1,5 @@
 # Every file holding words a person reads. scripts/update-po.sh rebuilds
+appcore/src/event_question.rs
 # from what it found.
 # the template from the crate roots and warns when this list has drifted
 appcore/src/add_account.rs

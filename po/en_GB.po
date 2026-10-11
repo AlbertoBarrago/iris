@@ -489,10 +489,10 @@ msgstr "Try Again"
 #: app/src/ui/add_account.rs:807 app/src/ui/assistant_mcp_prefs.rs:347
 #: app/src/ui/calendar/editor.rs:183 app/src/ui/calendar/manage.rs:252
 #: app/src/ui/calendar/manage.rs:374 app/src/ui/calendar/manage.rs:417
-#: app/src/ui/calendar/scope.rs:92 app/src/ui/composer/editor.rs:343
-#: app/src/ui/composer/mod.rs:1681 app/src/ui/composer/mod.rs:1750
-#: app/src/ui/composer/mod.rs:2073 app/src/ui/composer/mod.rs:2521
-#: app/src/ui/confirm.rs:29 app/src/ui/rules.rs:445 app/src/ui/rules.rs:625
+#: app/src/ui/composer/editor.rs:343 app/src/ui/composer/mod.rs:1681
+#: app/src/ui/composer/mod.rs:1750 app/src/ui/composer/mod.rs:2073
+#: app/src/ui/composer/mod.rs:2521 app/src/ui/confirm.rs:29
+#: app/src/ui/rules.rs:445 app/src/ui/rules.rs:625
 #: app/src/ui/smart_editor.rs:150 app/src/ui/templates.rs:239
 #: app/src/ui/unsubscribe.rs:76 app/src/ui/vacation.rs:45 app/src/ui/when.rs:52
 #: app/src/ui/window/arrange.rs:146 app/src/ui/window/images.rs:101
@@ -769,8 +769,8 @@ msgid "Ask Iris…"
 msgstr "Ask Iris…"
 
 #: app/src/ui/assistant.rs:156 app/src/ui/assistant.rs:160
-#: app/src/ui/assistant.rs:446 app/src/ui/calendar/scope.rs:113
-#: app/src/ui/composer/mod.rs:300 app/src/ui/window/shortcuts.rs:502
+#: app/src/ui/assistant.rs:446 app/src/ui/composer/mod.rs:300
+#: app/src/ui/window/shortcuts.rs:502
 msgid "Send"
 msgstr "Send"
 
@@ -936,12 +936,11 @@ msgid "Test"
 msgstr "Test"
 
 #: app/src/ui/assistant_mcp_prefs.rs:341 app/src/ui/calendar/editor.rs:179
-#: app/src/ui/calendar/quick.rs:211 app/src/ui/calendar/scope.rs:111
-#: app/src/ui/composer/editor.rs:343 app/src/ui/composer/mod.rs:2521
-#: app/src/ui/dav_edit.rs:26 app/src/ui/rules.rs:438
-#: app/src/ui/smart_editor.rs:144 app/src/ui/templates.rs:233
-#: app/src/ui/vacation.rs:41 app/src/ui/window/arrange.rs:146
-#: app/src/ui/window/save_contacts.rs:110
+#: app/src/ui/calendar/quick.rs:211 app/src/ui/composer/editor.rs:343
+#: app/src/ui/composer/mod.rs:2521 app/src/ui/dav_edit.rs:26
+#: app/src/ui/rules.rs:438 app/src/ui/smart_editor.rs:144
+#: app/src/ui/templates.rs:233 app/src/ui/vacation.rs:41
+#: app/src/ui/window/arrange.rs:146 app/src/ui/window/save_contacts.rs:110
 msgid "Save"
 msgstr "Save"
 
@@ -1934,10 +1933,9 @@ msgstr "Delete “{calendar}”?"
 
 #: app/src/ui/calendar/manage.rs:292 app/src/ui/calendar/popover.rs:211
 #: app/src/ui/calendar/popover.rs:213 app/src/ui/calendar/popover.rs:713
-#: app/src/ui/calendar/scope.rs:112 app/src/ui/conversation.rs:550
-#: app/src/ui/hide_my_email.rs:289 app/src/ui/queued.rs:58
-#: app/src/ui/templates.rs:149 app/src/ui/window/arrange.rs:106
-#: app/src/ui/window/organize.rs:204
+#: app/src/ui/conversation.rs:550 app/src/ui/hide_my_email.rs:289
+#: app/src/ui/queued.rs:58 app/src/ui/templates.rs:149
+#: app/src/ui/window/arrange.rs:106 app/src/ui/window/organize.rs:204
 msgid "Delete"
 msgstr "Delete"
 
@@ -2255,85 +2253,9 @@ msgstr "%Y"
 msgid "W{week}"
 msgstr "W{week}"
 
-#: app/src/ui/calendar/scope.rs:74
-msgid "This event only"
-msgstr "This event only"
-
-#: app/src/ui/calendar/scope.rs:75
-msgid "This and following events"
-msgstr "This and following events"
-
-#: app/src/ui/calendar/scope.rs:76
-msgid "All events"
-msgstr "All events"
-
-#: app/src/ui/calendar/scope.rs:86
-msgid "Keep Old Time"
-msgstr "Keep Old Time"
-
-#: app/src/ui/calendar/scope.rs:87 app/src/ui/calendar/scope.rs:110
-msgid "Move"
-msgstr "Move"
-
-#: app/src/ui/calendar/scope.rs:96
-msgid "Don't send"
-msgstr "Don't send"
-
-#: app/src/ui/calendar/scope.rs:100
-msgid "Send a cancellation to the guests"
-msgstr "Send a cancellation to the guests"
-
-#: app/src/ui/calendar/scope.rs:102 app/src/ui/calendar/scope.rs:234
+#: app/src/ui/calendar/scope.rs:49
 msgid "Send an update to the guests"
 msgstr "Send an update to the guests"
-
-#: app/src/ui/calendar/scope.rs:172
-msgid "Move “{title}”?"
-msgstr "Move “{title}”?"
-
-#: app/src/ui/calendar/scope.rs:173
-msgid "Delete “{title}”?"
-msgstr "Delete “{title}”?"
-
-#: app/src/ui/calendar/scope.rs:174
-msgid "Move a repeating event"
-msgstr "Move a repeating event"
-
-#: app/src/ui/calendar/scope.rs:175
-msgid "Delete a repeating event"
-msgstr "Delete a repeating event"
-
-#: app/src/ui/calendar/scope.rs:176
-msgid "Save changes to “{title}”?"
-msgstr "Save changes to “{title}”?"
-
-#: app/src/ui/calendar/scope.rs:177
-msgid "Change a repeating event"
-msgstr "Change a repeating event"
-
-#: app/src/ui/calendar/scope.rs:178
-msgid "Answer “{title}”?"
-msgstr "Answer “{title}”?"
-
-#: app/src/ui/calendar/scope.rs:179
-msgid "Answer a repeating event"
-msgstr "Answer a repeating event"
-
-#: app/src/ui/calendar/scope.rs:190
-msgid "Keep Old Time saves your other changes at the time the event had."
-msgstr "Keep Old Time saves your other changes at the time the event had."
-
-#: app/src/ui/calendar/scope.rs:194
-msgid "The guests get a cancellation by mail."
-msgstr "The guests get a cancellation by mail."
-
-#: app/src/ui/calendar/scope.rs:196
-msgid "The guests get an update by mail."
-msgstr "The guests get an update by mail."
-
-#: app/src/ui/calendar/scope.rs:200
-msgid "The new guests get their invitation, and the others get an update."
-msgstr "The new guests get their invitation, and the others get an update."
 
 #: app/src/ui/calendar/shown.rs:69
 msgid "Day"
@@ -6250,6 +6172,10 @@ msgstr "Delete “{title}” from the calendar for {account}?"
 msgid "Delete an event from the calendar for {account}?"
 msgstr "Delete an event from the calendar for {account}?"
 
+#: appcore/src/assistant/run/calendar.rs:633
+msgid "The new guests get their invitation, and the others get an update."
+msgstr "The new guests get their invitation, and the others get an update."
+
 #: appcore/src/assistant/run/calendar.rs:634
 #: appcore/src/assistant/run/calendar.rs:636
 msgid "Its guests are told."
@@ -6943,6 +6869,78 @@ msgid "Could not save {count} person to contacts in {account}"
 msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] "Could not save {count} person to contacts in {account}"
 msgstr[1] "Could not save {count} people to contacts in {account}"
+
+#: appcore/src/event_question.rs:71
+msgid "This event only"
+msgstr "This event only"
+
+#: appcore/src/event_question.rs:72
+msgid "This and following events"
+msgstr "This and following events"
+
+#: appcore/src/event_question.rs:73
+msgid "All events"
+msgstr "All events"
+
+#: appcore/src/event_question.rs:83
+msgid "Keep Old Time"
+msgstr "Keep Old Time"
+
+#: appcore/src/event_question.rs:84 appcore/src/event_question.rs:107
+msgid "Move"
+msgstr "Move"
+
+#: appcore/src/event_question.rs:93
+msgid "Don't send"
+msgstr "Don't send"
+
+#: appcore/src/event_question.rs:97
+msgid "Send a cancellation to the guests"
+msgstr "Send a cancellation to the guests"
+
+#: appcore/src/event_question.rs:169
+msgid "Move “{title}”?"
+msgstr "Move “{title}”?"
+
+#: appcore/src/event_question.rs:170
+msgid "Delete “{title}”?"
+msgstr "Delete “{title}”?"
+
+#: appcore/src/event_question.rs:171
+msgid "Move a repeating event"
+msgstr "Move a repeating event"
+
+#: appcore/src/event_question.rs:172
+msgid "Delete a repeating event"
+msgstr "Delete a repeating event"
+
+#: appcore/src/event_question.rs:173
+msgid "Save changes to “{title}”?"
+msgstr "Save changes to “{title}”?"
+
+#: appcore/src/event_question.rs:174
+msgid "Change a repeating event"
+msgstr "Change a repeating event"
+
+#: appcore/src/event_question.rs:175
+msgid "Answer “{title}”?"
+msgstr "Answer “{title}”?"
+
+#: appcore/src/event_question.rs:176
+msgid "Answer a repeating event"
+msgstr "Answer a repeating event"
+
+#: appcore/src/event_question.rs:186
+msgid "Keep Old Time saves your other changes at the time the event had."
+msgstr "Keep Old Time saves your other changes at the time the event had."
+
+#: appcore/src/event_question.rs:190
+msgid "The guests get a cancellation by mail."
+msgstr "The guests get a cancellation by mail."
+
+#: appcore/src/event_question.rs:192
+msgid "The guests get an update by mail."
+msgstr "The guests get an update by mail."
 
 #: appcore/src/label_colors.rs:22
 msgid "Red"
