@@ -18,6 +18,8 @@ struct InvitationCard: View {
     @State private var went = ""
     @State private var picking = false
     @State private var target: String
+    /// The events of a several-event file left out of Add to Calendar.
+    @State private var unticked: Set<Int> = []
 
     init(invitation: MailInvitation, account: Int64) {
         self.invitation = invitation
@@ -41,7 +43,19 @@ struct InvitationCard: View {
                     Text(invitation.title).font(.title3.weight(.semibold))
                     if !invitation.when.isEmpty { Text(invitation.when) }
                     meta
-                    ForEach(invitation.events, id: \.self) { Text($0).foregroundStyle(.secondary) }
+                    // A file with several events lists them, each ticked, so
+                    // Add to Calendar adds the ones still ticked.
+                    ForEach(Array(invitation.events.enumerated()), id: \.offset) { index, event in
+                        if invitation.adds && invitation.onCalendar == nil {
+                            Toggle(event, isOn: Binding(
+                                get: { !unticked.contains(index) },
+                                set: { on in if on { unticked.remove(index) } else { unticked.insert(index) } }
+                            ))
+                            .toggleStyle(.checkbox)
+                        } else {
+                            Text(event).foregroundStyle(.secondary)
+                        }
+                    }
                     if let strip = invitation.strip {
                         DayStripView(strip: strip, answered: !given.isEmpty)
                             .padding(.top, 6)
@@ -52,6 +66,17 @@ struct InvitationCard: View {
                     actions.padding(.top, 6)
                     if !went.isEmpty {
                         Text(went).font(.callout).foregroundStyle(.secondary)
+                    }
+                    if invitation.needsCalendarAccess {
+                        HStack {
+                            Text(tr("Iris needs permission to show this event in Calendar."))
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                            Button(tr("Grant Access")) {
+                                model.addAccount = AddAccountRequest(again: account)
+                            }
+                            .buttonStyle(.link)
+                        }
                     }
             }
             .textSelection(.enabled)
@@ -161,6 +186,7 @@ struct InvitationCard: View {
             }
             Button(tr("Add to Calendar"), systemImage: "calendar.badge.plus") { add() }
                 .buttonStyle(.bordered)
+                .disabled(!invitation.events.isEmpty && unticked.count == invitation.events.count)
         }
     }
 
@@ -214,9 +240,11 @@ struct InvitationCard: View {
     private func add() {
         guard let mail = model.mail else { return }
         let (id, account, target) = (invitation.messageId, account, target)
+        // Every event ticked asks for none by name, which adds them all.
+        let picked = unticked.isEmpty ? [] : invitation.events.indices.filter { !unticked.contains($0) }.map(UInt32.init)
         sending = true
         Task.detached {
-            let done = Result { try mail.addInvitation(accountId: account, messageId: id, calendar: target, picked: []) }
+            let done = Result { try mail.addInvitation(accountId: account, messageId: id, calendar: target, picked: picked) }
             await MainActor.run {
                 sending = false
                 switch done {

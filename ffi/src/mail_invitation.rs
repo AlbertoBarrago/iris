@@ -22,7 +22,7 @@ use mailrs_store::calendar::CalendarScope;
 use mailrs_store::{accounts, bodies, messages};
 use mailrs_sync::calendar::Calendar;
 use mailrs_sync::invitations::Invitations;
-use mailrs_sync::{Permitted, Spot, Told, now_millis};
+use mailrs_sync::{Accounts, Permitted, Spot, Told, now_millis};
 
 use crate::CoreError;
 use crate::calendar::EventDetails;
@@ -76,6 +76,9 @@ pub struct MailInvitation {
     /// The hours around a timed request, once the calendar's copy holds
     /// them. It takes the clash line's place.
     pub strip: Option<DayStrip>,
+    /// The account has a calendar but withheld the permission to read
+    /// it, so the card offers Grant Access.
+    pub needs_calendar_access: bool,
 }
 
 /// The hours around the event: the person's other events as blocks, this
@@ -509,6 +512,10 @@ impl Mail {
         };
         let mut card = words(showing, clashes, targets);
         card.strip = strip.map(Into::into);
+        card.needs_calendar_access = !cancelled
+            && self.running.services(account_id).is_some_and(|s| {
+                mailrs_appcore::permission::card_offers_calendar_access(s.offers(), s.withheld())
+            });
         card
     }
 
@@ -643,6 +650,7 @@ fn words(showing: Showing, clashes: Vec<String>, targets: Vec<AddTarget>) -> Mai
         targets,
         events,
         strip: None,
+        needs_calendar_access: false,
     }
 }
 
