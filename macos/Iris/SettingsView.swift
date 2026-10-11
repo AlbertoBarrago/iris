@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -66,6 +67,36 @@ private struct Titled: View {
 }
 
 /// A switch bound to one preference by its name.
+/// Open at Login, which macOS keeps through SMAppService rather than a
+/// setting of Iris's own, so the switch reads the system each time and
+/// System Settings' Login Items list agrees with it.
+private struct LoginItemToggle: View {
+    @Environment(MailModel.self) private var model
+    let title: String
+    let subtitle: String
+    @State private var on = SMAppService.mainApp.status == .enabled
+
+    var body: some View {
+        Toggle(isOn: Binding(get: { on }, set: { set($0) })) {
+            Titled(title: title, subtitle: subtitle)
+        }
+        .onAppear { on = SMAppService.mainApp.status == .enabled }
+    }
+
+    private func set(_ wanted: Bool) {
+        do {
+            if wanted {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+        } catch {
+            model.say(error.localizedDescription)
+        }
+        on = SMAppService.mainApp.status == .enabled
+    }
+}
+
 private struct Switch: View {
     @Environment(MailModel.self) private var model
     let title: String
@@ -107,6 +138,9 @@ private struct GeneralSettings: View {
     var body: some View {
         if let prefs = model.prefs, let choices = model.choices {
             Form {
+                Section(choices.startupTitle) {
+                    LoginItemToggle(title: choices.loginTitle, subtitle: choices.loginSubtitle)
+                }
                 Section(tr("Reading")) {
                     Switch(title: tr("Group Messages into Conversations"),
                            subtitle: tr("Show a thread's replies together instead of one row per message"),

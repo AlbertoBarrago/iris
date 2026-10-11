@@ -9096,6 +9096,14 @@ msgstr ""
 msgid "This invitation has no time to move"
 msgstr "Questo invito non ha un orario da spostare"
 
+#: ffi/src/prefs.rs:179
+msgid "Open at Login"
+msgstr "Apri al login"
+
+#: ffi/src/prefs.rs:180
+msgid "Iris opens when you log in and keeps your mail up to date"
+msgstr "Iris si apre quando accedi e tiene aggiornata la posta"
+
 #: ffi/src/templates.rs:93
 msgid "The template is gone"
 msgstr "Il modello non c'è più"

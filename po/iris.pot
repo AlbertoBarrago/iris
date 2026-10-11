@@ -8691,6 +8691,14 @@ msgstr ""
 msgid "This invitation has no time to move"
 msgstr ""
 
+#: ffi/src/prefs.rs:179
+msgid "Open at Login"
+msgstr ""
+
+#: ffi/src/prefs.rs:180
+msgid "Iris opens when you log in and keeps your mail up to date"
+msgstr ""
+
 #: ffi/src/templates.rs:93
 msgid "The template is gone"
 msgstr ""

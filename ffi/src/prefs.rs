@@ -9,6 +9,7 @@ use mailrs_appcore::settings::{
     cache_choices, nearest, poll_choices, window_choices,
 };
 use mailrs_domain::Category;
+use mailrs_domain::translate::gettext;
 use mailrs_domain::calendar::hours::WorkingHours;
 use mailrs_domain::calendar::week::WeekStart;
 use mailrs_sync::config::{Config, config_path};
@@ -105,6 +106,11 @@ pub struct PreferenceChoices {
     /// The notice setting's name and the line under it.
     pub notice_title: String,
     pub notice_subtitle: String,
+    /// Open at Login: the heading of its group, its name, and the line
+    /// under it. macOS keeps the switch itself, through SMAppService.
+    pub startup_title: String,
+    pub login_title: String,
+    pub login_subtitle: String,
     pub default_category: Vec<ChoiceItem>,
     pub week_start: Vec<ChoiceItem>,
     pub notification_buttons: Vec<ChoiceItem>,
@@ -169,6 +175,9 @@ impl Mail {
             notice_time: choices::<NoticeTime>(),
             notice_title: NoticeTime::words().0,
             notice_subtitle: NoticeTime::words().1,
+            startup_title: gettext("Startup"),
+            login_title: gettext("Open at Login"),
+            login_subtitle: gettext("Iris opens when you log in and keeps your mail up to date"),
             default_category: choices::<Category>(),
             week_start: choices::<WeekStart>(),
             notification_buttons: Button::ALL
