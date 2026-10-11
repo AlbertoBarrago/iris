@@ -2555,6 +2555,7 @@ dependencies = [
  "mailrs-mime",
  "mailrs-pgp",
  "mailrs-render",
+ "mailrs-smime",
  "mailrs-store",
  "mailrs-sync",
  "mailrs-view",

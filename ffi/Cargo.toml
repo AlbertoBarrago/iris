@@ -22,6 +22,7 @@ mailrs-gmail.workspace = true
 mailrs-discover.workspace = true
 mailrs-domain.workspace = true
 mailrs-pgp.workspace = true
+mailrs-smime.workspace = true
 mailrs-appcore.workspace = true
 mailrs-mime.workspace = true
 serde.workspace = true

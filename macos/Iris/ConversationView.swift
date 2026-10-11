@@ -26,6 +26,9 @@ struct ConversationView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                         .padding(10)
                     }
+                    if let mark = model.protectionMarks.last {
+                        ProtectionBar(mark: mark)
+                    }
                     if let card = model.translationCard {
                         TranslationBar(card: card)
                     }
@@ -367,5 +370,61 @@ private struct TranslationBar: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
         .padding(10)
         .accessibilityElement(children: .contain)
+    }
+}
+
+/// What gpg or gpgsm found in the conversation's newest protected
+/// message, as the GTK card says it: a shield when the text is the
+/// signer's, a warning when something is wrong, an open lock when
+/// nothing here could check it.
+private struct ProtectionBar: View {
+    let mark: ProtectionMark
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: symbol)
+                .font(.title3)
+                .foregroundStyle(color)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(mark.title).fontWeight(.semibold)
+                if !mark.detail.isEmpty {
+                    Text(mark.detail)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .padding(10)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(spoken + ", " + mark.title)
+    }
+
+    private var symbol: String {
+        switch mark.tone {
+        case "good": "checkmark.shield.fill"
+        case "bad": "exclamationmark.triangle.fill"
+        default: "lock.open"
+        }
+    }
+
+    private var color: Color {
+        switch mark.tone {
+        case "good": .green
+        case "bad": .orange
+        default: .secondary
+        }
+    }
+
+    private var spoken: String {
+        switch mark.tone {
+        case "good": tr("Checked")
+        case "bad": tr("Warning")
+        default: tr("Not checked")
+        }
     }
 }

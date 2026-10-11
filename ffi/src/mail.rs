@@ -1188,7 +1188,9 @@ pub(crate) static LOCALE_DIR: std::sync::OnceLock<std::path::PathBuf> = std::syn
 #[uniffi::export]
 pub fn bind_language(locale_dir: String, language: String) {
     // Called once, first thing, before any other thread reads the
-    // environment or the locale.
+    // environment or the locale. gpg and gpgsm live where an app opened
+    // from the Dock does not look.
+    mailrs_appcore::tool_paths::add_tool_paths();
     unsafe {
         if !language.is_empty() {
             std::env::set_var("LANGUAGE", &language);

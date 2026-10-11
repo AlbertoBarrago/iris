@@ -191,3 +191,4 @@ ffi/src/account_settings.rs
 ffi/src/rules.rs
 ffi/src/prefs.rs
 ffi/src/about.rs
+ffi/src/protection.rs

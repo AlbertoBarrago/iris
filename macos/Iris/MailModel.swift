@@ -16,6 +16,10 @@ final class MailModel {
     private(set) var invitation: MailInvitation?
     /// The conversation `invitation` belongs to.
     fileprivate var invitationKey: ThreadKey?
+    /// What gpg or gpgsm found in the open conversation's protected
+    /// messages, oldest first.
+    private(set) var protectionMarks: [ProtectionMark] = []
+    fileprivate var protectionKey: ThreadKey?
     /// The card offering to translate the open conversation's message.
     private(set) var translationCard: TranslationOffer?
     fileprivate var translationKey: ThreadKey?
@@ -935,6 +939,7 @@ final class MailModel {
             invitation = nil
             listOffer = nil
             translationCard = nil
+            protectionMarks = []
             return
         }
         if invitationKey != key { invitation = nil }
@@ -943,6 +948,8 @@ final class MailModel {
         loadListOffer()
         if translationKey != key { translationCard = nil }
         loadTranslationCard()
+        if protectionKey != key { protectionMarks = [] }
+        loadProtection()
         markReadOnOpen(key)
         let theme = theme
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
@@ -1010,6 +1017,32 @@ extension MailModel {
                 } else {
                     self.say(tr("The event is no longer on the calendar"))
                 }
+            }
+        }
+    }
+}
+
+// MARK: Signed and encrypted mail
+
+extension MailModel {
+    /// Opens the open conversation's protected messages with gpg or
+    /// gpgsm, then draws the page again with what they decrypted. A
+    /// message is opened once a run; later reads answer from memory.
+    func loadProtection() {
+        guard let mail, let key = openThread else {
+            protectionMarks = []
+            return
+        }
+        Task.detached {
+            let marks = (try? mail.protectionMarks(accountId: key.account, threadId: key.thread)) ?? []
+            await MainActor.run {
+                guard self.openThread == key else { return }
+                let fresh = self.protectionMarks.map(\.messageId) != marks.map(\.messageId)
+                self.protectionMarks = marks
+                self.protectionKey = key
+                // A message just opened may have arrived encrypted, so the
+                // page is drawn again from what the engine opened.
+                if fresh, !marks.isEmpty { self.loadConversation() }
             }
         }
     }
