@@ -42,7 +42,9 @@ use mailrs_sync::{Permitted, Waiting};
 use super::block::{EventKey, key_of};
 use super::range::{self, Range, ViewKind};
 use super::next::{self, NextUp};
-use super::{layout, scope, time_grid};
+use mailrs_render::calendar_days::in_strip;
+
+use super::{layout, scope};
 pub use crate::wanted::Answer;
 use crate::wanted::{Screen, Wanted};
 
@@ -542,7 +544,7 @@ impl CalendarRun {
             return None;
         }
         let opening = opens
-            .filter(|o| !time_grid::in_strip(o))
+            .filter(|o| !in_strip(o))
             .map(|o| layout::open_hour(o.start, &chrono::Local));
         match opening {
             Some(hour) => Some(hour),
@@ -1023,7 +1025,7 @@ fn first_hour(found: &[Occurrence], range: Range) -> f64 {
     let (from, to) = range.span(&chrono::Local);
     let starts: Vec<f64> = found
         .iter()
-        .filter(|o| !time_grid::in_strip(o) && o.start >= from && o.start < to)
+        .filter(|o| !in_strip(o) && o.start >= from && o.start < to)
         .filter_map(|o| {
             let local = DateTime::<Utc>::from_timestamp_millis(o.start)?.with_timezone(&chrono::Local);
             let midnight = local.date_naive().and_hms_opt(0, 0, 0)?;

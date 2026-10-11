@@ -10,13 +10,14 @@ use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, VecDeque};
 
 use adw::prelude::*;
-use chrono::{Datelike, Days, NaiveDate, TimeZone};
+use chrono::{Datelike, NaiveDate};
 use chrono_tz::Tz;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, graphene, gsk};
 use mailrs_domain::calendar::{Calendar, Occurrence};
 use mailrs_domain::translate::{fill, fill_plural, gettext};
 use mailrs_domain::{AccountId, EpochMillis};
+use mailrs_render::calendar_days::{in_strip, now_column, stretch_for_lanes, strip_columns};
 
 use super::block::{self, EventBlock, EventKey};
 use super::drag::{self, Grab, Handle};
@@ -145,19 +146,6 @@ fn min_duration(min_height: f32, card_inset: f32, hour_px: f32) -> EpochMillis {
     (hours * 3_600_000.0).round() as EpochMillis
 }
 
-/// `spans`, each stretched to run at least `min` from its own start:
-/// not what the cards draw (their real length still decides that; see
-/// [`rect`]'s own floor), but what lane assignment reasons about, so two
-/// short events close enough together that their minimum-height cards
-/// would touch take separate lanes rather than sharing one and drawing
-/// on top of each other.
-fn stretch_for_lanes(
-    spans: &[(EpochMillis, EpochMillis)],
-    min: EpochMillis,
-) -> Vec<(EpochMillis, EpochMillis)> {
-    spans.iter().map(|&(start, end)| (start, end.max(start + min))).collect()
-}
-
 /// Where one all-day card sits: `start_day` to `end_day` (exclusive) of
 /// `days` equal shares of `width`, stacked at `lane` when more than one
 /// event covers the same day.
@@ -239,58 +227,6 @@ fn all_day_height(rows: usize) -> f32 {
 /// converted to local time, which would move them a day west of UTC.
 fn all_day_span(o: &Occurrence, days: &[NaiveDate]) -> Option<(usize, usize)> {
     strip_columns(o.start, o.end, o.event.all_day, days)
-}
-
-/// [`all_day_span`] for a span from `start` to `end`: UTC dates for an
-/// all-day one, local dates for a timed one that covers whole days.
-fn strip_columns(start: EpochMillis, end: EpochMillis, all_day: bool, days: &[NaiveDate]) -> Option<(usize, usize)> {
-    if all_day {
-        return all_day_columns(start, end, days);
-    }
-    let (first, last) = layout::whole_days(start, end, &chrono::Local)?;
-    date_columns(first, last, days)
-}
-
-/// Whether the strip draws `o` rather than the grid: an all-day event,
-/// or a timed entry that covers whole days (`layout::whole_days`).
-pub fn in_strip(o: &Occurrence) -> bool {
-    o.event.all_day || layout::whole_days(o.start, o.end, &chrono::Local).is_some()
-}
-
-/// [`all_day_span`] for an all-day span from `start` to `end`.
-fn all_day_columns(start: EpochMillis, end: EpochMillis, days: &[NaiveDate]) -> Option<(usize, usize)> {
-    date_columns(utc_date(start)?, utc_date(end)?.checked_sub_days(Days::new(1))?, days)
-}
-
-/// The columns from `start_date` through `end_date` among `days`, clipped
-/// to them.
-fn date_columns(start_date: NaiveDate, end_date: NaiveDate, days: &[NaiveDate]) -> Option<(usize, usize)> {
-    let (&first, &last) = (days.first()?, days.last()?);
-    if end_date < first || start_date > last {
-        return None;
-    }
-    let clipped_start = start_date.max(first);
-    let clipped_end = end_date.min(last);
-    let start_day = (clipped_start - first).num_days() as usize;
-    let end_day = (clipped_end - first).num_days() as usize + 1;
-    Some((start_day, end_day))
-}
-
-/// Today's column among `days` and how many hours past its midnight
-/// `now` is, when today is one of them.
-fn now_column<Z: TimeZone>(now: EpochMillis, days: &[NaiveDate], zone: &Z) -> Option<(usize, f64)> {
-    // Today is the local date of now. The UTC date is a different day
-    // for part of every day anywhere east or west of UTC.
-    let today = chrono::DateTime::<chrono::Utc>::from_timestamp_millis(now)?
-        .with_timezone(zone)
-        .date_naive();
-    let column = days.iter().position(|&d| d == today)?;
-    let midnight = today.and_hms_opt(0, 0, 0)?;
-    Some((column, layout::wall_offset(now, midnight, zone)))
-}
-
-fn utc_date(at: EpochMillis) -> Option<NaiveDate> {
-    chrono::DateTime::<chrono::Utc>::from_timestamp_millis(at).map(|d| d.date_naive())
 }
 
 /// The words `fill_plural`'s "{count} more event(s)" pattern makes of
@@ -2438,6 +2374,7 @@ fn connect_more_clicked_strip(strip: &AllDayStrip, button: &gtk::Button, hidden:
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::TimeZone;
 
     #[test]
     fn a_card_in_the_second_of_two_lanes_takes_the_right_half_of_its_column() {
