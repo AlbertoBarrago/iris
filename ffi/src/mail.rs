@@ -277,19 +277,33 @@ impl Mail {
         self.running.replace(Some(Arc::clone(&engine)));
         let heard = Arc::clone(&listener);
         let db = self.db.clone();
+        let (rules, running) = (self.rules_engine(), Arc::clone(&self.running));
         self.runtime.spawn(async move {
             while let Ok(event) = events.recv().await {
                 heard.changed(what_changed(&event).into());
                 if let ChangeEvent::NewMail { account_id, message_ids } = &event {
-                    tokio::spawn(crate::notify::announce(
-                        db.clone(),
-                        *account_id,
-                        message_ids.clone(),
-                        Arc::clone(&heard),
-                    ));
+                    let (db, heard, rules, running) = (db.clone(), Arc::clone(&heard), Arc::clone(&rules), Arc::clone(&running));
+                    let (account_id, message_ids) = (*account_id, message_ids.clone());
+                    tokio::spawn(async move {
+                        // Local rules file new mail first, so mail they move
+                        // out of the inbox or mark read does not notify.
+                        if crate::rules::rules_here(&running, account_id)
+                            && let Err(err) = rules.run_due(account_id).await
+                        {
+                            tracing::warn!(account = account_id, %err, "local rules did not run");
+                        }
+                        crate::notify::announce(db, account_id, message_ids, heard).await;
+                    });
                 }
             }
         });
+        self.runtime.spawn(crate::rules::keep_running(
+            self.rules_engine(),
+            self.account_settings(),
+            Arc::clone(&self.running),
+            Arc::clone(&engine),
+            self.db.clone(),
+        ));
         self.runtime.spawn(send_due(
             Arc::clone(&self.running),
             Arc::clone(&engine),

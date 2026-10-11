@@ -15,6 +15,7 @@ use mailrs_store::threads::{self, ThreadFilter};
 use mailrs_store::{accounts, bodies, messages};
 
 mod account_menu;
+mod account_settings;
 mod account_setup;
 mod ai_prefs;
 mod assistant;
@@ -28,6 +29,7 @@ mod mail_invitation;
 mod mail;
 mod notify;
 mod prefs;
+mod rules;
 mod templates;
 mod translation;
 mod unsubscribe;

@@ -186,3 +186,6 @@ ffi/src/unsubscribe.rs
 ffi/src/translation.rs
 view/src/sidebar.rs
 ffi/src/contacts.rs
+appcore/src/auto_reply.rs
+ffi/src/account_settings.rs
+ffi/src/rules.rs

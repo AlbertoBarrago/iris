@@ -234,7 +234,7 @@ msgstr ""
 msgid "That account is not connected."
 msgstr ""
 
-#: app/src/protection/draft.rs:87 app/src/ui/vacation.rs:146
+#: app/src/protection/draft.rs:87 app/src/ui/vacation.rs:147
 msgid "Could not save: {reason}"
 msgstr ""
 
@@ -415,7 +415,7 @@ msgstr ""
 #: app/src/ui/composer/mod.rs:2520 app/src/ui/confirm.rs:29
 #: app/src/ui/rules.rs:445 app/src/ui/rules.rs:625
 #: app/src/ui/smart_editor.rs:150 app/src/ui/templates.rs:226
-#: app/src/ui/unsubscribe.rs:76 app/src/ui/vacation.rs:45 app/src/ui/when.rs:52
+#: app/src/ui/unsubscribe.rs:76 app/src/ui/vacation.rs:46 app/src/ui/when.rs:52
 #: app/src/ui/window/arrange.rs:146 app/src/ui/window/images.rs:101
 #: app/src/ui/window/organize.rs:73 app/src/ui/window/organize.rs:122
 msgid "Cancel"
@@ -883,7 +883,7 @@ msgstr ""
 #: app/src/ui/calendar/quick.rs:211 app/src/ui/composer/editor.rs:343
 #: app/src/ui/composer/mod.rs:2520 app/src/ui/dav_edit.rs:26
 #: app/src/ui/rules.rs:438 app/src/ui/smart_editor.rs:144
-#: app/src/ui/templates.rs:220 app/src/ui/vacation.rs:41
+#: app/src/ui/templates.rs:220 app/src/ui/vacation.rs:42
 #: app/src/ui/window/arrange.rs:146 app/src/ui/window/save_contacts.rs:110
 msgid "Save"
 msgstr ""
@@ -1335,7 +1335,7 @@ msgid "None"
 msgstr ""
 
 #: app/src/ui/calendar/editor.rs:601 app/src/ui/composer/mod.rs:454
-#: app/src/ui/vacation.rs:249 app/src/ui/vacation.rs:258
+#: app/src/ui/vacation.rs:229 app/src/ui/vacation.rs:238
 msgid "Message"
 msgstr ""
 
@@ -2467,7 +2467,7 @@ msgid "Bcc"
 msgstr ""
 
 #: app/src/ui/composer/mod.rs:441 app/src/ui/rules.rs:355
-#: app/src/ui/templates.rs:179 app/src/ui/vacation.rs:238
+#: app/src/ui/templates.rs:179 app/src/ui/vacation.rs:218
 msgid "Subject"
 msgstr ""
 
@@ -3987,7 +3987,7 @@ msgstr ""
 msgid "Rules for {account}"
 msgstr ""
 
-#: app/src/ui/rules.rs:154 app/src/ui/vacation.rs:70
+#: app/src/ui/rules.rs:154 app/src/ui/vacation.rs:71
 msgid "This account is not syncing yet."
 msgstr ""
 
@@ -4474,61 +4474,51 @@ msgstr ""
 msgid "Translating…"
 msgstr ""
 
-#: app/src/ui/vacation.rs:58
+#: app/src/ui/vacation.rs:59
 msgid "Automatic Reply"
 msgstr ""
 
-#: app/src/ui/vacation.rs:91
+#: app/src/ui/vacation.rs:92
 msgid "Allow Automatic Replies"
 msgstr ""
 
-#: app/src/ui/vacation.rs:135
+#: app/src/ui/vacation.rs:136
 msgid "Automatic reply is on"
 msgstr ""
 
-#: app/src/ui/vacation.rs:137
+#: app/src/ui/vacation.rs:138
 msgid "Automatic reply is off"
 msgstr ""
 
-#: app/src/ui/vacation.rs:158
+#: app/src/ui/vacation.rs:159
 msgid "Could Not Load the Automatic Reply"
 msgstr ""
 
-#: app/src/ui/vacation.rs:168
-msgid "Your mail server"
-msgstr ""
-
-#: app/src/ui/vacation.rs:173
-msgid ""
-"{provider} answers new mail while you are away, even when this computer is "
-"off"
-msgstr ""
-
-#: app/src/ui/vacation.rs:204
+#: app/src/ui/vacation.rs:184
 msgid "Send Automatic Replies"
 msgstr ""
 
-#: app/src/ui/vacation.rs:219
+#: app/src/ui/vacation.rs:199
 msgid "Only Between These Dates"
 msgstr ""
 
-#: app/src/ui/vacation.rs:222
+#: app/src/ui/vacation.rs:202
 msgid "First Day"
 msgstr ""
 
-#: app/src/ui/vacation.rs:223
+#: app/src/ui/vacation.rs:203
 msgid "Last Day"
 msgstr ""
 
-#: app/src/ui/vacation.rs:231
+#: app/src/ui/vacation.rs:211
 msgid "Dates"
 msgstr ""
 
-#: app/src/ui/vacation.rs:265
+#: app/src/ui/vacation.rs:245
 msgid "The same reply goes to people inside and outside your organization."
 msgstr ""
 
-#: app/src/ui/vacation.rs:272
+#: app/src/ui/vacation.rs:252
 msgid "Only Reply to My Contacts"
 msgstr ""
 
@@ -6685,6 +6675,16 @@ msgstr ""
 
 #: appcore/src/assistant/turn.rs:286
 msgid "Running a command in the sandbox"
+msgstr ""
+
+#: appcore/src/auto_reply.rs:13
+msgid "Your mail server"
+msgstr ""
+
+#: appcore/src/auto_reply.rs:18
+msgid ""
+"{provider} answers new mail while you are away, even when this computer is "
+"off"
 msgstr ""
 
 #: appcore/src/calendar_draft.rs:373

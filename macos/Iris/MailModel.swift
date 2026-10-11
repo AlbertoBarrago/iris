@@ -21,6 +21,8 @@ final class MailModel {
     fileprivate var translationKey: ThreadKey?
     /// Set while the model translates.
     private(set) var translating = false
+    /// The account sheet the sidebar's account menu opened.
+    var accountSheet: AccountSheet?
     /// The contact card a click on a sender opened.
     var contactCard: ContactCard?
     /// The offer to leave the open conversation's mailing list.

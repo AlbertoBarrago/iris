@@ -100,6 +100,7 @@ struct AccountLine: View {
     @State private var newName = ""
     @State private var renamingEmail = ""
     @State private var makingLabel = false
+    @Environment(\.openSettings) private var openSettings
     @State private var newLabelName = ""
     /// The account menu's words, read when the menu is built.
     private var look: AccountLook? { item.accountId.flatMap { model.accountLook($0) } }
@@ -174,14 +175,18 @@ struct AccountLine: View {
                 if let id = item.accountId { model.checkAccount(id) }
             }
             Divider()
-            // These come with Preferences in this front end.
-            Group {
-                Button(tr("Automatic Reply…")) {}
-                Button(tr("Signature…")) {}
-                Button(tr("Rules…")) {}
-                Button(tr("Hide My Email…")) {}
+            Button(tr("Automatic Reply…")) {
+                if let id = item.accountId { model.accountSheet = .autoReply(id) }
             }
-            .disabled(true)
+            Button(tr("Signature…")) {
+                UserDefaults.standard.set("writing", forKey: SettingsView.tabKey)
+                openSettings()
+            }
+            Button(tr("Rules…")) {
+                if let id = item.accountId { model.accountSheet = .rules(id) }
+            }
+            Button(tr("Hide My Email…")) {}
+                .disabled(true)
             Divider()
             Button(look?.newLabelItem ?? tr("New Label…")) {
                 newLabelName = ""

@@ -17,6 +17,12 @@ struct ContentView: View {
                 mail
             }
         }
+        .sheet(item: Bindable(model).accountSheet) { sheet in
+            switch sheet {
+            case .autoReply(let account): AutoReplyView(account: account)
+            case .rules(let account): RulesView(account: account)
+            }
+        }
         .sheet(item: Bindable(model).contactCard) { card in
             ContactCardView(card: card)
         }

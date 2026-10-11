@@ -319,7 +319,7 @@ impl Mail {
     }
 
     /// The account's own labels, sorted as the picker lists them.
-    fn user_labels(&self, account_id: AccountId) -> Result<Vec<mailrs_domain::Label>, CoreError> {
+    pub(crate) fn user_labels(&self, account_id: AccountId) -> Result<Vec<mailrs_domain::Label>, CoreError> {
         let db = self.db.clone();
         let mut found: Vec<_> = self
             .run(async move { db.read(move |c| labels::list_labels(c, account_id)).await })?

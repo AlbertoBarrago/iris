@@ -136,8 +136,8 @@ impl Mail {
 
 /// Tells `listener` about new mail in `account_id`, when Preferences asks
 /// for notifications: the mail still unread in the inbox, from a VIP when
-/// only VIPs notify. Local rules do not run here yet, so mail a rule would
-/// file away still notifies.
+/// only VIPs notify. Local rules have run first, so mail a rule filed
+/// away no longer counts.
 pub(crate) async fn announce(db: Db, account_id: i64, ids: Vec<String>, listener: Arc<dyn MailListener>) {
     let settings = Settings::load(&Settings::default_path());
     if !settings.notifications {
