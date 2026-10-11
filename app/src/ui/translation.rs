@@ -10,8 +10,8 @@ use std::rc::Rc;
 
 use adw::prelude::*;
 
-use crate::translation::Language;
-use mailrs_domain::translate::{fill, gettext};
+use crate::translation::{CardWords, Language, done_words, offered_words};
+use mailrs_domain::translate::gettext;
 
 pub struct TranslationCard {
     pub widget: adw::BreakpointBin,
@@ -74,17 +74,7 @@ impl TranslationCard {
     /// words would go, or, as an `Err`, why there is nowhere to send
     /// them. Nothing has been sent at this point.
     pub fn offer(&self, from: Option<Language>, goes: Result<&str, &str>) {
-        self.title.set_text(&match from {
-            Some(language) => fill(
-                &gettext("This message is in {language}"),
-                &[("language", &language.name())],
-            ),
-            None => gettext("This message is in another language"),
-        });
-        self.say(goes.unwrap_or_else(|problem| problem), goes.is_err());
-        self.button.set_label(&gettext("Translate"));
-        self.button.set_sensitive(true);
-        self.widget.set_visible(true);
+        self.show(offered_words(from, goes));
     }
 
     /// While the model is reading the message.
@@ -97,23 +87,14 @@ impl TranslationCard {
     /// below is showing, and `cut` that the message was too long for one
     /// request.
     pub fn done(&self, from: Option<Language>, cut: bool, shown: bool) {
-        self.title.set_text(&match (shown, from) {
-            (false, _) => gettext("Showing the message as it arrived"),
-            (true, Some(language)) => fill(
-                &gettext("Translated from {language}"),
-                &[("language", &language.name())],
-            ),
-            (true, None) => gettext("Translated"),
-        });
-        let note = match cut && shown {
-            true => gettext("The message was long, so only the start of it was translated."),
-            false => String::new(),
-        };
-        self.say(&note, false);
-        self.button.set_label(&match shown {
-            true => gettext("Show Original"),
-            false => gettext("Show Translation"),
-        });
+        self.show(done_words(from, cut, shown));
+    }
+
+    /// Puts `words` on the card and shows it, its button ready.
+    fn show(&self, words: CardWords) {
+        self.title.set_text(&words.title);
+        self.say(&words.detail, words.problem);
+        self.button.set_label(&words.button);
         self.button.set_sensitive(true);
         self.widget.set_visible(true);
     }

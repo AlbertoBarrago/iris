@@ -9,8 +9,6 @@
 //! thread stays open, so turning back to what arrived and forward again
 //! costs no second request.
 
-use mailrs_domain::translate::{fill, gettext};
-
 use super::ThreadRun;
 use crate::open_thread::Cleaned;
 use crate::translation::{self, Language, Prose, Reading, Translation};
@@ -117,14 +115,9 @@ impl ThreadRun {
             .anyway(|effects| effects.translate(interface, asked))
             .await
         {
-            Ok(said) if said.iter().all(Option::is_none) => Err(gettext(
-                "The model sent nothing back to put in the message.",
-            )),
+            Ok(said) if said.iter().all(Option::is_none) => Err(translation::failed_words(None)),
             Ok(said) => Ok(said),
-            Err(err) => Err(fill(
-                &gettext("The model could not translate this: {reason}"),
-                &[("reason", &err)],
-            )),
+            Err(err) => Err(translation::failed_words(Some(&err))),
         };
         let said = match said {
             Ok(said) => said,
