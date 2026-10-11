@@ -23,6 +23,7 @@ pub mod event_question;
 pub mod file_type;
 pub mod format;
 pub mod images;
+pub mod key_import;
 pub mod invitation_card;
 pub mod invitation_strip;
 pub mod label_colors;
