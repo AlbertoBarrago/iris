@@ -118,11 +118,16 @@ struct AccountLine: View {
                 menu
             } label: {
                 Image(systemName: "ellipsis.circle")
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(hovering ? .secondary : .tertiary)
             }
-            .menuStyle(.borderlessButton)
+            // A borderless menu draws its symbol black whatever it is
+            // asked; a plain button menu takes the secondary colour, which
+            // reads on either theme.
+            .menuStyle(.button)
+            .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize()
-            .opacity(hovering ? 1 : 0)
             .help(tr("Account options"))
         }
         .contentShape(Rectangle())
