@@ -55,11 +55,13 @@ targets:
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
-        # The identity the GTK app's bundle carries, which stays the same
-        # from one build to the next. The Keychain ties "Always Allow" to
-        # the signature, and an ad-hoc one changes with every build, so
-        # each build asked for the Keychain again and accounts waited.
-        CODE_SIGN_IDENTITY: albz Code Signing
+        # An Apple Development identity, which carries a Team ID. The
+        # Keychain keys "Always Allow" to the team; for an app with none it
+        # keys it to the binary's hash, which every build changes, so each
+        # build asked for the Keychain again and accounts waited on a
+        # prompt. A contributor sets their own team here.
+        CODE_SIGN_IDENTITY: Apple Development
+        DEVELOPMENT_TEAM: PW7G4XJ7H7
         CODE_SIGN_STYLE: Manual
         # One binary, which the stable signature covers whole.
         ENABLE_DEBUG_DYLIB: NO
