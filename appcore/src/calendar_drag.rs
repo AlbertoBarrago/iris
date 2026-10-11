@@ -6,7 +6,7 @@
 //! Snapping works on UTC quarter hours. Every zone's offset is a whole
 //! number of quarter hours, so they are local quarter hours too.
 //!
-//! Both front ends use it: the GTK calendar and Iris Next's, through
+//! Both front ends use it: the GTK calendar and Iris's, through
 //! the ffi.
 
 use std::collections::VecDeque;

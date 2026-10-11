@@ -1,4 +1,4 @@
-//! Writing mail from Iris Next: who it can come from, a new message, a
+//! Writing mail from Iris: who it can come from, a new message, a
 //! reply or a forward started the way the GTK app starts them, and sending
 //! through the engine's outbox. The drafting itself is
 //! `mailrs_appcore::compose`, which the GTK composer uses too.

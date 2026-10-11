@@ -1,4 +1,4 @@
-//! Iris Next's Preferences: the same settings file the GTK app keeps,
+//! Iris's Preferences: the same settings file the GTK app keeps,
 //! read whole and changed one named change at a time, through
 //! `mailrs_appcore::settings::Change`, so each choice lands as it does
 //! from the GTK Preferences. Choices come with the GTK app's own words.
@@ -26,7 +26,7 @@ pub struct ChoiceItem {
     pub label: String,
 }
 
-/// The preferences Iris Next shows, as they stand.
+/// The preferences Iris shows, as they stand.
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
 pub struct Preferences {
     pub threading: bool,

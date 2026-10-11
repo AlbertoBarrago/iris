@@ -1,5 +1,5 @@
 //! The words and rules of the automatic reply form, shared by the GTK
-//! dialog and Iris Next's sheet. `mailrs_sync::AccountSettings` reads and
+//! dialog and Iris's sheet. `mailrs_sync::AccountSettings` reads and
 //! stores the reply itself.
 
 use mailrs_domain::Provider;

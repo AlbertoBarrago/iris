@@ -611,7 +611,7 @@ settable! {
         // The composer reads this as a message goes out, so the assistant
         // has no business turning the warning off.
         check_attachments,
-        // How long Iris Next's notices stay is the person's own taste.
+        // How long Iris's notices stay is the person's own taste.
         notice_time,
         // Whether the app asks GitHub for new releases is the person's
         // call, made in Preferences.
@@ -861,7 +861,7 @@ impl Effects {
             signatures,
             formatted_signatures,
             undo_send,
-            // Iris Next reads this as each notice goes up.
+            // Iris reads this as each notice goes up.
             notice_time,
             flag_color,
             notify_vips_only,

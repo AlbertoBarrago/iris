@@ -10,19 +10,21 @@ the owner's own workflow, and wins where the two disagree.
 
 ## What this repo is
 
-Iris is a mail and calendar app for macOS, in Rust with GTK4 and
-libadwaita. It started from [Penguin Mail](https://github.com/c9dev/penguin-mail)
+Iris is a mail and calendar app for macOS: a SwiftUI and AppKit app
+(`macos/`) over a Rust core (`ffi/`, UniFFI). Until 1.1 its front end was
+GTK4 and libadwaita, removed when the Swift app replaced it. It started from [Penguin Mail](https://github.com/c9dev/penguin-mail)
 1.0.0, a Linux app by David Santos; the first commit imports that tree,
-and Iris has been its own project since. The About window and the README
-credit Penguin Mail, as the GPL asks of a modified copy.
+and Iris has been its own project since. The README, `LICENSE` and the
+last link of the About window credit Penguin Mail, as the GPL asks of a
+modified copy.
 
 - Remote: `origin` is `AlbertoBarrago/iris`, public. There is no upstream
   to merge from.
-- App ID `io.github.AlbertoBarrago.Iris`, binaries `iris` and `iris-cli`,
-  env vars `IRIS_*`, mail headers `X-Iris-*`.
+- App ID `io.github.AlbertoBarrago.Iris`, app `Iris.app` and binary
+  `iris-cli`, env vars `IRIS_*`, mail headers `X-Iris-*`.
 - Names that stay as they are because renaming them buys nothing: the
-  crate names `mailrs-*` (the app package is `mailrs`) and the SQLite
-  functions `penguin_fold` and `penguin_notes_text`.
+  crate names `mailrs-*` and the SQLite functions `penguin_fold` and
+  `penguin_notes_text`.
 - `CHANGELOG.md` starts at Iris 1.0.1, its first release. Iris is published by
   Alberto Barrago (albz, albertobarrago@gmail.com).
 - Iris has its own identity, the winged envelope (see AGENTS.md's icon
@@ -48,12 +50,11 @@ The workspace needs Rust 1.98. If the default toolchain is older, use
 `cargo +1.98`.
 
 ```sh
-scripts/dev-macos.sh [--demo]                       # build, quit the old copy, run
+scripts/dev-macos.sh                                # Xcode debug build, quit the old copy, open
 cargo test --workspace                              # full suite
 cargo test -p mailrs-sync some_test_name            # one test, by crate and name filter
 cargo clippy --workspace --all-targets -- -D warnings
 scripts/update-po.sh --check                        # run last; any edit to a file with strings moves .pot line numbers
-cargo run -p mailrs -- --demo                       # the app on sample accounts, no sign-in
 ```
 
 Releases: `scripts/macos-dmg.sh`, commit and push, then
@@ -68,20 +69,18 @@ them from `packaging/secrets.env`, which is gitignored.
 
 ## macOS specifics
 
-- The app names `webkit` only through the crate `webkit/`
-  (`mailrs-webkit`): webkit6's API, which the app was written against,
-  over a WKWebView laid on the GTK window (`webkit/src/macos/`).
-  WebKitGTK does not run on macOS. When the app starts calling a webkit6
-  method the crate lacks, add it there with webkit6's exact signature.
-- AppKit work lives in the `macos_*` modules of the app (`macos_menu`,
-  `macos_bundle`, `macos_pasteboard`), `dock.rs`, `sparkle.rs` and
-  `file_type.rs` (media types through `UTType`).
+- XcodeGen writes `macos/Iris.xcodeproj` from `macos/project.yml`
+  (`xcodegen generate` after adding a Swift file). Xcode builds the Rust
+  core first through `scripts/build-ffi.sh`, which also writes the Swift
+  bindings into `macos/Iris/Generated/`.
+- Sparkle comes in as a Swift package; `macos/Info.plist` names the
+  appcast, and `scripts/macos-dmg.sh` adds the public EdDSA key.
 - Secrets go through `keyring` in `gmail/src/token_store.rs` and
   `sync/src/passwords.rs`, which stores them in the Keychain.
-- Not on macOS yet, each to be made to work the macOS way: Start at
-  login (`SMAppService`), the action buttons on new-mail notifications
-  (`UNUserNotificationCenter` categories), and the sandbox for skill
-  scripts, which is bubblewrap today.
-- Development needs `brew install gtk4 libadwaita adwaita-icon-theme
-  pkgconf`. Low on disk, build with
+- Not on macOS yet, each to be made to work the macOS way: the action
+  buttons on new-mail notifications (`UNUserNotificationCenter`
+  categories) and the sandbox for skill scripts, which is bubblewrap
+  today.
+- Development needs Xcode 26 and `brew install xcodegen gettext librsvg`.
+  Low on disk, build with
   `CARGO_PROFILE_DEV_DEBUG=line-tables-only CARGO_INCREMENTAL=0`.

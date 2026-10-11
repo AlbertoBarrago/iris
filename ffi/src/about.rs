@@ -1,4 +1,4 @@
-//! The words of Iris Next's About window: who made it, what it is built
+//! The words of Iris's About window: who made it, what it is built
 //! on, a short poem for the messenger it is named after, and where to
 //! find it on GitHub.
 

@@ -8,6 +8,12 @@ options:
   deploymentTarget:
     macOS: "26.0"
   createIntermediateGroups: true
+packages:
+  # Updates, from the same appcast and with the same EdDSA key the GTK
+  # app's builds used, so an installed Iris updates itself to this one.
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.0
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -18,23 +24,24 @@ targets:
     platform: macOS
     sources:
       - path: Iris
-      # The GTK app's catalogs, which scripts/update-po.sh compiles; the
-      # app reads them from Contents/Resources/locale.
+      # The catalogs scripts/update-po.sh compiles; the app reads them
+      # from Contents/Resources/locale.
       - path: ../target/locale
         type: folder
         buildPhase: resources
-      # The Add Account band's poses and the providers' logos, the same
-      # files the GTK app bundles.
-      - path: ../app/data/band
+      # The Add Account band's poses and the providers' logos, which
+      # scripts/iris-art.py draws and data/ keeps.
+      - path: ../data/band
         type: folder
         buildPhase: resources
-      - path: ../app/data/logos
+      - path: ../data/logos
         type: folder
         buildPhase: resources
     dependencies:
       # Built first, so the library and the bindings are fresh before the
       # Swift sources compile against them.
       - target: IrisCore
+      - package: Sparkle
       # What the Rust core reaches through the system: the network's
       # configuration, TLS and the Keychain.
       - sdk: SystemConfiguration.framework
@@ -44,17 +51,20 @@ targets:
       - sdk: libresolv.tbd
     settings:
       base:
-        # Its own id while the GTK app is the one people use, so the two
-        # can run side by side.
-        PRODUCT_BUNDLE_IDENTIFIER: io.github.AlbertoBarrago.Iris.Next
-        PRODUCT_NAME: Iris Next
+        # The id every Iris has had, so an update replaces the app in
+        # place and macOS keeps its Login Items and notifications.
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.AlbertoBarrago.Iris
+        PRODUCT_NAME: Iris
         GENERATE_INFOPLIST_FILE: YES
+        # Sparkle's keys, which Xcode adds to the ones it writes itself.
+        # scripts/macos-dmg.sh adds the public signing key.
+        INFOPLIST_FILE: Info.plist
         # The winged envelope, from scripts/macos-icon.sh.
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        INFOPLIST_KEY_CFBundleDisplayName: Iris Next
+        INFOPLIST_KEY_CFBundleDisplayName: Iris
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
-        MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "1.1.0"
+        CURRENT_PROJECT_VERSION: "1.1.0"
         # An Apple Development identity, which carries a Team ID. The
         # Keychain keys "Always Allow" to the team; for an app with none it
         # keys it to the binary's hash, which every build changes, so each
@@ -65,8 +75,8 @@ targets:
         CODE_SIGN_STYLE: Manual
         # One binary, which the stable signature covers whole.
         ENABLE_DEBUG_DYLIB: NO
-        # The prototype reads the store the GTK app keeps in
-        # ~/Library/Application Support/iris, which a sandbox would close.
+        # Iris keeps its store in ~/Library/Application Support/iris and
+        # runs gpg and gpgsm, which a sandbox would close.
         ENABLE_APP_SANDBOX: NO
         ENABLE_USER_SCRIPT_SANDBOXING: NO
         # The core's module map and header, and the static library, read

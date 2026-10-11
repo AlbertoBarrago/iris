@@ -1,7 +1,7 @@
 //! The words on an invitation's card: the news line, the organizer and
 //! the guests, the clash, the times to propose, and what an answer says
 //! after it went. Both front ends draw the card from these, so the GTK
-//! window and Iris Next word an invitation alike.
+//! window and Iris word an invitation alike.
 
 use chrono::{DateTime, Days, Local, TimeDelta};
 use mailrs_domain::invitation::{Answer, Card, Invitation, Method, When};

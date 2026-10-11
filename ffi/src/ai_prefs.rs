@@ -1,4 +1,4 @@
-//! The AI page of Iris Next's Settings: the assistant's connection and
+//! The AI page of Iris's Settings: the assistant's connection and
 //! model, the keys kept in the Keychain, how careful it is and how it
 //! reaches the web. Each change goes through `mailrs_appcore::settings`
 //! as it does from the GTK app's AI page, so the two read the same file.

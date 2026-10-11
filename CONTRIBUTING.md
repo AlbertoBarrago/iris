@@ -19,20 +19,23 @@ opening an issue.
 ## Building from source
 
 Iris builds on a Mac with Apple silicon and macOS 26 or later. You need
-Rust 1.98 (`cargo +1.98` when your default toolchain is older) and GTK from
-Homebrew. `scripts/dev-macos.sh` builds the app and runs it from its bundle:
+Xcode 26, Rust 1.98 (`cargo +1.98` when your default toolchain is older)
+and XcodeGen. Xcode builds the Rust core through `scripts/build-ffi.sh`
+before the Swift sources, and `scripts/dev-macos.sh` builds the app and
+opens it:
 
 ```sh
-brew install gtk4 libadwaita adwaita-icon-theme librsvg gettext pkgconf
-scripts/dev-macos.sh              # with your accounts
-scripts/dev-macos.sh --demo       # on sample accounts
+brew install xcodegen gettext librsvg
+cargo install xtr
+scripts/dev-macos.sh
 ```
 
 `scripts/macos-install.sh` builds a release and installs it as
-`/Applications/Iris.app`, loading GTK from Homebrew. A copy built from
-source signs in to Google and Microsoft only with OAuth clients compiled
-in; [docs/setup.md](docs/setup.md#building-your-own-copy) says how to give
-it one. The demo needs no client.
+`/Applications/Iris.app`. `macos/project.yml` signs with the author's
+Apple Development team; set your own `DEVELOPMENT_TEAM` there. A copy
+built from source signs in to Google and Microsoft only with OAuth
+clients compiled in; [docs/setup.md](docs/setup.md#building-your-own-copy)
+says how to give it one.
 
 ## How it is built
 
@@ -60,11 +63,9 @@ render/   the conversation page, sanitizing, dates and times as people
 view/     the sidebar and the words a window shows, free of any toolkit
 appcore/  what Iris does between a window and the engine: writing mail,
           signatures, settings, protection, rules, and the assistant
-webkit/   webkit6's API, as the app uses it, over WKWebView
-app/      the GTK 4 and libadwaita app, with the calendar view in
-          app/src/ui/calendar/
-ffi/      the Rust core for the SwiftUI app, through UniFFI
-macos/    Iris Next, the SwiftUI and AppKit app
+ffi/      the Rust core for the Swift app, through UniFFI
+macos/    Iris, the SwiftUI and AppKit app, and project.yml for XcodeGen
+data/     the app icon, the Add Account poses and the providers' logos
 testmail/ Dovecot and Mailpit in Docker, for the IMAP and SMTP tests
 ```
 
@@ -94,9 +95,7 @@ build a throwaway GnuPG keyring and skip when `gpg` or `gpgsm` is missing.
 `IRIS_REQUIRE_CRYPTO=1` turns that skip into a failure. The IMAP and SMTP
 tests start Dovecot and Mailpit in Docker and skip without it (Colima
 gives a Mac one); `scripts/test-images.sh` pulls their images once, and
-`IRIS_REQUIRE_IMAP=1` turns the skip into a failure. The one GTK test, in
-the composer, is ignored on macOS, where GTK starts only on the main
-thread and the test harness keeps that thread for itself.
+`IRIS_REQUIRE_IMAP=1` turns the skip into a failure.
 
 Release builds mask email addresses in the log, as `d…@example.com`.
 Debug builds keep them whole, and `IRIS_LOG_DETAILS=1` does the
@@ -108,7 +107,7 @@ same for an installed copy while you look into a problem.
    of `CHANGELOG.md` into a release. Sparkle offers a new DMG only when its
    version is higher than the one a tester runs.
 2. Run `scripts/macos-dmg.sh`. It builds `target/dmg/Iris-<version>.dmg`
-   with GTK and Sparkle inside, and rewrites `target/dmg/appcast.xml` for
+   from Xcode's Release build, with Sparkle inside, and rewrites `target/dmg/appcast.xml` for
    every DMG in that folder, signed with the Sparkle key in your login
    Keychain. Keep the older DMGs there, so the feed keeps listing them.
 3. Commit the release and push `main`, then run `scripts/macos-publish.sh`.

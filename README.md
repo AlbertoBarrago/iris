@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="app/data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg" width="128" height="128" alt="The Iris icon, a winged envelope">
+<img src="data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg" width="128" height="128" alt="The Iris icon, a winged envelope">
 
 # Iris
 
-Mail and calendar for macOS, written in Rust.
+A native Mac app for mail and calendar, with a core written in Rust.
 
 [![CI](https://github.com/AlbertoBarrago/iris/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbertoBarrago/iris/actions/workflows/ci.yml)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Rust 1.98](https://img.shields.io/badge/rust-1.98-orange?logo=rust)](https://www.rust-lang.org)
-[![GTK 4 and libadwaita 1.8](https://img.shields.io/badge/GTK_4-libadwaita_1.8-4a86cf?logo=gnome)](https://gnome.pages.gitlab.gnome.org/libadwaita/)
+[![SwiftUI on macOS 26](https://img.shields.io/badge/SwiftUI-macOS_26-0a84ff?logo=apple)](https://developer.apple.com/xcode/swiftui/)
 
 [Status](#status) · [Features](#features) · [Install](#install) · [Build](#build) · [Usage](#usage)
 
@@ -25,14 +25,17 @@ Graph, so no other server sees your mail.
 
 ## Status
 
-Iris runs on a Mac with Apple silicon and macOS 26 or later, as an
-`Iris.app` with a Dock badge for unread mail, a menu bar, Command shortcuts
-and secrets in the Keychain. Builds come as a DMG and update themselves
-through Sparkle; see [Install](#install).
+Iris runs on a Mac with Apple silicon and macOS 26 or later. Since 1.1 it
+is a native SwiftUI and AppKit app over the same Rust core: the GTK front
+end it started with is gone, and an installed Iris updates to this one
+through Sparkle with its accounts, mail and settings as they were. It has a
+Dock badge for unread mail, the Mac's own menus and shortcuts, secrets in
+the Keychain, and Open at Login; see [Install](#install).
 
-A few features are not on macOS yet: a skill's scripts (the sandbox they
-run in is Linux's bubblewrap), the Archive, Mark as Read, Delete and Reply
-buttons on new-mail notifications, and starting at login.
+A few things are not back yet since the move: Smart Mailboxes, exporting
+mail as mbox or `.eml`, View Source, Categorize Sender, Delete Forever, the
+sample accounts of the old demo mode, and a skill's scripts (the sandbox
+they run in is Linux's bubblewrap).
 
 A build signs in to Google and Microsoft only with OAuth clients compiled
 in. The test DMGs carry Iris's own; a build from source needs yours, as
@@ -59,8 +62,10 @@ and an IMAP account its rules over ManageSieve.
 - **Gmail search** with its full query syntax, across one account or all,
   with suggestions for subjects, people and labels as you type.
 - **Junk, Trash and All Mail**, for every account or one, read live from
-  Gmail. Delete Forever asks you to confirm each time, and needs the
-  permission signing in already asked for.
+  Gmail.
+- **Translation.** A message in another language offers to translate
+  itself into yours, through the model you choose, and turns back with one
+  click.
 
 ### Writing
 
@@ -81,8 +86,10 @@ and an IMAP account its rules over ManageSieve.
   and as soon as the network comes back. Problems another try would not fix,
   such as a refused recipient or a message over Gmail's size limit, come
   back to you instead.
-- **Templates** you drop in at the cursor, and a spelling check while you
-  write.
+- **Templates** you drop in at the cursor, with placeholders such as
+  `{{first_name}}` filled in for each message.
+- **Save to contacts.** After sending, Iris offers to add new recipients to
+  the account's contacts.
 
 ### Organizing
 
@@ -95,18 +102,15 @@ and an IMAP account its rules over ManageSieve.
   Gmail's star, and the color stays on this computer.
 - **VIPs.** Their mail gathers in a VIPs mailbox, their rows get a star, and
   notifications can be limited to them.
-- **Smart Mailboxes**: saved conditions such as sender, subject, label, age,
-  size or attachments, for all accounts or one. They search Gmail, so they
-  reach past the mail kept on this computer.
 - **Remind Me** takes a conversation out of the inbox and brings it back,
   unread, when you choose. **Follow Up** lists mail you sent that has had no
   answer for three days. **Mute** keeps a noisy thread out of the inbox.
 - **Labels** from the toolbar or with `l`, nested as a tree under their
   account. Drag mail onto any mailbox or label to move it there.
-- **A sidebar you arrange.** Fold Favorites, Mailboxes, Smart Mailboxes or
-  Accounts by clicking the title, and each account under its heading.
-  Iris remembers what you left open.
-- **Export** a conversation or a selection as mbox, or one message as `.eml`.
+- **A sidebar you arrange.** Fold Favorites, Mailboxes or Accounts, and
+  each account under its heading. Iris remembers what you left open.
+- **Contacts.** A click on a sender opens their card: photo, addresses,
+  phone, a new message, the VIP switch and all their mail.
 
 ### Gmail settings
 
@@ -124,9 +128,9 @@ Gmail runs all four, so they work with your computer off.
 ### Calendar
 
 - **A calendar beside your mail.** Every calendar on every account, by
-  day, week, month or a scrolling list, read from this computer.
-  Answer Yes, Maybe or No on an invitation from its event, and search
-  across every account's events.
+  day, week or month, read from this computer. Drag an event to move or
+  resize it, create one by dragging on empty time, and answer Yes, Maybe
+  or No on an invitation from its event.
 
 ### Security and privacy
 
@@ -143,8 +147,8 @@ Gmail runs all four, so they work with your computer off.
 - **Remote content blocked twice**, by a WebKit content filter and by the
   page's own Content-Security-Policy, with JavaScript off. Loading images is
   a choice per conversation, or per sender.
-- **Invitations** show as a card above the message, and you can accept,
-  decline or propose another time.
+- **Invitations** show as a card above the message with the hours around
+  the event, and you can accept, decline or propose another time.
 
 ### The assistant
 
@@ -173,17 +177,14 @@ uses a tool from outside the app, and it is off until you pick a model.
 
 ### On the Mac
 
-- **The unread count on the Dock icon**, the app's menu in the menu bar,
-  and Preferences in a window of its own. Closing the window keeps Iris
-  running, and a click on the Dock icon brings it back.
-- **New-mail notifications.** A click opens the conversation; the Archive,
-  Mark as Read, Delete and Reply buttons are not on macOS yet.
-- **Panes you size.** Drag the edge of the message list or the assistant;
-  a double click puts it back. Iris remembers the widths and the window's
-  size.
+- **The unread count on the Dock icon**, the Mac's own menus, and Settings
+  in a window of their own. Closing the window keeps Iris running, and a
+  click on the Dock icon brings it back.
+- **New-mail notifications**, which open the conversation they are about.
+- **Open at Login**, through macOS's Login Items.
 - **Apple Mail's shortcuts**, plus Gmail's single keys.
-- **English and Italian**, chosen in Preferences, with
-  the window's controls named for screen readers.
+- **English and Italian**, chosen in Settings, with the window's controls
+  named for screen readers.
 
 ## Install
 
@@ -213,22 +214,21 @@ Iris then updates itself through Sparkle: it checks once a day, and
 
 ## Build
 
-You need Rust 1.98 (`cargo +1.98` when your default toolchain is older).
-Install GTK and libadwaita from Homebrew, then build and run, or install
-into `/Applications`:
+You need Xcode 26, Rust 1.98 (`cargo +1.98` when your default toolchain
+is older) and XcodeGen, which writes the Xcode project from
+`macos/project.yml`. Xcode builds the Rust core itself, through
+`scripts/build-ffi.sh`:
 
 ```sh
-brew install gtk4 libadwaita adwaita-icon-theme librsvg gettext pkgconf
+brew install xcodegen gettext librsvg
+cargo install xtr                 # for scripts/update-po.sh
 scripts/dev-macos.sh              # build the debug app and run it
-scripts/dev-macos.sh --demo       # the same, on sample accounts
 scripts/macos-install.sh          # build a release and install Iris.app
+scripts/macos-dmg.sh              # build the DMG and appcast in target/dmg/
 ```
 
-`macos-install.sh` builds an app that loads GTK from Homebrew, so it runs on
-the Mac that built it. `scripts/macos-dmg.sh` builds the test DMG instead,
-in `target/dmg/`: the app carries GTK and its libraries inside, so it runs
-on a Mac without Homebrew, on the macOS Homebrew built them for or later.
-Short on disk, build with
+`project.yml` signs with the author's Apple Development team; set your own
+`DEVELOPMENT_TEAM` there. Short on disk, build the core with
 `CARGO_PROFILE_DEV_DEBUG=line-tables-only CARGO_INCREMENTAL=0`.
 
 To sign in to Google and Microsoft, compile your own OAuth clients in:
@@ -244,17 +244,6 @@ them. [CONTRIBUTING.md](CONTRIBUTING.md) has the rest of the build and the
 layout of the crates.
 
 ## Usage
-
-### Try it without an account
-
-```sh
-scripts/dev-macos.sh --demo
-/Applications/Iris.app/Contents/MacOS/iris --demo   # an installed copy
-```
-
-The demo opens three sample accounts in a throwaway store. Search, triage,
-the composer and attachments all work against sample data, and nothing
-talks to Google.
 
 ### Keyboard
 
@@ -278,18 +267,6 @@ whenever you are not typing. ⌘? lists every shortcut.
 
 ### Command line
 
-The app's binary is `Iris.app/Contents/MacOS/iris`:
-
-```sh
-iris --background             # start without opening a window
-iris --compose                # new message
-iris mailto:ann@example.com   # new message to Ann
-iris --version
-```
-
-`Iris.app` registers for `mailto:` links. To make it the app that opens
-them, choose it as the default email reader in Mail's settings.
-
 `iris-cli` drives the same sync core without a window: `account add`,
 `sync`, `threads`, `show`, `triage` and `export`.
 
@@ -310,17 +287,17 @@ The full policy is in [docs/privacy-policy.md](docs/privacy-policy.md).
 
 ## Roadmap
 
-Done: the macOS app with its menu bar, Dock badge, Command shortcuts and
-Keychain; a DMG that carries its own GTK and updates through Sparkle; the
+Done: a native SwiftUI app over the Rust core, with its menu bar, Dock
+badge, shortcuts, Keychain and Open at Login; updates through Sparkle; the
 winged-envelope identity; Google and Microsoft clients; the Italian
 translation.
 
-1. **Start at login** through `SMAppService`.
+1. **What the move left behind**: Smart Mailboxes, mbox and `.eml` export,
+   View Source, Categorize Sender, Delete Forever, and sample accounts to
+   try Iris without one.
 2. **A Developer ID and notarization**, so the DMG opens without the
    Privacy & Security step.
-3. **macOS before 26 and Intel Macs**, with GTK built for them rather
-   than taken from Homebrew.
-4. **Device sync without a cloud.** Rules, settings and the local store
+3. **Device sync without a cloud.** Rules, settings and the local store
    kept in step between your own computers, peer to peer.
 
 ## Help and feedback

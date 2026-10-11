@@ -97,6 +97,17 @@ private struct LoginItemToggle: View {
     }
 }
 
+/// Check for Updates, which Sparkle keeps in its own defaults.
+private struct UpdatesToggle: View {
+    @State private var on = Updates.shared.automatic
+
+    var body: some View {
+        Toggle(isOn: Binding(get: { on }, set: { Updates.shared.automatic = $0; on = $0 })) {
+            Titled(title: tr("Check for Updates"), subtitle: tr("Look for a new release once a day"))
+        }
+    }
+}
+
 private struct Switch: View {
     @Environment(MailModel.self) private var model
     let title: String
@@ -140,6 +151,9 @@ private struct GeneralSettings: View {
             Form {
                 Section(choices.startupTitle) {
                     LoginItemToggle(title: choices.loginTitle, subtitle: choices.loginSubtitle)
+                    if Updates.shared.available {
+                        UpdatesToggle()
+                    }
                 }
                 Section(tr("Reading")) {
                     Switch(title: tr("Group Messages into Conversations"),

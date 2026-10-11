@@ -7,6 +7,16 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### New
 
+- Iris is now a native Mac app, built with SwiftUI over the same core. It
+  updates from the version you have and keeps your accounts, mail and
+  settings.
+- Open at Login, in Settings, through macOS's Login Items.
+- Contact cards: click a sender to see their photo, addresses and phone,
+  write to them, make them a VIP or see all their mail.
+- After sending, Iris offers to save new recipients to your contacts.
+- The About window has a short poem for Iris and a way to star it on
+  GitHub.
+- How long notices stay in the window's corner can be chosen in Settings.
 - A company signature with logos, badges and a table can be pasted or
   imported in Preferences, and goes out looking the way it was made.
 

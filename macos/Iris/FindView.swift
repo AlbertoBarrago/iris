@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 import WebKit
 
-private let log = Logger(subsystem: "io.github.AlbertoBarrago.Iris.Next", category: "find")
+private let log = Logger(subsystem: "io.github.AlbertoBarrago.Iris", category: "find")
 
 /// Finds in the conversation's page: WebKit highlights the match and
 /// scrolls to it, and a count over the page's text says where it stands,

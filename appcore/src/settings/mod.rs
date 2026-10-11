@@ -43,7 +43,7 @@ pub struct Settings {
     pub formatted_signatures: BTreeMap<String, String>,
     /// How long Undo stays available after Send.
     pub undo_send: UndoSend,
-    /// How long a notice in Iris Next's window stays before it goes.
+    /// How long a notice in Iris's window stays before it goes.
     pub notice_time: NoticeTime,
     /// The colour a new flag gets: the last one chosen.
     pub flag_color: mailrs_domain::FlagColor,
@@ -710,7 +710,7 @@ impl Choice for UndoSend {
     }
 }
 
-/// How long a notice stays in Iris Next's window before it goes by
+/// How long a notice stays in Iris's window before it goes by
 /// itself. A notice that offers Undo or a question stays a little longer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -722,7 +722,7 @@ pub enum NoticeTime {
 }
 
 impl NoticeTime {
-    /// The setting's name and the line under it, for Iris Next's Settings.
+    /// The setting's name and the line under it, for Iris's Settings.
     pub fn words() -> (String, String) {
         (
             gettext("Notices Stay For"),

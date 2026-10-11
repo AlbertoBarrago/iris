@@ -33,6 +33,9 @@ struct IrisApp: App {
         .commands {
             CommandGroup(replacing: .appInfo) {
                 Button(aboutWords().title) { openWindow(id: "about") }
+                if Updates.shared.available {
+                    Button(tr("Check for Updates…")) { Updates.shared.checkNow() }
+                }
             }
             CommandGroup(replacing: .newItem) {
                 Button(tr("New Message")) { model.composeAsked = ComposeRequest(kind: .new) }

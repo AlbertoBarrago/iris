@@ -1,8 +1,8 @@
 # Iris
 
-Mail and calendar for macOS, in Rust: GTK4, libadwaita, WKWebView behind
-webkit6's API, a Dock badge, several accounts synced into SQLite. Targets
-macOS 26 on Apple silicon and Rust 1.98. The crate map is in `CONTRIBUTING.md` under "How it is built"; the words
+Mail and calendar for macOS: a SwiftUI and AppKit app (`macos/`) over a
+Rust core it reaches through UniFFI (`ffi/`), several accounts synced into
+SQLite. Targets macOS 26 on Apple silicon, Swift 6 and Rust 1.98. The crate map is in `CONTRIBUTING.md` under "How it is built"; the words
 the code uses are in `CONTEXT.md`. Read both before changing behaviour.
 
 ## Where to look
@@ -30,10 +30,10 @@ cargo clippy --workspace --all-targets -- -D warnings
 scripts/update-po.sh --check      # stale? run scripts/update-po.sh, commit the result
 ```
 
-A change to the UI also names every control it adds (`crate::ui::name`).
-VoiceOver does not read GTK's controls yet, since Homebrew builds GTK
-without AccessKit, but the names are what it will read; see
-`docs/accessibility.md`.
+A change to the Swift app builds with Xcode as well
+(`scripts/dev-macos.sh`, or `xcodebuild` in `macos/`), and gives every
+control it adds a name VoiceOver reads (`accessibilityLabel` where the
+visible text does not say it); see `docs/accessibility.md`.
 
 Any edit to a file holding translatable strings moves line numbers in
 `po/iris.pot`, so `--check` goes stale from edits that change no
@@ -48,16 +48,10 @@ signed `Iris.app` into `/Applications`.
 
 ## Testing traps
 
-- **No GTK in tests.** GTK on macOS starts only on the process's main
-  thread, and the test harness runs each test on a thread of its own, so
-  a test that calls `gtk::init()` cannot run. The one that exists, in
-  `app/src/ui/composer/richbuffer.rs`, is `#[ignore]`d for that reason.
-  Test the logic without widgets.
-- **Picture decoding.** GDK decodes PNG, JPEG and TIFF in this process;
-  every other format, and every gdk-pixbuf load or save, goes to
-  glycin's sandboxed loader. Go through `app/src/ui/texture.rs` rather
-  than calling `gdk::Texture::from_bytes` or gdk-pixbuf on the GTK
-  thread, and build test pictures from `gdk::MemoryTexture`.
+- **Logic in Rust, tested there.** What a view decides (words, rules,
+  layout numbers) lives in `appcore`, `render`, `view` or `ffi` with
+  tests; the Swift views draw what it answers. A Swift view that starts
+  deciding is drifting.
 - **GnuPG tests** build a throwaway keyring and skip when `gpg` or
   `gpgsm` is missing. `IRIS_REQUIRE_CRYPTO=1` turns the skip into
   a failure. Fixtures write `pinentry-program /bin/false` into
@@ -96,10 +90,9 @@ signed `Iris.app` into `/Applications`.
 
 ## Seeing the UI
 
-`scripts/dev-macos.sh --demo` builds and opens three sample accounts in a
-throwaway store; nothing talks to Google. It quits the copy already
-running first, so it takes over the owner's screen: say so before running
-it. `screencapture -o -l <window id> out.png` takes a picture of one
+`scripts/dev-macos.sh` builds the debug app and opens it on the owner's
+own accounts. It quits the copy already running first, so it takes over
+the owner's screen: say so before running it. `screencapture -o -l <window id> out.png` takes a picture of one
 window. A recipe that moves `HOME` still reaches the owner's own
 gpg-agent unless it sets `GNUPGHOME` too, and a secret key it imports
 lands in their keyring.
@@ -117,20 +110,9 @@ a good icon look broken.
   holds a `Wanted` (`appcore/src/wanted.rs`) for the `Target` it started on
   and reaches its effect port only through it: `wait` and `ask` drop an
   answer once that target has left the screen, and `on_screen` makes a
-  change only while it is there. The thread run
-  (`app/src/open_thread/run.rs`) and the engine run
-  (`app/src/protection/run.rs`) work this way, each with a fake window
-  and tests. New work on the open thread belongs in the thread run as a
-  step; decide what it leaves stale in `Stale::after`. Window code that
-  awaits outside a run, such as a dialog, keeps the target it started
-  from and checks `ConversationView::is_showing(&target)` before
-  touching the view.
-- **The open thread changes through named methods** on
-  `ConversationView` (`bodies_arrived`, `translated`, `engine_answered`,
-  and so on), and is read through `read` and `find`. Add a named change
-  rather than reaching into `OpenThread`, and put its data half on
-  `OpenThread` (`take_bodies`, `take_engine_answer`), so the thread
-  run's fake changes the thread the way the view does.
+  change only while it is there. In the Swift app, a task that awaits the
+  core keeps the conversation it started on and checks
+  `model.openThread == key` before it changes what is on screen.
 - **Architecture vocabulary** is the `codebase-design` skill's: module,
   interface, depth, seam, adapter, leverage, locality. A seam gets
   introduced when a second adapter exists, not before.
@@ -138,9 +120,11 @@ a good icon look broken.
 ## Words a person reads
 
 - Every user-facing string goes through `mailrs_domain::translate`
-  (`gettext`, `ngettext`, `fill`, `fill_plural`), placeholders named
-  like `{reason}`. A new file with such strings goes into
-  `po/POTFILES.in`; `update-po.sh` warns when the list drifts.
+  (`gettext`, `ngettext`, `fill`, `fill_plural`) in Rust, and through
+  `tr` and `trPlural` in Swift, with a literal string so
+  `update-po.sh` finds it. Placeholders are named like `{reason}`. A new
+  file with such strings goes into `po/POTFILES.in`; `update-po.sh` warns
+  when the list drifts.
 - The owner reads the UI in Italian. `po/it_IT.po` is kept complete:
   translate new strings into it in the same change.
 - Write source strings in American English (color, organize, canceled).
@@ -188,8 +172,9 @@ violet `#8b6cf0` to pink `#f07ab8` to amber `#f5c46b`. The app icon sets it
 on a macOS squircle shaded from `#5b3fd1` to `#1b1340`; the symbolic icon is
 the same shape in one colour. The Add Account poses are the same envelope
 with the wing raised, spread or drooped. `scripts/iris-art.py` draws all of
-them from the geometry `app/src/ui/post_band.rs` uses, so change the two
-together and regenerate rather than editing the SVGs by hand.
+them into `data/` from the geometry `macos/Iris/PostBand.swift` uses, so
+change the two together and regenerate rather than editing the SVGs by
+hand; `scripts/macos-icon.sh` then draws the app icon set from them.
 
 ## Agent skills
 

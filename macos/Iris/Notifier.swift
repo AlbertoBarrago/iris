@@ -2,7 +2,7 @@ import AppKit
 import OSLog
 import UserNotifications
 
-private let log = Logger(subsystem: "io.github.AlbertoBarrago.Iris.Next", category: "notifications")
+private let log = Logger(subsystem: "io.github.AlbertoBarrago.Iris", category: "notifications")
 
 /// New-mail notifications through the Mac's notification centre. The
 /// core words them and decides which mail is news (`MailListener.newMail`);

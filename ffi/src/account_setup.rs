@@ -1,4 +1,4 @@
-//! Adding and removing accounts in Iris Next. `AccountSetup` walks the
+//! Adding and removing accounts in Iris. `AccountSetup` walks the
 //! Add Account steps the GTK dialog walks, with its words and decisions
 //! from `mailrs_appcore::add_account`, and signs in through
 //! `mailrs_appcore::accounts`. A new account starts on the running engine
