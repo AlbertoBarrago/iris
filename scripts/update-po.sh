@@ -39,7 +39,15 @@ while read -r file; do
     number=$((number + 1))
     xtr "${keywords[@]}" -o "$(printf '%s/1-%03d.pot' "$work" "$number")" "$file"
 done <<< "$listed"
-msgcat --use-first --sort-by-file -o "$work/joined.pot" "$work"/1-*.pot
+# The Swift front end words its views through `tr` and `trPlural`, whose
+# string literals xgettext's C reader takes as they are.
+swift=$(grep -v '^#' po/POTFILES.in | grep -v '^$' | grep '\.swift$' | LC_ALL=C sort || true)
+if [ -n "$swift" ]; then
+    # shellcheck disable=SC2086
+    xgettext -L C --from-code=UTF-8 -ktr -ktrPlural:1,2 --sort-by-file --no-wrap \
+        -o "$work/2-swift.pot" $swift
+fi
+msgcat --use-first --sort-by-file -o "$work/joined.pot" "$work"/1-*.pot $( [ -f "$work/2-swift.pot" ] && echo "$work/2-swift.pot" )
 # msgcat needs a header on its inputs; ours replaces it, so drop theirs.
 sed '1,/^$/d' "$work/joined.pot" > "$work/merged.pot"
 cat > "$work/header.pot" <<HEADER
@@ -81,9 +89,11 @@ python3 scripts/en-gb.py "$pot" po/en_GB.po
 
 # POTFILES.in is what the extraction reads, so a file left out of it is a
 # file whose words nobody can translate. Say so loudly.
-grep -rlE '(gettext|fill_plural)\(' --include='*.rs' app/src domain/src sync/src |
-    LC_ALL=C sort > "$work/rust.txt"
-forgotten=$(comm -13 <(echo "$listed") "$work/rust.txt")
+{
+    grep -rlE '(gettext|fill_plural)\(' --include='*.rs' appcore/src domain/src sync/src ffi/src render/src view/src
+    grep -rlE '\btr(Plural)?\("' --include='*.swift' macos/Iris
+} | LC_ALL=C sort > "$work/rust.txt"
+forgotten=$(comm -13 <(printf '%s\n%s\n' "$listed" "$swift" | grep -v '^$' | LC_ALL=C sort) "$work/rust.txt")
 if [ -n "$forgotten" ]; then
     echo "po/POTFILES.in is missing, and their words go untranslated:" >&2
     echo "$forgotten" | sed 's/^/  /' >&2

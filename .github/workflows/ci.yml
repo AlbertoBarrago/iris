@@ -23,10 +23,9 @@ jobs:
       CARGO_TERM_COLOR: always
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      # GTK and libadwaita come from Homebrew, as on a developer's Mac;
       # gettext brings xgettext and msgmerge for update-po.sh.
       - name: Install build dependencies
-        run: brew install gtk4 libadwaita adwaita-icon-theme pkgconf gettext
+        run: brew install gettext
       - name: Install Rust 1.98
         run: |
           rustup toolchain install 1.98 --profile minimal --component clippy

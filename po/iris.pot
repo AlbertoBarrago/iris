@@ -3,5308 +3,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: iris 1.0.11\n"
+"Project-Id-Version: iris 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/AlbertoBarrago/iris/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: app/src/app.rs:349
-msgid ""
-"Your preferences could not be read, so Iris started from the defaults. The "
-"old file is kept as {file}."
+#: appcore/src/accounts.rs:55
+msgid "Canceled."
 msgstr ""
 
-#: app/src/app/sending.rs:31
-msgid "That account is not connected. Check its status in the sidebar."
-msgstr ""
-
-#: app/src/app/sending.rs:156
-msgid "Could not build the message: {reason}"
-msgstr ""
-
-#: app/src/app/sending.rs:171 app/src/app/sending.rs:223
-msgid "Not encrypted, so not sent: {reason}"
-msgstr ""
-
-#: app/src/app/sending.rs:224
-msgid "Not signed, so not sent: {reason}"
-msgstr ""
-
-#: app/src/app/sending.rs:254
-msgid "Message sent"
-msgstr ""
-
-#: app/src/app/sending.rs:262
-msgid "Waiting in the Outbox. It goes out as soon as it can."
-msgstr ""
-
-#: app/src/app/sending.rs:267 app/src/app/sending.rs:272
-msgid "Not sent: {reason}"
-msgstr ""
-
-#: app/src/app/sending.rs:302 app/src/app/sending.rs:315
-msgid "Not scheduled: {reason}"
-msgstr ""
-
-#: app/src/app/sending.rs:308
-msgid "Will send {when}"
-msgstr ""
-
-#: app/src/app/sending.rs:366
-msgid "Sent {message}"
-msgstr ""
-
-#: app/src/app/sending.rs:375
-msgid "Still in the Outbox: {message}"
-msgstr ""
-
-#: app/src/app/sending.rs:484
-msgid "your message"
-msgstr ""
-
-#: app/src/app/sending.rs:486
-msgid "“{subject}”"
-msgstr ""
-
-#: app/src/core.rs:181
-msgid ""
-"Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, then "
-"open Iris again."
-msgstr ""
-
-#: app/src/core.rs:193
-msgid "Iris could not update its mail store, and kept the old one."
-msgstr ""
-
-#: app/src/core.rs:685 app/src/core.rs:725 app/src/core.rs:748
-msgid "Demo mode cannot add real accounts."
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:31
-msgid "Join"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:32
-msgid "Snooze 5 Minutes"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:61
-msgid "(no title)"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:90
-msgid "{when}, all day"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:96
-msgid "Now"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:99
-msgid "Started {count} minute ago"
-msgid_plural "Started {count} minutes ago"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/event_reminders/notice.rs:106
-msgid "In {count} minute"
-msgid_plural "In {count} minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/event_reminders/notice.rs:109
-msgid "In {count} hour"
-msgid_plural "In {count} hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/event_reminders/notice.rs:114
-msgid "{when}, {start} to {end}"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:154
-msgid "Today"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:155
-msgid "Tomorrow"
-msgstr ""
-
-#: app/src/event_reminders/notice.rs:159
-msgid "%A %-d %B"
-msgstr ""
-
-#: app/src/language_names.rs:48
-msgid "{language} ({country})"
-msgstr ""
-
-#: app/src/macos_menu.rs:87
-msgid "New Message"
-msgstr ""
-
-#: app/src/macos_menu.rs:88
-msgid "Check for Mail"
-msgstr ""
-
-#: app/src/macos_menu.rs:89
-msgid "Add Account…"
-msgstr ""
-
-#: app/src/macos_menu.rs:93
-msgid "Undo"
-msgstr ""
-
-#: app/src/macos_menu.rs:94
-msgid "Redo"
-msgstr ""
-
-#: app/src/macos_menu.rs:97
-msgid "Cut"
-msgstr ""
-
-#: app/src/macos_menu.rs:98
-msgid "Copy"
-msgstr ""
-
-#: app/src/macos_menu.rs:99
-msgid "Paste"
-msgstr ""
-
-#: app/src/macos_menu.rs:100
-msgid "Select All"
-msgstr ""
-
-#: app/src/macos_menu.rs:104
-msgid "Minimize"
-msgstr ""
-
-#: app/src/macos_menu.rs:107
-msgid "File"
-msgstr ""
-
-#: app/src/macos_menu.rs:108
-msgid "Edit"
-msgstr ""
-
-#: app/src/macos_menu.rs:109
-msgid "Window"
-msgstr ""
-
-#: app/src/macos_menu.rs:116
-msgid "Check for Updates…"
-msgstr ""
-
-#: app/src/main.rs:68
-msgid ""
-"Usage: iris [--background] [--demo] [--compose [mailto:ADDRESS]] [FILE.ics]\n"
-"\n"
-"  --version      print the version and quit\n"
-"  --background   start without opening a window\n"
-"  --demo         open sample mail in a throwaway store; nothing syncs\n"
-"  --compose      open a new message, addressed to ADDRESS when given\n"
-"  mailto:...     the same as --compose mailto:...\n"
-"  FILE.ics       open a calendar file, to add its events to a calendar"
-msgstr ""
-
-#: app/src/main.rs:173
-msgid "iris: unknown option {option}"
-msgstr ""
-
-#: app/src/main.rs:318
-msgid "Iris Could Not Start"
-msgstr ""
-
-#: app/src/main.rs:323 app/src/ui/about.rs:155
-msgid "Report a Problem"
-msgstr ""
-
-#: app/src/protection/draft.rs:27 app/src/protection/draft.rs:93
-msgid "Draft not saved: {reason}"
-msgstr ""
-
-#: app/src/protection/draft.rs:55
-msgid ""
-"Draft not saved. An encrypted message waits in Drafts encrypted to your own "
-"key, and this computer holds no key or certificate for {address}."
-msgstr ""
-
-#: app/src/protection/draft.rs:74
-msgid "That account is not connected."
-msgstr ""
-
-#: app/src/protection/draft.rs:87 app/src/ui/vacation.rs:147
-msgid "Could not save: {reason}"
-msgstr ""
-
-#: app/src/protection/draft.rs:117 app/src/ui/window.rs:2421
-msgid "Could not open the draft: {reason}"
-msgstr ""
-
-#: app/src/servers.rs:23
-msgid "Not found"
-msgstr ""
-
-#: app/src/servers.rs:24
-msgid "Found at {host}. Use it?"
-msgstr ""
-
-#: app/src/servers.rs:25
-msgid "{host} refused the login: {reason}"
-msgstr ""
-
-#: app/src/servers.rs:34 app/src/ui/calendar/editor.rs:1164
-#: app/src/ui/calendar/editor.rs:1240 app/src/ui/contacts_prefs.rs:226
-#: app/src/ui/sidebar.rs:380 app/src/ui/sidebar.rs:1511
-#: app/src/ui/window/shortcuts.rs:238
-msgid "Calendar"
-msgstr ""
-
-#: app/src/servers.rs:35 app/src/ui/contacts_prefs.rs:161
-msgid "Contacts"
-msgstr ""
-
-#: app/src/servers.rs:37
-msgid "Rules"
-msgstr ""
-
-#: app/src/servers.rs:39
-msgid "On this computer, while Iris is open"
-msgstr ""
-
-#: app/src/servers.rs:40
-msgid "On the server"
-msgstr ""
-
-#: app/src/ui/about.rs:37 app/src/ui/window.rs:678
-msgid "Iris"
-msgstr ""
-
-#: app/src/ui/about.rs:53
-msgid "Based on {app}"
-msgstr ""
-
-#: app/src/ui/about.rs:62
-msgid "Version {version}"
-msgstr ""
-
-#: app/src/ui/about.rs:71
-msgid "Mail and calendar for macOS. Your mail stays on your computer."
-msgstr ""
-
-#: app/src/ui/about.rs:115 app/src/ui/preferences.rs:828
-msgid "Check for Updates"
-msgstr ""
-
-#: app/src/ui/about.rs:149
-msgid "What's New"
-msgstr ""
-
-#: app/src/ui/about.rs:153
-msgid "Website"
-msgstr ""
-
-#: app/src/ui/about.rs:160
-msgid "License"
-msgstr ""
-
-#: app/src/ui/about.rs:177 app/src/ui/window.rs:3000
-msgid "About Iris"
-msgstr ""
-
-#: app/src/ui/add_account.rs:401
-msgid "Copy Command"
-msgstr ""
-
-#: app/src/ui/add_account.rs:409
-msgid "Command copied"
-msgstr ""
-
-#: app/src/ui/add_account.rs:539
-msgid "Signs in through your browser"
-msgstr ""
-
-#: app/src/ui/add_account.rs:549
-msgid "Enter server settings by hand"
-msgstr ""
-
-#: app/src/ui/add_account.rs:563 app/src/ui/add_account.rs:1584
-msgid "Add Account"
-msgstr ""
-
-#: app/src/ui/add_account.rs:566
-msgid "Add an account"
-msgstr ""
-
-#: app/src/ui/add_account.rs:568
-msgid "Choose where your mail lives."
-msgstr ""
-
-#: app/src/ui/add_account.rs:600
-msgid "Your Email Address"
-msgstr ""
-
-#: app/src/ui/add_account.rs:602 app/src/ui/add_account.rs:605
-msgid "Email Address"
-msgstr ""
-
-#: app/src/ui/add_account.rs:616
-msgid "Use This Address"
-msgstr ""
-
-#: app/src/ui/add_account.rs:633
-msgid "Continue"
-msgstr ""
-
-#. The same full-width secondary button as on the address page.
-#: app/src/ui/add_account.rs:634 app/src/ui/add_account.rs:727
-msgid "Enter Server Settings"
-msgstr ""
-
-#: app/src/ui/add_account.rs:636
-msgid "Your email address"
-msgstr ""
-
-#: app/src/ui/add_account.rs:638
-msgid "Iris finds the servers for you."
-msgstr ""
-
-#: app/src/ui/add_account.rs:671
-msgid "Looking Up"
-msgstr ""
-
-#: app/src/ui/add_account.rs:731
-msgid "Only the domain leaves this computer, never your full address."
-msgstr ""
-
-#: app/src/ui/add_account.rs:761
-msgid "Sign In in Your Browser"
-msgstr ""
-
-#: app/src/ui/add_account.rs:769
-msgid "Waiting for your browser"
-msgstr ""
-
-#: app/src/ui/add_account.rs:778
-msgid "Time left"
-msgstr ""
-
-#: app/src/ui/add_account.rs:787
-msgid "Iris stops waiting after five minutes."
-msgstr ""
-
-#: app/src/ui/add_account.rs:792
-msgid "Open Page Again"
-msgstr ""
-
-#: app/src/ui/add_account.rs:797
-msgid "Copy Link"
-msgstr ""
-
-#: app/src/ui/add_account.rs:802 app/src/ui/add_account.rs:927
-#: app/src/ui/key_import.rs:214
-msgid "Try Again"
-msgstr ""
-
-#: app/src/ui/add_account.rs:807 app/src/ui/assistant_mcp_prefs.rs:347
-#: app/src/ui/calendar/editor.rs:183 app/src/ui/calendar/manage.rs:252
-#: app/src/ui/calendar/manage.rs:374 app/src/ui/calendar/manage.rs:417
-#: app/src/ui/composer/editor.rs:343 app/src/ui/composer/mod.rs:1681
-#: app/src/ui/composer/mod.rs:1750 app/src/ui/composer/mod.rs:2073
-#: app/src/ui/composer/mod.rs:2520 app/src/ui/confirm.rs:29
-#: app/src/ui/rules.rs:445 app/src/ui/rules.rs:625
-#: app/src/ui/smart_editor.rs:150 app/src/ui/templates.rs:226
-#: app/src/ui/unsubscribe.rs:76 app/src/ui/vacation.rs:46 app/src/ui/when.rs:52
-#: app/src/ui/window/arrange.rs:146 app/src/ui/window/images.rs:101
-#: app/src/ui/window/organize.rs:73 app/src/ui/window/organize.rs:122
-msgid "Cancel"
-msgstr ""
-
-#: app/src/ui/add_account.rs:895 app/src/ui/add_account.rs:988
-#: app/src/ui/add_account.rs:2284 app/src/ui/window.rs:1082
-msgid "Sign In"
-msgstr ""
-
-#: app/src/ui/add_account.rs:900 app/src/ui/add_account.rs:903
-msgid "Your Name"
-msgstr ""
-
-#: app/src/ui/add_account.rs:905 app/src/ui/add_account.rs:907
-msgid "Password"
-msgstr ""
-
-#: app/src/ui/add_account.rs:922 app/src/ui/add_account.rs:1473
-msgid "Server Settings"
-msgstr ""
-
-#: app/src/ui/add_account.rs:935
-msgid "Incoming"
-msgstr ""
-
-#: app/src/ui/add_account.rs:946 app/src/ui/add_account.rs:2367
-msgid "Outgoing"
-msgstr ""
-
-#: app/src/ui/add_account.rs:951
-msgid "Keep this account's mail on this computer alone"
-msgstr ""
-
-#: app/src/ui/add_account.rs:956
-msgid "Servers"
-msgstr ""
-
-#: app/src/ui/add_account.rs:961 app/src/ui/add_account.rs:963
-msgid "Use these servers"
-msgstr ""
-
-#: app/src/ui/add_account.rs:965
-msgid ""
-"Iris guessed these servers. Your password goes to them only after you check "
-"the box."
-msgstr ""
-
-#: app/src/ui/add_account.rs:1031
-msgid "No Other Mail Apps"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1037
-msgid "Use another address"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1038
-msgid "Change the address and look it up again"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1044
-msgid "Choose another provider"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1045
-msgid "Back to the list"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1091
-msgid "Account Added"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1114
-msgctxt "mailbox"
-msgid "Archive"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1147
-msgid ""
-"Grant Access opens Google's page again. You can also do it later in "
-"Preferences."
-msgstr ""
-
-#: app/src/ui/add_account.rs:1150
-msgid "Open Inbox"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1152
-msgid "Add Another Account"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1154 app/src/ui/confirm.rs:46
-msgid "Not Now"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1159 app/src/ui/calendar/editor.rs:1606
-#: app/src/ui/calendar/sidebar.rs:922 app/src/ui/contacts_prefs.rs:265
-#: app/src/ui/invitation.rs:369 app/src/ui/permission.rs:42
-#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1161
-msgid "Grant Access"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1229
-msgid "Server"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1232 app/src/ui/add_account.rs:1233
-msgid "Port"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1243 app/src/ui/add_account.rs:1245
-msgid "Security"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1306
-msgid "Mail on the Server"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1308
-msgid "Iris keeps every message it downloads on this computer."
-msgstr ""
-
-#: app/src/ui/add_account.rs:1313 app/src/ui/add_account.rs:1314
-#: app/src/ui/preferences.rs:1122
-msgid "Days"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1388
-msgid "Incoming User Name"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1389
-msgid "Outgoing User Name"
-msgstr ""
-
-#. An entry row has no placeholder of its own: one set on its inner
-#. text draws over the title. The rule goes in a tooltip, since a
-#. second line under the group would push this row off a 768-pixel
-#. screen.
-#: app/src/ui/add_account.rs:1395
-msgid "Leave it empty to use the incoming user name."
-msgstr ""
-
-#: app/src/ui/add_account.rs:1398
-msgid "Incoming Mail"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1408 app/src/ui/add_account.rs:1410
-msgid "Protocol"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1439
-msgid "Outgoing Mail"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1450
-msgid "Sign-In"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1451
-msgid "Leave them empty to sign in with your address."
-msgstr ""
-
-#: app/src/ui/add_account.rs:1462
-msgid "Use These Settings"
-msgstr ""
-
-#: app/src/ui/add_account.rs:1900 app/src/ui/add_account.rs:3046
-msgid "Looking up {domain}"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2141
-msgid "Sign in to {domain}"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2144
-msgid "{domain} uses {provider}"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2158
-msgid "Open {provider}'s Settings"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2165
-msgid "{provider} needs an app password"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2168
-msgid ""
-"Not your {provider} website password. Make one with mail access in "
-"{provider}'s settings and paste it here."
-msgstr ""
-
-#: app/src/ui/add_account.rs:2276 app/src/ui/add_account.rs:3116
-msgid "Signing In…"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2386
-msgid "Could not reach {host}"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2388
-msgid "Your password was not sent."
-msgstr ""
-
-#: app/src/ui/add_account.rs:2578 app/src/ui/add_account.rs:2687
-msgid "Could not sign in"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2596
-msgid "Sign in with {provider} in your browser"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2601
-msgid ""
-"{provider}'s sign-in page is open in your browser. When you finish there, "
-"this window moves on."
-msgstr ""
-
-#: app/src/ui/add_account.rs:2621
-msgid ""
-"This copy of Iris was built without Google sign-in. Get a release from "
-"github.com/AlbertoBarrago/iris/releases."
-msgstr ""
-
-#: app/src/ui/add_account.rs:2624
-msgid ""
-"This copy of Iris was built without Microsoft sign-in. Get a release from "
-"github.com/AlbertoBarrago/iris/releases."
-msgstr ""
-
-#: app/src/ui/add_account.rs:2788
-msgid "Link copied"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2815
-msgid "{account} is added"
-msgstr ""
-
-#: app/src/ui/add_account.rs:2835
-msgid "{account} is ready"
-msgstr ""
-
-#: app/src/ui/add_account.rs:3119
-msgid ""
-"This server cannot tell its messages apart, so Iris cannot download from it "
-"safely."
-msgstr ""
-
-#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3068
-msgid "Summarize this conversation"
-msgstr ""
-
-#: app/src/ui/assistant.rs:32
-msgid "What needs a reply today?"
-msgstr ""
-
-#: app/src/ui/assistant.rs:33
-msgid "Archive newsletters older than a week"
-msgstr ""
-
-#: app/src/ui/assistant.rs:34
-msgid "Set an out-of-office reply for next week"
-msgstr ""
-
-#: app/src/ui/assistant.rs:35
-msgid "Draft a reply to the open conversation"
-msgstr ""
-
-#. The header in both spaces carries a button for this now (R12);
-#. the menu item stays too, so Ctrl+J shows here as well.
-#: app/src/ui/assistant.rs:99 app/src/ui/window.rs:2983
-msgid "Assistant"
-msgstr ""
-
-#: app/src/ui/assistant.rs:102 app/src/ui/assistant.rs:104
-msgid "New Chat"
-msgstr ""
-
-#: app/src/ui/assistant.rs:127
-msgid ""
-"Ask about your mail, or tell me what to tidy. I can search, summarize, sort, "
-"draft, and change settings."
-msgstr ""
-
-#: app/src/ui/assistant.rs:151
-msgid "Ask Iris…"
-msgstr ""
-
-#: app/src/ui/assistant.rs:156 app/src/ui/assistant.rs:160
-#: app/src/ui/assistant.rs:446 app/src/ui/composer/mod.rs:300
-#: app/src/ui/window/shortcuts.rs:502
-msgid "Send"
-msgstr ""
-
-#: app/src/ui/assistant.rs:159
-msgid "Ask Iris"
-msgstr ""
-
-#: app/src/ui/assistant.rs:175
-msgid "Choose a Model"
-msgstr ""
-
-#: app/src/ui/assistant.rs:181
-msgid "Set Up the Assistant"
-msgstr ""
-
-#: app/src/ui/assistant.rs:183
-msgid ""
-"Use a local model from LM Studio, Ollama, or any server with OpenAI's API. "
-"You can also use an Anthropic API key or your Claude subscription."
-msgstr ""
-
-#: app/src/ui/assistant.rs:445
-msgid "Stop"
-msgstr ""
-
-#: app/src/ui/assistant.rs:550
-msgid "Don't Allow"
-msgstr ""
-
-#: app/src/ui/assistant.rs:552
-msgid "Allow"
-msgstr ""
-
-#: app/src/ui/assistant.rs:556
-msgid "Always Allow"
-msgstr ""
-
-#: app/src/ui/assistant.rs:592
-msgid "Allowed"
-msgstr ""
-
-#: app/src/ui/assistant.rs:593
-msgid "Always allowed"
-msgstr ""
-
-#: app/src/ui/assistant.rs:594
-msgid "Not allowed"
-msgstr ""
-
-#: app/src/ui/assistant.rs:834
-msgid "Result"
-msgstr ""
-
-#: app/src/ui/assistant.rs:842
-msgid "Input"
-msgstr ""
-
-#: app/src/ui/assistant.rs:920
-msgid "Running"
-msgstr ""
-
-#: app/src/ui/assistant.rs:921 app/src/ui/calendar/editor.rs:263
-#: app/src/ui/hide_my_email.rs:467
-msgid "Done"
-msgstr ""
-
-#: app/src/ui/assistant.rs:922
-msgid "Failed"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:26
-msgid "MCP Servers"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:28
-msgid ""
-"Tools from servers you add. The assistant asks before each call, unless you "
-"choose Always Allow. A server gets what the assistant sends it."
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:36 app/src/ui/assistant_mcp_prefs.rs:38
-#: app/src/ui/assistant_mcp_prefs.rs:361
-msgid "Add Server"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:105
-msgid "Use {server}"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:115
-msgid "Edit {server}"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:121 app/src/ui/calendar/editor.rs:1639
-#: app/src/ui/composer/mod.rs:1849 app/src/ui/composer/recipients.rs:315
-#: app/src/ui/window.rs:2772
-msgid "Remove"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:125
-msgid "Remove {server}"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:153
-msgid "Removed {server}"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:184
-msgid "Off"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:223
-msgid "Starts when the assistant needs it"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:224
-msgid "Starting…"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:226
-msgid "Connected, {count} tool"
-msgid_plural "Connected, {count} tools"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:232
-msgid "Could not connect: {reason}"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:249
-msgid ""
-"A command runs on this computer and talks over its input and output, as in "
-"npx -y @modelcontextprotocol/server-filesystem ~/Documents. Put NAME=value "
-"in front for the environment. A URL reaches a server over HTTP."
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:254 app/src/ui/calendar/manage.rs:348
-#: app/src/ui/composer/mod.rs:2515 app/src/ui/smart_editor.rs:37
-#: app/src/ui/templates.rs:177
-msgid "Name"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:255
-msgid "Command"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:255 app/src/ui/assistant_mcp_prefs.rs:263
-msgid "URL"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:257
-msgid "Connect With"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:261
-msgid "Command Line"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:265
-msgid "Bearer Token (Optional)"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:268
-msgid "Test the Server"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:272 app/src/ui/assistant_prefs.rs:257
-#: app/src/ui/assistant_web_prefs.rs:59
-msgid "Test"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:341 app/src/ui/calendar/editor.rs:179
-#: app/src/ui/calendar/quick.rs:211 app/src/ui/composer/editor.rs:343
-#: app/src/ui/composer/mod.rs:2520 app/src/ui/dav_edit.rs:26
-#: app/src/ui/rules.rs:438 app/src/ui/smart_editor.rs:144
-#: app/src/ui/templates.rs:220 app/src/ui/vacation.rs:42
-#: app/src/ui/window/arrange.rs:146 app/src/ui/window/save_contacts.rs:110
-msgid "Save"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:343 app/src/ui/calendar/manage.rs:483
-msgid "Add"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:359
-msgid "Edit Server"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:382
-msgid "Give the server a short name of letters, digits, - and _"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:391
-msgid "Another server has that name"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:396
-msgid "Enter a URL that starts with http:// or https://"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:402
-msgid "The command line does not read: {problem}"
-msgstr ""
-
-#: app/src/ui/assistant_mcp_prefs.rs:436
-msgid "Connecting…"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:24
-msgid "AI"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:30
-msgid "Connections"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:32
-msgid ""
-"A local server is LM Studio, Ollama, or any server with OpenAI's API. Local "
-"models keep your mail on this computer. With Anthropic or a Claude "
-"subscription, what a feature reads goes to Anthropic."
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:40
-msgid "Server Address"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:45
-msgid "API Key (Optional)"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:50
-msgid "Anthropic API Key"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:73
-msgid "Uses your Claude subscription through {path}"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:76
-msgid "Not found. Install Claude Code and sign in by running claude once."
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:101
-msgid "Removed the key"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:103
-msgid "Saved in the keyring"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:110
-msgid "Key saved in the keyring"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:112
-msgid "No key saved"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:126
-msgid "Anthropic API Key (Saved)"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:130
-msgid "Used For"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:132
-msgid "Each feature sends what it reads to the model chosen for it."
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:151
-msgid "Safety"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:154
-msgid "Ask Before Acting"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:156
-msgid ""
-"Approve each message the assistant sends and each change to Gmail settings, "
-"such as automatic replies and rules"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:177 app/src/ui/conversation.rs:688
-#: app/src/ui/window/detached.rs:65
-msgid "Conversation"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:180
-msgid "Show Details Expanded"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:182
-msgid "Open the model's thinking and each tool it runs as they appear"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:202
-msgid "Always Allowed"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:204
-msgid ""
-"Tools from outside sources that run without asking. Remove one to be asked "
-"again next time."
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:220
-msgid "Ask Again"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:224
-msgid "Ask again before {tool}"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:261
-msgid "Test the Connection"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:286 app/src/ui/assistant_web_prefs.rs:90
-msgid "No answer: {reason}"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:346
-msgid "Connection"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:492
-msgid "Claude Code's own default"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:500
-msgid "Model"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:519 app/src/ui/assistant_prefs.rs:523
-msgid "Models You Can Use"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:544
-msgid "Search models"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:561
-msgid "Asking for the model list…"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:677
-msgid "This provider lists no models. Type a name in the field instead."
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:712
-msgid "alias"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:752
-msgid "Found on This Computer"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:756
-msgid "Looking for LM Studio, Ollama, Unsloth, and Claude Code…"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:772
-msgid "Nothing found"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:774
-msgid ""
-"Start LM Studio's server or Ollama, or install Claude Code, then open "
-"Preferences again."
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:786
-msgid "{model} and {count} more"
-msgid_plural "{model} and {count} more"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/assistant_prefs.rs:797
-msgid "Use"
-msgstr ""
-
-#: app/src/ui/assistant_prefs.rs:802
-msgid "Use {provider}"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:17
-msgid "Skills"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:19
-msgid ""
-"Instructions the assistant follows for one kind of task, found in Iris's "
-"skills folder and in Claude Code's. Each skill is off until you turn it on. "
-"Scripts in a skill run in a sandbox that cannot reach your mail, keys or "
-"home folder, and the assistant asks before each command."
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:26
-msgid "Open Folder"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:28
-msgid "Open Iris's skills folder"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:38
-msgid "Scripts Cannot Run"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:47
-msgid "No Skills Found"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:49
-msgid "Put a folder holding a SKILL.md file in {folder}."
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:64
-msgid "{origin}: {description}"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:106
-msgid "Use the skill {skill}"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:119
-msgid "Allow Network"
-msgstr ""
-
-#: app/src/ui/assistant_skills_prefs.rs:121
-msgid ""
-"Let this skill's scripts reach the internet. Without it they can only use "
-"what is on this computer."
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:18
-msgid "Web Search"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:20
-msgid ""
-"Lets the assistant search the web and read pages. Claude searches with "
-"Anthropic's own tools. A local model searches with the engine chosen here, "
-"which receives every query."
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:29
-msgid "Search With"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:47
-msgid "SearXNG Server Address"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:63
-msgid "Test the Search"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:64
-msgid "Runs one search and shows the first result"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:79
-msgid "Searching…"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:88
-msgid "First result: {title}"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:126
-msgid "Brave Search API Key (Saved)"
-msgstr ""
-
-#: app/src/ui/assistant_web_prefs.rs:127
-msgid "Brave Search API Key"
-msgstr ""
-
-#: app/src/ui/autocomplete.rs:307 app/src/ui/calendar/editor.rs:2269
-#: app/src/ui/composer/recipients.rs:50
-msgid "{name}, {address}"
-msgstr ""
-
-#: app/src/ui/autocomplete.rs:315
-msgid "{person}, {source}"
-msgstr ""
-
-#: app/src/ui/calendar/agenda.rs:454 app/src/ui/calendar/block.rs:615
-msgid "{title}, {kind}"
-msgstr ""
-
-#: app/src/ui/calendar/agenda.rs:460
-msgid "{title}, {when}, {calendar}"
-msgstr ""
-
-#: app/src/ui/calendar/agenda.rs:579
-msgid "Nothing earlier on this computer"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:82
-msgid "Untitled file"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:90
-msgid "Uploads when you are back online"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:91
-msgid "Waiting for access"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:92
-msgid "File not found"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:93
-msgid "Could not upload: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:101
-msgid "Guests can open this file"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:102
-msgid "Not shared with the guests"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:117
-msgid "Open {file} in the browser"
-msgstr ""
-
-#: app/src/ui/calendar/attachments.rs:132 app/src/ui/calendar/popover.rs:881
-msgid "Open in Browser"
-msgstr ""
-
-#: app/src/ui/calendar/block.rs:531
-msgid "Waiting to be sent"
-msgstr ""
-
-#: app/src/ui/calendar/block.rs:534 app/src/ui/calendar/popover.rs:774
-msgid "Not answered yet"
-msgstr ""
-
-#: app/src/ui/calendar/block.rs:535
-msgid "Declined"
-msgstr ""
-
-#: app/src/ui/calendar/block.rs:576 app/src/ui/preferences.rs:955
-msgid "{start}–{end}"
-msgstr ""
-
-#: app/src/ui/calendar/block.rs:621
-msgid "{title}, {day}"
-msgstr ""
-
-#: app/src/ui/calendar/block.rs:628
-msgid "{title}, all day, {calendar}"
-msgstr ""
-
-#: app/src/ui/calendar/block.rs:633
-msgid "{title}, {start} to {end}, {calendar}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:174
-msgid "New Event"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:176
-msgid "Edit Event"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:272
-msgid "Custom Repeat"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:396
-msgid ""
-"{organizer} organizes this event, so its time, place and guests stay as they "
-"set them."
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:422 app/src/ui/calendar/quick.rs:176
-msgid "Title"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:457 app/src/ui/calendar/quick.rs:182
-msgid "Type"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:544
-msgid "Out of office and focus time go on a primary calendar"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:546
-msgid "Out of office goes on a primary calendar"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:585
-msgid "Meetings"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:593
-msgid "Decline"
-msgstr ""
-
-#. The row's title says Decline, so each choice names only which
-#. meetings, short enough not to be cut off.
-#: app/src/ui/calendar/editor.rs:597
-msgid "New and existing"
-msgstr ""
-
-#. The row's title says Decline, so each choice names only which
-#. meetings, short enough not to be cut off.
-#: app/src/ui/calendar/editor.rs:597
-msgid "New only"
-msgstr ""
-
-#. The row's title says Decline, so each choice names only which
-#. meetings, short enough not to be cut off.
-#: app/src/ui/calendar/editor.rs:597
-msgid "None"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:601 app/src/ui/composer/mod.rs:454
-#: app/src/ui/vacation.rs:229 app/src/ui/vacation.rs:238
-msgid "Message"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:628
-msgid "All day"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:642
-msgid "Start date"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:656
-msgid "Start time"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:676
-msgid "End date"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:698
-msgid "End time"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:713 app/src/ui/preferences.rs:1084
-msgid "Starts"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:716 app/src/ui/preferences.rs:1086
-msgid "Ends"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:850
-msgid "Repeats"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:893
-msgid "Custom…"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:947
-msgid "Every"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:951
-msgid "Unit"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:955
-msgid "On"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1007
-msgid "Stops"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1014 app/src/ui/calendar/editor.rs:1019
-msgid "Never"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1015 app/src/ui/calendar/editor.rs:1038
-msgid "On a date"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1016 app/src/ui/calendar/editor.rs:1064
-msgid "After"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1028
-msgid "End date of the repeat"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1051 app/src/ui/calendar/editor.rs:1060
-msgid "time"
-msgid_plural "times"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/editor.rs:1052
-msgid "Number of times"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1252
-msgid "Place"
-msgstr ""
-
-#. Named for the moment Show all hands it the focus.
-#: app/src/ui/calendar/editor.rs:1267 app/src/ui/calendar/popover.rs:288
-msgid "Guests"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1270 app/src/ui/calendar/editor.rs:1275
-msgid "Add guests"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1336
-msgid "Not an address: {text}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1359
-msgid "{address} · {answer}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1377
-msgid "Remove {guest}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1404
-msgid "Reminders"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1444
-msgid "Add Reminder"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1486
-msgid "Remove reminder"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1530 app/src/ui/calendar/editor.rs:1541
-#: app/src/ui/calendar/popover.rs:266
-msgid "Notes"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1556
-msgid "Attachments"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1561 app/src/ui/calendar/editor.rs:1567
-msgid "Attach File…"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1610
-msgid "Grant access to upload {file}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1623
-msgid "Share with guests"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1625
-msgid "Share {file} with the guests"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1641 app/src/ui/composer/mod.rs:1853
-msgid "Remove {file}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1674
-msgid "Cancel Upload"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1676
-msgid "Cancel upload of {file}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1701
-msgid "Attach File"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1715
-msgid "Iris can attach only a file saved on this computer."
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1739
-msgid "Uploading {file}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1770
-msgid "Could not attach {file}: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1813 app/src/ui/composer/mod.rs:344
-msgid "More"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1817
-msgid "Time zone"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1861
-msgid "Show as busy"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1875
-msgid "Private"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1877
-msgid "Only people who can change this calendar see the details"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1891 app/src/ui/calendar/manage.rs:353
-#: app/src/ui/calendar/sidebar.rs:1261 app/src/ui/sidebar.rs:1701
-#: app/src/ui/sidebar.rs:1946
-msgid "Color"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1895
-msgid "Calendar color"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1939
-msgid "Add Google Meet"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1990 app/src/ui/calendar/mod.rs:2248
-#: app/src/ui/calendar/quick.rs:54
-msgid "Event"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1991 app/src/ui/calendar/kinds.rs:60
-msgid "Focus time"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:1992 app/src/ui/calendar/kinds.rs:59
-msgid "Out of office"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2014
-msgid "day"
-msgid_plural "days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/editor.rs:2015
-msgid "week"
-msgid_plural "weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/editor.rs:2016
-msgid "month"
-msgid_plural "months"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/editor.rs:2017
-msgid "year"
-msgid_plural "years"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/editor.rs:2029
-msgid "Monday"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2030
-msgid "Tuesday"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2031
-msgid "Wednesday"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2032
-msgid "Thursday"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2033
-msgid "Friday"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2034
-msgid "Saturday"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2035
-msgid "Sunday"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2046
-msgid "Lavender"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2047
-msgid "Sage"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2048
-msgid "Grape"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2049
-msgid "Flamingo"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2050
-msgid "Banana"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2051
-msgid "Tangerine"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2052
-msgid "Peacock"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2053
-msgid "Graphite"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2054
-msgid "Blueberry"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2055
-msgid "Basil"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2056
-msgid "Tomato"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2064 app/src/ui/calendar/editor.rs:2298
-msgid "By email"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2065 app/src/ui/calendar/editor.rs:2295
-#: app/src/ui/calendar/editor.rs:2298
-msgid "Reminder"
-msgstr ""
-
-#: app/src/ui/calendar/editor.rs:2071
-msgid "Uses the calendar's default"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:25
-msgid "Holidays in {region}"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:37
-msgid "Australia"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:38
-msgid "Austria"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:39
-msgid "Brazil"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:40
-msgid "Canada"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:41
-msgid "China"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:42
-msgid "Denmark"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:43
-msgid "Netherlands"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:44
-msgid "Finland"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:45
-msgid "France"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:46
-msgid "Germany"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:47
-msgid "Greece"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:48
-msgid "Hong Kong"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:49
-msgid "India"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:50
-msgid "Indonesia"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:51
-msgid "Ireland"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:52
-msgid "Italy"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:53
-msgid "Japan"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:54
-msgid "Malaysia"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:55
-msgid "Mexico"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:56
-msgid "New Zealand"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:57
-msgid "Norway"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:58
-msgid "Philippines"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:59
-msgid "Poland"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:60
-msgid "Portugal"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:61
-msgid "Russia"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:62
-msgid "South Africa"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:63
-msgid "Singapore"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:64
-msgid "South Korea"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:65
-msgid "Spain"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:66
-msgid "Sweden"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:67
-msgid "Taiwan"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:68
-msgid "Thailand"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:69
-msgid "United Kingdom"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:70
-msgid "United States"
-msgstr ""
-
-#: app/src/ui/calendar/holidays.rs:71
-msgid "Vietnam"
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:61
-msgid "Working location"
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:62
-msgid "Birthday"
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:69
-msgid "Home"
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:70
-msgid "Office"
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:72
-msgid "Elsewhere"
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:128
-msgid "{date}, working from {place}"
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:141
-msgid "{kind}. Declines new meetings."
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:142
-msgid "{kind}. Declines new and existing meetings."
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:146
-msgid ""
-"Birthday. Google Calendar makes it from your contacts, so you can only "
-"change it there."
-msgstr ""
-
-#: app/src/ui/calendar/kinds.rs:147
-msgid ""
-"Working location. Google Calendar sets it, so you can only change it there."
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:35
-msgid "The calendar is deleted on every device. This cannot be undone."
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:37
-msgid ""
-"The calendar and its {count} event are deleted on every device. This cannot "
-"be undone."
-msgid_plural ""
-"The calendar and its {count} events are deleted on every device. This cannot "
-"be undone."
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/manage.rs:68
-msgid "A calendar of your own on {account}, on every device."
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:133
-msgid "Could not change the calendar list: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:138 app/src/ui/window/organize.rs:254
-msgid "Could not change the color: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:248
-msgid "Rename Calendar"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:250 app/src/ui/calendar/manage.rs:351
-msgid "Calendar name"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:252 app/src/ui/window/organize.rs:123
-msgid "Rename"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:269
-msgid "Could not rename the calendar: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:290
-msgid "Delete “{calendar}”?"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:292 app/src/ui/calendar/popover.rs:211
-#: app/src/ui/calendar/popover.rs:213 app/src/ui/calendar/popover.rs:713
-#: app/src/ui/conversation.rs:550 app/src/ui/hide_my_email.rs:289
-#: app/src/ui/queued.rs:58 app/src/ui/templates.rs:136
-#: app/src/ui/window/arrange.rs:106 app/src/ui/window/organize.rs:204
-msgid "Delete"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:299
-msgid "Deleted “{calendar}”"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:304
-msgid "Could not delete the calendar: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:319
-msgid "Unsubscribe from “{calendar}”?"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:321
-msgid ""
-"It leaves your calendar list in Google Calendar on every device. You can "
-"subscribe to it again later."
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:324 app/src/ui/conversation.rs:396
-#: app/src/ui/unsubscribe.rs:77
-msgid "Unsubscribe"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:331
-msgid "Could not unsubscribe: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:344
-msgid "New Calendar"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:374 app/src/ui/hide_my_email.rs:365
-#: app/src/ui/rules.rs:439 app/src/ui/smart_editor.rs:146
-#: app/src/ui/templates.rs:222 app/src/ui/window/organize.rs:74
-#: app/src/ui/window/organize.rs:347
-msgid "Create"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:392
-msgid "Could not make the calendar: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:403
-msgid "Subscribe to Calendar"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:405
-msgid ""
-"Enter the address of a published calendar, starting with https or webcal. "
-"Google Calendar fetches it from then on and shows it on every device. You "
-"can read it but not change it."
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:415
-msgid "Calendar address"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:417
-msgid "Subscribe"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:435
-msgid "Subscribed. The events arrive once Google Calendar reads the address."
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:436
-msgid "Could not subscribe: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:449
-msgid "Public holidays from Google Calendar, added to {account}."
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:462
-msgid "Holiday Calendars"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:474
-msgid "Added"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:486
-msgid "Add holidays in {region}"
-msgstr ""
-
-#: app/src/ui/calendar/manage.rs:501
-msgid "Could not add the holidays: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:324 app/src/ui/calendar/mod.rs:344
-msgid "View"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:359 app/src/ui/calendar/mod.rs:367
-#: app/src/ui/calendar/mod.rs:2236
-msgid "New Event (N)"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:364
-msgid "New Focus Time or Out of Office"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:373 app/src/ui/calendar/mod.rs:375
-msgid "Search the Calendar (Ctrl+F)"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:378 app/src/ui/calendar/mod.rs:381
-msgid "Show Calendars"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:387 app/src/ui/calendar/mod.rs:391
-#: app/src/ui/conversation.rs:538 app/src/ui/conversation.rs:542
-msgid "Assistant (Ctrl+J)"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:424 app/src/ui/calendar/mod.rs:426
-msgid "Search the Calendar"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:493 app/src/ui/calendar/ports.rs:397
-msgid "Loading older events"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:874 app/src/ui/window/shortcuts.rs:581
-msgid "Go to date"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1273
-msgid "Moved “{title}”"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1274
-msgid "Could not move the event: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1403
-msgid "All-day events"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1405
-msgid "All-day"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1677 app/src/ui/calendar/mod.rs:2789
-#: app/src/ui/calendar/sidebar.rs:314 app/src/ui/preferences.rs:969
-#: app/src/ui/preferences.rs:1130
-msgid "%a"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1976
-msgid "Removed “{title}” from your calendar"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1977
-msgid "Deleted “{title}”"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:1990
-msgid "Could not delete the event: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:2179
-msgid "Could not send your answer: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:2238
-msgid "None of your calendars take new events"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:2249 app/src/ui/calendar/quick.rs:55
-msgid "Focus Time"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:2250 app/src/ui/calendar/quick.rs:56
-msgid "Out of Office"
-msgstr ""
-
-#: app/src/ui/calendar/mod.rs:2549
-msgid "Could not save the event: {reason}"
-msgstr ""
-
-#: app/src/ui/calendar/next.rs:87 app/src/ui/invitation.rs:715
-#: app/src/ui/invitation.rs:854
-msgid "Untitled event"
-msgstr ""
-
-#: app/src/ui/calendar/next.rs:92
-msgid "{title} · {start}"
-msgstr ""
-
-#: app/src/ui/calendar/next.rs:96
-msgid "Now · until {end}"
-msgstr ""
-
-#: app/src/ui/calendar/next.rs:103
-msgid "Next · in {minutes} min"
-msgstr ""
-
-#: app/src/ui/calendar/next.rs:104
-msgid "Next · in {hours} h"
-msgstr ""
-
-#: app/src/ui/calendar/next.rs:106
-msgid "Next · in {hours} h {minutes} min"
-msgstr ""
-
-#: app/src/ui/calendar/next.rs:117
-msgid "{when}: {what}"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:240
-msgid "Open in Maps"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:268
-msgid "Show more"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:274
-msgid "Show more of the notes"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:290
-msgid "Show all"
-msgstr ""
-
-#. The button reads "Show all"; a screen reader also hears how
-#. many are still hidden, in the same words the tooltip used
-#. to give before this list replaced it.
-#: app/src/ui/calendar/popover.rs:296 app/src/ui/calendar/popover.rs:852
-msgid "Show all guests"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:315 app/src/ui/calendar/popover.rs:776
-#: app/src/ui/invitation.rs:225
-msgid "Answer"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:329 app/src/ui/invitation.rs:236
-msgid "Add a note"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:333 app/src/ui/invitation.rs:240
-msgid "Note with your answer"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:333 app/src/ui/invitation.rs:240
-msgid "The organizer reads it with your answer"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:339 app/src/ui/calendar/popover.rs:346
-#: app/src/ui/invitation.rs:266
-msgid "Propose New Time"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:355 app/src/ui/calendar/popover.rs:362
-msgid "Open the invitation in Mail"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:698
-msgid "{when}, {zone}"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:714
-msgid "Remove from My Calendar"
-msgstr ""
-
-#: app/src/ui/calendar/popover.rs:790
-msgid "Your answer"
-msgstr ""
-
-#: app/src/ui/calendar/ports.rs:396
-msgid "Older events can't load while offline"
-msgstr ""
-
-#: app/src/ui/calendar/quick.rs:82
-msgid "{name}, {account}"
-msgstr ""
-
-#: app/src/ui/calendar/quick.rs:172
-msgid "Add title"
-msgstr ""
-
-#: app/src/ui/calendar/quick.rs:207
-msgid "More Details"
-msgstr ""
-
-#: app/src/ui/calendar/quick.rs:417
-msgid "Calendar: {name}"
-msgstr ""
-
-#: app/src/ui/calendar/range.rs:108
-msgid "%A %-d"
-msgstr ""
-
-#: app/src/ui/calendar/range.rs:111 app/src/ui/calendar/sidebar.rs:868
-msgid "%B %Y"
-msgstr ""
-
-#: app/src/ui/calendar/range.rs:119 app/src/ui/calendar/range.rs:150
-msgid "%B"
-msgstr ""
-
-#: app/src/ui/calendar/range.rs:123
-msgid "{first} – {last}"
-msgstr ""
-
-#: app/src/ui/calendar/range.rs:129 app/src/ui/calendar/range.rs:135
-msgid "%b"
-msgstr ""
-
-#: app/src/ui/calendar/range.rs:142 app/src/ui/calendar/range.rs:153
-msgid "%Y"
-msgstr ""
-
-#: app/src/ui/calendar/range.rs:209
-msgid "W{week}"
-msgstr ""
-
-#: app/src/ui/calendar/scope.rs:49
-msgid "Send an update to the guests"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:69
-msgid "Day"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:70
-msgid "Week"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:71
-msgid "Month"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:72
-msgid "Agenda"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:112
-msgid "Next Day"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:112
-msgid "Previous Day"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:113
-msgid "Next Week"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:113
-msgid "Previous Week"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:114 app/src/ui/calendar/sidebar.rs:531
-msgid "Next Month"
-msgstr ""
-
-#: app/src/ui/calendar/shown.rs:114 app/src/ui/calendar/sidebar.rs:530
-msgid "Previous Month"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:620
-msgid "Waiting for your answer"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:772
-msgid "Open mail"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:912
-msgid "Grant Access to show shared calendars"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:918
-msgid "Iris cannot see this account's calendars"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:998
-msgid "Show or hide this account's calendars"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1065
-msgid "Calendar options"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1069
-msgid "Options for {calendar}"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1109 app/src/ui/contacts_prefs.rs:271
-msgid "Grant Access for {account}"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1183
-msgid "{address}. You can only read this calendar"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1205
-msgid "New Calendar…"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1206
-msgid "Subscribe to Calendar…"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1207
-msgid "Holiday Calendars…"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1218 app/src/ui/calendar/sidebar.rs:1226
-msgid "Add Calendar"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1240
-msgid "Hide from the List"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1253
-msgid "Original Color"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1265 app/src/ui/sidebar.rs:1690
-#: app/src/ui/sidebar.rs:1936
-msgid "Rename…"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1266 app/src/ui/sidebar.rs:1600
-#: app/src/ui/sidebar.rs:1716
-msgid "Delete…"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1267 app/src/ui/conversation.rs:596
-msgid "Unsubscribe…"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1291
-msgid "Show {calendar}"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1307
-msgid "Hidden Calendars"
-msgstr ""
-
-#: app/src/ui/calendar/sidebar.rs:1327
-msgid "{count} hidden calendar"
-msgid_plural "{count} hidden calendars"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/time_grid.rs:236
-msgid "{count} more event"
-msgid_plural "{count} more events"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/calendar/time_grid.rs:262
-msgid ""
-"Shift+Up or Shift+Down moves it; Shift+Alt+Up or Shift+Alt+Down changes when "
-"it ends."
-msgstr ""
-
-#: app/src/ui/calendar/time_grid.rs:267
-msgid "{base} {hint}"
-msgstr ""
-
-#: app/src/ui/composer/editor.rs:298
-msgid "Describe Picture…"
-msgstr ""
-
-#: app/src/ui/composer/editor.rs:331
-msgid "Describe Picture"
-msgstr ""
-
-#: app/src/ui/composer/editor.rs:333
-msgid ""
-"Screen readers read these words in place of the picture, and they show where "
-"the picture does not load."
-msgstr ""
-
-#: app/src/ui/composer/editor.rs:337 app/src/ui/composer/editor.rs:341
-msgid "Description"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:292 app/src/ui/conversation.rs:1758
-msgid "Choose a Time…"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:304 app/src/ui/composer/mod.rs:1696
-#: app/src/ui/sidebar.rs:1141
-msgid "Send Later"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:306 app/src/ui/composer/mod.rs:1426
-msgid "Send (Ctrl+Enter)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:310
-msgid "Attach Files (Ctrl+Shift+A)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:317
-msgid "Save as Template…"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:330 app/src/ui/templates.rs:24
-msgid "Templates"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:331 app/src/ui/composer/mod.rs:894
-msgid "Preview"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:334
-msgid "Sign"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:335
-msgid "Encrypt"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:350
-msgid "Add a recipient this computer can encrypt to."
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:395
-msgid "Recipients"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:396
-msgid "Carbon copy"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:397
-msgid "Blind carbon copy"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:409
-msgid "Cc/Bcc"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:410 app/src/ui/composer/mod.rs:1037
-msgid "Show Cc and Bcc"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:420 app/src/ui/rules.rs:353
-msgid "From"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:425 app/src/ui/rules.rs:354
-msgid "To"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:429
-msgid "Cc"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:431
-msgid "Bcc"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:441 app/src/ui/rules.rs:355
-#: app/src/ui/templates.rs:179 app/src/ui/vacation.rs:218
-msgid "Subject"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:484 app/src/ui/composer/mod.rs:488
-msgid "Show trimmed content"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:509
-msgid "Formatting"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:528 app/src/ui/composer/mod.rs:1210
-msgid "Forwarded Message"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:536 app/src/ui/composer/mod.rs:550
-#: app/src/ui/composer/mod.rs:1351
-msgid "Signature"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:540 app/src/ui/composer/mod.rs:546
-msgid "Remove Signature"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1035
-msgid "Hide Cc and Bcc"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1128
-msgid "Remove Quoted Text"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1129
-msgid "Do Not Forward the Original"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1239
-msgid "Quoted text removed"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1240
-msgid "Forwarded message removed"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1367
-msgid "Signature removed"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1405
-msgid "Scheduled to send {when}"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1416
-msgid "No account to send from."
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1648
-msgid "Attachment Missing?"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1650
-msgid "The message says “{sentence}” and carries no file."
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1655
-msgid "Add Attachment"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1656
-msgid "Send Anyway"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1674
-msgid "Send Without Encryption?"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1676
-msgid "This message was to go out encrypted, and it cannot be. {reason}"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1682
-msgid "Send Readable"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1697
-msgid "Iris sends it at this time while it runs, even in the tray."
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1698
-msgid "Schedule"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1731
-msgid "Draft saved, encrypted to your own key"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1733
-msgid "Draft saved"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1743
-msgid "Save as Draft?"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1745
-msgid "The draft is kept in Gmail, so you can finish it later on any device."
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1749
-msgid "Discard"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1751
-msgid "Save Draft"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1772
-msgid "Attach Files"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1808
-msgid "{files}  ·  {size}"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1813
-msgid "{count} attachment"
-msgid_plural "{count} attachments"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/composer/mod.rs:1890
-msgid "Bold (Ctrl+B)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1891
-msgid "Italic (Ctrl+I)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1894
-msgid "Strikethrough (Ctrl+Shift+X)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1897
-msgid "Code (Ctrl+E)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1934
-msgid "Link (Ctrl+K)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1944
-msgid "Bulleted List (Ctrl+Shift+8)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1949
-msgid "Numbered List (Ctrl+Shift+7)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1954
-msgid "Quote (Ctrl+Shift+9)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1971
-msgid "Insert Image (Ctrl+Shift+P)"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1981
-msgid "Paragraph"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1982
-msgid "Heading 1"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1983
-msgid "Heading 2"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1984
-msgid "Heading 3"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1985
-msgid "Code Block"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:1999
-msgid "Turn Markdown into Formatting"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2003
-msgid "Clear Formatting"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2009
-msgid "Write in Markdown"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2015 app/src/ui/composer/mod.rs:2019
-msgid "More Formatting"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2056
-msgid "Add a Link"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2062
-msgid "Text"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2074
-msgid "Add Link"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2110
-msgid "Markdown formatted"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2226
-msgid "Pasted as rich text"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2227
-msgid "Paste as Plain Text"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2261
-msgid "Editing as Markdown"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2294
-msgid "Images"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2299
-msgid "Insert Image"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2340
-msgid "Could not read the file: {reason}"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2415
-msgid "Could not paste the image"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2460
-msgid "No Templates Yet"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2509
-msgid "Save as Template"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2511
-msgid "Placeholders such as {{first_name}} fill in each time you use it."
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2534 app/src/ui/templates.rs:267
-msgid "Give the template a name"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2542
-msgid "Template saved"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2545
-msgid "Template not saved: {reason}"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2615
-msgid "This looks like Markdown"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2621
-msgid "Format"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2622
-msgid "Turn the Markdown into rich text"
-msgstr ""
-
-#: app/src/ui/composer/mod.rs:2628 app/src/ui/composer/mod.rs:2632
-msgid "Dismiss"
-msgstr ""
-
-#: app/src/ui/composer/recipients.rs:57
-msgid "{recipient}, not an address"
-msgstr ""
-
-#: app/src/ui/composer/recipients.rs:320
-msgid "Remove {recipient}"
-msgstr ""
-
-#: app/src/ui/composer/recipients.rs:334
-msgid "Press Delete to remove"
-msgstr ""
-
-#: app/src/ui/composer/richbuffer.rs:42
-msgid "Picture"
-msgstr ""
-
-#: app/src/ui/composer/spell.rs:653
-msgid "No Suggestions"
-msgstr ""
-
-#: app/src/ui/composer/spell.rs:665
-msgid "Add to Dictionary"
-msgstr ""
-
-#: app/src/ui/composer/spell.rs:666
-msgid "Ignore"
-msgstr ""
-
-#: app/src/ui/contact_card.rs:43
-msgid "Contact"
-msgstr ""
-
-#: app/src/ui/contact_card.rs:106
-msgid "Email"
-msgstr ""
-
-#: app/src/ui/contact_card.rs:108
-msgid "Other email"
-msgstr ""
-
-#: app/src/ui/contact_card.rs:128
-msgid "Phone"
-msgstr ""
-
-#: app/src/ui/contact_card.rs:168 app/src/ui/sidebar.rs:1112
-msgid "Remove from VIPs"
-msgstr ""
-
-#: app/src/ui/contact_card.rs:170
-msgid "Add to VIPs"
-msgstr ""
-
-#: app/src/ui/contact_card.rs:181
-msgid "All Their Mail"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:31
-msgid "Contacts & Calendar"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:57
-msgid "Calendar, Contacts and Rules Servers"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:58
-msgid ""
-"Iris looks for these when you add an account. The login is the account's own."
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:95
-msgid "Use It"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:96
-msgid "Use {host} for {account}"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:115
-msgid "Find Again"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:116 app/src/ui/conversation.rs:548
-#: app/src/ui/queued.rs:60 app/src/ui/sidebar.rs:1594
-msgid "Edit…"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:163
-msgid ""
-"Iris can read an account's contacts: names, email addresses, photos, "
-"organizations, and phone numbers. It uses them to suggest recipients, to "
-"show faces beside mail, and to fill the card behind a sender's name. What it "
-"reads stays on this computer, and turning an account off deletes its "
-"contacts."
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:172
-msgid "No accounts yet"
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:228
-msgid "Iris shows each account's meetings and reminds you before they start."
-msgstr ""
-
-#: app/src/ui/contacts_prefs.rs:262
-msgid "Not allowed when you signed in"
-msgstr ""
-
-#: app/src/ui/conversation.rs:385
-msgid "No Conversation Selected"
-msgstr ""
-
-#: app/src/ui/conversation.rs:390
-msgid "Remote images are hidden to protect your privacy"
-msgstr ""
-
-#: app/src/ui/conversation.rs:391
-msgid "Load Images"
-msgstr ""
-
-#: app/src/ui/conversation.rs:395
-msgid "This message is from a mailing list"
-msgstr ""
-
-#: app/src/ui/conversation.rs:407 app/src/ui/conversation.rs:564
-#: app/src/ui/conversation.rs:1134 app/src/ui/window/message_menu.rs:125
-#: app/src/ui/window/shortcuts.rs:402
-msgid "Archive"
-msgstr ""
-
-#: app/src/ui/conversation.rs:408 app/src/ui/conversation.rs:1178
-#: app/src/ui/preferences.rs:160 app/src/ui/rules.rs:370
-#: app/src/ui/window/message_menu.rs:128
-msgid "Mark as Read"
-msgstr ""
-
-#: app/src/ui/conversation.rs:409 app/src/ui/conversation.rs:1185
-#: app/src/ui/window/message_menu.rs:130
-msgid "Flag"
-msgstr ""
-
-#: app/src/ui/conversation.rs:410 app/src/ui/conversation.rs:574
-#: app/src/ui/conversation.rs:962 app/src/ui/conversation.rs:1190
-msgid "Mute"
-msgstr ""
-
-#: app/src/ui/conversation.rs:411 app/src/ui/conversation.rs:566
-#: app/src/ui/conversation.rs:1127 app/src/ui/window/shortcuts.rs:421
-msgid "Junk"
-msgstr ""
-
-#: app/src/ui/conversation.rs:412 app/src/ui/conversation.rs:565
-#: app/src/ui/conversation.rs:1122 app/src/ui/window/message_menu.rs:126
-msgid "Move to Trash"
-msgstr ""
-
-#: app/src/ui/conversation.rs:439
-msgid "Several Conversations Selected"
-msgstr ""
-
-#: app/src/ui/conversation.rs:441
-msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
-msgstr ""
-
-#: app/src/ui/conversation.rs:488
-msgid "Archive (E or Ctrl+Alt+A)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:490 app/src/ui/conversation.rs:1105
-msgid "Move to Trash (Delete)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:491 app/src/ui/conversation.rs:1115
-msgid "Junk (Ctrl+Shift+J)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:494
-msgid "Mark as Unread (Ctrl+Shift+U)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:499 app/src/ui/conversation.rs:503
-#: app/src/ui/conversation.rs:1798
-msgid "Flag (Ctrl+Shift+L)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:500 app/src/ui/conversation.rs:506
-msgid "Choose Flag Color"
-msgstr ""
-
-#: app/src/ui/conversation.rs:507
-msgid "Flags it in the color you chose last, or takes the flag off"
-msgstr ""
-
-#: app/src/ui/conversation.rs:511
-msgid "Reply (Ctrl+R)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:514
-msgid "Reply All (Ctrl+Shift+R)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:516
-msgid "Forward (Ctrl+Shift+F)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:518
-msgid "Edit Draft"
-msgstr ""
-
-#: app/src/ui/conversation.rs:525 app/src/ui/conversation.rs:528
-msgid "More Actions"
-msgstr ""
-
-#: app/src/ui/conversation.rs:549 app/src/ui/queued.rs:56
-msgid "Send Now"
-msgstr ""
-
-#: app/src/ui/conversation.rs:558 app/src/ui/window/message_menu.rs:122
-#: app/src/ui/window/shortcuts.rs:481
-msgid "Reply"
-msgstr ""
-
-#: app/src/ui/conversation.rs:559 app/src/ui/window/message_menu.rs:123
-msgid "Reply All"
-msgstr ""
-
-#: app/src/ui/conversation.rs:560 app/src/ui/window/message_menu.rs:124
-#: app/src/ui/window/shortcuts.rs:494
-msgid "Forward"
-msgstr ""
-
-#: app/src/ui/conversation.rs:569
-msgid "Flag or Unflag"
-msgstr ""
-
-#: app/src/ui/conversation.rs:571
-msgid "Mark Read or Unread"
-msgstr ""
-
-#: app/src/ui/conversation.rs:579 app/src/ui/window/message_menu.rs:135
-msgid "Tags…"
-msgstr ""
-
-#: app/src/ui/conversation.rs:583 app/src/ui/sidebar.rs:1147
-#: app/src/ui/window/reminders.rs:25 app/src/ui/window/reminders.rs:30
-msgid "Remind Me"
-msgstr ""
-
-#: app/src/ui/conversation.rs:587
-msgid "Open in New Window"
-msgstr ""
-
-#: app/src/ui/conversation.rs:590
-msgid "Print…"
-msgstr ""
-
-#: app/src/ui/conversation.rs:591
-msgid "View Source"
-msgstr ""
-
-#: app/src/ui/conversation.rs:592 app/src/ui/window/message_menu.rs:136
-msgid "Export…"
-msgstr ""
-
-#: app/src/ui/conversation.rs:595 app/src/ui/conversation.rs:929
-msgid "Add Sender to VIPs"
-msgstr ""
-
-#: app/src/ui/conversation.rs:598
-msgid "Always Load Images…"
-msgstr ""
-
-#. Both sender items leave a rule on the server, so an account
-#. without rules turns them off, and the menu leaves them out.
-#: app/src/ui/conversation.rs:603
-msgid "Block Sender…"
-msgstr ""
-
-#: app/src/ui/conversation.rs:608 app/src/ui/conversation.rs:949
-msgid "Categorize Sender"
-msgstr ""
-
-#: app/src/ui/conversation.rs:636 app/src/ui/conversation.rs:638
-msgid "Tags"
-msgstr ""
-
-#: app/src/ui/conversation.rs:927
-msgid "Remove Sender from VIPs"
-msgstr ""
-
-#: app/src/ui/conversation.rs:960 app/src/ui/conversation.rs:1188
-msgid "Unmute"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1104
-msgid "Delete Forever (Delete)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1113
-msgid "Not Junk (Ctrl+Shift+J)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1121 app/src/ui/window/message_menu.rs:127
-#: app/src/ui/window/press.rs:393
-msgid "Delete Forever"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1126
-msgid "Not Junk"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1180 app/src/ui/window/message_menu.rs:129
-msgid "Mark as Unread"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1183 app/src/ui/window/message_menu.rs:131
-msgid "Unflag"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1199
-msgid "{count} Conversation Selected"
-msgid_plural "{count} Conversations Selected"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/conversation.rs:1205
-msgid "{count} Message Selected"
-msgid_plural "{count} Messages Selected"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/conversation.rs:1797
-msgid "Unflag (Ctrl+Shift+L)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1810
-msgid "Mark as Read (U)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:1811
-msgid "Mark as Unread (U)"
-msgstr ""
-
-#: app/src/ui/conversation.rs:2036
-msgid "{color} (Ctrl+Alt+{number})"
-msgstr ""
-
-#: app/src/ui/conversation.rs:2053 app/src/ui/window/message_menu.rs:258
-msgid "Clear Flag"
-msgstr ""
-
-#: app/src/ui/dav_edit.rs:16
-msgid "Calendar (CalDAV) URL"
-msgstr ""
-
-#: app/src/ui/dav_edit.rs:17
-msgid "Contacts (CardDAV) URL"
-msgstr ""
-
-#: app/src/ui/dav_edit.rs:20
-msgid "Iris signs in to these with {account}'s password."
-msgstr ""
-
-#: app/src/ui/dav_edit.rs:36
-msgid "Calendar and Contacts Servers"
-msgstr ""
-
-#: app/src/ui/dav_edit.rs:57
-msgid "Could not use that server: {reason}"
-msgstr ""
-
-#: app/src/ui/find.rs:81
-msgid "No matches"
-msgstr ""
-
-#: app/src/ui/find.rs:89
-msgid "{position} of {total} match"
-msgid_plural "{position} of {total} matches"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/find.rs:128 app/src/ui/find.rs:143
-#: app/src/ui/window/shortcuts.rs:340
-msgid "Find in the conversation"
-msgstr ""
-
-#: app/src/ui/find.rs:141 app/src/ui/find.rs:144
-msgid "Previous Match"
-msgstr ""
-
-#: app/src/ui/find.rs:142 app/src/ui/find.rs:145
-msgid "Next Match"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:22
-msgid ""
-"Gmail delivers mail sent to these addresses to your inbox. Each one shows "
-"which site shared your address, and you can turn one off when the spam "
-"starts. Your real address is part of each one, so anyone who removes the tag "
-"can still reach you, and your replies come from your main address."
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:73 app/src/ui/hide_my_email.rs:75
-#: app/src/ui/hide_my_email.rs:375
-msgid "Create Address"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:82
-msgid "Hide My Email"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:130
-msgid "Created {date}"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:165
-msgid "No addresses yet"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:166
-msgid "Create one with the + button."
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:186
-msgid "Off: mail goes to the Trash"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:208 app/src/ui/window/message_menu.rs:137
-msgid "Copy Address"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:209
-msgid "Copy {address}"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:216 app/src/ui/hide_my_email.rs:451
-msgid "Address copied"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:224
-msgid "Receive Mail"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:229
-msgid "Receive mail at {address}"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:244
-msgid "Mail to this address reaches you again"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:247
-msgid "Mail to this address now goes to the Trash"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:251
-msgid "Could not change the address: {reason}"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:262
-msgid "Delete Address"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:264
-msgid "Delete {address}"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:281
-msgid "Delete Address?"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:284
-msgid ""
-"Mail sent to {address} arrives in your inbox again, without the Hide My "
-"Email label. To stop that mail, turn the address off instead."
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:298
-msgid "Address deleted"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:300
-msgid "Could not delete the address: {reason}"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:315
-msgid "Allow Hide My Email"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3116
-msgid "Add an account first"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:340
-msgid ""
-"You get a new address that ends in your own, such as "
-"name+kite.fern482@gmail.com. Give it to one site only."
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:346
-msgid "Account"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:358
-msgid "Where Did You Use It?"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:403
-msgid "Could not create the address: {reason}"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:428
-msgid "Your New Address"
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:458
-msgid ""
-"It is on your clipboard. Mail sent to it gets the Hide My Email label in "
-"Gmail."
-msgstr ""
-
-#: app/src/ui/hide_my_email.rs:482
-msgid "Address Created"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:43
-msgid "This file is too large to be a calendar."
-msgstr ""
-
-#: app/src/ui/ics_file.rs:52
-msgid "Calendar File"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:75
-msgid "No Events in This File"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:76
-msgid "Iris found no event to add in it."
-msgstr ""
-
-#: app/src/ui/ics_file.rs:78
-msgid "Could Not Open This File"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:141
-msgid "No app on this desktop opens calendar files"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:152
-msgid "A file has nobody to answer to"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:189
-msgid ""
-"No account here has a calendar Iris can add to. Add an account with a "
-"calendar, or turn one on in Preferences, under Contacts & Calendar, then "
-"open the file again."
-msgstr ""
-
-#: app/src/ui/ics_file.rs:257
-msgid ""
-"Nothing in this file can be added, since its events have no id or start time"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:262
-msgid "Some events were left out, since they have no id or start time"
-msgstr ""
-
-#: app/src/ui/ics_file.rs:271
-msgid "Iris has no permission to use this calendar. Allow it in Preferences."
-msgstr ""
-
-#: app/src/ui/ics_file.rs:274
-msgid "Could not add to your calendar: {reason}"
-msgstr ""
-
-#: app/src/ui/invitation.rs:247
-msgid "What the answer covers"
-msgstr ""
-
-#: app/src/ui/invitation.rs:249
-msgid "This Event"
-msgstr ""
-
-#: app/src/ui/invitation.rs:254
-msgid "All Events"
-msgstr ""
-
-#: app/src/ui/invitation.rs:279 app/src/ui/invitation.rs:284
-msgid "Add to Calendar"
-msgstr ""
-
-#: app/src/ui/invitation.rs:292
-msgid "Calendar to add to"
-msgstr ""
-
-#: app/src/ui/invitation.rs:293
-msgid "The calendar the events go on"
-msgstr ""
-
-#: app/src/ui/invitation.rs:302
-msgid "Events to add"
-msgstr ""
-
-#: app/src/ui/invitation.rs:307 app/src/ui/invitation.rs:313
-#: app/src/ui/sidebar.rs:137
-msgid "Show in Calendar"
-msgstr ""
-
-#: app/src/ui/invitation.rs:366
-msgid "Iris needs permission to show this event in Calendar."
-msgstr ""
-
-#: app/src/ui/invitation.rs:771
-msgid "Added to your calendar"
-msgstr ""
-
-#: app/src/ui/invitation.rs:773
-msgid "Added {count} events to your calendar"
-msgid_plural "Added {count} events to your calendar"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/invitation.rs:778
-msgid "Added to {calendar}"
-msgstr ""
-
-#: app/src/ui/invitation.rs:780
-msgid "Added {count} events to {calendar}"
-msgid_plural "Added {count} events to {calendar}"
-msgstr[0] ""
-msgstr[1] ""
-
-#. A file with several events names none of them on the card's
-#. head: the list below does, one row each.
-#: app/src/ui/invitation.rs:864
-msgid "{count} events"
-msgid_plural "{count} events"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/invitation.rs:941
-msgid "Pick a Time…"
-msgstr ""
-
-#: app/src/ui/invitation.rs:986
-msgid "No reply yet"
-msgstr ""
-
-#: app/src/ui/key_import.rs:35
-msgid "Import…"
-msgstr ""
-
-#: app/src/ui/key_import.rs:44 app/src/ui/key_import.rs:84
-msgid "Import OpenPGP Keys"
-msgstr ""
-
-#: app/src/ui/key_import.rs:45 app/src/ui/key_import.rs:89
-msgid "Import S/MIME Certificates"
-msgstr ""
-
-#: app/src/ui/key_import.rs:85
-msgid "OpenPGP Keys"
-msgstr ""
-
-#: app/src/ui/key_import.rs:90
-msgid "Certificates"
-msgstr ""
-
-#: app/src/ui/key_import.rs:100
-msgid "All Files"
-msgstr ""
-
-#: app/src/ui/key_import.rs:214 app/src/ui/key_import.rs:218
-#: app/src/ui/window.rs:3525
-msgid "Close"
-msgstr ""
-
-#: app/src/ui/pgp.rs:105
-msgid "Checked"
-msgstr ""
-
-#: app/src/ui/pgp.rs:106
-msgid "Warning"
-msgstr ""
-
-#: app/src/ui/pgp.rs:107
-msgid "Not checked"
-msgstr ""
-
-#: app/src/ui/preferences.rs:117 app/src/ui/window/shortcuts.rs:239
-msgid "General"
-msgstr ""
-
-#: app/src/ui/preferences.rs:122 app/src/ui/window/shortcuts.rs:235
-msgid "Reading"
-msgstr ""
-
-#: app/src/ui/preferences.rs:126
-msgid "Group Messages into Conversations"
-msgstr ""
-
-#: app/src/ui/preferences.rs:128
-msgid "Show a thread's replies together instead of one row per message"
-msgstr ""
-
-#: app/src/ui/preferences.rs:135
-msgid "Group Inbox into Categories"
-msgstr ""
-
-#: app/src/ui/preferences.rs:137
-msgid ""
-"Sort the inbox into Primary, Updates, Promotions, and Social, as Gmail does"
-msgstr ""
-
-#: app/src/ui/preferences.rs:144
-msgid "Open the Inbox On"
-msgstr ""
-
-#: app/src/ui/preferences.rs:145
-msgid "Which category the window starts on"
-msgstr ""
-
-#: app/src/ui/preferences.rs:151
-msgid "Suggest Follow-Ups"
-msgstr ""
-
-#: app/src/ui/preferences.rs:153
-msgid "List mail you sent that has had no reply for three days"
-msgstr ""
-
-#: app/src/ui/preferences.rs:167
-msgid "Remote Images"
-msgstr ""
-
-#: app/src/ui/preferences.rs:169
-msgid "Loading them can tell senders when you read their mail"
-msgstr ""
-
-#: app/src/ui/preferences.rs:177
-msgid "Text Size"
-msgstr ""
-
-#: app/src/ui/preferences.rs:185
-msgid "Appearance"
-msgstr ""
-
-#: app/src/ui/preferences.rs:189
-msgid "Style"
-msgstr ""
-
-#: app/src/ui/preferences.rs:198
-msgid "Notifications"
-msgstr ""
-
-#: app/src/ui/preferences.rs:202
-msgid "Notify About New Mail"
-msgstr ""
-
-#: app/src/ui/preferences.rs:209
-msgid "Show Sender and Subject"
-msgstr ""
-
-#: app/src/ui/preferences.rs:210
-msgid "Turn off to see only how much mail arrived"
-msgstr ""
-
-#: app/src/ui/preferences.rs:220
-msgid "Only for VIPs"
-msgstr ""
-
-#: app/src/ui/preferences.rs:221
-msgid "Stay quiet about mail from everyone else"
-msgstr ""
-
-#: app/src/ui/preferences.rs:230
-msgid "Buttons"
-msgstr ""
-
-#: app/src/ui/preferences.rs:232
-msgid "What a notification offers besides opening the conversation"
-msgstr ""
-
-#: app/src/ui/preferences.rs:255
-msgid "Not Available"
-msgstr ""
-
-#: app/src/ui/preferences.rs:280
-msgid "Event Reminders"
-msgstr ""
-
-#: app/src/ui/preferences.rs:282
-msgid ""
-"A notification before each event, at the times the event or its calendar sets"
-msgstr ""
-
-#: app/src/ui/preferences.rs:301 app/src/ui/window/shortcuts.rs:237
-msgid "Writing"
-msgstr ""
-
-#: app/src/ui/preferences.rs:306
-msgid "No Accounts Yet"
-msgstr ""
-
-#: app/src/ui/preferences.rs:308
-msgid "Add an account to choose a sender and write signatures."
-msgstr ""
-
-#: app/src/ui/preferences.rs:317
-msgid "New Messages"
-msgstr ""
-
-#: app/src/ui/preferences.rs:327
-msgid "Send New Messages From"
-msgstr ""
-
-#: app/src/ui/preferences.rs:329
-msgid "Replies always come from the account that received the message"
-msgstr ""
-
-#: app/src/ui/preferences.rs:347
-msgid "New Messages Start As"
-msgstr ""
-
-#: app/src/ui/preferences.rs:349
-msgid "Rich text styles the words themselves; Markdown shows its marks"
-msgstr ""
-
-#. The seconds change every second and the name stays put, so a
-#. screen reader is not told each one.
-#: app/src/ui/preferences.rs:356 app/src/ui/sidebar.rs:68
-#: app/src/ui/sidebar.rs:81
-msgid "Undo Send"
-msgstr ""
-
-#: app/src/ui/preferences.rs:358
-msgid "How long you can take a message back after sending it"
-msgstr ""
-
-#: app/src/ui/preferences.rs:365
-msgid "Check for Missing Attachments"
-msgstr ""
-
-#: app/src/ui/preferences.rs:367
-msgid "Ask before sending a message that promises a file and carries none"
-msgstr ""
-
-#: app/src/ui/preferences.rs:375
-msgid "Signatures"
-msgstr ""
-
-#: app/src/ui/preferences.rs:377
-msgid ""
-"Added below new messages and above quoted text in replies. Markdown works."
-msgstr ""
-
-#: app/src/ui/preferences.rs:406
-msgid "Signature for {account}"
-msgstr ""
-
-#: app/src/ui/preferences.rs:419
-msgid "Import from Gmail"
-msgstr ""
-
-#: app/src/ui/preferences.rs:440
-msgid "This account is not syncing yet"
-msgstr ""
-
-#: app/src/ui/preferences.rs:459
-msgid "Imported the signature from Gmail"
-msgstr ""
-
-#: app/src/ui/preferences.rs:463
-msgid "Gmail has no signature for this account"
-msgstr ""
-
-#: app/src/ui/preferences.rs:466 app/src/ui/preferences.rs:1385
-msgid "Could not import: {reason}"
-msgstr ""
-
-#: app/src/ui/preferences.rs:519
-msgid "Signing and Encryption"
-msgstr ""
-
-#: app/src/ui/preferences.rs:521
-msgid ""
-"Iris signs and encrypts through GnuPG, which holds your keys and asks for "
-"your passphrase itself."
-msgstr ""
-
-#: app/src/ui/preferences.rs:526
-msgid "Your OpenPGP Keys"
-msgstr ""
-
-#: app/src/ui/preferences.rs:527
-msgid "Asking gpg…"
-msgstr ""
-
-#: app/src/ui/preferences.rs:531
-msgid "Your S/MIME Certificates"
-msgstr ""
-
-#: app/src/ui/preferences.rs:532
-msgid "Asking gpgsm…"
-msgstr ""
-
-#: app/src/ui/preferences.rs:539
-msgid "Sign My Messages by Default"
-msgstr ""
-
-#: app/src/ui/preferences.rs:540
-msgid "New messages open with Sign turned on"
-msgstr ""
-
-#: app/src/ui/preferences.rs:546
-msgid "Encrypt When I Can"
-msgstr ""
-
-#: app/src/ui/preferences.rs:548
-msgid "Turn Encrypt on as soon as every recipient has a key or a certificate"
-msgstr ""
-
-#: app/src/ui/preferences.rs:637
-msgid "gpg could not be asked: {reason}"
-msgstr ""
-
-#: app/src/ui/preferences.rs:656
-msgid "gpgsm could not be asked: {reason}"
-msgstr ""
-
-#. The verb agrees with the programs: "gpg, which holds" but "gpg and
-#. gpgsm, which hold".
-#: app/src/ui/preferences.rs:666
-msgid ""
-"Iris signs and encrypts through {programs}, which holds your keys and asks "
-"for your passphrase itself."
-msgid_plural ""
-"Iris signs and encrypts through {programs}, which hold your keys and ask for "
-"your passphrase themselves."
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/preferences.rs:698 app/src/ui/preferences.rs:711
-msgid "Spelling"
-msgstr ""
-
-#: app/src/ui/preferences.rs:700
-msgid ""
-"No dictionaries are installed, so Iris is not checking spelling. Install a "
-"Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and reopen "
-"the composer."
-msgstr ""
-
-#: app/src/ui/preferences.rs:713
-msgid ""
-"The language each account checks spelling in. Dictionaries installed: "
-"{languages}."
-msgstr ""
-
-#: app/src/ui/preferences.rs:725
-msgid "System: {language}"
-msgstr ""
-
-#: app/src/ui/preferences.rs:737
-msgid "All Installed Languages"
-msgstr ""
-
-#: app/src/ui/preferences.rs:775
-msgid "Sync"
-msgstr ""
-
-#: app/src/ui/preferences.rs:781
-msgid "Checking"
-msgstr ""
-
-#: app/src/ui/preferences.rs:787
-msgid "Check for New Mail"
-msgstr ""
-
-#: app/src/ui/preferences.rs:796
-msgid "Storage"
-msgstr ""
-
-#: app/src/ui/preferences.rs:801
-msgid "Keep Mail on This Computer For"
-msgstr ""
-
-#: app/src/ui/preferences.rs:803
-msgid "Everything in your inbox stays too, and older mail remains searchable"
-msgstr ""
-
-#: app/src/ui/preferences.rs:812
-msgid "Message Cache"
-msgstr ""
-
-#: app/src/ui/preferences.rs:814
-msgid "Bodies of mail you have read, kept for opening offline"
-msgstr ""
-
-#: app/src/ui/preferences.rs:823
-msgid "Startup"
-msgstr ""
-
-#: app/src/ui/preferences.rs:829
-msgid "Look for a new release once a day"
-msgstr ""
-
-#: app/src/ui/preferences.rs:838
-msgid "Make Default"
-msgstr ""
-
-#: app/src/ui/preferences.rs:843
-msgid "Default Mail App"
-msgstr ""
-
-#: app/src/ui/preferences.rs:844
-msgid "Open email links from websites and other apps in Iris"
-msgstr ""
-
-#: app/src/ui/preferences.rs:857
-msgid "Senders Who May Load Images"
-msgstr ""
-
-#: app/src/ui/preferences.rs:858 app/src/ui/preferences.rs:866
-msgid "Nobody yet"
-msgstr ""
-
-#: app/src/ui/preferences.rs:868
-msgid "{count} sender"
-msgid_plural "{count} senders"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/preferences.rs:878
-msgid "Anyone at this domain"
-msgstr ""
-
-#: app/src/ui/preferences.rs:880
-msgid "This address"
-msgstr ""
-
-#: app/src/ui/preferences.rs:885
-msgid "Stop Loading Images from This Sender"
-msgstr ""
-
-#: app/src/ui/preferences.rs:892
-msgid "Stop loading images from {sender}"
-msgstr ""
-
-#: app/src/ui/preferences.rs:962
-msgid "Monday to Friday"
-msgstr ""
-
-#: app/src/ui/preferences.rs:963
-msgid "Every day of the week"
-msgstr ""
-
-#: app/src/ui/preferences.rs:964
-msgid "No days"
-msgstr ""
-
-#: app/src/ui/preferences.rs:971
-msgid ", "
-msgstr ""
-
-#: app/src/ui/preferences.rs:973
-msgid "{time}, {days}"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1037
-msgid "Week Starts On"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1042
-msgid "Automatic follows the locale's own first day of the week"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1058
-msgid "Working Hours"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1076
-msgid "Hours"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1117
-msgid "–"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1142
-msgid "%A"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1201
-msgid "Follow System"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1205
-msgid "Language"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1206
-msgid "Iris shows a new language after a restart"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1320
-msgid "Paste Formatted Signature"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1321
-msgid "Import from File…"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1322
-msgid "Remove Formatted Signature"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1325
-msgid "This signature goes out as it was made, pictures and layout included."
-msgstr ""
-
-#: app/src/ui/preferences.rs:1367
-msgid "There is no formatted signature to bring in"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1379
-msgid "Formatted signature saved"
-msgstr ""
-
-#: app/src/ui/preferences.rs:1435
-msgid "No signature"
-msgstr ""
-
-#: app/src/ui/queued.rs:65 app/src/ui/window/press.rs:407
-msgid "Cancel Send"
-msgstr ""
-
-#: app/src/ui/queued.rs:92
-msgid "This message has not been sent"
-msgstr ""
-
-#: app/src/ui/queued.rs:93
-msgid "This message is waiting to be sent"
-msgstr ""
-
-#: app/src/ui/rules.rs:73 app/src/ui/rules.rs:75 app/src/ui/rules.rs:439
-msgid "New Rule"
-msgstr ""
-
-#: app/src/ui/rules.rs:85
-msgid "Rules for {account}"
-msgstr ""
-
-#: app/src/ui/rules.rs:154 app/src/ui/vacation.rs:71
-msgid "This account is not syncing yet."
-msgstr ""
-
-#: app/src/ui/rules.rs:194
-msgid "Add Rule"
-msgstr ""
-
-#: app/src/ui/rules.rs:222
-msgid "Made elsewhere. Change it where you made it."
-msgstr ""
-
-#: app/src/ui/rules.rs:236
-msgid "Edit the rule for {mail}"
-msgstr ""
-
-#: app/src/ui/rules.rs:247
-msgid "Delete Rule"
-msgstr ""
-
-#: app/src/ui/rules.rs:254
-msgid "Delete the rule for {mail}"
-msgstr ""
-
-#: app/src/ui/rules.rs:271
-msgid "Rules Written Elsewhere"
-msgstr ""
-
-#: app/src/ui/rules.rs:273
-msgid "Iris keeps these as they are. Change them where they were written."
-msgstr ""
-
-#: app/src/ui/rules.rs:304
-msgid "Rule deleted"
-msgstr ""
-
-#: app/src/ui/rules.rs:308
-msgid "Could not delete the rule: {reason}"
-msgstr ""
-
-#: app/src/ui/rules.rs:316
-msgid "Could Not Load the Rules"
-msgstr ""
-
-#: app/src/ui/rules.rs:325
-msgid "Allow Rules"
-msgstr ""
-
-#: app/src/ui/rules.rs:356
-msgid "Has the Words"
-msgstr ""
-
-#: app/src/ui/rules.rs:357
-msgid "Doesn't Have"
-msgstr ""
-
-#: app/src/ui/rules.rs:359
-msgid "Has an Attachment"
-msgstr ""
-
-#: app/src/ui/rules.rs:361
-msgid "When Mail Matches"
-msgstr ""
-
-#: app/src/ui/rules.rs:369
-msgid "Skip the Inbox"
-msgstr ""
-
-#: app/src/ui/rules.rs:371
-msgid "Star It"
-msgstr ""
-
-#: app/src/ui/rules.rs:372
-msgid "Never Send to Spam"
-msgstr ""
-
-#: app/src/ui/rules.rs:373
-msgid "Delete It"
-msgstr ""
-
-#: app/src/ui/rules.rs:376
-msgid "Apply Label"
-msgstr ""
-
-#: app/src/ui/rules.rs:376
-msgid "Don't Apply a Label"
-msgstr ""
-
-#: app/src/ui/rules.rs:377
-msgid "Don't Move"
-msgstr ""
-
-#: app/src/ui/rules.rs:377
-msgid "Move to Folder"
-msgstr ""
-
-#: app/src/ui/rules.rs:387
-msgid "Do This"
-msgstr ""
-
-#: app/src/ui/rules.rs:427
-msgid "This rule also does things this form can't show. Saving keeps them."
-msgstr ""
-
-#: app/src/ui/rules.rs:438
-msgid "Edit Rule"
-msgstr ""
-
-#: app/src/ui/rules.rs:511
-msgid "Rule added"
-msgstr ""
-
-#: app/src/ui/rules.rs:526 app/src/ui/rules.rs:598
-msgid "Could not add the rule: {reason}"
-msgstr ""
-
-#: app/src/ui/rules.rs:544
-msgid "Rule saved"
-msgstr ""
-
-#: app/src/ui/rules.rs:549
-msgid "Saved, but Gmail kept the old rule too, so both run now: {reason}"
-msgstr ""
-
-#: app/src/ui/rules.rs:569
-msgid "Could not save the rule: {reason}"
-msgstr ""
-
-#: app/src/ui/rules.rs:619
-msgid "Replace “{script}”?"
-msgstr ""
-
-#: app/src/ui/rules.rs:621
-msgid ""
-"{provider} runs one set of rules at a time, and it runs “{script}” now. "
-"Iris's rules would take its place; “{script}” stays on the server, switched "
-"off."
-msgstr ""
-
-#: app/src/ui/rules.rs:625
-msgid "Replace"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:77
-msgid "Stop the message from going out"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:372
-msgid "Mailboxes"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:379 app/src/ui/sidebar.rs:1510
-#: app/src/ui/thread_list.rs:315
-msgid "Mail"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1099 app/src/ui/sidebar.rs:1101
-msgid "VIPs"
-msgstr ""
-
-#. Send Later has the tray with an arrow, which the mockup
-#. pictures; the Outbox has a tray holding a letter, and
-#. `set_counts` swaps in a warning while a send has failed.
-#: app/src/ui/sidebar.rs:1136
-msgid "Outbox"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1152
-msgid "Follow Up"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1179
-msgid "Holds folders, not mail"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1464
-msgid "{mailbox}, {count} unread message"
-msgid_plural "{mailbox}, {count} unread messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/sidebar.rs:1470
-msgid "{mailbox}, {count} message"
-msgid_plural "{mailbox}, {count} messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/sidebar.rs:1501
-msgid "99+"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1512
-msgid "Mail, {count} unread"
-msgid_plural "Mail, {count} unread"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/sidebar.rs:1514
-msgid "Calendar, {count} waiting for your answer"
-msgid_plural "Calendar, {count} waiting for your answer"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/sidebar.rs:1530
-msgid "{account}, {count} unread message"
-msgid_plural "{account}, {count} unread messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/sidebar.rs:1596 app/src/ui/sidebar.rs:1707
-#: app/src/ui/sidebar.rs:1947
-msgid "Move Up"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1597 app/src/ui/sidebar.rs:1710
-#: app/src/ui/sidebar.rs:1948
-msgid "Move Down"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1838
-msgid "Automatic Reply…"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1839
-msgid "Signature…"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1840
-msgid "Rules…"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1841 app/src/ui/window.rs:2990
-msgid "Hide My Email…"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1850
-msgid "On this computer"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1858
-msgid "On this computer. Show or hide this account's mailboxes"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1859
-msgid "Show or hide this account's mailboxes"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1951
-msgid "Sign In Again…"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1953
-msgid "Messages That Will Not Download…"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1958
-msgid "Remove Account…"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1965
-msgid "Account options"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:1970
-msgid "Options for {account}"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:2024
-msgid "Sign in again to keep syncing"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:2026
-msgid "Offline"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:2030
-msgid "{provider} is not responding; retrying"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:2038
-msgid "The keyring is not responding; retrying"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:2041
-msgid "Downloading mail"
-msgstr ""
-
-#: app/src/ui/sidebar.rs:2045
-msgid "Syncing stopped after an error; restart Iris to try again"
-msgstr ""
-
-#: app/src/ui/signature_source.rs:21
-msgid "Web Pages"
-msgstr ""
-
-#: app/src/ui/signature_source.rs:28
-msgid "Import Signature"
-msgstr ""
-
-#: app/src/ui/signature_source.rs:40
-msgid "The file is not on this computer."
-msgstr ""
-
-#: app/src/ui/signature_source.rs:46 app/src/ui/signature_source.rs:52
-msgid "Reading the file stopped."
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:39
-msgid "All Accounts"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:43
-msgid "Accounts"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:54
-msgid "Match"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:56
-msgid "All of the conditions"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:57
-msgid "Any of the conditions"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:67
-msgid "Conditions"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:73
-msgid "Add Condition"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:106 app/src/ui/smart_editor.rs:112
-msgid "Remove Condition"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:110
-msgid "Condition"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:111
-msgid "Matches"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:162
-msgid "Edit Smart Mailbox"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:164
-msgid "New Smart Mailbox"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:193
-msgid "Give the mailbox a name"
-msgstr ""
-
-#: app/src/ui/smart_editor.rs:197
-msgid "Add a condition with a value"
-msgstr ""
-
-#: app/src/ui/templates.rs:26
-msgid ""
-"Saved bodies the composer's Templates menu drops into a message. Markdown "
-"works, and {{first_name}}, {{name}}, {{email}}, {{subject}} and {{date}} "
-"fill in when you use one."
-msgstr ""
-
-#: app/src/ui/templates.rs:35
-msgid "Add Template"
-msgstr ""
-
-#: app/src/ui/templates.rs:94 app/src/ui/templates.rs:238
-msgid "Edit Template"
-msgstr ""
-
-#: app/src/ui/templates.rs:95
-msgid "Edit {template}"
-msgstr ""
-
-#: app/src/ui/templates.rs:110
-msgid "Delete Template"
-msgstr ""
-
-#: app/src/ui/templates.rs:111
-msgid "Delete {template}"
-msgstr ""
-
-#: app/src/ui/templates.rs:134
-msgid "Delete {name}?"
-msgstr ""
-
-#: app/src/ui/templates.rs:135
-msgid "This computer keeps the only copy."
-msgstr ""
-
-#: app/src/ui/templates.rs:183
-msgid ""
-"The subject is optional. A template with one gives it to a message that has "
-"none."
-msgstr ""
-
-#: app/src/ui/templates.rs:199 app/src/ui/templates.rs:201
-msgid "Body"
-msgstr ""
-
-#: app/src/ui/templates.rs:240
-msgid "New Template"
-msgstr ""
-
-#: app/src/ui/thread_list.rs:206
-msgid "No Mail"
-msgstr ""
-
-#. The two search terms are Gmail's own and stay in English.
-#: app/src/ui/thread_list.rs:224
-msgid "Search mail, e.g. from:ann has:attachment"
-msgstr ""
-
-#: app/src/ui/thread_list.rs:243
-msgid "All Inboxes"
-msgstr ""
-
-#: app/src/ui/thread_list.rs:263 app/src/ui/thread_list.rs:283
-msgid "Show Mailboxes"
-msgstr ""
-
-#: app/src/ui/thread_list.rs:268
-msgid "New Message (C)"
-msgstr ""
-
-#: app/src/ui/thread_list.rs:273
-msgid "Search (/)"
-msgstr ""
-
-#. The tooltips already say what these do; the spoken name takes
-#. the words and leaves the keys to a property of their own.
-#: app/src/ui/thread_list.rs:282
-msgid "Search mail"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:96
-msgid "VIP"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:121
-msgid "Muted"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:143
-msgid "Invitation"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:286
-msgid "Unread invitation, {sender}, {subject}, {snippet}"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:287
-msgid "Unread, {sender}, {subject}, {snippet}"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:288
-msgid "Invitation, {sender}, {subject}, {snippet}"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:289
-msgid "{sender}, {subject}, {snippet}"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:359
-msgid "Unknown sender"
-msgstr ""
-
-#: app/src/ui/thread_row.rs:374
-msgid "(no subject)"
-msgstr ""
-
-#: app/src/ui/translation.rs:50 app/src/ui/translation.rs:106
-msgid "Translate"
-msgstr ""
-
-#: app/src/ui/translation.rs:82
-msgid "Translating…"
-msgstr ""
-
-#: app/src/ui/vacation.rs:59
-msgid "Automatic Reply"
-msgstr ""
-
-#: app/src/ui/vacation.rs:92
-msgid "Allow Automatic Replies"
-msgstr ""
-
-#: app/src/ui/vacation.rs:136
-msgid "Automatic reply is on"
-msgstr ""
-
-#: app/src/ui/vacation.rs:138
-msgid "Automatic reply is off"
-msgstr ""
-
-#: app/src/ui/vacation.rs:159
-msgid "Could Not Load the Automatic Reply"
-msgstr ""
-
-#: app/src/ui/vacation.rs:184
-msgid "Send Automatic Replies"
-msgstr ""
-
-#: app/src/ui/vacation.rs:199
-msgid "Only Between These Dates"
-msgstr ""
-
-#: app/src/ui/vacation.rs:202
-msgid "First Day"
-msgstr ""
-
-#: app/src/ui/vacation.rs:203
-msgid "Last Day"
-msgstr ""
-
-#: app/src/ui/vacation.rs:211
-msgid "Dates"
-msgstr ""
-
-#: app/src/ui/vacation.rs:245
-msgid "The same reply goes to people inside and outside your organization."
-msgstr ""
-
-#: app/src/ui/vacation.rs:252
-msgid "Only Reply to My Contacts"
-msgstr ""
-
-#: app/src/ui/welcome.rs:31
-msgid "Add your first account"
-msgstr ""
-
-#: app/src/ui/welcome.rs:39
-msgid ""
-"Choose where your mail lives. You can add more later from the main menu."
-msgstr ""
-
-#: app/src/ui/window.rs:273
-msgid "Deleted forever"
-msgstr ""
-
-#: app/src/ui/window.rs:275
-msgid "Deleted {count} conversation forever"
-msgid_plural "Deleted {count} conversations forever"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window.rs:281
-msgid "Deleted {count} message forever"
-msgid_plural "Deleted {count} messages forever"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window.rs:294
-msgid "{label}, on this mail"
-msgstr ""
-
-#: app/src/ui/window.rs:322
-msgid "Could not load mail: {reason}"
-msgstr ""
-
-#: app/src/ui/window.rs:332
-msgid "Added {account}. Downloading mail…"
-msgstr ""
-
-#: app/src/ui/window.rs:336 app/src/ui/window.rs:2562
-msgid "{account} is signed in again."
-msgstr ""
-
-#: app/src/ui/window.rs:355
-msgid "Made a folder called “{name}” on {provider} for archived mail"
-msgstr ""
-
-#: app/src/ui/window.rs:413
-msgid "Resize the message list"
-msgstr ""
-
-#: app/src/ui/window.rs:582
-msgid "Resize the assistant"
-msgstr ""
-
-#: app/src/ui/window.rs:676
-msgid "Iris (Demo)"
-msgstr ""
-
-#: app/src/ui/window.rs:1017
-msgid "Could not read accounts: {reason}"
-msgstr ""
-
-#: app/src/ui/window.rs:1079
-msgid "Sign in again to keep {account} syncing"
-msgstr ""
-
-#: app/src/ui/window.rs:1776
-msgid "Could not delete the mail: {reason}"
-msgstr ""
-
-#: app/src/ui/window.rs:1860
-msgid "Turn On the {service}"
-msgstr ""
-
-#: app/src/ui/window.rs:1863
-msgid ""
-"The Google Cloud project Iris signs in with has the {service} switched off, "
-"so Google refuses before it can ask for your permission. Turn it on, wait a "
-"minute, and try again."
-msgstr ""
-
-#: app/src/ui/window.rs:1869
-msgid "Open Google Cloud"
-msgstr ""
-
-#: app/src/ui/window.rs:1985
-msgid "Nothing to undo"
-msgstr ""
-
-#: app/src/ui/window.rs:1991
-msgid "{action} undone"
-msgstr ""
-
-#: app/src/ui/window.rs:2217
-msgid "Select mail from one account to tag it."
-msgstr ""
-
-#: app/src/ui/window.rs:2229
-msgid "This account has no tags yet. Make one in Outlook."
-msgstr ""
-
-#: app/src/ui/window.rs:2368
-msgid "Could not include {file}: {reason}"
-msgstr ""
-
-#: app/src/ui/window.rs:2479
-msgid "Downloading {file}…"
-msgstr ""
-
-#: app/src/ui/window.rs:2500 app/src/ui/window/attachments.rs:229
-msgid "Saved {file} to Downloads"
-msgstr ""
-
-#: app/src/ui/window.rs:2503
-msgid "Open"
-msgstr ""
-
-#: app/src/ui/window.rs:2518 app/src/ui/window/attachments.rs:234
-msgid "Could not save {file}: {reason}"
-msgstr ""
-
-#: app/src/ui/window.rs:2647
-msgid "This copy of Iris was built without Microsoft sign-in."
-msgstr ""
-
-#: app/src/ui/window.rs:2661
-msgid "Continue in your browser"
-msgstr ""
-
-#: app/src/ui/window.rs:2688
-msgid "This copy of Iris was built without Google sign-in."
-msgstr ""
-
-#: app/src/ui/window.rs:2696
-msgid "Get a Release"
-msgstr ""
-
-#: app/src/ui/window.rs:2768
-msgid "Remove {account}?"
-msgstr ""
-
-#: app/src/ui/window.rs:2783
-msgid "Removed {account}"
-msgstr ""
-
-#: app/src/ui/window.rs:2785
-msgid "Could not remove {account}: {reason}"
-msgstr ""
-
-#: app/src/ui/window.rs:2970
-msgid "Refresh"
-msgstr ""
-
-#: app/src/ui/window.rs:2974
-msgid "Show Declined Events"
-msgstr ""
-
-#: app/src/ui/window.rs:2989
-msgid "New Smart Mailbox…"
-msgstr ""
-
-#: app/src/ui/window.rs:2998 app/src/ui/window/shortcuts.rs:616
-msgid "Preferences"
-msgstr ""
-
-#: app/src/ui/window.rs:2999
-msgid "Keyboard Shortcuts"
-msgstr ""
-
-#: app/src/ui/window.rs:3001 app/src/ui/window/shortcuts.rs:639
-msgid "Quit"
-msgstr ""
-
-#: app/src/ui/window.rs:3007 app/src/ui/window.rs:3009
-msgid "Main Menu"
-msgstr ""
-
-#: app/src/ui/window.rs:3389
-msgid "Open a message from the person first"
-msgstr ""
-
-#: app/src/ui/window.rs:3465
-msgid "Iris shows the new language after a restart"
-msgstr ""
-
-#: app/src/ui/window.rs:3467
-msgid "Restart"
-msgstr ""
-
-#: app/src/ui/window.rs:3500
-msgid "Messages That Will Not Download"
-msgstr ""
-
-#: app/src/ui/window.rs:3502
-msgid ""
-"Iris could not download these from {address}'s server. It tries again at "
-"each check, except for a message too large to download."
-msgstr ""
-
-#: app/src/ui/window/arrange.rs:104 app/src/ui/window/organize.rs:202
-msgid "Delete “{name}”?"
-msgstr ""
-
-#: app/src/ui/window/arrange.rs:105
-msgid "Only the smart mailbox goes. The mail it shows stays where it is."
-msgstr ""
-
-#: app/src/ui/window/arrange.rs:139
-msgid "Name This Account"
-msgstr ""
-
-#: app/src/ui/window/arrange.rs:141
-msgid ""
-"The sidebar shows the name instead of the address. Leave it empty for the "
-"address."
-msgstr ""
-
-#: app/src/ui/window/attachments.rs:57
-msgid "Could not open {file}: {reason}"
-msgstr ""
-
-#: app/src/ui/window/attachments.rs:102
-msgid "Save Attachments"
-msgstr ""
-
-#: app/src/ui/window/attachments.rs:113
-msgid "Saving {count} attachment…"
-msgid_plural "Saving {count} attachments…"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/attachments.rs:161
-msgid "Saved {count} attachment to {folder}"
-msgid_plural "Saved {count} attachments to {folder}"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/attachments.rs:168
-msgid "Saved {count} to {folder}. Could not save {files}"
-msgstr ""
-
-#: app/src/ui/window/attachments.rs:277
-msgid "Could not open {file}"
-msgstr ""
-
-#: app/src/ui/window/attachments.rs:329 app/src/ui/window/attachments.rs:335
-msgid "Save to Downloads"
-msgstr ""
-
-#: app/src/ui/window/attachments.rs:333 app/src/ui/window/attachments.rs:336
-msgid "Open in Another Program"
-msgstr ""
-
-#: app/src/ui/window/attachments.rs:340
-msgid "{file}, preview"
-msgstr ""
-
-#: app/src/ui/window/categories.rs:342
-msgid "Open a message from the sender first"
-msgstr ""
-
-#: app/src/ui/window/categories.rs:386
-msgid "Mail from {sender} now goes to {category}"
-msgstr ""
-
-#: app/src/ui/window/categories.rs:391
-msgid "Moved mail from {sender} to {category}"
-msgstr ""
-
-#: app/src/ui/window/categories.rs:398
-msgid ""
-"Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
-msgstr ""
-
-#: app/src/ui/window/categories/chip.rs:27
-msgid "{name}, {count} unread"
-msgid_plural "{name}, {count} unread"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/detached.rs:39 app/src/ui/window/export.rs:72
-#: app/src/ui/window/export.rs:123
-msgid "Open a conversation first"
-msgstr ""
-
-#: app/src/ui/window/detached.rs:173 app/src/ui/window/export.rs:75
-#: app/src/ui/window/export.rs:138 app/src/ui/window/organize.rs:89
-#: app/src/ui/window/organize.rs:138 app/src/ui/window/organize.rs:180
-#: app/src/ui/window/organize.rs:213 app/src/ui/window/organize.rs:241
-#: app/src/ui/window/senders.rs:254
-msgid "That account is not connected"
-msgstr ""
-
-#: app/src/ui/window/detached.rs:183
-msgid "Could not load the source: {reason}"
-msgstr ""
-
-#: app/src/ui/window/detached.rs:209 app/src/ui/window/detached.rs:215
-#: app/src/ui/window/detached.rs:227
-msgid "Message Source"
-msgstr ""
-
-#: app/src/ui/window/detached.rs:211
-msgid "Save As…"
-msgstr ""
-
-#: app/src/ui/window/detached.rs:212
-msgid "Save as an .eml file"
-msgstr ""
-
-#: app/src/ui/window/detached.rs:250
-msgid "Save Message"
-msgstr ""
-
-#: app/src/ui/window/export.rs:37
-msgid "{count} conversation"
-msgid_plural "{count} conversations"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/export.rs:79 app/src/ui/window/export.rs:142
-msgid "Export Mail"
-msgstr ""
-
-#: app/src/ui/window/export.rs:93 app/src/ui/window/export.rs:151
-msgid "Exporting…"
-msgstr ""
-
-#: app/src/ui/window/export.rs:103 app/src/ui/window/export.rs:161
-msgid "Saved {file}"
-msgstr ""
-
-#: app/src/ui/window/export.rs:104 app/src/ui/window/export.rs:162
-msgid "Could not export the mail: {reason}"
-msgstr ""
-
-#: app/src/ui/window/followup.rs:34
-msgid "Review"
-msgstr ""
-
-#: app/src/ui/window/followup.rs:39 app/src/ui/window/followup.rs:43
-msgid "Hide Until Next Launch"
-msgstr ""
-
-#: app/src/ui/window/followup.rs:108
-msgid "{count} sent message has had no reply"
-msgid_plural "{count} sent messages have had no reply"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/images.rs:66
-msgid "Always load images from {sender}?"
-msgstr ""
-
-#: app/src/ui/window/images.rs:71
-msgid "Always"
-msgstr ""
-
-#: app/src/ui/window/images.rs:92
-msgid "This message has no sender to remember."
-msgstr ""
-
-#: app/src/ui/window/images.rs:96
-msgid "Always Load Images?"
-msgstr ""
-
-#: app/src/ui/window/images.rs:98
-msgid "Loading a remote image tells the sender when you opened their mail."
-msgstr ""
-
-#: app/src/ui/window/images.rs:104
-msgid "From {sender}"
-msgstr ""
-
-#: app/src/ui/window/images.rs:110
-msgid "From Anyone at {domain}"
-msgstr ""
-
-#: app/src/ui/window/images.rs:160
-msgid "Images from anyone at {domain} will load from now on"
-msgstr ""
-
-#: app/src/ui/window/images.rs:165
-msgid "Images from {sender} will load from now on"
-msgstr ""
-
-#: app/src/ui/window/images.rs:170
-msgid "Could not remember that sender: {reason}"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:73
-msgid "This invitation names no event, so there is nothing to answer"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:99
-msgid "This invitation names no organizer, so there is nobody to reply to"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:128
-msgid "Could not send your reply: {reason}"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:167 app/src/ui/window/invitation.rs:235
-msgid "Could not send your proposal: {reason}"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:196
-msgid "Nobody"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:202
-msgid "The organizer decides. {organizer} hears what you suggest."
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:205
-msgid "Propose"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:223
-msgid "This invitation names no organizer, so there is nobody to ask"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:228
-msgid "Proposed a new time to {organizer}"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:231
-msgid "Proposed a new time"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:233
-msgid "New time proposed. The organizer decides."
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:265
-msgid "Could not save the invitation: {reason}"
-msgstr ""
-
-#: app/src/ui/window/invitation.rs:275
-msgid "No app on this desktop opens invitations: {reason}"
-msgstr ""
-
-#: app/src/ui/window/message_menu.rs:132
-msgid "Flag Color"
-msgstr ""
-
-#: app/src/ui/window/message_menu.rs:219
-msgid "Message from {sender}"
-msgstr ""
-
-#: app/src/ui/window/message_menu.rs:220
-msgid "This Message"
-msgstr ""
-
-#: app/src/ui/window/message_menu.rs:387
-msgid "Copied {address}"
-msgstr ""
-
-#: app/src/ui/window/notice.rs:84
-msgid "A rule that waited was refused: {reason}"
-msgstr ""
-
-#: app/src/ui/window/on_screen.rs:222 app/src/ui/window/shortcuts.rs:328
-msgid "Search"
-msgstr ""
-
-#: app/src/ui/window/organize.rs:64
-msgid "Name, or Parent/Name to nest it"
-msgstr ""
-
-#: app/src/ui/window/organize.rs:99
-msgid "Created “{name}”"
-msgstr ""
-
-#: app/src/ui/window/organize.rs:223
-msgid "Deleted “{name}”"
-msgstr ""
-
-#: app/src/ui/window/organize.rs:349
-msgid "Only Where It Exists"
-msgstr ""
-
-#: app/src/ui/window/outbox.rs:116
-msgid "Still not sent. It stays in the Outbox."
-msgstr ""
-
-#: app/src/ui/window/outbox.rs:140
-msgid "That message is no longer waiting."
-msgstr ""
-
-#: app/src/ui/window/outbox.rs:144
-msgid "Iris cannot reopen this message. Send it as it is."
-msgstr ""
-
-#: app/src/ui/window/outbox.rs:153
-msgid "Could not open it: {reason}"
-msgstr ""
-
-#: app/src/ui/window/outbox.rs:177
-msgid "Could not delete: {reason}"
-msgstr ""
-
-#: app/src/ui/window/outbox.rs:183
-msgid "Deleted. It will not be sent."
-msgstr ""
-
-#: app/src/ui/window/outbox.rs:185
-msgid "Deleted. They will not be sent."
-msgstr ""
-
-#: app/src/ui/window/press.rs:284
-msgid "Back in the Inbox"
-msgstr ""
-
-#: app/src/ui/window/press.rs:303
-msgid "Will remind you {when}"
-msgstr ""
-
-#: app/src/ui/window/press.rs:348
-msgid "Delete This Conversation Forever?"
-msgstr ""
-
-#: app/src/ui/window/press.rs:350
-msgid "Delete {count} Conversation Forever?"
-msgid_plural "Delete {count} Conversations Forever?"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/press.rs:355
-msgid "Delete This Message Forever?"
-msgstr ""
-
-#: app/src/ui/window/press.rs:357
-msgid "Delete {count} Message Forever?"
-msgid_plural "Delete {count} Messages Forever?"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/press.rs:365
-msgid "{provider} deletes it from every device and cannot bring it back."
-msgstr ""
-
-#: app/src/ui/window/press.rs:369
-msgid "{provider} deletes them from every device and cannot bring them back."
-msgstr ""
-
-#: app/src/ui/window/press.rs:372
-msgid "The server deletes it from every device and cannot bring it back."
-msgstr ""
-
-#: app/src/ui/window/press.rs:374
-msgid ""
-"Each account's server deletes them from every device and cannot bring them "
-"back."
-msgstr ""
-
-#: app/src/ui/window/press.rs:382
-msgid ""
-"Mail in {accounts} stays in the Trash, since its server cannot delete mail "
-"for good."
-msgid_plural ""
-"Mail in {accounts} stays in the Trash, since their servers cannot delete "
-"mail for good."
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/src/ui/window/press.rs:407
-msgid "Cancel Send (Delete)"
-msgstr ""
-
-#: app/src/ui/window/press.rs:409
-msgid "Delete from Outbox"
-msgstr ""
-
-#: app/src/ui/window/press.rs:410
-msgid "Delete from Outbox (Delete)"
-msgstr ""
-
-#: app/src/ui/window/press.rs:413
-msgid "Cancel Reminder"
-msgstr ""
-
-#: app/src/ui/window/press.rs:414
-msgid "Cancel Reminder (Delete)"
-msgstr ""
-
-#: app/src/ui/window/press.rs:417
-msgid "Dismiss Follow-Up"
-msgstr ""
-
-#: app/src/ui/window/press.rs:418
-msgid "Dismiss Follow-Up (Delete)"
-msgstr ""
-
-#: app/src/ui/window/reminders.rs:27
-msgid ""
-"The conversation leaves the inbox now and comes back at this time, marked "
-"unread."
-msgstr ""
-
-#: app/src/ui/window/reveal.rs:75
-msgid "Could not open the conversation to reply to it"
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:98
-msgid "Sending…"
-msgstr ""
-
-#: app/src/ui/window/scheduled.rs:198
-msgid "Could not cancel: {reason}"
-msgstr ""
-
-#: app/src/ui/window/senders.rs:43 app/src/ui/window/senders.rs:52
-msgid "This message has no unsubscribe link"
-msgstr ""
-
-#: app/src/ui/window/senders.rs:110
-msgid ""
-"The request to leave {sender} waits in the Outbox. It goes out as soon as it "
-"can."
-msgstr ""
-
-#: app/src/ui/window/senders.rs:176
-msgid "Open Page"
-msgstr ""
-
-#: app/src/ui/window/senders.rs:213
-msgid "The app is closing."
-msgstr ""
-
-#: app/src/ui/window/senders.rs:231
-msgid "Open a message from the sender to block"
-msgstr ""
-
-#: app/src/ui/window/senders.rs:237
-msgid "Block {sender}?"
-msgstr ""
-
-#: app/src/ui/window/senders.rs:240
-msgid ""
-"New mail from {email} goes straight to the Trash. This conversation moves "
-"there now. Remove the rule under Rules to unblock."
-msgstr ""
-
-#: app/src/ui/window/senders.rs:245
-msgid "Block"
-msgstr ""
-
-#: app/src/ui/window/senders.rs:272
-msgid "Blocked {sender}"
-msgstr ""
-
-#: app/src/ui/window/senders.rs:279
-msgid "Could not block the sender: {reason}"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:236
-msgid "Organizing"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:305
-msgid "Next or previous conversation"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:313
-msgid "Open mailbox 1 to 9"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:335
-msgid "Search from a text field"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:345
-msgid "Check for mail"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:353
-msgid "Select all"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:358
-msgid "Clear the selection"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:363
-msgid "Bigger or smaller text"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:372
-msgid "Open the menu of the conversation in focus"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:377
-msgid "Open the menu of the message in focus"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:382
-msgid "Open in a new window"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:387
-msgid "Print"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:392
-msgid "View source"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:397
-msgid "Normal text size"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:410
-msgid "Move to trash"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:426
-msgid "Flag or unflag"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:434
-msgid "Flag colors"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:447
-msgid "Mark read or unread"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:455
-msgid "Mute or unmute"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:460
-msgid "Labels"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:473
-msgid "New message"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:486
-msgid "Reply all"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:507
-msgid "Attach files"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:512
-msgid "Insert image"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:517
-msgid "Bold, italic, link"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:526
-msgid "Save draft"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:531
-msgid "Show mail"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:536
-msgid "Show the calendar"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:541
-msgid "Go to today"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:546
-msgid "Day, week, month or agenda"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:551
-msgid "Previous or next"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:556
-msgid "Edit the event"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:561
-msgid "Show the event"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:566
-msgid "Delete the event, with Undo"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:571
-msgid "New event"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:576
-msgid "Search the calendar"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:586
-msgid "Undo, while its toast is still up"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:591
-msgid "Move the focused event a day earlier or later"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:596
-msgid "Move the focused event by 15 minutes"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:601
-msgid "Change when the focused event ends"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:606
-msgid "Change when the focused event starts"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:611
-msgid "Refresh the calendar"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:621
-msgid "Keyboard shortcuts"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:626
-msgid "Show or hide the assistant"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:631
-msgid "Close window"
-msgstr ""
-
-#: app/src/ui/window/shortcuts.rs:812
-msgid "Checking for mail"
-msgstr ""
-
-#: app/src/ui/window/spaces.rs:23
-msgid ""
-"“{title}” was saved without “{file}”, which moved or was deleted before it "
-"could upload"
-msgstr ""
-
-#: app/src/ui/window/spaces.rs:29
-msgid "Your change to “{title}” was not saved because it changed elsewhere"
-msgstr ""
-
-#: app/src/ui/window/spaces.rs:33
-msgid "Your change to “{title}” was not saved: {reason}"
-msgstr ""
-
-#: app/src/ui/window/spaces.rs:256
-msgid "Show Event"
-msgstr ""
-
-#: app/src/unsubscribe_page/webkit.rs:304
-msgid "the view went away"
-msgstr ""
-
-#: app/src/unsubscribe_page/webkit.rs:404
-msgid "the plan would type something other than the address"
+#: appcore/src/accounts.rs:57
+msgid "Gave up waiting for the browser after five minutes."
 msgstr ""
 
 #: appcore/src/add_account.rs:113
@@ -5329,6 +40,10 @@ msgid_plural "Remove After {count} Days"
 msgstr[0] ""
 msgstr[1] ""
 
+#: appcore/src/add_account.rs:285
+msgid "This copy of Iris was built without Microsoft sign-in."
+msgstr ""
+
 #: appcore/src/add_account.rs:305
 msgid "{provider} has no IMAP, so other mail apps cannot reach it."
 msgstr ""
@@ -5339,6 +54,10 @@ msgstr ""
 
 #: appcore/src/add_account.rs:429
 msgid "{provider} also offers POP3"
+msgstr ""
+
+#: appcore/src/add_account.rs:438
+msgid "Incoming"
 msgstr ""
 
 #: appcore/src/add_account.rs:439
@@ -5363,6 +82,10 @@ msgstr ""
 
 #: appcore/src/add_account.rs:490
 msgid "App Password"
+msgstr ""
+
+#: appcore/src/add_account.rs:491
+msgid "Password"
 msgstr ""
 
 #: appcore/src/add_account.rs:526
@@ -5447,6 +170,16 @@ msgstr ""
 
 #: appcore/src/add_account.rs:618
 msgid "Empty"
+msgstr ""
+
+#: appcore/src/add_account.rs:622
+msgid "{count} conversation"
+msgid_plural "{count} conversations"
+msgstr[0] ""
+msgstr[1] ""
+
+#: appcore/src/add_account.rs:744
+msgid "Could not sign in"
 msgstr ""
 
 #: appcore/src/add_account.rs:757
@@ -5667,6 +400,10 @@ msgstr ""
 msgid "Ready to sign in"
 msgstr ""
 
+#: appcore/src/add_account/post.rs:68
+msgid "Waiting for your browser"
+msgstr ""
+
 #: appcore/src/add_account/post.rs:69
 msgid "Looking for your mail servers"
 msgstr ""
@@ -5765,6 +502,10 @@ msgid ""
 "Iris does not support yet. Use another address instead."
 msgstr ""
 
+#: appcore/src/add_account/post.rs:439
+msgid "{provider} needs an app password"
+msgstr ""
+
 #: appcore/src/add_account/post.rs:441
 msgid "With two-step sign-in on, {provider} needs an app password"
 msgstr ""
@@ -5783,6 +524,10 @@ msgstr ""
 msgid ""
 "On the next page, paste an app password from {provider}'s settings, not your "
 "{provider} password."
+msgstr ""
+
+#: appcore/src/add_account/post.rs:466
+msgid "Open {provider}'s Settings"
 msgstr ""
 
 #: appcore/src/add_account/post.rs:487
@@ -6324,6 +1069,14 @@ msgstr ""
 msgid "Always load images from anyone at {domain}?"
 msgstr ""
 
+#: appcore/src/assistant/run/manage.rs:601
+msgid "Always load images from {sender}?"
+msgstr ""
+
+#: appcore/src/assistant/run/manage.rs:607
+msgid "Loading a remote image tells the sender when you opened their mail."
+msgstr ""
+
 #: appcore/src/assistant/run/manage.rs:632
 msgid "Stop loading images from {sender}?"
 msgstr ""
@@ -6338,6 +1091,11 @@ msgstr ""
 
 #: appcore/src/assistant/run/manage.rs:752
 msgid "the message “{subject}”"
+msgstr ""
+
+#: appcore/src/assistant/run/queue.rs:17
+#: appcore/src/assistant/run/writing.rs:228
+msgid "(no subject)"
 msgstr ""
 
 #: appcore/src/assistant/run/queue.rs:91
@@ -6504,6 +1262,10 @@ msgstr ""
 msgid "Run {tool} on the MCP server {server}?"
 msgstr ""
 
+#: appcore/src/assistant/sources/skills/mod.rs:59
+msgid "Iris"
+msgstr ""
+
 #: appcore/src/assistant/sources/skills/mod.rs:60
 msgid "Claude Code"
 msgstr ""
@@ -6607,6 +1369,14 @@ msgid ""
 "off"
 msgstr ""
 
+#: appcore/src/calendar_draft.rs:103
+msgid "Out of office"
+msgstr ""
+
+#: appcore/src/calendar_draft.rs:104
+msgid "Focus time"
+msgstr ""
+
 #: appcore/src/calendar_draft.rs:373
 msgid "Declined because I am out of office"
 msgstr ""
@@ -6699,12 +1469,32 @@ msgstr ""
 msgid "Move"
 msgstr ""
 
+#: appcore/src/event_question.rs:89
+msgid "Cancel"
+msgstr ""
+
 #: appcore/src/event_question.rs:93
 msgid "Don't send"
 msgstr ""
 
 #: appcore/src/event_question.rs:97
 msgid "Send a cancellation to the guests"
+msgstr ""
+
+#: appcore/src/event_question.rs:99
+msgid "Send an update to the guests"
+msgstr ""
+
+#: appcore/src/event_question.rs:108
+msgid "Save"
+msgstr ""
+
+#: appcore/src/event_question.rs:109
+msgid "Delete"
+msgstr ""
+
+#: appcore/src/event_question.rs:110
+msgid "Send"
 msgstr ""
 
 #: appcore/src/event_question.rs:169
@@ -6910,6 +1700,10 @@ msgid_plural "Clashes with {event} and {count} more"
 msgstr[0] ""
 msgstr[1] ""
 
+#: appcore/src/invitation_strip.rs:168
+msgid "Untitled event"
+msgstr ""
+
 #: appcore/src/invitation_strip.rs:207
 msgid "This meeting"
 msgstr ""
@@ -7058,14 +1852,38 @@ msgstr ""
 msgid "Moved to {mailbox}"
 msgstr ""
 
+#: appcore/src/notify.rs:48
+msgid "Archive"
+msgstr ""
+
+#: appcore/src/notify.rs:49
+msgid "Mark as Read"
+msgstr ""
+
+#: appcore/src/notify.rs:51
+msgid "Reply"
+msgstr ""
+
 #: appcore/src/notify.rs:114
 msgid "{count} new message"
 msgid_plural "{count} new messages"
 msgstr[0] ""
 msgstr[1] ""
 
+#: appcore/src/notify.rs:138
+msgid "New message"
+msgstr ""
+
 #: appcore/src/notify.rs:160
 msgid "From {senders}"
+msgstr ""
+
+#: appcore/src/notify.rs:220
+msgid "Open"
+msgstr ""
+
+#: appcore/src/offered.rs:237
+msgid "Labels"
 msgstr ""
 
 #: appcore/src/offered.rs:238
@@ -7911,6 +2729,10 @@ msgstr ""
 msgid "Delete it"
 msgstr ""
 
+#: appcore/src/rules.rs:257
+msgid "Skip the Inbox"
+msgstr ""
+
 #: appcore/src/rules.rs:262
 msgid "Apply {label}"
 msgstr ""
@@ -7990,6 +2812,11 @@ msgid ""
 "open for you to save."
 msgstr ""
 
+#: appcore/src/settings/mod.rs:234 appcore/src/settings/mod.rs:409
+#: appcore/src/settings/mod.rs:704
+msgid "Off"
+msgstr ""
+
 #: appcore/src/settings/mod.rs:235
 msgid "Local Server"
 msgstr ""
@@ -8000,6 +2827,10 @@ msgstr ""
 
 #: appcore/src/settings/mod.rs:237
 msgid "Claude Subscription"
+msgstr ""
+
+#: appcore/src/settings/mod.rs:262
+msgid "Assistant"
 msgstr ""
 
 #: appcore/src/settings/mod.rs:263
@@ -8052,6 +2883,14 @@ msgstr ""
 
 #: appcore/src/settings/mod.rs:571
 msgid "Automatic"
+msgstr ""
+
+#: appcore/src/settings/mod.rs:572
+msgid "Monday"
+msgstr ""
+
+#: appcore/src/settings/mod.rs:573
+msgid "Sunday"
 msgstr ""
 
 #: appcore/src/settings/mod.rs:611
@@ -8287,6 +3126,10 @@ msgstr ""
 
 #: appcore/src/translation.rs:832
 msgid "This message is in another language"
+msgstr ""
+
+#: appcore/src/translation.rs:835
+msgid "Translate"
 msgstr ""
 
 #: appcore/src/translation.rs:846
@@ -8556,6 +3399,26 @@ msgstr[1] ""
 msgid "{days} and {last}"
 msgstr ""
 
+#: domain/src/invitation/recurrence.rs:209
+msgid "Tuesday"
+msgstr ""
+
+#: domain/src/invitation/recurrence.rs:210
+msgid "Wednesday"
+msgstr ""
+
+#: domain/src/invitation/recurrence.rs:211
+msgid "Thursday"
+msgstr ""
+
+#: domain/src/invitation/recurrence.rs:212
+msgid "Friday"
+msgstr ""
+
+#: domain/src/invitation/recurrence.rs:213
+msgid "Saturday"
+msgstr ""
+
 #: domain/src/invitation/recurrence.rs:224
 msgid "the last day"
 msgstr ""
@@ -8675,6 +3538,18 @@ msgstr ""
 msgid "Is flagged"
 msgstr ""
 
+#: ffi/src/about.rs:42
+msgid "About Iris"
+msgstr ""
+
+#: ffi/src/about.rs:46
+msgid "Based on {app}"
+msgstr ""
+
+#: ffi/src/about.rs:49
+msgid "Mail and calendar for macOS. Your mail stays on your computer."
+msgstr ""
+
 #: ffi/src/about.rs:51
 msgid "Iris carried word between the sky and the sea,"
 msgstr ""
@@ -8699,12 +3574,247 @@ msgstr ""
 msgid "Star on GitHub"
 msgstr ""
 
+#: ffi/src/about.rs:61
+msgid "What's New"
+msgstr ""
+
+#: ffi/src/about.rs:66
+msgid "Website"
+msgstr ""
+
+#: ffi/src/about.rs:71
+msgid "Report a Problem"
+msgstr ""
+
+#: ffi/src/about.rs:76
+msgid "License"
+msgstr ""
+
+#: ffi/src/about.rs:87
+msgid "Version {version}"
+msgstr ""
+
+#: ffi/src/account_menu.rs:54
+msgid "Name, or Parent/Name to nest it"
+msgstr ""
+
+#: ffi/src/account_settings.rs:56
+msgid "This account is not syncing yet."
+msgstr ""
+
+#: ffi/src/account_settings.rs:111
+msgid "Could not save: {reason}"
+msgstr ""
+
+#: ffi/src/account_settings.rs:114
+msgid "Automatic reply is on"
+msgstr ""
+
+#: ffi/src/account_settings.rs:115
+msgid "Automatic reply is off"
+msgstr ""
+
+#: ffi/src/account_setup.rs:269
+msgid "Remove {account}?"
+msgstr ""
+
+#: ffi/src/ai_prefs.rs:247
+msgid "No answer: {reason}"
+msgstr ""
+
+#: ffi/src/assistant.rs:455
+msgid "Stopped."
+msgstr ""
+
+#: ffi/src/assistant.rs:778
+msgid ""
+"The Google Cloud project Iris signs in with has the {service} switched off, "
+"so Google refuses before it can ask for your permission. Turn it on, wait a "
+"minute, and try again."
+msgstr ""
+
+#: ffi/src/assistant.rs:797 ffi/src/assistant.rs:807
+msgid "Not scheduled: {reason}"
+msgstr ""
+
+#: ffi/src/assistant.rs:802
+msgid "Will send {when}"
+msgstr ""
+
+#: ffi/src/assistant.rs:1002
+msgid "That account is not connected."
+msgstr ""
+
+#: ffi/src/assistant.rs:1012
+msgid "Draft not saved: {reason}"
+msgstr ""
+
+#: ffi/src/assistant.rs:1021
+msgid "Could not build the message: {reason}"
+msgstr ""
+
+#: ffi/src/calendar.rs:355 ffi/src/calendar.rs:484
+msgid "%B %Y"
+msgstr ""
+
+#: ffi/src/calendar.rs:358 ffi/src/calendar.rs:500
+msgid "%a"
+msgstr ""
+
+#: ffi/src/calendar.rs:487
+msgid "{first} – {last}"
+msgstr ""
+
+#: ffi/src/calendar.rs:489 ffi/src/calendar.rs:490
+msgid "%b"
+msgstr ""
+
 #: ffi/src/compose.rs:142
 msgid "Add an account to write mail."
 msgstr ""
 
+#: ffi/src/compose.rs:235
+msgid "Could not open the draft: {reason}"
+msgstr ""
+
+#: ffi/src/compose.rs:318 ffi/src/compose.rs:325
+msgid "Not sent: {reason}"
+msgstr ""
+
+#: ffi/src/compose.rs:322
+msgid "Message sent"
+msgstr ""
+
+#: ffi/src/compose.rs:324
+msgid "Waiting in the Outbox. It goes out as soon as it can."
+msgstr ""
+
+#: ffi/src/contacts.rs:130
+msgid "Not allowed when you signed in"
+msgstr ""
+
+#: ffi/src/event_editor.rs:256
+msgid "Could not save the event: {reason}"
+msgstr ""
+
+#: ffi/src/event_editor.rs:258
+msgid "Moved “{title}”"
+msgstr ""
+
+#: ffi/src/event_editor.rs:277
+msgid "Could not delete the event: {reason}"
+msgstr ""
+
+#: ffi/src/event_editor.rs:278
+msgid "Deleted “{title}”"
+msgstr ""
+
+#: ffi/src/event_editor.rs:338
+msgid "Iris has no permission to use this calendar. Allow it in Preferences."
+msgstr ""
+
+#: ffi/src/filing.rs:97
+msgid "Delete “{name}”?"
+msgstr ""
+
+#: ffi/src/filing.rs:139
+msgid "Deleted “{name}”"
+msgstr ""
+
+#: ffi/src/filing.rs:154
+msgid "Could not change the color: {reason}"
+msgstr ""
+
+#: ffi/src/filing.rs:301
+msgid "That account is not connected"
+msgstr ""
+
+#: ffi/src/filing.rs:384
+msgid "{label}, on this mail"
+msgstr ""
+
+#: ffi/src/hidden.rs:46
+msgid ""
+"Gmail delivers mail sent to these addresses to your inbox. Each one shows "
+"which site shared your address, and you can turn one off when the spam "
+"starts. Your real address is part of each one, so anyone who removes the tag "
+"can still reach you, and your replies come from your main address."
+msgstr ""
+
+#: ffi/src/hidden.rs:52
+msgid ""
+"You get a new address that ends in your own, such as "
+"name+kite.fern482@gmail.com. Give it to one site only."
+msgstr ""
+
+#: ffi/src/hidden.rs:64
+msgid "Off: mail goes to the Trash"
+msgstr ""
+
+#: ffi/src/hidden.rs:95 ffi/src/hidden.rs:115 ffi/src/hidden.rs:131
+msgid "Allow Hide My Email"
+msgstr ""
+
+#: ffi/src/hidden.rs:111
+msgid "Mail to this address reaches you again"
+msgstr ""
+
+#: ffi/src/hidden.rs:112
+msgid "Mail to this address now goes to the Trash"
+msgstr ""
+
+#: ffi/src/hidden.rs:129
+msgid "Address deleted"
+msgstr ""
+
+#: ffi/src/hidden.rs:139
+msgid ""
+"Mail sent to {address} arrives in your inbox again, without the Hide My "
+"Email label. To stop that mail, turn the address off instead."
+msgstr ""
+
+#: ffi/src/hidden.rs:172
+msgid "Created {date}"
+msgstr ""
+
 #: ffi/src/invitation_answer.rs:49
 msgid "The event is no longer on the calendar"
+msgstr ""
+
+#: ffi/src/invitation_answer.rs:69
+msgid "Could not send your answer: {reason}"
+msgstr ""
+
+#: ffi/src/mail.rs:374
+msgid "Will remind you {when}"
+msgstr ""
+
+#: ffi/src/mail.rs:377
+msgid "Back in the Inbox"
+msgstr ""
+
+#: ffi/src/mail.rs:414
+msgid "Could not cancel: {reason}"
+msgstr ""
+
+#: ffi/src/mail.rs:438
+msgid "Deleted. It will not be sent."
+msgstr ""
+
+#: ffi/src/mail.rs:439
+msgid "Deleted. They will not be sent."
+msgstr ""
+
+#: ffi/src/mail.rs:448
+msgid "Could not delete: {reason}"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:238
+msgid "Could not send your reply: {reason}"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:241
+msgid "This invitation names no organizer, so there is nobody to reply to"
 msgstr ""
 
 #: ffi/src/mail_invitation.rs:255
@@ -8715,6 +3825,77 @@ msgstr ""
 msgid "This invitation has no time to move"
 msgstr ""
 
+#: ffi/src/mail_invitation.rs:286
+msgid "Could not send your proposal: {reason}"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:289
+msgid "This invitation names no organizer, so there is nobody to ask"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:294
+msgid "Proposed a new time to {organizer}"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:295
+msgid "Proposed a new time"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:297
+msgid "New time proposed. The organizer decides."
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:325
+msgid "Could not add to your calendar: {reason}"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:336
+msgid ""
+"Nothing in this file can be added, since its events have no id or start time"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:343
+msgid "Added to your calendar"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:345
+msgid "Added {count} events to your calendar"
+msgid_plural "Added {count} events to your calendar"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ffi/src/mail_invitation.rs:350
+msgid "Added to {calendar}"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:352
+msgid "Added {count} events to {calendar}"
+msgid_plural "Added {count} events to {calendar}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ffi/src/mail_invitation.rs:360
+msgid "Some events were left out, since they have no id or start time"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:435 ffi/src/mail_invitation.rs:438
+msgid "This invitation names no event, so there is nothing to answer"
+msgstr ""
+
+#: ffi/src/mail_invitation.rs:603
+msgid "{count} events"
+msgid_plural "{count} events"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ffi/src/mail_invitation.rs:639
+msgid "No reply yet"
+msgstr ""
+
+#: ffi/src/prefs.rs:178
+msgid "Startup"
+msgstr ""
+
 #: ffi/src/prefs.rs:179
 msgid "Open at Login"
 msgstr ""
@@ -8723,8 +3904,1663 @@ msgstr ""
 msgid "Iris opens when you log in and keeps your mail up to date"
 msgstr ""
 
+#: ffi/src/protection.rs:158
+msgid "Your OpenPGP Keys"
+msgstr ""
+
+#: ffi/src/protection.rs:161
+msgid "gpg could not be asked: {reason}"
+msgstr ""
+
+#: ffi/src/protection.rs:168
+msgid "Your S/MIME Certificates"
+msgstr ""
+
+#: ffi/src/protection.rs:171
+msgid "gpgsm could not be asked: {reason}"
+msgstr ""
+
+#: ffi/src/protection.rs:177
+msgid "Signing and Encryption"
+msgstr ""
+
+#: ffi/src/protection.rs:179
+msgid ""
+"Iris signs and encrypts through GnuPG, which holds your keys and asks for "
+"your passphrase itself."
+msgstr ""
+
+#: ffi/src/protection.rs:186
+msgid "Import…"
+msgstr ""
+
+#: ffi/src/protection.rs:187
+msgid "Sign My Messages by Default"
+msgstr ""
+
+#: ffi/src/protection.rs:188
+msgid "New messages open with Sign turned on"
+msgstr ""
+
+#: ffi/src/protection.rs:190
+msgid "Encrypt When I Can"
+msgstr ""
+
+#: ffi/src/protection.rs:191
+msgid "Turn Encrypt on as soon as every recipient has a key or a certificate"
+msgstr ""
+
+#: ffi/src/protection.rs:253
+msgid "Add a recipient this computer can encrypt to."
+msgstr ""
+
+#: ffi/src/protection.rs:286
+msgid "Not encrypted, so not sent: {reason}"
+msgstr ""
+
+#: ffi/src/protection.rs:287
+msgid "Not signed, so not sent: {reason}"
+msgstr ""
+
+#: ffi/src/protection.rs:356
+msgid ""
+"Draft not saved. An encrypted message waits in Drafts encrypted to your own "
+"key, and this computer holds no key or certificate for {address}."
+msgstr ""
+
+#: ffi/src/rules.rs:162
+msgid "Rule added"
+msgstr ""
+
+#: ffi/src/rules.rs:171
+msgid "Rule saved"
+msgstr ""
+
+#: ffi/src/rules.rs:189
+msgid "Rule deleted"
+msgstr ""
+
+#: ffi/src/rules.rs:207 ffi/src/rules.rs:208
+msgid "Could Not Load the Rules"
+msgstr ""
+
+#: ffi/src/templates.rs:69
+msgid "Template not saved: {reason}"
+msgstr ""
+
 #: ffi/src/templates.rs:93
 msgid "The template is gone"
+msgstr ""
+
+#: ffi/src/templates.rs:102
+msgid "Give the template a name"
+msgstr ""
+
+#: ffi/src/unsubscribe.rs:71
+msgid "This message has no unsubscribe link"
+msgstr ""
+
+#: ffi/src/unsubscribe.rs:91
+msgid ""
+"The request to leave {sender} waits in the Outbox. It goes out as soon as it "
+"can."
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:20
+msgid "Safety"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:21
+msgid "Ask Before Acting"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:22
+msgid ""
+"Approve each message the assistant sends and each change to Gmail settings, "
+"such as automatic replies and rules"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:650
+msgid "Conversation"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:27
+msgid "Show Details Expanded"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:28
+msgid "Open the model's thinking and each tool it runs as they appear"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:72
+msgid "Connection"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:80 macos/Iris/AISettingsView.swift:510
+msgid "Model"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:88 macos/Iris/AISettingsView.swift:89
+msgid "Models You Can Use"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:110 macos/Iris/AISettingsView.swift:138
+msgid "Claude Code's own default"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:133
+msgid "Search models"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:152
+msgid "Asking for the model list…"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:176
+msgid "alias"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:193
+msgid "This provider lists no models. Type a name in the field instead."
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:209
+msgid "Test the Connection"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:216
+msgid "Test"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:248
+msgid "Server Address"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:253
+msgid "API Key (Optional)"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:259
+msgid "Anthropic API Key"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:259
+msgid "Anthropic API Key (Saved)"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:263
+msgid "Key saved in the keyring"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:263
+msgid "No key saved"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:270
+msgid "Connections"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:272
+msgid ""
+"A local server is LM Studio, Ollama, or any server with OpenAI's API. Local "
+"models keep your mail on this computer. With Anthropic or a Claude "
+"subscription, what a feature reads goes to Anthropic."
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:282
+msgid "Not found. Install Claude Code and sign in by running claude once."
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:284
+msgid "Uses your Claude subscription through {path}"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:325
+msgid "Found on This Computer"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:329
+msgid "Nothing found"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:330
+msgid ""
+"Start LM Studio's server or Ollama, or install Claude Code, then open "
+"Preferences again."
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:343
+msgid "Use"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:347
+msgid "Use {provider}"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:352
+msgid "Looking for LM Studio, Ollama, Unsloth, and Claude Code…"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:365
+msgid "{model} and {count} more"
+msgid_plural "{model} and {count} more"
+msgstr[0] ""
+msgstr[1] ""
+
+#: macos/Iris/AISettingsView.swift:383
+msgid "Search With"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:390
+msgid "Brave Search API Key"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:390
+msgid "Brave Search API Key (Saved)"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:394
+msgid "SearXNG Server Address"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:401
+msgid "Web Search"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:403
+msgid ""
+"Lets the assistant search the web and read pages. Claude searches with "
+"Anthropic's own tools. A local model searches with the engine chosen here, "
+"which receives every query."
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:436
+msgid "Ask Again"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:437
+msgid "Ask again before {tool}"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:441
+msgid "Always Allowed"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:443
+msgid ""
+"Tools from outside sources that run without asking. Remove one to be asked "
+"again next time."
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:476
+msgid "Used For"
+msgstr ""
+
+#: macos/Iris/AISettingsView.swift:478
+msgid "Each feature sends what it reads to the model chosen for it."
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:127
+msgid "Add an account"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:128 macos/Iris/AddAccountView.swift:752
+msgid "Choose where your mail lives."
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:131 macos/Iris/AddAccountView.swift:757
+msgid "Enter server settings by hand"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:140
+msgid "Your Email Address"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:141
+msgid "Iris finds the servers for you."
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:142
+msgid "Email Address"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:142
+msgid "Your email address"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:150 macos/Iris/AddAccountView.swift:159
+msgid "Only the domain leaves this computer, never your full address."
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:157
+msgid "Looking up {domain}"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:179
+msgid "No Other Mail Apps"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:181 macos/Iris/AddAccountView.swift:268
+msgid "Use another address"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:182 macos/Iris/AddAccountView.swift:267
+msgid "Choose another provider"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:190
+msgid "{account} is added"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:197
+msgid "Add Another Account"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:198
+msgid "Open Inbox"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:220
+msgid "Not Now"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:228
+msgid "Continue"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:497
+msgid "Sign in to {domain}"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:504 macos/Iris/AddAccountView.swift:594
+msgid "Server Settings"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:507
+msgid "Use these servers"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:521
+msgid "Your Name"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:530
+msgid "Signing In…"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:532
+msgid "Sign In"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:567
+msgid "Copy Command"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:599
+msgid "Incoming Mail"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:600
+msgid "Protocol"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:607
+msgid "Incoming User Name"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:609
+msgid "Outgoing Mail"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:610
+msgid "Outgoing User Name"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:612
+msgid "Leave them empty to sign in with your address."
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:618
+msgid "Use These Settings"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:628
+msgid "Server"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:629
+msgid "Port"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:630
+msgid "Security"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:662
+msgid "Sign in with {provider} in your browser"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:669
+msgid "Iris stops waiting after five minutes."
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:671
+msgid "Open Page Again"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:672
+msgid "Copy Link"
+msgstr ""
+
+#: macos/Iris/AddAccountView.swift:751
+msgid "Add your first account"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:233 macos/Iris/AssistantView.swift:236
+msgid "New Chat"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:256
+msgid "Set Up the Assistant"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:257
+msgid ""
+"Use a local model from LM Studio, Ollama, or any server with OpenAI's API. "
+"You can also use an Anthropic API key or your Claude subscription."
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:260
+msgid "Choose a Model"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:293
+msgid "Ask Iris…"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:299
+msgid "Ask Iris"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:307 macos/Iris/AssistantView.swift:308
+msgid "Stop"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:327
+msgid ""
+"Ask about your mail, or tell me what to tidy. I can search, summarize, sort, "
+"draft, and change settings."
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:455
+msgid "Don't Allow"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:457
+msgid "Always Allow"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:459
+msgid "Allow"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:471
+msgid "Allowed"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:472
+msgid "Always allowed"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:473
+msgid "Not allowed"
+msgstr ""
+
+#: macos/Iris/AssistantView.swift:510 macos/Iris/ConversationView.swift:39
+#: macos/Iris/ConversationView.swift:47
+msgid "Unsubscribe"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:36
+msgid "Allow Automatic Replies"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:40 macos/Iris/ContactsSettings.swift:31
+#: macos/Iris/InvitationCard.swift:75 macos/Iris/RulesView.swift:26
+msgid "Grant Access"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:46
+msgid "Could Not Load the Automatic Reply"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:63
+msgid "Automatic Reply"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:71
+msgid "Send Automatic Replies"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:76
+msgid "Dates"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:77
+msgid "Only Between These Dates"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:78
+msgid "First Day"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:80
+msgid "Last Day"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:213
+#: macos/Iris/RulesView.swift:169 macos/Iris/TemplatesSettings.swift:98
+msgid "Subject"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:90 macos/Iris/AutoReplyView.swift:92
+msgid "Message"
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:95
+msgid "The same reply goes to people inside and outside your organization."
+msgstr ""
+
+#: macos/Iris/AutoReplyView.swift:101
+msgid "Only Reply to My Contacts"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:57
+msgid "New Event (N)"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:61
+msgid "View"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:62
+msgid "Day"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:63
+msgid "Week"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:64
+msgid "Month"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:83 macos/Iris/CalendarView.swift:84
+#: macos/Iris/CalendarView.swift:113 macos/Iris/EventEditorView.swift:34
+#: macos/Iris/IrisApp.swift:63 macos/Iris/SettingsView.swift:24
+#: macos/Iris/SettingsView.swift:299
+msgid "Calendar"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:90
+msgid "Previous Day"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:91
+msgid "Previous Week"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:92
+msgid "Previous Month"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:98
+msgid "Next Day"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:99
+msgid "Next Week"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:100
+msgid "Next Month"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:61
+msgid "Mail"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:534 macos/Iris/InvitationCard.swift:143
+msgid "Your answer"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:540 macos/Iris/InvitationCard.swift:128
+msgid "Add a note"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:544 macos/Iris/InvitationCard.swift:131
+msgid "The organizer reads it with your answer"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:619 macos/Iris/EventEditorView.swift:90
+msgid "Guests"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:626 macos/Iris/EventEditorView.swift:94
+msgid "Notes"
+msgstr ""
+
+#: macos/Iris/CalendarView.swift:645 macos/Iris/ContactCardView.swift:74
+#: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:48
+#: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:41
+#: macos/Iris/ThreadListView.swift:306 macos/Iris/ThreadListView.swift:307
+msgid "Close"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:60 macos/Iris/ContactCardView.swift:42
+#: macos/Iris/ContactCardView.swift:58 macos/Iris/IrisApp.swift:41
+#: macos/Iris/ThreadListView.swift:89
+msgid "New Message"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:78
+msgid "Iris sends it at this time while it runs, even in the tray."
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:79
+msgid "Schedule"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:82
+msgid "Save as Template"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:83 macos/Iris/TemplatesSettings.swift:97
+msgid "Name"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:88
+msgid "Placeholders such as {{first_name}} fill in each time you use it."
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:103
+msgid "Sign"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:108 macos/Iris/ComposeView.swift:332
+msgid "Encrypt"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:126
+msgid "No Templates Yet"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:132
+msgid "Save as Template…"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:137 macos/Iris/ComposeView.swift:139
+#: macos/Iris/TemplatesSettings.swift:35
+msgid "Templates"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:143
+msgid "Attach Files (Ctrl+Shift+A)"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:155 macos/Iris/LaterView.swift:86
+msgid "Choose a Time…"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:174 macos/Iris/RulesView.swift:167
+msgid "From"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:194 macos/Iris/RulesView.swift:168
+msgid "To"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:196
+msgid "Recipients"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:197
+msgid "Cc/Bcc"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:204
+msgid "Cc"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:208
+msgid "Bcc"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:236
+msgid "Remove {file}"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:256 macos/Iris/ComposeView.swift:261
+msgid "Remove Quoted Text"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:271
+msgid "Forwarded Message"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:366
+msgid "Template saved"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:377
+msgid "Attach Files"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:414
+msgid "Draft saved"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:586
+msgid "Save as Draft?"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:587
+msgid "The draft is kept in Gmail, so you can finish it later on any device."
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:588
+msgid "Save Draft"
+msgstr ""
+
+#: macos/Iris/ComposeView.swift:589
+msgid "Discard"
+msgstr ""
+
+#: macos/Iris/ContactCardView.swift:37
+msgid "Email"
+msgstr ""
+
+#: macos/Iris/ContactCardView.swift:37
+msgid "Other email"
+msgstr ""
+
+#: macos/Iris/ContactCardView.swift:44 macos/Iris/HideMyEmailView.swift:82
+msgid "Copy Address"
+msgstr ""
+
+#: macos/Iris/ContactCardView.swift:51
+msgid "Phone"
+msgstr ""
+
+#: macos/Iris/ContactCardView.swift:59
+msgid "Add to VIPs"
+msgstr ""
+
+#: macos/Iris/ContactCardView.swift:59
+msgid "Remove from VIPs"
+msgstr ""
+
+#: macos/Iris/ContactCardView.swift:63
+msgid "All Their Mail"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:15
+msgid "No accounts yet"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:43 macos/Iris/SettingsView.swift:27
+msgid "Contacts"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:45
+msgid ""
+"Iris can read an account's contacts: names, email addresses, photos, "
+"organizations, and phone numbers. It uses them to suggest recipients, to "
+"show faces beside mail, and to fill the card behind a sender's name. What it "
+"reads stays on this computer, and turning an account off deletes its "
+"contacts."
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:20
+msgid "Remote images are hidden to protect your privacy"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:22
+msgid "Load Images"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:37
+msgid "This message is from a mailing list"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:66
+msgid "No Conversation Selected"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:74
+msgid "Edit Draft"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:83 macos/Iris/ConversationWindow.swift:31
+msgid "Reply All"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:85 macos/Iris/ConversationWindow.swift:32
+msgid "Forward"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:104 macos/Iris/ConversationView.swift:266
+#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:237
+msgid "Mark as Unread"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:258
+msgid "Several Conversations Selected"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:260
+msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:270
+msgid "Move to Trash"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:425
+msgid "Checked"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:426
+msgid "Warning"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:427
+msgid "Not checked"
+msgstr ""
+
+#: macos/Iris/EventEditorView.swift:32
+msgid "Title"
+msgstr ""
+
+#: macos/Iris/EventEditorView.swift:54 macos/Iris/EventEditorView.swift:57
+#: macos/Iris/InvitationCard.swift:302 macos/Iris/SettingsView.swift:328
+msgid "Starts"
+msgstr ""
+
+#: macos/Iris/EventEditorView.swift:55 macos/Iris/EventEditorView.swift:58
+#: macos/Iris/SettingsView.swift:334
+msgid "Ends"
+msgstr ""
+
+#: macos/Iris/EventEditorView.swift:60
+msgid "Place"
+msgstr ""
+
+#: macos/Iris/EventEditorView.swift:73 macos/Iris/SidebarView.swift:141
+msgid "Remove"
+msgstr ""
+
+#: macos/Iris/EventEditorView.swift:81
+msgid "Add guests"
+msgstr ""
+
+#: macos/Iris/EventEditorView.swift:380
+msgid "None of your calendars take new events"
+msgstr ""
+
+#: macos/Iris/FilingView.swift:70 macos/Iris/FilingView.swift:175
+#: macos/Iris/HideMyEmailView.swift:39 macos/Iris/RulesView.swift:198
+#: macos/Iris/SidebarView.swift:150 macos/Iris/TemplatesSettings.swift:119
+msgid "Create"
+msgstr ""
+
+#: macos/Iris/FilingView.swift:167
+msgid "Rename"
+msgstr ""
+
+#: macos/Iris/FilingView.swift:193 macos/Iris/SidebarView.swift:196
+msgid "Rename…"
+msgstr ""
+
+#: macos/Iris/FilingView.swift:204 macos/Iris/SidebarView.swift:202
+msgid "Color"
+msgstr ""
+
+#: macos/Iris/FilingView.swift:216 macos/Iris/SidebarView.swift:215
+msgid "Move Up"
+msgstr ""
+
+#: macos/Iris/FilingView.swift:219 macos/Iris/SidebarView.swift:219
+msgid "Move Down"
+msgstr ""
+
+#: macos/Iris/FilingView.swift:223
+msgid "Delete…"
+msgstr ""
+
+#: macos/Iris/FindView.swift:63
+msgid "No matches"
+msgstr ""
+
+#: macos/Iris/FindView.swift:64
+msgid "{position} of {total} match"
+msgid_plural "{position} of {total} matches"
+msgstr[0] ""
+msgstr[1] ""
+
+#: macos/Iris/FindView.swift:121
+msgid "Find in the conversation"
+msgstr ""
+
+#: macos/Iris/FindView.swift:139 macos/Iris/FindView.swift:140
+msgid "Previous Match"
+msgstr ""
+
+#: macos/Iris/FindView.swift:147 macos/Iris/FindView.swift:148
+msgid "Next Match"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:43
+msgid "Done"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:46
+msgid "Create Address"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:55
+msgid "Hide My Email"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:57
+msgid "Delete Address?"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:71
+msgid "No addresses yet"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:72
+msgid "Create one with the + button."
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:84 macos/Iris/HideMyEmailView.swift:88
+msgid "Receive Mail"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:89
+msgid "Delete Address"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:104
+msgid "Account"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:107
+msgid "Where Did You Use It?"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:123
+msgid "Your New Address"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:125
+msgid "Copy"
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:126
+msgid ""
+"It is on your clipboard. Mail sent to it gets the Hide My Email label in "
+"Gmail."
+msgstr ""
+
+#: macos/Iris/HideMyEmailView.swift:137
+msgid "Address copied"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:72
+msgid "Iris needs permission to show this event in Calendar."
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:132
+msgid "Note with your answer"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:146
+msgid "What the answer covers"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:147
+msgid "This Event"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:148
+msgid "All Events"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:158 macos/Iris/InvitationCard.swift:297
+msgid "Propose New Time"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:163
+msgid "Pick a Time…"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:177
+msgid "Show in Calendar"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:181
+msgid "Calendar to add to"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:187
+msgid "Add to Calendar"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:298
+msgid "The organizer decides. {organizer} hears what you suggest."
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:299
+msgid "Nobody"
+msgstr ""
+
+#: macos/Iris/InvitationCard.swift:308
+msgid "Propose"
+msgstr ""
+
+#: macos/Iris/IrisApp.swift:37
+msgid "Check for Updates…"
+msgstr ""
+
+#: macos/Iris/IrisApp.swift:44
+msgid "Add Account…"
+msgstr ""
+
+#: macos/Iris/IrisApp.swift:47
+msgid "Print…"
+msgstr ""
+
+#: macos/Iris/IrisApp.swift:56
+msgid "Open in New Window"
+msgstr ""
+
+#: macos/Iris/LaterView.swift:91
+msgid ""
+"The conversation leaves the inbox now and comes back at this time, marked "
+"unread."
+msgstr ""
+
+#: macos/Iris/MailModel.swift:552
+msgid "Saved {file} to Downloads"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:554
+msgid "Could not save {file}: {reason}"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:579
+msgid "Saved {file}"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:620
+msgid "Open a conversation first"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:744
+msgid "Sending…"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:831
+msgid "Cancel Send"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:1080
+msgid "Translating…"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:1532
+msgid "Removed {account}"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:1537
+msgid "Could not remove {account}: {reason}"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:1583
+msgid "{account} is signed in again."
+msgstr ""
+
+#: macos/Iris/RichEditor.swift:171
+msgid "Add a Link"
+msgstr ""
+
+#: macos/Iris/RichEditor.swift:175
+msgid "Add Link"
+msgstr ""
+
+#: macos/Iris/RichEditor.swift:417 macos/Iris/RichEditor.swift:426
+msgid "Paragraph"
+msgstr ""
+
+#: macos/Iris/RichEditor.swift:418
+msgid "Heading 1"
+msgstr ""
+
+#: macos/Iris/RichEditor.swift:419
+msgid "Heading 2"
+msgstr ""
+
+#: macos/Iris/RichEditor.swift:420
+msgid "Heading 3"
+msgstr ""
+
+#: macos/Iris/RichEditor.swift:432 macos/Iris/RichEditor.swift:434
+msgid "Clear Formatting"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:22
+msgid "Allow Rules"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:38 macos/Iris/RulesView.swift:63
+msgid "Add Rule"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:47
+msgid "Rules"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:79 macos/Iris/RulesView.swift:205
+msgid "Edit Rule"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:84
+msgid "Edit the rule for {mail}"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:88
+msgid "Delete the rule for {mail}"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:96
+msgid "Rules Written Elsewhere"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:166
+msgid "When Mail Matches"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:170
+msgid "Has the Words"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:171
+msgid "Doesn't Have"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:172
+msgid "Has an Attachment"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:174
+msgid "Do This"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:177
+msgid "Star It"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:178
+msgid "Apply Label"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:178
+msgid "Move to Folder"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:182
+msgid "Don't Apply a Label"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:182
+msgid "Don't Move"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:186
+msgid "Never Send to Spam"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:188
+msgid "Delete It"
+msgstr ""
+
+#: macos/Iris/RulesView.swift:205
+msgid "New Rule"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:18
+msgid "General"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:21
+msgid "Writing"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:30
+msgid "Sync"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:33
+msgid "AI"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:36 macos/Iris/SettingsView.swift:552
+msgid "Language"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:106
+msgid "Check for Updates"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:106
+msgid "Look for a new release once a day"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:158
+msgid "Reading"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:159
+msgid "Group Messages into Conversations"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:160
+msgid "Show a thread's replies together instead of one row per message"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:162
+msgid "Group Inbox into Categories"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:163
+msgid ""
+"Sort the inbox into Primary, Updates, Promotions, and Social, as Gmail does"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:165
+msgid "Open the Inbox On"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:165
+msgid "Which category the window starts on"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:168
+msgid "Suggest Follow-Ups"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:169
+msgid "List mail you sent that has had no reply for three days"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:172
+msgid "Loading them can tell senders when you read their mail"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:172
+msgid "Remote Images"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:175
+msgid "Text Size"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:177
+msgid "Appearance"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:178
+msgid "Style"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:182
+msgid "Notifications"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:183
+msgid "Notify About New Mail"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:185
+msgid "Only for VIPs"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:185
+msgid "Stay quiet about mail from everyone else"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:187
+msgid "Show Sender and Subject"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:187
+msgid "Turn off to see only how much mail arrived"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:195
+msgid "Buttons"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:195
+msgid "What a notification offers besides opening the conversation"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:218
+msgid "Anyone at this domain"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:218
+msgid "This address"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:227
+msgid "Stop Loading Images from This Sender"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:228
+msgid "Stop loading images from {sender}"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:232
+msgid "Senders Who May Load Images"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:238
+msgid "Nobody yet"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:239
+msgid "{count} sender"
+msgid_plural "{count} senders"
+msgstr[0] ""
+msgstr[1] ""
+
+#: macos/Iris/SettingsView.swift:251
+msgid "New Messages"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:260
+msgid "Send New Messages From"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:261
+msgid "Replies always come from the account that received the message"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:263
+msgid "New Messages Start As"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:264
+msgid "Rich text styles the words themselves; Markdown shows its marks"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:266
+msgid "How long you can take a message back after sending it"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:266
+msgid "Undo Send"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:268
+msgid "Check for Missing Attachments"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:269
+msgid "Ask before sending a message that promises a file and carries none"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:272
+msgid "Signatures"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:274
+msgid "No Accounts Yet"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:300
+msgid "Event Reminders"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:301
+msgid ""
+"A notification before each event, at the times the event or its calendar sets"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:303
+msgid "Week Starts On"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:304
+msgid "Automatic follows the locale's own first day of the week"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:307
+msgid "Working Hours"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:326
+msgid "Hours"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:333
+msgid "–"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:341
+msgid "Days"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:396
+msgid "Checking"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:397
+msgid "Check for New Mail"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:399
+msgid "Storage"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:400
+msgid "Keep Mail on This Computer For"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:401
+msgid "Everything in your inbox stays too, and older mail remains searchable"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:403
+msgid "Bodies of mail you have read, kept for opening offline"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:403
+msgid "Message Cache"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:440
+msgid "Signature for {account}"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:443
+msgid "This signature goes out as it was made, pictures and layout included."
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:466
+msgid "Import from Gmail"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:467
+msgid "Paste Formatted Signature"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:468
+msgid "Import from File…"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:470
+msgid "Remove Formatted Signature"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:485
+msgid "Gmail has no signature for this account"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:492
+msgid "Imported the signature from Gmail"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:494 macos/Iris/SettingsView.swift:517
+msgid "Could not import: {reason}"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:503
+msgid "There is no formatted signature to bring in"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:529
+msgid "Formatted signature saved"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:547
+msgid "Follow System"
+msgstr ""
+
+#: macos/Iris/SettingsView.swift:553
+msgid "Iris shows a new language after a restart"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:132
+msgid "Account options"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:155
+msgid "Name This Account"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:163
+msgid ""
+"The sidebar shows the name instead of the address. Leave it empty for the "
+"address."
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:174 macos/Iris/ThreadListView.swift:81
+msgid "Check for Mail"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:178
+msgid "Automatic Reply…"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:181
+msgid "Signature…"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:185
+msgid "Rules…"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:188
+msgid "Hide My Email…"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:224
+msgid "Sign In Again…"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:228
+msgid "Remove Account…"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:254
+msgid "Sign in again to keep syncing"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:21 macos/Iris/TemplatesSettings.swift:95
+msgid "Edit Template"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:24
+msgid "Edit {template}"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:25
+msgid "Delete Template"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:28
+msgid "Delete {template}"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:31
+msgid "Add Template"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:37
+msgid ""
+"Saved bodies the composer's Templates menu drops into a message. Markdown "
+"works, and {{first_name}}, {{name}}, {{email}}, {{subject}} and {{date}} "
+"fill in when you use one."
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:46
+msgid "Delete {name}?"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:56
+msgid "This computer keeps the only copy."
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:95
+msgid "New Template"
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:101
+msgid ""
+"The subject is optional. A template with one gives it to a message that has "
+"none."
+msgstr ""
+
+#: macos/Iris/TemplatesSettings.swift:111
+msgid "Body"
+msgstr ""
+
+#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:378
+msgid "Search mail"
+msgstr ""
+
+#: macos/Iris/ThreadListView.swift:267
+msgid "Clear Flag"
+msgstr ""
+
+#: macos/Iris/ThreadListView.swift:282
+msgid "Undo"
+msgstr ""
+
+#: render/src/calendar_words.rs:28
+msgid "%A %-d %B"
+msgstr ""
+
+#: render/src/calendar_words.rs:34
+msgid "%A %-d"
+msgstr ""
+
+#: render/src/calendar_words.rs:66 render/src/calendar_words.rs:161
+msgid "All day"
 msgstr ""
 
 #: render/src/calendar_words.rs:72
@@ -8741,6 +5577,14 @@ msgstr ""
 
 #: render/src/calendar_words.rs:140
 msgid "{date} {time}"
+msgstr ""
+
+#: render/src/calendar_words.rs:148
+msgid "{title}, {start} to {end}, {calendar}"
+msgstr ""
+
+#: render/src/calendar_words.rs:164
+msgid "{start}–{end}"
 msgstr ""
 
 #: render/src/calendar_words.rs:175
@@ -8815,6 +5659,10 @@ msgstr ""
 msgid "Offline, last updated {time}"
 msgstr ""
 
+#: render/src/calendar_words.rs:358
+msgid "Offline"
+msgstr ""
+
 #: render/src/calendar_words.rs:378
 msgid "{weekday} {time}"
 msgstr ""
@@ -8855,6 +5703,10 @@ msgid_plural "{count} minutes before"
 msgstr[0] ""
 msgstr[1] ""
 
+#: render/src/calendar_words.rs:466
+msgid "Never"
+msgstr ""
+
 #: render/src/calendar_words.rs:468
 msgid "Every weekday"
 msgstr ""
@@ -8885,12 +5737,24 @@ msgstr[1] ""
 msgid "Summarize"
 msgstr ""
 
+#: render/src/conversation.rs:245
+msgid "Unknown sender"
+msgstr ""
+
 #: render/src/conversation.rs:257
 msgid "Show or hide this message"
 msgstr ""
 
+#: render/src/conversation.rs:259
+msgid "Contact"
+msgstr ""
+
 #: render/src/conversation.rs:264
 msgid "Contact card for {person}"
+msgstr ""
+
+#: render/src/conversation.rs:323
+msgid "Invitation"
 msgstr ""
 
 #: render/src/conversation.rs:336
@@ -8945,8 +5809,18 @@ msgstr ""
 msgid "Not encrypted in transit"
 msgstr ""
 
+#: render/src/conversation.rs:481
+msgid "{count} attachment"
+msgid_plural "{count} attachments"
+msgstr[0] ""
+msgstr[1] ""
+
 #: render/src/conversation.rs:513
 msgid "Quick Look"
+msgstr ""
+
+#: render/src/conversation.rs:514
+msgid "Save to Downloads"
 msgstr ""
 
 #: render/src/conversation.rs:516
@@ -8981,8 +5855,20 @@ msgstr[1] ""
 msgid "me"
 msgstr ""
 
+#: render/src/conversation.rs:631
+msgid "Show trimmed content"
+msgstr ""
+
 #: render/src/format.rs:36 render/src/format.rs:384
 msgid "Yesterday"
+msgstr ""
+
+#: render/src/format.rs:37 render/src/format.rs:383
+msgid "Tomorrow"
+msgstr ""
+
+#: render/src/format.rs:38 render/src/format.rs:385
+msgid "%A"
 msgstr ""
 
 #: render/src/format.rs:39
@@ -9073,6 +5959,10 @@ msgstr ""
 msgid "{date} · {start}"
 msgstr ""
 
+#: render/src/format.rs:382
+msgid "Today"
+msgstr ""
+
 #: render/src/format.rs:386
 msgid "%A, %-d %B"
 msgstr ""
@@ -9115,8 +6005,28 @@ msgstr[1] ""
 msgid "a minute"
 msgstr ""
 
+#: sync/src/actions.rs:117
+msgid "Flag"
+msgstr ""
+
+#: sync/src/actions.rs:118
+msgid "Unflag"
+msgstr ""
+
+#: sync/src/actions.rs:119
+msgid "Remind Me"
+msgstr ""
+
+#: sync/src/actions.rs:120
+msgid "Cancel Reminder"
+msgstr ""
+
 #: sync/src/actions.rs:123 sync/src/actions.rs:681
 msgid "Change labels"
+msgstr ""
+
+#: sync/src/actions.rs:124
+msgid "Dismiss Follow-Up"
 msgstr ""
 
 #: sync/src/actions.rs:349
@@ -9194,6 +6104,30 @@ msgstr ""
 msgid "Drafts"
 msgstr ""
 
+#: sync/src/mailbox.rs:83
+msgid "Muted"
+msgstr ""
+
+#: sync/src/mailbox.rs:90
+msgid "All Inboxes"
+msgstr ""
+
+#: sync/src/mailbox.rs:187
+msgid "Search"
+msgstr ""
+
+#: sync/src/mailbox.rs:189
+msgid "Send Later"
+msgstr ""
+
+#: sync/src/mailbox.rs:190
+msgid "Outbox"
+msgstr ""
+
+#: sync/src/mailbox.rs:192
+msgid "Follow Up"
+msgstr ""
+
 #: sync/src/mailbox.rs:193
 msgid "{color} Flag"
 msgstr ""
@@ -9250,6 +6184,10 @@ msgstr ""
 msgid "Trash Is Empty"
 msgstr ""
 
+#: sync/src/mailbox.rs:344 sync/src/mailbox.rs:358 sync/src/mailbox.rs:423
+msgid "No Mail"
+msgstr ""
+
 #: sync/src/mailbox.rs:349
 msgid "Inbox Zero"
 msgstr ""
@@ -9272,6 +6210,15 @@ msgstr ""
 
 #: sync/src/mailbox.rs:357
 msgid "No Muted Mail"
+msgstr ""
+
+#: sync/src/mailbox.rs:395
+msgctxt "mailbox"
+msgid "Archive"
+msgstr ""
+
+#: sync/src/mailbox.rs:396
+msgid "Junk"
 msgstr ""
 
 #: sync/src/mailbox.rs:397
@@ -9498,8 +6445,30 @@ msgstr ""
 msgid "The rule is read-only."
 msgstr ""
 
+#: sync/src/settings.rs:333
+msgid "Made elsewhere. Change it where you made it."
+msgstr ""
+
 #: sync/src/sign_in.rs:168
 msgid "{address} is already in Iris as a {provider} account."
+msgstr ""
+
+#: sync/src/sign_in.rs:389
+msgid ""
+"This server cannot tell its messages apart, so Iris cannot download from it "
+"safely."
+msgstr ""
+
+#: sync/src/sign_in/browser.rs:96
+msgid ""
+"This copy of Iris was built without Google sign-in. Get a release from "
+"github.com/AlbertoBarrago/iris/releases."
+msgstr ""
+
+#: sync/src/sign_in/browser.rs:100
+msgid ""
+"This copy of Iris was built without Microsoft sign-in. Get a release from "
+"github.com/AlbertoBarrago/iris/releases."
 msgstr ""
 
 #: sync/src/sign_in/browser.rs:109
@@ -9545,6 +6514,10 @@ msgstr ""
 msgid "Remove label {label}"
 msgstr ""
 
+#: sync/src/triage.rs:63
+msgid "Move to trash"
+msgstr ""
+
 #: sync/src/triage.rs:64
 msgid "Move out of trash"
 msgstr ""
@@ -9555,6 +6528,14 @@ msgstr ""
 
 #: sync/src/triage.rs:66
 msgid "Mark as not junk"
+msgstr ""
+
+#: sync/src/triage.rs:67
+msgid "Mute"
+msgstr ""
+
+#: sync/src/triage.rs:68
+msgid "Unmute"
 msgstr ""
 
 #: sync/src/triage.rs:70
@@ -9695,6 +6676,18 @@ msgstr[1] ""
 msgid "Favorites"
 msgstr ""
 
+#: view/src/sections.rs:27
+msgid "Mailboxes"
+msgstr ""
+
 #: view/src/sections.rs:28
 msgid "Smart Mailboxes"
+msgstr ""
+
+#: view/src/sections.rs:29
+msgid "Accounts"
+msgstr ""
+
+#: view/src/sidebar.rs:153
+msgid "VIPs"
 msgstr ""

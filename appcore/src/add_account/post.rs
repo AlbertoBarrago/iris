@@ -693,13 +693,17 @@ mod tests {
 
     #[test]
     fn every_logo_a_stamp_names_ships_in_the_resources() {
-        let manifest = include_str!("../../../app/data/iris.gresource.xml");
+        // The app bundles data/logos as it is, so each logo is a file there.
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/logos");
+        let files: Vec<String> = std::fs::read_dir(&dir)
+            .expect("data/logos is there")
+            .flatten()
+            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .collect();
         for name in ["Google", "Microsoft", "iCloud Mail"] {
             let logo = stamp_for(name).logo.expect(name);
-            let listed = manifest
-                .lines()
-                .any(|line| line.contains(&format!("logos/{logo}.")));
-            assert!(listed, "{logo} is not in the gresource manifest");
+            let listed = files.iter().any(|file| file.starts_with(&format!("{logo}.")));
+            assert!(listed, "{logo} is not in data/logos");
         }
     }
 

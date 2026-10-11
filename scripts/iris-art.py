@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Draws Iris's winged envelope: the seven Add Account poses and the app icons.
 
-The envelope geometry per pose matches `Env::of` in app/src/ui/post_band.rs,
+The envelope geometry per pose matches `Envelope(pose:)` in macos/Iris/PostBand.swift,
 so the stamp, badge, dots and glint the app draws on top land in place. Change
 the two together. Run from the repository root: scripts/iris-art.py .
 """
@@ -10,8 +10,8 @@ import os
 import sys
 
 ROOT = sys.argv[1]
-BAND = os.path.join(ROOT, "app/data/band")
-ICONS = os.path.join(ROOT, "app/data/icons")
+BAND = os.path.join(ROOT, "data/band")
+ICONS = os.path.join(ROOT, "data/icons")
 
 PAPER = "#fbf7f0"
 # Degrees between neighbouring feathers.

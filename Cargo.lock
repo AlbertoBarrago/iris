@@ -496,29 +496,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
 
 [[package]]
-name = "cairo-rs"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df683f1d30b457964673a5541a4603208ef95ab6873d2a55871895cf310f3b56"
-dependencies = [
- "bitflags",
- "cairo-sys-rs",
- "glib",
- "libc",
-]
-
-[[package]]
-name = "cairo-sys-rs"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee548131103ad8f698c6725669647b9c757b3b66992dd6a026037596417bee21"
-dependencies = [
- "glib-sys",
- "libc",
- "system-deps 9.0.0",
-]
-
-[[package]]
 name = "calcard"
 version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -584,16 +561,6 @@ dependencies = [
  "jobserver",
  "libc",
  "shlex",
-]
-
-[[package]]
-name = "cfg-expr"
-version = "0.20.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe4ece8474b5f766c63426647e7b4b316b67431ade1036a8313cee24a03ae917"
-dependencies = [
- "smallvec",
- "target-lexicon",
 ]
 
 [[package]]
@@ -1090,16 +1057,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
 
 [[package]]
-name = "field-offset"
-version = "0.3.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38e2275cc4e4fc009b0669731a1e5ab7ebf11f469eaede2bab9309a5b4d6057f"
-dependencies = [
- "memoffset",
- "rustc_version",
-]
-
-[[package]]
 name = "find-msvc-tools"
 version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1254,63 +1211,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gdk-pixbuf"
-version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25f420376dbee041b2db374ce4573892a36222bb3f6c0c43e24f0d67eae9b646"
-dependencies = [
- "gdk-pixbuf-sys",
- "gio",
- "glib",
- "libc",
-]
-
-[[package]]
-name = "gdk-pixbuf-sys"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d5209294ba3775f9b650bf78bfadeba4332089f2329b3e2f6ce0a4957a45bff"
-dependencies = [
- "gio-sys",
- "glib-sys",
- "gobject-sys",
- "libc",
- "system-deps 9.0.0",
-]
-
-[[package]]
-name = "gdk4"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d81e2a6c6ecba2aab60633a98df1868b03fa0bfdce8105edc27c1bccf71f0e39"
-dependencies = [
- "cairo-rs",
- "gdk-pixbuf",
- "gdk4-sys",
- "gio",
- "glib",
- "libc",
- "pango",
-]
-
-[[package]]
-name = "gdk4-sys"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d8f608d8d7d229975c4d0d026f5d3071598c4ddab3c5262b0a31840fec78d13"
-dependencies = [
- "cairo-sys-rs",
- "gdk-pixbuf-sys",
- "gio-sys",
- "glib-sys",
- "gobject-sys",
- "libc",
- "pango-sys",
- "pkg-config",
- "system-deps 7.0.8",
-]
-
-[[package]]
 name = "gethostname"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1389,94 +1289,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "gio"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b399f4650bb52c051f3fdf49a234e8a27ab5725c8cd774556c55eee64b2c0350"
-dependencies = [
- "futures-channel",
- "futures-core",
- "futures-io",
- "futures-util",
- "gio-sys",
- "glib",
- "libc",
- "pin-project-lite",
- "smallvec",
-]
-
-[[package]]
-name = "gio-sys"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c28739f914c15b87a9856000bed9cbd5b3a8afbca5e982d9a299e1601422cb5"
-dependencies = [
- "glib-sys",
- "gobject-sys",
- "libc",
- "system-deps 9.0.0",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "glib"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18b9b8d350db41f690ec1b87109f202782748bbd8ab2f2ede17cb40d29e2838c"
-dependencies = [
- "bitflags",
- "futures-channel",
- "futures-core",
- "futures-executor",
- "futures-task",
- "futures-util",
- "gio-sys",
- "glib-macros",
- "glib-sys",
- "gobject-sys",
- "libc",
- "memchr",
- "smallvec",
-]
-
-[[package]]
-name = "glib-macros"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c9597c68fa7bdf4154a3079642cd21c4dccac0b0bdd2897d82861523bf91e7b9"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "syn 3.0.6",
-]
-
-[[package]]
-name = "glib-sys"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99b38907e67e40dec9b60f858bcada952598719cb512a13eb13d6cdcd16f8295"
-dependencies = [
- "libc",
- "system-deps 9.0.0",
-]
-
-[[package]]
 name = "glob"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e4eba85ea1d0a966a983acd07deee566e67395d2d96b6fb39e62b5a833f1eb0b"
-
-[[package]]
-name = "gobject-sys"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07595c9ba696bd9819cb6a8df39f08078f3dd679508fe052dd558492c2053834"
-dependencies = [
- "glib-sys",
- "libc",
- "system-deps 9.0.0",
-]
 
 [[package]]
 name = "goblin"
@@ -1487,110 +1303,6 @@ dependencies = [
  "log",
  "plain",
  "scroll",
-]
-
-[[package]]
-name = "graphene-rs"
-version = "0.22.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb856b9c558971c3f13ab692358926da710b046932a4e087aedcc35b040d7dff"
-dependencies = [
- "glib",
- "graphene-sys",
-]
-
-[[package]]
-name = "graphene-sys"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97842c7543828f98aa5583aa54fcda28aa84fa2b0f8c556142177f7bbb638057"
-dependencies = [
- "glib-sys",
- "libc",
- "system-deps 9.0.0",
-]
-
-[[package]]
-name = "gsk4"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b867be1c5f14dcb8f552c0eff6e9a9b1da5f8b43943e8efc3a63c889d84952ff"
-dependencies = [
- "cairo-rs",
- "gdk4",
- "glib",
- "graphene-rs",
- "gsk4-sys",
- "libc",
- "pango",
-]
-
-[[package]]
-name = "gsk4-sys"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b7c7eb2e681ee896646cfb8872b431f24d09f53ba9283289d9b10caa6707088"
-dependencies = [
- "cairo-sys-rs",
- "gdk4-sys",
- "glib-sys",
- "gobject-sys",
- "graphene-sys",
- "libc",
- "pango-sys",
- "system-deps 7.0.8",
-]
-
-[[package]]
-name = "gtk4"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98a0a0466484f64b07b5b8184d43fa46be78eb0b8e04ae4e179af31d770b76d9"
-dependencies = [
- "cairo-rs",
- "field-offset",
- "futures-channel",
- "gdk-pixbuf",
- "gdk4",
- "gio",
- "glib",
- "graphene-rs",
- "gsk4",
- "gtk4-macros",
- "gtk4-sys",
- "libc",
- "pango",
-]
-
-[[package]]
-name = "gtk4-macros"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ac7179400a36a04de039c24206bb841c5596992b907b43b23ee8d5bdc40d00e"
-dependencies = [
- "proc-macro-crate",
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
-[[package]]
-name = "gtk4-sys"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "82b8f954786af0b1984425c4446b77f5ff6594346181316be3f850caab1c6f01"
-dependencies = [
- "cairo-sys-rs",
- "gdk-pixbuf-sys",
- "gdk4-sys",
- "gio-sys",
- "glib-sys",
- "gobject-sys",
- "graphene-sys",
- "gsk4-sys",
- "libc",
- "pango-sys",
- "system-deps 7.0.8",
 ]
 
 [[package]]
@@ -2216,36 +1928,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "libadwaita"
-version = "0.9.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85b9900e67182a4b5b1f157b448d94f0715c8b9770cce21cf000801917f53bfa"
-dependencies = [
- "gdk4",
- "gio",
- "glib",
- "gtk4",
- "libadwaita-sys",
- "pango",
-]
-
-[[package]]
-name = "libadwaita-sys"
-version = "0.9.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "28d3c27642b389852aa99341bd4a4c19ec6f8a2b63ebdd7f5ba1952198079ccd"
-dependencies = [
- "gdk4-sys",
- "gio-sys",
- "glib-sys",
- "gobject-sys",
- "gtk4-sys",
- "libc",
- "pango-sys",
- "system-deps 7.0.8",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.189"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2351,62 +2033,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "mailrs"
-version = "1.0.11"
-dependencies = [
- "ammonia",
- "anyhow",
- "async-channel 2.5.0",
- "base64 0.23.1",
- "chrono",
- "chrono-tz",
- "futures",
- "gettext-rs",
- "gtk4",
- "libadwaita",
- "libc",
- "mail-builder",
- "mail-parser",
- "mailrs-ai",
- "mailrs-appcore",
- "mailrs-discover",
- "mailrs-domain",
- "mailrs-gmail",
- "mailrs-graph",
- "mailrs-imap",
- "mailrs-mime",
- "mailrs-pgp",
- "mailrs-render",
- "mailrs-smime",
- "mailrs-store",
- "mailrs-sync",
- "mailrs-view",
- "mailrs-webkit",
- "notify-rust",
- "objc2",
- "objc2-app-kit",
- "objc2-foundation",
- "pulldown-cmark",
- "rand",
- "reqwest",
- "rusqlite",
- "serde",
- "serde_json",
- "sha2",
- "spellbook",
- "tempfile",
- "thiserror 2.0.20",
- "tokio",
- "toml",
- "tracing",
- "tracing-subscriber",
- "url",
- "wiremock",
-]
-
-[[package]]
 name = "mailrs-ai"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "async-channel 2.5.0",
  "base64 0.23.1",
@@ -2423,7 +2051,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-appcore"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "ammonia",
  "anyhow",
@@ -2465,7 +2093,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-cli"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "async-channel 2.5.0",
@@ -2483,7 +2111,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-dav"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "base64 0.23.1",
  "calcard",
@@ -2506,7 +2134,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-discover"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "futures",
  "hickory-resolver",
@@ -2526,7 +2154,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-domain"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "chrono",
  "chrono-tz",
@@ -2540,7 +2168,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-ffi"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "async-channel 2.5.0",
  "chrono",
@@ -2572,7 +2200,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-gmail"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "base64 0.23.1",
  "chrono",
@@ -2594,7 +2222,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-graph"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "base64 0.23.1",
  "chrono",
@@ -2613,7 +2241,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-imap"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "async-imap",
  "base64 0.23.1",
@@ -2635,7 +2263,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-mime"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "base64 0.23.1",
  "encoding_rs",
@@ -2646,7 +2274,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-pgp"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "libc",
  "mail-builder",
@@ -2657,7 +2285,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-pop3"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "base64 0.23.1",
  "mailrs-discover",
@@ -2672,7 +2300,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-render"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "ammonia",
  "chrono",
@@ -2686,7 +2314,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-sieve"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "base64 0.23.1",
  "chrono",
@@ -2704,7 +2332,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-smime"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "mail-builder",
  "mailrs-pgp",
@@ -2715,7 +2343,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-store"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "chrono",
  "mailrs-domain",
@@ -2731,7 +2359,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-sync"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "async-channel 2.5.0",
@@ -2769,7 +2397,7 @@ dependencies = [
 
 [[package]]
 name = "mailrs-testmail"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "rand",
  "reqwest",
@@ -2780,27 +2408,10 @@ dependencies = [
 
 [[package]]
 name = "mailrs-view"
-version = "1.0.11"
+version = "1.1.0"
 dependencies = [
  "mailrs-domain",
  "mailrs-sync",
-]
-
-[[package]]
-name = "mailrs-webkit"
-version = "1.0.11"
-dependencies = [
- "block2",
- "futures",
- "gtk4",
- "objc2",
- "objc2-app-kit",
- "objc2-core-foundation",
- "objc2-core-graphics",
- "objc2-foundation",
- "objc2-quartz-core",
- "objc2-web-kit",
- "tracing",
 ]
 
 [[package]]
@@ -3111,110 +2722,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "objc2-app-kit"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d49e936b501e5c5bf01fda3a9452ff86dc3ea98ad5f283e1455153142d97518c"
-dependencies = [
- "bitflags",
- "block2",
- "libc",
- "objc2",
- "objc2-cloud-kit",
- "objc2-core-data",
- "objc2-core-foundation",
- "objc2-core-graphics",
- "objc2-core-image",
- "objc2-core-text",
- "objc2-core-video",
- "objc2-foundation",
- "objc2-quartz-core",
-]
-
-[[package]]
-name = "objc2-cloud-kit"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73ad74d880bb43877038da939b7427bba67e9dd42004a18b809ba7d87cee241c"
-dependencies = [
- "bitflags",
- "objc2",
- "objc2-foundation",
-]
-
-[[package]]
-name = "objc2-core-data"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b402a653efbb5e82ce4df10683b6b28027616a2715e90009947d50b8dd298fa"
-dependencies = [
- "bitflags",
- "objc2",
- "objc2-foundation",
-]
-
-[[package]]
 name = "objc2-core-foundation"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536"
 dependencies = [
  "bitflags",
- "block2",
  "dispatch2",
- "libc",
  "objc2",
-]
-
-[[package]]
-name = "objc2-core-graphics"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e022c9d066895efa1345f8e33e584b9f958da2fd4cd116792e15e07e4720a807"
-dependencies = [
- "bitflags",
- "block2",
- "dispatch2",
- "libc",
- "objc2",
- "objc2-core-foundation",
- "objc2-io-surface",
- "objc2-metal",
-]
-
-[[package]]
-name = "objc2-core-image"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5d563b38d2b97209f8e861173de434bd0214cf020e3423a52624cd1d989f006"
-dependencies = [
- "objc2",
- "objc2-foundation",
-]
-
-[[package]]
-name = "objc2-core-text"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0cde0dfb48d25d2b4862161a4d5fcc0e3c24367869ad306b0c9ec0073bfed92d"
-dependencies = [
- "bitflags",
- "objc2",
- "objc2-core-foundation",
- "objc2-core-graphics",
-]
-
-[[package]]
-name = "objc2-core-video"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d425caf1df73233f29fd8a5c3e5edbc30d2d4307870f802d18f00d83dc5141a6"
-dependencies = [
- "bitflags",
- "objc2",
- "objc2-core-foundation",
- "objc2-core-graphics",
- "objc2-io-surface",
 ]
 
 [[package]]
@@ -3234,82 +2749,6 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-core-foundation",
-]
-
-[[package]]
-name = "objc2-io-surface"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "180788110936d59bab6bd83b6060ffdfffb3b922ba1396b312ae795e1de9d81d"
-dependencies = [
- "bitflags",
- "objc2",
- "objc2-core-foundation",
-]
-
-[[package]]
-name = "objc2-javascript-core"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a1e6550c4caed348956ce3370c9ffeca70bb1dbed4fa96112e7c6170e074586"
-dependencies = [
- "objc2",
- "objc2-core-foundation",
-]
-
-[[package]]
-name = "objc2-metal"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0125f776a10d00af4152d74616409f0d4a2053a6f57fa5b7d6aa2854ac04794"
-dependencies = [
- "bitflags",
- "objc2",
- "objc2-foundation",
-]
-
-[[package]]
-name = "objc2-quartz-core"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96c1358452b371bf9f104e21ec536d37a650eb10f7ee379fff67d2e08d537f1f"
-dependencies = [
- "bitflags",
- "block2",
- "libc",
- "objc2",
- "objc2-core-foundation",
- "objc2-core-graphics",
- "objc2-core-video",
- "objc2-foundation",
- "objc2-metal",
-]
-
-[[package]]
-name = "objc2-security"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "709fe137109bd1e8b5a99390f77a7d8b2961dafc1a1c5db8f2e60329ad6d895a"
-dependencies = [
- "bitflags",
- "objc2",
- "objc2-core-foundation",
-]
-
-[[package]]
-name = "objc2-web-kit"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b2e5aaab980c433cf470df9d7af96a7b46a9d892d521a2cbbb2f8a4c16751e7f"
-dependencies = [
- "bitflags",
- "block2",
- "objc2",
- "objc2-app-kit",
- "objc2-core-foundation",
- "objc2-foundation",
- "objc2-javascript-core",
- "objc2-security",
 ]
 
 [[package]]
@@ -3357,29 +2796,6 @@ checksum = "9aa2b01e1d916879f73a53d01d1d6cee68adbb31d6d9177a8cfce093cced1d50"
 dependencies = [
  "futures-core",
  "pin-project-lite",
-]
-
-[[package]]
-name = "pango"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b2022dbbd82e1c42bd950a6f1df9b98c796e725dce5ec275e03cbf9772e4efa"
-dependencies = [
- "gio",
- "glib",
- "pango-sys",
-]
-
-[[package]]
-name = "pango-sys"
-version = "0.22.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca02d64761b74d56cdd4b437db6d73dc95e6c0d40f27e1c707952c0f09052948"
-dependencies = [
- "glib-sys",
- "gobject-sys",
- "libc",
- "system-deps 9.0.0",
 ]
 
 [[package]]
@@ -4288,16 +3704,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "spellbook"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d204abcbdf8e88729306a8d0ca01a79d8a49969fe1f84696909d6dbc4321c1a"
-dependencies = [
- "foldhash",
- "hashbrown 0.17.1",
-]
-
-[[package]]
 name = "sqlite-wasm-rs"
 version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4433,42 +3839,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "system-deps"
-version = "7.0.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "396a35feb67335377e0251fcbc1092fc85c484bd4e3a7a54319399da127796e7"
-dependencies = [
- "cfg-expr",
- "heck",
- "pkg-config",
- "toml",
- "version-compare",
-]
-
-[[package]]
-name = "system-deps"
-version = "9.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a0dae2cbca1f0ff93795713cfe0a4c02f760e3c0b8ae2ab4ec4045808ff429f"
-dependencies = [
- "cfg-expr",
- "heck",
- "pkg-config",
- "toml",
- "version-compare",
-]
-
-[[package]]
 name = "tagptr"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
-
-[[package]]
-name = "target-lexicon"
-version = "0.13.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
 
 [[package]]
 name = "tauri-winrt-notification"
@@ -5026,12 +4400,6 @@ name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
-
-[[package]]
-name = "version-compare"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03c2856837ef78f57382f06b2b8563a2f512f7185d732608fd9176cb3b8edf0e"
 
 [[package]]
 name = "version_check"

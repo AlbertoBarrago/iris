@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Draws Iris Next's app icon, the winged envelope that scripts/iris-art.py
+# Draws Iris's app icon, the winged envelope that scripts/iris-art.py
 # writes, into macos/Iris/Assets.xcassets/AppIcon.appiconset at every size
 # macOS asks for. Run it again after changing the art.
 #
@@ -8,7 +8,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 command -v rsvg-convert >/dev/null || { echo "rsvg-convert is missing: brew install librsvg" >&2; exit 1; }
-svg=app/data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg
+svg=data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg
 set_dir=macos/Iris/Assets.xcassets/AppIcon.appiconset
 mkdir -p "$set_dir"
 images=""

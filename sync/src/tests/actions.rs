@@ -704,7 +704,7 @@ async fn removing_the_mute_label_clears_the_muted_keyword() {
 }
 
 /// Dragging out of Muted into All Mail takes the mail out of the `$muted`
-/// set (`app/src/ui/moving.rs`'s All Mail arm), and Undo puts it back.
+/// set (`appcore/src/moving.rs`'s All Mail arm), and Undo puts it back.
 #[tokio::test]
 async fn dragging_out_of_muted_onto_all_mail_clears_the_muted_keyword() {
     let h = harness().await;

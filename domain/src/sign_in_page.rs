@@ -6,7 +6,7 @@ use crate::translate::gettext;
 /// The app's own icon, drawn at the top of the page the browser shows
 /// when sign-in hands back. It is inline, so the page loads nothing.
 const APP_ICON: &str =
-    include_str!("../../app/data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg");
+    include_str!("../../data/icons/scalable/apps/io.github.AlbertoBarrago.Iris.svg");
 
 /// "Iris" in Manrope Bold, as outlines, so the page shows the
 /// brand's lettering without loading or bundling the font. It takes its

@@ -2,7 +2,7 @@
 
 The Add Account tiles show these marks. They are their owners' trademarks and
 Iris uses them only to identify the service. Files are in
-`app/data/logos/` and ship in the app's resources.
+`data/logos/` and ship in the app's resources.
 
 | Mark | Owner | Source | File |
 |---|---|---|---|

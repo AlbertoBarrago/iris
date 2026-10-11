@@ -896,7 +896,7 @@ mod body_tests {
     /// dropped the tag and the page's own font showed instead.
     #[test]
     fn the_body_tag_s_styles_move_to_the_wrapper() {
-        let out = clean(include_str!("../../app/src/demo/github-ci.html"));
+        let out = clean(include_str!("fixtures/github-ci.html"));
         let body = style_of(&out, "mailrs-body");
         assert!(
             body.contains("font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica"),

@@ -521,8 +521,6 @@ fn every_reason_a_page_gives_is_translated() {
         "the page did not load: {reason}",
         "the page could not be read: {reason}",
         "the page changed while it was waiting to be asked",
-        "the view went away",
-        "the plan would type something other than the address",
     ] {
         let entry = format!("msgid \"{english}\"\nmsgstr \"");
         let at = IT
