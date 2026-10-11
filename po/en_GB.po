@@ -8454,6 +8454,30 @@ msgstr "Is unread"
 msgid "Is flagged"
 msgstr "Is flagged"
 
+#: ffi/src/about.rs:51
+msgid "Iris carried word between the sky and the sea,"
+msgstr "Iris carried word between the sky and the sea,"
+
+#: ffi/src/about.rs:52
+msgid "and folded every message into light."
+msgstr "and folded every message into light."
+
+#: ffi/src/about.rs:53
+msgid "Here she keeps your letters close and quiet,"
+msgstr "Here she keeps your letters close and quiet,"
+
+#: ffi/src/about.rs:54
+msgid "with no cloud between you and the ones you write to."
+msgstr "with no cloud between you and the ones you write to."
+
+#: ffi/src/about.rs:56
+msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
+msgstr "If Iris makes your day a little lighter, leave it a star on GitHub."
+
+#: ffi/src/about.rs:57
+msgid "Star on GitHub"
+msgstr "Star on GitHub"
+
 #: ffi/src/compose.rs:139
 msgid "Add an account to write mail."
 msgstr "Add an account to write mail."

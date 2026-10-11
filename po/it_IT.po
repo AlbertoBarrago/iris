@@ -9078,6 +9078,30 @@ msgstr "Non letto"
 msgid "Is flagged"
 msgstr "Contrassegnato"
 
+#: ffi/src/about.rs:51
+msgid "Iris carried word between the sky and the sea,"
+msgstr "Iride portava parole tra il cielo e il mare,"
+
+#: ffi/src/about.rs:52
+msgid "and folded every message into light."
+msgstr "e piegava ogni messaggio nella luce."
+
+#: ffi/src/about.rs:53
+msgid "Here she keeps your letters close and quiet,"
+msgstr "Qui tiene le tue lettere vicine e silenziose,"
+
+#: ffi/src/about.rs:54
+msgid "with no cloud between you and the ones you write to."
+msgstr "senza nuvole tra te e chi ti scrive."
+
+#: ffi/src/about.rs:56
+msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
+msgstr "Se Iris ti alleggerisce un po' la giornata, lasciale una stella su GitHub."
+
+#: ffi/src/about.rs:57
+msgid "Star on GitHub"
+msgstr "Una stella su GitHub"
+
 #: ffi/src/compose.rs:139
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."

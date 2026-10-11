@@ -14,6 +14,7 @@ use mailrs_domain::{MailSet, Role};
 use mailrs_store::threads::{self, ThreadFilter};
 use mailrs_store::{accounts, bodies, messages};
 
+mod about;
 mod account_menu;
 mod account_settings;
 mod account_setup;

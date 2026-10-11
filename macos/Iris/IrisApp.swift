@@ -5,6 +5,7 @@ import SwiftUI
 struct IrisApp: App {
     @State private var model = MailModel()
     @State private var assistant = AssistantModel()
+    @Environment(\.openWindow) private var openWindow
 
     init() {
         startLogging()
@@ -30,6 +31,9 @@ struct IrisApp: App {
         }
         .defaultSize(width: 1100, height: 720)
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button(aboutWords().title) { openWindow(id: "about") }
+            }
             CommandGroup(replacing: .newItem) {
                 Button(tr("New Message")) { model.composeAsked = ComposeRequest(kind: .new) }
                     .keyboardShortcut("n")
@@ -74,6 +78,10 @@ struct IrisApp: App {
             }
         }
         .defaultSize(width: 820, height: 760)
+        Window(aboutWords().title, id: "about") {
+            AboutView()
+        }
+        .windowResizability(.contentSize)
         Settings {
             SettingsView().environment(model).environment(assistant)
         }
