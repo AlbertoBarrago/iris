@@ -258,9 +258,17 @@ final class MailModel {
             if space == .calendar { loadCalendar() }
         }
     }
-    /// The month the grid shows, by its first day.
-    var calendarMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date())) ?? Date()
+    /// The day the calendar shows, or the week or month around it.
+    var calendarDay = Date()
+    /// Day, Week or Month, as the GTK calendar remembers it.
+    var calendarKind: CalendarKind = CalendarKind(rawValue: UserDefaults.standard.string(forKey: "calendarKind") ?? "") ?? .week {
+        didSet {
+            UserDefaults.standard.set(calendarKind.rawValue, forKey: "calendarKind")
+            loadCalendar()
+        }
+    }
     private(set) var monthView: MonthView?
+    private(set) var weekView: WeekView?
     private(set) var calendarAccounts: [CalendarAccount] = []
     /// The event a double click opened.
     var openedEvent: EventDetails?
@@ -272,17 +280,28 @@ final class MailModel {
     /// Reads the calendars and the month shown again.
     func loadCalendar() {
         guard let mail else { return }
-        let parts = Calendar.current.dateComponents([.year, .month], from: calendarMonth)
+        let parts = Calendar.current.dateComponents([.year, .month], from: calendarDay)
         let (year, month, rows) = (Int32(parts.year ?? 2026), UInt32(parts.month ?? 1), monthRows)
         // The locale's own first weekday, counted from Monday as the core
         // counts: Foundation counts from Sunday, as 1.
         let first = UInt32((Calendar.current.firstWeekday + 5) % 7)
+        let kind = calendarKind
+        let day = Self.dayKey(calendarDay)
         Task.detached {
             let accounts = (try? mail.calendarAccounts()) ?? []
-            let view = try? mail.monthView(year: year, month: month, localeFirst: first, rows: rows)
-            await MainActor.run {
-                self.calendarAccounts = accounts
-                if let view { self.monthView = view }
+            switch kind {
+            case .month:
+                let view = try? mail.monthView(year: year, month: month, localeFirst: first, rows: rows)
+                await MainActor.run {
+                    self.calendarAccounts = accounts
+                    if let view { self.monthView = view }
+                }
+            case .week, .day:
+                let view = try? mail.weekView(date: day, days: kind == .day ? 1 : 7, localeFirst: first)
+                await MainActor.run {
+                    self.calendarAccounts = accounts
+                    if let view { self.weekView = view }
+                }
             }
         }
     }

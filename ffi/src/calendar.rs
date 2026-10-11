@@ -11,7 +11,7 @@ use mailrs_domain::EpochMillis;
 use mailrs_domain::calendar::Occurrence;
 use mailrs_domain::calendar::week::{week_start, week_start_on_or_before};
 use mailrs_domain::translate::{date_locale, gettext};
-use mailrs_render::calendar_days::grid_days;
+use mailrs_render::calendar_days::{self, grid_days};
 use mailrs_render::calendar_layout as layout;
 use mailrs_render::calendar_words::{bar_words, guest_answer_words, guest_name_words, more_count_words, when_words};
 use mailrs_store::accounts;
@@ -24,6 +24,11 @@ use crate::mail::{Mail, MailListener, Running};
 
 /// The rows of a month grid: six weeks, so every row is a whole week.
 const WEEKS: usize = 6;
+
+/// The shortest a timed card is laid out as, so two short events close
+/// together take separate lanes rather than drawing over each other: 25
+/// minutes, a one-line card at the grid's hour height.
+const SHORTEST_CARD: EpochMillis = 25 * 60 * 1000;
 
 /// One account's calendars, for the sidebar.
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
@@ -129,6 +134,80 @@ pub struct GuestRow {
     /// "Going", "Not going", "Maybe" or "No answer yet".
     pub said: String,
     pub organizer: bool,
+}
+
+/// A week or a day, as the time grid draws it.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct WeekView {
+    /// "October 2026", or "Sep – Oct" for a week across two months.
+    pub title: String,
+    pub days: Vec<WeekDayHead>,
+    /// All-day events and those that run from midnight to midnight, on
+    /// the strip above the hours.
+    pub strip: Vec<StripItem>,
+    pub strip_rows: u32,
+    pub timed: Vec<TimedItem>,
+    /// "+N" cards where more than four events overlap.
+    pub more: Vec<MoreCard>,
+    /// Today's column and the hours past its midnight, for the now line.
+    pub now_column: Option<u32>,
+    pub now_hours: f64,
+    /// The hour the grid opens scrolled to: 08:00, or the day's first
+    /// event when that is earlier.
+    pub first_hour: f64,
+    /// The working day, in hours, which the grid leaves unshaded.
+    pub work_start: f64,
+    pub work_end: f64,
+}
+
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct WeekDayHead {
+    pub date: String,
+    /// "Mon", in the interface's language.
+    pub weekday: String,
+    pub number: u32,
+    pub today: bool,
+    pub working: bool,
+}
+
+/// An event on the all-day strip, across columns `start` to `end`.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct StripItem {
+    pub id: String,
+    pub title: String,
+    pub color: String,
+    pub start: u32,
+    pub end: u32,
+    pub line: u32,
+    pub details: EventDetails,
+}
+
+/// A timed event's card: its column, its lane among `lanes` sharing the
+/// width, and its top and bottom in hours from the day's midnight.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct TimedItem {
+    pub id: String,
+    pub title: String,
+    pub color: String,
+    pub column: u32,
+    pub lane: u32,
+    pub lanes: u32,
+    pub top: f64,
+    pub bottom: f64,
+    pub starts: i64,
+    pub ends: i64,
+    pub details: EventDetails,
+}
+
+/// The events of a crowded hour the grid has no lane left for.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct MoreCard {
+    pub column: u32,
+    pub top: f64,
+    pub bottom: f64,
+    /// "+3".
+    pub label: String,
+    pub items: Vec<DayItem>,
 }
 
 /// An event on one day, for the list "N more" opens.
@@ -271,6 +350,168 @@ impl Mail {
                 .map(|d| d.format_localized(&gettext("%a"), date_locale()).to_string())
                 .collect(),
             weeks: laid,
+        })
+    }
+
+    /// The `days` (1 or 7) holding `date` (`YYYY-MM-DD`): a day, or the
+    /// week from Preferences' first day, `locale_first` being the locale's
+    /// own (0 for Monday to 6 for Sunday).
+    pub fn week_view(&self, date: String, days: u32, locale_first: u32) -> Result<WeekView, CoreError> {
+        let settings = Settings::load(&Settings::default_path());
+        let anchor = NaiveDate::parse_from_str(&date, "%Y-%m-%d").map_err(|err| CoreError::Store(err.to_string()))?;
+        let count = if days <= 1 { 1 } else { 7 };
+        let first = if count == 1 {
+            anchor
+        } else {
+            week_start_on_or_before(anchor, week_start(settings.week_start, weekday(locale_first)))
+        };
+        let dates: Vec<NaiveDate> = (0..count).map(|i| first + Days::new(i)).collect();
+        let last = dates[dates.len() - 1];
+        let today = Local::now().date_naive();
+        let occurrences = self.occurrences_between(first, last + Days::new(1))?;
+        let colors = self.calendar_colors()?;
+        let look = |o: &Occurrence| {
+            let (color, calendar) = colors
+                .iter()
+                .find(|(account, id, _, _)| *account == o.account_id && *id == o.event.calendar)
+                .map(|(_, _, color, name)| (color.clone(), name.clone()))
+                .unwrap_or_default();
+            let color = o.event.color.clone().unwrap_or(color);
+            (color.clone(), details(o, color, &calendar))
+        };
+
+        // The strip: all-day events, and timed ones from midnight to
+        // midnight, stacked as the month stacks a week.
+        let in_strip: Vec<(&Occurrence, (usize, usize))> = occurrences
+            .iter()
+            .filter(|o| calendar_days::in_strip(o))
+            .filter_map(|o| calendar_days::strip_columns(o.start, o.end, o.event.all_day, &dates).map(|c| (o, c)))
+            .collect();
+        let spans: Vec<(EpochMillis, EpochMillis)> =
+            in_strip.iter().map(|(_, (a, b))| (*a as EpochMillis, *b as EpochMillis)).collect();
+        let (placed, _) = layout::lanes_within(&spans, usize::MAX);
+        let strip: Vec<StripItem> = placed
+            .iter()
+            .map(|p| {
+                let (o, (start, end)) = in_strip[p.index];
+                let (color, details) = look(o);
+                StripItem {
+                    id: o.id(),
+                    title: shown_title(o),
+                    color,
+                    start: start as u32,
+                    end: end as u32,
+                    line: p.lane as u32,
+                    details,
+                }
+            })
+            .collect();
+        let strip_rows = placed.iter().map(|p| p.lane + 1).max().unwrap_or(0) as u32;
+
+        // The hours: each day's timed events, clipped to it, in lanes.
+        let midnight = |day: NaiveDate| {
+            Local
+                .from_local_datetime(&day.and_hms_opt(0, 0, 0).unwrap_or_default())
+                .earliest()
+                .map_or(0, |at| at.timestamp_millis())
+        };
+        let bounds: Vec<(EpochMillis, EpochMillis)> =
+            dates.iter().map(|&d| (midnight(d), midnight(d + Days::new(1)))).collect();
+        let mut by_day: Vec<Vec<(usize, EpochMillis, EpochMillis)>> = vec![Vec::new(); dates.len()];
+        for (index, o) in occurrences.iter().enumerate() {
+            if calendar_days::in_strip(o) {
+                continue;
+            }
+            for (column, start, end) in layout::clip_to_days(o.start, o.end, &bounds) {
+                by_day[column].push((index, start, end));
+            }
+        }
+        let mut timed = Vec::new();
+        let mut more = Vec::new();
+        let mut starts = Vec::new();
+        for (column, (day, pieces)) in dates.iter().zip(&by_day).enumerate() {
+            let wall = day.and_hms_opt(0, 0, 0).unwrap_or_default();
+            let spans: Vec<(EpochMillis, EpochMillis)> = pieces.iter().map(|&(_, s, e)| (s, e)).collect();
+            let (placed, hidden) = layout::lanes(&calendar_days::stretch_for_lanes(&spans, SHORTEST_CARD));
+            for p in placed {
+                let (index, start, end) = pieces[p.index];
+                let o = &occurrences[index];
+                let (color, details) = look(o);
+                let top = layout::wall_offset(start, wall, &Local);
+                starts.push(top);
+                timed.push(TimedItem {
+                    id: o.id(),
+                    title: shown_title(o),
+                    color,
+                    column: column as u32,
+                    lane: p.lane as u32,
+                    lanes: p.lanes as u32,
+                    top,
+                    bottom: layout::wall_offset(end, wall, &Local),
+                    starts: o.start,
+                    ends: o.end,
+                    details,
+                });
+            }
+            for group in hidden {
+                more.push(MoreCard {
+                    column: column as u32,
+                    top: layout::wall_offset(group.from, wall, &Local),
+                    bottom: layout::wall_offset(group.to, wall, &Local),
+                    label: format!("+{}", group.hidden.len()),
+                    items: group
+                        .hidden
+                        .iter()
+                        .map(|&i| {
+                            let o = &occurrences[pieces[i].0];
+                            let (color, details) = look(o);
+                            DayItem {
+                                id: o.id(),
+                                title: shown_title(o),
+                                color,
+                                all_day: o.event.all_day,
+                                starts: o.start,
+                                ends: o.end,
+                                details,
+                            }
+                        })
+                        .collect(),
+                });
+            }
+        }
+        let now = calendar_days::now_column(mailrs_sync::now_millis(), &dates, &Local);
+        let title = if first.month() == last.month() {
+            first.format_localized(&gettext("%B %Y"), date_locale()).to_string()
+        } else {
+            mailrs_domain::translate::fill(
+                &gettext("{first} – {last}"),
+                &[
+                    ("first", &first.format_localized(&gettext("%b"), date_locale()).to_string()),
+                    ("last", &last.format_localized(&gettext("%b"), date_locale()).to_string()),
+                ],
+            )
+        };
+        Ok(WeekView {
+            title,
+            days: dates
+                .iter()
+                .map(|&d| WeekDayHead {
+                    date: d.format("%Y-%m-%d").to_string(),
+                    weekday: d.format_localized(&gettext("%a"), date_locale()).to_string(),
+                    number: d.day(),
+                    today: d == today,
+                    working: settings.working_hours.is_working_day(d.weekday()),
+                })
+                .collect(),
+            strip,
+            strip_rows,
+            timed,
+            more,
+            now_column: now.map(|(column, _)| column as u32),
+            now_hours: now.map_or(0.0, |(_, hours)| hours),
+            first_hour: layout::first_hour(&starts),
+            work_start: f64::from(settings.working_hours.start_minutes) / 60.0,
+            work_end: f64::from(settings.working_hours.end_minutes) / 60.0,
         })
     }
 
@@ -434,5 +675,22 @@ mod tests {
         assert_eq!(view.weeks[0].days[0].date, "2026-09-28");
         assert!(!view.weeks[0].days[0].in_month);
         assert_eq!(view.weekdays.len(), 7);
+    }
+}
+
+#[cfg(test)]
+mod week_tests {
+    use super::*;
+
+    #[test]
+    fn a_week_has_seven_heads_from_its_first_day() {
+        let dir = tempfile::tempdir().unwrap();
+        let mail = Mail::open(dir.path().join("mailrs.db").display().to_string()).unwrap();
+        let week = mail.week_view("2026-10-15".into(), 7, 0).unwrap();
+        assert_eq!(week.days.len(), 7);
+        assert_eq!(week.days[0].date, "2026-10-12", "a Monday week holds the 15th from the 12th");
+        assert_eq!(week.first_hour, 8.0, "an empty week opens at eight");
+        let day = mail.week_view("2026-10-15".into(), 1, 0).unwrap();
+        assert_eq!(day.days.len(), 1);
     }
 }

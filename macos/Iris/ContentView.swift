@@ -31,7 +31,7 @@ struct ContentView: View {
                     CalendarSidebar()
                         .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 340)
                 } detail: {
-                    MonthGrid()
+                    CalendarPage()
                 }
             } else {
                 NavigationSplitView {

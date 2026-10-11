@@ -2512,19 +2512,19 @@ msgid_plural "{count} hidden calendars"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/src/ui/calendar/time_grid.rs:300
+#: app/src/ui/calendar/time_grid.rs:236
 msgid "{count} more event"
 msgid_plural "{count} more events"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/src/ui/calendar/time_grid.rs:326
+#: app/src/ui/calendar/time_grid.rs:262
 msgid ""
 "Shift+Up or Shift+Down moves it; Shift+Alt+Up or Shift+Alt+Down changes when "
 "it ends."
 msgstr ""
 
-#: app/src/ui/calendar/time_grid.rs:331
+#: app/src/ui/calendar/time_grid.rs:267
 msgid "{base} {hint}"
 msgstr ""
 

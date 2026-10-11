@@ -5,6 +5,84 @@ enum Space: String {
     case mail, calendar
 }
 
+/// The calendar's three grids.
+enum CalendarKind: String, CaseIterable {
+    case day, week, month
+}
+
+/// The calendar page: the grid chosen, under one toolbar that steps it,
+/// goes back to today and switches between Day, Week and Month.
+struct CalendarPage: View {
+    @Environment(MailModel.self) private var model
+
+    var body: some View {
+        @Bindable var model = model
+        Group {
+            switch model.calendarKind {
+            case .month: MonthGrid()
+            case .week, .day: WeekGrid()
+            }
+        }
+        .navigationTitle(title)
+        .sheet(item: Bindable(model).openedEvent) { details in
+            EventSheet(details: details)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .navigation) {
+                Button(previousWords, systemImage: "chevron.left") { model.stepCalendar(-1) }
+                    .keyboardShortcut(.leftArrow, modifiers: .command)
+                Button(nextWords, systemImage: "chevron.right") { model.stepCalendar(1) }
+                    .keyboardShortcut(.rightArrow, modifiers: .command)
+            }
+            ToolbarItem {
+                Button(tr("Today")) { model.showToday() }
+                    .keyboardShortcut("t", modifiers: .command)
+            }
+            ToolbarItem {
+                Picker(tr("View"), selection: $model.calendarKind) {
+                    Text(tr("Day")).tag(CalendarKind.day)
+                    Text(tr("Week")).tag(CalendarKind.week)
+                    Text(tr("Month")).tag(CalendarKind.month)
+                }
+                .pickerStyle(.segmented)
+            }
+        }
+        // The GTK calendar's d, w and m.
+        .background {
+            Group {
+                Button("") { model.calendarKind = .day }.keyboardShortcut("d", modifiers: [])
+                Button("") { model.calendarKind = .week }.keyboardShortcut("w", modifiers: [])
+                Button("") { model.calendarKind = .month }.keyboardShortcut("m", modifiers: [])
+            }
+            .opacity(0)
+            .accessibilityHidden(true)
+        }
+    }
+
+    private var title: String {
+        switch model.calendarKind {
+        case .month: model.monthView?.title ?? tr("Calendar")
+        case .week, .day: model.weekView?.title ?? tr("Calendar")
+        }
+    }
+
+    private var previousWords: String {
+        switch model.calendarKind {
+        case .day: tr("Previous Day")
+        case .week: tr("Previous Week")
+        case .month: tr("Previous Month")
+        }
+    }
+
+    private var nextWords: String {
+        switch model.calendarKind {
+        case .day: tr("Next Day")
+        case .week: tr("Next Week")
+        case .month: tr("Next Month")
+        }
+    }
+}
+
 /// Mail and Calendar, at the top of either sidebar, as the GTK sidebar's
 /// two toggles. ⌥1 and ⌥2 flip it from the View menu.
 struct SpaceSwitch: View {
@@ -131,22 +209,6 @@ struct MonthGrid: View {
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .sheet(item: Bindable(model).openedEvent) { details in
-            EventSheet(details: details)
-        }
-        .navigationTitle(model.monthView?.title ?? tr("Calendar"))
-        .toolbar {
-            ToolbarItemGroup(placement: .navigation) {
-                Button(tr("Previous Month"), systemImage: "chevron.left") { model.stepMonth(-1) }
-                    .keyboardShortcut(.leftArrow, modifiers: .command)
-                Button(tr("Next Month"), systemImage: "chevron.right") { model.stepMonth(1) }
-                    .keyboardShortcut(.rightArrow, modifiers: .command)
-            }
-            ToolbarItem {
-                Button(tr("Today")) { model.showToday() }
-                    .keyboardShortcut("t", modifiers: .command)
-            }
-        }
     }
 
     /// How many lines of events fit a row `height` tall, which the core
@@ -229,33 +291,10 @@ private struct DayCell: View {
 /// chip with a dot and its time on one. Resting the pointer on it shows
 /// its card; a double click keeps the card open.
 private struct EventChip: View {
-    @Environment(MailModel.self) private var model
     let item: MonthItem
-    @State private var hovering = false
-    @State private var peeking = false
 
     var body: some View {
-        chip
-            .contentShape(Rectangle())
-            .onHover { inside in
-                hovering = inside
-                if !inside { peeking = false }
-            }
-            .task(id: hovering) {
-                // A short rest before the card, so sweeping across the
-                // month does not flash one under every event.
-                guard hovering else { return }
-                try? await Task.sleep(for: .milliseconds(600))
-                if hovering, !Task.isCancelled { peeking = true }
-            }
-            // A double click opens the event, as in the GTK calendar.
-            .simultaneousGesture(TapGesture(count: 2).onEnded {
-                peeking = false
-                model.openedEvent = item.details
-            })
-            .popover(isPresented: $peeking, arrowEdge: .top) {
-                EventCard(details: item.details)
-            }
+        chip.eventActions(item.details)
     }
 
     @ViewBuilder private var chip: some View {
@@ -283,6 +322,45 @@ private struct EventChip: View {
             }
         }
         .accessibilityLabel(item.described)
+    }
+}
+
+/// What every event in the calendar answers: resting the pointer on it
+/// shows its card, a double click opens it whole.
+struct EventActions: ViewModifier {
+    @Environment(MailModel.self) private var model
+    let details: EventDetails
+    @State private var hovering = false
+    @State private var peeking = false
+
+    func body(content: Content) -> some View {
+        content
+            .contentShape(Rectangle())
+            .onHover { inside in
+                hovering = inside
+                if !inside { peeking = false }
+            }
+            .task(id: hovering) {
+                // A short rest before the card, so sweeping across the
+                // calendar does not flash one under every event.
+                guard hovering else { return }
+                try? await Task.sleep(for: .milliseconds(600))
+                if hovering, !Task.isCancelled { peeking = true }
+            }
+            // A double click opens the event, as in the GTK calendar.
+            .simultaneousGesture(TapGesture(count: 2).onEnded {
+                peeking = false
+                model.openedEvent = details
+            })
+            .popover(isPresented: $peeking, arrowEdge: .top) {
+                EventCard(details: details)
+            }
+    }
+}
+
+extension View {
+    func eventActions(_ details: EventDetails) -> some View {
+        modifier(EventActions(details: details))
     }
 }
 
@@ -513,15 +591,26 @@ extension MailModel {
         }
     }
 
-    /// The month before or after the one shown.
-    func stepMonth(_ by: Int) {
-        calendarMonth = Calendar.current.date(byAdding: .month, value: by, to: calendarMonth) ?? calendarMonth
+    /// The day, week or month before or after the one shown.
+    func stepCalendar(_ by: Int) {
+        let unit: Calendar.Component = switch calendarKind {
+        case .day: .day
+        case .week: .weekOfYear
+        case .month: .month
+        }
+        calendarDay = Calendar.current.date(byAdding: unit, value: by, to: calendarDay) ?? calendarDay
         loadCalendar()
     }
 
     func showToday() {
-        calendarMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date())) ?? Date()
+        calendarDay = Date()
         loadCalendar()
+    }
+
+    /// `YYYY-MM-DD`, as the core names a day.
+    nonisolated static func dayKey(_ date: Date) -> String {
+        let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", parts.year ?? 2026, parts.month ?? 1, parts.day ?? 1)
     }
 
     func dayEvents(_ date: String) -> [DayItem] {
