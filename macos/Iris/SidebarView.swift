@@ -307,6 +307,8 @@ struct MailboxRow: View {
         case "all-mail": "envelope.open"
         case "group": "folder"
         case "tag": "tag"
+        case "vips": "star"
+        case "person": "person.crop.circle"
         default: "folder"
         }
     }

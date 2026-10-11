@@ -17,6 +17,9 @@ struct ContentView: View {
                 mail
             }
         }
+        .sheet(item: Bindable(model).contactCard) { card in
+            ContactCardView(card: card)
+        }
         .sheet(item: Bindable(model).addAccount) { request in
             AddAccountView(request: request).environment(model)
         }

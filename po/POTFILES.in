@@ -184,3 +184,5 @@ ffi/src/templates.rs
 appcore/src/unsubscribe.rs
 ffi/src/unsubscribe.rs
 ffi/src/translation.rs
+view/src/sidebar.rs
+ffi/src/contacts.rs

@@ -140,10 +140,15 @@ struct ThreadRowView: View {
                 .frame(width: 8, height: 8)
                 .padding(.top, 16)
             ZStack {
-                Circle().fill(Color(hex: row.avatarColor) ?? .gray)
-                Text(row.initials).font(.callout.weight(.semibold)).foregroundStyle(.white)
+                if let photo = ContactPhotos.image(row.photo) {
+                    Image(nsImage: photo).resizable().scaledToFill()
+                } else {
+                    Circle().fill(Color(hex: row.avatarColor) ?? .gray)
+                    Text(row.initials).font(.callout.weight(.semibold)).foregroundStyle(.white)
+                }
             }
             .frame(width: 38, height: 38)
+            .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 5) {
                     Circle().fill(Color(hex: row.accountColor) ?? .accentColor).frame(width: 7, height: 7)
@@ -280,7 +285,15 @@ struct ToastView: View {
                     .buttonStyle(.borderless)
                     .fontWeight(.semibold)
             }
+            if let offer = toast.offer {
+                Button(tr("Save")) { model.saveOffered(offer) }
+                    .buttonStyle(.borderless)
+                    .fontWeight(.semibold)
+            }
             Button {
+                // Closing the question counts as a no, as in the GTK app;
+                // letting it time out does not.
+                if let offer = toast.offer { model.declineOffered(offer) }
                 model.dismissToast()
             } label: {
                 Image(systemName: "xmark")
@@ -303,7 +316,7 @@ struct ToastView: View {
         // its own clock: the toast goes once the message does.
         .task(id: TimerKey(toast: toast.id, hovering: hovering)) {
             guard toast.undoSend == nil, !hovering else { return }
-            try? await Task.sleep(for: .seconds(toast.undo ? 8 : 5))
+            try? await Task.sleep(for: .seconds(toast.offer != nil ? 10 : toast.undo ? 8 : 5))
             if !Task.isCancelled, model.toast?.id == toast.id { model.dismissToast() }
         }
     }
@@ -448,5 +461,24 @@ private struct SearchFieldBox: NSViewRepresentable {
                 return false
             }
         }
+    }
+}
+
+/// Contact photos read from disk once per run, so a long list does not
+/// read the same file for every row it draws.
+@MainActor
+enum ContactPhotos {
+    private static var read: [String: NSImage] = [:]
+    private static var missing: Set<String> = []
+
+    static func image(_ path: String) -> NSImage? {
+        guard !path.isEmpty, !missing.contains(path) else { return nil }
+        if let found = read[path] { return found }
+        guard let image = NSImage(contentsOfFile: path) else {
+            missing.insert(path)
+            return nil
+        }
+        read[path] = image
+        return image
     }
 }

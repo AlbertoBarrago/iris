@@ -162,6 +162,8 @@ pub struct ListRow {
     pub invitation: bool,
     pub initials: String,
     pub avatar_color: String,
+    /// The sender's contact photo on disk, or empty for initials.
+    pub photo: String,
     pub account_color: String,
 }
 
@@ -199,7 +201,7 @@ pub struct Mail {
     /// The mailbox behind each key the last sidebar handed out.
     keys: Mutex<HashMap<String, Mailbox>>,
     /// Everyone a recipient field can offer, read once.
-    pub(crate) people: Mutex<Option<Arc<Vec<mailrs_store::contacts::Suggestion>>>>,
+    pub(crate) people: Arc<Mutex<Option<Arc<Vec<mailrs_store::contacts::Suggestion>>>>>,
     /// Who hears the engine, kept to start it again after a change.
     listener: Mutex<Option<Arc<dyn MailListener>>>,
     /// The local copy of every account's calendars.
@@ -240,7 +242,7 @@ impl Mail {
             runtime,
             db,
             keys: Mutex::new(HashMap::new()),
-            people: Mutex::new(None),
+            people: Arc::new(Mutex::new(None)),
             account_colors: Mutex::new(HashMap::new()),
             listener: Mutex::new(None),
         })
@@ -294,6 +296,14 @@ impl Mail {
             self.db.clone(),
             Arc::clone(&self.actions),
             Arc::clone(&listener),
+        ));
+        self.runtime.spawn(crate::contacts::keep_fresh(
+            self.contact_book(),
+            Arc::clone(&self.running),
+            Arc::clone(&engine),
+            self.db.clone(),
+            Arc::clone(&listener),
+            Arc::clone(&self.people),
         ));
         self.runtime.spawn(crate::calendar::keep_fresh(
             Arc::clone(&self.calendar),
@@ -590,7 +600,8 @@ impl Mail {
         for (account, _) in &accounts_and_labels {
             order.insert(account.id, self.label_positions(account.id).unwrap_or_default());
         }
-        let entries = sidebar::entries(&accounts_and_labels, &order);
+        let vips: Vec<(String, String)> = settings.vips.iter().map(|(e, n)| (e.clone(), n.clone())).collect();
+        let entries = sidebar::entries(&accounts_and_labels, &order, &vips);
         let counted = sidebar::counted(&entries);
         let view = view(None);
         let mailboxes = Arc::clone(&self.mailboxes);
@@ -719,10 +730,11 @@ impl Mail {
         tracing::info!(rows = listing.rows.len(), ?account_id, "searched the stored mail");
         let now = chrono::Local::now();
         let colors = self.account_colors.lock().unwrap_or_else(|p| p.into_inner()).clone();
+        let photos = self.photo_paths();
         Ok(MailboxListing {
             title: listing.title,
             subtitle: listing.subtitle,
-            rows: listing.rows.iter().map(|t| row(t, now, &colors)).collect(),
+            rows: listing.rows.iter().map(|t| row(t, now, &colors, &photos)).collect(),
             categories: Vec::new(),
             empty: listing.empty.title,
         })
@@ -798,10 +810,11 @@ impl Mail {
         };
         let now = chrono::Local::now();
         let colors = self.account_colors.lock().unwrap_or_else(|p| p.into_inner()).clone();
+        let photos = self.photo_paths();
         Ok(MailboxListing {
             title: listing.title,
             subtitle: listing.subtitle,
-            rows: listing.rows.iter().map(|t| row(t, now, &colors)).collect(),
+            rows: listing.rows.iter().map(|t| row(t, now, &colors, &photos)).collect(),
             categories,
             empty: listing.empty.title,
         })
@@ -809,6 +822,17 @@ impl Mail {
 }
 
 impl Mail {
+    /// Every contact photo on disk, by lower-case address, from the
+    /// people the store knows.
+    pub(crate) fn photo_paths(&self) -> HashMap<String, std::path::PathBuf> {
+        let files: Vec<(String, String)> = self
+            .known_people()
+            .iter()
+            .filter_map(|p| Some((p.email.clone(), p.photo_file.clone()?)))
+            .collect();
+        mailrs_appcore::photos::on_disk(crate::contacts::photo_dir(), files)
+    }
+
     /// Tells the window that `what` changed, as the engine's news does.
     /// Sends `account`'s queued calendar changes now rather than at the
     /// next refresh, as the GTK app's `push_calendar` does, then says the
@@ -1018,7 +1042,12 @@ fn view(category: Option<Category>) -> View {
     }
 }
 
-fn row(thread: &ThreadSummary, now: chrono::DateTime<chrono::Local>, colors: &HashMap<AccountId, String>) -> ListRow {
+fn row(
+    thread: &ThreadSummary,
+    now: chrono::DateTime<chrono::Local>,
+    colors: &HashMap<AccountId, String>,
+    photos: &HashMap<String, std::path::PathBuf>,
+) -> ListRow {
     let sender = if thread.from.trim().is_empty() {
         thread.from_email.clone()
     } else {
@@ -1029,6 +1058,10 @@ fn row(thread: &ThreadSummary, now: chrono::DateTime<chrono::Local>, colors: &Ha
         thread_id: thread.id.clone(),
         initials: format::initials(&sender),
         avatar_color: format::PALETTE[format::avatar_hue(&sender, &thread.from_email)].to_string(),
+        photo: photos
+            .get(&thread.from_email.trim().to_lowercase())
+            .map(|p| p.to_string_lossy().into_owned())
+            .unwrap_or_default(),
         account_color: colors
             .get(&thread.account_id)
             .cloned()
@@ -1074,6 +1107,8 @@ fn icon_name(icon: Icon) -> (&'static str, Option<String>) {
         Icon::Label => "label",
         Icon::Group => "group",
         Icon::Tag => "tag",
+        Icon::Vips => "vips",
+        Icon::Person => "person",
     };
     (name, None)
 }

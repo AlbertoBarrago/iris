@@ -276,46 +276,6 @@ struct SeveralSelected: View {
     }
 }
 
-/// What a click on an address offers, as a menu where the pointer is.
-/// New Message waits for the composer.
-@MainActor
-enum ContactMenu {
-    static func show(for address: String) {
-        let menu = NSMenu()
-        let title = NSMenuItem(title: address, action: nil, keyEquivalent: "")
-        title.isEnabled = false
-        menu.addItem(title)
-        menu.addItem(.separator())
-        let copy = MenuAction(title: tr("Copy Address")) {
-            NSPasteboard.general.clearContents()
-            NSPasteboard.general.setString(address, forType: .string)
-        }
-        menu.addItem(copy.item)
-        let write = NSMenuItem(title: tr("New Message"), action: nil, keyEquivalent: "")
-        write.isEnabled = false
-        menu.addItem(write)
-        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
-        _ = copy
-    }
-}
-
-/// A menu item that runs a closure, kept alive by the item itself.
-final class MenuAction: NSObject {
-    let item: NSMenuItem
-    private let run: () -> Void
-
-    init(title: String, run: @escaping () -> Void) {
-        self.run = run
-        item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-        super.init()
-        item.target = self
-        item.action = #selector(fire)
-        item.representedObject = self
-    }
-
-    @objc private func fire() { run() }
-}
-
 /// Gives the page the pictures its mail names by `cid:`, asked for at
 /// `mailrs-cid:<account>/<message>/<version>/<content id>`. The bytes come
 /// from the Rust core, which fetches the part from the cache or the

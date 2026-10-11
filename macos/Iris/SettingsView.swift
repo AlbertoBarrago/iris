@@ -22,6 +22,9 @@ struct SettingsView: View {
             CalendarSettings()
                 .tabItem { Label(tr("Calendar"), systemImage: "calendar") }
                 .tag("calendar")
+            ContactsSettings()
+                .tabItem { Label(tr("Contacts"), systemImage: "person.2") }
+                .tag("contacts")
             SyncSettingsView()
                 .tabItem { Label(tr("Sync"), systemImage: "arrow.triangle.2.circlepath") }
                 .tag("sync")

@@ -11,6 +11,8 @@ struct ComposeRequest: Codable, Hashable {
     var thread: String?
     /// The message Undo Send kept, by its key in the model.
     var restore: UUID?
+    /// Who a new message is to, as the recipient field reads.
+    var to: String?
 }
 
 /// One message being written, in a window of its own as in Mail.

@@ -35,6 +35,10 @@ pub enum Icon {
     Group,
     /// An Outlook category.
     Tag,
+    /// The mail of every VIP.
+    Vips,
+    /// One VIP's mail.
+    Person,
 }
 
 /// One line of the sidebar.
@@ -74,16 +78,18 @@ impl Row {
 }
 
 /// The sidebar for `accounts`, each with its labels, in the order the
-/// person put each account's labels in (`label_order`, by label id).
+/// person put each account's labels in (`label_order`, by label id), with
+/// the VIPs Preferences keeps as (address, name).
 pub fn entries(
     accounts: &[(Account, Vec<Label>)],
     label_order: &HashMap<AccountId, HashMap<String, i64>>,
+    vips: &[(String, String)],
 ) -> Vec<Entry> {
     let mut out = Vec::new();
     for (section, places) in sections::LAYOUT {
         out.push(Entry::Heading(section));
         for &place in places {
-            unified(place, &mut out);
+            unified(place, vips, &mut out);
         }
     }
     if !accounts.is_empty() {
@@ -133,16 +139,31 @@ pub fn entries(
 }
 
 /// The rows one place in the layout stands for.
-fn unified(place: Place, out: &mut Vec<Entry>) {
+fn unified(place: Place, vips: &[(String, String)], out: &mut Vec<Entry>) {
     let row = |mailbox: Mailbox, icon| {
         let title = mailbox.title();
         Entry::Mailbox(Row::new(mailbox, title, icon, 0))
     };
     match place {
         Place::Unified(which) => out.push(row(Mailbox::Unified(which), standard_icon(which))),
-        // The VIPs come from Preferences, which this front end does not
-        // read yet.
-        Place::Vips => {}
+        // Every VIP's mail, then each VIP's own under it, as the GTK
+        // sidebar lists them. No VIPs, no rows.
+        Place::Vips if vips.is_empty() => {}
+        Place::Vips => {
+            let name = mailrs_domain::translate::gettext("VIPs");
+            let everyone = Mailbox::Vips {
+                emails: vips.iter().map(|(email, _)| email.clone()).collect(),
+                name: name.clone(),
+            };
+            out.push(Entry::Mailbox(Row::new(everyone, name, Icon::Vips, 0)));
+            for (email, name) in vips {
+                let person = Mailbox::Vips {
+                    emails: vec![email.clone()],
+                    name: name.clone(),
+                };
+                out.push(Entry::Mailbox(Row::new(person, name.clone(), Icon::Person, 1)));
+            }
+        }
         Place::FlagColors => {
             for color in FlagColor::ALL {
                 let mut flag = Row::new(Mailbox::Flag(color), color.name(), Icon::Flag(color), 1);
@@ -223,7 +244,7 @@ mod tests {
     #[test]
     fn unified_mailboxes_come_first_then_each_account_with_its_labels() {
         let accounts = vec![(account(1, "ann@example.com"), vec![label(1, "L1", "Work/Clients"), label(1, "L2", "Work")])];
-        let entries = entries(&accounts, &HashMap::new());
+        let entries = entries(&accounts, &HashMap::new(), &[]);
         assert_eq!(entries[0], Entry::Heading(Section::Favorites));
         let first = entries.iter().find_map(|e| match e {
             Entry::Mailbox(row) => Some(row),
@@ -246,7 +267,7 @@ mod tests {
 
     #[test]
     fn flag_colors_wait_until_they_are_used() {
-        let entries = entries(&[], &HashMap::new());
+        let entries = entries(&[], &HashMap::new(), &[]);
         let flags: Vec<&Row> = entries
             .iter()
             .filter_map(|e| match e {
@@ -257,5 +278,25 @@ mod tests {
         assert_eq!(flags.len(), FlagColor::ALL.len());
         assert!(flags.iter().all(|r| r.hidden_until_used));
         assert!(!entries.contains(&Entry::Heading(Section::Accounts)));
+    }
+
+    #[test]
+    fn the_vips_get_a_row_and_one_each_under_it() {
+        let vips = [("ann@example.com".to_string(), "Ann Lee".to_string())];
+        let rows: Vec<(String, Icon, u32)> = entries(&[], &HashMap::new(), &vips)
+            .into_iter()
+            .filter_map(|entry| match entry {
+                Entry::Mailbox(row) if matches!(row.mailbox, Mailbox::Vips { .. }) => {
+                    Some((row.title, row.icon, row.depth))
+                }
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            rows,
+            [("VIPs".to_string(), Icon::Vips, 0), ("Ann Lee".to_string(), Icon::Person, 1)]
+        );
+        let none = entries(&[], &HashMap::new(), &[]);
+        assert!(!none.iter().any(|e| matches!(e, Entry::Mailbox(r) if matches!(r.mailbox, Mailbox::Vips { .. }))));
     }
 }

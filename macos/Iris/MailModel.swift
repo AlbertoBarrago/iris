@@ -21,6 +21,8 @@ final class MailModel {
     fileprivate var translationKey: ThreadKey?
     /// Set while the model translates.
     private(set) var translating = false
+    /// The contact card a click on a sender opened.
+    var contactCard: ContactCard?
     /// The offer to leave the open conversation's mailing list.
     private(set) var listOffer: ListOffer?
     fileprivate var listOfferKey: ThreadKey?
@@ -489,7 +491,12 @@ final class MailModel {
         } else if let id = text.removingPrefix("mailrs:attachments/") {
             saveAllAttachments(message: id.removingPercentEncoding ?? id, account: account)
         } else if let address = text.removingPrefix("mailrs:contact/") ?? text.removingPrefix("mailto:") {
-            ContactMenu.show(for: address.components(separatedBy: "?")[0].removingPercentEncoding ?? address)
+            let address = address.components(separatedBy: "?")[0].removingPercentEncoding ?? address
+            if text.hasPrefix("mailto:") {
+                composeAsked = ComposeRequest(kind: .new, to: address)
+            } else {
+                showContact(address)
+            }
         }
     }
 
@@ -681,7 +688,9 @@ final class MailModel {
                 }
                 return try mail.editDraft(accountId: account, threadId: thread)
             default:
-                return try mail.newDraft(accountId: account)
+                var draft = try mail.newDraft(accountId: account)
+                if let to = request.to { draft.to = to }
+                return draft
             }
         }.value
     }
@@ -733,8 +742,10 @@ final class MailModel {
             sending = nil
             Task.detached {
                 let said: String
+                var offer: SaveOffer?
                 do {
                     said = try mail.send(composed: draft)
+                    offer = mail.saveOffer(accountId: draft.accountId, to: draft.to, cc: draft.cc, bcc: draft.bcc)
                 } catch {
                     said = "\(error)"
                     await MainActor.run {
@@ -743,12 +754,39 @@ final class MailModel {
                         self.composeAsked = ComposeRequest(kind: .restore, restore: key)
                     }
                 }
-                await MainActor.run {
-                    self.toast = Toast(words: said, undo: false)
+                await MainActor.run { [offer] in
+                    if let offer {
+                        self.toast = Toast(words: said + "\n" + offer.title, undo: false, offer: offer)
+                    } else {
+                        self.toast = Toast(words: said, undo: false)
+                    }
                     self.refresh()
                 }
             }
         }
+    }
+
+    /// Save on the toast after sending: the new recipients go to the
+    /// account's contacts.
+    func saveOffered(_ offer: SaveOffer) {
+        guard let mail else { return }
+        toast = nil
+        Task.detached {
+            let done = Result { try mail.saveOffered(offer: offer) }
+            await MainActor.run {
+                switch done {
+                case .success(let words): self.say(words)
+                case .failure(let error): self.say("\(error)")
+                }
+            }
+        }
+    }
+
+    /// The person closed the question: those people are not asked about
+    /// again.
+    func declineOffered(_ offer: SaveOffer) {
+        guard let mail else { return }
+        Task.detached { mail.declineOffered(offer: offer) }
     }
 
     /// Keeps the message to go out at `at`. A message the core refuses
@@ -1027,6 +1065,43 @@ extension MailModel {
     }
 }
 
+// MARK: Contacts
+
+extension MailModel {
+    /// Opens the card for the person at `address`.
+    func showContact(_ address: String) {
+        guard let mail else { return }
+        Task.detached {
+            let found = Result { try mail.contactCard(address: address, name: "") }
+            await MainActor.run {
+                switch found {
+                case .success(let card): self.contactCard = card
+                case .failure(let error): self.say("\(error)")
+                }
+            }
+        }
+    }
+
+    /// Adds `email` to the VIPs, or takes it off, and says which.
+    func toggleVip(email: String, name: String) {
+        guard let mail else { return }
+        do {
+            say(try mail.toggleVip(email: email, name: name))
+            refresh()
+        } catch {
+            say("\(error)")
+        }
+    }
+
+    /// Searches every account for mail from `address`.
+    func searchFrom(_ address: String) {
+        space = .mail
+        searchOpen = true
+        searchText = "from:\(address)"
+        searchNow()
+    }
+}
+
 // MARK: Mailing lists
 
 extension MailModel {
@@ -1244,6 +1319,9 @@ struct Toast: Equatable {
     let undo: Bool
     /// Set while the toast stands for a message waiting to go.
     var undoSend: UUID? = nil
+    /// The question after sending, with Save, about the recipients the
+    /// address book lacks.
+    var offer: SaveOffer? = nil
 }
 
 /// A conversation, by the account it belongs to and its id.

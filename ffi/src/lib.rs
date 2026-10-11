@@ -20,6 +20,7 @@ mod ai_prefs;
 mod assistant;
 mod calendar;
 mod compose;
+mod contacts;
 mod event_editor;
 mod filing;
 mod invitation_answer;
@@ -273,7 +274,7 @@ impl Store {
                 .flatten()
                 .any(|(html, _, _)| page::loads_remote(&html.to_ascii_lowercase()));
         let thumbnails = std::collections::HashMap::new();
-        let photos = std::collections::HashMap::new();
+        let photos = sender_photos(&self.conn(), &metas);
         let last = metas.len().saturating_sub(1);
         for (at, meta) in metas.iter().enumerate() {
             let body = match &bodies[at] {
@@ -364,6 +365,29 @@ fn page(html: Option<&str>, text: Option<&str>) -> String {
 
 fn escape(text: &str) -> String {
     text.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
+}
+
+/// The contact photos of the senders in `metas`, as `data:` URIs by
+/// lower-case address: the page loads nothing from disk, so a photo
+/// travels inline or not at all.
+fn sender_photos(conn: &rusqlite::Connection, metas: &[mailrs_domain::MessageMeta]) -> std::collections::HashMap<String, String> {
+    let dir = crate::contacts::photo_dir();
+    let mut files = Vec::new();
+    for from in metas.iter().filter_map(|m| m.from.as_ref()) {
+        let key = from.email.trim().to_lowercase();
+        if files.iter().any(|(k, _)| *k == key) {
+            continue;
+        }
+        if let Ok(Some(contact)) = mailrs_store::address_book::find(conn, &key)
+            && let Some(file) = contact.photo_file
+        {
+            files.push((key, dir.join(file)));
+        }
+    }
+    mailrs_appcore::photos::read(files)
+        .into_iter()
+        .filter_map(|(key, data)| Some((key, data?)))
+        .collect()
 }
 
 #[cfg(test)]

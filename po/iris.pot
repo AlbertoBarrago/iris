@@ -238,7 +238,7 @@ msgstr ""
 msgid "Could not save: {reason}"
 msgstr ""
 
-#: app/src/protection/draft.rs:117 app/src/ui/window.rs:2429
+#: app/src/protection/draft.rs:117 app/src/ui/window.rs:2421
 msgid "Could not open the draft: {reason}"
 msgstr ""
 
@@ -255,13 +255,13 @@ msgid "{host} refused the login: {reason}"
 msgstr ""
 
 #: app/src/servers.rs:34 app/src/ui/calendar/editor.rs:1164
-#: app/src/ui/calendar/editor.rs:1240 app/src/ui/contacts_prefs.rs:263
+#: app/src/ui/calendar/editor.rs:1240 app/src/ui/contacts_prefs.rs:226
 #: app/src/ui/sidebar.rs:380 app/src/ui/sidebar.rs:1511
 #: app/src/ui/window/shortcuts.rs:238
 msgid "Calendar"
 msgstr ""
 
-#: app/src/servers.rs:35 app/src/ui/contacts_prefs.rs:173
+#: app/src/servers.rs:35 app/src/ui/contacts_prefs.rs:161
 msgid "Contacts"
 msgstr ""
 
@@ -277,7 +277,7 @@ msgstr ""
 msgid "On the server"
 msgstr ""
 
-#: app/src/ui/about.rs:37 app/src/ui/window.rs:686
+#: app/src/ui/about.rs:37 app/src/ui/window.rs:678
 msgid "Iris"
 msgstr ""
 
@@ -309,7 +309,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: app/src/ui/about.rs:177 app/src/ui/window.rs:3008
+#: app/src/ui/about.rs:177 app/src/ui/window.rs:3000
 msgid "About Iris"
 msgstr ""
 
@@ -422,7 +422,7 @@ msgid "Cancel"
 msgstr ""
 
 #: app/src/ui/add_account.rs:895 app/src/ui/add_account.rs:988
-#: app/src/ui/add_account.rs:2284 app/src/ui/window.rs:1090
+#: app/src/ui/add_account.rs:2284 app/src/ui/window.rs:1082
 msgid "Sign In"
 msgstr ""
 
@@ -512,9 +512,9 @@ msgid "Not Now"
 msgstr ""
 
 #: app/src/ui/add_account.rs:1159 app/src/ui/calendar/editor.rs:1606
-#: app/src/ui/calendar/sidebar.rs:922 app/src/ui/contacts_prefs.rs:314
+#: app/src/ui/calendar/sidebar.rs:922 app/src/ui/contacts_prefs.rs:265
 #: app/src/ui/invitation.rs:369 app/src/ui/permission.rs:42
-#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1169
+#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1161
 msgid "Grant Access"
 msgstr ""
 
@@ -665,7 +665,7 @@ msgid ""
 "safely."
 msgstr ""
 
-#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3076
+#: app/src/ui/assistant.rs:31 app/src/ui/window.rs:3068
 msgid "Summarize this conversation"
 msgstr ""
 
@@ -687,7 +687,7 @@ msgstr ""
 
 #. The header in both spaces carries a button for this now (R12);
 #. the menu item stays too, so Ctrl+J shows here as well.
-#: app/src/ui/assistant.rs:99 app/src/ui/window.rs:2991
+#: app/src/ui/assistant.rs:99 app/src/ui/window.rs:2983
 msgid "Assistant"
 msgstr ""
 
@@ -803,7 +803,7 @@ msgstr ""
 
 #: app/src/ui/assistant_mcp_prefs.rs:121 app/src/ui/calendar/editor.rs:1639
 #: app/src/ui/composer/mod.rs:1849 app/src/ui/composer/recipients.rs:315
-#: app/src/ui/window.rs:2780
+#: app/src/ui/window.rs:2772
 msgid "Remove"
 msgstr ""
 
@@ -2295,7 +2295,7 @@ msgstr ""
 msgid "Options for {calendar}"
 msgstr ""
 
-#: app/src/ui/calendar/sidebar.rs:1109 app/src/ui/contacts_prefs.rs:320
+#: app/src/ui/calendar/sidebar.rs:1109 app/src/ui/contacts_prefs.rs:271
 msgid "Grant Access for {account}"
 msgstr ""
 
@@ -2840,7 +2840,7 @@ msgstr ""
 msgid "Edit…"
 msgstr ""
 
-#: app/src/ui/contacts_prefs.rs:175
+#: app/src/ui/contacts_prefs.rs:163
 msgid ""
 "Iris can read an account's contacts: names, email addresses, photos, "
 "organizations, and phone numbers. It uses them to suggest recipients, to "
@@ -2849,15 +2849,15 @@ msgid ""
 "contacts."
 msgstr ""
 
-#: app/src/ui/contacts_prefs.rs:184
+#: app/src/ui/contacts_prefs.rs:172
 msgid "No accounts yet"
 msgstr ""
 
-#: app/src/ui/contacts_prefs.rs:265
+#: app/src/ui/contacts_prefs.rs:228
 msgid "Iris shows each account's meetings and reminds you before they start."
 msgstr ""
 
-#: app/src/ui/contacts_prefs.rs:311
+#: app/src/ui/contacts_prefs.rs:262
 msgid "Not allowed when you signed in"
 msgstr ""
 
@@ -3242,7 +3242,7 @@ msgstr ""
 msgid "Allow Hide My Email"
 msgstr ""
 
-#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3124
+#: app/src/ui/hide_my_email.rs:336 app/src/ui/window.rs:3116
 msgid "Add an account first"
 msgstr ""
 
@@ -3428,7 +3428,7 @@ msgid "All Files"
 msgstr ""
 
 #: app/src/ui/key_import.rs:213 app/src/ui/key_import.rs:217
-#: app/src/ui/window.rs:3533
+#: app/src/ui/window.rs:3525
 msgid "Close"
 msgstr ""
 
@@ -4218,7 +4218,7 @@ msgstr ""
 msgid "Rules…"
 msgstr ""
 
-#: app/src/ui/sidebar.rs:1841 app/src/ui/window.rs:2998
+#: app/src/ui/sidebar.rs:1841 app/src/ui/window.rs:2990
 msgid "Hide My Email…"
 msgstr ""
 
@@ -4561,178 +4561,170 @@ msgstr[1] ""
 msgid "{label}, on this mail"
 msgstr ""
 
-#: app/src/ui/window.rs:323
-msgid "Added {person} to VIPs"
-msgstr ""
-
-#: app/src/ui/window.rs:324
-msgid "Removed {person} from VIPs"
-msgstr ""
-
-#: app/src/ui/window.rs:330
+#: app/src/ui/window.rs:322
 msgid "Could not load mail: {reason}"
 msgstr ""
 
-#: app/src/ui/window.rs:340
+#: app/src/ui/window.rs:332
 msgid "Added {account}. Downloading mail…"
 msgstr ""
 
-#: app/src/ui/window.rs:344 app/src/ui/window.rs:2570
+#: app/src/ui/window.rs:336 app/src/ui/window.rs:2562
 msgid "{account} is signed in again."
 msgstr ""
 
-#: app/src/ui/window.rs:363
+#: app/src/ui/window.rs:355
 msgid "Made a folder called “{name}” on {provider} for archived mail"
 msgstr ""
 
-#: app/src/ui/window.rs:421
+#: app/src/ui/window.rs:413
 msgid "Resize the message list"
 msgstr ""
 
-#: app/src/ui/window.rs:590
+#: app/src/ui/window.rs:582
 msgid "Resize the assistant"
 msgstr ""
 
-#: app/src/ui/window.rs:684
+#: app/src/ui/window.rs:676
 msgid "Iris (Demo)"
 msgstr ""
 
-#: app/src/ui/window.rs:1025
+#: app/src/ui/window.rs:1017
 msgid "Could not read accounts: {reason}"
 msgstr ""
 
-#: app/src/ui/window.rs:1087
+#: app/src/ui/window.rs:1079
 msgid "Sign in again to keep {account} syncing"
 msgstr ""
 
-#: app/src/ui/window.rs:1784
+#: app/src/ui/window.rs:1776
 msgid "Could not delete the mail: {reason}"
 msgstr ""
 
-#: app/src/ui/window.rs:1868
+#: app/src/ui/window.rs:1860
 msgid "Turn On the {service}"
 msgstr ""
 
-#: app/src/ui/window.rs:1871
+#: app/src/ui/window.rs:1863
 msgid ""
 "The Google Cloud project Iris signs in with has the {service} switched off, "
 "so Google refuses before it can ask for your permission. Turn it on, wait a "
 "minute, and try again."
 msgstr ""
 
-#: app/src/ui/window.rs:1877
+#: app/src/ui/window.rs:1869
 msgid "Open Google Cloud"
 msgstr ""
 
-#: app/src/ui/window.rs:1993
+#: app/src/ui/window.rs:1985
 msgid "Nothing to undo"
 msgstr ""
 
-#: app/src/ui/window.rs:1999
+#: app/src/ui/window.rs:1991
 msgid "{action} undone"
 msgstr ""
 
-#: app/src/ui/window.rs:2225
+#: app/src/ui/window.rs:2217
 msgid "Select mail from one account to tag it."
 msgstr ""
 
-#: app/src/ui/window.rs:2237
+#: app/src/ui/window.rs:2229
 msgid "This account has no tags yet. Make one in Outlook."
 msgstr ""
 
-#: app/src/ui/window.rs:2376
+#: app/src/ui/window.rs:2368
 msgid "Could not include {file}: {reason}"
 msgstr ""
 
-#: app/src/ui/window.rs:2487
+#: app/src/ui/window.rs:2479
 msgid "Downloading {file}…"
 msgstr ""
 
-#: app/src/ui/window.rs:2508 app/src/ui/window/attachments.rs:229
+#: app/src/ui/window.rs:2500 app/src/ui/window/attachments.rs:229
 msgid "Saved {file} to Downloads"
 msgstr ""
 
-#: app/src/ui/window.rs:2511
+#: app/src/ui/window.rs:2503
 msgid "Open"
 msgstr ""
 
-#: app/src/ui/window.rs:2526 app/src/ui/window/attachments.rs:234
+#: app/src/ui/window.rs:2518 app/src/ui/window/attachments.rs:234
 msgid "Could not save {file}: {reason}"
 msgstr ""
 
-#: app/src/ui/window.rs:2655
+#: app/src/ui/window.rs:2647
 msgid "This copy of Iris was built without Microsoft sign-in."
 msgstr ""
 
-#: app/src/ui/window.rs:2669
+#: app/src/ui/window.rs:2661
 msgid "Continue in your browser"
 msgstr ""
 
-#: app/src/ui/window.rs:2696
+#: app/src/ui/window.rs:2688
 msgid "This copy of Iris was built without Google sign-in."
 msgstr ""
 
-#: app/src/ui/window.rs:2704
+#: app/src/ui/window.rs:2696
 msgid "Get a Release"
 msgstr ""
 
-#: app/src/ui/window.rs:2776
+#: app/src/ui/window.rs:2768
 msgid "Remove {account}?"
 msgstr ""
 
-#: app/src/ui/window.rs:2791
+#: app/src/ui/window.rs:2783
 msgid "Removed {account}"
 msgstr ""
 
-#: app/src/ui/window.rs:2793
+#: app/src/ui/window.rs:2785
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: app/src/ui/window.rs:2978
+#: app/src/ui/window.rs:2970
 msgid "Refresh"
 msgstr ""
 
-#: app/src/ui/window.rs:2982
+#: app/src/ui/window.rs:2974
 msgid "Show Declined Events"
 msgstr ""
 
-#: app/src/ui/window.rs:2997
+#: app/src/ui/window.rs:2989
 msgid "New Smart Mailbox…"
 msgstr ""
 
-#: app/src/ui/window.rs:3006 app/src/ui/window/shortcuts.rs:616
+#: app/src/ui/window.rs:2998 app/src/ui/window/shortcuts.rs:616
 msgid "Preferences"
 msgstr ""
 
-#: app/src/ui/window.rs:3007
+#: app/src/ui/window.rs:2999
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: app/src/ui/window.rs:3009 app/src/ui/window/shortcuts.rs:639
+#: app/src/ui/window.rs:3001 app/src/ui/window/shortcuts.rs:639
 msgid "Quit"
 msgstr ""
 
-#: app/src/ui/window.rs:3015 app/src/ui/window.rs:3017
+#: app/src/ui/window.rs:3007 app/src/ui/window.rs:3009
 msgid "Main Menu"
 msgstr ""
 
-#: app/src/ui/window.rs:3397
+#: app/src/ui/window.rs:3389
 msgid "Open a message from the person first"
 msgstr ""
 
-#: app/src/ui/window.rs:3473
+#: app/src/ui/window.rs:3465
 msgid "Iris shows the new language after a restart"
 msgstr ""
 
-#: app/src/ui/window.rs:3475
+#: app/src/ui/window.rs:3467
 msgid "Restart"
 msgstr ""
 
-#: app/src/ui/window.rs:3508
+#: app/src/ui/window.rs:3500
 msgid "Messages That Will Not Download"
 msgstr ""
 
-#: app/src/ui/window.rs:3510
+#: app/src/ui/window.rs:3502
 msgid ""
 "Iris could not download these from {address}'s server. It tries again at "
 "each check, except for a message too large to download."
@@ -6729,31 +6721,39 @@ msgstr[1] ""
 msgid "contact in {accounts}"
 msgstr ""
 
-#: appcore/src/contacts.rs:159
+#: appcore/src/contacts.rs:157
+msgid "Added {person} to VIPs"
+msgstr ""
+
+#: appcore/src/contacts.rs:158
+msgid "Removed {person} from VIPs"
+msgstr ""
+
+#: appcore/src/contacts.rs:167
 msgid "Save {name} to contacts in {account}?"
 msgstr ""
 
-#: appcore/src/contacts.rs:163
+#: appcore/src/contacts.rs:171
 msgid "Save {count} person to contacts in {account}?"
 msgid_plural "Save {count} people to contacts in {account}?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/contacts.rs:212
+#: appcore/src/contacts.rs:220
 msgid "Saved {name} to contacts in {account}"
 msgstr ""
 
-#: appcore/src/contacts.rs:216
+#: appcore/src/contacts.rs:224
 msgid "Saved {count} person to contacts in {account}"
 msgid_plural "Saved {count} people to contacts in {account}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/contacts.rs:228
+#: appcore/src/contacts.rs:236
 msgid "Could not save {name} to contacts in {account}"
 msgstr ""
 
-#: appcore/src/contacts.rs:232
+#: appcore/src/contacts.rs:240
 msgid "Could not save {count} person to contacts in {account}"
 msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] ""
