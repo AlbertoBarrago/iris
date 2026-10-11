@@ -104,7 +104,7 @@ fn macos_data_dirs() {
 fn main() -> glib::ExitCode {
     macos_data_dirs();
     macos_bundle::set_environment();
-    macos_bundle::add_tool_paths();
+    mailrs_appcore::tool_paths::add_tool_paths();
     // async-imap logs passwords and mail at trace level; `quiet` drops
     // those lines whatever RUST_LOG says.
     tracing_subscriber::util::SubscriberInitExt::init(mailrs_imap::quiet(

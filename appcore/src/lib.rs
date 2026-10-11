@@ -43,6 +43,7 @@ pub mod smime;
 pub mod standard;
 pub mod stray_markdown;
 pub mod templates;
+pub mod tool_paths;
 pub mod translation;
 pub mod unsubscribe;
 pub mod unsubscribe_lines;
