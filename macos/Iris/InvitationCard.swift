@@ -33,11 +33,11 @@ struct InvitationCard: View {
                     .font(.callout.weight(.medium))
                     .foregroundStyle(invitation.newsTone == "cancelled" ? Color.red : Color.orange)
             }
-            HStack(alignment: .top, spacing: 12) {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(barColor)
-                    .frame(width: 4)
-                VStack(alignment: .leading, spacing: 4) {
+            // The bar is drawn behind the column, so it takes the column's
+            // height rather than asking for one of its own: a free shape
+            // inside a fixed-size stack made the window grow to the
+            // screen's height.
+            VStack(alignment: .leading, spacing: 4) {
                     Text(invitation.title).font(.title3.weight(.semibold))
                     if !invitation.when.isEmpty { Text(invitation.when) }
                     meta
@@ -53,10 +53,14 @@ struct InvitationCard: View {
                     if !went.isEmpty {
                         Text(went).font(.callout).foregroundStyle(.secondary)
                     }
-                }
-                .textSelection(.enabled)
             }
-            .fixedSize(horizontal: false, vertical: true)
+            .textSelection(.enabled)
+            .padding(.leading, 16)
+            .background(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(barColor)
+                    .frame(width: 4)
+            }
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
