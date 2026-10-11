@@ -9,6 +9,7 @@
 use chrono::{DateTime, Local};
 use mailrs_domain::Address;
 use mailrs_domain::translate::{date_locale, gettext};
+use mailrs_store::templates::Template;
 
 use crate::richtext::{Block, RichBody, Span};
 
@@ -69,6 +70,27 @@ pub fn fill(body: &RichBody, filling: &Filling) -> RichBody {
         })
         .collect();
     RichBody { blocks }
+}
+
+/// The subject a template gives a message: its own, filled in, and only
+/// to a message that has none yet, since the writer's subject wins.
+pub fn subject_for(template: &Template, filling: &Filling) -> Option<String> {
+    let own = template.subject.trim();
+    (filling.subject.is_empty() && !own.is_empty()).then(|| expand(own, filling))
+}
+
+/// What a list of templates says under the name: the subject, or the
+/// first line of the body when the template leaves the subject alone.
+pub fn summary(template: &Template) -> String {
+    let subject = template.subject.trim();
+    if !subject.is_empty() {
+        return subject.to_string();
+    }
+    template
+        .markdown
+        .lines()
+        .find(|line| !line.trim().is_empty())
+        .map_or_else(|| gettext("Empty"), |line| line.trim().to_string())
 }
 
 /// What one placeholder stands for, or nothing when the name is not one of
@@ -182,5 +204,37 @@ mod tests {
         let last = filled.blocks.last().unwrap();
         assert_eq!(last.kind, BlockKind::Bullet);
         assert_eq!(last.text(), "on 9 June 2025");
+    }
+
+    fn template(subject: &str, markdown: &str) -> Template {
+        Template {
+            id: 1,
+            name: "Thanks".into(),
+            subject: subject.into(),
+            markdown: markdown.into(),
+        }
+    }
+
+    fn titled(subject: &str) -> Filling {
+        Filling {
+            recipient: None,
+            subject: subject.into(),
+            date: "9 June 2025".into(),
+        }
+    }
+
+    #[test]
+    fn a_template_subject_goes_only_to_a_message_without_one() {
+        let thanks = template("Thanks for {{date}}", "");
+        assert_eq!(subject_for(&thanks, &titled("")).as_deref(), Some("Thanks for 9 June 2025"));
+        assert_eq!(subject_for(&thanks, &titled("Re: lunch")), None);
+        assert_eq!(subject_for(&template("  ", ""), &titled("")), None);
+    }
+
+    #[test]
+    fn the_summary_is_the_subject_or_the_first_line() {
+        assert_eq!(summary(&template("Hello", "Body")), "Hello");
+        assert_eq!(summary(&template("", "\n  First line\nSecond")), "First line");
+        assert_eq!(summary(&template("", "")), "Empty");
     }
 }

@@ -8,6 +8,7 @@ use std::rc::Rc;
 
 use adw::prelude::*;
 use gtk::glib;
+use mailrs_appcore::templates::summary;
 use mailrs_store::templates::Template;
 
 use crate::app::App;
@@ -119,20 +120,6 @@ fn row(
     row.add_suffix(&open);
     row.add_suffix(&delete);
     row
-}
-
-/// What the row says under the name: the subject, or the first line of the
-/// body when the template leaves the subject alone.
-fn summary(template: &Template) -> String {
-    let subject = template.subject.trim();
-    if !subject.is_empty() {
-        return subject.to_string();
-    }
-    template
-        .markdown
-        .lines()
-        .find(|line| !line.trim().is_empty())
-        .map_or_else(|| gettext("Empty"), |line| line.trim().to_string())
 }
 
 /// Asks before deleting, since nothing here brings a template back.

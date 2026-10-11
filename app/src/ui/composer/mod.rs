@@ -2485,9 +2485,8 @@ impl Composer {
         let found = self.templates.borrow().iter().find(|t| t.id == id).cloned();
         let Some(template) = found else { return };
         let mut filling = self.filling();
-        if filling.subject.is_empty() && !template.subject.trim().is_empty() {
-            self.subject
-                .set_text(&templates::expand(&template.subject, &filling));
+        if let Some(subject) = templates::subject_for(&template, &filling) {
+            self.subject.set_text(&subject);
             filling.subject = self.subject.text().trim().to_string();
         }
         let body = templates::fill(&RichBody::from_markdown(&template.markdown), &filling);
