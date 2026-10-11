@@ -7,13 +7,14 @@ use std::sync::Arc;
 
 use adw::prelude::*;
 use gtk::glib;
-use mailrs_domain::{Account, Provider};
+use mailrs_domain::Account;
 use mailrs_sync::{AutomaticReply, Offers, Permitted};
 
 use crate::core::Core;
 use crate::permission::Permission;
+use mailrs_appcore::auto_reply::{away_subtitle, subject_to_save};
 use crate::ui::permission;
-use mailrs_domain::translate::{fill, gettext, with_reason};
+use mailrs_domain::translate::{gettext, with_reason};
 
 /// Shows the dialog for `account`. `grant` runs when the server says Iris lacks
 /// the settings permission, to send the user through consent again. `saved`
@@ -158,27 +159,6 @@ fn problem(message: &str) -> adw::StatusPage {
         .title(gettext("Could Not Load the Automatic Reply"))
         .description(glib::markup_escape_text(message).as_str())
         .build()
-}
-
-/// The switch's subtitle: who answers while the person is away. An IMAP
-/// account with no provider name has only "IMAP" to call its server, which
-/// reads badly as a subject, so it says "Your mail server".
-fn away_subtitle(provider_name: &str) -> String {
-    let who = if provider_name == Provider::Imap.name() {
-        gettext("Your mail server")
-    } else {
-        provider_name.to_string()
-    };
-    fill(
-        &gettext("{provider} answers new mail while you are away, even when this computer is off"),
-        &[("provider", &who)],
-    )
-}
-
-/// The subject a save sends: what was typed when the row shows, and what
-/// the reply already held when it does not, so a hidden row never blanks it.
-fn subject_to_save(shown: bool, typed: &str, kept: &str) -> String {
-    if shown { typed.to_string() } else { kept.to_string() }
 }
 
 struct Form {
@@ -380,31 +360,4 @@ fn midnight(day: &glib::DateTime) -> i64 {
     glib::DateTime::from_local(year, month, date, 0, 0, 0.0)
         .map(|d| d.to_unix() * 1000)
         .unwrap_or_default()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn the_subtitle_names_the_provider_that_answers() {
-        let off = "while you are away, even when this computer is off";
-        assert_eq!(away_subtitle("Gmail"), format!("Gmail answers new mail {off}"));
-        assert_eq!(away_subtitle("Outlook"), format!("Outlook answers new mail {off}"));
-        assert_eq!(away_subtitle("Fastmail"), format!("Fastmail answers new mail {off}"));
-    }
-
-    #[test]
-    fn an_imap_account_with_no_provider_name_says_its_mail_server_answers() {
-        assert_eq!(
-            away_subtitle(Provider::Imap.name()),
-            "Your mail server answers new mail while you are away, even when this computer is off"
-        );
-    }
-
-    #[test]
-    fn a_hidden_subject_row_leaves_the_subject_as_it_was() {
-        assert_eq!(subject_to_save(false, "", "Away"), "Away");
-        assert_eq!(subject_to_save(true, "Back soon", "Away"), "Back soon");
-    }
 }

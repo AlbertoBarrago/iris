@@ -11,6 +11,7 @@ pub mod accounts;
 pub mod add_account;
 pub mod assistant;
 pub mod attachcheck;
+pub mod auto_reply;
 pub mod calendar_drag;
 pub mod calendar_draft;
 pub mod compose;
