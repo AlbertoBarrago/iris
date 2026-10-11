@@ -16,6 +16,9 @@ final class MailModel {
     private(set) var invitation: MailInvitation?
     /// The conversation `invitation` belongs to.
     fileprivate var invitationKey: ThreadKey?
+    /// The offer to leave the open conversation's mailing list.
+    private(set) var listOffer: ListOffer?
+    fileprivate var listOfferKey: ThreadKey?
     /// Conversations whose pictures on the web the person chose to load.
     private var remoteAllowed: Set<ThreadKey> = []
     /// Messages of the open conversation the person opened or closed.
@@ -885,10 +888,13 @@ final class MailModel {
         guard let store, let key = openThread else {
             page = nil
             invitation = nil
+            listOffer = nil
             return
         }
         if invitationKey != key { invitation = nil }
         loadInvitation()
+        if listOfferKey != key { listOffer = nil }
+        loadListOffer()
         markReadOnOpen(key)
         let theme = theme
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
@@ -955,6 +961,49 @@ extension MailModel {
                     self.openEvent(details)
                 } else {
                     self.say(tr("The event is no longer on the calendar"))
+                }
+            }
+        }
+    }
+}
+
+// MARK: Mailing lists
+
+extension MailModel {
+    /// Reads whether the open conversation's list can be left.
+    func loadListOffer() {
+        guard let mail, let key = openThread else {
+            listOffer = nil
+            return
+        }
+        Task.detached {
+            let found = try? mail.listOffer(accountId: key.account, threadId: key.thread)
+            await MainActor.run {
+                if self.openThread == key {
+                    self.listOffer = found ?? nil
+                    self.listOfferKey = key
+                }
+            }
+        }
+    }
+
+    /// Leaves the open conversation's list, once the person said yes,
+    /// and says how it went. A page the list needs finished opens in the
+    /// browser.
+    func unsubscribe() {
+        guard let mail, let key = openThread else { return }
+        Task.detached {
+            let done = Result { try mail.unsubscribe(accountId: key.account, threadId: key.thread) }
+            await MainActor.run {
+                switch done {
+                case .success(let done):
+                    self.say(done.words)
+                    if !done.openUrl.isEmpty, let url = URL(string: done.openUrl) {
+                        NSWorkspace.shared.open(url)
+                    }
+                    if done.left, self.openThread == key { self.listOffer = nil }
+                case .failure(let error):
+                    self.say("\(error)")
                 }
             }
         }

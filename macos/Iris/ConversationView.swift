@@ -7,6 +7,7 @@ import WebKit
 struct ConversationView: View {
     @Environment(MailModel.self) private var model
     @Environment(\.colorScheme) private var colorScheme
+    @State private var leaving = false
 
     var body: some View {
         Group {
@@ -25,6 +26,24 @@ struct ConversationView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                         .padding(10)
                     }
+                    if let offer = model.listOffer {
+                        HStack {
+                            Text(tr("This message is from a mailing list"))
+                            Spacer()
+                            Button(tr("Unsubscribe")) { leaving = true }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        .padding(10)
+                        .alert(offer.heading, isPresented: $leaving) {
+                            Button(tr("Cancel"), role: .cancel) {}
+                            Button(tr("Unsubscribe")) { model.unsubscribe() }
+                                .keyboardShortcut(.defaultAction)
+                        } message: {
+                            Text(offer.line.prefix(1).uppercased() + offer.line.dropFirst())
+                        }
+                    }
                     if model.findShown {
                         FindBar()
                         Divider()
@@ -32,8 +51,10 @@ struct ConversationView: View {
                     if let invitation = model.invitation, let key = model.openThread {
                         InvitationCard(invitation: invitation, account: key.account)
                             .id(invitation.messageId + invitation.answer)
+                            .layoutPriority(1)
                     }
                     MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1, finder: model.finder) { url in model.followLink(url) }
+                        .frame(minHeight: 120)
                 }
             } else {
                 ContentUnavailableView(tr("No Conversation Selected"), systemImage: "envelope")

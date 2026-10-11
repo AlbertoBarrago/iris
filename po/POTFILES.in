@@ -181,3 +181,5 @@ appcore/src/unsubscribe_page.rs
 appcore/src/invitation_card.rs
 ffi/src/mail_invitation.rs
 ffi/src/templates.rs
+appcore/src/unsubscribe.rs
+ffi/src/unsubscribe.rs

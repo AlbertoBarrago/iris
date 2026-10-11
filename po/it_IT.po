@@ -5124,7 +5124,7 @@ msgstr "Apri prima una conversazione"
 #: app/src/ui/window/export.rs:138 app/src/ui/window/organize.rs:89
 #: app/src/ui/window/organize.rs:138 app/src/ui/window/organize.rs:180
 #: app/src/ui/window/organize.rs:213 app/src/ui/window/organize.rs:241
-#: app/src/ui/window/senders.rs:285
+#: app/src/ui/window/senders.rs:254
 msgid "That account is not connected"
 msgstr "Quell'account non è connesso"
 
@@ -5462,15 +5462,11 @@ msgstr "Invio…"
 msgid "Could not cancel: {reason}"
 msgstr "Impossibile annullare: {reason}"
 
-#: app/src/ui/window/senders.rs:42
-msgid "this list"
-msgstr "questa lista"
-
-#: app/src/ui/window/senders.rs:64
+#: app/src/ui/window/senders.rs:43 app/src/ui/window/senders.rs:52
 msgid "This message has no unsubscribe link"
 msgstr "Questo messaggio non ha un link per annullare l'iscrizione"
 
-#: app/src/ui/window/senders.rs:141
+#: app/src/ui/window/senders.rs:110
 msgid ""
 "The request to leave {sender} waits in the Outbox. It goes out as soon as it "
 "can."
@@ -5478,23 +5474,23 @@ msgstr ""
 "La richiesta di lasciare {sender} attende in Posta in uscita. Partirà appena "
 "possibile."
 
-#: app/src/ui/window/senders.rs:207
+#: app/src/ui/window/senders.rs:176
 msgid "Open Page"
 msgstr "Apri pagina"
 
-#: app/src/ui/window/senders.rs:244
+#: app/src/ui/window/senders.rs:213
 msgid "The app is closing."
 msgstr "L'app si sta chiudendo."
 
-#: app/src/ui/window/senders.rs:262
+#: app/src/ui/window/senders.rs:231
 msgid "Open a message from the sender to block"
 msgstr "Apri un messaggio del mittente da bloccare"
 
-#: app/src/ui/window/senders.rs:268
+#: app/src/ui/window/senders.rs:237
 msgid "Block {sender}?"
 msgstr "Bloccare {sender}?"
 
-#: app/src/ui/window/senders.rs:271
+#: app/src/ui/window/senders.rs:240
 msgid ""
 "New mail from {email} goes straight to the Trash. This conversation moves "
 "there now. Remove the rule under Rules to unblock."
@@ -5502,15 +5498,15 @@ msgstr ""
 "La nuova posta da {email} va direttamente nel Cestino. Questa conversazione "
 "ci viene spostata ora. Rimuovi la regola in Regole per sbloccare."
 
-#: app/src/ui/window/senders.rs:276
+#: app/src/ui/window/senders.rs:245
 msgid "Block"
 msgstr "Blocca"
 
-#: app/src/ui/window/senders.rs:303
+#: app/src/ui/window/senders.rs:272
 msgid "Blocked {sender}"
 msgstr "{sender} bloccato"
 
-#: app/src/ui/window/senders.rs:310
+#: app/src/ui/window/senders.rs:279
 msgid "Could not block the sender: {reason}"
 msgstr "Impossibile bloccare il mittente: {reason}"
 
@@ -6904,6 +6900,10 @@ msgstr[1] "Riportare invece {count} conversazioni {when}?"
 #: appcore/src/assistant/run/queue.rs:426
 msgid "Undo “{action}”?"
 msgstr "Annullare “{action}”?"
+
+#: appcore/src/assistant/run/unsubscribe.rs:373
+msgid "this list"
+msgstr "questa lista"
 
 #: appcore/src/assistant/run/writing.rs:241
 msgid "Signed with {standard}"

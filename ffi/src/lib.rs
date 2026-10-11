@@ -28,6 +28,7 @@ mod mail;
 mod notify;
 mod prefs;
 mod templates;
+mod unsubscribe;
 
 pub use prefs::{ChoiceItem, PreferenceChoices, Preferences, SignatureSetting, import_signature};
 
