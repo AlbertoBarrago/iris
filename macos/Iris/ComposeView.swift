@@ -33,6 +33,9 @@ struct ComposeView: View {
     @State private var pickedTime: Int64?
     @State private var problem: String?
     @State private var editor = RichController()
+    @State private var templates: [TemplateItem] = []
+    @State private var savingTemplate = false
+    @State private var templateName = ""
 
     var body: some View {
         Group {
@@ -72,7 +75,35 @@ struct ComposeView: View {
                 confirm: tr("Schedule")
             ) { at in pickedTime = at }
         }
+        .alert(tr("Save as Template"), isPresented: $savingTemplate) {
+            TextField(tr("Name"), text: $templateName)
+            Button(tr("Cancel"), role: .cancel) {}
+            Button(tr("Save")) { saveTemplate() }
+                .keyboardShortcut(.defaultAction)
+        } message: {
+            Text(tr("Placeholders such as {{first_name}} fill in each time you use it."))
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .templatesChanged)) { _ in loadTemplates() }
         .toolbar {
+            ToolbarItem {
+                Menu {
+                    if templates.isEmpty {
+                        Button(tr("No Templates Yet")) {}.disabled(true)
+                    }
+                    ForEach(templates, id: \.id) { template in
+                        Button(template.name) { insertTemplate(template.id) }
+                    }
+                    Divider()
+                    Button(tr("Save as Template…")) {
+                        templateName = draft?.subject ?? ""
+                        savingTemplate = true
+                    }
+                } label: {
+                    Label(tr("Templates"), systemImage: "doc.text")
+                }
+                .help(tr("Templates"))
+                .disabled(draft == nil)
+            }
             ToolbarItem {
                 Button(macKeys(tr("Attach Files (Ctrl+Shift+A)")), systemImage: "paperclip") { pickFiles() }
                     .keyboardShortcut("a", modifiers: [.command, .shift])
@@ -219,6 +250,7 @@ struct ComposeView: View {
     }
 
     private func load() async {
+        loadTemplates()
         do {
             senders = try await model.senders()
             if request.kind == .restore, let key = request.restore {
@@ -233,6 +265,35 @@ struct ComposeView: View {
     }
 
     /// Picks files to attach with the Mac's open panel.
+    private func loadTemplates() {
+        templates = (try? model.mail?.templates()) ?? []
+    }
+
+    /// Puts a template in at the cursor, its placeholders filled for this
+    /// message. One with a subject gives it to a message that has none.
+    private func insertTemplate(_ id: Int64) {
+        guard let mail = model.mail, let current = draft else { return }
+        do {
+            let filled = try mail.fillTemplate(id: id, to: current.to, subject: current.subject)
+            if let subject = filled.subject { draft?.subject = subject }
+            editor.insert(filled.blocks)
+        } catch {
+            model.say("\(error)")
+        }
+    }
+
+    /// Keeps what is written as a template under the name given.
+    private func saveTemplate() {
+        guard let mail = model.mail, let current = draft else { return }
+        do {
+            _ = try mail.saveDraftAsTemplate(name: templateName, subject: current.subject, blocks: current.rich ?? [])
+            model.say(tr("Template saved"))
+            NotificationCenter.default.post(name: .templatesChanged, object: nil)
+        } catch {
+            model.say("\(error)")
+        }
+    }
+
     private func pickFiles() {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = true
@@ -480,4 +541,9 @@ final class CloseGuardDelegate: NSObject, NSWindowDelegate {
     override func forwardingTarget(for selector: Selector!) -> Any? {
         original?.responds(to: selector) == true ? original : super.forwardingTarget(for: selector)
     }
+}
+
+extension Notification.Name {
+    /// A template was saved or deleted, so every list of them reads again.
+    static let templatesChanged = Notification.Name("IrisTemplatesChanged")
 }

@@ -488,7 +488,7 @@ impl Mail {
 
 
 /// The editor's lines as the core's rich body.
-fn rich_body(blocks: Vec<RichBlock>) -> RichBody {
+pub(crate) fn rich_body(blocks: Vec<RichBlock>) -> RichBody {
     RichBody {
         blocks: blocks
             .into_iter()
@@ -522,7 +522,7 @@ fn rich_body(blocks: Vec<RichBlock>) -> RichBody {
 }
 
 /// The core's rich body as the editor's lines.
-fn rich_blocks(body: RichBody) -> Vec<RichBlock> {
+pub(crate) fn rich_blocks(body: RichBody) -> Vec<RichBlock> {
     body.blocks
         .into_iter()
         .map(|block| {

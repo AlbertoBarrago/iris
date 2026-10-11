@@ -184,6 +184,20 @@ final class RichController {
         changed()
     }
 
+    /// Puts `blocks` in where the cursor is, over any selection, as one
+    /// step Undo takes back.
+    func insert(_ blocks: [RichBlock]) {
+        guard let text else { return }
+        let range = text.selectedRange()
+        let words = Self.attributed(blocks)
+        guard text.shouldChangeText(in: range, replacementString: words.string) else { return }
+        text.textStorage?.replaceCharacters(in: range, with: words)
+        text.didChangeText()
+        text.setSelectedRange(NSRange(location: range.location + words.length, length: 0))
+        text.window?.makeFirstResponder(text)
+        changed()
+    }
+
     /// Takes every style and line kind off the selection.
     func clear() {
         guard let text, let storage = text.textStorage else { return }

@@ -491,9 +491,9 @@ msgstr "Try Again"
 #: app/src/ui/calendar/manage.rs:374 app/src/ui/calendar/manage.rs:417
 #: app/src/ui/composer/editor.rs:343 app/src/ui/composer/mod.rs:1681
 #: app/src/ui/composer/mod.rs:1750 app/src/ui/composer/mod.rs:2073
-#: app/src/ui/composer/mod.rs:2521 app/src/ui/confirm.rs:29
+#: app/src/ui/composer/mod.rs:2520 app/src/ui/confirm.rs:29
 #: app/src/ui/rules.rs:445 app/src/ui/rules.rs:625
-#: app/src/ui/smart_editor.rs:150 app/src/ui/templates.rs:239
+#: app/src/ui/smart_editor.rs:150 app/src/ui/templates.rs:226
 #: app/src/ui/unsubscribe.rs:76 app/src/ui/vacation.rs:45 app/src/ui/when.rs:52
 #: app/src/ui/window/arrange.rs:146 app/src/ui/window/images.rs:101
 #: app/src/ui/window/organize.rs:73 app/src/ui/window/organize.rs:122
@@ -901,8 +901,8 @@ msgid "A command runs on this computer and talks over its input and output, as i
 msgstr "A command runs on this computer and talks over its input and output, as in npx -y @modelcontextprotocol/server-filesystem ~/Documents. Put NAME=value in front for the environment. A URL reaches a server over HTTP."
 
 #: app/src/ui/assistant_mcp_prefs.rs:254 app/src/ui/calendar/manage.rs:348
-#: app/src/ui/composer/mod.rs:2516 app/src/ui/smart_editor.rs:37
-#: app/src/ui/templates.rs:190
+#: app/src/ui/composer/mod.rs:2515 app/src/ui/smart_editor.rs:37
+#: app/src/ui/templates.rs:177
 msgid "Name"
 msgstr "Name"
 
@@ -937,9 +937,9 @@ msgstr "Test"
 
 #: app/src/ui/assistant_mcp_prefs.rs:341 app/src/ui/calendar/editor.rs:179
 #: app/src/ui/calendar/quick.rs:211 app/src/ui/composer/editor.rs:343
-#: app/src/ui/composer/mod.rs:2521 app/src/ui/dav_edit.rs:26
+#: app/src/ui/composer/mod.rs:2520 app/src/ui/dav_edit.rs:26
 #: app/src/ui/rules.rs:438 app/src/ui/smart_editor.rs:144
-#: app/src/ui/templates.rs:233 app/src/ui/vacation.rs:41
+#: app/src/ui/templates.rs:220 app/src/ui/vacation.rs:41
 #: app/src/ui/window/arrange.rs:146 app/src/ui/window/save_contacts.rs:110
 msgid "Save"
 msgstr "Save"
@@ -1928,7 +1928,7 @@ msgstr "Delete “{calendar}”?"
 #: app/src/ui/calendar/manage.rs:292 app/src/ui/calendar/popover.rs:211
 #: app/src/ui/calendar/popover.rs:213 app/src/ui/calendar/popover.rs:713
 #: app/src/ui/conversation.rs:550 app/src/ui/hide_my_email.rs:289
-#: app/src/ui/queued.rs:58 app/src/ui/templates.rs:149
+#: app/src/ui/queued.rs:58 app/src/ui/templates.rs:136
 #: app/src/ui/window/arrange.rs:106 app/src/ui/window/organize.rs:204
 msgid "Delete"
 msgstr "Delete"
@@ -1964,7 +1964,7 @@ msgstr "New Calendar"
 
 #: app/src/ui/calendar/manage.rs:374 app/src/ui/hide_my_email.rs:365
 #: app/src/ui/rules.rs:439 app/src/ui/smart_editor.rs:146
-#: app/src/ui/templates.rs:235 app/src/ui/window/organize.rs:74
+#: app/src/ui/templates.rs:222 app/src/ui/window/organize.rs:74
 #: app/src/ui/window/organize.rs:347
 msgid "Create"
 msgstr "Create"
@@ -2430,7 +2430,7 @@ msgstr "Attach Files (Ctrl+Shift+A)"
 msgid "Save as Template…"
 msgstr "Save as Template…"
 
-#: app/src/ui/composer/mod.rs:330 app/src/ui/templates.rs:23
+#: app/src/ui/composer/mod.rs:330 app/src/ui/templates.rs:24
 msgid "Templates"
 msgstr "Templates"
 
@@ -2487,7 +2487,7 @@ msgid "Bcc"
 msgstr "Bcc"
 
 #: app/src/ui/composer/mod.rs:441 app/src/ui/rules.rs:355
-#: app/src/ui/templates.rs:192 app/src/ui/vacation.rs:238
+#: app/src/ui/templates.rs:179 app/src/ui/vacation.rs:238
 msgid "Subject"
 msgstr "Subject"
 
@@ -2738,39 +2738,39 @@ msgstr "Could not paste the image"
 msgid "No Templates Yet"
 msgstr "No Templates Yet"
 
-#: app/src/ui/composer/mod.rs:2510
+#: app/src/ui/composer/mod.rs:2509
 msgid "Save as Template"
 msgstr "Save as Template"
 
-#: app/src/ui/composer/mod.rs:2512
+#: app/src/ui/composer/mod.rs:2511
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr "Placeholders such as {{first_name}} fill in each time you use it."
 
-#: app/src/ui/composer/mod.rs:2535 app/src/ui/templates.rs:280
+#: app/src/ui/composer/mod.rs:2534 app/src/ui/templates.rs:267
 msgid "Give the template a name"
 msgstr "Give the template a name"
 
-#: app/src/ui/composer/mod.rs:2543
+#: app/src/ui/composer/mod.rs:2542
 msgid "Template saved"
 msgstr "Template saved"
 
-#: app/src/ui/composer/mod.rs:2546
+#: app/src/ui/composer/mod.rs:2545
 msgid "Template not saved: {reason}"
 msgstr "Template not saved: {reason}"
 
-#: app/src/ui/composer/mod.rs:2616
+#: app/src/ui/composer/mod.rs:2615
 msgid "This looks like Markdown"
 msgstr "This looks like Markdown"
 
-#: app/src/ui/composer/mod.rs:2622
+#: app/src/ui/composer/mod.rs:2621
 msgid "Format"
 msgstr "Format"
 
-#: app/src/ui/composer/mod.rs:2623
+#: app/src/ui/composer/mod.rs:2622
 msgid "Turn the Markdown into rich text"
 msgstr "Turn the Markdown into rich text"
 
-#: app/src/ui/composer/mod.rs:2629 app/src/ui/composer/mod.rs:2633
+#: app/src/ui/composer/mod.rs:2628 app/src/ui/composer/mod.rs:2632
 msgid "Dismiss"
 msgstr "Dismiss"
 
@@ -4331,51 +4331,47 @@ msgstr "Give the mailbox a name"
 msgid "Add a condition with a value"
 msgstr "Add a condition with a value"
 
-#: app/src/ui/templates.rs:25
+#: app/src/ui/templates.rs:26
 msgid "Saved bodies the composer's Templates menu drops into a message. Markdown works, and {{first_name}}, {{name}}, {{email}}, {{subject}} and {{date}} fill in when you use one."
 msgstr "Saved bodies the composer's Templates menu drops into a message. Markdown works, and {{first_name}}, {{name}}, {{email}}, {{subject}} and {{date}} fill in when you use one."
 
-#: app/src/ui/templates.rs:34
+#: app/src/ui/templates.rs:35
 msgid "Add Template"
 msgstr "Add Template"
 
-#: app/src/ui/templates.rs:93 app/src/ui/templates.rs:251
+#: app/src/ui/templates.rs:94 app/src/ui/templates.rs:238
 msgid "Edit Template"
 msgstr "Edit Template"
 
-#: app/src/ui/templates.rs:94
+#: app/src/ui/templates.rs:95
 msgid "Edit {template}"
 msgstr "Edit {template}"
 
-#: app/src/ui/templates.rs:109
+#: app/src/ui/templates.rs:110
 msgid "Delete Template"
 msgstr "Delete Template"
 
-#: app/src/ui/templates.rs:110
+#: app/src/ui/templates.rs:111
 msgid "Delete {template}"
 msgstr "Delete {template}"
 
-#: app/src/ui/templates.rs:135
-msgid "Empty"
-msgstr "Empty"
-
-#: app/src/ui/templates.rs:147
+#: app/src/ui/templates.rs:134
 msgid "Delete {name}?"
 msgstr "Delete {name}?"
 
-#: app/src/ui/templates.rs:148
+#: app/src/ui/templates.rs:135
 msgid "This computer keeps the only copy."
 msgstr "This computer keeps the only copy."
 
-#: app/src/ui/templates.rs:196
+#: app/src/ui/templates.rs:183
 msgid "The subject is optional. A template with one gives it to a message that has none."
 msgstr "The subject is optional. A template with one gives it to a message that has none."
 
-#: app/src/ui/templates.rs:212 app/src/ui/templates.rs:214
+#: app/src/ui/templates.rs:199 app/src/ui/templates.rs:201
 msgid "Body"
 msgstr "Body"
 
-#: app/src/ui/templates.rs:253
+#: app/src/ui/templates.rs:240
 msgid "New Template"
 msgstr "New Template"
 
@@ -5534,6 +5530,10 @@ msgstr "nine"
 #: appcore/src/add_account.rs:617
 msgid "Waiting"
 msgstr "Waiting"
+
+#: appcore/src/add_account.rs:618
+msgid "Empty"
+msgstr "Empty"
 
 #: appcore/src/add_account.rs:757
 msgid "Could not sign in: {reason}"
@@ -8104,7 +8104,7 @@ msgstr "The file needs its passphrase, and none was given. Nothing was imported.
 msgid "gpgsm failed: {reason}"
 msgstr "gpgsm failed: {reason}"
 
-#: appcore/src/templates.rs:28
+#: appcore/src/templates.rs:29
 msgid "%-d %B %Y"
 msgstr "%-d %B %Y"
 
@@ -8458,6 +8458,10 @@ msgstr "The {service} is switched off for Iris, so your answer went by email"
 #: ffi/src/mail_invitation.rs:277
 msgid "This invitation has no time to move"
 msgstr "This invitation has no time to move"
+
+#: ffi/src/templates.rs:93
+msgid "The template is gone"
+msgstr "The template is gone"
 
 #: render/src/calendar_words.rs:72
 msgid "{date} · {start}–{end}"

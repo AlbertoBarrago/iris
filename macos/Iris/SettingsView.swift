@@ -224,6 +224,7 @@ private struct WritingSettings: View {
                         SignatureEditor(signature: $signature)
                     }
                 }
+                TemplatesSection()
             }
             .formStyle(.grouped)
             .onAppear { signatures = model.signatures() }

@@ -27,6 +27,7 @@ mod mail_invitation;
 mod mail;
 mod notify;
 mod prefs;
+mod templates;
 
 pub use prefs::{ChoiceItem, PreferenceChoices, Preferences, SignatureSetting, import_signature};
 
