@@ -317,14 +317,6 @@ fn filing_choice(filing: Filing, id: &str, name: &str, applied: bool) -> Press {
     }
 }
 
-/// The toast after adding or removing a VIP.
-fn vip_message(added: bool, who: &str) -> String {
-    match added {
-        true => fill(&gettext("Added {person} to VIPs"), &[("person", who)]),
-        false => fill(&gettext("Removed {person} from VIPs"), &[("person", who)]),
-    }
-}
-
 /// What a mailbox that would not load says.
 fn load_failed(err: &impl std::fmt::Display) -> String {
     with_reason(&gettext("Could not load mail: {reason}"), err, &[])
@@ -1633,7 +1625,7 @@ impl MainWindow {
                         name: display.clone(),
                     });
                     let added = app.settings_with(|s| s.is_vip(&address));
-                    window.toast(&vip_message(added, &display));
+                    window.toast(&mailrs_appcore::contacts::vip_message(added, &display));
                 }
                 contact_card::Choice::AllMail => {
                     window.search(format!("from:{address}"));
@@ -3402,7 +3394,7 @@ impl MainWindow {
             name,
         });
         let added = app.settings_with(|s| s.is_vip(&sender.email));
-        self.toast(&vip_message(added, sender.display()));
+        self.toast(&mailrs_appcore::contacts::vip_message(added, sender.display()));
     }
 
     /// Brings what is on screen back in line after a settings change.

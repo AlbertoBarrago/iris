@@ -13,13 +13,13 @@ use base64::Engine;
 /// could not be read, so a missing photo is asked for once rather than on
 /// every redraw.
 #[derive(Default)]
-pub(crate) struct PhotoCache {
+pub struct PhotoCache {
     read: HashMap<String, Option<String>>,
     reading: std::collections::HashSet<String>,
 }
 
 /// What a conversation gets now, and the files still to read for it.
-pub(crate) struct Lookup {
+pub struct Lookup {
     pub found: HashMap<String, String>,
     pub to_read: Vec<(String, PathBuf)>,
 }
@@ -28,7 +28,7 @@ impl PhotoCache {
     /// Answers `addresses` from what is read, and names the files to read
     /// for the others that have a photo at `path_of`. A file already being
     /// read is not named twice.
-    pub(crate) fn lookup(
+    pub fn lookup(
         &mut self,
         addresses: impl Iterator<Item = String>,
         path_of: impl Fn(&str) -> Option<PathBuf>,
@@ -58,7 +58,7 @@ impl PhotoCache {
     }
 
     /// Keeps what a background read brought back.
-    pub(crate) fn store(&mut self, read: Vec<(String, Option<String>)>) {
+    pub fn store(&mut self, read: Vec<(String, Option<String>)>) {
         for (key, data) in read {
             self.reading.remove(&key);
             self.read.insert(key, data);
@@ -66,14 +66,14 @@ impl PhotoCache {
     }
 
     /// Forgets every photo, after the address books change.
-    pub(crate) fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.read.clear();
         self.reading.clear();
     }
 }
 
 /// Reads each file as a `data:` URI. Runs on a blocking thread.
-pub(crate) fn read(files: Vec<(String, PathBuf)>) -> Vec<(String, Option<String>)> {
+pub fn read(files: Vec<(String, PathBuf)>) -> Vec<(String, Option<String>)> {
     files
         .into_iter()
         .map(|(key, path)| {
@@ -88,7 +88,7 @@ pub(crate) fn read(files: Vec<(String, PathBuf)>) -> Vec<(String, Option<String>
 
 /// Keeps the contacts whose photo file is on disk, by lower-case address.
 /// Runs on a blocking thread, since it asks the disk once per contact.
-pub(crate) fn on_disk(dir: PathBuf, files: Vec<(String, String)>) -> HashMap<String, PathBuf> {
+pub fn on_disk(dir: PathBuf, files: Vec<(String, String)>) -> HashMap<String, PathBuf> {
     files
         .into_iter()
         .filter_map(|(email, name)| {

@@ -12,7 +12,7 @@ use mailrs_store::services::{Miss, ServiceKind};
 use mailrs_sync::{Missing, Offers, Withheld};
 
 use crate::app::App;
-use crate::offered::reason;
+use crate::offered::{CalendarRow, ContactsRow, calendar_lack, contacts_row};
 use crate::settings::{Change, Settings};
 
 /// The page for `accounts`, each with what its server offers and what its
@@ -147,18 +147,6 @@ fn fill_servers(app: &Rc<App>, row: &adw::ExpanderRow, account: &Account, shown:
     });
 }
 
-/// What one account's contacts switch shows.
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum ContactsRow {
-    /// A switch, on as the person set it.
-    Switch,
-    /// The person unticked the contacts scope on Google's consent
-    /// screen, or it has never been asked: a Grant Access row.
-    Withheld,
-    /// The server keeps no contacts to read.
-    NotOffered(String),
-}
-
 /// One switch per account. A withheld account gets a Grant Access row
 /// instead of a switch, since it has nothing to switch on yet. An
 /// account whose server keeps no contacts has its row say why.
@@ -221,31 +209,6 @@ fn contacts(
     group
 }
 
-/// The subtitle of `account`'s contacts switch, and whether the switch
-/// works: it does not on a server that keeps no contacts, and then the
-/// subtitle says why.
-fn contacts_row(account: &Account, offers: Offers, withheld: Withheld, missed: Option<Miss>) -> ContactsRow {
-    if !offers.contacts {
-        return ContactsRow::NotOffered(reason(account, Missing::Contacts, missed));
-    }
-    if withheld.contacts {
-        return ContactsRow::Withheld;
-    }
-    ContactsRow::Switch
-}
-
-/// What one account's calendar row shows in Preferences.
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum CalendarRow {
-    /// The account can be added to GNOME Online Accounts.
-    Available,
-    /// The person unticked the calendar scope, or it has never been
-    /// asked: a Grant Access row.
-    Withheld,
-    /// The server has no calendar to read.
-    NotOffered(String),
-}
-
 /// Which accounts GNOME knows, since that is what puts their meetings in
 /// GNOME Calendar and the clock. Answering an invitation needs nothing
 /// here: sign-in already asked for the calendar permission. An account
@@ -290,18 +253,6 @@ fn calendar(
     group
 }
 
-/// Why `account`'s calendar row is not the Online Accounts row: the
-/// server has none, or the person's own consent withheld it.
-fn calendar_lack(account: &Account, offers: Offers, withheld: Withheld, missed: Option<Miss>) -> CalendarRow {
-    if !offers.calendar {
-        return CalendarRow::NotOffered(reason(account, Missing::Calendar, missed));
-    }
-    if withheld.calendar || withheld.calendar_list {
-        return CalendarRow::Withheld;
-    }
-    CalendarRow::Available
-}
-
 /// A row for a withheld account: the reason below its address and a
 /// Grant Access button that runs `grant`, named so a screen reader tells
 /// several such rows apart.
@@ -323,71 +274,4 @@ fn grant_access_row(account: &Account, grant: impl Fn(AccountId) + 'static) -> a
     button.connect_clicked(move |_| grant(account_id));
     row.add_suffix(&button);
     row
-}
-
-#[cfg(test)]
-mod tests {
-    use mailrs_domain::{Account, AccountState, Provider};
-    use mailrs_sync::{Missing, Offers, Withheld};
-
-    use super::{CalendarRow, ContactsRow, calendar_lack, contacts_row};
-    use crate::offered::reason;
-
-    fn account() -> Account {
-        Account {
-            id: 1,
-            email: "me@gmail.com".into(),
-            state: AccountState::Ok,
-            provider: Provider::Gmail,
-            provider_name: None,
-        }
-    }
-
-    #[test]
-    fn a_granted_account_switches_its_contacts_as_before() {
-        assert_eq!(
-            contacts_row(&account(), Offers::EVERYTHING, Withheld::NONE, None),
-            ContactsRow::Switch
-        );
-        assert_eq!(
-            calendar_lack(&account(), Offers::EVERYTHING, Withheld::NONE, None),
-            CalendarRow::Available
-        );
-    }
-
-    #[test]
-    fn an_account_without_contacts_or_a_calendar_says_why() {
-        let bare = Offers {
-            contacts: false,
-            calendar: false,
-            ..Offers::EVERYTHING
-        };
-        assert_eq!(
-            contacts_row(&account(), bare, Withheld::NONE, None),
-            ContactsRow::NotOffered(reason(&account(), Missing::Contacts, None))
-        );
-        assert_eq!(
-            calendar_lack(&account(), bare, Withheld::NONE, None),
-            CalendarRow::NotOffered(reason(&account(), Missing::Calendar, None))
-        );
-    }
-
-    #[test]
-    fn a_withheld_account_gets_a_grant_access_row() {
-        let withheld_contacts = Withheld { contacts: true, ..Withheld::NONE };
-        assert_eq!(
-            contacts_row(&account(), Offers::EVERYTHING, withheld_contacts, None),
-            ContactsRow::Withheld
-        );
-        let withheld_calendar = Withheld { calendar: true, ..Withheld::NONE };
-        assert_eq!(
-            calendar_lack(&account(), Offers::EVERYTHING, withheld_calendar, None),
-            CalendarRow::Withheld
-        );
-        let withheld_list = Withheld { calendar_list: true, ..Withheld::NONE };
-        assert_eq!(
-            calendar_lack(&account(), Offers::EVERYTHING, withheld_list, None),
-            CalendarRow::Withheld
-        );
-    }
 }

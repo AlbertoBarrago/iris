@@ -33,7 +33,7 @@ mod announce;
 mod calendar_file;
 mod composing;
 mod hidden;
-mod photos;
+use mailrs_appcore::photos;
 mod reminders;
 mod sending;
 

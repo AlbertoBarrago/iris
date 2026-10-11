@@ -30,6 +30,7 @@ pub mod notify;
 pub mod offered;
 pub mod permission;
 pub mod pgp;
+pub mod photos;
 pub mod protection;
 pub mod richtext;
 pub mod rules;

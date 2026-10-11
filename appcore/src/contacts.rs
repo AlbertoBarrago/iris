@@ -151,6 +151,14 @@ pub fn queued_recipients(message: &mailrs_store::outbox::Queued) -> Vec<Address>
         .unwrap_or_default()
 }
 
+/// The toast after adding or removing a VIP.
+pub fn vip_message(added: bool, who: &str) -> String {
+    match added {
+        true => fill(&gettext("Added {person} to VIPs"), &[("person", who)]),
+        false => fill(&gettext("Removed {person} from VIPs"), &[("person", who)]),
+    }
+}
+
 /// The question the sent toast asks about `people`, the new recipients,
 /// for the account named `account`.
 pub fn offer_title(people: &[Address], account: &str) -> String {
