@@ -82,7 +82,7 @@ app/src/ui/find.rs
 app/src/ui/hide_my_email.rs
 app/src/ui/ics_file.rs
 app/src/ui/invitation.rs
-app/src/ui/invitation/strip.rs
+appcore/src/invitation_strip.rs
 app/src/ui/key_import.rs
 app/src/ui/mod.rs
 appcore/src/label_colors.rs
@@ -178,3 +178,5 @@ view/src/sections.rs
 appcore/src/protection.rs
 appcore/src/send_later.rs
 appcore/src/unsubscribe_page.rs
+appcore/src/invitation_card.rs
+ffi/src/mail_invitation.rs

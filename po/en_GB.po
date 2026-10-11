@@ -588,7 +588,7 @@ msgstr "Not Now"
 
 #: app/src/ui/add_account.rs:1159 app/src/ui/calendar/editor.rs:1606
 #: app/src/ui/calendar/sidebar.rs:922 app/src/ui/contacts_prefs.rs:314
-#: app/src/ui/invitation.rs:461 app/src/ui/permission.rs:42
+#: app/src/ui/invitation.rs:369 app/src/ui/permission.rs:42
 #: app/src/ui/permission.rs:66 app/src/ui/window.rs:1169
 msgid "Grant Access"
 msgstr "Grant Access"
@@ -2109,8 +2109,8 @@ msgstr "Out of Office"
 msgid "Could not save the event: {reason}"
 msgstr "Could not save the event: {reason}"
 
-#: app/src/ui/calendar/next.rs:87 app/src/ui/invitation.rs:807
-#: app/src/ui/invitation.rs:946 app/src/ui/invitation/strip.rs:168
+#: app/src/ui/calendar/next.rs:87 app/src/ui/invitation.rs:715
+#: app/src/ui/invitation.rs:854
 msgid "Untitled event"
 msgstr "Untitled event"
 
@@ -2162,24 +2162,24 @@ msgid "Show all guests"
 msgstr "Show all guests"
 
 #: app/src/ui/calendar/popover.rs:315 app/src/ui/calendar/popover.rs:776
-#: app/src/ui/invitation.rs:317
+#: app/src/ui/invitation.rs:225
 msgid "Answer"
 msgstr "Answer"
 
-#: app/src/ui/calendar/popover.rs:329 app/src/ui/invitation.rs:328
+#: app/src/ui/calendar/popover.rs:329 app/src/ui/invitation.rs:236
 msgid "Add a note"
 msgstr "Add a note"
 
-#: app/src/ui/calendar/popover.rs:333 app/src/ui/invitation.rs:332
+#: app/src/ui/calendar/popover.rs:333 app/src/ui/invitation.rs:240
 msgid "Note with your answer"
 msgstr "Note with your answer"
 
-#: app/src/ui/calendar/popover.rs:333 app/src/ui/invitation.rs:332
+#: app/src/ui/calendar/popover.rs:333 app/src/ui/invitation.rs:240
 msgid "The organizer reads it with your answer"
 msgstr "The organiser reads it with your answer"
 
 #: app/src/ui/calendar/popover.rs:339 app/src/ui/calendar/popover.rs:346
-#: app/src/ui/invitation.rs:358
+#: app/src/ui/invitation.rs:266
 msgid "Propose New Time"
 msgstr "Propose New Time"
 
@@ -3330,62 +3330,58 @@ msgstr "Iris has no permission to use this calendar. Allow it in Preferences."
 msgid "Could not add to your calendar: {reason}"
 msgstr "Could not add to your calendar: {reason}"
 
-#: app/src/ui/invitation.rs:76
-msgid "{calendar} ({account})"
-msgstr "{calendar} ({account})"
-
-#: app/src/ui/invitation.rs:339
+#: app/src/ui/invitation.rs:247
 msgid "What the answer covers"
 msgstr "What the answer covers"
 
-#: app/src/ui/invitation.rs:341
+#: app/src/ui/invitation.rs:249
 msgid "This Event"
 msgstr "This Event"
 
-#: app/src/ui/invitation.rs:346
+#: app/src/ui/invitation.rs:254
 msgid "All Events"
 msgstr "All Events"
 
-#: app/src/ui/invitation.rs:371 app/src/ui/invitation.rs:376
+#: app/src/ui/invitation.rs:279 app/src/ui/invitation.rs:284
 msgid "Add to Calendar"
 msgstr "Add to Calendar"
 
-#: app/src/ui/invitation.rs:384
+#: app/src/ui/invitation.rs:292
 msgid "Calendar to add to"
 msgstr "Calendar to add to"
 
-#: app/src/ui/invitation.rs:385
+#: app/src/ui/invitation.rs:293
 msgid "The calendar the events go on"
 msgstr "The calendar the events go on"
 
-#: app/src/ui/invitation.rs:394
+#: app/src/ui/invitation.rs:302
 msgid "Events to add"
 msgstr "Events to add"
 
-#: app/src/ui/invitation.rs:399 app/src/ui/invitation.rs:405
+#: app/src/ui/invitation.rs:307 app/src/ui/invitation.rs:313
 #: app/src/ui/sidebar.rs:137
 msgid "Show in Calendar"
 msgstr "Show in Calendar"
 
-#: app/src/ui/invitation.rs:458
+#: app/src/ui/invitation.rs:366
 msgid "Iris needs permission to show this event in Calendar."
 msgstr "Iris needs permission to show this event in Calendar."
 
-#: app/src/ui/invitation.rs:863
+#: app/src/ui/invitation.rs:771
 msgid "Added to your calendar"
 msgstr "Added to your calendar"
 
-#: app/src/ui/invitation.rs:865
+#: app/src/ui/invitation.rs:773
 msgid "Added {count} events to your calendar"
 msgid_plural "Added {count} events to your calendar"
 msgstr[0] "Added {count} events to your calendar"
 msgstr[1] "Added {count} events to your calendar"
 
-#: app/src/ui/invitation.rs:870
+#: app/src/ui/invitation.rs:778
 msgid "Added to {calendar}"
 msgstr "Added to {calendar}"
 
-#: app/src/ui/invitation.rs:872
+#: app/src/ui/invitation.rs:780
 msgid "Added {count} events to {calendar}"
 msgid_plural "Added {count} events to {calendar}"
 msgstr[0] "Added {count} events to {calendar}"
@@ -3393,150 +3389,19 @@ msgstr[1] "Added {count} events to {calendar}"
 
 #. A file with several events names none of them on the card's
 #. head: the list below does, one row each.
-#: app/src/ui/invitation.rs:956
+#: app/src/ui/invitation.rs:864
 msgid "{count} events"
 msgid_plural "{count} events"
 msgstr[0] "{count} events"
 msgstr[1] "{count} events"
 
-#: app/src/ui/invitation.rs:1033
+#: app/src/ui/invitation.rs:941
 msgid "Pick a Time…"
 msgstr "Pick a Time…"
 
-#: app/src/ui/invitation.rs:1078
+#: app/src/ui/invitation.rs:986
 msgid "No reply yet"
 msgstr "No reply yet"
-
-#: app/src/ui/invitation.rs:1148
-msgid "Half an Hour Later"
-msgstr "Half an Hour Later"
-
-#: app/src/ui/invitation.rs:1151
-msgid "An Hour Later"
-msgstr "An Hour Later"
-
-#: app/src/ui/invitation.rs:1153
-msgid "Same Time Tomorrow"
-msgstr "Same Time Tomorrow"
-
-#: app/src/ui/invitation.rs:1157
-msgid "Same Time Next Week"
-msgstr "Same Time Next Week"
-
-#: app/src/ui/invitation.rs:1172
-msgid "You have {event} then"
-msgstr "You have {event} then"
-
-#: app/src/ui/invitation.rs:1174
-msgid "You have {event} and {other} then"
-msgstr "You have {event} and {other} then"
-
-#: app/src/ui/invitation.rs:1178
-msgid "You have {event} and {count} more then"
-msgid_plural "You have {event} and {count} more then"
-msgstr[0] "You have {event} and {count} more then"
-msgstr[1] "You have {event} and {count} more then"
-
-#: app/src/ui/invitation.rs:1191
-msgid "Reply to the invitation from {organizer}"
-msgstr "Reply to the invitation from {organizer}"
-
-#. The calendar's popover words its people line the same way.
-#: app/src/ui/invitation.rs:1195
-msgid "{name}, organizer"
-msgstr "{name}, organiser"
-
-#: app/src/ui/invitation.rs:1273
-msgid "You"
-msgstr "You"
-
-#: app/src/ui/invitation.rs:1299
-msgid "{count} yes"
-msgid_plural "{count} yes"
-msgstr[0] "{count} yes"
-msgstr[1] "{count} yes"
-
-#: app/src/ui/invitation.rs:1307
-msgid "{count} no"
-msgid_plural "{count} no"
-msgstr[0] "{count} no"
-msgstr[1] "{count} no"
-
-#: app/src/ui/invitation.rs:1315
-msgid "{count} maybe"
-msgid_plural "{count} maybe"
-msgstr[0] "{count} maybe"
-msgstr[1] "{count} maybe"
-
-#: app/src/ui/invitation.rs:1323
-msgid "{count} awaiting"
-msgid_plural "{count} awaiting"
-msgstr[0] "{count} awaiting"
-msgstr[1] "{count} awaiting"
-
-#: app/src/ui/invitation.rs:1331
-msgid "{count} guest"
-msgid_plural "{count} guests"
-msgstr[0] "{count} guest"
-msgstr[1] "{count} guests"
-
-#: app/src/ui/invitation.rs:1337
-msgid "{guests} · {answers}"
-msgstr "{guests} · {answers}"
-
-#: app/src/ui/invitation.rs:1347
-msgid "This meeting moved from {when}"
-msgstr "This meeting moved from {when}"
-
-#: app/src/ui/invitation.rs:1350
-msgid "The organizer changed this meeting"
-msgstr "The organiser changed this meeting"
-
-#: app/src/ui/invitation.rs:1351
-msgid "The organizer canceled this meeting"
-msgstr "The organiser cancelled this meeting"
-
-#: app/src/ui/invitation.rs:1352
-msgid "This meeting is canceled"
-msgstr "This meeting is cancelled"
-
-#: app/src/ui/invitation/strip.rs:63
-msgid "Your morning"
-msgstr "Your morning"
-
-#: app/src/ui/invitation/strip.rs:64
-msgid "Your afternoon"
-msgstr "Your afternoon"
-
-#: app/src/ui/invitation/strip.rs:65
-msgid "Your evening"
-msgstr "Your evening"
-
-#: app/src/ui/invitation/strip.rs:96 app/src/ui/invitation/strip.rs:100
-msgid "Nothing else at that hour"
-msgstr "Nothing else at that hour"
-
-#: app/src/ui/invitation/strip.rs:101
-msgid "Clashes with {event}"
-msgstr "Clashes with {event}"
-
-#: app/src/ui/invitation/strip.rs:103
-msgid "Clashes with {event} and {other}"
-msgstr "Clashes with {event} and {other}"
-
-#: app/src/ui/invitation/strip.rs:107
-msgid "Clashes with {event} and {count} more"
-msgid_plural "Clashes with {event} and {count} more"
-msgstr[0] "Clashes with {event} and {count} more"
-msgstr[1] "Clashes with {event} and {count} more"
-
-#: app/src/ui/invitation/strip.rs:207
-msgid "This meeting"
-msgstr "This meeting"
-
-#: app/src/ui/invitation/strip.rs:265
-msgid "%H:%M"
-msgstr "%H:%M"
 
 #: app/src/ui/key_import.rs:34
 msgid "Import…"
@@ -5066,89 +4931,57 @@ msgstr "Images from {sender} will load from now on"
 msgid "Could not remember that sender: {reason}"
 msgstr "Could not remember that sender: {reason}"
 
-#: app/src/ui/window/invitation.rs:72
+#: app/src/ui/window/invitation.rs:73
 msgid "This invitation names no event, so there is nothing to answer"
 msgstr "This invitation names no event, so there is nothing to answer"
 
-#: app/src/ui/window/invitation.rs:98
+#: app/src/ui/window/invitation.rs:99
 msgid "This invitation names no organizer, so there is nobody to reply to"
 msgstr "This invitation names no organiser, so there is nobody to reply to"
 
-#: app/src/ui/window/invitation.rs:127
+#: app/src/ui/window/invitation.rs:128
 msgid "Could not send your reply: {reason}"
 msgstr "Could not send your reply: {reason}"
 
-#: app/src/ui/window/invitation.rs:166 app/src/ui/window/invitation.rs:234
+#: app/src/ui/window/invitation.rs:167 app/src/ui/window/invitation.rs:235
 msgid "Could not send your proposal: {reason}"
 msgstr "Could not send your proposal: {reason}"
 
-#: app/src/ui/window/invitation.rs:195
+#: app/src/ui/window/invitation.rs:196
 msgid "Nobody"
 msgstr "Nobody"
 
-#: app/src/ui/window/invitation.rs:201
+#: app/src/ui/window/invitation.rs:202
 msgid "The organizer decides. {organizer} hears what you suggest."
 msgstr "The organiser decides. {organizer} hears what you suggest."
 
-#: app/src/ui/window/invitation.rs:204
+#: app/src/ui/window/invitation.rs:205
 msgid "Propose"
 msgstr "Propose"
 
-#: app/src/ui/window/invitation.rs:222
+#: app/src/ui/window/invitation.rs:223
 msgid "This invitation names no organizer, so there is nobody to ask"
 msgstr "This invitation names no organiser, so there is nobody to ask"
 
-#: app/src/ui/window/invitation.rs:227
+#: app/src/ui/window/invitation.rs:228
 msgid "Proposed a new time to {organizer}"
 msgstr "Proposed a new time to {organizer}"
 
-#: app/src/ui/window/invitation.rs:230
+#: app/src/ui/window/invitation.rs:231
 msgid "Proposed a new time"
 msgstr "Proposed a new time"
 
-#: app/src/ui/window/invitation.rs:232
+#: app/src/ui/window/invitation.rs:233
 msgid "New time proposed. The organizer decides."
 msgstr "New time proposed. The organiser decides."
 
-#: app/src/ui/window/invitation.rs:264
+#: app/src/ui/window/invitation.rs:265
 msgid "Could not save the invitation: {reason}"
 msgstr "Could not save the invitation: {reason}"
 
-#: app/src/ui/window/invitation.rs:274
+#: app/src/ui/window/invitation.rs:275
 msgid "No app on this desktop opens invitations: {reason}"
 msgstr "No app on this desktop opens invitations: {reason}"
-
-#: app/src/ui/window/invitation.rs:365
-msgid "Replied Yes"
-msgstr "Replied Yes"
-
-#: app/src/ui/window/invitation.rs:366
-msgid "Replied No"
-msgstr "Replied No"
-
-#: app/src/ui/window/invitation.rs:367
-msgid "Replied Maybe"
-msgstr "Replied Maybe"
-
-#: app/src/ui/window/invitation.rs:370
-msgid "{answer}. The organizer has been told."
-msgstr "{answer}. The organiser has been told."
-
-#: app/src/ui/window/invitation.rs:371
-msgid "{answer}. Your reply is on its way to the organizer."
-msgstr "{answer}. Your reply is on its way to the organiser."
-
-#: app/src/ui/window/invitation.rs:381
-msgid "Answered on your calendar"
-msgstr "Answered on your calendar"
-
-#: app/src/ui/window/invitation.rs:383
-msgid "Replied by email to {organizer}"
-msgstr "Replied by email to {organizer}"
-
-#: app/src/ui/window/invitation.rs:386
-msgid "Replied by email"
-msgstr "Replied by email"
 
 #: app/src/ui/window/message_menu.rs:132
 msgid "Flag Color"
@@ -6940,6 +6773,173 @@ msgstr "The guests get a cancellation by mail."
 msgid "The guests get an update by mail."
 msgstr "The guests get an update by mail."
 
+#: appcore/src/invitation_card.rs:42
+msgid "{calendar} ({account})"
+msgstr "{calendar} ({account})"
+
+#: appcore/src/invitation_card.rs:154
+msgid "Half an Hour Later"
+msgstr "Half an Hour Later"
+
+#: appcore/src/invitation_card.rs:157
+msgid "An Hour Later"
+msgstr "An Hour Later"
+
+#: appcore/src/invitation_card.rs:159
+msgid "Same Time Tomorrow"
+msgstr "Same Time Tomorrow"
+
+#: appcore/src/invitation_card.rs:163
+msgid "Same Time Next Week"
+msgstr "Same Time Next Week"
+
+#: appcore/src/invitation_card.rs:178
+msgid "You have {event} then"
+msgstr "You have {event} then"
+
+#: appcore/src/invitation_card.rs:180
+msgid "You have {event} and {other} then"
+msgstr "You have {event} and {other} then"
+
+#: appcore/src/invitation_card.rs:184
+msgid "You have {event} and {count} more then"
+msgid_plural "You have {event} and {count} more then"
+msgstr[0] "You have {event} and {count} more then"
+msgstr[1] "You have {event} and {count} more then"
+
+#: appcore/src/invitation_card.rs:197
+msgid "Reply to the invitation from {organizer}"
+msgstr "Reply to the invitation from {organizer}"
+
+#. The calendar's popover words its people line the same way.
+#: appcore/src/invitation_card.rs:201
+msgid "{name}, organizer"
+msgstr "{name}, organiser"
+
+#: appcore/src/invitation_card.rs:239
+msgid "You"
+msgstr "You"
+
+#: appcore/src/invitation_card.rs:265
+msgid "{count} yes"
+msgid_plural "{count} yes"
+msgstr[0] "{count} yes"
+msgstr[1] "{count} yes"
+
+#: appcore/src/invitation_card.rs:273
+msgid "{count} no"
+msgid_plural "{count} no"
+msgstr[0] "{count} no"
+msgstr[1] "{count} no"
+
+#: appcore/src/invitation_card.rs:281
+msgid "{count} maybe"
+msgid_plural "{count} maybe"
+msgstr[0] "{count} maybe"
+msgstr[1] "{count} maybe"
+
+#: appcore/src/invitation_card.rs:289
+msgid "{count} awaiting"
+msgid_plural "{count} awaiting"
+msgstr[0] "{count} awaiting"
+msgstr[1] "{count} awaiting"
+
+#: appcore/src/invitation_card.rs:297
+msgid "{count} guest"
+msgid_plural "{count} guests"
+msgstr[0] "{count} guest"
+msgstr[1] "{count} guests"
+
+#: appcore/src/invitation_card.rs:303
+msgid "{guests} · {answers}"
+msgstr "{guests} · {answers}"
+
+#: appcore/src/invitation_card.rs:313
+msgid "This meeting moved from {when}"
+msgstr "This meeting moved from {when}"
+
+#: appcore/src/invitation_card.rs:316
+msgid "The organizer changed this meeting"
+msgstr "The organiser changed this meeting"
+
+#: appcore/src/invitation_card.rs:317
+msgid "The organizer canceled this meeting"
+msgstr "The organiser cancelled this meeting"
+
+#: appcore/src/invitation_card.rs:318
+msgid "This meeting is canceled"
+msgstr "This meeting is cancelled"
+
+#: appcore/src/invitation_card.rs:356
+msgid "Replied Yes"
+msgstr "Replied Yes"
+
+#: appcore/src/invitation_card.rs:357
+msgid "Replied No"
+msgstr "Replied No"
+
+#: appcore/src/invitation_card.rs:358
+msgid "Replied Maybe"
+msgstr "Replied Maybe"
+
+#: appcore/src/invitation_card.rs:361
+msgid "{answer}. The organizer has been told."
+msgstr "{answer}. The organiser has been told."
+
+#: appcore/src/invitation_card.rs:362
+msgid "{answer}. Your reply is on its way to the organizer."
+msgstr "{answer}. Your reply is on its way to the organiser."
+
+#: appcore/src/invitation_card.rs:372
+msgid "Answered on your calendar"
+msgstr "Answered on your calendar"
+
+#: appcore/src/invitation_card.rs:374
+msgid "Replied by email to {organizer}"
+msgstr "Replied by email to {organizer}"
+
+#: appcore/src/invitation_card.rs:377
+msgid "Replied by email"
+msgstr "Replied by email"
+
+#: appcore/src/invitation_strip.rs:63
+msgid "Your morning"
+msgstr "Your morning"
+
+#: appcore/src/invitation_strip.rs:64
+msgid "Your afternoon"
+msgstr "Your afternoon"
+
+#: appcore/src/invitation_strip.rs:65
+msgid "Your evening"
+msgstr "Your evening"
+
+#: appcore/src/invitation_strip.rs:96 appcore/src/invitation_strip.rs:100
+msgid "Nothing else at that hour"
+msgstr "Nothing else at that hour"
+
+#: appcore/src/invitation_strip.rs:101
+msgid "Clashes with {event}"
+msgstr "Clashes with {event}"
+
+#: appcore/src/invitation_strip.rs:103
+msgid "Clashes with {event} and {other}"
+msgstr "Clashes with {event} and {other}"
+
+#: appcore/src/invitation_strip.rs:107
+msgid "Clashes with {event} and {count} more"
+msgid_plural "Clashes with {event} and {count} more"
+msgstr[0] "Clashes with {event} and {count} more"
+msgstr[1] "Clashes with {event} and {count} more"
+
+#: appcore/src/invitation_strip.rs:207
+msgid "This meeting"
+msgstr "This meeting"
+
+#: appcore/src/invitation_strip.rs:265
+msgid "%H:%M"
+msgstr "%H:%M"
+
 #: appcore/src/label_colors.rs:22
 msgid "Red"
 msgstr "Red"
@@ -8450,6 +8450,14 @@ msgstr "Add an account to write mail."
 #: ffi/src/invitation_answer.rs:49
 msgid "The event is no longer on the calendar"
 msgstr "The event is no longer on the calendar"
+
+#: ffi/src/mail_invitation.rs:186
+msgid "The {service} is switched off for Iris, so your answer went by email"
+msgstr "The {service} is switched off for Iris, so your answer went by email"
+
+#: ffi/src/mail_invitation.rs:211
+msgid "This invitation has no time to move"
+msgstr "This invitation has no time to move"
 
 #: render/src/calendar_words.rs:72
 msgid "{date} · {start}–{end}"

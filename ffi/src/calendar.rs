@@ -591,6 +591,29 @@ impl Mail {
             .collect())
     }
 
+    /// The card of the occurrence of event `id` on `calendar` that starts
+    /// at `start`, as the grid shows it.
+    pub(crate) fn event_details(
+        &self,
+        account_id: i64,
+        calendar: &str,
+        id: &str,
+        start: i64,
+    ) -> Result<Option<EventDetails>, CoreError> {
+        const DAY: EpochMillis = 86_400_000;
+        let copy = Arc::clone(&self.calendar);
+        let found = self
+            .run(async move { copy.occurrences(&[account_id], start - DAY, start + DAY, CalendarScope::All).await })
+            .map_err(|err| CoreError::Store(err.to_string()))?;
+        let Some(o) = found
+            .into_iter()
+            .find(|o| o.event.calendar == calendar && o.event.id == id && o.start == start)
+        else {
+            return Ok(None);
+        };
+        Ok(Some(dress(&self.calendar_colors()?, &o).1))
+    }
+
     fn account_ids(&self) -> Result<Vec<i64>, CoreError> {
         let db = self.db.clone();
         Ok(self.run(async move { db.read(accounts::list_accounts).await })?.into_iter().map(|a| a.id).collect())

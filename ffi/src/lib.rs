@@ -23,6 +23,7 @@ mod compose;
 mod event_editor;
 mod filing;
 mod invitation_answer;
+mod mail_invitation;
 mod mail;
 mod notify;
 mod prefs;

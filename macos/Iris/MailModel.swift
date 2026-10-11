@@ -11,6 +11,11 @@ final class MailModel {
     /// The open conversation as one page, drawn by the Rust core the way
     /// the GTK app draws it.
     private(set) var page: ConversationPage?
+    /// The invitation the open conversation carries, for the card above
+    /// its page.
+    private(set) var invitation: MailInvitation?
+    /// The conversation `invitation` belongs to.
+    fileprivate var invitationKey: ThreadKey?
     /// Conversations whose pictures on the web the person chose to load.
     private var remoteAllowed: Set<ThreadKey> = []
     /// Messages of the open conversation the person opened or closed.
@@ -879,8 +884,11 @@ final class MailModel {
     fileprivate func loadConversation() {
         guard let store, let key = openThread else {
             page = nil
+            invitation = nil
             return
         }
+        if invitationKey != key { invitation = nil }
+        loadInvitation()
         markReadOnOpen(key)
         let theme = theme
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
@@ -908,6 +916,46 @@ final class MailModel {
                 }
             } catch {
                 await MainActor.run { self.problem = "\(error)" }
+            }
+        }
+    }
+}
+
+// MARK: Invitations
+
+extension MailModel {
+    /// Reads the open conversation's invitation again, for its card.
+    func loadInvitation() {
+        guard let mail, let key = openThread else {
+            invitation = nil
+            return
+        }
+        Task.detached {
+            let found = try? mail.invitation(accountId: key.account, threadId: key.thread)
+            await MainActor.run {
+                if self.openThread == key {
+                    self.invitation = found ?? nil
+                    self.invitationKey = key
+                }
+            }
+        }
+    }
+
+    /// Switches to the calendar on the day of the event at `spot`, with
+    /// its card open.
+    func showSpot(_ spot: EventSpot) {
+        guard let mail else { return }
+        calendarDay = Date(timeIntervalSince1970: TimeInterval(spot.start) / 1000)
+        space = .calendar
+        loadCalendar()
+        Task.detached {
+            let details = try? mail.eventAt(spot: spot)
+            await MainActor.run {
+                if let details = details ?? nil {
+                    self.openEvent(details)
+                } else {
+                    self.say(tr("The event is no longer on the calendar"))
+                }
             }
         }
     }

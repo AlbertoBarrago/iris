@@ -29,6 +29,10 @@ struct ConversationView: View {
                         FindBar()
                         Divider()
                     }
+                    if let invitation = model.invitation, let key = model.openThread {
+                        InvitationCard(invitation: invitation, account: key.account)
+                            .id(invitation.messageId + invitation.answer)
+                    }
                     MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1, finder: model.finder) { url in model.followLink(url) }
                 }
             } else {
