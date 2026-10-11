@@ -314,7 +314,51 @@ extension EventQuestion: Identifiable {
     public var id: String { heading + responses.map(\.id).joined() }
 }
 
+/// A drag let go, waiting on the question before it is written.
+struct DropRequest: Identifiable {
+    let id = UUID()
+    let editor: EventEditor
+    let question: EventQuestion
+}
+
 extension MailModel {
+    /// Writes a drag of the event `details` names: `land` puts it where
+    /// the drag let go, on an editor opened on it, which then asks what
+    /// the GTK calendar asks of a moved event (which occurrences, whether
+    /// to tell the guests) before saving. Anything that stops the write
+    /// reads the calendar again, which puts the card back.
+    func dropEvent(_ details: EventDetails, land: (EventEditor) -> Bool) {
+        guard let mail, let editor = try? mail.editEvent(id: details.id, starts: details.starts), land(editor) else {
+            loadCalendar()
+            return
+        }
+        do {
+            if let question = try editor.saveQuestion() {
+                dropping = DropRequest(editor: editor, question: question)
+            } else {
+                writeDrop(editor, response: nil, scope: nil, send: true)
+            }
+        } catch {
+            say("\(error)")
+            loadCalendar()
+        }
+    }
+
+    func writeDrop(_ editor: EventEditor, response: String?, scope: String?, send: Bool) {
+        Task.detached {
+            let done = Result { try editor.save(response: response, scope: scope, send: send) }
+            await MainActor.run {
+                switch done {
+                case .success(let words):
+                    self.eventWritten(words)
+                case .failure(let error):
+                    self.say("\(error)")
+                    self.loadCalendar()
+                }
+            }
+        }
+    }
+
     /// Opens the event the details name: its editor when it is the
     /// person's own, else everything about it, read only.
     func openEvent(_ details: EventDetails) {

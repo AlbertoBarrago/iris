@@ -7,6 +7,7 @@ use std::sync::{Arc, Mutex};
 
 use chrono::{Local, NaiveDate, TimeZone};
 use chrono_tz::Tz;
+use mailrs_appcore::calendar_drag::{self, Edge, Grab, Handle};
 use mailrs_appcore::calendar_draft::Draft;
 use mailrs_appcore::event_question::{self, Look, Question};
 use mailrs_domain::calendar::series::RepeatScope;
@@ -189,6 +190,44 @@ impl EventEditor {
     /// Takes `email` off the guest list. The account itself stays.
     pub fn remove_guest(&self, email: String) {
         self.lock().guests.retain(|g| g.me || !g.email.eq_ignore_ascii_case(&email));
+    }
+
+    /// Lands a drag on the time grid: the card's `handle` (`body`,
+    /// `start` or `end`) was taken at the instant `grabbed` and let go at
+    /// `released`, over the day from `day_start` to `day_end`, which the
+    /// event stays inside. Says whether the event moved.
+    pub fn drag_timed(&self, handle: String, grabbed: i64, released: i64, day_start: i64, day_end: i64) -> bool {
+        let mut draft = self.lock();
+        let handle = match handle.as_str() {
+            "start" => Handle::Start,
+            "end" => Handle::End,
+            _ => Handle::Body,
+        };
+        let (start, end) = Grab::new(handle, draft.start, draft.end, grabbed).settle(released, (day_start, day_end));
+        let all_day = draft.all_day;
+        land(&mut draft, start, end, all_day)
+    }
+
+    /// Lands a drag in the all-day row: the bar moved `days` columns by
+    /// its body (`edge` empty) or stretched by its `start` or `end`.
+    pub fn drag_strip(&self, edge: String, days: i64) -> bool {
+        let mut draft = self.lock();
+        let edge = match edge.as_str() {
+            "start" => Some(Edge::Start),
+            "end" => Some(Edge::End),
+            _ => None,
+        };
+        let landing = calendar_drag::strip_landing(draft.start, draft.end, draft.all_day, edge, days, zone());
+        land(&mut draft, landing.start, landing.end, landing.all_day)
+    }
+
+    /// Lands a drag in Month: the event moved `days` days, keeping its
+    /// time of day.
+    pub fn move_days(&self, days: i64) -> bool {
+        let mut draft = self.lock();
+        let (start, end) = calendar_drag::by_days(draft.start, draft.end, draft.all_day, days, zone());
+        let all_day = draft.all_day;
+        land(&mut draft, start, end, all_day)
     }
 
     /// What to ask before saving, or `None` to save at once.
@@ -394,6 +433,13 @@ fn change(draft: &Draft) -> EventChange {
         rule_changed: draft.rule_changed(),
     };
     EventChange::Edit { occurrence, edited, how }
+}
+
+/// Puts the draft at `start` to `end`, saying whether that moved it.
+fn land(draft: &mut Draft, start: EpochMillis, end: EpochMillis, all_day: bool) -> bool {
+    let before = (draft.start, draft.end, draft.all_day);
+    draft.land(start, end, all_day);
+    before != (draft.start, draft.end, draft.all_day)
 }
 
 /// The new time of a moved draft, in words, for the question.

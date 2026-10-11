@@ -389,6 +389,3 @@ struct ProviderMark: View {
     }
 }
 
-private extension CGFloat {
-    func clamped(_ low: CGFloat, _ high: CGFloat) -> CGFloat { Swift.min(Swift.max(self, low), high) }
-}

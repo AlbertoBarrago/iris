@@ -30,6 +30,17 @@ struct CalendarPage: View {
         .sheet(item: Bindable(model).editing) { request in
             EventEditorSheet(editor: request.editor)
         }
+        .sheet(item: Bindable(model).dropping) { request in
+            QuestionSheet(question: request.question) { response, scope, send in
+                model.dropping = nil
+                if let response {
+                    model.writeDrop(request.editor, response: response, scope: scope, send: send)
+                } else {
+                    // Cancel puts the card back where it was.
+                    model.loadCalendar()
+                }
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
                 Button(previousWords, systemImage: "chevron.left") { model.stepCalendar(-1) }
@@ -188,6 +199,11 @@ struct MonthGrid: View {
     /// A day's number above its events, and one line of events.
     static let heading: CGFloat = 24
     static let line: CGFloat = 20
+    /// The month's coordinates, which a drag reads its points in.
+    static let space = "month"
+
+    /// An event being dragged to another day.
+    @State private var ghost: MonthGhost?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -204,15 +220,40 @@ struct MonthGrid: View {
                 Divider()
                 GeometryReader { proxy in
                     let rowHeight = proxy.size.height / CGFloat(max(view.weeks.count, 1))
+                    let column = proxy.size.width / 7
+                    // The day under a point of the month, counted from the
+                    // top left; a row is as tall as its divider too.
+                    let cell = { (point: CGPoint) -> Int in
+                        let row = Int(point.y / rowHeight).clamped(0, view.weeks.count - 1)
+                        return row * 7 + Int(point.x / column).clamped(0, 6)
+                    }
                     VStack(spacing: 0) {
-                        ForEach(Array(view.weeks.enumerated()), id: \.offset) { _, week in
-                            WeekRow(week: week, width: proxy.size.width, height: rowHeight)
+                        ForEach(Array(view.weeks.enumerated()), id: \.offset) { index, week in
+                            WeekRow(week: week, width: proxy.size.width, height: rowHeight, ghost: $ghost, cell: cell)
+                                // The row an event is dragged out of stays
+                                // over the others, so the event shows.
+                                .zIndex(ghost.map { $0.from / 7 == index } == true ? 1 : 0)
                             Divider()
+                        }
+                    }
+                    .coordinateSpace(name: Self.space)
+                    // The day a dragged event would land on.
+                    .overlay(alignment: .topLeading) {
+                        if let ghost, ghost.to != ghost.from {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.accentColor.opacity(0.12))
+                                .strokeBorder(Color.accentColor.opacity(0.7), lineWidth: 1.5)
+                                .frame(width: column - 2, height: rowHeight - 2)
+                                .offset(x: column * CGFloat(ghost.to % 7) + 1, y: rowHeight * CGFloat(ghost.to / 7) + 1)
+                                .allowsHitTesting(false)
                         }
                     }
                     .onAppear { fit(rowHeight) }
                     .onChange(of: rowHeight) { fit(rowHeight) }
-                }
+                    // A read mid-drag clears the mark; the next move of
+                    // the hand puts it back.
+                    .onChange(of: model.calendarLoads) { ghost = nil }
+                            }
             } else {
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -233,6 +274,8 @@ private struct WeekRow: View {
     let week: MonthWeek
     let width: CGFloat
     let height: CGFloat
+    @Binding var ghost: MonthGhost?
+    let cell: (CGPoint) -> Int
 
     var body: some View {
         let column = width / 7
@@ -247,14 +290,13 @@ private struct WeekRow: View {
                 }
             }
             ForEach(Array(week.items.enumerated()), id: \.offset) { _, item in
-                EventChip(item: item)
+                EventChip(item: item, ghost: $ghost, cell: cell)
                     .frame(width: column * CGFloat(item.end - item.start) - 4, height: MonthGrid.line - 2)
                     .offset(x: column * CGFloat(item.start) + 2,
                             y: MonthGrid.heading + CGFloat(item.line) * MonthGrid.line)
             }
         }
         .frame(width: width, height: height, alignment: .topLeading)
-        .clipped()
     }
 }
 
@@ -302,6 +344,15 @@ private struct DayCell: View {
     }
 }
 
+/// An event dragged across the month: which, and the days it left and
+/// is over.
+struct MonthGhost: Equatable {
+    let id: String
+    let starts: Int64
+    let from: Int
+    let to: Int
+}
+
 enum CalendarDate {
     /// The day `YYYY-MM-DD` names, at its local midnight.
     static func date(_ key: String) -> Date? {
@@ -315,10 +366,57 @@ enum CalendarDate {
 /// chip with a dot and its time on one. Resting the pointer on it shows
 /// its card; a double click keeps the card open.
 private struct EventChip: View {
+    @Environment(MailModel.self) private var model
     let item: MonthItem
+    @Binding var ghost: MonthGhost?
+    let cell: (CGPoint) -> Int
+
+    /// How far the hand has taken the event, in points.
+    @State private var moved = CGSize.zero
+    /// While the hand holds the event, a read of the month leaves it be.
+    @State private var dragging = false
 
     var body: some View {
-        chip.eventActions(item.details)
+        let dragged = moved != .zero || ghost?.id == item.id && ghost?.starts == item.starts
+        chip
+            .background(dragged && !(item.bar || item.allDay) ? Color(nsColor: .windowBackgroundColor) : .clear,
+                        in: RoundedRectangle(cornerRadius: 4))
+            .shadow(color: .black.opacity(moved != .zero ? 0.25 : 0), radius: 6, y: 3)
+            .eventActions(item.details, busy: dragged)
+            .gesture(drag, including: item.details.movable ? .all : .subviews)
+            .offset(moved)
+            .zIndex(dragged ? 1 : 0)
+            .onChange(of: model.calendarLoads) {
+                guard !dragging else { return }
+                moved = .zero
+            }
+    }
+
+    /// A drag to another day moves the event there, keeping its time of
+    /// day; the core counts the days (`calendar_drag::by_days`). The event
+    /// follows the hand, and the day it would land on is marked.
+    private var drag: some Gesture {
+        DragGesture(minimumDistance: 3, coordinateSpace: .named(MonthGrid.space))
+            .onChanged { drag in
+                dragging = true
+                moved = drag.translation
+                let (from, to) = (cell(drag.startLocation), cell(drag.location))
+                // Only a new day changes the month around it.
+                if ghost?.to != to || ghost?.id != item.id {
+                    ghost = MonthGhost(id: item.id, starts: item.starts, from: from, to: to)
+                }
+            }
+            .onEnded { _ in
+                dragging = false
+                guard let landed = ghost, landed.to != landed.from else {
+                    withAnimation(.snappy(duration: 0.2)) { moved = .zero }
+                    ghost = nil
+                    return
+                }
+                // It stays where it was let go until the month is read
+                // again, written or put back.
+                model.dropEvent(item.details) { $0.moveDays(days: Int64(landed.to - landed.from)) }
+            }
     }
 
     @ViewBuilder private var chip: some View {
@@ -354,6 +452,8 @@ private struct EventChip: View {
 struct EventActions: ViewModifier {
     @Environment(MailModel.self) private var model
     let details: EventDetails
+    /// While the event is dragged its card stays away.
+    let busy: Bool
     @State private var hovering = false
     @State private var peeking = false
 
@@ -367,10 +467,11 @@ struct EventActions: ViewModifier {
             .task(id: hovering) {
                 // A short rest before the card, so sweeping across the
                 // calendar does not flash one under every event.
-                guard hovering else { return }
+                guard hovering, !busy else { return }
                 try? await Task.sleep(for: .milliseconds(600))
-                if hovering, !Task.isCancelled { peeking = true }
+                if hovering, !busy, !Task.isCancelled { peeking = true }
             }
+            .onChange(of: busy) { if busy { peeking = false } }
             // A double click opens the event, as in the GTK calendar.
             .simultaneousGesture(TapGesture(count: 2).onEnded {
                 peeking = false
@@ -383,8 +484,8 @@ struct EventActions: ViewModifier {
 }
 
 extension View {
-    func eventActions(_ details: EventDetails) -> some View {
-        modifier(EventActions(details: details))
+    func eventActions(_ details: EventDetails, busy: Bool = false) -> some View {
+        modifier(EventActions(details: details, busy: busy))
     }
 }
 

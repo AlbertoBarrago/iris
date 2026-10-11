@@ -6,9 +6,10 @@
 use std::sync::Arc;
 
 use chrono::{Datelike, Days, Local, NaiveDate, TimeZone, Weekday};
+use mailrs_appcore::calendar_drag;
 use mailrs_appcore::settings::Settings;
 use mailrs_domain::EpochMillis;
-use mailrs_domain::calendar::Occurrence;
+use mailrs_domain::calendar::{Access, Occurrence};
 use mailrs_domain::calendar::week::{week_start, week_start_on_or_before};
 use mailrs_domain::translate::{date_locale, gettext};
 use mailrs_render::calendar_days::{self, grid_days};
@@ -124,6 +125,8 @@ pub struct EventDetails {
     pub conference: String,
     /// The description as lines of text.
     pub notes: String,
+    /// Whether a drag may move it: see `calendar_drag::can_move`.
+    pub movable: bool,
 }
 
 /// One person asked to the event, and their answer.
@@ -308,15 +311,11 @@ impl Mail {
                     .zip(shown)
                     .filter(|(_, shown)| *shown)
                     .map(|(((o, bar, segment), line), _)| {
-                        let (color, calendar) = colors
-                            .iter()
-                            .find(|(account, id, _, _)| *account == o.account_id && *id == o.event.calendar)
-                            .map(|(_, _, color, name)| (color.clone(), name.clone()))
-                            .unwrap_or_default();
+                        let (color, details) = dress(&colors, o);
                         MonthItem {
                             id: o.id(),
                             title: shown_title(o),
-                            color: o.event.color.clone().unwrap_or(color.clone()),
+                            color,
                             start: segment.start as u32,
                             end: segment.end as u32,
                             line: *line as u32,
@@ -325,8 +324,8 @@ impl Mail {
                             bar: *bar,
                             all_day: o.event.all_day,
                             starts: o.start,
-                            described: bar_words(o, &calendar, &Local),
-                            details: details(o, o.event.color.clone().unwrap_or(color.clone()), &calendar),
+                            described: bar_words(o, &details.calendar, &Local),
+                            details,
                         }
                     })
                     .collect();
@@ -373,15 +372,7 @@ impl Mail {
         let today = Local::now().date_naive();
         let occurrences = self.occurrences_between(first, last + Days::new(1))?;
         let colors = self.calendar_colors()?;
-        let look = |o: &Occurrence| {
-            let (color, calendar) = colors
-                .iter()
-                .find(|(account, id, _, _)| *account == o.account_id && *id == o.event.calendar)
-                .map(|(_, _, color, name)| (color.clone(), name.clone()))
-                .unwrap_or_default();
-            let color = o.event.color.clone().unwrap_or(color);
-            (color.clone(), details(o, color, &calendar))
-        };
+        let look = |o: &Occurrence| dress(&colors, o);
 
         // The strip: all-day events, and timed ones from midnight to
         // midnight, stacked as the month stacks a week.
@@ -535,16 +526,11 @@ impl Mail {
         Ok(found
             .iter()
             .map(|o| {
-                let (color, calendar) = colors
-                    .iter()
-                    .find(|(account, id, _, _)| *account == o.account_id && *id == o.event.calendar)
-                    .map(|(_, _, color, name)| (color.clone(), name.clone()))
-                    .unwrap_or_default();
-                let color = o.event.color.clone().unwrap_or(color);
+                let (color, details) = dress(&colors, o);
                 DayItem {
                     id: o.id(),
                     title: shown_title(o),
-                    details: details(o, color.clone(), &calendar),
+                    details,
                     color,
                     all_day: o.event.all_day,
                     starts: o.start,
@@ -577,20 +563,58 @@ impl Mail {
             .map_err(|err| CoreError::Store(err.to_string()))
     }
 
-    /// Every calendar's account, id, colour and name.
-    fn calendar_colors(&self) -> Result<Vec<(i64, String, String, String)>, CoreError> {
-        Ok(self
-            .calendar_accounts()?
+    /// Every calendar's account, id, colour, name and access.
+    fn calendar_colors(&self) -> Result<Vec<Shade>, CoreError> {
+        let ids = self.account_ids()?;
+        let copy = Arc::clone(&self.calendar);
+        let listed = self
+            .run(async move { copy.listed(&ids).await })
+            .map_err(|err| CoreError::Store(err.to_string()))?;
+        Ok(listed
             .into_iter()
-            .flat_map(|a| a.calendars)
-            .map(|c| (c.account_id, c.id, c.color, c.name))
+            .flat_map(|l| {
+                let account = l.account_id;
+                l.calendars.into_iter().map(move |c| Shade {
+                    account,
+                    id: c.id,
+                    color: c.color,
+                    name: c.name,
+                    access: c.access,
+                })
+            })
             .collect())
+    }
+
+    fn account_ids(&self) -> Result<Vec<i64>, CoreError> {
+        let db = self.db.clone();
+        Ok(self.run(async move { db.read(accounts::list_accounts).await })?.into_iter().map(|a| a.id).collect())
     }
 }
 
+/// A calendar as the cards on it are drawn.
+struct Shade {
+    account: i64,
+    id: String,
+    color: String,
+    name: String,
+    access: Access,
+}
+
+/// `o`'s colour, its own or its calendar's, and its card.
+fn dress(shades: &[Shade], o: &Occurrence) -> (String, EventDetails) {
+    let shade = shades.iter().find(|s| s.account == o.account_id && s.id == o.event.calendar);
+    let color = o.event.color.clone().or_else(|| shade.map(|s| s.color.clone())).unwrap_or_default();
+    let calendar = shade.map(|s| s.name.as_str()).unwrap_or_default();
+    // Whether the account offers and grants its calendar shows when the
+    // move is written, which then says what is missing.
+    let movable = shade.is_some_and(|s| calendar_drag::can_move(o, s.access, true, false));
+    (color.clone(), details(o, color, calendar, movable))
+}
+
 /// The card for `o`, in `color`, on the calendar called `calendar`.
-fn details(o: &Occurrence, color: String, calendar: &str) -> EventDetails {
+fn details(o: &Occurrence, color: String, calendar: &str, movable: bool) -> EventDetails {
     EventDetails {
+        movable,
         id: o.id(),
         starts: o.start,
         title: shown_title(o),

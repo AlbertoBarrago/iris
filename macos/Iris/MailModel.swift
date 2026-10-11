@@ -274,6 +274,12 @@ final class MailModel {
     var openedEvent: EventDetails?
     /// The editor open on an event of the person's own, or a new one.
     var editing: EditorRequest?
+    /// A drag let go on an event that needs a question before it is
+    /// written.
+    var dropping: DropRequest?
+    /// Counts the calendar's reads, so a card held where a drag left it
+    /// goes back to the grid's own place once the grid is read again.
+    private(set) var calendarLoads = 0
     /// How many lines of events a week row holds at the window's height.
     var monthRows: UInt32 = 3 {
         didSet { if monthRows != oldValue { loadCalendar() } }
@@ -297,12 +303,14 @@ final class MailModel {
                 await MainActor.run {
                     self.calendarAccounts = accounts
                     if let view { self.monthView = view }
+                    self.calendarLoads += 1
                 }
             case .week, .day:
                 let view = try? mail.weekView(date: day, days: kind == .day ? 1 : 7, localeFirst: first)
                 await MainActor.run {
                     self.calendarAccounts = accounts
                     if let view { self.weekView = view }
+                    self.calendarLoads += 1
                 }
             }
         }
