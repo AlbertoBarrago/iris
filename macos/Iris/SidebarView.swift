@@ -185,8 +185,9 @@ struct AccountLine: View {
             Button(tr("Rules…")) {
                 if let id = item.accountId { model.accountSheet = .rules(id) }
             }
-            Button(tr("Hide My Email…")) {}
-                .disabled(true)
+            Button(tr("Hide My Email…")) {
+                if let id = item.accountId { model.accountSheet = .hideMyEmail(id) }
+            }
             Divider()
             Button(look?.newLabelItem ?? tr("New Label…")) {
                 newLabelName = ""

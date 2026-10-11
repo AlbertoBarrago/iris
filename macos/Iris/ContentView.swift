@@ -21,6 +21,7 @@ struct ContentView: View {
             switch sheet {
             case .autoReply(let account): AutoReplyView(account: account)
             case .rules(let account): RulesView(account: account)
+            case .hideMyEmail(let account): HideMyEmailView(account: account)
             }
         }
         .sheet(item: Bindable(model).contactCard) { card in

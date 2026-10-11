@@ -25,6 +25,7 @@ mod compose;
 mod contacts;
 mod event_editor;
 mod filing;
+mod hidden;
 mod invitation_answer;
 mod mail_invitation;
 mod mail;

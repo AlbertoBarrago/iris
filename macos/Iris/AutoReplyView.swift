@@ -4,11 +4,13 @@ import SwiftUI
 enum AccountSheet: Identifiable, Equatable {
     case autoReply(Int64)
     case rules(Int64)
+    case hideMyEmail(Int64)
 
     var id: String {
         switch self {
         case .autoReply(let account): "reply-\(account)"
         case .rules(let account): "rules-\(account)"
+        case .hideMyEmail(let account): "hidden-\(account)"
         }
     }
 }

@@ -193,3 +193,4 @@ ffi/src/prefs.rs
 ffi/src/about.rs
 ffi/src/protection.rs
 appcore/src/key_import.rs
+ffi/src/hidden.rs
