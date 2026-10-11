@@ -12,7 +12,7 @@ use mailrs_domain::EpochMillis;
 use mailrs_domain::calendar::Occurrence;
 use mailrs_domain::translate::{date_locale, fill, fill_plural, gettext};
 
-use crate::ui::calendar::layout::MOST_LANES;
+use mailrs_render::calendar_layout::MOST_LANES;
 
 /// How many hours the strip shows.
 pub const HOURS: i64 = 5;

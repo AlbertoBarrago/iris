@@ -11,15 +11,16 @@ use std::rc::Rc;
 
 use gtk::prelude::WidgetExt;
 use gtk::{gio, glib};
-use mailrs_domain::invitation::{Answer, Invitation, Scope, When};
+use mailrs_domain::invitation::{Answer, Invitation, Scope};
 use mailrs_domain::calendar::Occurrence;
-use mailrs_domain::{AccountId, Address, EpochMillis};
+use mailrs_domain::{AccountId, Address};
 use mailrs_sync::{Told, now_millis};
 
 use super::MainWindow;
 use crate::permission::{Occasion, Permission};
 use crate::ui::conversation::ConversationView;
 use crate::ui::invitation::{Action, AddTo, Proposal};
+use mailrs_appcore::invitation_card::{file_name, moved, replied, went};
 use mailrs_domain::translate::{fill, gettext};
 
 impl MainWindow {
@@ -337,81 +338,5 @@ impl MainWindow {
         let _ = WidgetExt::activate_action(&self.window, "win.show-calendar", None);
         self.calendar
             .open(spot.account_id, &spot.calendar, &spot.id, spot.start);
-    }
-}
-
-/// The event moved to `starts_at`, keeping the length the organizer gave
-/// it. An event with no end of its own is proposed as an hour, which is
-/// what the calendar on the other side will draw.
-fn moved(invitation: &Invitation, starts_at: EpochMillis) -> Option<When> {
-    let Some(When::At {
-        starts_at: was,
-        ends_at,
-    }) = invitation.when
-    else {
-        return None;
-    };
-    let length = ends_at.map_or(60 * 60 * 1_000, |ends_at| ends_at - was);
-    Some(When::At {
-        starts_at,
-        ends_at: Some(starts_at + length),
-    })
-}
-
-/// The toast an answer leaves: the answer the user gave, and that the
-/// organizer now knows it.
-fn replied(answer: Answer, told: Told) -> String {
-    let said = match answer {
-        Answer::Yes => gettext("Replied Yes"),
-        Answer::No => gettext("Replied No"),
-        Answer::Maybe => gettext("Replied Maybe"),
-    };
-    let pattern = match told {
-        Told::Calendar => gettext("{answer}. The organizer has been told."),
-        _ => gettext("{answer}. Your reply is on its way to the organizer."),
-    };
-    fill(&pattern, &[("answer", &said)])
-}
-
-/// The line under the buttons: where the answer went. Google files the
-/// answer on the user's own calendar as well, so the two roads leave the
-/// user in different places and the card says which.
-fn went(told: Told, organizer: Option<&str>) -> String {
-    match (told, organizer) {
-        (Told::Calendar, _) => gettext("Answered on your calendar"),
-        (_, Some(organizer)) => fill(
-            &gettext("Replied by email to {organizer}"),
-            &[("organizer", organizer)],
-        ),
-        (_, None) => gettext("Replied by email"),
-    }
-}
-
-/// A file name for the event, so the calendar app shows something better
-/// than a random string while it imports.
-fn file_name(summary: &str) -> String {
-    let stem: String = summary
-        .chars()
-        .map(|c| if c.is_alphanumeric() { c } else { '-' })
-        .collect();
-    let stem = stem.trim_matches('-').to_lowercase();
-    let stem: String = stem.chars().take(48).collect();
-    if stem.is_empty() {
-        "invitation.ics".into()
-    } else {
-        format!("{stem}.ics")
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::file_name;
-
-    #[test]
-    fn an_event_becomes_a_readable_file_name() {
-        assert_eq!(file_name("Q4 roadmap review"), "q4-roadmap-review.ics");
-        assert_eq!(file_name("  "), "invitation.ics");
-        assert_eq!(file_name("Budget review, Q1"), "budget-review--q1.ics");
-        assert!(file_name(&"x".repeat(200)).len() <= 52);
     }
 }

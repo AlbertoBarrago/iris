@@ -22,6 +22,8 @@ pub mod event_question;
 pub mod file_type;
 pub mod format;
 pub mod images;
+pub mod invitation_card;
+pub mod invitation_strip;
 pub mod label_colors;
 pub mod moving;
 pub mod notify;
