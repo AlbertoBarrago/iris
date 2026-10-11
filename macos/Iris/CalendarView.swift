@@ -27,6 +27,9 @@ struct CalendarPage: View {
         .sheet(item: Bindable(model).openedEvent) { details in
             EventSheet(details: details)
         }
+        .sheet(item: Bindable(model).editing) { request in
+            EventEditorSheet(editor: request.editor)
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
                 Button(previousWords, systemImage: "chevron.left") { model.stepCalendar(-1) }
@@ -37,6 +40,11 @@ struct CalendarPage: View {
             ToolbarItem {
                 Button(tr("Today")) { model.showToday() }
                     .keyboardShortcut("t", modifiers: .command)
+            }
+            ToolbarItem {
+                // The GTK calendar's N.
+                Button(tr("New Event (N)"), systemImage: "plus") { model.newEventNow() }
+                    .keyboardShortcut("n", modifiers: [])
             }
             ToolbarItem {
                 Picker(tr("View"), selection: $model.calendarKind) {
@@ -284,6 +292,22 @@ private struct DayCell: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(day.working ? Color.clear : Color.primary.opacity(0.035))
+        .contentShape(Rectangle())
+        // A double click on the day makes an event on it, at nine.
+        .onTapGesture(count: 2) {
+            guard let date = CalendarDate.date(day.date) else { return }
+            let start = Calendar.current.date(byAdding: .hour, value: 9, to: date) ?? date
+            model.newEvent(start: start, end: start.addingTimeInterval(3600), allDay: false)
+        }
+    }
+}
+
+enum CalendarDate {
+    /// The day `YYYY-MM-DD` names, at its local midnight.
+    static func date(_ key: String) -> Date? {
+        let parts = key.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3 else { return nil }
+        return Calendar.current.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2]))
     }
 }
 
@@ -350,7 +374,7 @@ struct EventActions: ViewModifier {
             // A double click opens the event, as in the GTK calendar.
             .simultaneousGesture(TapGesture(count: 2).onEnded {
                 peeking = false
-                model.openedEvent = details
+                model.openEvent(details)
             })
             .popover(isPresented: $peeking, arrowEdge: .top) {
                 EventCard(details: details)
@@ -452,7 +476,7 @@ struct EventSheet: View {
 
 /// One guest: their initials, name and address, and their answer as an
 /// icon in its colour with its word.
-private struct GuestLine: View {
+struct GuestLine: View {
     let guest: GuestRow
 
     var body: some View {
@@ -565,7 +589,7 @@ private struct DayList: View {
                 }
                 .font(.callout)
                 .contentShape(Rectangle())
-                .onTapGesture(count: 2) { model.openedEvent = item.details }
+                .onTapGesture(count: 2) { model.openEvent(item.details) }
             }
         }
         .padding(12)
@@ -618,6 +642,4 @@ extension MailModel {
     }
 }
 
-extension EventDetails: Identifiable {
-    public var id: String { title + when + calendar }
-}
+extension EventDetails: Identifiable {}

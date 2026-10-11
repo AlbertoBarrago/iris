@@ -323,6 +323,11 @@ struct RecipientField: View {
     let placeholder: String
     @Binding var text: String
     let account: Int64
+    /// Addresses not to offer again, such as the guests already invited.
+    var leaving: Set<String> = []
+    /// Called once a suggestion is taken, or Return is pressed with none
+    /// offered, for a field whose words become a list at once.
+    var taken: (() -> Void)?
 
     @State private var offered: [Suggestion] = []
     @State private var chosen = 0
@@ -341,7 +346,9 @@ struct RecipientField: View {
                     offered = []
                     return .handled
                 }
-                .onSubmit { take(chosen) }
+                .onSubmit {
+                    if offered.isEmpty { taken?() } else { take(chosen) }
+                }
             if focused, !offered.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(offered.enumerated()), id: \.offset) { index, person in
@@ -372,7 +379,7 @@ struct RecipientField: View {
         Task {
             let found = await model.suggest(field, account: account)
             if text == field {
-                offered = found
+                offered = found.filter { !leaving.contains($0.email.lowercased()) }
                 chosen = 0
             }
         }
@@ -388,6 +395,7 @@ struct RecipientField: View {
         guard offered.indices.contains(index) else { return }
         text = offered[index].completed
         offered = []
+        taken?()
     }
 }
 

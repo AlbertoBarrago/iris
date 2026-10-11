@@ -2544,6 +2544,7 @@ version = "1.0.11"
 dependencies = [
  "async-channel 2.5.0",
  "chrono",
+ "chrono-tz",
  "futures",
  "gettext-rs",
  "mailrs-ai",

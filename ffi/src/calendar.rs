@@ -108,6 +108,9 @@ pub struct MonthItem {
 /// What the event's card shows.
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
 pub struct EventDetails {
+    /// The occurrence's id and start, which open its editor.
+    pub id: String,
+    pub starts: i64,
     pub title: String,
     pub color: String,
     /// "Monday 12 October, 09:00 – 10:00", or the days of an all-day one.
@@ -588,26 +591,28 @@ impl Mail {
 /// The card for `o`, in `color`, on the calendar called `calendar`.
 fn details(o: &Occurrence, color: String, calendar: &str) -> EventDetails {
     EventDetails {
+        id: o.id(),
+        starts: o.start,
         title: shown_title(o),
         color,
         when: when_words(o, &Local),
         place: o.event.place.clone(),
         calendar: calendar.to_string(),
         organizer: o.event.organizer.clone().unwrap_or_default(),
-        guests: o
-            .event
-            .guests
-            .iter()
-            .map(|guest| GuestRow {
-                name: guest_name_words(guest),
-                email: guest.email.clone(),
-                answer: guest.answer.map(|a| a.as_str().to_string()).unwrap_or_default(),
-                said: guest_answer_words(guest),
-                organizer: guest.organizer,
-            })
-            .collect(),
+        guests: o.event.guests.iter().map(guest_row).collect(),
         conference: o.event.conference.clone().unwrap_or_default(),
         notes: mailrs_mime::notes::text(&o.event.description).trim().to_string(),
+    }
+}
+
+/// One guest as a list shows them: their name, address and answer.
+pub(crate) fn guest_row(guest: &mailrs_domain::calendar::Guest) -> GuestRow {
+    GuestRow {
+        name: guest_name_words(guest),
+        email: guest.email.clone(),
+        answer: guest.answer.map(|a| a.as_str().to_string()).unwrap_or_default(),
+        said: guest_answer_words(guest),
+        organizer: guest.organizer,
     }
 }
 

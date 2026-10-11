@@ -20,6 +20,7 @@ mod ai_prefs;
 mod assistant;
 mod calendar;
 mod compose;
+mod event_editor;
 mod filing;
 mod mail;
 mod notify;

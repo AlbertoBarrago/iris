@@ -94,6 +94,11 @@ struct WeekGrid: View {
                         ZStack(alignment: .topLeading) {
                             shading(week, column: column)
                             lines(week, width: proxy.size.width, column: column)
+                            // A double click on empty time makes an event
+                            // there, on the half hour it falls in.
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture(count: 2) { at in create(at, week: week, column: column) }
                             ForEach(Array(week.timed.enumerated()), id: \.offset) { _, item in
                                 card(item, column: column)
                             }
@@ -114,6 +119,15 @@ struct WeekGrid: View {
                 scroller.scrollTo(Int(week.firstHour), anchor: .top)
             }
         }
+    }
+
+    private func create(_ at: CGPoint, week: WeekView, column: CGFloat) {
+        guard at.x > Self.gutter, column > 0 else { return }
+        let index = min(Int((at.x - Self.gutter) / column), week.days.count - 1)
+        guard let day = CalendarDate.date(week.days[index].date) else { return }
+        let halfHours = Int(at.y / (Self.hour / 2))
+        let start = Calendar.current.date(byAdding: .minute, value: halfHours * 30, to: day) ?? day
+        model.newEvent(start: start, end: start.addingTimeInterval(3600), allDay: false)
     }
 
     /// Out-of-hours time and days off, shaded as the GTK grid shades them.

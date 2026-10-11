@@ -270,8 +270,10 @@ final class MailModel {
     private(set) var monthView: MonthView?
     private(set) var weekView: WeekView?
     private(set) var calendarAccounts: [CalendarAccount] = []
-    /// The event a double click opened.
+    /// The event a double click opened, read only.
     var openedEvent: EventDetails?
+    /// The editor open on an event of the person's own, or a new one.
+    var editing: EditorRequest?
     /// How many lines of events a week row holds at the window's height.
     var monthRows: UInt32 = 3 {
         didSet { if monthRows != oldValue { loadCalendar() } }

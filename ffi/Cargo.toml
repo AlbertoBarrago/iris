@@ -32,6 +32,7 @@ mailrs-sync.workspace = true
 mailrs-view.workspace = true
 async-channel.workspace = true
 chrono.workspace = true
+chrono-tz.workspace = true
 futures.workspace = true
 gettext-rs.workspace = true
 tokio.workspace = true
