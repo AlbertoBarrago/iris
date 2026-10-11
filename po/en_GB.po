@@ -229,14 +229,6 @@ msgstr "Iris Could Not Start"
 msgid "Report a Problem"
 msgstr "Report a Problem"
 
-#: app/src/open_thread/run/translation.rs:121
-msgid "The model sent nothing back to put in the message."
-msgstr "The model sent nothing back to put in the message."
-
-#: app/src/open_thread/run/translation.rs:125
-msgid "The model could not translate this: {reason}"
-msgstr "The model could not translate this: {reason}"
-
 #: app/src/protection/draft.rs:27 app/src/protection/draft.rs:93
 msgid "Draft not saved: {reason}"
 msgstr "Draft not saved: {reason}"
@@ -291,70 +283,6 @@ msgstr "On this computer, while Iris is open"
 #: app/src/servers.rs:40
 msgid "On the server"
 msgstr "On the server"
-
-#: app/src/translation.rs:76
-msgid "Portuguese"
-msgstr "Portuguese"
-
-#: app/src/translation.rs:77
-msgid "Spanish"
-msgstr "Spanish"
-
-#: app/src/translation.rs:78
-msgid "French"
-msgstr "French"
-
-#: app/src/translation.rs:79
-msgid "German"
-msgstr "German"
-
-#: app/src/translation.rs:80
-msgid "Italian"
-msgstr "Italian"
-
-#: app/src/translation.rs:81
-msgid "Dutch"
-msgstr "Dutch"
-
-#: app/src/translation.rs:82
-msgid "Greek"
-msgstr "Greek"
-
-#: app/src/translation.rs:83
-msgid "Hebrew"
-msgstr "Hebrew"
-
-#: app/src/translation.rs:84
-msgid "Japanese"
-msgstr "Japanese"
-
-#: app/src/translation.rs:85
-msgid "Korean"
-msgstr "Korean"
-
-#: app/src/translation.rs:86
-msgid "Chinese"
-msgstr "Chinese"
-
-#: app/src/translation.rs:87
-msgid "English"
-msgstr "English"
-
-#: app/src/translation.rs:843
-msgid "The message goes to {host}, for {model} to read."
-msgstr "The message goes to {host}, for {model} to read."
-
-#: app/src/translation.rs:847
-msgid "The message goes to {model} on this computer and no further."
-msgstr "The message goes to {model} on this computer and no further."
-
-#: app/src/translation.rs:852
-msgid "The message goes to Anthropic, for {model} to read."
-msgstr "The message goes to Anthropic, for {model} to read."
-
-#: app/src/translation.rs:856
-msgid "The message goes to Anthropic, for Claude to read through your subscription."
-msgstr "The message goes to Anthropic, for Claude to read through your subscription."
 
 #: app/src/ui/about.rs:37 app/src/ui/window.rs:686
 msgid "Iris"
@@ -4442,46 +4370,13 @@ msgstr "Unknown sender"
 msgid "(no subject)"
 msgstr "(no subject)"
 
-#: app/src/ui/translation.rs:50 app/src/ui/translation.rs:85
-#: app/src/ui/translation.rs:125
+#: app/src/ui/translation.rs:50 app/src/ui/translation.rs:106
 msgid "Translate"
 msgstr "Translate"
 
-#: app/src/ui/translation.rs:79
-msgid "This message is in {language}"
-msgstr "This message is in {language}"
-
 #: app/src/ui/translation.rs:82
-msgid "This message is in another language"
-msgstr "This message is in another language"
-
-#: app/src/ui/translation.rs:92
 msgid "Translating…"
 msgstr "Translating…"
-
-#: app/src/ui/translation.rs:101
-msgid "Showing the message as it arrived"
-msgstr "Showing the message as it arrived"
-
-#: app/src/ui/translation.rs:103
-msgid "Translated from {language}"
-msgstr "Translated from {language}"
-
-#: app/src/ui/translation.rs:106
-msgid "Translated"
-msgstr "Translated"
-
-#: app/src/ui/translation.rs:109
-msgid "The message was long, so only the start of it was translated."
-msgstr "The message was long, so only the start of it was translated."
-
-#: app/src/ui/translation.rs:114
-msgid "Show Original"
-msgstr "Show Original"
-
-#: app/src/ui/translation.rs:115
-msgid "Show Translation"
-msgstr "Show Translation"
 
 #: app/src/ui/vacation.rs:58
 msgid "Automatic Reply"
@@ -8107,6 +8002,110 @@ msgstr "gpgsm failed: {reason}"
 #: appcore/src/templates.rs:29
 msgid "%-d %B %Y"
 msgstr "%-d %B %Y"
+
+#: appcore/src/translation.rs:75
+msgid "Portuguese"
+msgstr "Portuguese"
+
+#: appcore/src/translation.rs:76
+msgid "Spanish"
+msgstr "Spanish"
+
+#: appcore/src/translation.rs:77
+msgid "French"
+msgstr "French"
+
+#: appcore/src/translation.rs:78
+msgid "German"
+msgstr "German"
+
+#: appcore/src/translation.rs:79
+msgid "Italian"
+msgstr "Italian"
+
+#: appcore/src/translation.rs:80
+msgid "Dutch"
+msgstr "Dutch"
+
+#: appcore/src/translation.rs:81
+msgid "Greek"
+msgstr "Greek"
+
+#: appcore/src/translation.rs:82
+msgid "Hebrew"
+msgstr "Hebrew"
+
+#: appcore/src/translation.rs:83
+msgid "Japanese"
+msgstr "Japanese"
+
+#: appcore/src/translation.rs:84
+msgid "Korean"
+msgstr "Korean"
+
+#: appcore/src/translation.rs:85
+msgid "Chinese"
+msgstr "Chinese"
+
+#: appcore/src/translation.rs:86
+msgid "English"
+msgstr "English"
+
+#: appcore/src/translation.rs:829
+msgid "This message is in {language}"
+msgstr "This message is in {language}"
+
+#: appcore/src/translation.rs:832
+msgid "This message is in another language"
+msgstr "This message is in another language"
+
+#: appcore/src/translation.rs:846
+msgid "Showing the message as it arrived"
+msgstr "Showing the message as it arrived"
+
+#: appcore/src/translation.rs:848
+msgid "Translated from {language}"
+msgstr "Translated from {language}"
+
+#: appcore/src/translation.rs:851
+msgid "Translated"
+msgstr "Translated"
+
+#: appcore/src/translation.rs:854
+msgid "The message was long, so only the start of it was translated."
+msgstr "The message was long, so only the start of it was translated."
+
+#: appcore/src/translation.rs:858
+msgid "Show Original"
+msgstr "Show Original"
+
+#: appcore/src/translation.rs:859
+msgid "Show Translation"
+msgstr "Show Translation"
+
+#: appcore/src/translation.rs:869
+msgid "The model sent nothing back to put in the message."
+msgstr "The model sent nothing back to put in the message."
+
+#: appcore/src/translation.rs:871
+msgid "The model could not translate this: {reason}"
+msgstr "The model could not translate this: {reason}"
+
+#: appcore/src/translation.rs:887
+msgid "The message goes to {host}, for {model} to read."
+msgstr "The message goes to {host}, for {model} to read."
+
+#: appcore/src/translation.rs:891
+msgid "The message goes to {model} on this computer and no further."
+msgstr "The message goes to {model} on this computer and no further."
+
+#: appcore/src/translation.rs:896
+msgid "The message goes to Anthropic, for {model} to read."
+msgstr "The message goes to Anthropic, for {model} to read."
+
+#: appcore/src/translation.rs:900
+msgid "The message goes to Anthropic, for Claude to read through your subscription."
+msgstr "The message goes to Anthropic, for Claude to read through your subscription."
 
 #: appcore/src/unsubscribe_lines.rs:38
 msgid "Unsubscribe from {sender}?"

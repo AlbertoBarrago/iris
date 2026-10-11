@@ -28,6 +28,7 @@ mod mail;
 mod notify;
 mod prefs;
 mod templates;
+mod translation;
 mod unsubscribe;
 
 pub use prefs::{ChoiceItem, PreferenceChoices, Preferences, SignatureSetting, import_signature};
@@ -213,9 +214,14 @@ impl Store {
         };
         let conn = self.conn();
         let metas = messages::thread_messages(&conn, account_id, thread_id)?;
+        // A message translated in this run draws its translation while
+        // the person has it shown.
         let bodies = metas
             .iter()
-            .map(|meta| bodies::peek_body(&conn, account_id, &meta.id))
+            .map(|meta| match translation::shown_body(account_id, &meta.id) {
+                Some(body) => Ok(Some(body)),
+                None => bodies::peek_body(&conn, account_id, &meta.id),
+            })
             .collect::<Result<Vec<_>, _>>()?;
         let me: Vec<String> = accounts::list_accounts(&conn)?
             .into_iter()

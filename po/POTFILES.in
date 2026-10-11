@@ -40,7 +40,7 @@ appcore/src/search.rs
 app/src/servers.rs
 appcore/src/smime.rs
 appcore/src/templates.rs
-app/src/translation.rs
+appcore/src/translation.rs
 app/src/ui/about.rs
 app/src/ui/add_account.rs
 app/src/ui/assistant.rs
@@ -183,3 +183,4 @@ ffi/src/mail_invitation.rs
 ffi/src/templates.rs
 appcore/src/unsubscribe.rs
 ffi/src/unsubscribe.rs
+ffi/src/translation.rs

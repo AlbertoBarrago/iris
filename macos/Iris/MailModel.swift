@@ -16,6 +16,11 @@ final class MailModel {
     private(set) var invitation: MailInvitation?
     /// The conversation `invitation` belongs to.
     fileprivate var invitationKey: ThreadKey?
+    /// The card offering to translate the open conversation's message.
+    private(set) var translationCard: TranslationOffer?
+    fileprivate var translationKey: ThreadKey?
+    /// Set while the model translates.
+    private(set) var translating = false
     /// The offer to leave the open conversation's mailing list.
     private(set) var listOffer: ListOffer?
     fileprivate var listOfferKey: ThreadKey?
@@ -889,12 +894,15 @@ final class MailModel {
             page = nil
             invitation = nil
             listOffer = nil
+            translationCard = nil
             return
         }
         if invitationKey != key { invitation = nil }
         loadInvitation()
         if listOfferKey != key { listOffer = nil }
         loadListOffer()
+        if translationKey != key { translationCard = nil }
+        loadTranslationCard()
         markReadOnOpen(key)
         let theme = theme
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
@@ -961,6 +969,58 @@ extension MailModel {
                     self.openEvent(details)
                 } else {
                     self.say(tr("The event is no longer on the calendar"))
+                }
+            }
+        }
+    }
+}
+
+// MARK: Translation
+
+extension MailModel {
+    /// Reads whether the open conversation's message reads as another
+    /// language, or has a translation already.
+    func loadTranslationCard() {
+        guard let mail, let key = openThread else {
+            translationCard = nil
+            return
+        }
+        let interface = appLocale.identifier
+        Task.detached {
+            let found = try? mail.translationCard(accountId: key.account, threadId: key.thread, interface: interface)
+            await MainActor.run {
+                if self.openThread == key, !self.translating {
+                    self.translationCard = found ?? nil
+                    self.translationKey = key
+                }
+            }
+        }
+    }
+
+    /// The card's button: translates the message, or turns over the
+    /// translation it has, and draws the page again.
+    func translateOpen() {
+        guard let mail, let key = openThread, !translating else { return }
+        let interface = appLocale.identifier
+        translating = true
+        if let card = translationCard, card.button == tr("Translate") {
+            translationCard = TranslationOffer(title: card.title, detail: tr("Translating…"), button: card.button, problem: false)
+        }
+        Task.detached {
+            let done = Result { try mail.translateMessage(accountId: key.account, threadId: key.thread, interface: interface) }
+            await MainActor.run {
+                self.translating = false
+                guard self.openThread == key else { return }
+                switch done {
+                case .success(let card):
+                    self.translationCard = card
+                    self.loadConversation()
+                case .failure(let error):
+                    let reason = "\(error)"
+                    if let card = self.translationCard {
+                        self.translationCard = TranslationOffer(title: card.title, detail: reason, button: card.button, problem: true)
+                    }
+                    self.say(reason)
                 }
             }
         }

@@ -1131,6 +1131,9 @@ pub fn translate_plural(one: String, many: String, count: u32) -> String {
     gettextrs::ngettext(one, many, count)
 }
 
+/// Where the interface's catalogs are, once `bind_language` has run.
+pub(crate) static LOCALE_DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+
 /// Binds the interface's words to the catalogs in `locale_dir`, in
 /// `language` (such as `it_IT`), or in the system's when it is empty.
 #[uniffi::export]
@@ -1144,6 +1147,7 @@ pub fn bind_language(locale_dir: String, language: String) {
         }
         gettextrs::setlocale(gettextrs::LocaleCategory::LcAll, "");
     }
+    let _ = LOCALE_DIR.set(std::path::PathBuf::from(&locale_dir));
     if gettextrs::bindtextdomain("iris", locale_dir).is_err() {
         return;
     }

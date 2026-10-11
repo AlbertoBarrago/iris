@@ -26,6 +26,9 @@ struct ConversationView: View {
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                         .padding(10)
                     }
+                    if let card = model.translationCard {
+                        TranslationBar(card: card)
+                    }
                     if let offer = model.listOffer {
                         HStack {
                             Text(tr("This message is from a mailing list"))
@@ -372,4 +375,37 @@ final class PictureScheme: NSObject, WKURLSchemeHandler {
 /// thread, where alone it is touched.
 private struct Asked: @unchecked Sendable {
     let task: any WKURLSchemeTask
+}
+
+/// The card offering to translate the message, or to turn a translation
+/// back to what arrived, as the GTK conversation's card does.
+private struct TranslationBar: View {
+    @Environment(MailModel.self) private var model
+    let card: TranslationOffer
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "character.bubble")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(card.title).fontWeight(.semibold)
+                if !card.detail.isEmpty {
+                    Text(card.detail)
+                        .font(.callout)
+                        .foregroundStyle(card.problem ? Color.red : Color.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Spacer()
+            if model.translating { ProgressView().controlSize(.small) }
+            Button(card.button) { model.translateOpen() }
+                .disabled(model.translating)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .padding(10)
+        .accessibilityElement(children: .contain)
+    }
 }
