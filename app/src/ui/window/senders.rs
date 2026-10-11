@@ -11,7 +11,7 @@ use crate::permission::{Occasion, Permission};
 use crate::ui::confirm::{Tone, confirm};
 use crate::ui::conversation::ConversationView;
 use crate::ui::unsubscribe::{self, ListLine, Way, summary};
-use crate::unsubscribe::{RequestSent, Unsubscribe, choose_with_body};
+use crate::unsubscribe::{Leaving, RequestSent, Unsubscribe};
 use crate::unsubscribe_page::{Adviser, Outcome, WebkitBrowser, finish, model_adviser, prepare};
 use mailrs_domain::translate::{fill, gettext};
 
@@ -33,62 +33,31 @@ impl MainWindow {
     /// it themselves. A page nobody could read still opens in their
     /// browser, as it always did.
     pub(super) fn unsubscribe(self: &Rc<Self>, view: Rc<ConversationView>) {
+        // `list_unsubscribe` answers only a message this finds a way out
+        // of, so a link Iris cannot use never gets here.
         let found = view.find(|open| {
             let (meta, body) = open.list_unsubscribe()?;
-            let sender = meta
-                .from
-                .as_ref()
-                .map(|a| a.display().to_string())
-                .unwrap_or_else(|| gettext("this list"));
-            let email = meta
-                .from
-                .as_ref()
-                .map(|a| a.email.clone())
-                .unwrap_or_default();
-            let sent_to = meta
-                .to
-                .iter()
-                .chain(meta.cc.iter())
-                .map(|a| a.email.clone())
-                .collect::<Vec<String>>();
-            // `list_unsubscribe` answers only a message this finds a way
-            // out of, so a link Iris cannot use never gets here.
-            let method = choose_with_body(
-                body.list_unsubscribe.as_deref(),
-                body.one_click_unsubscribe,
-                body.html.as_deref(),
-            )?;
-            Some((open.target(), sender, email, method, sent_to))
+            Some((open.target(), meta.clone(), body.clone()))
         });
-        let Some((asked_on, sender, email, method, sent_to)) = found else {
+        let Some((asked_on, meta, body)) = found else {
             return self.toast(&gettext("This message has no unsubscribe link"));
         };
         let account = self
             .account(asked_on.account_id)
             .map(|account| account.email)
             .unwrap_or_default();
-        // The address the newsletter came to, which a page is typed and a
-        // request mail goes from.
         let senders = self.settings_with(|s| s.senders(&account));
         let mine: Vec<String> = senders.into_iter().map(|a| a.email).collect();
-        let address = unsubscribe::sent_to(&sent_to, &mine, &account);
-        let (way, page) = match &method {
-            Unsubscribe::OneClick(_) => (Way::OneClick, None),
-            Unsubscribe::Email { .. } => (
-                Way::Mail {
-                    from: address.clone(),
-                },
-                None,
-            ),
-            Unsubscribe::Page(url) | Unsubscribe::BodyLink(url) => {
-                (Way::Reading, Some(url.clone()))
-            }
+        let Some(leaving) = crate::unsubscribe::leaving(&meta, &body, &mine, &account) else {
+            return self.toast(&gettext("This message has no unsubscribe link"));
         };
-        let how = match &method {
-            Unsubscribe::OneClick(_) => How::OneClick,
-            Unsubscribe::Email { .. } => How::Email,
-            Unsubscribe::Page(_) | Unsubscribe::BodyLink(_) => How::Page,
-        };
+        let (way, page, how) = (leaving.way(), leaving.page().map(str::to_string), leaving.how());
+        let Leaving {
+            sender,
+            email,
+            method,
+            address,
+        } = leaving;
         let lines = vec![ListLine {
             name: sender.clone(),
             way,
