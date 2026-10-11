@@ -284,13 +284,35 @@ struct ToastView: View {
                 model.dismissToast()
             } label: {
                 Image(systemName: "xmark")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 20, height: 20)
+                    .background(.quaternary, in: Circle())
             }
-            .buttonStyle(.borderless)
+            .buttonStyle(.plain)
+            .help(tr("Close"))
+            .accessibilityLabel(tr("Close"))
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 10)
         .background(.regularMaterial, in: Capsule())
         .shadow(radius: 8, y: 2)
+        .onHover { hovering = $0 }
+        // Each toast goes by itself after a while, longer when it offers
+        // Undo, and stays while the pointer rests on it. Undo Send keeps
+        // its own clock: the toast goes once the message does.
+        .task(id: TimerKey(toast: toast.id, hovering: hovering)) {
+            guard toast.undoSend == nil, !hovering else { return }
+            try? await Task.sleep(for: .seconds(toast.undo ? 8 : 5))
+            if !Task.isCancelled, model.toast?.id == toast.id { model.dismissToast() }
+        }
+    }
+
+    @State private var hovering = false
+
+    private struct TimerKey: Equatable {
+        let toast: UUID
+        let hovering: Bool
     }
 }
 
