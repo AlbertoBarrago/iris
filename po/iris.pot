@@ -8672,11 +8672,11 @@ msgstr ""
 msgid "The event is no longer on the calendar"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:186
+#: ffi/src/mail_invitation.rs:252
 msgid "The {service} is switched off for Iris, so your answer went by email"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:211
+#: ffi/src/mail_invitation.rs:277
 msgid "This invitation has no time to move"
 msgstr ""
 

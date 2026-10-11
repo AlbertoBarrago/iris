@@ -9075,11 +9075,13 @@ msgstr "Aggiungi un account per scrivere."
 msgid "The event is no longer on the calendar"
 msgstr "L'evento non è più nel calendario"
 
-#: ffi/src/mail_invitation.rs:186
+#: ffi/src/mail_invitation.rs:252
 msgid "The {service} is switched off for Iris, so your answer went by email"
-msgstr "Il servizio {service} è disattivato per Iris, quindi la risposta è partita per email"
+msgstr ""
+"Il servizio {service} è disattivato per Iris, quindi la risposta è partita "
+"per email"
 
-#: ffi/src/mail_invitation.rs:211
+#: ffi/src/mail_invitation.rs:277
 msgid "This invitation has no time to move"
 msgstr "Questo invito non ha un orario da spostare"
 

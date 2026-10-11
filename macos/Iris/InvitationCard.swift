@@ -35,14 +35,17 @@ struct InvitationCard: View {
             }
             HStack(alignment: .top, spacing: 12) {
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.accentColor)
+                    .fill(barColor)
                     .frame(width: 4)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(invitation.title).font(.title3.weight(.semibold))
                     if !invitation.when.isEmpty { Text(invitation.when) }
                     meta
                     ForEach(invitation.events, id: \.self) { Text($0).foregroundStyle(.secondary) }
-                    if !invitation.clash.isEmpty {
+                    if let strip = invitation.strip {
+                        DayStripView(strip: strip, answered: !given.isEmpty)
+                            .padding(.top, 6)
+                    } else if !invitation.clash.isEmpty {
                         Label(invitation.clash, systemImage: "exclamationmark.triangle")
                             .foregroundStyle(.orange)
                     }
@@ -67,6 +70,13 @@ struct InvitationCard: View {
                 if let at { propose(at) }
             }
         }
+    }
+
+    /// The colour of the calendar that holds the event, once the strip
+    /// has found it there; the accent until then.
+    private var barColor: Color {
+        let own = invitation.strip?.blocks.first { $0.this }?.color ?? ""
+        return Color(hex: own) ?? .accentColor
     }
 
     /// How the series runs, who organizes it, and the guest count, which
@@ -269,5 +279,84 @@ private struct PickTimeSheet: View {
         }
         .padding(20)
         .frame(width: 360)
+    }
+}
+
+/// The hours around the invitation: the person's other events as tinted
+/// blocks, this meeting dashed until it is answered, hairlines on the
+/// hours, and whether the hour is free.
+struct DayStripView: View {
+    let strip: DayStrip
+    /// Whether the person has answered, which makes this meeting solid.
+    let answered: Bool
+
+    private static let row: CGFloat = 22
+    private static let gap: CGFloat = 3
+    private static let labels: CGFloat = 16
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack {
+                Text(strip.heading).font(.callout.weight(.semibold))
+                Spacer()
+                Text(strip.verdict)
+                    .font(.callout)
+                    .foregroundStyle(strip.free ? Color.green : Color.orange)
+            }
+            GeometryReader { geometry in
+                let width = geometry.size.width
+                let rows = CGFloat(max(strip.lanes, 1))
+                let grid = rows * Self.row + (rows - 1) * Self.gap
+                ZStack(alignment: .topLeading) {
+                    ForEach(Array(strip.hours.enumerated()), id: \.offset) { _, hour in
+                        Rectangle()
+                            .fill(Color.secondary.opacity(0.25))
+                            .frame(width: 1, height: grid)
+                            .offset(x: width * hour.at)
+                        Text(hour.label)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .offset(x: width * hour.at + 3, y: grid + 2)
+                    }
+                    ForEach(Array(strip.blocks.enumerated()), id: \.offset) { _, block in
+                        StripBlockView(block: block, dashed: block.this && !answered)
+                            .frame(width: max(width * (block.to - block.from) - 2, 4), height: Self.row)
+                            .offset(x: width * block.from + 1, y: CGFloat(block.lane) * (Self.row + Self.gap))
+                    }
+                }
+            }
+            .frame(height: CGFloat(max(strip.lanes, 1)) * (Self.row + Self.gap) + Self.labels)
+            .clipped()
+        }
+        .frame(maxWidth: 520)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(strip.heading + ", " + strip.verdict)
+    }
+}
+
+/// One event on the strip, in its calendar's colour.
+private struct StripBlockView: View {
+    let block: StripBlock
+    let dashed: Bool
+
+    var body: some View {
+        let color = Color(hex: block.color) ?? .accentColor
+        let shape = RoundedRectangle(cornerRadius: 5)
+        HStack(spacing: 4) {
+            if !dashed {
+                RoundedRectangle(cornerRadius: 1).fill(color).frame(width: 3)
+            }
+            Text(block.title)
+                .font(.caption)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 2)
+        .background(color.opacity(dashed ? 0.08 : 0.22), in: shape)
+        .overlay {
+            if dashed { shape.strokeBorder(color, style: StrokeStyle(lineWidth: 1, dash: [4, 3])) }
+        }
     }
 }

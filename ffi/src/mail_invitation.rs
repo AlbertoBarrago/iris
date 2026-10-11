@@ -9,14 +9,16 @@
 use std::sync::Arc;
 
 use chrono::Local;
+use mailrs_appcore::invitation_strip::{self as strip, Asked, Strip, Verdict};
 use mailrs_appcore::invitation_card::{
     self as card, CalendarButton, Showing, attending, calendar_button, clash, guest_summary, joined,
     moved, nearby, news, news_tone, organizer_line, replied, said_yes, targets_of, went,
 };
 use mailrs_domain::invitation::{Answer, Card, Method, Scope, When};
 use mailrs_domain::translate::{fill, fill_plural, gettext};
-use mailrs_domain::AccountId;
+use mailrs_domain::{AccountId, EpochMillis};
 use mailrs_render::format::event_when;
+use mailrs_store::calendar::CalendarScope;
 use mailrs_store::{accounts, bodies, messages};
 use mailrs_sync::calendar::Calendar;
 use mailrs_sync::invitations::Invitations;
@@ -71,6 +73,70 @@ pub struct MailInvitation {
     pub targets: Vec<AddTarget>,
     /// Each event of a file that holds several, "Title · when".
     pub events: Vec<String>,
+    /// The hours around a timed request, once the calendar's copy holds
+    /// them. It takes the clash line's place.
+    pub strip: Option<DayStrip>,
+}
+
+/// The hours around the event: the person's other events as blocks, this
+/// one among them, and whether the hour is free.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct DayStrip {
+    /// "Your afternoon".
+    pub heading: String,
+    /// "Nothing else at that hour", or what clashes.
+    pub verdict: String,
+    pub free: bool,
+    pub hours: Vec<StripHour>,
+    pub blocks: Vec<StripBlock>,
+    /// How many rows the blocks take.
+    pub lanes: u32,
+}
+
+/// A whole hour on the strip, at its place along it.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct StripHour {
+    /// From 0, the strip's left edge, to 1, its right.
+    pub at: f64,
+    /// "14:00".
+    pub label: String,
+}
+
+/// One event on the strip, placed as fractions of its width.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct StripBlock {
+    pub title: String,
+    pub from: f64,
+    pub to: f64,
+    pub lane: u32,
+    /// `#rrggbb`, or empty for the accent.
+    pub color: String,
+    /// The invitation's own event, drawn dashed until it is answered.
+    pub this: bool,
+}
+
+impl From<Strip> for DayStrip {
+    fn from(strip: Strip) -> Self {
+        DayStrip {
+            heading: strip.heading,
+            verdict: strip.verdict.words(),
+            free: strip.verdict == Verdict::Free,
+            hours: strip.hours.into_iter().map(|(at, label)| StripHour { at, label }).collect(),
+            blocks: strip
+                .blocks
+                .into_iter()
+                .map(|b| StripBlock {
+                    title: b.title,
+                    from: b.from,
+                    to: b.to,
+                    lane: b.lane as u32,
+                    color: b.colour,
+                    this: b.this,
+                })
+                .collect(),
+            lanes: strip.lanes as u32,
+        }
+    }
 }
 
 /// One person on the guest list and what they said.
@@ -413,7 +479,19 @@ impl Mail {
                 Err(err) => tracing::info!(error = %err, "could not look for the event on the calendar"),
             }
         }
-        let clashes = if showing.answer.is_none() && request && !cancelled {
+        // A timed request still on gets the hours around it, on the
+        // occurrence Show in Calendar opens, in place of the clash line.
+        let timed = event.when.as_ref().is_some_and(|when| !when.all_day());
+        let strip = if request && !cancelled && timed {
+            let at = showing.on_calendar.as_ref().map(|spot| spot.start);
+            self.strip(account_id, &event, at).unwrap_or_else(|err| {
+                tracing::info!(error = %err, "could not read the hours around the event");
+                None
+            })
+        } else {
+            None
+        };
+        let clashes = if strip.is_none() && showing.answer.is_none() && request && !cancelled {
             let invitation = event.clone();
             self.run(async move { invitations.busy(account_id, &invitation).await })
                 .unwrap_or_else(|err| {
@@ -429,7 +507,56 @@ impl Mail {
         } else {
             Vec::new()
         };
-        words(showing, clashes, targets)
+        let mut card = words(showing, clashes, targets);
+        card.strip = strip.map(Into::into);
+        card
+    }
+
+    /// The hours around `invitation`, from the calendar's copy, at `at`
+    /// when the copy holds it there. `None` before the copy is read.
+    fn strip(
+        &self,
+        account_id: AccountId,
+        invitation: &mailrs_domain::invitation::Invitation,
+        at: Option<EpochMillis>,
+    ) -> Result<Option<Strip>, CoreError> {
+        let Some(When::At { starts_at, ends_at }) = invitation.when else {
+            return Ok(None);
+        };
+        // An invitation with no end runs an hour, as the clash line
+        // assumes. A series keeps its length on the occurrence found.
+        let length = ends_at.unwrap_or(starts_at + 3_600_000) - starts_at;
+        let start = at.unwrap_or(starts_at);
+        let end = start + length;
+        let Some(span) = strip::window(start, &Local) else {
+            return Ok(None);
+        };
+        let read = (span.0.min(start), span.1.max(end));
+        let db = self.db.clone();
+        let found = self.run(async move {
+            db.read(move |c| {
+                if !mailrs_store::calendar::synced(c, account_id)? {
+                    return Ok(None);
+                }
+                let around =
+                    mailrs_store::calendar::occurrences(c, &[account_id], read.0, read.1, CalendarScope::Owned)?;
+                let colours: std::collections::HashMap<String, String> =
+                    mailrs_store::calendar::calendars(c, account_id)?
+                        .into_iter()
+                        .map(|calendar| (calendar.id, calendar.color))
+                        .collect();
+                Ok(Some((around, colours)))
+            })
+            .await
+        })?;
+        Ok(found.map(|(around, colours)| {
+            let asked = Asked {
+                uid: &invitation.uid,
+                start,
+                end,
+            };
+            strip::build(&asked, span, &around, &colours, &Local)
+        }))
     }
 
     /// The calendars of the account a file's events can go on.
@@ -515,6 +642,7 @@ fn words(showing: Showing, clashes: Vec<String>, targets: Vec<AddTarget>) -> Mai
         on_calendar: showing.on_calendar.clone().map(Into::into),
         targets,
         events,
+        strip: None,
     }
 }
 
@@ -605,5 +733,28 @@ mod tests {
         }
         .into();
         assert_eq!((spot.account_id, spot.id.as_str(), spot.start), (2, "design", 7));
+    }
+
+    #[test]
+    fn a_strip_keeps_its_blocks_and_says_whether_the_hour_is_free() {
+        let built = Strip {
+            heading: "Your morning".into(),
+            hours: vec![(0.2, "09:00".into())],
+            blocks: vec![strip::Block {
+                title: "This meeting".into(),
+                from: 0.4,
+                to: 0.6,
+                lane: 0,
+                colour: "#3366ff".into(),
+                this: true,
+            }],
+            lanes: 1,
+            verdict: Verdict::Free,
+        };
+        let shown: DayStrip = built.into();
+        assert!(shown.free);
+        assert_eq!(shown.verdict, "Nothing else at that hour");
+        assert_eq!(shown.hours[0].label, "09:00");
+        assert_eq!((shown.blocks[0].lane, shown.blocks[0].this), (0, true));
     }
 }

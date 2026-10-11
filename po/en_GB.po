@@ -8451,11 +8451,11 @@ msgstr "Add an account to write mail."
 msgid "The event is no longer on the calendar"
 msgstr "The event is no longer on the calendar"
 
-#: ffi/src/mail_invitation.rs:186
+#: ffi/src/mail_invitation.rs:252
 msgid "The {service} is switched off for Iris, so your answer went by email"
 msgstr "The {service} is switched off for Iris, so your answer went by email"
 
-#: ffi/src/mail_invitation.rs:211
+#: ffi/src/mail_invitation.rs:277
 msgid "This invitation has no time to move"
 msgstr "This invitation has no time to move"
 
