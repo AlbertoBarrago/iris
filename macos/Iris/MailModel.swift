@@ -25,6 +25,8 @@ final class MailModel {
     fileprivate var translationKey: ThreadKey?
     /// Set while the model translates.
     private(set) var translating = false
+    /// Delete Forever's question, while it is up.
+    var erasing: EraseRequest?
     /// The account sheet the sidebar's account menu opened.
     var accountSheet: AccountSheet?
     /// The contact card a click on a sender opened.
@@ -263,10 +265,26 @@ final class MailModel {
         guard !picked.isEmpty else { return }
         let threads = picked.map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
         let from = selectedMailbox
+        // Delete in the Trash erases for good, so it asks first.
+        if action == .trash, let question = try? mail.eraseQuestion(threads: threads, from: from) {
+            erasing = EraseRequest(threads: threads, question: question, clears: keys == nil)
+            return
+        }
         if keys == nil, Self.leavesList(action) { selection = [] }
         Task.detached {
             let done = mail.act(threads: threads, action: action, from: from)
             await MainActor.run { self.finished(done, undoable: true) }
+        }
+    }
+
+    /// Erases what Delete Forever's question asked about, on a yes.
+    func erase(_ request: EraseRequest) {
+        guard let mail else { return }
+        if request.clears { selection = [] }
+        let threads = request.threads
+        Task.detached {
+            let done = mail.erase(threads: threads)
+            await MainActor.run { self.finished(done, undoable: false) }
         }
     }
 
@@ -825,10 +843,12 @@ final class MailModel {
     /// cancels the sending or the reminder.
     var inSendLater: Bool { selectedMailbox == "Scheduled" }
     var inReminders: Bool { selectedMailbox == "Reminders" }
+    /// A Trash, unified or one account's, where Delete erases for good.
+    var inTrash: Bool { selectedMailbox?.contains("folder: Trash") ?? false }
 
     /// What Delete does in the list on screen, in words.
     var deleteWords: String {
-        inSendLater ? tr("Cancel Send") : inReminders ? tr("Cancel Reminder") : tr("Delete")
+        inSendLater ? tr("Cancel Send") : inReminders ? tr("Cancel Reminder") : inTrash ? tr("Delete Forever") : tr("Delete")
     }
 
     /// Stops a message waiting to go and brings it back in its composer.
@@ -1600,4 +1620,13 @@ extension MailModel {
             }
         }
     }
+}
+
+/// Delete Forever asked about `threads`, with the question's words.
+struct EraseRequest: Identifiable {
+    let id = UUID()
+    let threads: [ThreadRef]
+    let question: EraseQuestion
+    /// Whether the selection goes once the mail does.
+    let clears: Bool
 }

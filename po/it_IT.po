@@ -1548,6 +1548,80 @@ msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] "Impossibile salvare {count} persona nei contatti di {account}"
 msgstr[1] "Impossibile salvare {count} persone nei contatti di {account}"
 
+#: appcore/src/erase.rs:25
+msgid "Delete This Conversation Forever?"
+msgstr "Eliminare definitivamente questa conversazione?"
+
+#: appcore/src/erase.rs:27
+msgid "Delete {count} Conversation Forever?"
+msgid_plural "Delete {count} Conversations Forever?"
+msgstr[0] "Eliminare definitivamente {count} conversazione?"
+msgstr[1] "Eliminare definitivamente {count} conversazioni?"
+
+#: appcore/src/erase.rs:32
+msgid "Delete This Message Forever?"
+msgstr "Eliminare definitivamente questo messaggio?"
+
+#: appcore/src/erase.rs:34
+msgid "Delete {count} Message Forever?"
+msgid_plural "Delete {count} Messages Forever?"
+msgstr[0] "Eliminare definitivamente {count} messaggio?"
+msgstr[1] "Eliminare definitivamente {count} messaggi?"
+
+#: appcore/src/erase.rs:42
+msgid "{provider} deletes it from every device and cannot bring it back."
+msgstr "{provider} lo elimina da tutti i dispositivi e non può recuperarlo."
+
+#: appcore/src/erase.rs:46
+msgid "{provider} deletes them from every device and cannot bring them back."
+msgstr "{provider} li elimina da tutti i dispositivi e non può recuperarli."
+
+#: appcore/src/erase.rs:49
+msgid "The server deletes it from every device and cannot bring it back."
+msgstr "Il server lo elimina da tutti i dispositivi e non può recuperarlo."
+
+#: appcore/src/erase.rs:51
+msgid ""
+"Each account's server deletes them from every device and cannot bring them "
+"back."
+msgstr ""
+"Il server di ogni account li elimina da tutti i dispositivi e non può "
+"recuperarli."
+
+#: appcore/src/erase.rs:59
+msgid ""
+"Mail in {accounts} stays in the Trash, since its server cannot delete mail "
+"for good."
+msgid_plural ""
+"Mail in {accounts} stays in the Trash, since their servers cannot delete "
+"mail for good."
+msgstr[0] ""
+"La posta in {accounts} resta nel Cestino, perché il suo server non può "
+"eliminarla definitivamente."
+msgstr[1] ""
+"La posta in {accounts} resta nel Cestino, perché i loro server non possono "
+"eliminarla definitivamente."
+
+#: appcore/src/erase.rs:70
+msgid "Delete Forever"
+msgstr "Elimina definitivamente"
+
+#: appcore/src/erase.rs:80
+msgid "Deleted forever"
+msgstr "Eliminato per sempre"
+
+#: appcore/src/erase.rs:82
+msgid "Deleted {count} conversation forever"
+msgid_plural "Deleted {count} conversations forever"
+msgstr[0] "Eliminata {count} conversazione per sempre"
+msgstr[1] "Eliminate {count} conversazioni per sempre"
+
+#: appcore/src/erase.rs:88
+msgid "Deleted {count} message forever"
+msgid_plural "Deleted {count} messages forever"
+msgstr[0] "Eliminato {count} messaggio per sempre"
+msgstr[1] "Eliminati {count} messaggi per sempre"
+
 #: appcore/src/event_question.rs:71
 msgid "This event only"
 msgstr "Solo questo evento"
@@ -3901,6 +3975,10 @@ msgstr "In attesa in Posta in uscita. Partirà appena possibile."
 msgid "Not allowed when you signed in"
 msgstr "Non consentito quando hai effettuato l'accesso"
 
+#: ffi/src/erase.rs:108
+msgid "Could not delete the mail: {reason}"
+msgstr "Impossibile eliminare la posta: {reason}"
+
 #: ffi/src/event_editor.rs:256
 msgid "Could not save the event: {reason}"
 msgstr "Impossibile salvare l'evento: {reason}"
@@ -4260,7 +4338,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:650
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:668
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -5265,43 +5343,43 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:552
+#: macos/Iris/MailModel.swift:570
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:554
+#: macos/Iris/MailModel.swift:572
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:579
+#: macos/Iris/MailModel.swift:597
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:620
+#: macos/Iris/MailModel.swift:638
 msgid "Open a conversation first"
 msgstr "Apri prima una conversazione"
 
-#: macos/Iris/MailModel.swift:744
+#: macos/Iris/MailModel.swift:762
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:831
+#: macos/Iris/MailModel.swift:851
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1080
+#: macos/Iris/MailModel.swift:1100
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1532
+#: macos/Iris/MailModel.swift:1552
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1537
+#: macos/Iris/MailModel.swift:1557
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1583
+#: macos/Iris/MailModel.swift:1603
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -8457,9 +8535,6 @@ msgstr "VIP"
 #~ msgid "Not Junk (Ctrl+Shift+J)"
 #~ msgstr "Non indesiderata (Ctrl+Maiusc+J)"
 
-#~ msgid "Delete Forever"
-#~ msgstr "Elimina definitivamente"
-
 #~ msgid "Not Junk"
 #~ msgstr "Non indesiderata"
 
@@ -8858,19 +8933,6 @@ msgstr "VIP"
 #~ "Scegli dove si trova la tua posta. Puoi aggiungerne altri in seguito dal "
 #~ "menu principale."
 
-#~ msgid "Deleted forever"
-#~ msgstr "Eliminato per sempre"
-
-#~ msgid "Deleted {count} conversation forever"
-#~ msgid_plural "Deleted {count} conversations forever"
-#~ msgstr[0] "Eliminata {count} conversazione per sempre"
-#~ msgstr[1] "Eliminate {count} conversazioni per sempre"
-
-#~ msgid "Deleted {count} message forever"
-#~ msgid_plural "Deleted {count} messages forever"
-#~ msgstr[0] "Eliminato {count} messaggio per sempre"
-#~ msgstr[1] "Eliminati {count} messaggi per sempre"
-
 #~ msgid "Could not load mail: {reason}"
 #~ msgstr "Impossibile caricare la posta: {reason}"
 
@@ -8896,9 +8958,6 @@ msgstr "VIP"
 
 #~ msgid "Sign in again to keep {account} syncing"
 #~ msgstr "Accedi di nuovo per continuare a sincronizzare {account}"
-
-#~ msgid "Could not delete the mail: {reason}"
-#~ msgstr "Impossibile eliminare la posta: {reason}"
 
 #~ msgid "Turn On the {service}"
 #~ msgstr "Attiva {service}"
@@ -9123,52 +9182,6 @@ msgstr "VIP"
 
 #~ msgid "Could not open it: {reason}"
 #~ msgstr "Impossibile aprirlo: {reason}"
-
-#~ msgid "Delete This Conversation Forever?"
-#~ msgstr "Eliminare definitivamente questa conversazione?"
-
-#~ msgid "Delete {count} Conversation Forever?"
-#~ msgid_plural "Delete {count} Conversations Forever?"
-#~ msgstr[0] "Eliminare definitivamente {count} conversazione?"
-#~ msgstr[1] "Eliminare definitivamente {count} conversazioni?"
-
-#~ msgid "Delete This Message Forever?"
-#~ msgstr "Eliminare definitivamente questo messaggio?"
-
-#~ msgid "Delete {count} Message Forever?"
-#~ msgid_plural "Delete {count} Messages Forever?"
-#~ msgstr[0] "Eliminare definitivamente {count} messaggio?"
-#~ msgstr[1] "Eliminare definitivamente {count} messaggi?"
-
-#~ msgid "{provider} deletes it from every device and cannot bring it back."
-#~ msgstr "{provider} lo elimina da tutti i dispositivi e non può recuperarlo."
-
-#~ msgid ""
-#~ "{provider} deletes them from every device and cannot bring them back."
-#~ msgstr "{provider} li elimina da tutti i dispositivi e non può recuperarli."
-
-#~ msgid "The server deletes it from every device and cannot bring it back."
-#~ msgstr "Il server lo elimina da tutti i dispositivi e non può recuperarlo."
-
-#~ msgid ""
-#~ "Each account's server deletes them from every device and cannot bring "
-#~ "them back."
-#~ msgstr ""
-#~ "Il server di ogni account li elimina da tutti i dispositivi e non può "
-#~ "recuperarli."
-
-#~ msgid ""
-#~ "Mail in {accounts} stays in the Trash, since its server cannot delete "
-#~ "mail for good."
-#~ msgid_plural ""
-#~ "Mail in {accounts} stays in the Trash, since their servers cannot delete "
-#~ "mail for good."
-#~ msgstr[0] ""
-#~ "La posta in {accounts} resta nel Cestino, perché il suo server non può "
-#~ "eliminarla definitivamente."
-#~ msgstr[1] ""
-#~ "La posta in {accounts} resta nel Cestino, perché i loro server non "
-#~ "possono eliminarla definitivamente."
 
 #~ msgid "Cancel Send (Delete)"
 #~ msgstr "Annulla invio (Canc)"

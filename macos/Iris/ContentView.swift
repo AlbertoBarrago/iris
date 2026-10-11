@@ -17,6 +17,15 @@ struct ContentView: View {
                 mail
             }
         }
+        .alert(model.erasing?.question.heading ?? "", isPresented: Binding(
+            get: { model.erasing != nil },
+            set: { if !$0 { model.erasing = nil } }
+        ), presenting: model.erasing) { request in
+            Button(tr("Cancel"), role: .cancel) {}
+            Button(request.question.verb, role: .destructive) { model.erase(request) }
+        } message: { request in
+            Text(request.question.body)
+        }
         .sheet(item: Bindable(model).accountSheet) { sheet in
             switch sheet {
             case .autoReply(let account): AutoReplyView(account: account)

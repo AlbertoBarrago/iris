@@ -134,3 +134,5 @@ macos/Iris/TemplatesSettings.swift
 macos/Iris/ThreadListView.swift
 macos/Iris/WeekView.swift
 macos/Iris/Updates.swift
+appcore/src/erase.rs
+ffi/src/erase.rs

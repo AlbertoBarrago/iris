@@ -23,6 +23,7 @@ mod assistant;
 mod calendar;
 mod compose;
 mod contacts;
+mod erase;
 mod event_editor;
 mod filing;
 mod hidden;

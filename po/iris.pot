@@ -1449,6 +1449,74 @@ msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] ""
 msgstr[1] ""
 
+#: appcore/src/erase.rs:25
+msgid "Delete This Conversation Forever?"
+msgstr ""
+
+#: appcore/src/erase.rs:27
+msgid "Delete {count} Conversation Forever?"
+msgid_plural "Delete {count} Conversations Forever?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: appcore/src/erase.rs:32
+msgid "Delete This Message Forever?"
+msgstr ""
+
+#: appcore/src/erase.rs:34
+msgid "Delete {count} Message Forever?"
+msgid_plural "Delete {count} Messages Forever?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: appcore/src/erase.rs:42
+msgid "{provider} deletes it from every device and cannot bring it back."
+msgstr ""
+
+#: appcore/src/erase.rs:46
+msgid "{provider} deletes them from every device and cannot bring them back."
+msgstr ""
+
+#: appcore/src/erase.rs:49
+msgid "The server deletes it from every device and cannot bring it back."
+msgstr ""
+
+#: appcore/src/erase.rs:51
+msgid ""
+"Each account's server deletes them from every device and cannot bring them "
+"back."
+msgstr ""
+
+#: appcore/src/erase.rs:59
+msgid ""
+"Mail in {accounts} stays in the Trash, since its server cannot delete mail "
+"for good."
+msgid_plural ""
+"Mail in {accounts} stays in the Trash, since their servers cannot delete "
+"mail for good."
+msgstr[0] ""
+msgstr[1] ""
+
+#: appcore/src/erase.rs:70
+msgid "Delete Forever"
+msgstr ""
+
+#: appcore/src/erase.rs:80
+msgid "Deleted forever"
+msgstr ""
+
+#: appcore/src/erase.rs:82
+msgid "Deleted {count} conversation forever"
+msgid_plural "Deleted {count} conversations forever"
+msgstr[0] ""
+msgstr[1] ""
+
+#: appcore/src/erase.rs:88
+msgid "Deleted {count} message forever"
+msgid_plural "Deleted {count} messages forever"
+msgstr[0] ""
+msgstr[1] ""
+
 #: appcore/src/event_question.rs:71
 msgid "This event only"
 msgstr ""
@@ -3693,6 +3761,10 @@ msgstr ""
 msgid "Not allowed when you signed in"
 msgstr ""
 
+#: ffi/src/erase.rs:108
+msgid "Could not delete the mail: {reason}"
+msgstr ""
+
 #: ffi/src/event_editor.rs:256
 msgid "Could not save the event: {reason}"
 msgstr ""
@@ -4020,7 +4092,7 @@ msgid ""
 "such as automatic replies and rules"
 msgstr ""
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:650
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:668
 msgid "Conversation"
 msgstr ""
 
@@ -4992,43 +5064,43 @@ msgid ""
 "unread."
 msgstr ""
 
-#: macos/Iris/MailModel.swift:552
+#: macos/Iris/MailModel.swift:570
 msgid "Saved {file} to Downloads"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:554
+#: macos/Iris/MailModel.swift:572
 msgid "Could not save {file}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:579
+#: macos/Iris/MailModel.swift:597
 msgid "Saved {file}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:620
+#: macos/Iris/MailModel.swift:638
 msgid "Open a conversation first"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:744
+#: macos/Iris/MailModel.swift:762
 msgid "Sending…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:831
+#: macos/Iris/MailModel.swift:851
 msgid "Cancel Send"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1080
+#: macos/Iris/MailModel.swift:1100
 msgid "Translating…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1532
+#: macos/Iris/MailModel.swift:1552
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1537
+#: macos/Iris/MailModel.swift:1557
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1583
+#: macos/Iris/MailModel.swift:1603
 msgid "{account} is signed in again."
 msgstr ""
 
