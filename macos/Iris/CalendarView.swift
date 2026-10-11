@@ -456,13 +456,16 @@ struct EventActions: ViewModifier {
     let busy: Bool
     @State private var hovering = false
     @State private var peeking = false
+    /// Whether the pointer is over the card itself, which stays open
+    /// while it is, so its answers can be pressed.
+    @State private var inCard = false
 
     func body(content: Content) -> some View {
         content
             .contentShape(Rectangle())
             .onHover { inside in
                 hovering = inside
-                if !inside { peeking = false }
+                if !inside { closeSoon() }
             }
             .task(id: hovering) {
                 // A short rest before the card, so sweeping across the
@@ -479,7 +482,97 @@ struct EventActions: ViewModifier {
             })
             .popover(isPresented: $peeking, arrowEdge: .top) {
                 EventCard(details: details)
+                    .onHover { inside in
+                        inCard = inside
+                        if !inside { closeSoon() }
+                    }
             }
+    }
+
+    /// Closes the card once the pointer has left both the event and the
+    /// card, with a moment to cross the gap between them.
+    private func closeSoon() {
+        Task {
+            try? await Task.sleep(for: .milliseconds(250))
+            if !hovering && !inCard { peeking = false }
+        }
+    }
+}
+
+/// A guest's Yes, Maybe and No, the one given filled, with a note for the
+/// organizer, as the GTK calendar's card has them. A repeating event first
+/// asks, in place, whether the answer covers this event or all of them.
+struct AnswerBar: View {
+    @Environment(MailModel.self) private var model
+    let details: EventDetails
+    @State private var given: String
+    @State private var note = ""
+    @State private var asking: (answer: String, question: EventQuestion)?
+    @State private var sending = false
+
+    init(details: EventDetails) {
+        self.details = details
+        _given = State(initialValue: details.myAnswer)
+    }
+
+    var body: some View {
+        if let asking {
+            QuestionSheet(question: asking.question) { response, scope, _ in
+                self.asking = nil
+                if response != nil { send(asking.answer, scope: scope) }
+            }
+        } else {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    // Yes, Maybe, No: the order the GTK card answers in.
+                    ForEach([("yes", tr("Yes")), ("maybe", tr("Maybe")), ("no", tr("No"))], id: \.0) { answer, label in
+                        let current = given == answer
+                        Button(label) { pick(answer) }
+                            .buttonStyle(.bordered)
+                            .tint(current ? .accentColor : nil)
+                            .background(current ? Color.accentColor.opacity(0.2) : .clear, in: Capsule())
+                            .accessibilityValue(current ? tr("Your answer") : "")
+                    }
+                    if sending { ProgressView().controlSize(.small) }
+                }
+                .controlSize(.small)
+                .disabled(sending)
+                TextField(tr("Add a note"), text: $note, prompt: Text(tr("Add a note")))
+                    .textFieldStyle(.roundedBorder)
+                    .controlSize(.small)
+                    .frame(maxWidth: 260)
+                    .help(tr("The organizer reads it with your answer"))
+            }
+        }
+    }
+
+    private func pick(_ answer: String) {
+        guard let mail = model.mail else { return }
+        if let question = try? mail.answerQuestion(id: details.id, starts: details.starts) {
+            asking = (answer, question)
+        } else {
+            send(answer, scope: nil)
+        }
+    }
+
+    private func send(_ answer: String, scope: String?) {
+        guard let mail = model.mail else { return }
+        let (id, starts, note) = (details.id, details.starts, note)
+        sending = true
+        Task.detached {
+            let done = Result { try mail.answerEvent(id: id, starts: starts, answer: answer, scope: scope, note: note) }
+            await MainActor.run {
+                sending = false
+                switch done {
+                case .success:
+                    given = answer
+                    self.note = ""
+                    model.loadCalendar()
+                case .failure(let error):
+                    model.say("\(error)")
+                }
+            }
+        }
     }
 }
 
@@ -546,7 +639,8 @@ struct EventSheet: View {
             .frame(maxHeight: 480)
             .fixedSize(horizontal: false, vertical: true)
             Divider()
-            HStack {
+            HStack(alignment: .bottom) {
+                if details.invited { AnswerBar(details: details) }
                 Spacer()
                 Button(tr("Close")) { dismiss() }
                     .keyboardShortcut(.cancelAction)
@@ -657,6 +751,10 @@ struct EventCard: View {
                 Link(destination: url) { Label(tr("Join Call"), systemImage: "video") }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
+            }
+            if details.invited {
+                Divider()
+                AnswerBar(details: details)
             }
         }
         .padding(14)

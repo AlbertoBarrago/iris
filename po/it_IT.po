@@ -9071,6 +9071,10 @@ msgstr "Contrassegnato"
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."
 
+#: ffi/src/invitation_answer.rs:49
+msgid "The event is no longer on the calendar"
+msgstr "L'evento non è più nel calendario"
+
 #: render/src/calendar_words.rs:72
 msgid "{date} · {start}–{end}"
 msgstr "{date} · {start}-{end}"

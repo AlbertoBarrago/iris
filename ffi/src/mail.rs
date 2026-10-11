@@ -810,6 +810,25 @@ impl Mail {
 
 impl Mail {
     /// Tells the window that `what` changed, as the engine's news does.
+    /// Sends `account`'s queued calendar changes now rather than at the
+    /// next refresh, as the GTK app's `push_calendar` does, then says the
+    /// calendar changed so the waiting marks clear. Offline, the queue
+    /// waits for the next try.
+    pub(crate) fn send_calendar(&self, account: AccountId) {
+        let copy = Arc::clone(&self.calendar);
+        let listener = self.listener.lock().unwrap_or_else(|p| p.into_inner()).clone();
+        self.runtime.spawn(async move {
+            match copy.send(account).await {
+                Ok(_) => {
+                    if let Some(listener) = listener {
+                        listener.changed("calendar".into());
+                    }
+                }
+                Err(err) => tracing::info!(%err, "calendar changes wait for the next try"),
+            }
+        });
+    }
+
     pub(crate) fn changed(&self, what: &str) {
         let listener = self.listener.lock().unwrap_or_else(|p| p.into_inner()).clone();
         if let Some(listener) = listener {

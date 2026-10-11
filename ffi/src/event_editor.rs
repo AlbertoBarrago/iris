@@ -293,28 +293,7 @@ impl EventEditor {
     ) -> Result<Option<EventQuestion>, CoreError> {
         let asked = self.mail.calendar.ask_before(account, change).map_err(|err| CoreError::Store(err.to_string()))?;
         let Ask::Question(question) = asked else { return Ok(None) };
-        Ok(Some(EventQuestion {
-            heading: event_question::heading(&question, title),
-            body: event_question::body(&question, when.as_deref()),
-            responses: event_question::responses(&question)
-                .into_iter()
-                .map(|r| QuestionButton { id: r.id.into(), label: r.label, look: look(r.look).into() })
-                .collect(),
-            scopes: match event_question::scope_options(&question) {
-                true => question
-                    .scopes
-                    .iter()
-                    .map(|&s| QuestionButton {
-                        id: event_question::scope_id(s).into(),
-                        label: event_question::scope_label(s),
-                        look: "plain".into(),
-                    })
-                    .collect(),
-                false => Vec::new(),
-            },
-            send_check: event_question::send_check(&question),
-            default_id: event_question::default_response(&question).into(),
-        }))
+        Ok(Some(question_record(&question, title, when.as_deref())))
     }
 
     /// The choice the change is written with: the one nobody had to be
@@ -353,6 +332,7 @@ impl Mail {
         match written.map(|permitted| permitted.done().is_some()) {
             Ok(true) => {
                 self.changed("calendar");
+                self.send_calendar(account);
                 Ok(())
             }
             Ok(false) => Err(CoreError::Store(gettext("Iris has no permission to use this calendar. Allow it in Preferences."))),
@@ -361,7 +341,7 @@ impl Mail {
     }
 
     /// The occurrence the grid named `id`, starting at `starts`.
-    fn occurrence(&self, id: &str, starts: i64) -> Result<Option<Occurrence>, CoreError> {
+    pub(crate) fn occurrence(&self, id: &str, starts: i64) -> Result<Option<Occurrence>, CoreError> {
         let db = self.db.clone();
         let ids: Vec<i64> = self
             .run(async move { db.read(accounts::list_accounts).await })?
@@ -435,6 +415,33 @@ fn change(draft: &Draft) -> EventChange {
     EventChange::Edit { occurrence, edited, how }
 }
 
+/// The question the window shows for `question`, about the event called
+/// `title`, with `when` naming a new time.
+pub(crate) fn question_record(question: &Question, title: &str, when: Option<&str>) -> EventQuestion {
+    EventQuestion {
+        heading: event_question::heading(question, title),
+        body: event_question::body(question, when),
+        responses: event_question::responses(question)
+            .into_iter()
+            .map(|r| QuestionButton { id: r.id.into(), label: r.label, look: look(r.look).into() })
+            .collect(),
+        scopes: match event_question::scope_options(question) {
+            true => question
+                .scopes
+                .iter()
+                .map(|&s| QuestionButton {
+                    id: event_question::scope_id(s).into(),
+                    label: event_question::scope_label(s),
+                    look: "plain".into(),
+                })
+                .collect(),
+            false => Vec::new(),
+        },
+        send_check: event_question::send_check(question),
+        default_id: event_question::default_response(question).into(),
+    }
+}
+
 /// Puts the draft at `start` to `end`, saying whether that moved it.
 fn land(draft: &mut Draft, start: EpochMillis, end: EpochMillis, all_day: bool) -> bool {
     let before = (draft.start, draft.end, draft.all_day);
@@ -447,7 +454,7 @@ fn when(draft: &Draft) -> String {
     mailrs_render::calendar_words::span_words(draft.start, draft.end, draft.all_day, &Local)
 }
 
-fn scope_of(question: &Question, id: &str) -> Option<RepeatScope> {
+pub(crate) fn scope_of(question: &Question, id: &str) -> Option<RepeatScope> {
     question.scopes.iter().copied().find(|&s| event_question::scope_id(s) == id)
 }
 

@@ -144,6 +144,7 @@ domain/src/sign_in_page.rs
 domain/src/smart.rs
 domain/src/translate.rs
 ffi/src/compose.rs
+ffi/src/invitation_answer.rs
 render/src/calendar_words.rs
 render/src/conversation.rs
 render/src/format.rs

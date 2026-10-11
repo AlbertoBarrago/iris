@@ -8447,6 +8447,10 @@ msgstr "Is flagged"
 msgid "Add an account to write mail."
 msgstr "Add an account to write mail."
 
+#: ffi/src/invitation_answer.rs:49
+msgid "The event is no longer on the calendar"
+msgstr "The event is no longer on the calendar"
+
 #: render/src/calendar_words.rs:72
 msgid "{date} · {start}–{end}"
 msgstr "{date} · {start}–{end}"

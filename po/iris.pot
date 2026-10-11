@@ -8668,6 +8668,10 @@ msgstr ""
 msgid "Add an account to write mail."
 msgstr ""
 
+#: ffi/src/invitation_answer.rs:49
+msgid "The event is no longer on the calendar"
+msgstr ""
+
 #: render/src/calendar_words.rs:72
 msgid "{date} · {start}–{end}"
 msgstr ""

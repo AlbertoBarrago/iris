@@ -127,6 +127,12 @@ pub struct EventDetails {
     pub notes: String,
     /// Whether a drag may move it: see `calendar_drag::can_move`.
     pub movable: bool,
+    /// Whether the person is a guest of someone else's event, who answers
+    /// it rather than changes it.
+    pub invited: bool,
+    /// The person's answer to it: `yes`, `no`, `maybe`, or empty before
+    /// one.
+    pub my_answer: String,
 }
 
 /// One person asked to the event, and their answer.
@@ -615,6 +621,8 @@ fn dress(shades: &[Shade], o: &Occurrence) -> (String, EventDetails) {
 fn details(o: &Occurrence, color: String, calendar: &str, movable: bool) -> EventDetails {
     EventDetails {
         movable,
+        invited: mailrs_appcore::calendar_draft::limited(&o.event),
+        my_answer: o.event.my_answer.map(|a| a.as_str().to_string()).unwrap_or_default(),
         id: o.id(),
         starts: o.start,
         title: shown_title(o),
@@ -641,7 +649,7 @@ pub(crate) fn guest_row(guest: &mailrs_domain::calendar::Guest) -> GuestRow {
 }
 
 /// An event's title, or the words for one that has none.
-fn shown_title(o: &Occurrence) -> String {
+pub(crate) fn shown_title(o: &Occurrence) -> String {
     if o.event.title.trim().is_empty() {
         gettext("Untitled event")
     } else {
