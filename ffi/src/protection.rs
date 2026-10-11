@@ -407,7 +407,7 @@ impl Mail {
 /// What each engine holds for `addresses`. An engine this Mac lacks, or
 /// one that would not answer, is left out, since a question nobody
 /// answered is not a missing key.
-fn held(addresses: &[String]) -> Held {
+pub(crate) fn held(addresses: &[String]) -> Held {
     let (gpg, gpgsm) = engines();
     Held {
         pgp: gpg.as_ref().and_then(|gpg| gpg.keys_for(addresses).ok()),
@@ -416,7 +416,7 @@ fn held(addresses: &[String]) -> Held {
 }
 
 /// What the engines hold of the sender's own, for which signs.
-fn own_held(from: &str) -> Held {
+pub(crate) fn own_held(from: &str) -> Held {
     let from = vec![from.trim().to_lowercase()];
     let (gpg, gpgsm) = engines();
     Held {

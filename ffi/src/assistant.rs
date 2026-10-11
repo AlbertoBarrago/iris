@@ -1,4 +1,4 @@
-//! The assistant for Iris Next: the same tool loop the GTK app runs
+//! The assistant for Iris: the same tool loop the GTK app runs
 //! (`mailrs_appcore::assistant`), with this module as the window behind
 //! its two ports.
 //!
@@ -677,15 +677,15 @@ impl Background for OnRuntime {
     }
 }
 
-/// Iris Next reads no unsubscribe page yet, so every page goes to the
-/// person's browser, as one the rules cannot finish does.
+/// Iris reads no unsubscribe page out of sight yet, so every page goes to
+/// the person's browser, as one the rules cannot finish does.
 struct NoBrowser;
 
 impl Browser for NoBrowser {
     fn load(&self, _url: &str) -> Answer<'_, Result<PageForm, PageError>> {
         // Only the log reads this: a page that will not load goes to the
         // browser.
-        Box::pin(async { Err(PageError::Load("Iris Next reads no pages yet".into())) })
+        Box::pin(async { Err(PageError::Load("Iris reads no pages yet".into())) })
     }
 
     fn submit(&self, _plan: &Plan, _address: &str) -> Answer<'_, Result<PageForm, PageError>> {
@@ -969,27 +969,27 @@ impl Effects for Port {
         self.window.changed();
     }
 
-    // Iris Next does not reach gpg or gpgsm yet, so it holds no keys and
-    // opens no encrypted draft.
+    // gpg and gpgsm answer here as they do for the composer.
 
-    fn keys(&self, _addresses: Vec<String>) -> Answer<'_, Held> {
-        Box::pin(async { Held::default() })
+    fn keys(&self, addresses: Vec<String>) -> Answer<'_, Held> {
+        Box::pin(async move { crate::protection::held(&addresses) })
     }
 
-    fn signing_standard(&self, _from: String) -> Answer<'_, Standard> {
-        Box::pin(async { protection::signing(&Held::default()) })
+    fn signing_standard(&self, from: String) -> Answer<'_, Standard> {
+        Box::pin(async move { protection::signing(&crate::protection::own_held(&from)) })
     }
 
     fn reopen_draft(&self, raw: Vec<u8>, draft: Draft) -> Answer<'_, Result<Draft, String>> {
         Box::pin(async move {
             let mut draft = draft;
             match protection::draft::standard_of(&raw) {
-                None => {
-                    protection::draft::reopen_plain(&raw, &mut draft);
-                    Ok(draft)
-                }
-                Some(_) => Err(mailrs_appcore::pgp::explain(&mailrs_pgp::PgpError::NoGpg)),
+                None => protection::draft::reopen_plain(&raw, &mut draft),
+                Some(standard) => self
+                    .mail
+                    .reopen_sealed(&raw, standard, &mut draft)
+                    .map_err(|err| err.to_string())?,
             }
+            Ok(draft)
         })
     }
 
