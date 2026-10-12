@@ -36,6 +36,7 @@ struct RulesView: View {
             Divider()
             HStack {
                 Button(tr("Add Rule"), systemImage: "plus") { editing = RuleEdit(id: nil, fields: .empty) }
+                    .help(tr("Add Rule"))
                     .disabled(page == nil)
                 Spacer()
                 Button(tr("Close")) { dismiss() }
@@ -61,6 +62,7 @@ struct RulesView: View {
                 }
                 if page.rules.isEmpty {
                     Button(tr("Add Rule"), systemImage: "plus") { editing = RuleEdit(id: nil, fields: .empty) }
+                        .help(tr("Add Rule"))
                 }
                 ForEach(page.rules, id: \.id) { rule in
                     HStack {

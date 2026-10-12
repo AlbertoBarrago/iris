@@ -79,6 +79,7 @@ struct ThreadListView: View {
         .toolbar {
             ToolbarItemGroup {
                 Button(tr("Check for Mail"), systemImage: "arrow.clockwise") { model.checkNow() }
+                    .help(tr("Check for Mail"))
                 // As in the GTK app: the magnifier opens a search bar over
                 // the list. ⌘F opens it too, from the Edit menu, unless the
                 // conversation has the keys.
@@ -89,6 +90,7 @@ struct ThreadListView: View {
                 Button(tr("New Message"), systemImage: "square.and.pencil") {
                     model.composeAsked = ComposeRequest(kind: .new)
                 }
+                .help(tr("New Message"))
             }
         }
     }

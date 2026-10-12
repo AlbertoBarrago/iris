@@ -28,14 +28,20 @@ struct ConversationWindow: View {
         .toolbar {
             ToolbarItemGroup {
                 Button(tr("Reply"), systemImage: "arrowshape.turn.up.left") { answer(.reply) }
+                    .help(tr("Reply"))
                 Button(tr("Reply All"), systemImage: "arrowshape.turn.up.left.2") { answer(.replyAll) }
+                    .help(tr("Reply All"))
                 Button(tr("Forward"), systemImage: "arrowshape.turn.up.right") { answer(.forward) }
+                    .help(tr("Forward"))
             }
             ToolbarItemGroup {
                 // Mail that leaves takes its window with it.
                 Button(tr("Archive"), systemImage: "archivebox") { leave(.archive) }
+                    .help(tr("Archive"))
                 Button(model.deleteWords, systemImage: "trash") { leave(.trash) }
+                    .help(model.deleteWords)
                 Button(tr("Junk"), systemImage: "xmark.bin") { leave(.junk) }
+                    .help(tr("Junk"))
             }
             ToolbarItemGroup {
                 FlagMenu(keys: [key])

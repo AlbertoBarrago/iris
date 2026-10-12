@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Improved
+
+- Every icon button says what it does when you point at it, so Reply, Reply
+  All and Forward no longer look alike.
+
 ### Fixed
 
 - Mail you send and drafts you save show up in Sent and Drafts right away on

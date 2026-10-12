@@ -33,7 +33,9 @@ scripts/update-po.sh --check      # stale? run scripts/update-po.sh, commit the 
 A change to the Swift app builds with Xcode as well
 (`scripts/dev-macos.sh`, or `xcodebuild` in `macos/`), and gives every
 control it adds a name VoiceOver reads (`accessibilityLabel` where the
-visible text does not say it); see `docs/accessibility.md`.
+visible text does not say it); see `docs/accessibility.md`. Every icon
+button gets a tooltip with its label (`.help`), which
+`scripts/check-tooltips.py` checks.
 
 Any edit to a file holding translatable strings moves line numbers in
 `po/iris.pot`, so `--check` goes stale from edits that change no

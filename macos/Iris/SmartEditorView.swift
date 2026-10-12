@@ -49,6 +49,7 @@ struct SmartEditorView: View {
                             Button(tr("Remove Condition"), systemImage: "minus.circle") {
                                 form.conditions.remove(at: index)
                             }
+                            .help(tr("Remove Condition"))
                             .labelStyle(.iconOnly)
                             .buttonStyle(.borderless)
                         }
@@ -56,6 +57,7 @@ struct SmartEditorView: View {
                     Button(tr("Add Condition"), systemImage: "plus") {
                         form.conditions.append(SmartCondition(field: fields.first?.key ?? "from", value: ""))
                     }
+                    .help(tr("Add Condition"))
                 }
                 if let problem {
                     Text(problem).foregroundStyle(.red)

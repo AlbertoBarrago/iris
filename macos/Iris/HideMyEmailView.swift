@@ -44,6 +44,7 @@ struct HideMyEmailView: View {
                         .keyboardShortcut(.defaultAction)
                 } else {
                     Button(tr("Create Address"), systemImage: "plus") { making = true }
+                        .help(tr("Create Address"))
                         .disabled(page?.accounts.isEmpty ?? true)
                     Button(tr("Close")) { dismiss() }
                         .keyboardShortcut(.cancelAction)
@@ -80,6 +81,7 @@ struct HideMyEmailView: View {
                         }
                         Spacer()
                         Button(tr("Copy Address"), systemImage: "doc.on.doc") { copy(row.address) }
+                            .help(tr("Copy Address"))
                             .labelStyle(.iconOnly).buttonStyle(.borderless)
                         Toggle(tr("Receive Mail"), isOn: Binding(get: { row.active }, set: { on in
                             run { try $0.setHiddenAddressActive(address: row.address, active: on) }
@@ -87,6 +89,7 @@ struct HideMyEmailView: View {
                         .labelsHidden()
                         .help(tr("Receive Mail"))
                         Button(tr("Delete Address"), systemImage: "trash") { deleting = row.address }
+                            .help(tr("Delete Address"))
                             .labelStyle(.iconOnly).buttonStyle(.borderless)
                     }
                 }

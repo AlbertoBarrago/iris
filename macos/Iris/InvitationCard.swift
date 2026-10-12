@@ -175,6 +175,7 @@ struct InvitationCard: View {
     private var calendarButton: some View {
         if let spot = invitation.onCalendar {
             Button(tr("Show in Calendar"), systemImage: "calendar") { model.showSpot(spot) }
+                .help(tr("Show in Calendar"))
                 .buttonStyle(.bordered)
         } else if invitation.adds {
             if invitation.targets.count > 1 {
@@ -185,6 +186,7 @@ struct InvitationCard: View {
                 .fixedSize()
             }
             Button(tr("Add to Calendar"), systemImage: "calendar.badge.plus") { add() }
+                .help(tr("Add to Calendar"))
                 .buttonStyle(.bordered)
                 .disabled(!invitation.events.isEmpty && unticked.count == invitation.events.count)
         }

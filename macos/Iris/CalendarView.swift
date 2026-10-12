@@ -44,8 +44,10 @@ struct CalendarPage: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
                 Button(previousWords, systemImage: "chevron.left") { model.stepCalendar(-1) }
+                    .help(previousWords)
                     .keyboardShortcut(.leftArrow, modifiers: .command)
                 Button(nextWords, systemImage: "chevron.right") { model.stepCalendar(1) }
+                    .help(nextWords)
                     .keyboardShortcut(.rightArrow, modifiers: .command)
             }
             ToolbarItem {
@@ -55,6 +57,7 @@ struct CalendarPage: View {
             ToolbarItem {
                 // The GTK calendar's N.
                 Button(tr("New Event (N)"), systemImage: "plus") { model.newEventNow() }
+                    .help(tr("New Event (N)"))
                     .keyboardShortcut("n", modifiers: [])
             }
             ToolbarItem {

@@ -56,14 +56,17 @@ struct ContactCardView: View {
             .fixedSize(horizontal: false, vertical: true)
             HStack {
                 Button(tr("New Message"), systemImage: "square.and.pencil") { write(to: card.email) }
+                    .help(tr("New Message"))
                 Button(vip ? tr("Remove from VIPs") : tr("Add to VIPs"), systemImage: vip ? "star.slash" : "star") {
                     model.toggleVip(email: card.email, name: card.name)
                     vip.toggle()
                 }
+                .help(vip ? tr("Remove from VIPs") : tr("Add to VIPs"))
                 Button(tr("All Their Mail"), systemImage: "magnifyingglass") {
                     dismiss()
                     model.searchFrom(card.email)
                 }
+                .help(tr("All Their Mail"))
             }
             .controlSize(.large)
         }

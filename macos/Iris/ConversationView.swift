@@ -78,6 +78,7 @@ struct ConversationView: View {
                 // A draft is edited, not answered, as in the GTK app.
                 ToolbarItem {
                     Button(tr("Edit Draft"), systemImage: "pencil") { answer(.editDraft) }
+                        .help(tr("Edit Draft"))
                         .keyboardShortcut("e", modifiers: .command)
                         .disabled(model.openThread == nil)
                 }
@@ -85,10 +86,13 @@ struct ConversationView: View {
             ToolbarItemGroup {
                 Group {
                     Button(tr("Reply"), systemImage: "arrowshape.turn.up.left") { answer(.reply) }
+                        .help(tr("Reply"))
                         .keyboardShortcut("r", modifiers: .command)
                     Button(tr("Reply All"), systemImage: "arrowshape.turn.up.left.2") { answer(.replyAll) }
+                        .help(tr("Reply All"))
                         .keyboardShortcut("r", modifiers: [.command, .shift])
                     Button(tr("Forward"), systemImage: "arrowshape.turn.up.right") { answer(.forward) }
+                        .help(tr("Forward"))
                         .keyboardShortcut("f", modifiers: [.command, .shift])
                 }
                 .disabled(model.openThread == nil)
@@ -97,9 +101,12 @@ struct ConversationView: View {
             ToolbarItemGroup {
                 Group {
                     Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive) }
+                        .help(tr("Archive"))
                         .keyboardShortcut("a", modifiers: [.command, .option])
                     Button(model.deleteWords, systemImage: model.inSendLater || model.inReminders ? "xmark.circle" : "trash") { model.perform(.trash) }
+                        .help(model.deleteWords)
                     Button(tr("Junk"), systemImage: "xmark.bin") { model.perform(.junk) }
+                        .help(tr("Junk"))
                         .keyboardShortcut("j", modifiers: [.command, .shift])
                 }
                 .disabled(model.selection.isEmpty)

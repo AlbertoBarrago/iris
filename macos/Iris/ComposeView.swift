@@ -141,6 +141,7 @@ struct ComposeView: View {
             }
             ToolbarItem {
                 Button(macKeys(tr("Attach Files (Ctrl+Shift+A)")), systemImage: "paperclip") { pickFiles() }
+                    .help(macKeys(tr("Attach Files (Ctrl+Shift+A)")))
                     .keyboardShortcut("a", modifiers: [.command, .shift])
                     .disabled(draft == nil)
             }
@@ -236,6 +237,7 @@ struct ComposeView: View {
                                     Button(tr("Remove {file}").replacingOccurrences(of: "{file}", with: file.filename), systemImage: "xmark") {
                                         draft.wrappedValue.attachments.remove(at: index)
                                     }
+                                    .help(tr("Remove {file}").replacingOccurrences(of: "{file}", with: file.filename))
                                     .labelStyle(.iconOnly)
                                     .buttonStyle(.borderless)
                                 }

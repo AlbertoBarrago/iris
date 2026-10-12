@@ -4867,8 +4867,8 @@ msgstr "Primo giorno"
 msgid "Last Day"
 msgstr "Ultimo giorno"
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:213
-#: macos/Iris/RulesView.swift:169 macos/Iris/TemplatesSettings.swift:98
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:214
+#: macos/Iris/RulesView.swift:171 macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr "Oggetto"
 
@@ -4885,92 +4885,93 @@ msgstr ""
 msgid "Only Reply to My Contacts"
 msgstr "Rispondi solo ai miei contatti"
 
-#: macos/Iris/CalendarView.swift:57
+#: macos/Iris/CalendarView.swift:59 macos/Iris/CalendarView.swift:60
 msgid "New Event (N)"
 msgstr "Nuovo evento (N)"
 
-#: macos/Iris/CalendarView.swift:61
+#: macos/Iris/CalendarView.swift:64
 msgid "View"
 msgstr "Vista"
 
-#: macos/Iris/CalendarView.swift:62
+#: macos/Iris/CalendarView.swift:65
 msgid "Day"
 msgstr "Giorno"
 
-#: macos/Iris/CalendarView.swift:63
+#: macos/Iris/CalendarView.swift:66
 msgid "Week"
 msgstr "Settimana"
 
-#: macos/Iris/CalendarView.swift:64
+#: macos/Iris/CalendarView.swift:67
 msgid "Month"
 msgstr "Mese"
 
-#: macos/Iris/CalendarView.swift:83 macos/Iris/CalendarView.swift:84
-#: macos/Iris/CalendarView.swift:113 macos/Iris/EventEditorView.swift:34
+#: macos/Iris/CalendarView.swift:86 macos/Iris/CalendarView.swift:87
+#: macos/Iris/CalendarView.swift:116 macos/Iris/EventEditorView.swift:34
 #: macos/Iris/IrisApp.swift:80 macos/Iris/SettingsView.swift:24
 #: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:46
 msgid "Calendar"
 msgstr "Calendario"
 
-#: macos/Iris/CalendarView.swift:90
+#: macos/Iris/CalendarView.swift:93
 msgid "Previous Day"
 msgstr "Giorno precedente"
 
-#: macos/Iris/CalendarView.swift:91
+#: macos/Iris/CalendarView.swift:94
 msgid "Previous Week"
 msgstr "Settimana precedente"
 
-#: macos/Iris/CalendarView.swift:92
+#: macos/Iris/CalendarView.swift:95
 msgid "Previous Month"
 msgstr "Mese precedente"
 
-#: macos/Iris/CalendarView.swift:98
+#: macos/Iris/CalendarView.swift:101
 msgid "Next Day"
 msgstr "Giorno successivo"
 
-#: macos/Iris/CalendarView.swift:99
+#: macos/Iris/CalendarView.swift:102
 msgid "Next Week"
 msgstr "Settimana successiva"
 
-#: macos/Iris/CalendarView.swift:100
+#: macos/Iris/CalendarView.swift:103
 msgid "Next Month"
 msgstr "Mese successivo"
 
-#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:78
+#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:78
 msgid "Mail"
 msgstr "Posta"
 
-#: macos/Iris/CalendarView.swift:534 macos/Iris/InvitationCard.swift:143
+#: macos/Iris/CalendarView.swift:537 macos/Iris/InvitationCard.swift:143
 msgid "Your answer"
 msgstr "La tua risposta"
 
-#: macos/Iris/CalendarView.swift:540 macos/Iris/InvitationCard.swift:128
+#: macos/Iris/CalendarView.swift:543 macos/Iris/InvitationCard.swift:128
 msgid "Add a note"
 msgstr "Aggiungi una nota"
 
-#: macos/Iris/CalendarView.swift:544 macos/Iris/InvitationCard.swift:131
+#: macos/Iris/CalendarView.swift:547 macos/Iris/InvitationCard.swift:131
 msgid "The organizer reads it with your answer"
 msgstr "L'organizzatore la legge insieme alla tua risposta"
 
-#: macos/Iris/CalendarView.swift:619 macos/Iris/EventEditorView.swift:90
+#: macos/Iris/CalendarView.swift:622 macos/Iris/EventEditorView.swift:90
 msgid "Guests"
 msgstr "Invitati"
 
-#: macos/Iris/CalendarView.swift:626 macos/Iris/EventEditorView.swift:94
+#: macos/Iris/CalendarView.swift:629 macos/Iris/EventEditorView.swift:94
 msgid "Notes"
 msgstr "Note"
 
-#: macos/Iris/CalendarView.swift:645 macos/Iris/ContactCardView.swift:74
-#: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:48
-#: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:41
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:306
-#: macos/Iris/ThreadListView.swift:307
+#: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
+#: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
+#: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:308
+#: macos/Iris/ThreadListView.swift:309
 msgid "Close"
 msgstr "Chiudi"
 
 #: macos/Iris/ComposeView.swift:60 macos/Iris/ContactCardView.swift:42
-#: macos/Iris/ContactCardView.swift:58 macos/Iris/IrisApp.swift:47
-#: macos/Iris/ThreadListView.swift:89
+#: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
+#: macos/Iris/IrisApp.swift:47 macos/Iris/ThreadListView.swift:90
+#: macos/Iris/ThreadListView.swift:93
 msgid "New Message"
 msgstr "Nuovo messaggio"
 
@@ -5001,7 +5002,7 @@ msgstr "I segnaposto come {{first_name}} si compilano ogni volta che lo usi."
 msgid "Sign"
 msgstr "Firma"
 
-#: macos/Iris/ComposeView.swift:108 macos/Iris/ComposeView.swift:332
+#: macos/Iris/ComposeView.swift:108 macos/Iris/ComposeView.swift:334
 msgid "Encrypt"
 msgstr "Cifra"
 
@@ -5018,77 +5019,77 @@ msgstr "Salva come modello…"
 msgid "Templates"
 msgstr "Modelli"
 
-#: macos/Iris/ComposeView.swift:143
+#: macos/Iris/ComposeView.swift:143 macos/Iris/ComposeView.swift:144
 msgid "Attach Files (Ctrl+Shift+A)"
 msgstr "Allega file (Ctrl+Maiusc+A)"
 
-#: macos/Iris/ComposeView.swift:155 macos/Iris/LaterView.swift:86
+#: macos/Iris/ComposeView.swift:156 macos/Iris/LaterView.swift:86
 msgid "Choose a Time…"
 msgstr "Scegli un orario…"
 
-#: macos/Iris/ComposeView.swift:174 macos/Iris/RulesView.swift:167
+#: macos/Iris/ComposeView.swift:175 macos/Iris/RulesView.swift:169
 msgid "From"
 msgstr "Da"
 
-#: macos/Iris/ComposeView.swift:194 macos/Iris/RulesView.swift:168
+#: macos/Iris/ComposeView.swift:195 macos/Iris/RulesView.swift:170
 msgid "To"
 msgstr "A"
 
-#: macos/Iris/ComposeView.swift:196
+#: macos/Iris/ComposeView.swift:197
 msgid "Recipients"
 msgstr "Destinatari"
 
-#: macos/Iris/ComposeView.swift:197
+#: macos/Iris/ComposeView.swift:198
 msgid "Cc/Bcc"
 msgstr "Cc/Ccn"
 
-#: macos/Iris/ComposeView.swift:204
+#: macos/Iris/ComposeView.swift:205
 msgid "Cc"
 msgstr "Cc"
 
-#: macos/Iris/ComposeView.swift:208
+#: macos/Iris/ComposeView.swift:209
 msgid "Bcc"
 msgstr "Ccn"
 
-#: macos/Iris/ComposeView.swift:236
+#: macos/Iris/ComposeView.swift:237 macos/Iris/ComposeView.swift:240
 msgid "Remove {file}"
 msgstr "Rimuovi {file}"
 
-#: macos/Iris/ComposeView.swift:256 macos/Iris/ComposeView.swift:261
+#: macos/Iris/ComposeView.swift:258 macos/Iris/ComposeView.swift:263
 msgid "Remove Quoted Text"
 msgstr "Rimuovi testo citato"
 
-#: macos/Iris/ComposeView.swift:271
+#: macos/Iris/ComposeView.swift:273
 msgid "Forwarded Message"
 msgstr "Messaggio inoltrato"
 
-#: macos/Iris/ComposeView.swift:366
+#: macos/Iris/ComposeView.swift:368
 msgid "Template saved"
 msgstr "Modello salvato"
 
-#: macos/Iris/ComposeView.swift:377
+#: macos/Iris/ComposeView.swift:379
 msgid "Attach Files"
 msgstr "Allega file"
 
-#: macos/Iris/ComposeView.swift:414
+#: macos/Iris/ComposeView.swift:416
 msgid "Draft saved"
 msgstr "Bozza salvata"
 
-#: macos/Iris/ComposeView.swift:586
+#: macos/Iris/ComposeView.swift:588
 msgid "Save as Draft?"
 msgstr "Salvare come bozza?"
 
-#: macos/Iris/ComposeView.swift:587
+#: macos/Iris/ComposeView.swift:589
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 "La bozza resta in Gmail, così puoi completarla più tardi su qualsiasi "
 "dispositivo."
 
-#: macos/Iris/ComposeView.swift:588
+#: macos/Iris/ComposeView.swift:590
 msgid "Save Draft"
 msgstr "Salva bozza"
 
-#: macos/Iris/ComposeView.swift:589
+#: macos/Iris/ComposeView.swift:591
 msgid "Discard"
 msgstr "Scarta"
 
@@ -5100,7 +5101,8 @@ msgstr "Email"
 msgid "Other email"
 msgstr "Altra email"
 
-#: macos/Iris/ContactCardView.swift:44 macos/Iris/HideMyEmailView.swift:82
+#: macos/Iris/ContactCardView.swift:44 macos/Iris/HideMyEmailView.swift:83
+#: macos/Iris/HideMyEmailView.swift:84
 msgid "Copy Address"
 msgstr "Copia indirizzo"
 
@@ -5108,15 +5110,15 @@ msgstr "Copia indirizzo"
 msgid "Phone"
 msgstr "Telefono"
 
-#: macos/Iris/ContactCardView.swift:59
+#: macos/Iris/ContactCardView.swift:60 macos/Iris/ContactCardView.swift:64
 msgid "Add to VIPs"
 msgstr "Aggiungi ai VIP"
 
-#: macos/Iris/ContactCardView.swift:59
+#: macos/Iris/ContactCardView.swift:60 macos/Iris/ContactCardView.swift:64
 msgid "Remove from VIPs"
 msgstr "Rimuovi dai VIP"
 
-#: macos/Iris/ContactCardView.swift:63
+#: macos/Iris/ContactCardView.swift:65 macos/Iris/ContactCardView.swift:69
 msgid "All Their Mail"
 msgstr "Tutta la sua posta"
 
@@ -5158,57 +5160,60 @@ msgstr "Questo messaggio proviene da una mailing list"
 msgid "No Conversation Selected"
 msgstr "Nessuna conversazione selezionata"
 
-#: macos/Iris/ConversationView.swift:80
+#: macos/Iris/ConversationView.swift:80 macos/Iris/ConversationView.swift:81
 msgid "Edit Draft"
 msgstr "Modifica bozza"
 
-#: macos/Iris/ConversationView.swift:89 macos/Iris/ConversationWindow.swift:31
+#: macos/Iris/ConversationView.swift:91 macos/Iris/ConversationView.swift:92
+#: macos/Iris/ConversationWindow.swift:32
+#: macos/Iris/ConversationWindow.swift:33
 msgid "Reply All"
 msgstr "Rispondi a tutti"
 
-#: macos/Iris/ConversationView.swift:91 macos/Iris/ConversationWindow.swift:32
-#: macos/Iris/ShortcutsView.swift:41
+#: macos/Iris/ConversationView.swift:94 macos/Iris/ConversationView.swift:95
+#: macos/Iris/ConversationWindow.swift:34
+#: macos/Iris/ConversationWindow.swift:35 macos/Iris/ShortcutsView.swift:41
 msgid "Forward"
 msgstr "Inoltra"
 
-#: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:284
-#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:237
+#: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:291
+#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:239
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
-#: macos/Iris/ConversationView.swift:276
+#: macos/Iris/ConversationView.swift:283
 msgid "Several Conversations Selected"
 msgstr "Più conversazioni selezionate"
 
-#: macos/Iris/ConversationView.swift:278
+#: macos/Iris/ConversationView.swift:285
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 
-#: macos/Iris/ConversationView.swift:288
+#: macos/Iris/ConversationView.swift:295
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
-#: macos/Iris/ConversationView.swift:443
+#: macos/Iris/ConversationView.swift:450
 msgid "Checked"
 msgstr "Verificata"
 
-#: macos/Iris/ConversationView.swift:444
+#: macos/Iris/ConversationView.swift:451
 msgid "Warning"
 msgstr "Avviso"
 
-#: macos/Iris/ConversationView.swift:445
+#: macos/Iris/ConversationView.swift:452
 msgid "Not checked"
 msgstr "Non verificata"
 
-#: macos/Iris/ConversationView.swift:461
+#: macos/Iris/ConversationView.swift:468
 msgid "Categorize Sender"
 msgstr "Classifica mittente"
 
-#: macos/Iris/ConversationView.swift:468
+#: macos/Iris/ConversationView.swift:475
 msgid "Block Sender…"
 msgstr "Blocca mittente…"
 
-#: macos/Iris/ConversationView.swift:477
+#: macos/Iris/ConversationView.swift:484
 msgid "Block"
 msgstr "Blocca"
 
@@ -5217,7 +5222,7 @@ msgid "Title"
 msgstr "Titolo"
 
 #: macos/Iris/EventEditorView.swift:54 macos/Iris/EventEditorView.swift:57
-#: macos/Iris/InvitationCard.swift:302 macos/Iris/SettingsView.swift:327
+#: macos/Iris/InvitationCard.swift:304 macos/Iris/SettingsView.swift:327
 msgid "Starts"
 msgstr "Inizio"
 
@@ -5243,8 +5248,8 @@ msgid "None of your calendars take new events"
 msgstr "Nessuno dei tuoi calendari accetta nuovi eventi"
 
 #: macos/Iris/FilingView.swift:70 macos/Iris/FilingView.swift:175
-#: macos/Iris/HideMyEmailView.swift:39 macos/Iris/RulesView.swift:198
-#: macos/Iris/SidebarView.swift:150 macos/Iris/SmartEditorView.swift:70
+#: macos/Iris/HideMyEmailView.swift:39 macos/Iris/RulesView.swift:200
+#: macos/Iris/SidebarView.swift:150 macos/Iris/SmartEditorView.swift:72
 #: macos/Iris/TemplatesSettings.swift:119
 msgid "Create"
 msgstr "Crea"
@@ -5299,51 +5304,51 @@ msgstr "Corrispondenza successiva"
 msgid "Done"
 msgstr "Fine"
 
-#: macos/Iris/HideMyEmailView.swift:46
+#: macos/Iris/HideMyEmailView.swift:46 macos/Iris/HideMyEmailView.swift:47
 msgid "Create Address"
 msgstr "Crea indirizzo"
 
-#: macos/Iris/HideMyEmailView.swift:55
+#: macos/Iris/HideMyEmailView.swift:56
 msgid "Hide My Email"
 msgstr "Nascondi la mia email"
 
-#: macos/Iris/HideMyEmailView.swift:57
+#: macos/Iris/HideMyEmailView.swift:58
 msgid "Delete Address?"
 msgstr "Eliminare l'indirizzo?"
 
-#: macos/Iris/HideMyEmailView.swift:71
+#: macos/Iris/HideMyEmailView.swift:72
 msgid "No addresses yet"
 msgstr "Ancora nessun indirizzo"
 
-#: macos/Iris/HideMyEmailView.swift:72
+#: macos/Iris/HideMyEmailView.swift:73
 msgid "Create one with the + button."
 msgstr "Creane uno con il pulsante +."
 
-#: macos/Iris/HideMyEmailView.swift:84 macos/Iris/HideMyEmailView.swift:88
+#: macos/Iris/HideMyEmailView.swift:86 macos/Iris/HideMyEmailView.swift:90
 msgid "Receive Mail"
 msgstr "Ricevi posta"
 
-#: macos/Iris/HideMyEmailView.swift:89
+#: macos/Iris/HideMyEmailView.swift:91 macos/Iris/HideMyEmailView.swift:92
 msgid "Delete Address"
 msgstr "Elimina indirizzo"
 
-#: macos/Iris/HideMyEmailView.swift:104
+#: macos/Iris/HideMyEmailView.swift:107
 msgid "Account"
 msgstr "Account"
 
-#: macos/Iris/HideMyEmailView.swift:107
+#: macos/Iris/HideMyEmailView.swift:110
 msgid "Where Did You Use It?"
 msgstr "Dove l'hai usato?"
 
-#: macos/Iris/HideMyEmailView.swift:123
+#: macos/Iris/HideMyEmailView.swift:126
 msgid "Your New Address"
 msgstr "Il tuo nuovo indirizzo"
 
-#: macos/Iris/HideMyEmailView.swift:125 macos/Iris/SourceView.swift:31
+#: macos/Iris/HideMyEmailView.swift:128 macos/Iris/SourceView.swift:31
 msgid "Copy"
 msgstr "Copia"
 
-#: macos/Iris/HideMyEmailView.swift:126
+#: macos/Iris/HideMyEmailView.swift:129
 msgid ""
 "It is on your clipboard. Mail sent to it gets the Hide My Email label in "
 "Gmail."
@@ -5351,7 +5356,7 @@ msgstr ""
 "È negli appunti. La posta inviata a questo indirizzo riceve l'etichetta "
 "Nascondi la mia email in Gmail."
 
-#: macos/Iris/HideMyEmailView.swift:137
+#: macos/Iris/HideMyEmailView.swift:140
 msgid "Address copied"
 msgstr "Indirizzo copiato"
 
@@ -5375,7 +5380,7 @@ msgstr "Questo evento"
 msgid "All Events"
 msgstr "Tutti gli eventi"
 
-#: macos/Iris/InvitationCard.swift:158 macos/Iris/InvitationCard.swift:297
+#: macos/Iris/InvitationCard.swift:158 macos/Iris/InvitationCard.swift:299
 msgid "Propose New Time"
 msgstr "Proponi un nuovo orario"
 
@@ -5383,27 +5388,27 @@ msgstr "Proponi un nuovo orario"
 msgid "Pick a Time…"
 msgstr "Scegli un orario…"
 
-#: macos/Iris/InvitationCard.swift:177
+#: macos/Iris/InvitationCard.swift:177 macos/Iris/InvitationCard.swift:178
 msgid "Show in Calendar"
 msgstr "Mostra in Calendario"
 
-#: macos/Iris/InvitationCard.swift:181
+#: macos/Iris/InvitationCard.swift:182
 msgid "Calendar to add to"
 msgstr "Calendario a cui aggiungere"
 
-#: macos/Iris/InvitationCard.swift:187
+#: macos/Iris/InvitationCard.swift:188 macos/Iris/InvitationCard.swift:189
 msgid "Add to Calendar"
 msgstr "Aggiungi al calendario"
 
-#: macos/Iris/InvitationCard.swift:298
+#: macos/Iris/InvitationCard.swift:300
 msgid "The organizer decides. {organizer} hears what you suggest."
 msgstr "Decide l'organizzatore. {organizer} riceverà il tuo suggerimento."
 
-#: macos/Iris/InvitationCard.swift:299
+#: macos/Iris/InvitationCard.swift:301
 msgid "Nobody"
 msgstr "Nessuno"
 
-#: macos/Iris/InvitationCard.swift:308
+#: macos/Iris/InvitationCard.swift:310
 msgid "Propose"
 msgstr "Proponi"
 
@@ -5521,79 +5526,80 @@ msgstr "Cancella formattazione"
 msgid "Allow Rules"
 msgstr "Consenti le regole"
 
-#: macos/Iris/RulesView.swift:38 macos/Iris/RulesView.swift:63
+#: macos/Iris/RulesView.swift:38 macos/Iris/RulesView.swift:39
+#: macos/Iris/RulesView.swift:64 macos/Iris/RulesView.swift:65
 msgid "Add Rule"
 msgstr "Aggiungi regola"
 
-#: macos/Iris/RulesView.swift:47
+#: macos/Iris/RulesView.swift:48
 msgid "Rules"
 msgstr "Regole"
 
-#: macos/Iris/RulesView.swift:79 macos/Iris/RulesView.swift:205
+#: macos/Iris/RulesView.swift:81 macos/Iris/RulesView.swift:207
 msgid "Edit Rule"
 msgstr "Modifica regola"
 
-#: macos/Iris/RulesView.swift:84
+#: macos/Iris/RulesView.swift:86
 msgid "Edit the rule for {mail}"
 msgstr "Modifica la regola per {mail}"
 
-#: macos/Iris/RulesView.swift:88
+#: macos/Iris/RulesView.swift:90
 msgid "Delete the rule for {mail}"
 msgstr "Elimina la regola per {mail}"
 
-#: macos/Iris/RulesView.swift:96
+#: macos/Iris/RulesView.swift:98
 msgid "Rules Written Elsewhere"
 msgstr "Regole scritte altrove"
 
-#: macos/Iris/RulesView.swift:166
+#: macos/Iris/RulesView.swift:168
 msgid "When Mail Matches"
 msgstr "Quando la posta corrisponde"
 
-#: macos/Iris/RulesView.swift:170
+#: macos/Iris/RulesView.swift:172
 msgid "Has the Words"
 msgstr "Contiene le parole"
 
-#: macos/Iris/RulesView.swift:171
+#: macos/Iris/RulesView.swift:173
 msgid "Doesn't Have"
 msgstr "Non contiene"
 
-#: macos/Iris/RulesView.swift:172
+#: macos/Iris/RulesView.swift:174
 msgid "Has an Attachment"
 msgstr "Ha un allegato"
 
-#: macos/Iris/RulesView.swift:174
+#: macos/Iris/RulesView.swift:176
 msgid "Do This"
 msgstr "Esegui questo"
 
-#: macos/Iris/RulesView.swift:177
+#: macos/Iris/RulesView.swift:179
 msgid "Star It"
 msgstr "Aggiungi una stella"
 
-#: macos/Iris/RulesView.swift:178
+#: macos/Iris/RulesView.swift:180
 msgid "Apply Label"
 msgstr "Applica etichetta"
 
-#: macos/Iris/RulesView.swift:178
+#: macos/Iris/RulesView.swift:180
 msgid "Move to Folder"
 msgstr "Sposta nella cartella"
 
-#: macos/Iris/RulesView.swift:182
+#: macos/Iris/RulesView.swift:184
 msgid "Don't Apply a Label"
 msgstr "Non applicare un'etichetta"
 
-#: macos/Iris/RulesView.swift:182
+#: macos/Iris/RulesView.swift:184
 msgid "Don't Move"
 msgstr "Non spostare"
 
-#: macos/Iris/RulesView.swift:186
+#: macos/Iris/RulesView.swift:188
 msgid "Never Send to Spam"
 msgstr "Non inviare mai in Indesiderata"
 
-#: macos/Iris/RulesView.swift:188
+#: macos/Iris/RulesView.swift:190
 msgid "Delete It"
 msgstr "Eliminala"
 
-#: macos/Iris/RulesView.swift:205
+#: macos/Iris/RulesView.swift:207
 msgid "New Rule"
 msgstr "Nuova regola"
 
@@ -5941,7 +5947,7 @@ msgstr "Segna come letto o non letto"
 msgid "Mute or unmute"
 msgstr "Silenzia o riattiva"
 
-#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:282
+#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:284
 msgid "Undo"
 msgstr "Annulla"
 
@@ -6014,6 +6020,7 @@ msgstr ""
 "usare l'indirizzo."
 
 #: macos/Iris/SidebarView.swift:174 macos/Iris/ThreadListView.swift:81
+#: macos/Iris/ThreadListView.swift:82
 msgid "Check for Mail"
 msgstr "Controlla la posta"
 
@@ -6045,7 +6052,7 @@ msgstr "Rimuovi account…"
 msgid "Sign in again to keep syncing"
 msgstr "Accedi di nuovo per continuare la sincronizzazione"
 
-#: macos/Iris/SidebarView.swift:298 macos/Iris/SmartEditorView.swift:76
+#: macos/Iris/SidebarView.swift:298 macos/Iris/SmartEditorView.swift:78
 msgid "Edit Smart Mailbox"
 msgstr "Modifica casella smart"
 
@@ -6077,15 +6084,15 @@ msgstr "Condizione"
 msgid "Matches"
 msgstr "Corrisponde a"
 
-#: macos/Iris/SmartEditorView.swift:49
+#: macos/Iris/SmartEditorView.swift:49 macos/Iris/SmartEditorView.swift:52
 msgid "Remove Condition"
 msgstr "Rimuovi condizione"
 
-#: macos/Iris/SmartEditorView.swift:56
+#: macos/Iris/SmartEditorView.swift:57 macos/Iris/SmartEditorView.swift:60
 msgid "Add Condition"
 msgstr "Aggiungi condizione"
 
-#: macos/Iris/SmartEditorView.swift:76
+#: macos/Iris/SmartEditorView.swift:78
 msgid "New Smart Mailbox"
 msgstr "Nuova casella smart"
 
@@ -6167,11 +6174,11 @@ msgstr ""
 msgid "Body"
 msgstr "Testo"
 
-#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:380
+#: macos/Iris/ThreadListView.swift:89 macos/Iris/ThreadListView.swift:382
 msgid "Search mail"
 msgstr "Cerca nella posta"
 
-#: macos/Iris/ThreadListView.swift:267
+#: macos/Iris/ThreadListView.swift:269
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
 
