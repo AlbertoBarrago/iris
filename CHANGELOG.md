@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.4 (2026-10-12)
+
 ### Fixed
 
 - Adding an account works again, and no longer stops your other accounts
