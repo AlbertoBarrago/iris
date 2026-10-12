@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.5 (2026-10-12)
+
 ### Fixed
 
 - Typing in the search field no longer loses letters or the cursor when
