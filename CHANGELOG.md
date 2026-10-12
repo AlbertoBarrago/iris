@@ -19,6 +19,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- Discard closes the message and says it was discarded, or why the draft
+  saved of it stays in Drafts.
 - New Message always opens a new, empty message, also while a reply is
   open, and each press opens a window of its own.
 - Reply answers the newest message that is not your own unsent draft, and

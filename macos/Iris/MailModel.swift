@@ -750,9 +750,20 @@ final class MailModel {
     }
 
     /// Deletes the server's copy of a discarded draft, when there is one.
+    /// Lets a message go, with the draft saved of it, and says which came
+    /// of it: discarded, or why the saved copy stays in Drafts.
     func discardDraft(_ draft: ComposeDraft) {
         guard let mail else { return }
-        Task.detached { mail.deleteDraft(composed: draft) }
+        Task.detached {
+            let said: String
+            do {
+                try mail.deleteDraft(composed: draft)
+                said = tr("Message discarded")
+            } catch {
+                said = "\(error)"
+            }
+            await MainActor.run { self.say(said) }
+        }
     }
 
     /// People a recipient field could mean.

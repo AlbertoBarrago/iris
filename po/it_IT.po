@@ -591,31 +591,31 @@ msgstr "L'accesso a {provider} avviene tramite il browser"
 msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr "Continua apre la pagina di accesso di {provider} nel browser."
 
-#: appcore/src/assistant/mod.rs:119
+#: appcore/src/assistant/mod.rs:120
 msgid "The assistant is off. Choose a model in Preferences."
 msgstr "L'assistente è disattivato. Scegli un modello in Impostazioni."
 
-#: appcore/src/assistant/mod.rs:121
+#: appcore/src/assistant/mod.rs:122
 msgid "Translation has no model. Choose one in Preferences, on the AI page."
 msgstr ""
 "La traduzione non ha un modello. Scegline uno in Impostazioni, nella pagina "
 "IA."
 
-#: appcore/src/assistant/mod.rs:124
+#: appcore/src/assistant/mod.rs:125
 msgid "Unsubscribing has no model. Choose one in Preferences, on the AI page."
 msgstr ""
 "L'annullamento delle iscrizioni non ha un modello. Scegline uno in "
 "Impostazioni, nella pagina IA."
 
-#: appcore/src/assistant/mod.rs:130
+#: appcore/src/assistant/mod.rs:131
 msgid "Choose a model for the local server in Preferences."
 msgstr "Scegli un modello per il server locale in Impostazioni."
 
-#: appcore/src/assistant/mod.rs:142
+#: appcore/src/assistant/mod.rs:143
 msgid "Add an Anthropic API key in Preferences."
 msgstr "Aggiungi una chiave API Anthropic in Impostazioni."
 
-#: appcore/src/assistant/mod.rs:149
+#: appcore/src/assistant/mod.rs:150
 msgid "Claude Code is not installed. Install it and sign in, then try again."
 msgstr ""
 "Claude Code non è installato. Installalo ed esegui l'accesso, poi riprova."
@@ -3972,15 +3972,23 @@ msgstr "Aggiungi un account per scrivere."
 msgid "Could not open the draft: {reason}"
 msgstr "Impossibile aprire la bozza: {reason}"
 
-#: ffi/src/compose.rs:332 ffi/src/compose.rs:339
+#: ffi/src/compose.rs:270
+msgid "The saved draft stays in Drafts: {reason}"
+msgstr "La bozza salvata resta in Bozze: {reason}"
+
+#: ffi/src/compose.rs:274
+msgid "the account is not connected."
+msgstr "l'account non è connesso."
+
+#: ffi/src/compose.rs:338 ffi/src/compose.rs:345
 msgid "Not sent: {reason}"
 msgstr "Non inviato: {reason}"
 
-#: ffi/src/compose.rs:336
+#: ffi/src/compose.rs:342
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: ffi/src/compose.rs:338
+#: ffi/src/compose.rs:344
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "In attesa in Posta in uscita. Partirà appena possibile."
 
@@ -5486,31 +5494,35 @@ msgstr "Impossibile salvare {file}: {reason}"
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:783
+#: macos/Iris/MailModel.swift:761
+msgid "Message discarded"
+msgstr "Messaggio scartato"
+
+#: macos/Iris/MailModel.swift:794
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:872
+#: macos/Iris/MailModel.swift:883
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1168
+#: macos/Iris/MailModel.swift:1179
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1207
+#: macos/Iris/MailModel.swift:1218
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1666
+#: macos/Iris/MailModel.swift:1677
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1671
+#: macos/Iris/MailModel.swift:1682
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1717
+#: macos/Iris/MailModel.swift:1728
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 

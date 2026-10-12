@@ -261,17 +261,23 @@ impl Mail {
         Ok(self.shown(draft))
     }
 
-    /// Deletes the draft the composer saved before, when it was discarded.
-    pub fn delete_draft(&self, composed: ComposeDraft) {
-        let Ok(draft) = serde_json::from_str::<Draft>(&composed.draft) else { return };
-        let (Some(id), Some(sync)) = (draft.draft_id, self.running.account(composed.account_id)) else {
-            return;
-        };
-        let deleted = self.run(async move { sync.delete_draft(&id).await });
-        match deleted {
-            Ok(()) => self.check_account(composed.account_id),
-            Err(err) => tracing::warn!(error = %err, "could not delete a discarded draft"),
-        }
+    /// Deletes the draft the composer saved before, when it was discarded,
+    /// and says why when the saved copy stays. A message never saved has
+    /// nothing on the server and is discarded as it is.
+    pub fn delete_draft(&self, composed: ComposeDraft) -> Result<(), CoreError> {
+        let draft: Draft = serde_json::from_str(&composed.draft).map_err(|err| CoreError::Store(err.to_string()))?;
+        let Some(id) = draft.draft_id else { return Ok(()) };
+        let stays = |reason: &str| CoreError::Store(fill(&gettext("The saved draft stays in Drafts: {reason}"), &[("reason", reason)]));
+        let sync = self
+            .running
+            .account(composed.account_id)
+            .ok_or_else(|| stays(&gettext("the account is not connected.")))?;
+        self.run(async move { sync.delete_draft(&id).await }).map_err(|err| {
+            tracing::warn!(error = %err, "could not delete a discarded draft");
+            stays(&err.to_string())
+        })?;
+        self.check_account(composed.account_id);
+        Ok(())
     }
 
     /// The people `field` could mean by what is being typed after its last

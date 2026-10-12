@@ -538,27 +538,27 @@ msgstr ""
 msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:119
+#: appcore/src/assistant/mod.rs:120
 msgid "The assistant is off. Choose a model in Preferences."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:121
+#: appcore/src/assistant/mod.rs:122
 msgid "Translation has no model. Choose one in Preferences, on the AI page."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:124
+#: appcore/src/assistant/mod.rs:125
 msgid "Unsubscribing has no model. Choose one in Preferences, on the AI page."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:130
+#: appcore/src/assistant/mod.rs:131
 msgid "Choose a model for the local server in Preferences."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:142
+#: appcore/src/assistant/mod.rs:143
 msgid "Add an Anthropic API key in Preferences."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:149
+#: appcore/src/assistant/mod.rs:150
 msgid "Claude Code is not installed. Install it and sign in, then try again."
 msgstr ""
 
@@ -3757,15 +3757,23 @@ msgstr ""
 msgid "Could not open the draft: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:332 ffi/src/compose.rs:339
+#: ffi/src/compose.rs:270
+msgid "The saved draft stays in Drafts: {reason}"
+msgstr ""
+
+#: ffi/src/compose.rs:274
+msgid "the account is not connected."
+msgstr ""
+
+#: ffi/src/compose.rs:338 ffi/src/compose.rs:345
 msgid "Not sent: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:336
+#: ffi/src/compose.rs:342
 msgid "Message sent"
 msgstr ""
 
-#: ffi/src/compose.rs:338
+#: ffi/src/compose.rs:344
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr ""
 
@@ -5202,31 +5210,35 @@ msgstr ""
 msgid "Saved {file}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:783
+#: macos/Iris/MailModel.swift:761
+msgid "Message discarded"
+msgstr ""
+
+#: macos/Iris/MailModel.swift:794
 msgid "Sending…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:872
+#: macos/Iris/MailModel.swift:883
 msgid "Cancel Send"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1168
+#: macos/Iris/MailModel.swift:1179
 msgid "Translating…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1207
+#: macos/Iris/MailModel.swift:1218
 msgid "This Mac cannot translate this message: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1666
+#: macos/Iris/MailModel.swift:1677
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1671
+#: macos/Iris/MailModel.swift:1682
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1717
+#: macos/Iris/MailModel.swift:1728
 msgid "{account} is signed in again."
 msgstr ""
 

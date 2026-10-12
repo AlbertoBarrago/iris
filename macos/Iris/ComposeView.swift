@@ -690,7 +690,10 @@ final class CloseGuardDelegate: NSObject, NSWindowDelegate {
             case .alertSecondButtonReturn:
                 self.guardView.discard()
                 self.settled = true
-                window.performClose(nil)
+                // The alert's sheet is still on the window here, and a
+                // window with a sheet refuses to close without a word, so
+                // the close waits for the sheet to go.
+                DispatchQueue.main.async { window.performClose(nil) }
             default:
                 break
             }
