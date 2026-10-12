@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.0 (2026-10-12)
+
 ### New
 
 - Iris is now a native Mac app, built with SwiftUI over the same core. It
@@ -18,7 +20,7 @@ Each release of Iris, newest first. GitHub shows the same text on the
   GitHub.
 - How long notices stay in the window's corner can be chosen in Settings.
 - A company signature with logos, badges and a table can be pasted or
-  imported in Preferences, and goes out looking the way it was made.
+  imported in Settings, and goes out looking the way it was made.
 
 ### Improved
 
@@ -29,8 +31,6 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
-- The button that shows a message's hidden quoted lines has its three
-  dots in the middle.
 - Send Later works on Microsoft accounts: a scheduled message used to
   fail at its hour and wait in the Outbox.
 - Search keeps working when an account cannot connect, such as while it
@@ -41,7 +41,6 @@ Each release of Iris, newest first. GitHub shows the same text on the
   a text file, so the recipient's mail app opens them right.
 - The assistant can attach files from temporary folders and external
   disks.
-- Decrypted attachments you opened leave the disk when the window closes.
 
 ## 1.0.11 (2026-10-08)
 
