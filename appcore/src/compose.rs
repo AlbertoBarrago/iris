@@ -965,6 +965,11 @@ pub fn respond(
                 text: original_text.trim_end().to_string(),
                 whole: false,
             }));
+            // A forward stays beside the message it forwards, as in Mail
+            // and Gmail, which thread by these headers and the thread id.
+            draft.in_reply_to = original.rfc822_msgid.clone();
+            draft.references = references(original, thread);
+            draft.thread_id = Some(original.thread_id.clone());
         }
     }
     draft
@@ -2116,7 +2121,7 @@ mod tests {
     }
 
     #[test]
-    fn a_forward_starts_a_new_thread_with_the_original_inline() {
+    fn a_forward_stays_in_the_conversation_with_the_original_inline() {
         let original = message(
             "m1",
             addr(Some("Ann"), "ann@example.com"),
@@ -2145,7 +2150,9 @@ mod tests {
                 .contains("From: Ann <ann@example.com>\n")
         );
         assert!(forwarded.to_plain().ends_with("Menu attached."));
-        assert!(draft.in_reply_to.is_none() && draft.thread_id.is_none());
+        assert_eq!(draft.in_reply_to, original.rfc822_msgid);
+        assert_eq!(draft.thread_id.as_deref(), Some(original.thread_id.as_str()));
+        assert_eq!(draft.references, original.rfc822_msgid.iter().cloned().collect::<Vec<_>>());
     }
 
     #[test]

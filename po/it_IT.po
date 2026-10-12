@@ -1480,7 +1480,7 @@ msgstr "Tempo per concentrarsi"
 msgid "Declined because I am out of office"
 msgstr "Rifiutato perché sono fuori sede"
 
-#: appcore/src/compose.rs:592 appcore/src/compose.rs:2772
+#: appcore/src/compose.rs:592 appcore/src/compose.rs:2779
 msgid "Add at least one recipient."
 msgstr "Aggiungi almeno un destinatario."
 
@@ -1488,11 +1488,11 @@ msgstr "Aggiungi almeno un destinatario."
 msgid "“{address}” is not an email address."
 msgstr "“{address}” non è un indirizzo email."
 
-#: appcore/src/compose.rs:849 appcore/src/compose.rs:2778
+#: appcore/src/compose.rs:849 appcore/src/compose.rs:2785
 msgid "Choose a time in the future"
 msgstr "Scegli un orario nel futuro"
 
-#: appcore/src/compose.rs:1054
+#: appcore/src/compose.rs:1059
 msgid "On {date}, {sender} wrote:"
 msgstr "Il giorno {date}, {sender} ha scritto:"
 

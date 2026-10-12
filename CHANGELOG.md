@@ -7,6 +7,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Improved
 
+- A message you forward stays in the conversation it came from, as in Mail
+  and Gmail, instead of starting a new one.
 - Every icon button says what it does when you point at it, so Reply, Reply
   All and Forward no longer look alike.
 
