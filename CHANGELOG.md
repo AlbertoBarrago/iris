@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- A conversation moved from Follow Up to the Trash on a Microsoft or IMAP
+  account leaves Follow Up; it used to stay there.
+
 ## 1.1.0 (2026-10-12)
 
 ### New
