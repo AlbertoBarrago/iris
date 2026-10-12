@@ -218,6 +218,11 @@ impl Mail {
     #[uniffi::constructor]
     pub fn open(path: String) -> Result<Mail, CoreError> {
         let path = PathBuf::from(path);
+        // On a Mac Iris has never run on, the folder the store lives in is
+        // not there yet, and SQLite cannot make a file in a missing folder.
+        if let Some(dir) = path.parent() {
+            std::fs::create_dir_all(dir).map_err(|err| CoreError::Store(err.to_string()))?;
+        }
         let db = Db::open(&path)?;
         let runtime = tokio::runtime::Builder::new_multi_thread()
             .worker_threads(2)
@@ -1226,4 +1231,18 @@ pub fn bind_language(locale_dir: String, language: String) {
     }
     let _ = gettextrs::bind_textdomain_codeset("iris", "UTF-8");
     let _ = gettextrs::textdomain("iris");
+}
+
+#[cfg(test)]
+mod first_run {
+    use super::Mail;
+
+    #[test]
+    fn the_store_opens_on_a_mac_iris_never_ran_on() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("Application Support/iris/mailrs.db");
+        assert!(!path.parent().unwrap().exists());
+        Mail::open(path.display().to_string()).expect("the store opens");
+        assert!(path.exists());
+    }
 }
