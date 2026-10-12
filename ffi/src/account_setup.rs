@@ -15,11 +15,11 @@ use mailrs_appcore::add_account::{
 use mailrs_appcore::settings::{Change, Settings};
 use mailrs_discover::{Security, Server};
 use mailrs_domain::translate::{fill, gettext};
-use mailrs_domain::{Account, Provider, RemoveSetting};
+use mailrs_domain::{Account, AccountId, Provider, RemoveSetting};
 use mailrs_store::{accounts, servers};
 use mailrs_sync::passwords::Secrets;
 use mailrs_sync::sign_in::Wanted;
-use mailrs_sync::{Clients, Connector};
+use mailrs_sync::{AccountServices, Clients, Connector};
 
 use crate::CoreError;
 use crate::mail::Mail;
@@ -467,7 +467,7 @@ impl AccountSetup {
             };
             match tried {
                 Ok((account, services)) => {
-                    engine.start_account(account.id, services);
+                    self.start(&engine, account.id, services);
                     keep_send_as_name(&account, &name);
                     self.signed_in_again(&account.email);
                     self.mail.changed("accounts");
@@ -530,7 +530,7 @@ impl AccountSetup {
         });
         self.lock().cancel = None;
         let signed = signed.map_err(|err| CoreError::Store(err.to_string()))?;
-        engine.start_account(signed.account.id, signed.services);
+        self.start(&engine, signed.account.id, signed.services);
         if let Some(name) = &signed.name {
             keep_send_as_name(&signed.account, name);
         }
@@ -669,6 +669,15 @@ impl AccountSetup {
 
     fn lock(&self) -> std::sync::MutexGuard<'_, State> {
         self.state.lock().unwrap_or_else(|p| p.into_inner())
+    }
+
+    /// Starts the new account's loop. This runs on the Swift thread that
+    /// called, which has no tokio runtime, and `start_account` spawns the
+    /// loop with `tokio::spawn`: without entering the runtime first, it
+    /// panics while it holds the engine's lock.
+    fn start(&self, engine: &mailrs_sync::SyncEngine, account: AccountId, services: AccountServices) {
+        let _entered = self.mail.runtime.enter();
+        engine.start_account(account, services);
     }
 
     fn engine(&self) -> Result<Arc<mailrs_sync::SyncEngine>, CoreError> {

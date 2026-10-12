@@ -3585,7 +3585,7 @@ msgstr "Automatic reply is off"
 msgid "Remove {account}?"
 msgstr "Remove {account}?"
 
-#: ffi/src/account_setup.rs:680
+#: ffi/src/account_setup.rs:689
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr "Another copy of Iris is syncing your mail. Quit it, then try again."
 

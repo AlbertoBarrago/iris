@@ -21,7 +21,7 @@ impl RunningEngine {
     }
 
     fn lock(&self) -> std::sync::MutexGuard<'_, Option<Arc<SyncEngine>>> {
-        self.0.lock().expect("engine lock poisoned")
+        self.0.lock().unwrap_or_else(|p| p.into_inner())
     }
 }
 

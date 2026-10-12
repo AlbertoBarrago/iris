@@ -192,8 +192,11 @@ impl SyncEngine {
         }
     }
 
+    /// Takes the map of running accounts even after a panic while it was
+    /// held. Every change to it is a single insert or remove, so it never
+    /// stays half made, and refusing it would stop every account for good.
     fn lock(&self) -> MutexGuard<'_, HashMap<AccountId, Running>> {
-        self.running.lock().expect("engine lock poisoned")
+        self.running.lock().unwrap_or_else(|p| p.into_inner())
     }
 }
 

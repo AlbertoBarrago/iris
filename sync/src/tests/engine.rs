@@ -198,3 +198,23 @@ async fn a_check_asks_gmail_while_the_network_seems_gone() {
     s.engine.poke(1);
     wait_for(&s.events, reached(AccountState::Ok)).await;
 }
+
+/// Add Account once started an account from a thread with no tokio
+/// runtime. `tokio::spawn` panicked with the engine's lock held, and every
+/// later lock panicked too, so no account synced until Iris restarted.
+#[test]
+fn a_start_that_panics_leaves_the_engine_working() {
+    let runtime = tokio::runtime::Runtime::new().unwrap();
+    let s = runtime.block_on(setup());
+    let failed = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        s.engine.start_account(1, AccountServices::google(Arc::clone(&s.fake)));
+    }));
+    assert!(failed.is_err(), "outside a runtime the start panics");
+    assert!(!s.engine.is_running(1));
+
+    runtime.block_on(async {
+        s.engine.start_account(1, AccountServices::google(Arc::clone(&s.fake)));
+        wait_for(&s.events, reached(AccountState::Ok)).await;
+    });
+    assert!(s.engine.is_running(1));
+}

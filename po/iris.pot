@@ -3690,7 +3690,7 @@ msgstr ""
 msgid "Remove {account}?"
 msgstr ""
 
-#: ffi/src/account_setup.rs:680
+#: ffi/src/account_setup.rs:689
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr ""
 

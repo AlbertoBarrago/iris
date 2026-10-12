@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- Adding an account works again, and no longer stops your other accounts
+  from syncing until Iris is restarted.
+
 ## 1.1.3 (2026-10-12)
 
 ### New
