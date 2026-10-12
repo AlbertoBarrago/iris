@@ -4455,7 +4455,7 @@ msgstr "First Day"
 msgid "Last Day"
 msgstr "Last Day"
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:225
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:229
 #: macos/Iris/RulesView.swift:171 macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr "Subject"
@@ -4555,124 +4555,124 @@ msgstr "Notes"
 msgid "Close"
 msgstr "Close"
 
-#: macos/Iris/ComposeView.swift:62 macos/Iris/ContactCardView.swift:42
+#: macos/Iris/ComposeView.swift:66 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
 #: macos/Iris/IrisApp.swift:47 macos/Iris/ThreadListView.swift:90
 #: macos/Iris/ThreadListView.swift:93
 msgid "New Message"
 msgstr "New Message"
 
-#: macos/Iris/ComposeView.swift:80
+#: macos/Iris/ComposeView.swift:84
 msgid "Iris sends it at this time while it runs, even in the tray."
 msgstr "Iris sends it at this time while it runs, even in the tray."
 
-#: macos/Iris/ComposeView.swift:81
+#: macos/Iris/ComposeView.swift:85
 msgid "Schedule"
 msgstr "Schedule"
 
-#: macos/Iris/ComposeView.swift:84
+#: macos/Iris/ComposeView.swift:88
 msgid "Save as Template"
 msgstr "Save as Template"
 
-#: macos/Iris/ComposeView.swift:85 macos/Iris/SmartEditorView.swift:28
+#: macos/Iris/ComposeView.swift:89 macos/Iris/SmartEditorView.swift:28
 #: macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Name"
 
-#: macos/Iris/ComposeView.swift:90
+#: macos/Iris/ComposeView.swift:94
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr "Placeholders such as {{first_name}} fill in each time you use it."
 
-#: macos/Iris/ComposeView.swift:106
+#: macos/Iris/ComposeView.swift:110
 msgid "Sign"
 msgstr "Sign"
 
-#: macos/Iris/ComposeView.swift:111 macos/Iris/ComposeView.swift:345
+#: macos/Iris/ComposeView.swift:115 macos/Iris/ComposeView.swift:349
 msgid "Encrypt"
 msgstr "Encrypt"
 
-#: macos/Iris/ComposeView.swift:129
+#: macos/Iris/ComposeView.swift:133
 msgid "No Templates Yet"
 msgstr "No Templates Yet"
 
-#: macos/Iris/ComposeView.swift:135
+#: macos/Iris/ComposeView.swift:139
 msgid "Save as Template…"
 msgstr "Save as Template…"
 
-#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:142
+#: macos/Iris/ComposeView.swift:144 macos/Iris/ComposeView.swift:146
 #: macos/Iris/TemplatesSettings.swift:35
 msgid "Templates"
 msgstr "Templates"
 
-#: macos/Iris/ComposeView.swift:146 macos/Iris/ComposeView.swift:147
+#: macos/Iris/ComposeView.swift:150 macos/Iris/ComposeView.swift:151
 msgid "Attach Files (Ctrl+Shift+A)"
 msgstr "Attach Files (Ctrl+Shift+A)"
 
-#: macos/Iris/ComposeView.swift:159 macos/Iris/LaterView.swift:86
+#: macos/Iris/ComposeView.swift:163 macos/Iris/LaterView.swift:86
 msgid "Choose a Time…"
 msgstr "Choose a Time…"
 
-#: macos/Iris/ComposeView.swift:178 macos/Iris/RulesView.swift:169
+#: macos/Iris/ComposeView.swift:182 macos/Iris/RulesView.swift:169
 msgid "From"
 msgstr "From"
 
-#: macos/Iris/ComposeView.swift:198 macos/Iris/RulesView.swift:170
+#: macos/Iris/ComposeView.swift:202 macos/Iris/RulesView.swift:170
 msgid "To"
 msgstr "To"
 
-#: macos/Iris/ComposeView.swift:200
+#: macos/Iris/ComposeView.swift:204
 msgid "Recipients"
 msgstr "Recipients"
 
-#: macos/Iris/ComposeView.swift:201
+#: macos/Iris/ComposeView.swift:205
 msgid "Cc/Bcc"
 msgstr "Cc/Bcc"
 
-#: macos/Iris/ComposeView.swift:216
+#: macos/Iris/ComposeView.swift:220
 msgid "Cc"
 msgstr "Cc"
 
-#: macos/Iris/ComposeView.swift:220
+#: macos/Iris/ComposeView.swift:224
 msgid "Bcc"
 msgstr "Bcc"
 
-#: macos/Iris/ComposeView.swift:248 macos/Iris/ComposeView.swift:251
+#: macos/Iris/ComposeView.swift:252 macos/Iris/ComposeView.swift:255
 msgid "Remove {file}"
 msgstr "Remove {file}"
 
-#: macos/Iris/ComposeView.swift:269 macos/Iris/ComposeView.swift:274
+#: macos/Iris/ComposeView.swift:273 macos/Iris/ComposeView.swift:278
 msgid "Remove Quoted Text"
 msgstr "Remove Quoted Text"
 
-#: macos/Iris/ComposeView.swift:284
+#: macos/Iris/ComposeView.swift:288
 msgid "Forwarded Message"
 msgstr "Forwarded Message"
 
-#: macos/Iris/ComposeView.swift:379
+#: macos/Iris/ComposeView.swift:383
 msgid "Template saved"
 msgstr "Template saved"
 
-#: macos/Iris/ComposeView.swift:390
+#: macos/Iris/ComposeView.swift:394
 msgid "Attach Files"
 msgstr "Attach Files"
 
-#: macos/Iris/ComposeView.swift:440
+#: macos/Iris/ComposeView.swift:444
 msgid "Draft saved"
 msgstr "Draft saved"
 
-#: macos/Iris/ComposeView.swift:612
+#: macos/Iris/ComposeView.swift:616
 msgid "Save as Draft?"
 msgstr "Save as Draft?"
 
-#: macos/Iris/ComposeView.swift:613
+#: macos/Iris/ComposeView.swift:617
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr "The draft is kept in Gmail, so you can finish it later on any device."
 
-#: macos/Iris/ComposeView.swift:614
+#: macos/Iris/ComposeView.swift:618
 msgid "Save Draft"
 msgstr "Save Draft"
 
-#: macos/Iris/ComposeView.swift:615
+#: macos/Iris/ComposeView.swift:619
 msgid "Discard"
 msgstr "Discard"
 
@@ -4985,7 +4985,7 @@ msgstr "Propose"
 msgid "Check for Updates…"
 msgstr "Check for Updates…"
 
-#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:101
+#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:103
 #: macos/Iris/ShortcutsView.swift:57
 msgid "Keyboard shortcuts"
 msgstr "Keyboard shortcuts"
@@ -6232,19 +6232,19 @@ msgstr "the calendar is gone"
 msgid "Google Calendar offers out of office and focus time only on some work and school accounts ({reason})"
 msgstr "Google Calendar offers out of office and focus time only on some work and school accounts ({reason})"
 
-#: sync/src/error.rs:144
+#: sync/src/error.rs:143
 msgid "Gmail keeps “{name}” for its own label. Choose another name."
 msgstr "Gmail keeps “{name}” for its own label. Choose another name."
 
-#: sync/src/error.rs:151
+#: sync/src/error.rs:150
 msgid "Google Calendar makes “{title}” itself, so only Google Calendar can change it."
 msgstr "Google Calendar makes “{title}” itself, so only Google Calendar can change it."
 
-#: sync/src/error.rs:159
+#: sync/src/error.rs:158
 msgid "{host} refused the request to unsubscribe (HTTP {status})"
 msgstr "{host} refused the request to unsubscribe (HTTP {status})"
 
-#: sync/src/error.rs:163
+#: sync/src/error.rs:162
 msgid "could not reach {host}"
 msgstr "could not reach {host}"
 

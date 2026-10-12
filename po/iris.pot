@@ -4597,7 +4597,7 @@ msgstr ""
 msgid "Last Day"
 msgstr ""
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:225
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:229
 #: macos/Iris/RulesView.swift:171 macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr ""
@@ -4697,124 +4697,124 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:62 macos/Iris/ContactCardView.swift:42
+#: macos/Iris/ComposeView.swift:66 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
 #: macos/Iris/IrisApp.swift:47 macos/Iris/ThreadListView.swift:90
 #: macos/Iris/ThreadListView.swift:93
 msgid "New Message"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:80
+#: macos/Iris/ComposeView.swift:84
 msgid "Iris sends it at this time while it runs, even in the tray."
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:81
+#: macos/Iris/ComposeView.swift:85
 msgid "Schedule"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:84
+#: macos/Iris/ComposeView.swift:88
 msgid "Save as Template"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:85 macos/Iris/SmartEditorView.swift:28
+#: macos/Iris/ComposeView.swift:89 macos/Iris/SmartEditorView.swift:28
 #: macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:90
+#: macos/Iris/ComposeView.swift:94
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:106
+#: macos/Iris/ComposeView.swift:110
 msgid "Sign"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:111 macos/Iris/ComposeView.swift:345
+#: macos/Iris/ComposeView.swift:115 macos/Iris/ComposeView.swift:349
 msgid "Encrypt"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:129
+#: macos/Iris/ComposeView.swift:133
 msgid "No Templates Yet"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:135
+#: macos/Iris/ComposeView.swift:139
 msgid "Save as Template…"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:142
+#: macos/Iris/ComposeView.swift:144 macos/Iris/ComposeView.swift:146
 #: macos/Iris/TemplatesSettings.swift:35
 msgid "Templates"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:146 macos/Iris/ComposeView.swift:147
+#: macos/Iris/ComposeView.swift:150 macos/Iris/ComposeView.swift:151
 msgid "Attach Files (Ctrl+Shift+A)"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:159 macos/Iris/LaterView.swift:86
+#: macos/Iris/ComposeView.swift:163 macos/Iris/LaterView.swift:86
 msgid "Choose a Time…"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:178 macos/Iris/RulesView.swift:169
+#: macos/Iris/ComposeView.swift:182 macos/Iris/RulesView.swift:169
 msgid "From"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:198 macos/Iris/RulesView.swift:170
+#: macos/Iris/ComposeView.swift:202 macos/Iris/RulesView.swift:170
 msgid "To"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:200
+#: macos/Iris/ComposeView.swift:204
 msgid "Recipients"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:201
+#: macos/Iris/ComposeView.swift:205
 msgid "Cc/Bcc"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:216
+#: macos/Iris/ComposeView.swift:220
 msgid "Cc"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:220
+#: macos/Iris/ComposeView.swift:224
 msgid "Bcc"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:248 macos/Iris/ComposeView.swift:251
+#: macos/Iris/ComposeView.swift:252 macos/Iris/ComposeView.swift:255
 msgid "Remove {file}"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:269 macos/Iris/ComposeView.swift:274
+#: macos/Iris/ComposeView.swift:273 macos/Iris/ComposeView.swift:278
 msgid "Remove Quoted Text"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:284
+#: macos/Iris/ComposeView.swift:288
 msgid "Forwarded Message"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:379
+#: macos/Iris/ComposeView.swift:383
 msgid "Template saved"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:390
+#: macos/Iris/ComposeView.swift:394
 msgid "Attach Files"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:440
+#: macos/Iris/ComposeView.swift:444
 msgid "Draft saved"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:612
+#: macos/Iris/ComposeView.swift:616
 msgid "Save as Draft?"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:613
+#: macos/Iris/ComposeView.swift:617
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:614
+#: macos/Iris/ComposeView.swift:618
 msgid "Save Draft"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:615
+#: macos/Iris/ComposeView.swift:619
 msgid "Discard"
 msgstr ""
 
@@ -5134,7 +5134,7 @@ msgstr ""
 msgid "Check for Updates…"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:101
+#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:103
 #: macos/Iris/ShortcutsView.swift:57
 msgid "Keyboard shortcuts"
 msgstr ""
@@ -6398,21 +6398,21 @@ msgid ""
 "school accounts ({reason})"
 msgstr ""
 
-#: sync/src/error.rs:144
+#: sync/src/error.rs:143
 msgid "Gmail keeps “{name}” for its own label. Choose another name."
 msgstr ""
 
-#: sync/src/error.rs:151
+#: sync/src/error.rs:150
 msgid ""
 "Google Calendar makes “{title}” itself, so only Google Calendar can change "
 "it."
 msgstr ""
 
-#: sync/src/error.rs:159
+#: sync/src/error.rs:158
 msgid "{host} refused the request to unsubscribe (HTTP {status})"
 msgstr ""
 
-#: sync/src/error.rs:163
+#: sync/src/error.rs:162
 msgid "could not reach {host}"
 msgstr ""
 

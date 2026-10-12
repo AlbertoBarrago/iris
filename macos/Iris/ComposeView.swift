@@ -6,6 +6,10 @@ import WebKit
 /// a message that Undo Send brought back.
 struct ComposeRequest: Codable, Hashable {
     enum Kind: String, Codable { case new, reply, replyAll, forward, restore, editDraft }
+    /// Makes every request its own. A window group shows one window per
+    /// value, so without it a second New Message brought back the first,
+    /// and a closed composer's window could come back holding its old draft.
+    var id = UUID()
     var kind: Kind
     var account: Int64?
     var thread: String?

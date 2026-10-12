@@ -86,7 +86,9 @@ struct IrisApp: App {
         }
         WindowGroup(id: "compose", for: ComposeRequest.self) { $request in
             if let request {
-                ComposeView(request: request).environment(model)
+                // A window SwiftUI hands a new request starts afresh rather
+                // than keep the draft it held.
+                ComposeView(request: request).id(request).environment(model)
             }
         }
         .defaultSize(width: 720, height: 620)
