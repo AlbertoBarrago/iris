@@ -3940,11 +3940,11 @@ msgstr "Verrà inviato {when}"
 msgid "That account is not connected."
 msgstr "Quell'account non è connesso."
 
-#: ffi/src/assistant.rs:1012
+#: ffi/src/assistant.rs:1011
 msgid "Draft not saved: {reason}"
 msgstr "Bozza non salvata: {reason}"
 
-#: ffi/src/assistant.rs:1021
+#: ffi/src/assistant.rs:1023
 msgid "Could not build the message: {reason}"
 msgstr "Impossibile creare il messaggio: {reason}"
 
@@ -3968,19 +3968,19 @@ msgstr "%b"
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."
 
-#: ffi/src/compose.rs:235
+#: ffi/src/compose.rs:238
 msgid "Could not open the draft: {reason}"
 msgstr "Impossibile aprire la bozza: {reason}"
 
-#: ffi/src/compose.rs:318 ffi/src/compose.rs:325
+#: ffi/src/compose.rs:322 ffi/src/compose.rs:329
 msgid "Not sent: {reason}"
 msgstr "Non inviato: {reason}"
 
-#: ffi/src/compose.rs:322
+#: ffi/src/compose.rs:326
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: ffi/src/compose.rs:324
+#: ffi/src/compose.rs:328
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "In attesa in Posta in uscita. Partirà appena possibile."
 

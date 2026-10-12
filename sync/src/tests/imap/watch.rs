@@ -141,6 +141,21 @@ async fn mailboxes_other_than_the_inbox_wait_for_the_slow_poll() {
         .await
         .unwrap();
     assert_eq!(stored, ["INBOX/1001/1"], "Sent waits for the slow poll");
+
+    // Once Iris itself writes to Sent or Drafts, the next look reads them.
+    sync.services().mail.wrote();
+    sync.incremental().await.unwrap();
+    let sent = db
+        .read(move |c| {
+            Ok(c.query_row(
+                "SELECT COUNT(*) FROM messages WHERE account_id = ?1 AND id LIKE 'Sent/%'",
+                [account_id],
+                |row| row.get::<_, i64>(0),
+            )?)
+        })
+        .await
+        .unwrap();
+    assert_eq!(sent, 1, "a write makes the next look read Sent");
 }
 
 #[tokio::test]

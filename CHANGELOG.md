@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- Mail you send and drafts you save show up in Sent and Drafts right away on
+  Microsoft and IMAP accounts, instead of a few minutes later.
+
 ## 1.1.6 (2026-10-12)
 
 ### Fixed

@@ -1008,8 +1008,10 @@ impl Effects for Port {
                 .spawn(async move { sync.save_draft(raw, thread, old).await })
                 .await
                 .map_err(|err| err.to_string())?
-                .map(|_| ())
-                .map_err(|err| fill(&gettext("Draft not saved: {reason}"), &[("reason", &err.to_string())]))
+                .map_err(|err| fill(&gettext("Draft not saved: {reason}"), &[("reason", &err.to_string())]))?;
+            // Drafts is read at this look, so the draft shows there now.
+            self.mail.check_account(draft.account_id);
+            Ok(())
         })
     }
 }

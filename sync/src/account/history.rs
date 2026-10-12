@@ -97,6 +97,7 @@ impl AccountSync {
         });
         changes.extend(compared);
         let (fetched, placing) = self.fetch_for_history(&changes).await?;
+        let change_count = changes.len();
         let mail = &self.services.mail;
         let named_mailboxes: BTreeSet<String> = changes
             .iter()
@@ -112,10 +113,11 @@ impl AccountSync {
             .chain(fetched.values().flat_map(|m| m.held.mailboxes.clone()))
             .filter(|id| mail.made_by_person(id))
             .collect();
+        let fetched_count = fetched.len();
         let generation = cursor.sync_gen;
         let restates = mail.capabilities().restates;
         let state = found.state;
-        let (touched, new_mail, unknown_mailbox) = self
+        let (touched, new_mail, unknown_mailbox, unfetched) = self
             .db
             .write(move |c| {
                 // Whether each message the changes name was stored before
@@ -131,6 +133,14 @@ impl AccountSync {
                     })
                     .collect();
                 let stored = messages::existing_ids(c, account_id, &named)?;
+                // A message seen here for the first time is stored only from
+                // what was fetched for it, so one that could not be fetched
+                // is skipped without a trace. Counting those makes a folder
+                // that never fills, such as Drafts, visible in the log.
+                let unfetched = named
+                    .iter()
+                    .filter(|id| !stored.contains(*id) && !fetched.contains_key(*id))
+                    .count();
                 let mut batch = Vec::new();
                 let mut new_mail = Vec::new();
                 for change in &changes {
@@ -223,7 +233,7 @@ impl AccountSync {
                     .map(|l| l.id)
                     .collect();
                 let unknown = named_mailboxes.iter().any(|id| !known.contains(id));
-                Ok((touched, new_mail, unknown))
+                Ok((touched, new_mail, unknown, unfetched))
             })
             .await?;
         // A mailbox a person made that the store has never listed was made
@@ -232,6 +242,15 @@ impl AccountSync {
         if unknown_mailbox {
             self.refresh_labels().await?;
         }
+        tracing::info!(
+            account = account_id,
+            changes = change_count,
+            fetched = fetched_count,
+            unfetched,
+            threads = touched.len(),
+            new_mail = new_mail.len(),
+            "a sync look stored changes"
+        );
         self.mark_caught_up();
         Ok(Replayed { touched, new_mail })
     }

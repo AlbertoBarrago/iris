@@ -859,6 +859,12 @@ pub trait MailBackend: Send + Sync + 'static {
     /// often it looks at mail nobody is watching.
     fn set_window_open(&self, open: bool);
 
+    /// Iris just wrote to Sent or Drafts: sent a message, or saved or
+    /// deleted a draft. A backend that reads those folders less often than
+    /// the Inbox reads every folder at its next look, so the change shows
+    /// at once rather than at the slow poll.
+    fn wrote(&self) {}
+
     /// How long the engine waits between looks at the change feed. `None`
     /// keeps the engine's own interval.
     fn poll_interval(&self) -> Option<Duration>;

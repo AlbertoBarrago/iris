@@ -30,6 +30,29 @@ async fn saving_a_draft_twice_leaves_one() {
     assert_eq!(drafts[0].draft_id, second.draft_id);
 }
 
+/// With the window open only the Inbox is read at each look, and the other
+/// folders at the slow poll every five minutes. A draft saved here is read
+/// at the very next look instead, so it shows in Drafts at once.
+#[tokio::test]
+async fn a_draft_saved_here_shows_in_drafts_at_the_next_look() {
+    let h = outlook().await;
+    h.sync.services().mail.set_window_open(true);
+    h.bootstrap_all().await;
+    h.look().await;
+    let drafts = h.fake.folder_id("drafts");
+
+    // Written elsewhere, a draft waits for the slow poll.
+    let elsewhere = h.fake.deliver(&drafts, FakeMail { at: now_millis(), ..FakeMail::default() });
+    h.look().await;
+    assert!(!h.stored(&elsewhere).await, "the slow poll is not due yet");
+
+    let saved = h.sync.save_draft(RAW.to_vec(), None, None).await.unwrap();
+    h.look().await;
+    assert!(h.stored(&saved.message_id).await, "the draft saved here is read at once");
+    assert!(h.stored(&elsewhere).await);
+    assert!(h.held(&saved.message_id).await.mailboxes.contains(&drafts));
+}
+
 #[tokio::test]
 async fn sending_a_draft_moves_it_to_sent() {
     let h = outlook().await;

@@ -3617,11 +3617,11 @@ msgstr "Will send {when}"
 msgid "That account is not connected."
 msgstr "That account is not connected."
 
-#: ffi/src/assistant.rs:1012
+#: ffi/src/assistant.rs:1011
 msgid "Draft not saved: {reason}"
 msgstr "Draft not saved: {reason}"
 
-#: ffi/src/assistant.rs:1021
+#: ffi/src/assistant.rs:1023
 msgid "Could not build the message: {reason}"
 msgstr "Could not build the message: {reason}"
 
@@ -3645,19 +3645,19 @@ msgstr "%b"
 msgid "Add an account to write mail."
 msgstr "Add an account to write mail."
 
-#: ffi/src/compose.rs:235
+#: ffi/src/compose.rs:238
 msgid "Could not open the draft: {reason}"
 msgstr "Could not open the draft: {reason}"
 
-#: ffi/src/compose.rs:318 ffi/src/compose.rs:325
+#: ffi/src/compose.rs:322 ffi/src/compose.rs:329
 msgid "Not sent: {reason}"
 msgstr "Not sent: {reason}"
 
-#: ffi/src/compose.rs:322
+#: ffi/src/compose.rs:326
 msgid "Message sent"
 msgstr "Message sent"
 
-#: ffi/src/compose.rs:324
+#: ffi/src/compose.rs:328
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "Waiting in the Outbox. It goes out as soon as it can."
 

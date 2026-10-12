@@ -411,6 +411,10 @@ impl<I: ImapApi, S: Submit> MailBackend for Imap<I, S> {
         self.known().tray_only = !open;
     }
 
+    fn wrote(&self) {
+        self.known().last_slow = None;
+    }
+
     fn poll_interval(&self) -> Option<Duration> {
         let known = self.known();
         // An IDLE that keeps failing waits longer between tries, so the

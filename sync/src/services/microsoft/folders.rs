@@ -118,4 +118,14 @@ impl<G: GraphApi> Microsoft<G> {
         synced.extend(known.followed.iter().filter(|f| !synced.contains(f)).cloned().collect::<Vec<_>>());
         Ok(synced)
     }
+
+    /// How the log names `folder`: its role, or "followed" for a folder a
+    /// person opened. Folder ids are long and a person's folder names are
+    /// theirs, so neither goes in the log.
+    pub(super) fn folder_word(&self, folder: &str) -> String {
+        match self.known().roles.iter().find(|(_, id)| *id == folder) {
+            Some((role, _)) => format!("{role:?}"),
+            None => "followed".into(),
+        }
+    }
 }

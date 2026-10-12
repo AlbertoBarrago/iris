@@ -97,10 +97,12 @@ impl<A: Accounts> Outbox<A> {
                 Ok(Posted::Waiting(message.id))
             }
             Err(err) if worth_retrying(&err) => {
+                tracing::info!(account = message.account_id, error = %err, "not sent yet; the message waits in the Outbox");
                 message.attempts += 1;
                 Ok(Posted::Waiting(self.keep(message, &err).await?.id))
             }
             Err(err) => {
+                tracing::warn!(account = message.account_id, error = %err, "the server refused the message");
                 // A message already waiting keeps its place, so the Outbox
                 // goes on showing it and saying what is wrong with it.
                 if message.id > 0 {
@@ -131,9 +133,14 @@ impl<A: Accounts> Outbox<A> {
             Err(err) if worth_retrying(&err) => {
                 tracing::info!(error = %err, "scheduled here; Gmail holds no draft for it yet");
             }
-            Err(err) => return Ok(Posted::Refused(err.to_string())),
+            Err(err) => {
+                tracing::warn!(account = message.account_id, error = %err, "the server refused to keep a scheduled message");
+                return Ok(Posted::Refused(err.to_string()));
+            }
         }
+        let (account, at, on_server) = (message.account_id, message.send_at, message.draft_id.is_some());
         let id = self.db.write(move |c| outbox::put(c, &message)).await?;
+        tracing::info!(account, outbox = id, send_at = at, on_server, "scheduled a message");
         Ok(Posted::Waiting(id))
     }
 

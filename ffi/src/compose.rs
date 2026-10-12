@@ -210,6 +210,9 @@ impl Mail {
             .run(async move { sync.save_draft(raw, thread, old).await })
             .map_err(|err| CoreError::Store(err.to_string()))?;
         draft.draft_id = Some(saved.draft_id);
+        // The account reads Drafts at this look rather than at its slow
+        // poll, so the draft shows there now.
+        self.check_account(draft.account_id);
         Ok(self.shown(draft))
     }
 
@@ -265,8 +268,9 @@ impl Mail {
             return;
         };
         let deleted = self.run(async move { sync.delete_draft(&id).await });
-        if let Err(err) = deleted {
-            tracing::warn!(error = %err, "could not delete a discarded draft");
+        match deleted {
+            Ok(()) => self.check_account(composed.account_id),
+            Err(err) => tracing::warn!(error = %err, "could not delete a discarded draft"),
         }
     }
 

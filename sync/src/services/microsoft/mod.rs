@@ -329,6 +329,10 @@ impl<G: GraphApi> MailBackend for Microsoft<G> {
         self.known().window_open = open;
     }
 
+    fn wrote(&self) {
+        self.known().last_slow = None;
+    }
+
     fn poll_interval(&self) -> Option<Duration> {
         Some(self.poll_every())
     }

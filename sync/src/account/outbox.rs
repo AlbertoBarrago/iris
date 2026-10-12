@@ -24,6 +24,8 @@ impl AccountSync {
     ) -> Result<String, SyncError> {
         let sent = self.services.mail.send(&raw, thread_id.as_deref()).await?;
         let message_id = self.file_sent(&raw).await.unwrap_or(sent);
+        tracing::info!(account = self.account_id, message = %message_id, from_draft = draft_id.is_some(), "sent a message");
+        self.services.mail.wrote();
         if let Some(draft_id) = draft_id {
             // The message has gone out, so nothing after this may fail the
             // send: the outbox would send it again.
@@ -128,6 +130,13 @@ impl AccountSync {
             }
             other => other?,
         };
+        tracing::info!(
+            account = self.account_id,
+            draft = %saved.draft_id,
+            replaced = draft_id.is_some(),
+            "saved a draft on the server"
+        );
+        self.services.mail.wrote();
         // Gmail's answer names both the draft and the message it now
         // holds, which is the pair `drafts.list` would otherwise be asked
         // for. Keeping it here is what leaves every draft this app writes
@@ -162,8 +171,13 @@ impl AccountSync {
             (sent, _) => sent,
         };
         self.forget_draft(draft_id).await;
-        if let Some(id) = &sent {
-            self.tell_local(id).await;
+        self.services.mail.wrote();
+        match &sent {
+            Some(id) => {
+                tracing::info!(account = self.account_id, draft = %draft_id, message = %id, "sent a saved draft");
+                self.tell_local(id).await;
+            }
+            None => tracing::info!(account = self.account_id, draft = %draft_id, "the draft to send was gone"),
         }
         Ok(sent)
     }
@@ -175,6 +189,8 @@ impl AccountSync {
             Err(err) => return Err(err.into()),
         }
         self.forget_draft(draft_id).await;
+        tracing::info!(account = self.account_id, draft = %draft_id, "deleted a draft");
+        self.services.mail.wrote();
         Ok(())
     }
 

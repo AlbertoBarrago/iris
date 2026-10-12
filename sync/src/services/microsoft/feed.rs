@@ -72,8 +72,13 @@ impl<G: GraphApi> Microsoft<G> {
         let (mut removed, mut present) = (Vec::new(), Vec::new());
         for folder in due {
             let start = state.folders.get(&folder).cloned();
+            let before = (removed.len(), present.len());
             match self.read_folder(&folder, start, &mut removed, &mut present).await {
                 Ok(left) => {
+                    let (gone, here) = (removed.len() - before.0, present.len() - before.1);
+                    if gone + here > 0 {
+                        tracing::info!(folder = %self.folder_word(&folder), present = here, removed = gone, "a Microsoft folder changed");
+                    }
                     state.folders.insert(folder, left.link());
                 }
                 // A folder deleted elsewhere: stop following it and list
