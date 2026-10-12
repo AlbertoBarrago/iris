@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.1 (2026-10-12)
+
 ### Fixed
 
 - A conversation moved from Follow Up to the Trash on a Microsoft or IMAP
