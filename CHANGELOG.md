@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### New
+
+- Drag files onto a message you are writing to attach them, from Finder, the
+  desktop, Photos, Mail or a picture in another app, including onto the text.
+
 ### Improved
 
 - A message you forward stays in the conversation it came from, as in Mail

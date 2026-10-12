@@ -40,6 +40,9 @@ struct ComposeView: View {
     @State private var problem: String?
     /// Why Send did nothing, shown under the recipients until they change.
     @State private var sendProblem: String?
+    /// A drag carrying files is over the words, or over the rest of the window.
+    @State private var droppingOnText = false
+    @State private var droppingOnWindow = false
     @State private var editor = RichController()
     @State private var templates: [TemplateItem] = []
     /// What Sign and Encrypt can do for the recipients as they stand.
@@ -65,13 +68,29 @@ struct ComposeView: View {
         ))
         .navigationTitle(draft.map { $0.subject.isEmpty ? tr("New Message") : $0.subject } ?? tr("New Message"))
         .task { await load() }
-        .onDrop(of: [.fileURL], isTargeted: nil) { providers in
-            for provider in providers {
-                _ = provider.loadObject(ofClass: URL.self) { url, _ in
-                    if let url { Task { @MainActor in attach([url]) } }
-                }
-            }
+        .onAppear {
+            editor.dropped = { urls, failed in attach(urls, failed: failed) }
+            editor.hovering = { droppingOnText = $0 }
+        }
+        // The words take their own drops; this takes the rest of the window.
+        .onDrop(of: [.fileURL, .image], isTargeted: $droppingOnWindow) { providers in
+            dropped(providers)
             return true
+        }
+        .overlay {
+            if droppingOnText || droppingOnWindow {
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(Color.accentColor, lineWidth: 3)
+                    .overlay(alignment: .bottom) {
+                        Text(tr("Drop to attach"))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(.regularMaterial, in: Capsule())
+                            .padding(16)
+                    }
+                    .padding(4)
+                    .allowsHitTesting(false)
+            }
         }
         .sheet(isPresented: $choosingTime, onDismiss: {
             if let at = pickedTime {
@@ -396,12 +415,52 @@ struct ComposeView: View {
         attach(panel.urls)
     }
 
-    /// Adds files to the message, each with the type the Mac knows it by.
-    private func attach(_ urls: [URL]) {
+    /// Adds files to the message, each with the type the Mac knows it by,
+    /// and says how many could not be read, `failed` among them, rather than
+    /// leave one out unsaid.
+    private func attach(_ urls: [URL], failed: Int = 0) {
+        var missed = failed
+        var added = 0
         for url in urls {
-            guard let data = try? Data(contentsOf: url) else { continue }
+            guard let data = try? Data(contentsOf: url) else {
+                missed += 1
+                continue
+            }
             let type = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
             draft?.attachments.append(OutgoingFile(filename: url.lastPathComponent, mimeType: type, data: data, contentId: nil))
+            added += 1
+        }
+        if missed > 0 {
+            model.say(trPlural("Could not read {count} file", "Could not read {count} files", missed)
+                .replacingOccurrences(of: "{count}", with: "\(missed)"))
+        }
+        if added > 0 {
+            // The files show beside the words; VoiceOver hears it here.
+            let words = trPlural("Attached {count} file", "Attached {count} files", added)
+                .replacingOccurrences(of: "{count}", with: "\(added)")
+            NSAccessibility.post(
+                element: NSApp.keyWindow as Any,
+                notification: .announcementRequested,
+                userInfo: [.announcement: words, .priority: NSAccessibilityPriorityLevel.medium.rawValue]
+            )
+        }
+    }
+
+    /// Files and pictures dropped outside the words: a file by its place on
+    /// disk, a picture dragged as data written to a file first.
+    private func dropped(_ providers: [NSItemProvider]) {
+        for provider in providers {
+            if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
+                _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                    Task { @MainActor in attach(url.map { [$0] } ?? [], failed: url == nil ? 1 : 0) }
+                }
+            } else {
+                let name = tr("Image")
+                _ = provider.loadDataRepresentation(for: .png) { data, _ in
+                    let url = data.flatMap { FileDrop.image($0, named: name) }
+                    Task { @MainActor in attach(url.map { [$0] } ?? [], failed: url == nil ? 1 : 0) }
+                }
+            }
         }
     }
 

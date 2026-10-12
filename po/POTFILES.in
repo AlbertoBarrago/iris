@@ -143,4 +143,5 @@ ffi/src/smart.rs
 macos/Iris/SmartEditorView.swift
 macos/Iris/ShortcutsView.swift
 macos/Iris/SearchSuggestionPanel.swift
+macos/Iris/FileDrop.swift
 macos/Iris/AppleTranslation.swift

@@ -4455,7 +4455,7 @@ msgstr "First Day"
 msgid "Last Day"
 msgstr "Last Day"
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:229
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:248
 #: macos/Iris/RulesView.swift:171 macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr "Subject"
@@ -4555,124 +4555,144 @@ msgstr "Notes"
 msgid "Close"
 msgstr "Close"
 
-#: macos/Iris/ComposeView.swift:66 macos/Iris/ContactCardView.swift:42
+#: macos/Iris/ComposeView.swift:69 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
 #: macos/Iris/IrisApp.swift:47 macos/Iris/ThreadListView.swift:90
 #: macos/Iris/ThreadListView.swift:93
 msgid "New Message"
 msgstr "New Message"
 
-#: macos/Iris/ComposeView.swift:84
+#: macos/Iris/ComposeView.swift:85
+msgid "Drop to attach"
+msgstr "Drop to attach"
+
+#: macos/Iris/ComposeView.swift:103
 msgid "Iris sends it at this time while it runs, even in the tray."
 msgstr "Iris sends it at this time while it runs, even in the tray."
 
-#: macos/Iris/ComposeView.swift:85
+#: macos/Iris/ComposeView.swift:104
 msgid "Schedule"
 msgstr "Schedule"
 
-#: macos/Iris/ComposeView.swift:88
+#: macos/Iris/ComposeView.swift:107
 msgid "Save as Template"
 msgstr "Save as Template"
 
-#: macos/Iris/ComposeView.swift:89 macos/Iris/SmartEditorView.swift:28
+#: macos/Iris/ComposeView.swift:108 macos/Iris/SmartEditorView.swift:28
 #: macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Name"
 
-#: macos/Iris/ComposeView.swift:94
+#: macos/Iris/ComposeView.swift:113
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr "Placeholders such as {{first_name}} fill in each time you use it."
 
-#: macos/Iris/ComposeView.swift:110
+#: macos/Iris/ComposeView.swift:129
 msgid "Sign"
 msgstr "Sign"
 
-#: macos/Iris/ComposeView.swift:115 macos/Iris/ComposeView.swift:349
+#: macos/Iris/ComposeView.swift:134 macos/Iris/ComposeView.swift:368
 msgid "Encrypt"
 msgstr "Encrypt"
 
-#: macos/Iris/ComposeView.swift:133
+#: macos/Iris/ComposeView.swift:152
 msgid "No Templates Yet"
 msgstr "No Templates Yet"
 
-#: macos/Iris/ComposeView.swift:139
+#: macos/Iris/ComposeView.swift:158
 msgid "Save as Template…"
 msgstr "Save as Template…"
 
-#: macos/Iris/ComposeView.swift:144 macos/Iris/ComposeView.swift:146
+#: macos/Iris/ComposeView.swift:163 macos/Iris/ComposeView.swift:165
 #: macos/Iris/TemplatesSettings.swift:35
 msgid "Templates"
 msgstr "Templates"
 
-#: macos/Iris/ComposeView.swift:150 macos/Iris/ComposeView.swift:151
+#: macos/Iris/ComposeView.swift:169 macos/Iris/ComposeView.swift:170
 msgid "Attach Files (Ctrl+Shift+A)"
 msgstr "Attach Files (Ctrl+Shift+A)"
 
-#: macos/Iris/ComposeView.swift:163 macos/Iris/LaterView.swift:86
+#: macos/Iris/ComposeView.swift:182 macos/Iris/LaterView.swift:86
 msgid "Choose a Time…"
 msgstr "Choose a Time…"
 
-#: macos/Iris/ComposeView.swift:182 macos/Iris/RulesView.swift:169
+#: macos/Iris/ComposeView.swift:201 macos/Iris/RulesView.swift:169
 msgid "From"
 msgstr "From"
 
-#: macos/Iris/ComposeView.swift:202 macos/Iris/RulesView.swift:170
+#: macos/Iris/ComposeView.swift:221 macos/Iris/RulesView.swift:170
 msgid "To"
 msgstr "To"
 
-#: macos/Iris/ComposeView.swift:204
+#: macos/Iris/ComposeView.swift:223
 msgid "Recipients"
 msgstr "Recipients"
 
-#: macos/Iris/ComposeView.swift:205
+#: macos/Iris/ComposeView.swift:224
 msgid "Cc/Bcc"
 msgstr "Cc/Bcc"
 
-#: macos/Iris/ComposeView.swift:220
+#: macos/Iris/ComposeView.swift:239
 msgid "Cc"
 msgstr "Cc"
 
-#: macos/Iris/ComposeView.swift:224
+#: macos/Iris/ComposeView.swift:243
 msgid "Bcc"
 msgstr "Bcc"
 
-#: macos/Iris/ComposeView.swift:252 macos/Iris/ComposeView.swift:255
+#: macos/Iris/ComposeView.swift:271 macos/Iris/ComposeView.swift:274
 msgid "Remove {file}"
 msgstr "Remove {file}"
 
-#: macos/Iris/ComposeView.swift:273 macos/Iris/ComposeView.swift:278
+#: macos/Iris/ComposeView.swift:292 macos/Iris/ComposeView.swift:297
 msgid "Remove Quoted Text"
 msgstr "Remove Quoted Text"
 
-#: macos/Iris/ComposeView.swift:288
+#: macos/Iris/ComposeView.swift:307
 msgid "Forwarded Message"
 msgstr "Forwarded Message"
 
-#: macos/Iris/ComposeView.swift:383
+#: macos/Iris/ComposeView.swift:402
 msgid "Template saved"
 msgstr "Template saved"
 
-#: macos/Iris/ComposeView.swift:394
+#: macos/Iris/ComposeView.swift:413
 msgid "Attach Files"
 msgstr "Attach Files"
 
-#: macos/Iris/ComposeView.swift:444
+#: macos/Iris/ComposeView.swift:434
+msgid "Could not read {count} file"
+msgid_plural "Could not read {count} files"
+msgstr[0] "Could not read {count} file"
+msgstr[1] "Could not read {count} files"
+
+#: macos/Iris/ComposeView.swift:439
+msgid "Attached {count} file"
+msgid_plural "Attached {count} files"
+msgstr[0] "Attached {count} file"
+msgstr[1] "Attached {count} files"
+
+#: macos/Iris/ComposeView.swift:458 macos/Iris/FileDrop.swift:39
+msgid "Image"
+msgstr "Image"
+
+#: macos/Iris/ComposeView.swift:503
 msgid "Draft saved"
 msgstr "Draft saved"
 
-#: macos/Iris/ComposeView.swift:616
+#: macos/Iris/ComposeView.swift:675
 msgid "Save as Draft?"
 msgstr "Save as Draft?"
 
-#: macos/Iris/ComposeView.swift:617
+#: macos/Iris/ComposeView.swift:676
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr "The draft is kept in Gmail, so you can finish it later on any device."
 
-#: macos/Iris/ComposeView.swift:618
+#: macos/Iris/ComposeView.swift:677
 msgid "Save Draft"
 msgstr "Save Draft"
 
-#: macos/Iris/ComposeView.swift:619
+#: macos/Iris/ComposeView.swift:678
 msgid "Discard"
 msgstr "Discard"
 
@@ -5059,31 +5079,31 @@ msgstr "Could not remove {account}: {reason}"
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 
-#: macos/Iris/RichEditor.swift:171
+#: macos/Iris/RichEditor.swift:178
 msgid "Add a Link"
 msgstr "Add a Link"
 
-#: macos/Iris/RichEditor.swift:175
+#: macos/Iris/RichEditor.swift:182
 msgid "Add Link"
 msgstr "Add Link"
 
-#: macos/Iris/RichEditor.swift:417 macos/Iris/RichEditor.swift:426
+#: macos/Iris/RichEditor.swift:424 macos/Iris/RichEditor.swift:433
 msgid "Paragraph"
 msgstr "Paragraph"
 
-#: macos/Iris/RichEditor.swift:418
+#: macos/Iris/RichEditor.swift:425
 msgid "Heading 1"
 msgstr "Heading 1"
 
-#: macos/Iris/RichEditor.swift:419
+#: macos/Iris/RichEditor.swift:426
 msgid "Heading 2"
 msgstr "Heading 2"
 
-#: macos/Iris/RichEditor.swift:420
+#: macos/Iris/RichEditor.swift:427
 msgid "Heading 3"
 msgstr "Heading 3"
 
-#: macos/Iris/RichEditor.swift:432 macos/Iris/RichEditor.swift:434
+#: macos/Iris/RichEditor.swift:439 macos/Iris/RichEditor.swift:441
 msgid "Clear Formatting"
 msgstr "Clear Formatting"
 

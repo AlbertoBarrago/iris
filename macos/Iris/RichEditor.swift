@@ -11,10 +11,13 @@ struct RichEditor: NSViewRepresentable {
     let controller: RichController
 
     func makeNSView(context: Context) -> NSScrollView {
-        let scroll = NSTextView.scrollableTextView()
+        let scroll = AttachingTextView.scrollableTextView()
         scroll.drawsBackground = false
         scroll.hasVerticalScroller = false
-        guard let text = scroll.documentView as? NSTextView else { return scroll }
+        guard let text = scroll.documentView as? AttachingTextView else { return scroll }
+        text.acceptFileDrops()
+        text.dropped = { [controller] urls, failed in controller.dropped(urls, failed) }
+        text.hovering = { [controller] over in controller.hovering(over) }
         text.isRichText = true
         text.allowsUndo = true
         text.drawsBackground = false
@@ -69,6 +72,10 @@ struct RichEditor: NSViewRepresentable {
 final class RichController {
     weak var text: NSTextView?
     var changed: () -> Void = {}
+    /// Files dropped on the words, with how many could not be had.
+    var dropped: ([URL], Int) -> Void = { _, _ in }
+    /// A drag carrying files is over the words, or has left them.
+    var hovering: (Bool) -> Void = { _ in }
 
     static let blockKey = NSAttributedString.Key("IrisBlock")
     static let bodyFont = NSFont.systemFont(ofSize: NSFont.systemFontSize + 1)
@@ -457,4 +464,53 @@ func macKeys(_ words: String) -> String {
     words
         .replacingOccurrences(of: "Ctrl+Shift+", with: "⇧⌘")
         .replacingOccurrences(of: "Ctrl+", with: "⌘")
+}
+
+/// The composer's text view, which attaches files dropped on it rather
+/// than writing their paths into the message, as a text view does. Text
+/// dragged in or about inside it is the text view's as before.
+final class AttachingTextView: NSTextView {
+    var dropped: ([URL], Int) -> Void = { _, _ in }
+    var hovering: (Bool) -> Void = { _ in }
+    /// The drag over the view carries files.
+    private var carrying = false
+
+    func acceptFileDrops() {
+        registerForDraggedTypes(registeredDraggedTypes + FileDrop.types)
+    }
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        carrying = FileDrop.carriesFiles(sender.draggingPasteboard)
+        guard carrying else { return super.draggingEntered(sender) }
+        hovering(true)
+        return .copy
+    }
+
+    override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+        carrying ? .copy : super.draggingUpdated(sender)
+    }
+
+    override func draggingExited(_ sender: NSDraggingInfo?) {
+        guard carrying else { return super.draggingExited(sender) }
+        carrying = false
+        hovering(false)
+    }
+
+    override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        carrying ? true : super.prepareForDragOperation(sender)
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        guard carrying else { return super.performDragOperation(sender) }
+        FileDrop.read(sender.draggingPasteboard) { [weak self] urls, failed in
+            self?.dropped(urls, failed)
+        }
+        return true
+    }
+
+    override func concludeDragOperation(_ sender: NSDraggingInfo?) {
+        guard carrying else { return super.concludeDragOperation(sender) }
+        carrying = false
+        hovering(false)
+    }
 }
