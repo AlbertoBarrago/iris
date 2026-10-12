@@ -8,9 +8,8 @@ use mailrs_store::StoreError;
 /// What went wrong on the server's side, as a kind every provider shares.
 /// The retry rules and the account states read the kind. An adapter maps
 /// its own errors to the kinds that fit and keeps the rest in its own
-/// variant, as `Gmail` does. While Gmail is the only provider, a kind that
-/// stands for a Gmail error reads in Gmail's own words, so no message a
-/// person sees changed when these kinds arrived.
+/// variant, as `Gmail` does. Every provider shares these words, so none
+/// names one provider.
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum BackendError {
     /// The server no longer accepts the account's sign-in.
@@ -19,7 +18,7 @@ pub enum BackendError {
     #[error("network error: {0}")]
     Offline(String),
     /// Too many calls; the server may say how long to wait.
-    #[error("Gmail rate limit hit")]
+    #[error("the server asked Iris to slow down")]
     RateLimited(Option<Duration>),
     #[error("not found")]
     NotFound,
@@ -230,11 +229,16 @@ mod tests {
         ));
     }
 
+    /// Every Gmail error reads in Gmail's words but the rate limit, which
+    /// every provider shares and so names none.
     #[test]
     fn every_gmail_error_reads_as_it_did() {
+        assert_eq!(
+            SyncError::from(GmailError::RateLimited { retry_after: None }).to_string(),
+            "the server asked Iris to slow down"
+        );
         for err in [
             GmailError::NeedsReauth,
-            GmailError::RateLimited { retry_after: None },
             GmailError::MissingScope,
             GmailError::ApiDisabled {
                 service: "Google Calendar API".into(),

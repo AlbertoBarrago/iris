@@ -127,6 +127,14 @@ impl<G: GraphApi> Microsoft<G> {
 
     pub(super) async fn save(&self, old: Option<&str>, raw: &[u8]) -> Result<SavedDraft, BackendError> {
         let made = self.graph().create_draft_mime(raw).await.map_err(backend)?;
+        // Where Graph put the draft and whether it counts it as one: a
+        // draft made from MIME that lands outside Drafts never shows there.
+        tracing::info!(
+            folder = %made.parent_folder_id.as_deref().map_or_else(|| "none".to_string(), |f| self.folder_word(f)),
+            is_draft = ?made.is_draft,
+            received = made.received_date_time.is_some(),
+            "Graph made a draft"
+        );
         if let Some(old) = old {
             match self.graph().delete_message(old).await {
                 Ok(()) | Err(GraphError::NotFound) => {}

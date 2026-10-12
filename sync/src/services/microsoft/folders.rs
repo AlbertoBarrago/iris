@@ -119,13 +119,16 @@ impl<G: GraphApi> Microsoft<G> {
         Ok(synced)
     }
 
-    /// How the log names `folder`: its role, or "followed" for a folder a
-    /// person opened. Folder ids are long and a person's folder names are
-    /// theirs, so neither goes in the log.
+    /// How the log names `folder`: its role, "followed" for a folder a
+    /// person opened, or "unlisted" for one Iris does not know. Folder ids
+    /// are long and a person's folder names are theirs, so neither goes in
+    /// the log.
     pub(super) fn folder_word(&self, folder: &str) -> String {
-        match self.known().roles.iter().find(|(_, id)| *id == folder) {
+        let known = self.known();
+        match known.roles.iter().find(|(_, id)| *id == folder) {
             Some((role, _)) => format!("{role:?}"),
-            None => "followed".into(),
+            None if known.followed.contains(folder) => "followed".into(),
+            None => "unlisted".into(),
         }
     }
 }
