@@ -151,9 +151,8 @@ private struct GeneralSettings: View {
             Form {
                 Section(choices.startupTitle) {
                     LoginItemToggle(title: choices.loginTitle, subtitle: choices.loginSubtitle)
-                    if Updates.shared.available {
-                        UpdatesToggle()
-                    }
+                    UpdatesToggle()
+                        .disabled(!Updates.shared.available)
                 }
                 Section(tr("Reading")) {
                     Switch(title: tr("Group Messages into Conversations"),

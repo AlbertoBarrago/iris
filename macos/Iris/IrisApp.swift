@@ -33,9 +33,11 @@ struct IrisApp: App {
         .commands {
             CommandGroup(replacing: .appInfo) {
                 Button(aboutWords().title) { openWindow(id: "about") }
-                if Updates.shared.available {
-                    Button(tr("Check for Updates…")) { Updates.shared.checkNow() }
-                }
+                // Always listed, so it is where a Mac app keeps it; a build
+                // without the signing key, such as one made in Xcode, has
+                // nothing to check against and leaves it off.
+                Button(tr("Check for Updates…")) { Updates.shared.checkNow() }
+                    .disabled(!Updates.shared.available)
             }
             CommandGroup(replacing: .newItem) {
                 Button(tr("New Message")) { model.composeAsked = ComposeRequest(kind: .new) }
