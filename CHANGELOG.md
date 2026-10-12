@@ -12,6 +12,9 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- Send on a message with no recipient, or with an address that is not one,
+  says so under the recipients and keeps the message open, instead of
+  closing it and bringing it back a few seconds later.
 - Mail you send and drafts you save show up in Sent and Drafts right away on
   Microsoft and IMAP accounts, instead of a few minutes later.
 

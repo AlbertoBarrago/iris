@@ -34,6 +34,8 @@ struct ComposeView: View {
     /// composer while the sheet shows would close the sheet instead.
     @State private var pickedTime: Int64?
     @State private var problem: String?
+    /// Why Send did nothing, shown under the recipients until they change.
+    @State private var sendProblem: String?
     @State private var editor = RichController()
     @State private var templates: [TemplateItem] = []
     /// What Sign and Encrypt can do for the recipients as they stand.
@@ -88,6 +90,7 @@ struct ComposeView: View {
             Text(tr("Placeholders such as {{first_name}} fill in each time you use it."))
         }
         .onReceive(NotificationCenter.default.publisher(for: .templatesChanged)) { _ in loadTemplates() }
+        .onChange(of: recipientsKey) { sendProblem = nil }
         .task(id: recipientsKey) {
             // Asked once the typing pauses, as the GTK composer does.
             try? await Task.sleep(for: .milliseconds(400))
@@ -153,7 +156,7 @@ struct ComposeView: View {
                         Button(time.label) { sendLater(time.at) }
                     }
                     Divider()
-                    Button(tr("Choose a Time…")) { choosingTime = true }
+                    Button(tr("Choose a Time…")) { if readyToSend() { choosingTime = true } }
                 } label: {
                     Label(tr("Send"), systemImage: "paperplane.fill")
                 } primaryAction: {
@@ -198,6 +201,14 @@ struct ComposeView: View {
                         Button(tr("Cc/Bcc")) { showCopies.toggle() }
                             .buttonStyle(.borderless)
                             .foregroundStyle(.secondary)
+                    }
+                }
+                if let sendProblem {
+                    GridRow {
+                        label("")
+                        Text(sendProblem)
+                            .font(.callout)
+                            .foregroundStyle(.red)
                     }
                 }
                 if showCopies || !draft.wrappedValue.cc.isEmpty || !draft.wrappedValue.bcc.isEmpty {
@@ -392,14 +403,27 @@ struct ComposeView: View {
 
     /// Keeps the message to go out at `at`, and closes.
     private func sendLater(_ at: Int64) {
-        guard let draft else { return }
+        guard let draft, readyToSend() else { return }
         model.sendLater(draft, at: at)
         saved = draft
         dismiss()
     }
 
+    /// Says why the message cannot go, under the recipients, and keeps the
+    /// composer open to fix it. The core decides; true when it can go.
+    private func readyToSend() -> Bool {
+        guard let draft, let problem = model.mail?.sendProblem(composed: draft) else { return true }
+        sendProblem = problem
+        NSAccessibility.post(
+            element: NSApp.keyWindow as Any,
+            notification: .announcementRequested,
+            userInfo: [.announcement: problem, .priority: NSAccessibilityPriorityLevel.high.rawValue]
+        )
+        return false
+    }
+
     private func send() {
-        guard let draft else { return }
+        guard let draft, readyToSend() else { return }
         model.send(draft)
         saved = draft
         dismiss()

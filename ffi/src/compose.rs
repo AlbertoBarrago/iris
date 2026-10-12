@@ -305,6 +305,16 @@ impl Mail {
             .collect()
     }
 
+    /// Why `composed` cannot go as it stands, such as no recipient or an
+    /// address that is not one. The composer asks before it closes, so the
+    /// message stays open to fix rather than coming back after Undo Send.
+    pub fn send_problem(&self, composed: ComposeDraft) -> Option<String> {
+        match self.draft_from(composed) {
+            Ok(draft) => draft.problem(),
+            Err(err) => Some(err.to_string()),
+        }
+    }
+
     /// Sends what the composer holds through the engine's outbox, which
     /// keeps it and tries again while the network is away. Says what came
     /// of it, or why it was refused.
