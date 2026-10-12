@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.7 (2026-10-12)
+
 ### New
 
 - Conversations and events the assistant mentions open with a click: the
