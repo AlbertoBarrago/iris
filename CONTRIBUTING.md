@@ -103,6 +103,33 @@ same for an installed copy while you look into a problem.
 
 ## Releasing
 
+Before a release, run the debug build (`scripts/dev-macos.sh`) on a Gmail
+account and a Microsoft or IMAP account, and walk the flows below. Each
+one broke once in the native app. Check what you send against the
+provider's web mail as well as against Iris.
+
+- **Add an account**, and remove one and add it again: it syncs, with no
+  error on the address page.
+- **New Message** with Cmd-N, twice, while a reply is open: two empty
+  messages open.
+- **Reply, Reply All, Forward**: the recipients are filled in (none for a
+  forward), the subject is prefixed, and the message stays in its
+  conversation once sent.
+- **Send** with no recipient: the message stays open and says why.
+- **Save Draft**, close, reopen it from Drafts, send it: it shows in
+  Drafts and then in Sent within seconds, on the server too.
+- **Discard** a changed message: the window closes and says so.
+- **Send Later**, then Send Now from the list.
+- **Attach** by the button and by dragging onto the text, from Finder and
+  from Photos.
+- **Search** typing quickly while suggestions show: no letter is lost.
+- **Assistant**: ask it to find mail and to draft a reply; its links open
+  the conversation or the event, and its draft lands in Drafts.
+- **Move, archive, delete**, and Undo.
+- **Hover** over each toolbar icon: each names what it does.
+
+Then:
+
 1. Bump `version` in `Cargo.toml` and write the `## Unreleased` section
    of `CHANGELOG.md` into a release. Sparkle offers a new DMG only when its
    version is higher than the one a tester runs.
