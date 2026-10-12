@@ -63,8 +63,8 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: Iris
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
-        MARKETING_VERSION: "1.1.7"
-        CURRENT_PROJECT_VERSION: "1.1.7"
+        MARKETING_VERSION: "1.1.8"
+        CURRENT_PROJECT_VERSION: "1.1.8"
         # An Apple Development identity, which carries a Team ID. The
         # Keychain keys "Always Allow" to the team; for an app with none it
         # keys it to the binary's hash, which every build changes, so each

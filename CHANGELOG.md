@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.8 (2026-10-12)
+
 ### New
 
 - Reply, Reply All or Forward any message of a conversation from the buttons
