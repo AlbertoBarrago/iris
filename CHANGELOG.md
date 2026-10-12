@@ -5,6 +5,14 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.3 (2026-10-12)
+
+### New
+
+- Translating a message happens on your Mac by default, with Apple's own
+  translator, so the message never leaves it. A model can still be chosen
+  in Settings, AI, Used For.
+
 ## 1.1.2 (2026-10-12)
 
 ### New
