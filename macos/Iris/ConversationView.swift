@@ -15,49 +15,55 @@ struct ConversationView: View {
                 SeveralSelected()
             } else if let page = model.page {
                 VStack(spacing: 0) {
-                    if page.remoteHidden {
-                        HStack {
-                            Text(tr("Remote images are hidden to protect your privacy"))
-                            Spacer()
-                            Button(tr("Load Images")) { model.loadImages() }
+                    // The cards above the mail scroll in a band of their own,
+                    // as tall as they need up to a limit: text never shrinks,
+                    // so a tall card in the stack itself, such as an
+                    // invitation with many events, asked the window for its
+                    // whole height and grew it to the screen's.
+                    CardBand {
+                        if page.remoteHidden {
+                            HStack {
+                                Text(tr("Remote images are hidden to protect your privacy"))
+                                Spacer()
+                                Button(tr("Load Images")) { model.loadImages() }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                            .padding(10)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        .padding(10)
-                    }
-                    if let mark = model.protectionMarks.last {
-                        ProtectionBar(mark: mark)
-                    }
-                    if let card = model.translationCard {
-                        TranslationBar(card: card)
-                    }
-                    if let offer = model.listOffer {
-                        HStack {
-                            Text(tr("This message is from a mailing list"))
-                            Spacer()
-                            Button(tr("Unsubscribe")) { leaving = true }
+                        if let mark = model.protectionMarks.last {
+                            ProtectionBar(mark: mark)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        .padding(10)
-                        .alert(offer.heading, isPresented: $leaving) {
-                            Button(tr("Cancel"), role: .cancel) {}
-                            Button(tr("Unsubscribe")) { model.unsubscribe() }
-                                .keyboardShortcut(.defaultAction)
-                        } message: {
-                            Text(offer.line.prefix(1).uppercased() + offer.line.dropFirst())
+                        if let card = model.translationCard {
+                            TranslationBar(card: card)
+                        }
+                        if let offer = model.listOffer {
+                            HStack {
+                                Text(tr("This message is from a mailing list"))
+                                Spacer()
+                                Button(tr("Unsubscribe")) { leaving = true }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                            .padding(10)
+                            .alert(offer.heading, isPresented: $leaving) {
+                                Button(tr("Cancel"), role: .cancel) {}
+                                Button(tr("Unsubscribe")) { model.unsubscribe() }
+                                    .keyboardShortcut(.defaultAction)
+                            } message: {
+                                Text(offer.line.prefix(1).uppercased() + offer.line.dropFirst())
+                            }
+                        }
+                        if let invitation = model.invitation, let key = model.openThread {
+                            InvitationCard(invitation: invitation, account: key.account)
+                                .id(invitation.messageId + invitation.answer)
                         }
                     }
                     if model.findShown {
                         FindBar()
                         Divider()
-                    }
-                    if let invitation = model.invitation, let key = model.openThread {
-                        InvitationCard(invitation: invitation, account: key.account)
-                            .id(invitation.messageId + invitation.answer)
-                            .layoutPriority(1)
                     }
                     MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1, finder: model.finder) { url in model.followLink(url) }
                         .frame(minHeight: 120)
@@ -179,11 +185,21 @@ struct MailPage: NSViewRepresentable {
             configuration.setURLSchemeHandler(pictures, forURLScheme: "mailrs-cid")
         }
         let view = WKWebView(frame: .zero, configuration: configuration)
+        // Never hold the window open for the page's own size.
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        view.setContentHuggingPriority(.defaultLow, for: .vertical)
         view.navigationDelegate = context.coordinator
         // The page paints its own background, the window's color.
         view.underPageBackgroundColor = .windowBackgroundColor
         finder?.view = view
         return view
+    }
+
+    /// The page takes whatever room the window gives it and scrolls inside
+    /// it. Left to WebKit, a page could answer with its own height, and a
+    /// long mail then stretched the window to the height of the screen.
+    func sizeThatFits(_ proposal: ProposedViewSize, nsView: WKWebView, context: Context) -> CGSize? {
+        proposal.replacingUnspecifiedDimensions(by: CGSize(width: 480, height: 320))
     }
 
     func updateNSView(_ view: WKWebView, context: Context) {
@@ -461,5 +477,23 @@ struct SenderButton: View {
         } message: {
             Text(menu?.blockBody ?? "")
         }
+    }
+}
+
+/// A band for the cards above a conversation's page: as tall as the cards,
+/// up to `limit`, scrolling past it, so the cards never ask the window for
+/// more height than that.
+struct CardBand<Content: View>: View {
+    var limit: CGFloat = 360
+    @ViewBuilder let content: Content
+    @State private var height: CGFloat = 0
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 0) { content }
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        .frame(height: min(height, limit))
     }
 }

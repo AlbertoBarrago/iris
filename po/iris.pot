@@ -3861,27 +3861,27 @@ msgstr ""
 msgid "Could not send your answer: {reason}"
 msgstr ""
 
-#: ffi/src/mail.rs:389
+#: ffi/src/mail.rs:394
 msgid "Will remind you {when}"
 msgstr ""
 
-#: ffi/src/mail.rs:392
+#: ffi/src/mail.rs:397
 msgid "Back in the Inbox"
 msgstr ""
 
-#: ffi/src/mail.rs:429
+#: ffi/src/mail.rs:434
 msgid "Could not cancel: {reason}"
 msgstr ""
 
-#: ffi/src/mail.rs:453
+#: ffi/src/mail.rs:458
 msgid "Deleted. It will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:454
+#: ffi/src/mail.rs:459
 msgid "Deleted. They will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:463
+#: ffi/src/mail.rs:468
 msgid "Could not delete: {reason}"
 msgstr ""
 
@@ -4547,8 +4547,8 @@ msgstr ""
 msgid "Not allowed"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:510 macos/Iris/ConversationView.swift:39
-#: macos/Iris/ConversationView.swift:47
+#: macos/Iris/AssistantView.swift:510 macos/Iris/ConversationView.swift:45
+#: macos/Iris/ConversationView.swift:53
 msgid "Unsubscribe"
 msgstr ""
 
@@ -4854,73 +4854,73 @@ msgid ""
 "contacts."
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:20
+#: macos/Iris/ConversationView.swift:26
 msgid "Remote images are hidden to protect your privacy"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:22
+#: macos/Iris/ConversationView.swift:28
 msgid "Load Images"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:37
+#: macos/Iris/ConversationView.swift:43
 msgid "This message is from a mailing list"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:66
+#: macos/Iris/ConversationView.swift:72
 msgid "No Conversation Selected"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:74
+#: macos/Iris/ConversationView.swift:80
 msgid "Edit Draft"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:83 macos/Iris/ConversationWindow.swift:31
+#: macos/Iris/ConversationView.swift:89 macos/Iris/ConversationWindow.swift:31
 msgid "Reply All"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:85 macos/Iris/ConversationWindow.swift:32
+#: macos/Iris/ConversationView.swift:91 macos/Iris/ConversationWindow.swift:32
 #: macos/Iris/ShortcutsView.swift:41
 msgid "Forward"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:104 macos/Iris/ConversationView.swift:267
+#: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:283
 #: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:237
 msgid "Mark as Unread"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:259
+#: macos/Iris/ConversationView.swift:275
 msgid "Several Conversations Selected"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:261
+#: macos/Iris/ConversationView.swift:277
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:271
+#: macos/Iris/ConversationView.swift:287
 msgid "Move to Trash"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:426
+#: macos/Iris/ConversationView.swift:442
 msgid "Checked"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:427
+#: macos/Iris/ConversationView.swift:443
 msgid "Warning"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:428
+#: macos/Iris/ConversationView.swift:444
 msgid "Not checked"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:444
+#: macos/Iris/ConversationView.swift:460
 msgid "Categorize Sender"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:451
+#: macos/Iris/ConversationView.swift:467
 msgid "Block Sender…"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:460
+#: macos/Iris/ConversationView.swift:476
 msgid "Block"
 msgstr ""
 
