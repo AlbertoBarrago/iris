@@ -8,37 +8,25 @@ A native Mac app for mail and calendar, with a core written in Rust.
 
 [![CI](https://github.com/AlbertoBarrago/iris/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbertoBarrago/iris/actions/workflows/ci.yml)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
-[![Rust 1.98](https://img.shields.io/badge/rust-1.98-orange?logo=rust)](https://www.rust-lang.org)
 [![SwiftUI on macOS 26](https://img.shields.io/badge/SwiftUI-macOS_26-0a84ff?logo=apple)](https://developer.apple.com/xcode/swiftui/)
+[![Rust 1.98](https://img.shields.io/badge/rust-1.98-orange?logo=rust)](https://www.rust-lang.org)
 
-[Status](#status) · [Features](#features) · [Install](#install) · [Build](#build) · [Usage](#usage)
+[Features](#features) · [Install](#install) · [Build](#build) · [Keyboard](#keyboard) · [Privacy](#privacy)
 
 </div>
 
-Iris is mail and calendar for your Mac. It reads Gmail accounts,
-Microsoft accounts (Outlook.com, Hotmail, Live and Microsoft 365) and any
-IMAP and SMTP account, such as Fastmail, iCloud and Yahoo, and finds the
-server settings for you. It shows your accounts in one inbox or one at a
-time, and keeps your mail on your own computer. Gmail and Google Calendar
-accounts talk to Google directly, and Microsoft accounts talk to Microsoft
-Graph, so no other server sees your mail.
+Iris is mail and calendar for your Mac. It reads Gmail accounts, Microsoft
+accounts (Outlook.com, Hotmail, Live and Microsoft 365) and any IMAP, SMTP
+or POP3 account, such as Fastmail, iCloud and Yahoo, and finds the server
+settings for you. It shows your accounts in one inbox or one at a time,
+and keeps your mail on your own computer. Gmail and Google Calendar talk
+to Google directly, and Microsoft accounts to Microsoft Graph, so no other
+server sees your mail.
 
-## Status
-
-Iris runs on a Mac with Apple silicon and macOS 26 or later. Since 1.1 it
-is a native SwiftUI and AppKit app over the same Rust core: the GTK front
-end it started with is gone, and an installed Iris updates to this one
-through Sparkle with its accounts, mail and settings as they were. It has a
-Dock badge for unread mail, the Mac's own menus and shortcuts, secrets in
-the Keychain, and Open at Login; see [Install](#install).
-
-A few things are not back yet since the move: the sample accounts of the
-old demo mode, and a skill's scripts (the sandbox they run in is Linux's
-bubblewrap).
-
-A build signs in to Google and Microsoft only with OAuth clients compiled
-in. The test DMGs carry Iris's own; a build from source needs yours, as
-[Build](#build) describes. Without one, sign in with an IMAP account.
+The window is SwiftUI and AppKit; the work behind it, syncing, search,
+signing, the calendar's copy and the assistant, is a Rust core the app
+reaches through UniFFI. Iris runs on a Mac with Apple silicon and macOS 26
+or later.
 
 ## Features
 
@@ -188,35 +176,40 @@ uses a tool from outside the app, and it is off until you pick a model.
   click on the Dock icon brings it back.
 - **New-mail notifications**, which open the conversation they are about.
 - **Open at Login**, through macOS's Login Items.
-- **Apple Mail's shortcuts**, plus Gmail's single keys.
+- **Mac shortcuts**, plus a few of Gmail's single keys, all listed under
+  Help > Keyboard Shortcuts (⇧⌘/).
 - **English and Italian**, chosen in Settings, with the window's controls
   named for screen readers.
 
 ## Install
 
-Builds are for a Mac with Apple silicon and macOS 26 or later. The
-quickest way in is the installer, which fetches the newest build, puts it in
-Applications and opens it:
+The quickest way in is the installer, which fetches the newest build,
+puts it in Applications and opens it:
 
 ```sh
 curl -fsSL https://albz.it/iris/install.sh | sh
 ```
 
 The DMG is also on the
-[releases page](https://github.com/AlbertoBarrago/iris/releases).
+[releases page](https://github.com/AlbertoBarrago/iris/releases) and at
+[albz.it/iris](https://albz.it/iris/).
 
-The builds are signed with the author's own certificate, not yet with an
-Apple Developer ID. A copy installed this way opens at once; a DMG
-downloaded in a browser carries macOS's quarantine mark, and macOS stops
-Iris until you choose **Open Anyway** in **System Settings > Privacy &
-Security**, or clear the mark yourself:
+The builds are not signed with an Apple Developer ID yet. A copy the
+installer puts in place opens at once; a DMG downloaded in a browser
+carries macOS's quarantine mark, and macOS stops Iris until you choose
+**Open Anyway** in **System Settings > Privacy & Security**, or clear the
+mark yourself:
 
 ```sh
 xattr -cr /Applications/Iris.app
 ```
 
-Iris then updates itself through Sparkle: it checks once a day, and
-**Check for Updates…** in the Iris menu checks at once.
+Iris then keeps itself up to date through Sparkle: it checks once a day,
+and **Iris > Check for Updates…** checks at once.
+
+A build signs in to Google and Microsoft only with OAuth clients compiled
+in. The DMGs carry Iris's own; a build from source needs yours, as
+[Build](#build) describes. Without one, sign in with an IMAP account.
 
 ## Build
 
@@ -249,27 +242,24 @@ export IRIS_MICROSOFT_CLIENT_ID=...
 them. [CONTRIBUTING.md](CONTRIBUTING.md) has the rest of the build and the
 layout of the crates.
 
-## Usage
+## Keyboard
 
-### Keyboard
-
-Apple Mail's shortcuts work as they do in Mail. Gmail's single keys work
-whenever you are not typing. ⌘? lists every shortcut.
+Help > Keyboard Shortcuts (⇧⌘/) lists every key Iris answers. The main
+ones:
 
 | Key | Action | Key | Action |
 |---|---|---|---|
-| `j` / `k` | Next / previous conversation | `⌘R` or `r` | Reply |
-| `⌥⌘A` or `e` | Archive | `⇧⌘R` or `a` | Reply all |
-| `Delete` or `#` | Move to trash | `⇧⌘F` or `f` | Forward |
-| `⇧⌘J` | Junk | `⌘N` or `c` | New message |
-| `⇧⌘L` or `s` | Flag or unflag | `⇧⌘D` | Send |
-| `⌥⌘1` to `⌥⌘7` | Flag color | `⇧⌘A` | Attach files |
-| `⇧⌘U` or `u` | Mark read or unread | `⌘B` / `⌘I` / `⌘K` | Bold, italic, link |
-| `⌥⌘M` or `l` | Labels | `⌘F` or `/` | Search |
-| `⌘Z` | Undo | `⌘1` to `⌘9` | Open a mailbox |
-| `⌘A` | Select all | `⌘=` / `⌘-` / `⌘0` | Text size |
-| `⇧⌘N` or `F5` | Check for mail | `⌘P` | Print |
-| `⌘O` or double-click | Open in a new window | `⌥⌘U` | View source |
+| `⌥⌘A` or `e` | Archive | `⌘N` | New message |
+| `Delete` | Move to trash | `⌘R` | Reply |
+| `⇧⌘J` | Junk | `⇧⌘R` | Reply all |
+| `⇧⌘U` or `u` | Mark read or unread | `⇧⌘F` | Forward |
+| `⇧M` | Mute or unmute | `⌘↩` | Send |
+| `l` | Labels | `⇧⌘A` | Attach files |
+| `⌘Z` | Undo | `⌘B` / `⌘I` / `⌘K` | Bold, italic, link |
+| `⌘F` | Search | `⌥1` / `⌥2` | Mail / Calendar |
+| `⌘O` | Open in a new window | `⌘T` | Calendar: today |
+| `⌥⌘U` | View source | `d` / `w` / `m` | Calendar: day, week, month |
+| `⌘P` | Print | `⌘J` | The assistant |
 
 ### Command line
 
@@ -293,12 +283,7 @@ The full policy is in [docs/privacy-policy.md](docs/privacy-policy.md).
 
 ## Roadmap
 
-Done: a native SwiftUI app over the Rust core, with its menu bar, Dock
-badge, shortcuts, Keychain and Open at Login; updates through Sparkle; the
-winged-envelope identity; Google and Microsoft clients; the Italian
-translation.
-
-1. **Sample accounts** to try Iris without one, as the old demo mode had.
+1. **Sample accounts** to try Iris without signing in.
 2. **A Developer ID and notarization**, so the DMG opens without the
    Privacy & Security step.
 3. **Device sync without a cloud.** Rules, settings and the local store
@@ -314,8 +299,13 @@ Questions, bug reports and ideas are welcome in
 ## License
 
 Iris is free software under the
-[GNU General Public License, version 3 or later](LICENSE).
+[GNU General Public License, version 3 or later](LICENSE). It is made by
+[Alberto Barrago](https://github.com/AlbertoBarrago); if it makes your
+day lighter, a star on GitHub is welcome.
 
-Iris includes code from
-[Penguin Mail](https://github.com/c9dev/penguin-mail) by David Santos,
-under the same license.
+### Where Iris comes from
+
+Iris began as a fork of [Penguin Mail](https://github.com/c9dev/penguin-mail),
+a GTK mail client for Linux, and kept its licence. It has since become its
+own app: a native Mac app with a core rewritten and grown well beyond
+where it started.
