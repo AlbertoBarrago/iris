@@ -13,6 +13,9 @@ struct ComposeRequest: Codable, Hashable {
     var kind: Kind
     var account: Int64?
     var thread: String?
+    /// The message of `thread` a reply answers, picked on its header; the
+    /// toolbar leaves it out and the newest is answered.
+    var message: String?
     /// The message Undo Send kept, by its key in the model.
     var restore: UUID?
     /// Who a new message is to, as the recipient field reads.

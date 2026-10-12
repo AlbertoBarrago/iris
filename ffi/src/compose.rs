@@ -144,13 +144,14 @@ impl Mail {
         Ok(self.shown(self.signed(draft)))
     }
 
-    /// A reply, a reply to all, or a forward of the newest message of a
-    /// conversation, from the address it was written to, signed.
-    pub fn reply_draft(&self, account_id: i64, thread_id: String, mode: ReplyMode) -> Result<ComposeDraft, CoreError> {
+    /// A reply, a reply to all, or a forward of `message_id` in a
+    /// conversation, or of its newest message that is not a draft when none
+    /// is named, from the address it was written to, signed.
+    pub fn reply_draft(&self, account_id: i64, thread_id: String, message_id: Option<String>, mode: ReplyMode) -> Result<ComposeDraft, CoreError> {
         let db = self.db.clone();
         let (thread, id) = (thread_id.clone(), account_id);
         let metas: Vec<MessageMeta> = self.run(async move { db.read(move |c| messages::thread_messages(c, id, &thread)).await })?;
-        let original = compose::answered(&metas)
+        let original = compose::answering(&metas, message_id.as_deref())
             .cloned()
             .ok_or_else(|| CoreError::Store("The conversation is empty.".into()))?;
         let body = match self.stored_body(account_id, &original.id) {

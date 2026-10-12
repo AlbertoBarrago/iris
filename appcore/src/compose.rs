@@ -991,6 +991,14 @@ pub fn answered(thread: &[MessageMeta]) -> Option<&MessageMeta> {
     thread.iter().rev().find(|m| !m.is_draft()).or_else(|| thread.last())
 }
 
+/// The message a reply answers: `message` when the person picked one on
+/// its header and the conversation still holds it, else as [`answered`].
+pub fn answering<'a>(thread: &'a [MessageMeta], message: Option<&str>) -> Option<&'a MessageMeta> {
+    message
+        .and_then(|id| thread.iter().find(|m| m.id == id))
+        .or_else(|| answered(thread))
+}
+
 fn same_address(a: &Address, b: &Address) -> bool {
     a.email.eq_ignore_ascii_case(&b.email)
 }
@@ -1855,6 +1863,12 @@ mod tests {
         assert_eq!(answered(&thread).map(|m| m.id.as_str()), Some("m1"));
         let reply = respond(ReplyKind::Reply, 1, &[me()], answered(&thread).unwrap(), "", None, &[], &thread);
         assert_eq!(reply.to, vec![ann]);
+
+        // A message picked on its header is answered, and one no longer
+        // there falls back to the newest.
+        assert_eq!(answering(&thread, Some("m2")).map(|m| m.id.as_str()), Some("m2"));
+        assert_eq!(answering(&thread, Some("gone")).map(|m| m.id.as_str()), Some("m1"));
+        assert_eq!(answering(&thread, None).map(|m| m.id.as_str()), Some("m1"));
 
         // A conversation of nothing but a draft answers that draft.
         assert_eq!(answered(&thread[1..]).map(|m| m.id.as_str()), Some("m2"));

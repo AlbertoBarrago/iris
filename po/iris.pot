@@ -1381,7 +1381,7 @@ msgstr ""
 msgid "Declined because I am out of office"
 msgstr ""
 
-#: appcore/src/compose.rs:592 appcore/src/compose.rs:2847
+#: appcore/src/compose.rs:592 appcore/src/compose.rs:2861
 msgid "Add at least one recipient."
 msgstr ""
 
@@ -1389,11 +1389,11 @@ msgstr ""
 msgid "“{address}” is not an email address."
 msgstr ""
 
-#: appcore/src/compose.rs:849 appcore/src/compose.rs:2853
+#: appcore/src/compose.rs:849 appcore/src/compose.rs:2867
 msgid "Choose a time in the future"
 msgstr ""
 
-#: appcore/src/compose.rs:1075
+#: appcore/src/compose.rs:1083
 msgid "On {date}, {sender} wrote:"
 msgstr ""
 
@@ -3765,27 +3765,27 @@ msgstr ""
 msgid "Add an account to write mail."
 msgstr ""
 
-#: ffi/src/compose.rs:238
+#: ffi/src/compose.rs:239
 msgid "Could not open the draft: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:270
+#: ffi/src/compose.rs:271
 msgid "The saved draft stays in Drafts: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:274
+#: ffi/src/compose.rs:275
 msgid "the account is not connected."
 msgstr ""
 
-#: ffi/src/compose.rs:338 ffi/src/compose.rs:345
+#: ffi/src/compose.rs:339 ffi/src/compose.rs:346
 msgid "Not sent: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:342
+#: ffi/src/compose.rs:343
 msgid "Message sent"
 msgstr ""
 
-#: ffi/src/compose.rs:344
+#: ffi/src/compose.rs:345
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr ""
 
@@ -4185,7 +4185,7 @@ msgid ""
 "such as automatic replies and rules"
 msgstr ""
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:691
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:706
 msgid "Conversation"
 msgstr ""
 
@@ -4623,7 +4623,7 @@ msgstr ""
 msgid "Last Day"
 msgstr ""
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:248
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:251
 #: macos/Iris/RulesView.swift:171 macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr ""
@@ -4723,144 +4723,144 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:69 macos/Iris/ContactCardView.swift:42
+#: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
 #: macos/Iris/IrisApp.swift:47 macos/Iris/ThreadListView.swift:90
 #: macos/Iris/ThreadListView.swift:93
 msgid "New Message"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:85
+#: macos/Iris/ComposeView.swift:88
 msgid "Drop to attach"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:103
+#: macos/Iris/ComposeView.swift:106
 msgid "Iris sends it at this time while it runs, even in the tray."
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:104
+#: macos/Iris/ComposeView.swift:107
 msgid "Schedule"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:107
+#: macos/Iris/ComposeView.swift:110
 msgid "Save as Template"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:108 macos/Iris/SmartEditorView.swift:28
+#: macos/Iris/ComposeView.swift:111 macos/Iris/SmartEditorView.swift:28
 #: macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:113
+#: macos/Iris/ComposeView.swift:116
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:129
+#: macos/Iris/ComposeView.swift:132
 msgid "Sign"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:134 macos/Iris/ComposeView.swift:368
+#: macos/Iris/ComposeView.swift:137 macos/Iris/ComposeView.swift:371
 msgid "Encrypt"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:152
+#: macos/Iris/ComposeView.swift:155
 msgid "No Templates Yet"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:158
+#: macos/Iris/ComposeView.swift:161
 msgid "Save as Template…"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:163 macos/Iris/ComposeView.swift:165
+#: macos/Iris/ComposeView.swift:166 macos/Iris/ComposeView.swift:168
 #: macos/Iris/TemplatesSettings.swift:35
 msgid "Templates"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:169 macos/Iris/ComposeView.swift:170
+#: macos/Iris/ComposeView.swift:172 macos/Iris/ComposeView.swift:173
 msgid "Attach Files (Ctrl+Shift+A)"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:182 macos/Iris/LaterView.swift:86
+#: macos/Iris/ComposeView.swift:185 macos/Iris/LaterView.swift:86
 msgid "Choose a Time…"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:201 macos/Iris/RulesView.swift:169
+#: macos/Iris/ComposeView.swift:204 macos/Iris/RulesView.swift:169
 msgid "From"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:221 macos/Iris/RulesView.swift:170
+#: macos/Iris/ComposeView.swift:224 macos/Iris/RulesView.swift:170
 msgid "To"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:223
+#: macos/Iris/ComposeView.swift:226
 msgid "Recipients"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:224
+#: macos/Iris/ComposeView.swift:227
 msgid "Cc/Bcc"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:239
+#: macos/Iris/ComposeView.swift:242
 msgid "Cc"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:243
+#: macos/Iris/ComposeView.swift:246
 msgid "Bcc"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:271 macos/Iris/ComposeView.swift:274
+#: macos/Iris/ComposeView.swift:274 macos/Iris/ComposeView.swift:277
 msgid "Remove {file}"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:292 macos/Iris/ComposeView.swift:297
+#: macos/Iris/ComposeView.swift:295 macos/Iris/ComposeView.swift:300
 msgid "Remove Quoted Text"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:307
+#: macos/Iris/ComposeView.swift:310
 msgid "Forwarded Message"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:402
+#: macos/Iris/ComposeView.swift:405
 msgid "Template saved"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:413
+#: macos/Iris/ComposeView.swift:416
 msgid "Attach Files"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:434
+#: macos/Iris/ComposeView.swift:437
 msgid "Could not read {count} file"
 msgid_plural "Could not read {count} files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: macos/Iris/ComposeView.swift:439
+#: macos/Iris/ComposeView.swift:442
 msgid "Attached {count} file"
 msgid_plural "Attached {count} files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: macos/Iris/ComposeView.swift:458 macos/Iris/FileDrop.swift:39
+#: macos/Iris/ComposeView.swift:461 macos/Iris/FileDrop.swift:39
 msgid "Image"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:503
+#: macos/Iris/ComposeView.swift:506
 msgid "Draft saved"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:675
+#: macos/Iris/ComposeView.swift:678
 msgid "Save as Draft?"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:676
+#: macos/Iris/ComposeView.swift:679
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:677
+#: macos/Iris/ComposeView.swift:680
 msgid "Save Draft"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:678
+#: macos/Iris/ComposeView.swift:681
 msgid "Discard"
 msgstr ""
 
@@ -4940,18 +4940,6 @@ msgstr ""
 
 #: macos/Iris/ConversationView.swift:80 macos/Iris/ConversationView.swift:81
 msgid "Edit Draft"
-msgstr ""
-
-#: macos/Iris/ConversationView.swift:91 macos/Iris/ConversationView.swift:92
-#: macos/Iris/ConversationWindow.swift:32
-#: macos/Iris/ConversationWindow.swift:33
-msgid "Reply All"
-msgstr ""
-
-#: macos/Iris/ConversationView.swift:94 macos/Iris/ConversationView.swift:95
-#: macos/Iris/ConversationWindow.swift:34
-#: macos/Iris/ConversationWindow.swift:35 macos/Iris/ShortcutsView.swift:41
-msgid "Forward"
 msgstr ""
 
 #: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:291
@@ -5223,48 +5211,48 @@ msgid ""
 "unread."
 msgstr ""
 
-#: macos/Iris/MailModel.swift:593
+#: macos/Iris/MailModel.swift:608
 msgid "Saved {file} to Downloads"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:595
+#: macos/Iris/MailModel.swift:610
 msgid "Could not save {file}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:620 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:635 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:763
+#: macos/Iris/MailModel.swift:778
 msgid "Message discarded"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:803
+#: macos/Iris/MailModel.swift:818
 msgid "Sending…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:892
+#: macos/Iris/MailModel.swift:907
 msgid "Cancel Send"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1188
+#: macos/Iris/MailModel.swift:1203
 msgid "Translating…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1227
+#: macos/Iris/MailModel.swift:1242
 msgid "This Mac cannot translate this message: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1710
+#: macos/Iris/MailModel.swift:1725
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1715
+#: macos/Iris/MailModel.swift:1730
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1761
+#: macos/Iris/MailModel.swift:1776
 msgid "{account} is signed in again."
 msgstr ""
 
@@ -6139,109 +6127,117 @@ msgstr ""
 msgid "Contact card for {person}"
 msgstr ""
 
-#: render/src/conversation.rs:323
+#: render/src/conversation.rs:303
+msgid "Reply All"
+msgstr ""
+
+#: render/src/conversation.rs:304
+msgid "Forward"
+msgstr ""
+
+#: render/src/conversation.rs:340
 msgid "Invitation"
 msgstr ""
 
-#: render/src/conversation.rs:336
+#: render/src/conversation.rs:353
 msgid "Loading…"
 msgstr ""
 
-#: render/src/conversation.rs:341
+#: render/src/conversation.rs:358
 msgid "This message could not be loaded: {reason}"
 msgstr ""
 
-#: render/src/conversation.rs:391
+#: render/src/conversation.rs:408
 msgid "Details"
 msgstr ""
 
-#: render/src/conversation.rs:412
+#: render/src/conversation.rs:429
 msgid "from"
 msgstr ""
 
-#: render/src/conversation.rs:423
+#: render/src/conversation.rs:440
 msgid "to"
 msgstr ""
 
-#: render/src/conversation.rs:425
+#: render/src/conversation.rs:442
 msgid "cc"
 msgstr ""
 
-#: render/src/conversation.rs:427
+#: render/src/conversation.rs:444
 msgid "date"
 msgstr ""
 
-#: render/src/conversation.rs:428
+#: render/src/conversation.rs:445
 msgid "subject"
 msgstr ""
 
-#: render/src/conversation.rs:430
+#: render/src/conversation.rs:447
 msgid "mailed-by"
 msgstr ""
 
-#: render/src/conversation.rs:433
+#: render/src/conversation.rs:450
 msgid "signed-by"
 msgstr ""
 
-#: render/src/conversation.rs:437
+#: render/src/conversation.rs:454
 msgid "security"
 msgstr ""
 
-#: render/src/conversation.rs:439
+#: render/src/conversation.rs:456
 msgid "Standard encryption (TLS)"
 msgstr ""
 
-#: render/src/conversation.rs:444
+#: render/src/conversation.rs:461
 msgid "Not encrypted in transit"
 msgstr ""
 
-#: render/src/conversation.rs:481
+#: render/src/conversation.rs:498
 msgid "{count} attachment"
 msgid_plural "{count} attachments"
 msgstr[0] ""
 msgstr[1] ""
 
-#: render/src/conversation.rs:513
+#: render/src/conversation.rs:530
 msgid "Quick Look"
 msgstr ""
 
-#: render/src/conversation.rs:514
+#: render/src/conversation.rs:531
 msgid "Save to Downloads"
 msgstr ""
 
-#: render/src/conversation.rs:516
+#: render/src/conversation.rs:533
 msgid "Open {file}, {size}"
 msgstr ""
 
-#: render/src/conversation.rs:523
+#: render/src/conversation.rs:540
 msgid "Save {file} to Downloads"
 msgstr ""
 
-#: render/src/conversation.rs:530
+#: render/src/conversation.rs:547
 msgid "Save All ({count})"
 msgid_plural "Save All ({count})"
 msgstr[0] ""
 msgstr[1] ""
 
-#: render/src/conversation.rs:541
+#: render/src/conversation.rs:558
 msgid "Save every attachment to a folder"
 msgstr ""
 
-#: render/src/conversation.rs:605
+#: render/src/conversation.rs:622
 msgid "undisclosed recipients"
 msgstr ""
 
-#: render/src/conversation.rs:608
+#: render/src/conversation.rs:625
 msgid "{named}, and {count} other"
 msgid_plural "{named}, and {count} others"
 msgstr[0] ""
 msgstr[1] ""
 
-#: render/src/conversation.rs:621
+#: render/src/conversation.rs:638
 msgid "me"
 msgstr ""
 
-#: render/src/conversation.rs:631
+#: render/src/conversation.rs:648
 msgid "Show trimmed content"
 msgstr ""
 

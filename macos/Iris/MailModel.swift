@@ -525,12 +525,16 @@ final class MailModel {
     /// Follows a link of the page's own: a message's header opens or
     /// closes it, a sender's name or picture offers what can be done with
     /// the address.
-    /// `account` names the conversation's account when the page is not
+    /// `account` and `thread` name the conversation when the page is not
     /// the main window's, such as a conversation in its own window.
-    func followLink(_ url: URL, account: Int64? = nil) {
+    func followLink(_ url: URL, account: Int64? = nil, thread: String? = nil) {
         let text = url.absoluteString
         if let id = text.removingPrefix("mailrs:toggle/") {
             toggleMessage(id)
+        } else if let (kind, id) = Self.answerLink(text) {
+            // A message's own Reply, Reply All or Forward answers it.
+            guard let account = account ?? openThread?.account, let thread = thread ?? openThread?.thread else { return }
+            composeAsked = ComposeRequest(kind: kind, account: account, thread: thread, message: id)
         } else if let rest = text.removingPrefix("mailrs:preview/"), let (id, index) = Self.fileLink(rest) {
             openAttachment(message: id, index: index, account: account)
         } else if let rest = text.removingPrefix("mailrs:attachment/"), let (id, index) = Self.fileLink(rest) {
@@ -545,6 +549,17 @@ final class MailModel {
                 showContact(address)
             }
         }
+    }
+
+    /// What a message header's answer link asks for, and of which message.
+    private static func answerLink(_ text: String) -> (ComposeRequest.Kind, String)? {
+        let kinds: [(String, ComposeRequest.Kind)] = [
+            ("mailrs:reply/", .reply), ("mailrs:reply-all/", .replyAll), ("mailrs:forward/", .forward),
+        ]
+        for (prefix, kind) in kinds {
+            if let id = text.removingPrefix(prefix) { return (kind, id.removingPercentEncoding ?? id) }
+        }
+        return nil
     }
 
     /// `<message>/<index>` from an attachment's link.
@@ -728,7 +743,7 @@ final class MailModel {
                     return try mail.newDraft(accountId: account)
                 }
                 let mode: ReplyMode = request.kind == .reply ? .reply : request.kind == .replyAll ? .replyAll : .forward
-                return try mail.replyDraft(accountId: account, threadId: thread, mode: mode)
+                return try mail.replyDraft(accountId: account, threadId: thread, messageId: request.message, mode: mode)
             case .editDraft:
                 guard let account = request.account, let thread = request.thread else {
                     return try mail.newDraft(accountId: account)

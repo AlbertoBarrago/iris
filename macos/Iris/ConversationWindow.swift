@@ -65,7 +65,7 @@ struct ConversationWindow: View {
         if let id = url.absoluteString.removingPrefix("mailrs:toggle/") {
             if let at = toggled.firstIndex(of: id) { toggled.remove(at: at) } else { toggled.append(id) }
         } else {
-            model.followLink(url, account: key.account)
+            model.followLink(url, account: key.account, thread: key.thread)
         }
     }
 }

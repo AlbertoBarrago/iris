@@ -293,6 +293,23 @@ fn render_message(
     if !address.is_empty() && address != name {
         let _ = write!(html, "<span class=\"address\">{}</span>", escape(&address));
     }
+    // Reply, Reply All and Forward answer this message, as the header
+    // buttons do in Thunderbird; the toolbar answers the newest. Mail
+    // cannot write these links itself, since its HTML loses every
+    // `mailrs:` address.
+    html.push_str("</span><span class=\"acts\">");
+    for (class, kind, words) in [
+        ("reply", "reply", gettext("Reply")),
+        ("all", "reply-all", gettext("Reply All")),
+        ("forward", "forward", gettext("Forward")),
+    ] {
+        let _ = write!(
+            html,
+            "<a class=\"act {class}\" href=\"mailrs:{kind}/{id}\" title=\"{words}\" aria-label=\"{words}\"></a>",
+            id = escape(&meta.id),
+            words = escape(&words),
+        );
+    }
     let _ = write!(
         html,
         "</span><span class=\"date\">{}</span><span class=\"chev\" aria-hidden=\"true\"></span>",
@@ -841,9 +858,17 @@ font-size:13px;font-weight:700;text-decoration:none;transition:background-color 
 .message{{position:relative;border-top:1px solid var(--line);padding:16px 12px 18px;margin:0 -12px;border-radius:12px}}\
 .thread+.message{{border-top-color:transparent}}\
 .message.collapsed:hover{{background:var(--hover)}}\
-.header{{display:grid;grid-template-columns:40px minmax(0,1fr) auto auto;\
+.header{{display:grid;grid-template-columns:40px minmax(0,1fr) auto auto auto;\
 column-gap:12px;align-items:center;color:inherit}}\
-.chev{{grid-column:3;grid-row:1;width:16px;height:16px;margin-right:-6px;background:var(--dim);opacity:0;\
+.acts{{grid-column:3;grid-row:1;position:relative;display:flex;gap:2px}}\
+.act{{width:24px;height:24px;background:var(--dim);opacity:.55;transition:opacity 120ms ease,background-color 120ms ease;\
+-webkit-mask:url(\"{REPLY}\") center/15px no-repeat}}\
+.act.all{{-webkit-mask-image:url(\"{REPLY_ALL}\")}}\
+.act.forward{{-webkit-mask-image:url(\"{FORWARD}\")}}\
+.message:hover .act{{opacity:.8}}\
+.act:hover,.act:focus-visible{{opacity:1;background:var(--accent)}}\
+@media print{{.acts{{display:none}}}}\
+.chev{{grid-column:4;grid-row:1;width:16px;height:16px;margin-right:-6px;background:var(--dim);opacity:0;\
 -webkit-mask:url(\"{CHEV}\") center/14px no-repeat;\
 transition:transform 200ms cubic-bezier(0.23,1,0.32,1),opacity 120ms ease}}\
 .message:hover .chev,.toggle:focus-visible~.chev{{opacity:.7}}\
@@ -863,7 +888,7 @@ justify-content:center;overflow:hidden;color:#fff;font-weight:700;font-size:15px
 .unread .name::before{{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;\
 background:var(--accent);margin-right:7px;vertical-align:1px}}\
 .address{{color:var(--dim);font-size:12.5px;font-weight:500;margin-left:8px}}\
-.date{{grid-column:4;grid-row:1;color:var(--dim);font-size:12.5px;white-space:nowrap}}\
+.date{{grid-column:5;grid-row:1;color:var(--dim);font-size:12.5px;white-space:nowrap}}\
 .line{{grid-column:2 / -1;color:var(--dim);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}\
 .line.to{{position:relative;overflow:visible;white-space:normal;padding-right:96px;pointer-events:none}}\
 .line.to details{{pointer-events:auto}}\
@@ -938,6 +963,15 @@ color:inherit;text-decoration:none;min-width:0}}\
 
 const CLIP: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
 <path fill='black' d='M10.5 2A3.5 3.5 0 0 0 7 5.5v5a1.5 1.5 0 0 0 3 0V6h-1v4.5a.5.5 0 0 1-1 0v-5a2.5 2.5 0 0 1 5 0v6a3.5 3.5 0 0 1-7 0V5H5v6.5a4.5 4.5 0 0 0 9 0v-6A3.5 3.5 0 0 0 10.5 2z'/></svg>";
+
+/// The arrows on a message's header that answer it: back to the sender,
+/// back to everyone, and on to someone new.
+const REPLY: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
+<path fill='black' d='M6.5 3.5 1.5 8l5 4.5V9.6c3.3 0 5.8 1 7.5 3.9-.4-4-2.8-6.9-7.5-7.4V3.5z'/></svg>";
+const REPLY_ALL: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
+<path fill='black' d='M8.5 3.5 4 8l4.5 4.5V9.6c2.8 0 4.8 1 6 3.9-.3-4-2.3-6.9-6-7.4V3.5zM5.2 4.4 1 8l4.2 3.6v-1.5L2.7 8l2.5-2.1z'/></svg>";
+const FORWARD: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
+<path fill='black' d='M9.5 3.5 14.5 8l-5 4.5V9.6c-3.3 0-5.8 1-7.5 3.9.4-4 2.8-6.9 7.5-7.4V3.5z'/></svg>";
 
 /// The chevron beside a message's date, which says the header opens it.
 const CHEV: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
@@ -1311,6 +1345,13 @@ mod tests {
             ],
         );
         assert!(html.contains("message collapsed shut\" id=\"m-m1\""));
+        // Each message, open or shut, can be answered on its own.
+        for id in ["m1", "m2"] {
+            for kind in ["reply", "reply-all", "forward"] {
+                assert!(html.contains(&format!("href=\"mailrs:{kind}/{id}\"")), "{kind} on {id}");
+            }
+        }
+        assert!(html.contains("aria-label=\"Reply All\""), "VoiceOver names each answer");
         assert!(
             html.contains(".shut .folded{content-visibility:hidden}"),
             "a message closed since the page loaded is not laid out"
