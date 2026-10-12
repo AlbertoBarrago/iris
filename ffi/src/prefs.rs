@@ -214,6 +214,7 @@ impl Mail {
             "check_attachments" => Change::CheckAttachments(on()),
             "sign_by_default" => Change::SignByDefault(on()),
             "encrypt_when_possible" => Change::EncryptWhenPossible(on()),
+            "translate_on_device" => Change::TranslateOnDevice(on()),
             "default_account" => Change::DefaultAccount(Some(value).filter(|v| !v.is_empty())),
             "language" => Change::Language(value),
             "default_category" => Change::DefaultCategory(parse(&value)?),

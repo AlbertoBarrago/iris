@@ -30,6 +30,21 @@ pub struct TranslationOffer {
     pub button: String,
     /// Whether `detail` says what went wrong.
     pub problem: bool,
+    /// The Mac translates the message itself, through Apple's
+    /// Translation framework, rather than a model.
+    pub on_device: bool,
+}
+
+/// What the Mac's own translator is asked to translate.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct TranslationJob {
+    /// The language the message reads as, such as `pt`, or empty when
+    /// the words did not say, which leaves Apple's translator to tell.
+    pub from: String,
+    /// The interface's language, such as `it`.
+    pub into: String,
+    /// The message's prose, piece by piece, in order.
+    pub pieces: Vec<String>,
 }
 
 /// One message in the reader's language.
@@ -52,6 +67,7 @@ impl From<CardWords> for TranslationOffer {
             detail: words.detail,
             button: words.button,
             problem: words.problem,
+            on_device: crate::prefs::load().translate_on_device,
         }
     }
 }
@@ -79,8 +95,11 @@ impl Mail {
         let Reading::Other(from) = translation::read_message(&found.prose().sample(), &found.same_writer, into) else {
             return Ok(None);
         };
-        let ai = Settings::load(&Settings::default_path()).ai;
-        let goes = translation::destination(&ai).map(|(_, goes)| goes);
+        let settings = Settings::load(&Settings::default_path());
+        let goes = match settings.translate_on_device {
+            true => Ok(translation::on_device_words()),
+            false => translation::destination(&settings.ai).map(|(_, goes)| goes),
+        };
         Ok(Some(offered_words(from, goes.as_deref().map_err(String::as_str)).into()))
     }
 
@@ -143,6 +162,83 @@ impl Mail {
             },
         );
         Ok(words)
+    }
+
+    /// What the Mac's translator is to translate in conversation
+    /// `thread_id`: the message's prose, piece by piece, as much of it as
+    /// one translation takes, with the language it reads as and the
+    /// interface's.
+    pub fn translation_job(&self, account_id: i64, thread_id: String, interface: String) -> Result<TranslationJob, CoreError> {
+        let Some(found) = self.read_target(account_id, thread_id)? else {
+            return Err(CoreError::Store(failed_words(None)));
+        };
+        let into = interface_language(&interface).unwrap_or(translation::ENGLISH);
+        let prose = found.prose();
+        let from = match translation::read_message(&prose.sample(), &found.same_writer, into) {
+            Reading::Other(Some(language)) => language.code.to_string(),
+            _ => String::new(),
+        };
+        let pieces: Vec<String> = prose.pieces().iter().map(|p| p.to_string()).collect();
+        let fits = translation::fits(&pieces.iter().map(String::as_str).collect::<Vec<_>>());
+        Ok(TranslationJob {
+            from,
+            into: into.code.to_string(),
+            pieces: pieces[..fits].to_vec(),
+        })
+    }
+
+    /// Puts what the Mac's translator answered for `translation_job`'s
+    /// pieces, in order, into the page in place of the message's prose.
+    /// A piece it could not translate stays as it arrived.
+    pub fn apply_translation(
+        &self,
+        account_id: i64,
+        thread_id: String,
+        interface: String,
+        translated: Vec<Option<String>>,
+    ) -> Result<TranslationOffer, CoreError> {
+        let Some(found) = self.read_target(account_id, thread_id)? else {
+            return Err(CoreError::Store(failed_words(None)));
+        };
+        if translated.iter().all(Option::is_none) {
+            return Err(CoreError::Store(failed_words(None)));
+        }
+        let into = interface_language(&interface).unwrap_or(translation::ENGLISH);
+        let prose = found.prose();
+        let from = match translation::read_message(&prose.sample(), &found.same_writer, into) {
+            Reading::Other(from) => from,
+            _ => None,
+        };
+        let cut = translated.len() < prose.pieces().len();
+        let rebuilt = prose.rebuild(&translated);
+        let mut body = found.body;
+        match body.html.as_deref().is_some_and(|h| !h.trim().is_empty()) {
+            true => body.html = Some(rebuilt),
+            false => body.text = Some(rebuilt),
+        }
+        let words = done_words(from, cut, true).into();
+        made().insert(
+            (account_id, found.meta.id.clone()),
+            Translated {
+                from,
+                body,
+                cut,
+                shown: true,
+            },
+        );
+        Ok(words)
+    }
+
+    /// Turns over the translation conversation `thread_id` has, between
+    /// it and the message as it arrived. `None` when it has none.
+    pub fn turn_translation(&self, account_id: i64, thread_id: String) -> Result<Option<TranslationOffer>, CoreError> {
+        let Some(found) = self.read_target(account_id, thread_id)? else {
+            return Ok(None);
+        };
+        Ok(made().get_mut(&(account_id, found.meta.id.clone())).map(|made| {
+            made.shown = !made.shown;
+            done_words(made.from, made.cut, made.shown).into()
+        }))
     }
 }
 

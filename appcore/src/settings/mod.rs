@@ -115,6 +115,9 @@ pub struct Settings {
     pub sign_by_default: bool,
     /// Turn Encrypt on as soon as gpg holds a key for every recipient.
     pub encrypt_when_possible: bool,
+    /// Translate mail with the Mac's own Translation framework, on this
+    /// computer, rather than with the model chosen for translation.
+    pub translate_on_device: bool,
     /// Let Sparkle look for a newer release once a day.
     pub check_for_updates: bool,
     /// Which space the window opened on last: mail or the calendar.
@@ -519,6 +522,7 @@ impl Default for Settings {
             check_attachments: true,
             sign_by_default: false,
             encrypt_when_possible: false,
+            translate_on_device: true,
             contacts: false,
             contact_accounts: Vec::new(),
             check_for_updates: true,

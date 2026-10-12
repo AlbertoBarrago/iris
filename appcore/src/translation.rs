@@ -874,6 +874,12 @@ pub fn failed_words(reason: Option<&str>) -> String {
     }
 }
 
+/// What the card says about where the words go when the Mac translates
+/// them itself.
+pub fn on_device_words() -> String {
+    gettext("The message is translated on this Mac and does not leave it.")
+}
+
 /// Where a message's words go to be translated, and the model that reads
 /// them. `Err` says why there is nowhere to send them, in the words
 /// Preferences uses.

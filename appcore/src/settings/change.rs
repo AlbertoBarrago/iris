@@ -56,6 +56,7 @@ pub enum Change {
     SignByDefault(bool),
     /// Turn Encrypt on whenever gpg holds a key for every recipient.
     EncryptWhenPossible(bool),
+    TranslateOnDevice(bool),
     /// Read one account's Google contacts, or stop and forget them.
     AccountContacts {
         email: String,
@@ -283,6 +284,7 @@ impl Change {
             Change::CheckAttachments(on) => settings.check_attachments = on,
             Change::SignByDefault(on) => settings.sign_by_default = on,
             Change::EncryptWhenPossible(on) => settings.encrypt_when_possible = on,
+            Change::TranslateOnDevice(on) => settings.translate_on_device = on,
             Change::AccountContacts { email, on } => {
                 let email = email.to_lowercase();
                 settings.contact_accounts.retain(|e| *e != email);
@@ -613,6 +615,8 @@ settable! {
         check_attachments,
         // How long Iris's notices stay is the person's own taste.
         notice_time,
+        // Where mail goes to be translated is the person's call.
+        translate_on_device,
         // Whether the app asks GitHub for new releases is the person's
         // call, made in Preferences.
         check_for_updates,
@@ -837,6 +841,7 @@ impl Effects {
             check_attachments,
             sign_by_default,
             encrypt_when_possible,
+            translate_on_device,
             contacts,
             contact_accounts,
             check_for_updates,
@@ -881,6 +886,8 @@ impl Effects {
             check_attachments,
             sign_by_default,
             encrypt_when_possible,
+            // The translation card reads this as it goes up.
+            translate_on_device,
             // The pane reads this as it adds a row, and rows already in the
             // chat stay as the reader left them.
             assistant_details_expanded,

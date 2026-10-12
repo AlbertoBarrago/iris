@@ -119,6 +119,7 @@ struct ConversationView: View {
                 .disabled(model.selection.isEmpty)
             }
         }
+        .modifier(AppleTranslator())
         .onAppear { model.theme = PageTheme.current(dark: colorScheme == .dark) }
         .onChange(of: colorScheme) { model.theme = PageTheme.current(dark: colorScheme == .dark) }
         .onReceive(NotificationCenter.default.publisher(for: NSColor.systemColorsDidChangeNotification)) { _ in

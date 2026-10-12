@@ -3071,202 +3071,202 @@ msgstr ""
 "Non verranno inviati. Alcuni sono in Bozze, e quelli che Gmail non ha potuto "
 "prendere sono aperti per poterli salvare."
 
-#: appcore/src/settings/mod.rs:234 appcore/src/settings/mod.rs:409
-#: appcore/src/settings/mod.rs:704
+#: appcore/src/settings/mod.rs:237 appcore/src/settings/mod.rs:412
+#: appcore/src/settings/mod.rs:708
 msgid "Off"
 msgstr "Disattivato"
 
-#: appcore/src/settings/mod.rs:235
+#: appcore/src/settings/mod.rs:238
 msgid "Local Server"
 msgstr "Server locale"
 
-#: appcore/src/settings/mod.rs:236
+#: appcore/src/settings/mod.rs:239
 msgid "Anthropic API"
 msgstr "API Anthropic"
 
-#: appcore/src/settings/mod.rs:237
+#: appcore/src/settings/mod.rs:240
 msgid "Claude Subscription"
 msgstr "Abbonamento Claude"
 
-#: appcore/src/settings/mod.rs:262
+#: appcore/src/settings/mod.rs:265
 msgid "Assistant"
 msgstr "Assistente"
 
-#: appcore/src/settings/mod.rs:263
+#: appcore/src/settings/mod.rs:266
 msgid "Translation"
 msgstr "Traduzione"
 
 #. The assistant's running label says "Unsubscribing" too, and
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: appcore/src/settings/mod.rs:267
+#: appcore/src/settings/mod.rs:270
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr "Annullamento iscrizioni"
 
-#: appcore/src/settings/mod.rs:273
+#: appcore/src/settings/mod.rs:276
 msgid "Answers questions and acts on your mail"
 msgstr "Risponde alle domande e agisce sulla tua posta"
 
-#: appcore/src/settings/mod.rs:274
+#: appcore/src/settings/mod.rs:277
 msgid "Translates a message when you ask"
 msgstr "Traduce un messaggio quando lo chiedi"
 
-#: appcore/src/settings/mod.rs:276
+#: appcore/src/settings/mod.rs:279
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr ""
 "Legge la pagina di annullamento iscrizione di una newsletter quando le "
 "regole non bastano"
 
-#: appcore/src/settings/mod.rs:314
+#: appcore/src/settings/mod.rs:317
 msgid "Same as the Assistant"
 msgstr "Come l'Assistente"
 
-#: appcore/src/settings/mod.rs:410
+#: appcore/src/settings/mod.rs:413
 msgid "Claude's own only"
 msgstr "Solo quella di Claude"
 
-#: appcore/src/settings/mod.rs:411
+#: appcore/src/settings/mod.rs:414
 msgid "Brave Search"
 msgstr "Brave Search"
 
-#: appcore/src/settings/mod.rs:412
+#: appcore/src/settings/mod.rs:415
 msgid "SearXNG"
 msgstr "SearXNG"
 
-#: appcore/src/settings/mod.rs:551
+#: appcore/src/settings/mod.rs:555
 msgid "Rich text"
 msgstr "Testo formattato"
 
-#: appcore/src/settings/mod.rs:552
+#: appcore/src/settings/mod.rs:556
 msgid "Markdown"
 msgstr "Markdown"
 
-#: appcore/src/settings/mod.rs:571
+#: appcore/src/settings/mod.rs:575
 msgid "Automatic"
 msgstr "Automatico"
 
-#: appcore/src/settings/mod.rs:572
+#: appcore/src/settings/mod.rs:576
 msgid "Monday"
 msgstr "Lunedì"
 
-#: appcore/src/settings/mod.rs:573
+#: appcore/src/settings/mod.rs:577
 msgid "Sunday"
 msgstr "Domenica"
 
-#: appcore/src/settings/mod.rs:611
+#: appcore/src/settings/mod.rs:615
 msgid "When opened"
 msgstr "All'apertura"
 
-#: appcore/src/settings/mod.rs:612
+#: appcore/src/settings/mod.rs:616
 msgid "After 2 seconds"
 msgstr "Dopo 2 secondi"
 
-#: appcore/src/settings/mod.rs:613
+#: appcore/src/settings/mod.rs:617
 msgid "Only when I choose"
 msgstr "Solo quando lo scelgo"
 
-#: appcore/src/settings/mod.rs:629
+#: appcore/src/settings/mod.rs:633
 msgid "Ask each time"
 msgstr "Chiedi ogni volta"
 
-#: appcore/src/settings/mod.rs:630
+#: appcore/src/settings/mod.rs:634
 msgid "Always load"
 msgstr "Carica sempre"
 
-#: appcore/src/settings/mod.rs:664
+#: appcore/src/settings/mod.rs:668
 msgid "Small"
 msgstr "Piccolo"
 
-#: appcore/src/settings/mod.rs:665
+#: appcore/src/settings/mod.rs:669
 msgid "Default"
 msgstr "Predefinito"
 
-#: appcore/src/settings/mod.rs:666
+#: appcore/src/settings/mod.rs:670
 msgid "Large"
 msgstr "Grande"
 
-#: appcore/src/settings/mod.rs:667
+#: appcore/src/settings/mod.rs:671
 msgid "Larger"
 msgstr "Più grande"
 
-#: appcore/src/settings/mod.rs:705 appcore/src/settings/mod.rs:748
+#: appcore/src/settings/mod.rs:709 appcore/src/settings/mod.rs:752
 msgid "5 seconds"
 msgstr "5 secondi"
 
-#: appcore/src/settings/mod.rs:706 appcore/src/settings/mod.rs:749
+#: appcore/src/settings/mod.rs:710 appcore/src/settings/mod.rs:753
 msgid "10 seconds"
 msgstr "10 secondi"
 
-#: appcore/src/settings/mod.rs:707 appcore/src/settings/mod.rs:750
+#: appcore/src/settings/mod.rs:711 appcore/src/settings/mod.rs:754
 msgid "20 seconds"
 msgstr "20 secondi"
 
-#: appcore/src/settings/mod.rs:708
+#: appcore/src/settings/mod.rs:712
 msgid "30 seconds"
 msgstr "30 secondi"
 
-#: appcore/src/settings/mod.rs:728
+#: appcore/src/settings/mod.rs:732
 msgid "Notices Stay For"
 msgstr "Gli avvisi restano per"
 
-#: appcore/src/settings/mod.rs:729
+#: appcore/src/settings/mod.rs:733
 msgid "How long a notice in the window's corner stays before it goes"
 msgstr "Quanto resta un avviso nell'angolo della finestra prima di sparire"
 
-#: appcore/src/settings/mod.rs:747
+#: appcore/src/settings/mod.rs:751
 msgid "3 seconds"
 msgstr "3 secondi"
 
-#: appcore/src/settings/mod.rs:767
+#: appcore/src/settings/mod.rs:771
 msgid "Follow system"
 msgstr "Come il sistema"
 
-#: appcore/src/settings/mod.rs:768
+#: appcore/src/settings/mod.rs:772
 msgid "Light"
 msgstr "Chiaro"
 
-#: appcore/src/settings/mod.rs:769
+#: appcore/src/settings/mod.rs:773
 msgid "Dark"
 msgstr "Scuro"
 
-#: appcore/src/settings/mod.rs:803
+#: appcore/src/settings/mod.rs:807
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] "Ogni secondo"
 msgstr[1] "Ogni {count} secondi"
 
-#: appcore/src/settings/mod.rs:811
+#: appcore/src/settings/mod.rs:815
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] "Ogni minuto"
 msgstr[1] "Ogni {count} minuti"
 
-#: appcore/src/settings/mod.rs:828
+#: appcore/src/settings/mod.rs:832
 msgid "2 weeks"
 msgstr "2 settimane"
 
-#: appcore/src/settings/mod.rs:829
+#: appcore/src/settings/mod.rs:833
 msgid "30 days"
 msgstr "30 giorni"
 
-#: appcore/src/settings/mod.rs:830
+#: appcore/src/settings/mod.rs:834
 msgid "90 days"
 msgstr "90 giorni"
 
-#: appcore/src/settings/mod.rs:831
+#: appcore/src/settings/mod.rs:835
 msgid "1 year"
 msgstr "1 anno"
 
-#: appcore/src/settings/mod.rs:838
+#: appcore/src/settings/mod.rs:842
 msgid "256 MB"
 msgstr "256 MB"
 
-#: appcore/src/settings/mod.rs:839
+#: appcore/src/settings/mod.rs:843
 msgid "1 GB"
 msgstr "1 GB"
 
-#: appcore/src/settings/mod.rs:840
+#: appcore/src/settings/mod.rs:844
 msgid "4 GB"
 msgstr "4 GB"
 
@@ -3435,19 +3435,23 @@ msgstr "Il modello non ha restituito nulla da inserire nel messaggio."
 msgid "The model could not translate this: {reason}"
 msgstr "Il modello non è riuscito a tradurre: {reason}"
 
-#: appcore/src/translation.rs:887
+#: appcore/src/translation.rs:880
+msgid "The message is translated on this Mac and does not leave it."
+msgstr "Il messaggio viene tradotto su questo Mac e non lo lascia."
+
+#: appcore/src/translation.rs:893
 msgid "The message goes to {host}, for {model} to read."
 msgstr "Il messaggio va a {host}, perché {model} lo legga."
 
-#: appcore/src/translation.rs:891
+#: appcore/src/translation.rs:897
 msgid "The message goes to {model} on this computer and no further."
 msgstr "Il messaggio va a {model} su questo computer e non oltre."
 
-#: appcore/src/translation.rs:896
+#: appcore/src/translation.rs:902
 msgid "The message goes to Anthropic, for {model} to read."
 msgstr "Il messaggio va ad Anthropic, perché {model} lo legga."
 
-#: appcore/src/translation.rs:900
+#: appcore/src/translation.rs:906
 msgid ""
 "The message goes to Anthropic, for Claude to read through your subscription."
 msgstr ""
@@ -3902,7 +3906,11 @@ msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr ""
 "Un'altra copia di Iris sta sincronizzando la posta. Chiudila e riprova."
 
-#: ffi/src/ai_prefs.rs:247
+#: ffi/src/ai_prefs.rs:135
+msgid "Apple, on This Mac"
+msgstr "Apple, su questo Mac"
+
+#: ffi/src/ai_prefs.rs:267
 msgid "No answer: {reason}"
 msgstr "Nessuna risposta: {reason}"
 
@@ -4402,7 +4410,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:687
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:689
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -5163,44 +5171,44 @@ msgstr "Rispondi a tutti"
 msgid "Forward"
 msgstr "Inoltra"
 
-#: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:283
+#: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:284
 #: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:237
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
-#: macos/Iris/ConversationView.swift:275
+#: macos/Iris/ConversationView.swift:276
 msgid "Several Conversations Selected"
 msgstr "Più conversazioni selezionate"
 
-#: macos/Iris/ConversationView.swift:277
+#: macos/Iris/ConversationView.swift:278
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 
-#: macos/Iris/ConversationView.swift:287
+#: macos/Iris/ConversationView.swift:288
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
-#: macos/Iris/ConversationView.swift:442
+#: macos/Iris/ConversationView.swift:443
 msgid "Checked"
 msgstr "Verificata"
 
-#: macos/Iris/ConversationView.swift:443
+#: macos/Iris/ConversationView.swift:444
 msgid "Warning"
 msgstr "Avviso"
 
-#: macos/Iris/ConversationView.swift:444
+#: macos/Iris/ConversationView.swift:445
 msgid "Not checked"
 msgstr "Non verificata"
 
-#: macos/Iris/ConversationView.swift:460
+#: macos/Iris/ConversationView.swift:461
 msgid "Categorize Sender"
 msgstr "Classifica mittente"
 
-#: macos/Iris/ConversationView.swift:467
+#: macos/Iris/ConversationView.swift:468
 msgid "Block Sender…"
 msgstr "Blocca mittente…"
 
-#: macos/Iris/ConversationView.swift:476
+#: macos/Iris/ConversationView.swift:477
 msgid "Block"
 msgstr "Blocca"
 
@@ -5440,40 +5448,44 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:589
+#: macos/Iris/MailModel.swift:591
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:591
+#: macos/Iris/MailModel.swift:593
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:616 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:618 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:781
+#: macos/Iris/MailModel.swift:783
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:870
+#: macos/Iris/MailModel.swift:872
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1165
+#: macos/Iris/MailModel.swift:1168
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1617
+#: macos/Iris/MailModel.swift:1207
+msgid "This Mac cannot translate this message: {reason}"
+msgstr "Questo Mac non può tradurre il messaggio: {reason}"
+
+#: macos/Iris/MailModel.swift:1666
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1622
+#: macos/Iris/MailModel.swift:1671
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1668
+#: macos/Iris/MailModel.swift:1717
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 

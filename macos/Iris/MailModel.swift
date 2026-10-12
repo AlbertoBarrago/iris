@@ -25,6 +25,8 @@ final class MailModel {
     fileprivate var translationKey: ThreadKey?
     /// Set while the model translates.
     private(set) var translating = false
+    /// A translation the Mac's own translator has to do, while it does.
+    var appleJob: AppleTranslationJob?
     /// What the sender menu offers for the open conversation.
     private(set) var senderMenu: SenderMenu?
     fileprivate var senderMenuKey: ThreadKey?
@@ -1160,29 +1162,76 @@ extension MailModel {
     func translateOpen() {
         guard let mail, let key = openThread, !translating else { return }
         let interface = appLocale.identifier
+        let onDevice = translationCard?.onDevice ?? false
         translating = true
         if let card = translationCard, card.button == tr("Translate") {
-            translationCard = TranslationOffer(title: card.title, detail: tr("Translating…"), button: card.button, problem: false)
+            translationCard = TranslationOffer(title: card.title, detail: tr("Translating…"), button: card.button, problem: false, onDevice: card.onDevice)
         }
         Task.detached {
-            let done = Result { try mail.translateMessage(accountId: key.account, threadId: key.thread, interface: interface) }
-            await MainActor.run {
-                self.translating = false
-                guard self.openThread == key else { return }
-                switch done {
-                case .success(let card):
-                    self.translationCard = card
-                    self.loadConversation()
-                case .failure(let error):
-                    let reason = "\(error)"
-                    if let card = self.translationCard {
-                        self.translationCard = TranslationOffer(title: card.title, detail: reason, button: card.button, problem: true)
-                    }
-                    self.say(reason)
-                }
+            // A translation already made turns over without asking anyone.
+            if let turned = try? mail.turnTranslation(accountId: key.account, threadId: key.thread) {
+                await MainActor.run { self.translated(.success(turned), for: key) }
+                return
             }
+            if onDevice {
+                let job = Result { try mail.translationJob(accountId: key.account, threadId: key.thread, interface: interface) }
+                await MainActor.run {
+                    switch job {
+                    case .success(let job): self.appleJob = AppleTranslationJob(key: key, job: job)
+                    case .failure(let error): self.translated(.failure(error), for: key)
+                    }
+                }
+                return
+            }
+            let done = Result { try mail.translateMessage(accountId: key.account, threadId: key.thread, interface: interface) }
+            await MainActor.run { self.translated(done, for: key) }
         }
     }
+
+    /// The Mac's translator answered `job` with `pieces`, one for each of
+    /// its pieces, `nil` for one it could not translate.
+    func appleTranslated(_ job: AppleTranslationJob, pieces: [String?]) {
+        guard let mail else { return }
+        appleJob = nil
+        let interface = appLocale.identifier
+        let key = job.key
+        Task.detached {
+            let done = Result { try mail.applyTranslation(accountId: key.account, threadId: key.thread, interface: interface, translated: pieces) }
+            await MainActor.run { self.translated(done, for: key) }
+        }
+    }
+
+    /// The Mac's translator could not translate `job`.
+    func appleFailed(_ job: AppleTranslationJob, _ error: Error) {
+        appleJob = nil
+        translated(.failure(CoreError.Store(tr("This Mac cannot translate this message: {reason}")
+            .replacingOccurrences(of: "{reason}", with: error.localizedDescription))), for: job.key)
+    }
+
+    /// Puts what a translation came to on the card, and draws the page
+    /// again with it.
+    private func translated(_ done: Result<TranslationOffer, Error>, for key: ThreadKey) {
+        translating = false
+        guard openThread == key else { return }
+        switch done {
+        case .success(let card):
+            translationCard = card
+            loadConversation()
+        case .failure(let error):
+            let reason = "\(error)"
+            if let card = translationCard {
+                translationCard = TranslationOffer(title: card.title, detail: reason, button: card.button, problem: true, onDevice: card.onDevice)
+            }
+            say(reason)
+        }
+    }
+}
+
+/// What the Mac's own translator is asked to do for the open conversation.
+struct AppleTranslationJob: Equatable {
+    let id = UUID()
+    let key: ThreadKey
+    let job: TranslationJob
 }
 
 // MARK: Contacts

@@ -142,3 +142,4 @@ ffi/src/senders.rs
 ffi/src/smart.rs
 macos/Iris/SmartEditorView.swift
 macos/Iris/ShortcutsView.swift
+macos/Iris/AppleTranslation.swift

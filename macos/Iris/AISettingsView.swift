@@ -468,7 +468,7 @@ private struct UsedForRows: View {
                         Text(feature.description).font(.callout).foregroundStyle(.secondary)
                     }
                 }
-                if feature.current != "same" {
+                if feature.current != "same" && feature.current != "apple" {
                     ModelField(feature: feature) { set(feature, choice: feature.current, model: $0) }
                 }
             }

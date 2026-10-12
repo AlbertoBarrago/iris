@@ -112,24 +112,38 @@ impl Mail {
     /// The features besides the assistant, each with its model, as the
     /// GTK AI page's Used For group lists them.
     pub fn ai_features(&self) -> Vec<FeatureUse> {
-        let ai = load().ai;
+        let settings = load();
+        let ai = settings.ai;
         [("translation", Feature::Translation), ("unsubscribe", Feature::Unsubscribe)]
             .into_iter()
             .map(|(name, feature)| {
                 let current = ai.use_for(feature);
+                // Translation can also stay on this Mac, through Apple's own
+                // translator, which comes first and is where it starts.
+                let on_device = feature == Feature::Translation;
+                let mut choices: Vec<ChoiceItem> = feature
+                    .choices()
+                    .iter()
+                    .map(|choice| ChoiceItem {
+                        key: use_key(choice),
+                        label: choice.label(),
+                    })
+                    .collect();
+                if on_device {
+                    choices.insert(0, ChoiceItem {
+                        key: "apple".into(),
+                        label: gettext("Apple, on This Mac"),
+                    });
+                }
                 FeatureUse {
                     feature: name.into(),
                     label: feature.label(),
                     description: feature.description(),
-                    choices: feature
-                        .choices()
-                        .iter()
-                        .map(|choice| ChoiceItem {
-                            key: use_key(choice),
-                            label: choice.label(),
-                        })
-                        .collect(),
-                    current: use_key(&current),
+                    choices,
+                    current: match on_device && settings.translate_on_device {
+                        true => "apple".into(),
+                        false => use_key(&current),
+                    },
                     model: match current {
                         Use::Model { model, .. } => model,
                         Use::SameAsAssistant => String::new(),
@@ -144,6 +158,12 @@ impl Mail {
     /// the assistant's model there, as the GTK row does.
     pub fn set_feature_use(&self, feature: String, choice: String, model: String) -> Result<(), CoreError> {
         let feature = feature_of(&feature).ok_or_else(|| CoreError::Store(format!("not a feature: {feature}")))?;
+        if feature == Feature::Translation {
+            save(Change::TranslateOnDevice(choice == "apple"))?;
+            if choice == "apple" {
+                return Ok(());
+            }
+        }
         let choice = match choice.as_str() {
             "same" => Use::SameAsAssistant,
             other => {
