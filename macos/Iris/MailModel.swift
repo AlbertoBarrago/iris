@@ -48,6 +48,8 @@ final class MailModel {
     /// Messages of the open conversation the person opened or closed.
     private var toggled: [String] = []
     private(set) var problem: String?
+    /// The problem is a newer Iris's mail, which updating this copy solves.
+    private(set) var problemWantsUpdate = false
     /// Why this window does not sync, when it does not: another copy of
     /// Iris holds the store.
     private(set) var notSyncing: String?
@@ -178,7 +180,7 @@ final class MailModel {
                     }
                 }
             } catch {
-                await MainActor.run { self.problem = "\(error)" }
+                await MainActor.run { self.show(problem: error) }
             }
         }
     }
@@ -772,6 +774,13 @@ final class MailModel {
         return await Task.detached { mail.suggest(field: field, accountId: account) }.value
     }
 
+    /// Puts up the notice that the mail could not be read, offering
+    /// Check for Updates when a newer Iris has updated the mail.
+    private func show(problem error: Error) {
+        problem = "\(error)"
+        if case CoreError.NewerStore = error { problemWantsUpdate = true }
+    }
+
     /// Shows `words` in the toast corner.
     func say(_ words: String) {
         toast = Toast(words: words, undo: false)
@@ -1030,7 +1039,7 @@ final class MailModel {
                     }
                 }
             } catch {
-                await MainActor.run { self.problem = "\(error)" }
+                await MainActor.run { self.show(problem: error) }
             }
         }
     }

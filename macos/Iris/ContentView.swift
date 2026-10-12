@@ -103,8 +103,11 @@ struct ContentView: View {
             }
         }
         .onChange(of: undoManager) { model.undoManager = undoManager }
-        .alert("Iris could not read the mail", isPresented: .constant(model.problem != nil)) {
-            Button("OK") {}
+        .alert(tr("Iris could not read the mail"), isPresented: .constant(model.problem != nil)) {
+            if model.problemWantsUpdate, Updates.shared.available {
+                Button(tr("Check for Updates…")) { Updates.shared.checkNow() }
+            }
+            Button(tr("OK")) {}
         } message: {
             Text(model.problem ?? "")
         }

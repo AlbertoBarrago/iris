@@ -138,7 +138,7 @@ var appLocale: Locale {
 extension CoreError: CustomStringConvertible {
     public var description: String {
         switch self {
-        case .Store(let words): words
+        case .Store(let words), .NewerStore(let words): words
         }
     }
 }

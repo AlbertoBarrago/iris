@@ -4116,6 +4116,14 @@ msgstr "L'evento non è più nel calendario"
 msgid "Could not send your answer: {reason}"
 msgstr "Impossibile inviare la tua risposta: {reason}"
 
+#: ffi/src/lib.rs:69
+msgid ""
+"A newer version of Iris has updated your mail since this one last ran. "
+"Update Iris to open it."
+msgstr ""
+"Una versione più recente di Iris ha aggiornato la tua posta dopo l'ultima "
+"volta che hai usato questa. Aggiorna Iris per aprirla."
+
 #: ffi/src/mail.rs:394
 msgid "Will remind you {when}"
 msgstr "Te lo ricorderà {when}"
@@ -4430,7 +4438,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:689
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:691
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -5184,6 +5192,18 @@ msgstr ""
 "un mittente. Ciò che legge resta su questo computer, e disattivando un "
 "account i suoi contatti vengono eliminati."
 
+#: macos/Iris/ContentView.swift:106
+msgid "Iris could not read the mail"
+msgstr "Iris non riesce a leggere la posta"
+
+#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:39
+msgid "Check for Updates…"
+msgstr "Controlla aggiornamenti…"
+
+#: macos/Iris/ContentView.swift:110
+msgid "OK"
+msgstr "OK"
+
 #: macos/Iris/ConversationView.swift:26
 msgid "Remote images are hidden to protect your privacy"
 msgstr "Le immagini remote sono nascoste per proteggere la tua privacy"
@@ -5452,10 +5472,6 @@ msgstr "Nessuno"
 msgid "Propose"
 msgstr "Proponi"
 
-#: macos/Iris/IrisApp.swift:39
-msgid "Check for Updates…"
-msgstr "Controlla aggiornamenti…"
-
 #: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:103
 #: macos/Iris/ShortcutsView.swift:57
 msgid "Keyboard shortcuts"
@@ -5493,48 +5509,48 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:591
+#: macos/Iris/MailModel.swift:593
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:593
+#: macos/Iris/MailModel.swift:595
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:618 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:620 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:761
+#: macos/Iris/MailModel.swift:763
 msgid "Message discarded"
 msgstr "Messaggio scartato"
 
-#: macos/Iris/MailModel.swift:794
+#: macos/Iris/MailModel.swift:803
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:883
+#: macos/Iris/MailModel.swift:892
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1179
+#: macos/Iris/MailModel.swift:1188
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1218
+#: macos/Iris/MailModel.swift:1227
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1701
+#: macos/Iris/MailModel.swift:1710
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1706
+#: macos/Iris/MailModel.swift:1715
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1752
+#: macos/Iris/MailModel.swift:1761
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 

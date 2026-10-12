@@ -21,6 +21,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- When a newer Iris has updated your mail, an older copy says so in plain
+  words and offers to check for updates, instead of naming schema versions.
 - Discard closes the message and says it was discarded, or why the draft
   saved of it stays in Drafts.
 - New Message always opens a new, empty message, also while a reply is

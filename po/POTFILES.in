@@ -101,6 +101,7 @@ appcore/src/accounts.rs
 ffi/src/account_menu.rs
 ffi/src/account_setup.rs
 ffi/src/ai_prefs.rs
+ffi/src/lib.rs
 ffi/src/assistant.rs
 ffi/src/assistant_link.rs
 ffi/src/calendar.rs
@@ -124,6 +125,7 @@ macos/Iris/FindView.swift
 macos/Iris/HideMyEmailView.swift
 macos/Iris/InvitationCard.swift
 macos/Iris/IrisApp.swift
+macos/Iris/ContentView.swift
 macos/Iris/LaterView.swift
 macos/Iris/MailModel.swift
 macos/Iris/ProtectionSettings.swift

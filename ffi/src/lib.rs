@@ -10,6 +10,7 @@
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+use mailrs_domain::translate::gettext;
 use mailrs_domain::{MailSet, Role};
 use mailrs_store::threads::{self, ThreadFilter};
 use mailrs_store::{accounts, bodies, messages};
@@ -55,11 +56,20 @@ uniffi::setup_scaffolding!();
 pub enum CoreError {
     #[error("{0}")]
     Store(String),
+    /// A newer Iris has updated the mail since this one last ran, so only
+    /// updating this copy opens it again; the window offers to.
+    #[error("{0}")]
+    NewerStore(String),
 }
 
 impl From<mailrs_store::StoreError> for CoreError {
     fn from(err: mailrs_store::StoreError) -> Self {
-        CoreError::Store(err.to_string())
+        match err {
+            mailrs_store::StoreError::OtherVersion { found, wanted } if usize::try_from(found).is_ok_and(|f| f > wanted) => {
+                CoreError::NewerStore(gettext("A newer version of Iris has updated your mail since this one last ran. Update Iris to open it."))
+            }
+            err => CoreError::Store(err.to_string()),
+        }
     }
 }
 
@@ -417,6 +427,14 @@ mod tests {
         assert!(store.accounts().unwrap().is_empty());
         assert!(store.inbox(1, 0, 50).unwrap().is_empty());
         assert!(store.conversation(1, "t1".into()).unwrap().is_empty());
+    }
+
+    #[test]
+    fn mail_a_newer_iris_updated_asks_for_an_update() {
+        let newer = mailrs_store::StoreError::OtherVersion { found: 55, wanted: 54 };
+        assert!(matches!(CoreError::from(newer), CoreError::NewerStore(_)));
+        let older = mailrs_store::StoreError::OtherVersion { found: 53, wanted: 54 };
+        assert!(matches!(CoreError::from(older), CoreError::Store(_)));
     }
 
     #[test]

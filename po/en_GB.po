@@ -3773,6 +3773,10 @@ msgstr "The event is no longer on the calendar"
 msgid "Could not send your answer: {reason}"
 msgstr "Could not send your answer: {reason}"
 
+#: ffi/src/lib.rs:69
+msgid "A newer version of Iris has updated your mail since this one last ran. Update Iris to open it."
+msgstr "A newer version of Iris has updated your mail since this one last ran. Update Iris to open it."
+
 #: ffi/src/mail.rs:394
 msgid "Will remind you {when}"
 msgstr "Will remind you {when}"
@@ -4051,7 +4055,7 @@ msgstr "Ask Before Acting"
 msgid "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 msgstr "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:689
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:691
 msgid "Conversation"
 msgstr "Conversation"
 
@@ -4757,6 +4761,18 @@ msgstr "Contacts"
 msgid "Iris can read an account's contacts: names, email addresses, photos, organizations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
 msgstr "Iris can read an account's contacts: names, email addresses, photos, organisations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
 
+#: macos/Iris/ContentView.swift:106
+msgid "Iris could not read the mail"
+msgstr "Iris could not read the mail"
+
+#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:39
+msgid "Check for Updates…"
+msgstr "Check for Updates…"
+
+#: macos/Iris/ContentView.swift:110
+msgid "OK"
+msgstr "OK"
+
 #: macos/Iris/ConversationView.swift:26
 msgid "Remote images are hidden to protect your privacy"
 msgstr "Remote images are hidden to protect your privacy"
@@ -5021,10 +5037,6 @@ msgstr "Nobody"
 msgid "Propose"
 msgstr "Propose"
 
-#: macos/Iris/IrisApp.swift:39
-msgid "Check for Updates…"
-msgstr "Check for Updates…"
-
 #: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:103
 #: macos/Iris/ShortcutsView.swift:57
 msgid "Keyboard shortcuts"
@@ -5058,48 +5070,48 @@ msgstr "View Source"
 msgid "The conversation leaves the inbox now and comes back at this time, marked unread."
 msgstr "The conversation leaves the inbox now and comes back at this time, marked unread."
 
-#: macos/Iris/MailModel.swift:591
+#: macos/Iris/MailModel.swift:593
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: macos/Iris/MailModel.swift:593
+#: macos/Iris/MailModel.swift:595
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:618 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:620 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "Saved {file}"
 
-#: macos/Iris/MailModel.swift:761
+#: macos/Iris/MailModel.swift:763
 msgid "Message discarded"
 msgstr "Message discarded"
 
-#: macos/Iris/MailModel.swift:794
+#: macos/Iris/MailModel.swift:803
 msgid "Sending…"
 msgstr "Sending…"
 
-#: macos/Iris/MailModel.swift:883
+#: macos/Iris/MailModel.swift:892
 msgid "Cancel Send"
 msgstr "Cancel Send"
 
-#: macos/Iris/MailModel.swift:1179
+#: macos/Iris/MailModel.swift:1188
 msgid "Translating…"
 msgstr "Translating…"
 
-#: macos/Iris/MailModel.swift:1218
+#: macos/Iris/MailModel.swift:1227
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "This Mac cannot translate this message: {reason}"
 
-#: macos/Iris/MailModel.swift:1701
+#: macos/Iris/MailModel.swift:1710
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: macos/Iris/MailModel.swift:1706
+#: macos/Iris/MailModel.swift:1715
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1752
+#: macos/Iris/MailModel.swift:1761
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 
