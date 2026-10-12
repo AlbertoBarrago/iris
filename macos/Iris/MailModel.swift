@@ -137,7 +137,14 @@ final class MailModel {
             .path(percentEncoded: false)
     }
 
+    /// Set once the store is being opened. Every main window asks for it
+    /// as it appears, and a second core would find the first one holding
+    /// the sync lock and take its place without syncing.
+    private var opened = false
+
     func open() {
+        guard !opened else { return }
+        opened = true
         Task.detached {
             do {
                 let mail = try Mail.open(path: MailModel.storePath)
@@ -179,11 +186,16 @@ final class MailModel {
         } news: { [weak self] notices in
             Task { @MainActor in self?.announce(notices) }
         }
-        do {
-            try mail.startSync(listener: listener)
-            notSyncing = nil
-        } catch {
-            notSyncing = "\(error)"
+        // Taking the store can wait a few seconds for a copy that is still
+        // quitting, so it runs off the main thread.
+        Task.detached {
+            let started = Result { try mail.startSync(listener: listener) }
+            await MainActor.run {
+                switch started {
+                case .success: self.notSyncing = nil
+                case .failure(let error): self.notSyncing = "\(error)"
+                }
+            }
         }
     }
 

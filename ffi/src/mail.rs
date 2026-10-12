@@ -256,12 +256,25 @@ impl Mail {
         if held.is_some() {
             return Ok(());
         }
-        let lock = SyncLock::take(&self.dir).map_err(|err| match err {
-            LockError::Held => CoreError::Store(
-                "Another copy of Iris is syncing your mail. Quit it, then try again.".into(),
-            ),
-            other => CoreError::Store(other.to_string()),
-        })?;
+        // A copy just quit, as when the app restarts, can hold the lock for
+        // a moment more, so the take is tried for a few seconds before it
+        // says another copy has it.
+        let mut tries = 0;
+        let lock = loop {
+            match SyncLock::take(&self.dir) {
+                Ok(lock) => break lock,
+                Err(LockError::Held) if tries < 20 => {
+                    tries += 1;
+                    std::thread::sleep(std::time::Duration::from_millis(250));
+                }
+                Err(LockError::Held) => {
+                    return Err(CoreError::Store(gettext(
+                        "Another copy of Iris is syncing your mail. Quit it, then try again.",
+                    )));
+                }
+                Err(other) => return Err(CoreError::Store(other.to_string())),
+            }
+        };
         *self.listener.lock().unwrap_or_else(|p| p.into_inner()) = Some(Arc::clone(&listener));
         let config = match config_path().map(|path| Config::load(&path)) {
             Ok(Ok(config)) => config,

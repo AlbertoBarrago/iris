@@ -3581,6 +3581,10 @@ msgstr "Automatic reply is off"
 msgid "Remove {account}?"
 msgstr "Remove {account}?"
 
+#: ffi/src/account_setup.rs:680
+msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
+msgstr "Another copy of Iris is syncing your mail. Quit it, then try again."
+
 #: ffi/src/ai_prefs.rs:247
 msgid "No answer: {reason}"
 msgstr "No answer: {reason}"
@@ -3741,27 +3745,27 @@ msgstr "The event is no longer on the calendar"
 msgid "Could not send your answer: {reason}"
 msgstr "Could not send your answer: {reason}"
 
-#: ffi/src/mail.rs:374
+#: ffi/src/mail.rs:387
 msgid "Will remind you {when}"
 msgstr "Will remind you {when}"
 
-#: ffi/src/mail.rs:377
+#: ffi/src/mail.rs:390
 msgid "Back in the Inbox"
 msgstr "Back in the Inbox"
 
-#: ffi/src/mail.rs:414
+#: ffi/src/mail.rs:427
 msgid "Could not cancel: {reason}"
 msgstr "Could not cancel: {reason}"
 
-#: ffi/src/mail.rs:438
+#: ffi/src/mail.rs:451
 msgid "Deleted. It will not be sent."
 msgstr "Deleted. It will not be sent."
 
-#: ffi/src/mail.rs:439
+#: ffi/src/mail.rs:452
 msgid "Deleted. They will not be sent."
 msgstr "Deleted. They will not be sent."
 
-#: ffi/src/mail.rs:448
+#: ffi/src/mail.rs:461
 msgid "Could not delete: {reason}"
 msgstr "Could not delete: {reason}"
 
@@ -3967,7 +3971,7 @@ msgstr "Ask Before Acting"
 msgid "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 msgstr "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:668
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:680
 msgid "Conversation"
 msgstr "Conversation"
 
@@ -4916,43 +4920,43 @@ msgstr "Open in New Window"
 msgid "The conversation leaves the inbox now and comes back at this time, marked unread."
 msgstr "The conversation leaves the inbox now and comes back at this time, marked unread."
 
-#: macos/Iris/MailModel.swift:570
+#: macos/Iris/MailModel.swift:582
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: macos/Iris/MailModel.swift:572
+#: macos/Iris/MailModel.swift:584
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:597
+#: macos/Iris/MailModel.swift:609
 msgid "Saved {file}"
 msgstr "Saved {file}"
 
-#: macos/Iris/MailModel.swift:638
+#: macos/Iris/MailModel.swift:650
 msgid "Open a conversation first"
 msgstr "Open a conversation first"
 
-#: macos/Iris/MailModel.swift:762
+#: macos/Iris/MailModel.swift:774
 msgid "Sending…"
 msgstr "Sending…"
 
-#: macos/Iris/MailModel.swift:851
+#: macos/Iris/MailModel.swift:863
 msgid "Cancel Send"
 msgstr "Cancel Send"
 
-#: macos/Iris/MailModel.swift:1100
+#: macos/Iris/MailModel.swift:1112
 msgid "Translating…"
 msgstr "Translating…"
 
-#: macos/Iris/MailModel.swift:1552
+#: macos/Iris/MailModel.swift:1564
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: macos/Iris/MailModel.swift:1557
+#: macos/Iris/MailModel.swift:1569
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1603
+#: macos/Iris/MailModel.swift:1615
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 

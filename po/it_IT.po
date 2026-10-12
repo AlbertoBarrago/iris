@@ -3897,6 +3897,10 @@ msgstr "La risposta automatica è disattivata"
 msgid "Remove {account}?"
 msgstr "Rimuovere {account}?"
 
+#: ffi/src/account_setup.rs:680
+msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
+msgstr "Un'altra copia di Iris sta sincronizzando la posta. Chiudila e riprova."
+
 #: ffi/src/ai_prefs.rs:247
 msgid "No answer: {reason}"
 msgstr "Nessuna risposta: {reason}"
@@ -4083,27 +4087,27 @@ msgstr "L'evento non è più nel calendario"
 msgid "Could not send your answer: {reason}"
 msgstr "Impossibile inviare la tua risposta: {reason}"
 
-#: ffi/src/mail.rs:374
+#: ffi/src/mail.rs:387
 msgid "Will remind you {when}"
 msgstr "Te lo ricorderà {when}"
 
-#: ffi/src/mail.rs:377
+#: ffi/src/mail.rs:390
 msgid "Back in the Inbox"
 msgstr "Di nuovo in Posta in arrivo"
 
-#: ffi/src/mail.rs:414
+#: ffi/src/mail.rs:427
 msgid "Could not cancel: {reason}"
 msgstr "Impossibile annullare: {reason}"
 
-#: ffi/src/mail.rs:438
+#: ffi/src/mail.rs:451
 msgid "Deleted. It will not be sent."
 msgstr "Eliminato. Non verrà inviato."
 
-#: ffi/src/mail.rs:439
+#: ffi/src/mail.rs:452
 msgid "Deleted. They will not be sent."
 msgstr "Eliminati. Non verranno inviati."
 
-#: ffi/src/mail.rs:448
+#: ffi/src/mail.rs:461
 msgid "Could not delete: {reason}"
 msgstr "Impossibile eliminare: {reason}"
 
@@ -4338,7 +4342,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:668
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:680
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -5343,43 +5347,43 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:570
+#: macos/Iris/MailModel.swift:582
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:572
+#: macos/Iris/MailModel.swift:584
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:597
+#: macos/Iris/MailModel.swift:609
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:638
+#: macos/Iris/MailModel.swift:650
 msgid "Open a conversation first"
 msgstr "Apri prima una conversazione"
 
-#: macos/Iris/MailModel.swift:762
+#: macos/Iris/MailModel.swift:774
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:851
+#: macos/Iris/MailModel.swift:863
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1100
+#: macos/Iris/MailModel.swift:1112
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1552
+#: macos/Iris/MailModel.swift:1564
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1557
+#: macos/Iris/MailModel.swift:1569
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1603
+#: macos/Iris/MailModel.swift:1615
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -7123,13 +7127,6 @@ msgstr "VIP"
 
 #~ msgid "“{subject}”"
 #~ msgstr "“{subject}”"
-
-#~ msgid ""
-#~ "Another copy of Iris, or iris-cli sync, is syncing your mail. Stop it, "
-#~ "then open Iris again."
-#~ msgstr ""
-#~ "Un'altra copia di Iris, o iris-cli sync, sta sincronizzando la tua posta. "
-#~ "Interrompila, poi riapri Iris."
 
 #~ msgid "Iris could not update its mail store, and kept the old one."
 #~ msgstr ""

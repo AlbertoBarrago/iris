@@ -108,3 +108,14 @@ var appLocale: Locale {
     let chosen = chosenLanguage()
     return chosen.isEmpty ? .current : Locale(identifier: chosen)
 }
+
+/// The core's errors as the person reads them: their words alone, not
+/// the case they travel in, so a notice says "Another copy of Iris is
+/// syncing your mail" rather than `Store("…")`.
+extension CoreError: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .Store(let words): words
+        }
+    }
+}

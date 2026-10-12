@@ -677,7 +677,7 @@ impl AccountSetup {
         self.mail
             .running
             .current()
-            .ok_or_else(|| CoreError::Store("Another copy of Iris is syncing your mail. Quit it, then try again.".into()))
+            .ok_or_else(|| CoreError::Store(gettext("Another copy of Iris is syncing your mail. Quit it, then try again.")))
     }
 }
 
