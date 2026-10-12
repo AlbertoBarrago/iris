@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.6 (2026-10-12)
+
 ### Fixed
 
 - The assistant can write, save and send mail again, instead of saying the
