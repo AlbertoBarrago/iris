@@ -14,6 +14,9 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- Reply answers the newest message that is not your own unsent draft, and
+  goes to the address a message asks replies to go to (Reply-To), as Mail
+  does.
 - Send on a message with no recipient, or with an address that is not one,
   says so under the recipients and keeps the message open, instead of
   closing it and bringing it back a few seconds later.

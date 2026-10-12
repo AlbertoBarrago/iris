@@ -895,6 +895,9 @@ pub enum ReplyKind {
 /// `thread` is the whole conversation, oldest first. `original_text` and
 /// `original_html` are the original's body; a forward carries the HTML
 /// through unchanged, so what goes out is the message that arrived.
+/// `reply_to` is the original's `Reply-To`, where a reply goes instead of
+/// its sender when it names anyone.
+#[expect(clippy::too_many_arguments, reason = "each is part of the message being answered")]
 pub fn respond(
     kind: ReplyKind,
     account_id: AccountId,
@@ -902,6 +905,7 @@ pub fn respond(
     original: &MessageMeta,
     original_text: &str,
     original_html: Option<&str>,
+    reply_to: &[Address],
     thread: &[MessageMeta],
 ) -> Draft {
     let blank = Address {
@@ -919,8 +923,12 @@ pub fn respond(
     match kind {
         ReplyKind::Reply | ReplyKind::ReplyAll => {
             let from_me = mine.iter().any(|a| same_address(&sender, a));
+            // Mail the person sent is answered to the people it went to;
+            // anyone else's goes where its Reply-To says, else to its sender.
             let mut to: Vec<Address> = if from_me {
                 original.to.clone()
+            } else if !reply_to.is_empty() {
+                reply_to.to_vec()
             } else {
                 vec![sender.clone()]
             };
@@ -973,6 +981,14 @@ pub fn respond(
         }
     }
     draft
+}
+
+/// The message Reply answers in `thread`, oldest first: the newest one that
+/// is not a draft. A reply the person saved and has not sent is theirs to
+/// finish, not the message being answered. A conversation of drafts alone
+/// answers its newest.
+pub fn answered(thread: &[MessageMeta]) -> Option<&MessageMeta> {
+    thread.iter().rev().find(|m| !m.is_draft()).or_else(|| thread.last())
 }
 
 fn same_address(a: &Address, b: &Address) -> bool {
@@ -1802,6 +1818,50 @@ mod tests {
     }
 
     #[test]
+    fn a_reply_goes_where_reply_to_says() {
+        let list = addr(Some("The list"), "list@news.example");
+        let original = message(
+            "m1",
+            addr(Some("Ann"), "ann@news.example"),
+            vec![me()],
+            vec![addr(None, "bob@example.com")],
+        );
+        let reply = respond(ReplyKind::Reply, 1, &[me()], &original, "", None, std::slice::from_ref(&list), &[]);
+        assert_eq!(reply.to, vec![list.clone()]);
+        assert!(reply.cc.is_empty());
+
+        // Reply All keeps the other people on it, and never the person.
+        let all = respond(ReplyKind::ReplyAll, 1, &[me()], &original, "", None, std::slice::from_ref(&list), &[]);
+        assert_eq!(all.to, vec![list]);
+        assert_eq!(all.cc, vec![addr(None, "bob@example.com")]);
+    }
+
+    #[test]
+    fn mail_the_person_sent_is_answered_to_its_recipients_whatever_reply_to_says() {
+        let ann = addr(Some("Ann"), "ann@example.com");
+        let sent = message("m1", me(), vec![ann.clone()], vec![]);
+        let elsewhere = addr(None, "replies@example.org");
+        let reply = respond(ReplyKind::Reply, 1, &[me()], &sent, "", None, &[elsewhere], &[]);
+        assert_eq!(reply.to, vec![ann]);
+    }
+
+    #[test]
+    fn reply_answers_the_newest_message_that_is_not_a_draft() {
+        let ann = addr(Some("Ann"), "ann@example.com");
+        let first = message("m1", ann.clone(), vec![me()], vec![]);
+        let mut draft = message("m2", me(), vec![], vec![]);
+        draft.roles = vec![mailrs_domain::Role::Drafts];
+        let thread = [first, draft];
+        assert_eq!(answered(&thread).map(|m| m.id.as_str()), Some("m1"));
+        let reply = respond(ReplyKind::Reply, 1, &[me()], answered(&thread).unwrap(), "", None, &[], &thread);
+        assert_eq!(reply.to, vec![ann]);
+
+        // A conversation of nothing but a draft answers that draft.
+        assert_eq!(answered(&thread[1..]).map(|m| m.id.as_str()), Some("m2"));
+        assert!(answered(&[]).is_none());
+    }
+
+    #[test]
     fn a_reply_goes_to_the_sender_and_quotes_them() {
         let first = message(
             "m1",
@@ -1823,6 +1883,7 @@ mod tests {
             &second,
             "Noon works.\n\nSee you",
             None,
+            &[],
             &thread,
         );
         assert_eq!(draft.to, vec![addr(Some("Ann"), "ann@example.com")]);
@@ -1853,6 +1914,7 @@ mod tests {
             &sent,
             "hi",
             None,
+            &[],
             std::slice::from_ref(&sent),
         );
         assert_eq!(draft.to, vec![addr(None, "bob@example.com")]);
@@ -1879,6 +1941,7 @@ mod tests {
             &original,
             "x",
             None,
+            &[],
             std::slice::from_ref(&original),
         );
         assert_eq!(
@@ -1920,6 +1983,7 @@ mod tests {
             &original,
             "x",
             None,
+            &[],
             std::slice::from_ref(&original),
         );
         assert_eq!(draft.from, sales());
@@ -1942,6 +2006,7 @@ mod tests {
             &original,
             "x",
             None,
+            &[],
             std::slice::from_ref(&original),
         );
         assert_eq!(draft.from, me());
@@ -2110,12 +2175,12 @@ mod tests {
         let mut original = message("m1", addr(None, "a@example.com"), vec![], vec![]);
         original.subject = "RE: Budget".into();
         assert_eq!(
-            respond(ReplyKind::Reply, 1, &[me()], &original, "", None, &[]).subject,
+            respond(ReplyKind::Reply, 1, &[me()], &original, "", None, &[], &[]).subject,
             "RE: Budget"
         );
         original.subject = "Fw: Budget".into();
         assert_eq!(
-            respond(ReplyKind::Forward, 1, &[me()], &original, "", None, &[]).subject,
+            respond(ReplyKind::Forward, 1, &[me()], &original, "", None, &[], &[]).subject,
             "Fw: Budget"
         );
     }
@@ -2135,6 +2200,7 @@ mod tests {
             &original,
             "Menu attached.",
             None,
+            &[],
             &[],
         );
         assert!(draft.to.is_empty());
@@ -2176,6 +2242,7 @@ mod tests {
             text,
             Some(html),
             &[],
+            &[],
         );
         draft.to = vec![addr(None, "bob@example.com")];
         let raw = build_mime(&draft, 0, "id@example.com").unwrap();
@@ -2198,7 +2265,7 @@ mod tests {
             vec![],
         );
         let text = "Line one\nLine two\n-------------\n# Not a heading\n* Not a bullet";
-        let mut draft = respond(ReplyKind::Forward, 1, &[me()], &original, text, None, &[]);
+        let mut draft = respond(ReplyKind::Forward, 1, &[me()], &original, text, None, &[], &[]);
         draft.to = vec![addr(None, "bob@example.com")];
         let raw = build_mime(&draft, 0, "id@example.com").unwrap();
         let sent = MessageParser::default()
@@ -2229,6 +2296,7 @@ mod tests {
             &original,
             "Sale",
             Some(html),
+            &[],
             &[],
         );
         draft.to = vec![addr(None, "bob@example.com")];
@@ -2892,6 +2960,7 @@ mod tests {
             "Noon works.\n\nSee you",
             None,
             &[],
+            &[],
         );
         draft.markdown = with_signature("Thanks.", "Dana");
         draft
@@ -3114,6 +3183,7 @@ mod tests {
             &original,
             "Sale today",
             Some("<p>Sale <b>today</b></p>"),
+            &[],
             &[],
         );
         draft.markdown = "FYI".into();

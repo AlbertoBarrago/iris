@@ -150,8 +150,7 @@ impl Mail {
         let db = self.db.clone();
         let (thread, id) = (thread_id.clone(), account_id);
         let metas: Vec<MessageMeta> = self.run(async move { db.read(move |c| messages::thread_messages(c, id, &thread)).await })?;
-        let original = metas
-            .last()
+        let original = compose::answered(&metas)
             .cloned()
             .ok_or_else(|| CoreError::Store("The conversation is empty.".into()))?;
         let body = match self.stored_body(account_id, &original.id) {
@@ -182,7 +181,8 @@ impl Mail {
             ReplyMode::ReplyAll => ReplyKind::ReplyAll,
             ReplyMode::Forward => ReplyKind::Forward,
         };
-        let draft = compose::respond(kind, account_id, &mine, &original, &text, html.as_deref(), &metas);
+        let reply_to = body.as_ref().map(|b| b.reply_to.clone()).unwrap_or_default();
+        let draft = compose::respond(kind, account_id, &mine, &original, &text, html.as_deref(), &reply_to, &metas);
         Ok(self.shown(self.signed(draft)))
     }
 

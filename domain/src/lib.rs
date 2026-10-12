@@ -337,6 +337,11 @@ impl MessageMeta {
         self.roles.contains(&role)
     }
 
+    /// The message is a draft: it sits in Drafts or carries the draft mark.
+    pub fn is_draft(&self) -> bool {
+        self.in_role(Role::Drafts) || self.has_keyword(keyword::DRAFT)
+    }
+
     /// The message sits in the server mailbox `id`.
     pub fn in_mailbox(&self, id: &str) -> bool {
         self.held.mailboxes.iter().any(|m| m == id)
@@ -470,6 +475,11 @@ pub struct MessageBody {
     /// the raw message instead.
     #[serde(default)]
     pub protection: Option<Protection>,
+    /// The `Reply-To` header's addresses, where a reply goes instead of
+    /// `From`. Empty when the header is absent, and for a body stored
+    /// before the field existed.
+    #[serde(default)]
+    pub reply_to: Vec<Address>,
 }
 
 /// What a message arrived wrapped in: a signature beside the message, or

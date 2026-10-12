@@ -57,6 +57,18 @@ fn picks_html_and_text_from_an_alternative() {
 }
 
 #[test]
+fn reply_to_is_read_off_the_headers() {
+    let raw = b"From: Ann <ann@news.example>\r\n\
+Reply-To: The list <list@news.example>, bob@example.com\r\n\
+Content-Type: text/plain\r\n\r\nHello\r\n";
+    let body = read(raw);
+    let to: Vec<&str> = body.reply_to.iter().map(|a| a.email.as_str()).collect();
+    assert_eq!(to, ["list@news.example", "bob@example.com"]);
+    assert_eq!(body.reply_to[0].name.as_deref(), Some("The list"));
+    assert!(read(b"Content-Type: text/plain\r\n\r\nHi\r\n").reply_to.is_empty());
+}
+
+#[test]
 fn decodes_non_utf8_charsets() {
     let raw = [
         b"Content-Type: text/plain; charset=\"ISO-8859-1\"\r\nContent-Transfer-Encoding: 8bit\r\n\r\n".as_slice(),

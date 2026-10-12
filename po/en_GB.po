@@ -1150,7 +1150,7 @@ msgid "Forwards “{subject}” from {sender}"
 msgstr "Forwards “{subject}” from {sender}"
 
 #: appcore/src/assistant/run/writing.rs:271
-#: appcore/src/assistant/run/writing.rs:916
+#: appcore/src/assistant/run/writing.rs:917
 msgid "Attached: {files}"
 msgstr "Attached: {files}"
 
@@ -1168,55 +1168,55 @@ msgstr[1] "Put {count} files from this computer in a draft?"
 msgid "Send “{subject}” to {recipients}?"
 msgstr "Send “{subject}” to {recipients}?"
 
-#: appcore/src/assistant/run/writing.rs:737
+#: appcore/src/assistant/run/writing.rs:738
 msgid "Change the draft “{subject}”?"
 msgstr "Change the draft “{subject}”?"
 
-#: appcore/src/assistant/run/writing.rs:884
+#: appcore/src/assistant/run/writing.rs:885
 msgid "nobody"
 msgstr "nobody"
 
-#: appcore/src/assistant/run/writing.rs:890
+#: appcore/src/assistant/run/writing.rs:891
 msgid "To: {recipients}"
 msgstr "To: {recipients}"
 
-#: appcore/src/assistant/run/writing.rs:893
+#: appcore/src/assistant/run/writing.rs:894
 msgid "Cc: {recipients}"
 msgstr "Cc: {recipients}"
 
-#: appcore/src/assistant/run/writing.rs:896
+#: appcore/src/assistant/run/writing.rs:897
 msgid "Bcc: {recipients}"
 msgstr "Bcc: {recipients}"
 
-#: appcore/src/assistant/run/writing.rs:900
+#: appcore/src/assistant/run/writing.rs:901
 msgid "Subject: {subject}"
 msgstr "Subject: {subject}"
 
-#: appcore/src/assistant/run/writing.rs:905
+#: appcore/src/assistant/run/writing.rs:906
 msgid "New text in place of the old"
 msgstr "New text in place of the old"
 
-#: appcore/src/assistant/run/writing.rs:909
+#: appcore/src/assistant/run/writing.rs:910
 msgid "Takes out: {files}"
 msgstr "Takes out: {files}"
 
-#: appcore/src/assistant/run/writing.rs:924
+#: appcore/src/assistant/run/writing.rs:925
 msgid "Goes out encrypted"
 msgstr "Goes out encrypted"
 
-#: appcore/src/assistant/run/writing.rs:925
+#: appcore/src/assistant/run/writing.rs:926
 msgid "Goes out unencrypted"
 msgstr "Goes out unencrypted"
 
-#: appcore/src/assistant/run/writing.rs:929
+#: appcore/src/assistant/run/writing.rs:930
 msgid "Goes out signed"
 msgstr "Goes out signed"
 
-#: appcore/src/assistant/run/writing.rs:930
+#: appcore/src/assistant/run/writing.rs:931
 msgid "Goes out unsigned"
 msgstr "Goes out unsigned"
 
-#: appcore/src/assistant/run/writing.rs:940
+#: appcore/src/assistant/run/writing.rs:941
 msgid "Delete the draft “{subject}”? {provider} cannot bring it back."
 msgstr "Delete the draft “{subject}”? {provider} cannot bring it back."
 
@@ -1342,7 +1342,7 @@ msgstr "Focus time"
 msgid "Declined because I am out of office"
 msgstr "Declined because I am out of office"
 
-#: appcore/src/compose.rs:592 appcore/src/compose.rs:2779
+#: appcore/src/compose.rs:592 appcore/src/compose.rs:2847
 msgid "Add at least one recipient."
 msgstr "Add at least one recipient."
 
@@ -1350,11 +1350,11 @@ msgstr "Add at least one recipient."
 msgid "“{address}” is not an email address."
 msgstr "“{address}” is not an email address."
 
-#: appcore/src/compose.rs:849 appcore/src/compose.rs:2785
+#: appcore/src/compose.rs:849 appcore/src/compose.rs:2853
 msgid "Choose a time in the future"
 msgstr "Choose a time in the future"
 
-#: appcore/src/compose.rs:1059
+#: appcore/src/compose.rs:1075
 msgid "On {date}, {sender} wrote:"
 msgstr "On {date}, {sender} wrote:"
 

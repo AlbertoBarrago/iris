@@ -1,7 +1,7 @@
 mod common;
 
 use common::{db, meta, store};
-use mailrs_domain::{Attachment, MessageBody, Protection, Provenance};
+use mailrs_domain::{Address, Attachment, MessageBody, Protection, Provenance};
 use mailrs_store::messages::Change;
 use mailrs_store::{bodies, messages};
 
@@ -26,6 +26,10 @@ fn body(text: &str) -> MessageBody {
             signed_by: Some("example.net".into()),
             encrypted: Some(true),
         },
+        reply_to: vec![Address {
+            name: Some("The list".into()),
+            email: "list@news.example".into(),
+        }],
     }
 }
 

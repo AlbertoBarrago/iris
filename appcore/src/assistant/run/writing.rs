@@ -483,6 +483,7 @@ impl<A: Accounts> Tools<A> {
             &text,
             html.as_deref(),
             &[],
+            &[],
         );
         if draft.subject.is_empty() {
             draft.subject = made.subject;

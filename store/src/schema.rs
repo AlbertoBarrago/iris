@@ -863,6 +863,12 @@ CREATE TABLE contact_offers (
     PRIMARY KEY (account_id, email)
 );
 "#,
+    // A message's `Reply-To`, where a reply goes instead of its sender.
+    // JSON, as the composer reads the list whole; a body stored before
+    // this has none and answers its sender, as it always did.
+    r#"
+ALTER TABLE bodies ADD COLUMN reply_to TEXT;
+"#,
 ];
 
 /// How long the copy taken before a migration stays once the store has

@@ -13,6 +13,38 @@ use crate::StoreError;
 
 const TO_MAILBOXES: &str = include_str!("26-mailboxes.sql");
 
+/// Writes a body with the columns a store at an older version has.
+/// `bodies::put_body` writes the shape of the newest schema, which a later
+/// migration may have added a column to.
+fn put_old_body(conn: &Connection, id: &str, body: &mailrs_domain::MessageBody) {
+    conn.execute(
+        "INSERT INTO bodies (account_id, message_id, html, text, size, fetched_at, accessed_at) \
+         VALUES (1, ?1, ?2, ?3, 0, 1, 1)",
+        rusqlite::params![id, body.html, body.text],
+    )
+    .unwrap();
+    if let Some(calendar) = &body.calendar {
+        conn.execute("UPDATE bodies SET calendar = ?2 WHERE message_id = ?1", rusqlite::params![id, calendar])
+            .unwrap();
+    }
+    for a in &body.attachments {
+        conn.execute(
+            "INSERT INTO attachments (account_id, message_id, part_id, filename, mime_type, size, attachment_id, \
+             content_id) VALUES (1, ?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+            rusqlite::params![id, a.part_id, a.filename, a.mime_type, a.size, a.attachment_id, a.content_id],
+        )
+        .unwrap();
+    }
+}
+
+/// Whether the store still holds a body for `id`, read in a way every
+/// version of the schema answers.
+fn has_body(conn: &Connection, id: &str) -> bool {
+    conn.query_row("SELECT COUNT(*) FROM bodies WHERE message_id = ?1", [id], |row| row.get::<_, i64>(0))
+        .unwrap()
+        > 0
+}
+
 /// Two accounts. Messages carry each role label, both keyword labels,
 /// UNREAD, two categories, a person's label that is listed, one that is
 /// not, and CHAT, which Gmail puts on mail but never lists. `t3` starts
@@ -361,8 +393,6 @@ fn an_account_from_before_the_migration_keeps_its_own_client() {
 fn a_body_read_as_two_text_attachments_is_fetched_again() {
     use mailrs_domain::{Attachment, MessageBody};
 
-    use crate::bodies;
-
     let part = |id: &str, mime: &str, content_id: &str| Attachment {
         part_id: id.into(),
         filename: format!("text-{content_id}.txt"),
@@ -392,13 +422,13 @@ fn a_body_read_as_two_text_attachments_is_fetched_again() {
         text: Some("fine".into()),
         ..MessageBody::default()
     };
-    bodies::put_body(&conn, 1, "li", &empty, 1).unwrap();
-    bodies::put_body(&conn, 1, "ok", &fine, 1).unwrap();
+    put_old_body(&conn, "li", &empty);
+    put_old_body(&conn, "ok", &fine);
     drop(conn);
 
     let conn = open_with(&path, MIGRATIONS).unwrap();
-    assert!(bodies::get_body(&conn, 1, "li", 2).unwrap().is_none());
-    assert!(bodies::get_body(&conn, 1, "ok", 2).unwrap().is_some());
+    assert!(!has_body(&conn, "li"));
+    assert!(has_body(&conn, "ok"));
 }
 
 /// Bodies decoded under the charset they claimed rather than the one their
@@ -408,8 +438,6 @@ fn a_body_read_as_two_text_attachments_is_fetched_again() {
 #[test]
 fn a_body_decoded_in_the_wrong_charset_is_fetched_again() {
     use mailrs_domain::MessageBody;
-
-    use crate::bodies;
 
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("mail.db");
@@ -434,15 +462,15 @@ fn a_body_decoded_in_the_wrong_charset_is_fetched_again() {
         text: Some("Direção de Recuperação de Crédito, «café» às três".into()),
         ..MessageBody::default()
     };
-    bodies::put_body(&conn, 1, "html", &garbled_html, 1).unwrap();
-    bodies::put_body(&conn, 1, "text", &garbled_text, 1).unwrap();
-    bodies::put_body(&conn, 1, "ok", &fine, 1).unwrap();
+    put_old_body(&conn, "html", &garbled_html);
+    put_old_body(&conn, "text", &garbled_text);
+    put_old_body(&conn, "ok", &fine);
     drop(conn);
 
     let conn = open_with(&path, MIGRATIONS).unwrap();
-    assert!(bodies::get_body(&conn, 1, "html", 2).unwrap().is_none());
-    assert!(bodies::get_body(&conn, 1, "text", 2).unwrap().is_none());
-    assert!(bodies::get_body(&conn, 1, "ok", 2).unwrap().is_some());
+    assert!(!has_body(&conn, "html"));
+    assert!(!has_body(&conn, "text"));
+    assert!(has_body(&conn, "ok"));
 }
 
 /// Google Calendar's invitation part came by attachment id, so bodies read
@@ -452,8 +480,6 @@ fn a_body_decoded_in_the_wrong_charset_is_fetched_again() {
 #[test]
 fn an_invitation_read_without_its_calendar_is_fetched_again() {
     use mailrs_domain::{Attachment, MessageBody};
-
-    use crate::bodies;
 
     let ics = |mime: &str| Attachment {
         part_id: "1".into(),
@@ -487,17 +513,17 @@ fn an_invitation_read_without_its_calendar_is_fetched_again() {
         text: Some("hello".into()),
         ..MessageBody::default()
     };
-    bodies::put_body(&conn, 1, "missed", &missed, 1).unwrap();
-    bodies::put_body(&conn, 1, "read", &read, 1).unwrap();
-    bodies::put_body(&conn, 1, "plain", &plain, 1).unwrap();
+    put_old_body(&conn, "missed", &missed);
+    put_old_body(&conn, "read", &read);
+    put_old_body(&conn, "plain", &plain);
     drop(conn);
 
     // Up to migration 28 alone: a later one drops every body with a file,
     // the invitation that was read among them.
     let conn = open_with(&path, &MIGRATIONS[..28]).unwrap();
-    assert!(bodies::get_body(&conn, 1, "missed", 2).unwrap().is_none());
-    assert!(bodies::get_body(&conn, 1, "read", 2).unwrap().is_some());
-    assert!(bodies::get_body(&conn, 1, "plain", 2).unwrap().is_some());
+    assert!(!has_body(&conn, "missed"));
+    assert!(has_body(&conn, "read"));
+    assert!(has_body(&conn, "plain"));
 }
 
 /// Migration 30 adds local threading's table and column without touching a

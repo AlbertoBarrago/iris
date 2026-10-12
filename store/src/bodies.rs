@@ -17,13 +17,14 @@ pub fn put_body(
         body.html.as_ref().map_or(0, String::len) + body.text.as_ref().map_or(0, String::len);
     conn.execute(
         "INSERT INTO bodies (account_id, message_id, html, text, size, fetched_at, accessed_at, \
-         list_unsubscribe, one_click_unsubscribe, calendar, protection, provenance) \
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6, ?7, ?8, ?9, ?10, ?11) \
+         list_unsubscribe, one_click_unsubscribe, calendar, protection, provenance, reply_to) \
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6, ?7, ?8, ?9, ?10, ?11, ?12) \
          ON CONFLICT (account_id, message_id) DO UPDATE SET html = excluded.html, text = excluded.text, \
          size = excluded.size, fetched_at = excluded.fetched_at, accessed_at = excluded.accessed_at, \
          list_unsubscribe = excluded.list_unsubscribe, \
          one_click_unsubscribe = excluded.one_click_unsubscribe, calendar = excluded.calendar, \
-         protection = excluded.protection, provenance = excluded.provenance",
+         protection = excluded.protection, provenance = excluded.provenance, \
+         reply_to = excluded.reply_to",
         params![
             account_id,
             message_id,
@@ -39,6 +40,9 @@ pub fn put_body(
             // as one JSON column rather than three of their own.
             (!body.provenance.is_empty())
                 .then(|| serde_json::to_string(&body.provenance).ok())
+                .flatten(),
+            (!body.reply_to.is_empty())
+                .then(|| serde_json::to_string(&body.reply_to).ok())
                 .flatten()
         ],
     )?;
@@ -97,11 +101,12 @@ pub fn peek_body(
         Option<String>,
         Option<String>,
         Option<String>,
+        Option<String>,
     );
     let row: Option<BodyRow> = conn
         .query_row(
             "SELECT html, text, list_unsubscribe, one_click_unsubscribe, calendar, protection, \
-             provenance FROM bodies WHERE account_id = ?1 AND message_id = ?2",
+             provenance, reply_to FROM bodies WHERE account_id = ?1 AND message_id = ?2",
             params![account_id, message_id],
             |row| {
                 Ok((
@@ -112,6 +117,7 @@ pub fn peek_body(
                     row.get(4)?,
                     row.get(5)?,
                     row.get(6)?,
+                    row.get(7)?,
                 ))
             },
         )
@@ -124,6 +130,7 @@ pub fn peek_body(
         calendar,
         protection,
         provenance,
+        reply_to,
     )) = row
     else {
         return Ok(None);
@@ -153,6 +160,9 @@ pub fn peek_body(
         calendar,
         protection: protection.and_then(|stored| stored.parse().ok()),
         provenance: provenance
+            .and_then(|stored| serde_json::from_str(&stored).ok())
+            .unwrap_or_default(),
+        reply_to: reply_to
             .and_then(|stored| serde_json::from_str(&stored).ok())
             .unwrap_or_default(),
     }))
