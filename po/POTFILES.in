@@ -141,3 +141,4 @@ macos/Iris/SourceView.swift
 ffi/src/senders.rs
 ffi/src/smart.rs
 macos/Iris/SmartEditorView.swift
+macos/Iris/ShortcutsView.swift

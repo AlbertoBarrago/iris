@@ -39,6 +39,10 @@ struct IrisApp: App {
                 Button(tr("Check for Updates…")) { Updates.shared.checkNow() }
                     .disabled(!Updates.shared.available)
             }
+            CommandGroup(replacing: .help) {
+                Button(tr("Keyboard shortcuts")) { openWindow(id: "shortcuts") }
+                    .keyboardShortcut("/", modifiers: [.command, .shift])
+            }
             CommandGroup(replacing: .newItem) {
                 Button(tr("New Message")) { model.composeAsked = ComposeRequest(kind: .new) }
                     .keyboardShortcut("n")
@@ -94,6 +98,10 @@ struct IrisApp: App {
             }
         }
         .defaultSize(width: 820, height: 760)
+        Window(tr("Keyboard shortcuts"), id: "shortcuts") {
+            ShortcutsView()
+        }
+        .windowResizability(.contentSize)
         Window(aboutWords().title, id: "about") {
             AboutView()
         }

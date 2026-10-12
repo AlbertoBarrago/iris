@@ -4628,8 +4628,8 @@ msgstr ""
 
 #: macos/Iris/CalendarView.swift:83 macos/Iris/CalendarView.swift:84
 #: macos/Iris/CalendarView.swift:113 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:76 macos/Iris/SettingsView.swift:24
-#: macos/Iris/SettingsView.swift:298
+#: macos/Iris/IrisApp.swift:80 macos/Iris/SettingsView.swift:24
+#: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:46
 msgid "Calendar"
 msgstr ""
 
@@ -4657,7 +4657,7 @@ msgstr ""
 msgid "Next Month"
 msgstr ""
 
-#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:74
+#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:78
 msgid "Mail"
 msgstr ""
 
@@ -4690,7 +4690,7 @@ msgid "Close"
 msgstr ""
 
 #: macos/Iris/ComposeView.swift:60 macos/Iris/ContactCardView.swift:42
-#: macos/Iris/ContactCardView.swift:58 macos/Iris/IrisApp.swift:43
+#: macos/Iris/ContactCardView.swift:58 macos/Iris/IrisApp.swift:47
 #: macos/Iris/ThreadListView.swift:89
 msgid "New Message"
 msgstr ""
@@ -4879,6 +4879,7 @@ msgid "Reply All"
 msgstr ""
 
 #: macos/Iris/ConversationView.swift:85 macos/Iris/ConversationWindow.swift:32
+#: macos/Iris/ShortcutsView.swift:41
 msgid "Forward"
 msgstr ""
 
@@ -4994,7 +4995,7 @@ msgid_plural "{position} of {total} matches"
 msgstr[0] ""
 msgstr[1] ""
 
-#: macos/Iris/FindView.swift:121
+#: macos/Iris/FindView.swift:121 macos/Iris/ShortcutsView.swift:23
 msgid "Find in the conversation"
 msgstr ""
 
@@ -5120,27 +5121,32 @@ msgstr ""
 msgid "Check for Updates…"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:46
+#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:101
+#: macos/Iris/ShortcutsView.swift:57
+msgid "Keyboard shortcuts"
+msgstr ""
+
+#: macos/Iris/IrisApp.swift:50
 msgid "Add Account…"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:49
+#: macos/Iris/IrisApp.swift:53
 msgid "Print…"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:58
+#: macos/Iris/IrisApp.swift:62
 msgid "Open in New Window"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:60
+#: macos/Iris/IrisApp.swift:64
 msgid "New Smart Mailbox…"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:64
+#: macos/Iris/IrisApp.swift:68
 msgid "Export…"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:68
+#: macos/Iris/IrisApp.swift:72
 msgid "View Source"
 msgstr ""
 
@@ -5295,11 +5301,11 @@ msgstr ""
 msgid "New Rule"
 msgstr ""
 
-#: macos/Iris/SettingsView.swift:18
+#: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:54
 msgid "General"
 msgstr ""
 
-#: macos/Iris/SettingsView.swift:21
+#: macos/Iris/SettingsView.swift:21 macos/Iris/ShortcutsView.swift:37
 msgid "Writing"
 msgstr ""
 
@@ -5323,7 +5329,7 @@ msgstr ""
 msgid "Look for a new release once a day"
 msgstr ""
 
-#: macos/Iris/SettingsView.swift:157
+#: macos/Iris/SettingsView.swift:157 macos/Iris/ShortcutsView.swift:21
 msgid "Reading"
 msgstr ""
 
@@ -5599,6 +5605,86 @@ msgstr ""
 msgid "Iris shows a new language after a restart"
 msgstr ""
 
+#: macos/Iris/ShortcutsView.swift:24
+msgid "Open in a new window"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:25
+msgid "View source"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:26
+msgid "Print"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:28
+msgid "Organizing"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:32
+msgid "Mark read or unread"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:33
+msgid "Mute or unmute"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:282
+msgid "Undo"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:40
+msgid "Reply all"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:43
+msgid "Attach files"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:44
+msgid "Bold, italic, link"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:47
+msgid "Show mail"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:48
+msgid "Show the calendar"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:49
+msgid "Go to today"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:50
+msgid "Day, week or month"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:51
+msgid "Previous or next"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:52
+msgid "New event"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:55
+msgid "Settings"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:56
+msgid "Show or hide the assistant"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:58
+msgid "Close window"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:59
+msgid "Quit"
+msgstr ""
+
 #: macos/Iris/SidebarView.swift:132
 msgid "Account options"
 msgstr ""
@@ -5768,10 +5854,6 @@ msgstr ""
 
 #: macos/Iris/ThreadListView.swift:267
 msgid "Clear Flag"
-msgstr ""
-
-#: macos/Iris/ThreadListView.swift:282
-msgid "Undo"
 msgstr ""
 
 #: render/src/calendar_words.rs:28

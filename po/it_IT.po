@@ -4899,8 +4899,8 @@ msgstr "Mese"
 
 #: macos/Iris/CalendarView.swift:83 macos/Iris/CalendarView.swift:84
 #: macos/Iris/CalendarView.swift:113 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:76 macos/Iris/SettingsView.swift:24
-#: macos/Iris/SettingsView.swift:298
+#: macos/Iris/IrisApp.swift:80 macos/Iris/SettingsView.swift:24
+#: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:46
 msgid "Calendar"
 msgstr "Calendario"
 
@@ -4928,7 +4928,7 @@ msgstr "Settimana successiva"
 msgid "Next Month"
 msgstr "Mese successivo"
 
-#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:74
+#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:78
 msgid "Mail"
 msgstr "Posta"
 
@@ -4961,7 +4961,7 @@ msgid "Close"
 msgstr "Chiudi"
 
 #: macos/Iris/ComposeView.swift:60 macos/Iris/ContactCardView.swift:42
-#: macos/Iris/ContactCardView.swift:58 macos/Iris/IrisApp.swift:43
+#: macos/Iris/ContactCardView.swift:58 macos/Iris/IrisApp.swift:47
 #: macos/Iris/ThreadListView.swift:89
 msgid "New Message"
 msgstr "Nuovo messaggio"
@@ -5159,6 +5159,7 @@ msgid "Reply All"
 msgstr "Rispondi a tutti"
 
 #: macos/Iris/ConversationView.swift:85 macos/Iris/ConversationWindow.swift:32
+#: macos/Iris/ShortcutsView.swift:41
 msgid "Forward"
 msgstr "Inoltra"
 
@@ -5274,7 +5275,7 @@ msgid_plural "{position} of {total} matches"
 msgstr[0] "{position} di {total} corrispondenza"
 msgstr[1] "{position} di {total} corrispondenze"
 
-#: macos/Iris/FindView.swift:121
+#: macos/Iris/FindView.swift:121 macos/Iris/ShortcutsView.swift:23
 msgid "Find in the conversation"
 msgstr "Trova nella conversazione"
 
@@ -5402,27 +5403,32 @@ msgstr "Proponi"
 msgid "Check for Updates…"
 msgstr "Controlla aggiornamenti…"
 
-#: macos/Iris/IrisApp.swift:46
+#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:101
+#: macos/Iris/ShortcutsView.swift:57
+msgid "Keyboard shortcuts"
+msgstr "Abbreviazioni da tastiera"
+
+#: macos/Iris/IrisApp.swift:50
 msgid "Add Account…"
 msgstr "Aggiungi account…"
 
-#: macos/Iris/IrisApp.swift:49
+#: macos/Iris/IrisApp.swift:53
 msgid "Print…"
 msgstr "Stampa…"
 
-#: macos/Iris/IrisApp.swift:58
+#: macos/Iris/IrisApp.swift:62
 msgid "Open in New Window"
 msgstr "Apri in una nuova finestra"
 
-#: macos/Iris/IrisApp.swift:60
+#: macos/Iris/IrisApp.swift:64
 msgid "New Smart Mailbox…"
 msgstr "Nuova casella smart…"
 
-#: macos/Iris/IrisApp.swift:64
+#: macos/Iris/IrisApp.swift:68
 msgid "Export…"
 msgstr "Esporta…"
 
-#: macos/Iris/IrisApp.swift:68
+#: macos/Iris/IrisApp.swift:72
 msgid "View Source"
 msgstr "Mostra sorgente"
 
@@ -5579,11 +5585,11 @@ msgstr "Eliminala"
 msgid "New Rule"
 msgstr "Nuova regola"
 
-#: macos/Iris/SettingsView.swift:18
+#: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:54
 msgid "General"
 msgstr "Generale"
 
-#: macos/Iris/SettingsView.swift:21
+#: macos/Iris/SettingsView.swift:21 macos/Iris/ShortcutsView.swift:37
 msgid "Writing"
 msgstr "Scrittura"
 
@@ -5607,7 +5613,7 @@ msgstr "Controlla aggiornamenti"
 msgid "Look for a new release once a day"
 msgstr "Cerca una nuova versione una volta al giorno"
 
-#: macos/Iris/SettingsView.swift:157
+#: macos/Iris/SettingsView.swift:157 macos/Iris/ShortcutsView.swift:21
 msgid "Reading"
 msgstr "Lettura"
 
@@ -5895,6 +5901,86 @@ msgstr "Segui il sistema"
 msgid "Iris shows a new language after a restart"
 msgstr "Iris mostra una nuova lingua dopo il riavvio"
 
+#: macos/Iris/ShortcutsView.swift:24
+msgid "Open in a new window"
+msgstr "Apri in una nuova finestra"
+
+#: macos/Iris/ShortcutsView.swift:25
+msgid "View source"
+msgstr "Mostra sorgente"
+
+#: macos/Iris/ShortcutsView.swift:26
+msgid "Print"
+msgstr "Stampa"
+
+#: macos/Iris/ShortcutsView.swift:28
+msgid "Organizing"
+msgstr "Organizzazione"
+
+#: macos/Iris/ShortcutsView.swift:32
+msgid "Mark read or unread"
+msgstr "Segna come letto o non letto"
+
+#: macos/Iris/ShortcutsView.swift:33
+msgid "Mute or unmute"
+msgstr "Silenzia o riattiva"
+
+#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:282
+msgid "Undo"
+msgstr "Annulla"
+
+#: macos/Iris/ShortcutsView.swift:40
+msgid "Reply all"
+msgstr "Rispondi a tutti"
+
+#: macos/Iris/ShortcutsView.swift:43
+msgid "Attach files"
+msgstr "Allega file"
+
+#: macos/Iris/ShortcutsView.swift:44
+msgid "Bold, italic, link"
+msgstr "Grassetto, corsivo, link"
+
+#: macos/Iris/ShortcutsView.swift:47
+msgid "Show mail"
+msgstr "Mostra la posta"
+
+#: macos/Iris/ShortcutsView.swift:48
+msgid "Show the calendar"
+msgstr "Mostra il calendario"
+
+#: macos/Iris/ShortcutsView.swift:49
+msgid "Go to today"
+msgstr "Vai a oggi"
+
+#: macos/Iris/ShortcutsView.swift:50
+msgid "Day, week or month"
+msgstr "Giorno, settimana o mese"
+
+#: macos/Iris/ShortcutsView.swift:51
+msgid "Previous or next"
+msgstr "Precedente o successivo"
+
+#: macos/Iris/ShortcutsView.swift:52
+msgid "New event"
+msgstr "Nuovo evento"
+
+#: macos/Iris/ShortcutsView.swift:55
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: macos/Iris/ShortcutsView.swift:56
+msgid "Show or hide the assistant"
+msgstr "Mostra o nascondi l'assistente"
+
+#: macos/Iris/ShortcutsView.swift:58
+msgid "Close window"
+msgstr "Chiudi finestra"
+
+#: macos/Iris/ShortcutsView.swift:59
+msgid "Quit"
+msgstr "Esci"
+
 #: macos/Iris/SidebarView.swift:132
 msgid "Account options"
 msgstr "Opzioni account"
@@ -6072,10 +6158,6 @@ msgstr "Cerca nella posta"
 #: macos/Iris/ThreadListView.swift:267
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
-
-#: macos/Iris/ThreadListView.swift:282
-msgid "Undo"
-msgstr "Annulla"
 
 #: render/src/calendar_words.rs:28
 msgid "%A %-d %B"
@@ -7757,9 +7839,6 @@ msgstr "VIP"
 #~ msgid "Out of office goes on a primary calendar"
 #~ msgstr "Fuori sede va su un calendario principale"
 
-#~ msgid "Meetings"
-#~ msgstr "Riunioni"
-
 #~ msgid "Decline"
 #~ msgstr "Rifiuta"
 
@@ -9102,9 +9181,6 @@ msgstr "VIP"
 #~ msgid "Keyboard Shortcuts"
 #~ msgstr "Abbreviazioni da tastiera"
 
-#~ msgid "Quit"
-#~ msgstr "Esci"
-
 #~ msgid "Main Menu"
 #~ msgstr "Menu principale"
 
@@ -9265,9 +9341,6 @@ msgstr "VIP"
 #~ msgid "Open a message from the sender to block"
 #~ msgstr "Apri un messaggio del mittente da bloccare"
 
-#~ msgid "Organizing"
-#~ msgstr "Organizzazione"
-
 #~ msgid "Next or previous conversation"
 #~ msgstr "Conversazione successiva o precedente"
 
@@ -9295,15 +9368,6 @@ msgstr "VIP"
 #~ msgid "Open the menu of the message in focus"
 #~ msgstr "Apri il menu del messaggio selezionato"
 
-#~ msgid "Open in a new window"
-#~ msgstr "Apri in una nuova finestra"
-
-#~ msgid "Print"
-#~ msgstr "Stampa"
-
-#~ msgid "View source"
-#~ msgstr "Mostra sorgente"
-
 #~ msgid "Normal text size"
 #~ msgstr "Dimensione testo normale"
 
@@ -9313,41 +9377,11 @@ msgstr "VIP"
 #~ msgid "Flag colors"
 #~ msgstr "Colori contrassegno"
 
-#~ msgid "Mark read or unread"
-#~ msgstr "Segna come letto o non letto"
-
-#~ msgid "Mute or unmute"
-#~ msgstr "Silenzia o riattiva"
-
-#~ msgid "Reply all"
-#~ msgstr "Rispondi a tutti"
-
-#~ msgid "Attach files"
-#~ msgstr "Allega file"
-
 #~ msgid "Insert image"
 #~ msgstr "Inserisci immagine"
 
-#~ msgid "Bold, italic, link"
-#~ msgstr "Grassetto, corsivo, link"
-
 #~ msgid "Save draft"
 #~ msgstr "Salva bozza"
-
-#~ msgid "Show mail"
-#~ msgstr "Mostra la posta"
-
-#~ msgid "Show the calendar"
-#~ msgstr "Mostra il calendario"
-
-#~ msgid "Go to today"
-#~ msgstr "Vai a oggi"
-
-#~ msgid "Day, week, month or agenda"
-#~ msgstr "Giorno, settimana, mese o agenda"
-
-#~ msgid "Previous or next"
-#~ msgstr "Precedente o successivo"
 
 #~ msgid "Edit the event"
 #~ msgstr "Modifica l'evento"
@@ -9357,9 +9391,6 @@ msgstr "VIP"
 
 #~ msgid "Delete the event, with Undo"
 #~ msgstr "Elimina l'evento, con Annulla"
-
-#~ msgid "New event"
-#~ msgstr "Nuovo evento"
 
 #~ msgid "Search the calendar"
 #~ msgstr "Cerca nel calendario"
@@ -9381,15 +9412,6 @@ msgstr "VIP"
 
 #~ msgid "Refresh the calendar"
 #~ msgstr "Aggiorna il calendario"
-
-#~ msgid "Keyboard shortcuts"
-#~ msgstr "Abbreviazioni da tastiera"
-
-#~ msgid "Show or hide the assistant"
-#~ msgstr "Mostra o nascondi l'assistente"
-
-#~ msgid "Close window"
-#~ msgstr "Chiudi finestra"
 
 #~ msgid "Checking for mail"
 #~ msgstr "Controllo della posta"
