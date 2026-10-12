@@ -209,6 +209,29 @@ async fn follow_up_lists_sent_mail_that_waited() {
 }
 
 #[tokio::test]
+async fn a_follow_up_moved_to_the_trash_leaves_the_list() {
+    let h = harness().await;
+    let now = now_millis();
+    h.fake.seed(meta("a", "t1", now - 5 * DAY, &["SENT"]));
+    h.bootstrap_all().await;
+    assert_eq!(ids(&list(&h, &Mailbox::FollowUp, &view()).await), ["t1"]);
+
+    // Delete from Follow Up itself, which names no place it moves from.
+    let actions = crate::tests::actions::actions(&h);
+    actions
+        .run_from(
+            &[mailrs_domain::Target::thread(h.account_id, "t1")],
+            crate::MailAction::Triage(crate::TriageAction::Trash),
+            crate::History::Record,
+            &crate::MovedFrom::nowhere(),
+        )
+        .await;
+
+    let listing = list(&h, &Mailbox::FollowUp, &view()).await;
+    assert!(listing.rows.is_empty(), "t1 went to the Trash: {:?}", ids(&listing));
+}
+
+#[tokio::test]
 async fn remind_me_lists_what_comes_back_soonest_first() {
     let h = seeded().await;
     let account_id = h.account_id;
@@ -810,6 +833,8 @@ fn a_mailbox_names_the_place_its_mail_is_moved_from() {
         (Mailbox::Search { query: "kites".into(), account_id: Some(1) }, MovedFrom::nowhere()),
         // Remind Me put what this list shows in the Archive.
         (Mailbox::Reminders, MovedFrom::every(MailSet::Role(Role::Archive))),
+        // Follow Up lists sent mail, which a move has to be able to take.
+        (Mailbox::FollowUp, MovedFrom::every(MailSet::Role(Role::Sent))),
         (Mailbox::Flag(FlagColor::Red), MovedFrom::nowhere()),
     ];
     for (mailbox, from) in cases {

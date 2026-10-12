@@ -6669,164 +6669,164 @@ msgstr "Da seguire"
 msgid "{color} Flag"
 msgstr "Contrassegno {color}"
 
-#: sync/src/mailbox.rs:310
+#: sync/src/mailbox.rs:313
 msgid "No Results"
 msgstr "Nessun risultato"
 
-#: sync/src/mailbox.rs:312
+#: sync/src/mailbox.rs:315
 msgid "Try other words, or fewer of them."
 msgstr "Prova altre parole, o meno parole."
 
-#: sync/src/mailbox.rs:316
+#: sync/src/mailbox.rs:319
 msgid "Nothing Scheduled"
 msgstr "Niente di programmato"
 
-#: sync/src/mailbox.rs:319
+#: sync/src/mailbox.rs:322
 msgid "Outbox Is Empty"
 msgstr "Posta in uscita vuota"
 
-#: sync/src/mailbox.rs:323
+#: sync/src/mailbox.rs:326
 msgid "No Reminders"
 msgstr "Nessun promemoria"
 
-#: sync/src/mailbox.rs:325
+#: sync/src/mailbox.rs:328
 msgid "Choose Remind Me on a conversation to bring it back here later."
 msgstr ""
 "Scegli Ricordamelo su una conversazione per farla tornare qui più tardi."
 
-#: sync/src/mailbox.rs:329
+#: sync/src/mailbox.rs:332
 msgid "No Follow-Ups"
 msgstr "Niente da seguire"
 
-#: sync/src/mailbox.rs:332
+#: sync/src/mailbox.rs:335
 msgid "No Flagged Mail"
 msgstr "Nessuna posta contrassegnata"
 
-#: sync/src/mailbox.rs:334
+#: sync/src/mailbox.rs:337
 msgid "No Mail from VIPs"
 msgstr "Nessuna posta dai VIP"
 
-#: sync/src/mailbox.rs:336
+#: sync/src/mailbox.rs:339
 msgid "No Matching Mail"
 msgstr "Nessuna posta corrispondente"
 
-#: sync/src/mailbox.rs:341
+#: sync/src/mailbox.rs:344
 msgid "No Archived Mail"
 msgstr "Nessuna posta archiviata"
 
-#: sync/src/mailbox.rs:342
+#: sync/src/mailbox.rs:345
 msgid "No Junk"
 msgstr "Nessuna posta indesiderata"
 
-#: sync/src/mailbox.rs:343
+#: sync/src/mailbox.rs:346
 msgid "Trash Is Empty"
 msgstr "Il Cestino è vuoto"
 
-#: sync/src/mailbox.rs:344 sync/src/mailbox.rs:358 sync/src/mailbox.rs:423
+#: sync/src/mailbox.rs:347 sync/src/mailbox.rs:361 sync/src/mailbox.rs:426
 msgid "No Mail"
 msgstr "Nessuna posta"
 
-#: sync/src/mailbox.rs:349
+#: sync/src/mailbox.rs:352
 msgid "Inbox Zero"
 msgstr "Posta in arrivo vuota"
 
-#: sync/src/mailbox.rs:350
+#: sync/src/mailbox.rs:353
 msgid "No Starred Mail"
 msgstr "Nessuna posta speciale"
 
-#: sync/src/mailbox.rs:351
+#: sync/src/mailbox.rs:354
 msgid "No Sent Mail"
 msgstr "Nessuna posta inviata"
 
-#: sync/src/mailbox.rs:353
+#: sync/src/mailbox.rs:356
 msgid "No Drafts"
 msgstr "Nessuna bozza"
 
-#: sync/src/mailbox.rs:355
+#: sync/src/mailbox.rs:358
 msgid "Close a message without sending it and Iris keeps it here."
 msgstr "Chiudi un messaggio senza inviarlo e Iris lo conserva qui."
 
-#: sync/src/mailbox.rs:357
+#: sync/src/mailbox.rs:360
 msgid "No Muted Mail"
 msgstr "Nessuna posta silenziata"
 
-#: sync/src/mailbox.rs:395
+#: sync/src/mailbox.rs:398
 msgctxt "mailbox"
 msgid "Archive"
 msgstr "Archivio"
 
-#: sync/src/mailbox.rs:396
+#: sync/src/mailbox.rs:399
 msgid "Junk"
 msgstr "Indesiderata"
 
-#: sync/src/mailbox.rs:397
+#: sync/src/mailbox.rs:400
 msgid "Trash"
 msgstr "Cestino"
 
-#: sync/src/mailbox.rs:398
+#: sync/src/mailbox.rs:401
 msgid "All Mail"
 msgstr "Tutta la posta"
 
-#: sync/src/mailbox.rs:764
+#: sync/src/mailbox.rs:767
 msgid "This smart mailbox has no conditions"
 msgstr "Questa casella smart non ha condizioni"
 
-#: sync/src/mailbox.rs:1120
+#: sync/src/mailbox.rs:1123
 msgid "Results for {account} come from the mail on this computer alone"
 msgstr ""
 "I risultati per {account} provengono solo dalla posta su questo computer"
 
-#: sync/src/mailbox.rs:1132
+#: sync/src/mailbox.rs:1135
 msgid "Could not load mail for {account}: {reason}"
 msgstr "Impossibile caricare la posta per {account}: {reason}"
 
-#: sync/src/mailbox.rs:1253
+#: sync/src/mailbox.rs:1256
 msgid "Returns {when}"
 msgstr "Torna {when}"
 
-#: sync/src/mailbox.rs:1296 sync/src/mailbox.rs:1378
+#: sync/src/mailbox.rs:1299 sync/src/mailbox.rs:1381
 msgid "No recipients"
 msgstr "Nessun destinatario"
 
-#: sync/src/mailbox.rs:1299 sync/src/mailbox.rs:1381
+#: sync/src/mailbox.rs:1302 sync/src/mailbox.rs:1384
 msgid "To {recipients}"
 msgstr "A {recipients}"
 
-#: sync/src/mailbox.rs:1341
+#: sync/src/mailbox.rs:1344
 msgid "{count} unread · {category}"
 msgid_plural "{count} unread · {category}"
 msgstr[0] "{count} non letto · {category}"
 msgstr[1] "{count} non letti · {category}"
 
-#: sync/src/mailbox.rs:1346
+#: sync/src/mailbox.rs:1349
 msgid "{count} unread"
 msgid_plural "{count} unread"
 msgstr[0] "{count} non letto"
 msgstr[1] "{count} non letti"
 
-#: sync/src/mailbox.rs:1353
+#: sync/src/mailbox.rs:1356
 msgid "Sent yesterday, no reply yet"
 msgstr "Inviato ieri, ancora nessuna risposta"
 
-#: sync/src/mailbox.rs:1355
+#: sync/src/mailbox.rs:1358
 msgid "Sent {days} day ago, no reply yet"
 msgid_plural "Sent {days} days ago, no reply yet"
 msgstr[0] "Inviato {days} giorno fa, ancora nessuna risposta"
 msgstr[1] "Inviato {days} giorni fa, ancora nessuna risposta"
 
-#: sync/src/mailbox.rs:1393
+#: sync/src/mailbox.rs:1396
 msgid "Sends {when}"
 msgstr "Invio {when}"
 
-#: sync/src/mailbox.rs:1397
+#: sync/src/mailbox.rs:1400
 msgid "Not sent"
 msgstr "Non inviato"
 
-#: sync/src/mailbox.rs:1404
+#: sync/src/mailbox.rs:1407
 msgid "{problem}. Trying again {when}"
 msgstr "{problem}. Nuovo tentativo {when}"
 
-#: sync/src/mailbox.rs:1411
+#: sync/src/mailbox.rs:1414
 msgid "{problem}. Iris stopped trying"
 msgstr "{problem}. Iris ha smesso di riprovare"
 

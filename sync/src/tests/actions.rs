@@ -14,7 +14,7 @@ use crate::{
     MailCapabilities, Outcome, Permitted, SyncError, TriageAction, now_millis,
 };
 
-fn actions(h: &Harness) -> MailActions<Connected> {
+pub(crate) fn actions(h: &Harness) -> MailActions<Connected> {
     actions_over(h, [])
 }
 

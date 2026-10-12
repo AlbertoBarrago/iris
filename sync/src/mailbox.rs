@@ -247,10 +247,13 @@ impl Mailbox {
             }
             // Remind Me put the mail this list shows in the Archive.
             Mailbox::Reminders => (None, Some(MailSet::Role(Role::Archive))),
+            // Follow Up lists mail the person sent, which on a folder
+            // server sits in Sent alone; named as the place, a move takes
+            // it, where the roles alone would leave a sent message be.
+            Mailbox::FollowUp => (None, Some(MailSet::Role(Role::Sent))),
             Mailbox::Search { .. }
             | Mailbox::Scheduled
             | Mailbox::Outbox
-            | Mailbox::FollowUp
             | Mailbox::Flag(_)
             | Mailbox::Vips { .. }
             | Mailbox::Smart(_) => (None, None),
