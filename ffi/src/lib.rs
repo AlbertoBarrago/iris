@@ -20,6 +20,7 @@ mod account_settings;
 mod account_setup;
 mod ai_prefs;
 mod assistant;
+mod assistant_link;
 mod calendar;
 mod compose;
 mod contacts;

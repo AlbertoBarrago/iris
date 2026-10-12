@@ -102,6 +102,7 @@ ffi/src/account_menu.rs
 ffi/src/account_setup.rs
 ffi/src/ai_prefs.rs
 ffi/src/assistant.rs
+ffi/src/assistant_link.rs
 ffi/src/calendar.rs
 ffi/src/event_editor.rs
 ffi/src/filing.rs

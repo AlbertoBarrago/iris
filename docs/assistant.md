@@ -147,6 +147,14 @@ calendar sidebar's Grant Access button asks Google again. If the Google Cloud
 project Iris signs in with has the Calendar API switched off, a
 dialog says so and opens the page that turns it on.
 
+## Open what it found
+
+A conversation or an event the assistant names in its answer is a link.
+Click it to open that conversation in the mail, or the calendar on that
+event's day with its card open. If the mail was deleted or the event
+removed since the answer, Iris says so instead. Links to web pages open in
+your browser; links of any other kind open nothing.
+
 ## What it did
 
 Under your question, the assistant's answer shows what the model did, in

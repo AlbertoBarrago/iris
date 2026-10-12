@@ -3733,6 +3733,18 @@ msgstr ""
 msgid "Could not build the message: {reason}"
 msgstr ""
 
+#: ffi/src/assistant_link.rs:35
+msgid "Iris cannot open that link."
+msgstr ""
+
+#: ffi/src/assistant_link.rs:42
+msgid "That conversation is no longer in Iris."
+msgstr ""
+
+#: ffi/src/assistant_link.rs:51
+msgid "That event is no longer on the calendar."
+msgstr ""
+
 #: ffi/src/calendar.rs:355 ffi/src/calendar.rs:484
 msgid "%B %Y"
 msgstr ""
@@ -4539,31 +4551,31 @@ msgid ""
 "draft, and change settings."
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:455
+#: macos/Iris/AssistantView.swift:462
 msgid "Don't Allow"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:457
+#: macos/Iris/AssistantView.swift:464
 msgid "Always Allow"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:459
+#: macos/Iris/AssistantView.swift:466
 msgid "Allow"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:471
+#: macos/Iris/AssistantView.swift:478
 msgid "Allowed"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:472
+#: macos/Iris/AssistantView.swift:479
 msgid "Always allowed"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:473
+#: macos/Iris/AssistantView.swift:480
 msgid "Not allowed"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:510 macos/Iris/ConversationView.swift:45
+#: macos/Iris/AssistantView.swift:517 macos/Iris/ConversationView.swift:45
 #: macos/Iris/ConversationView.swift:53
 msgid "Unsubscribe"
 msgstr ""
@@ -5230,15 +5242,15 @@ msgstr ""
 msgid "This Mac cannot translate this message: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1677
+#: macos/Iris/MailModel.swift:1701
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1682
+#: macos/Iris/MailModel.swift:1706
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1728
+#: macos/Iris/MailModel.swift:1752
 msgid "{account} is signed in again."
 msgstr ""
 

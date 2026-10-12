@@ -390,6 +390,7 @@ private struct TurnBlock: View {
 }
 
 private struct StepView: View {
+    @Environment(AssistantModel.self) private var assistant
     let step: TurnStep
     @State private var open = false
 
@@ -399,6 +400,12 @@ private struct StepView: View {
             Text(markdown(step.text))
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                // A conversation or event the answer names opens in the
+                // window; the core decides where each link leads.
+                .environment(\.openURL, OpenURLAction { url in
+                    assistant.mail?.openAssistantLink(url)
+                    return .handled
+                })
         default:
             DisclosureGroup(isExpanded: $open) {
                 VStack(alignment: .leading, spacing: 6) {

@@ -3948,6 +3948,18 @@ msgstr "Bozza non salvata: {reason}"
 msgid "Could not build the message: {reason}"
 msgstr "Impossibile creare il messaggio: {reason}"
 
+#: ffi/src/assistant_link.rs:35
+msgid "Iris cannot open that link."
+msgstr "Iris non può aprire quel link."
+
+#: ffi/src/assistant_link.rs:42
+msgid "That conversation is no longer in Iris."
+msgstr "Quella conversazione non è più in Iris."
+
+#: ffi/src/assistant_link.rs:51
+msgid "That event is no longer on the calendar."
+msgstr "Quell'evento non è più nel calendario."
+
 #: ffi/src/calendar.rs:355 ffi/src/calendar.rs:484
 msgid "%B %Y"
 msgstr "%B %Y"
@@ -4809,31 +4821,31 @@ msgstr ""
 "Chiedimi della tua posta o dimmi cosa riordinare. Posso cercare, riassumere, "
 "ordinare, scrivere bozze e cambiare impostazioni."
 
-#: macos/Iris/AssistantView.swift:455
+#: macos/Iris/AssistantView.swift:462
 msgid "Don't Allow"
 msgstr "Non consentire"
 
-#: macos/Iris/AssistantView.swift:457
+#: macos/Iris/AssistantView.swift:464
 msgid "Always Allow"
 msgstr "Consenti sempre"
 
-#: macos/Iris/AssistantView.swift:459
+#: macos/Iris/AssistantView.swift:466
 msgid "Allow"
 msgstr "Consenti"
 
-#: macos/Iris/AssistantView.swift:471
+#: macos/Iris/AssistantView.swift:478
 msgid "Allowed"
 msgstr "Consentito"
 
-#: macos/Iris/AssistantView.swift:472
+#: macos/Iris/AssistantView.swift:479
 msgid "Always allowed"
 msgstr "Sempre consentito"
 
-#: macos/Iris/AssistantView.swift:473
+#: macos/Iris/AssistantView.swift:480
 msgid "Not allowed"
 msgstr "Non consentito"
 
-#: macos/Iris/AssistantView.swift:510 macos/Iris/ConversationView.swift:45
+#: macos/Iris/AssistantView.swift:517 macos/Iris/ConversationView.swift:45
 #: macos/Iris/ConversationView.swift:53
 msgid "Unsubscribe"
 msgstr "Annulla iscrizione"
@@ -5514,15 +5526,15 @@ msgstr "Traduzione…"
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1677
+#: macos/Iris/MailModel.swift:1701
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1682
+#: macos/Iris/MailModel.swift:1706
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1728
+#: macos/Iris/MailModel.swift:1752
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -8456,9 +8468,6 @@ msgstr "VIP"
 #~ msgid "Grant Access to show shared calendars"
 #~ msgstr "Concedi l'accesso per mostrare i calendari condivisi"
 
-#~ msgid "Iris cannot see this account's calendars"
-#~ msgstr "Iris non può vedere i calendari di questo account"
-
 #~ msgid "Show or hide this account's calendars"
 #~ msgstr "Mostra o nascondi i calendari di questo account"
 
@@ -9350,9 +9359,6 @@ msgstr "VIP"
 
 #~ msgid "Still not sent. It stays in the Outbox."
 #~ msgstr "Non ancora inviato. Resta in Posta in uscita."
-
-#~ msgid "That message is no longer waiting."
-#~ msgstr "Quel messaggio non è più in attesa."
 
 #~ msgid "Iris cannot reopen this message. Send it as it is."
 #~ msgstr "Iris non può riaprire questo messaggio. Invialo così com'è."

@@ -1490,6 +1490,30 @@ extension MailModel {
     func show(account: Int64, thread: String) {
         selection = [ThreadKey(account: account, thread: thread)]
     }
+
+    /// Opens what a link in the assistant's answer names: a conversation in
+    /// the mail, an event on the calendar, a page in the browser, or says
+    /// why there is nothing to open.
+    func openAssistantLink(_ url: URL) {
+        guard let mail else { return }
+        let text = url.absoluteString
+        Task.detached {
+            let goal = mail.assistantLink(url: text)
+            await MainActor.run {
+                switch goal {
+                case .conversation(let account, let thread):
+                    self.space = .mail
+                    self.show(account: account, thread: thread)
+                case .event(let spot):
+                    self.showSpot(spot)
+                case .web(let link):
+                    if let link = URL(string: link) { NSWorkspace.shared.open(link) }
+                case .nowhere(let words):
+                    self.say(words)
+                }
+            }
+        }
+    }
 }
 
 /// What a toast says, and whether it offers Undo.

@@ -2,6 +2,7 @@
 //! calls reach the window. The GTK pane lives in `ui::assistant`.
 
 mod host;
+pub mod links;
 mod markup;
 mod prompt;
 pub mod run;

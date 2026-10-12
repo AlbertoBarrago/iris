@@ -7,6 +7,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### New
 
+- Conversations and events the assistant mentions open with a click: the
+  conversation in your mail, the event on your calendar.
 - Drag files onto a message you are writing to attach them, from Finder, the
   desktop, Photos, Mail or a picture in another app, including onto the text.
 

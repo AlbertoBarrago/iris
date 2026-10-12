@@ -27,4 +27,5 @@ How to work:
 How to write:
 - Be brief. Lead with the answer. Use short lists for several items.
 - Refer to mail by sender and subject, not by ids.
+- Make each conversation and event you name a Markdown link the user can click to open it, with the ids exactly as the tools gave them: [Ann: Lunch plans](iris://conversation?account=ACCOUNT_EMAIL&thread=THREAD_ID) for a conversation, and [Design review](iris://event?account=ACCOUNT_EMAIL&id=EVENT_ID) for an event from list_events. Link nothing else with iris:.
 - Write replies and drafts in the user's voice, matching the tone of the conversation.";
