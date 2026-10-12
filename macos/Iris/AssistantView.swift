@@ -397,15 +397,10 @@ private struct StepView: View {
     var body: some View {
         switch step.kind {
         case "reply":
-            Text(markdown(step.text))
-                .textSelection(.enabled)
+            // A conversation or event the answer names opens in the
+            // window; the core decides where each link leads.
+            AnswerText(markdown: step.text) { url in assistant.mail?.openAssistantLink(url) }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                // A conversation or event the answer names opens in the
-                // window; the core decides where each link leads.
-                .environment(\.openURL, OpenURLAction { url in
-                    assistant.mail?.openAssistantLink(url)
-                    return .handled
-                })
         default:
             DisclosureGroup(isExpanded: $open) {
                 VStack(alignment: .leading, spacing: 6) {
@@ -438,11 +433,6 @@ private struct StepView: View {
         case ("thinking", _): Image(systemName: "brain").foregroundStyle(.secondary)
         default: Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
         }
-    }
-
-    private func markdown(_ text: String) -> AttributedString {
-        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        return (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text)
     }
 }
 

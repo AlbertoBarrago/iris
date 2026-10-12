@@ -4409,31 +4409,31 @@ msgstr "Stop"
 msgid "Ask about your mail, or tell me what to tidy. I can search, summarize, sort, draft, and change settings."
 msgstr "Ask about your mail, or tell me what to tidy. I can search, summarise, sort, draft, and change settings."
 
-#: macos/Iris/AssistantView.swift:462
+#: macos/Iris/AssistantView.swift:452
 msgid "Don't Allow"
 msgstr "Don't Allow"
 
-#: macos/Iris/AssistantView.swift:464
+#: macos/Iris/AssistantView.swift:454
 msgid "Always Allow"
 msgstr "Always Allow"
 
-#: macos/Iris/AssistantView.swift:466
+#: macos/Iris/AssistantView.swift:456
 msgid "Allow"
 msgstr "Allow"
 
-#: macos/Iris/AssistantView.swift:478
+#: macos/Iris/AssistantView.swift:468
 msgid "Allowed"
 msgstr "Allowed"
 
-#: macos/Iris/AssistantView.swift:479
+#: macos/Iris/AssistantView.swift:469
 msgid "Always allowed"
 msgstr "Always allowed"
 
-#: macos/Iris/AssistantView.swift:480
+#: macos/Iris/AssistantView.swift:470
 msgid "Not allowed"
 msgstr "Not allowed"
 
-#: macos/Iris/AssistantView.swift:517 macos/Iris/ConversationView.swift:45
+#: macos/Iris/AssistantView.swift:507 macos/Iris/ConversationView.swift:45
 #: macos/Iris/ConversationView.swift:53
 msgid "Unsubscribe"
 msgstr "Unsubscribe"

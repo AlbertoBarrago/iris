@@ -4821,31 +4821,31 @@ msgstr ""
 "Chiedimi della tua posta o dimmi cosa riordinare. Posso cercare, riassumere, "
 "ordinare, scrivere bozze e cambiare impostazioni."
 
-#: macos/Iris/AssistantView.swift:462
+#: macos/Iris/AssistantView.swift:452
 msgid "Don't Allow"
 msgstr "Non consentire"
 
-#: macos/Iris/AssistantView.swift:464
+#: macos/Iris/AssistantView.swift:454
 msgid "Always Allow"
 msgstr "Consenti sempre"
 
-#: macos/Iris/AssistantView.swift:466
+#: macos/Iris/AssistantView.swift:456
 msgid "Allow"
 msgstr "Consenti"
 
-#: macos/Iris/AssistantView.swift:478
+#: macos/Iris/AssistantView.swift:468
 msgid "Allowed"
 msgstr "Consentito"
 
-#: macos/Iris/AssistantView.swift:479
+#: macos/Iris/AssistantView.swift:469
 msgid "Always allowed"
 msgstr "Sempre consentito"
 
-#: macos/Iris/AssistantView.swift:480
+#: macos/Iris/AssistantView.swift:470
 msgid "Not allowed"
 msgstr "Non consentito"
 
-#: macos/Iris/AssistantView.swift:517 macos/Iris/ConversationView.swift:45
+#: macos/Iris/AssistantView.swift:507 macos/Iris/ConversationView.swift:45
 #: macos/Iris/ConversationView.swift:53
 msgid "Unsubscribe"
 msgstr "Annulla iscrizione"

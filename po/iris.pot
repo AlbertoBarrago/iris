@@ -4551,31 +4551,31 @@ msgid ""
 "draft, and change settings."
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:462
+#: macos/Iris/AssistantView.swift:452
 msgid "Don't Allow"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:464
+#: macos/Iris/AssistantView.swift:454
 msgid "Always Allow"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:466
+#: macos/Iris/AssistantView.swift:456
 msgid "Allow"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:478
+#: macos/Iris/AssistantView.swift:468
 msgid "Allowed"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:479
+#: macos/Iris/AssistantView.swift:469
 msgid "Always allowed"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:480
+#: macos/Iris/AssistantView.swift:470
 msgid "Not allowed"
 msgstr ""
 
-#: macos/Iris/AssistantView.swift:517 macos/Iris/ConversationView.swift:45
+#: macos/Iris/AssistantView.swift:507 macos/Iris/ConversationView.swift:45
 #: macos/Iris/ConversationView.swift:53
 msgid "Unsubscribe"
 msgstr ""
