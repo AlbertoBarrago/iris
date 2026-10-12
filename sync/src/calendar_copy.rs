@@ -199,7 +199,7 @@ struct Release<'a> {
 
 impl Release<'_> {
     fn new(held: &Mutex<Vec<HeldKey>>, keys: Vec<HeldKey>) -> Release<'_> {
-        held.lock().expect("copy poisoned").extend(keys.iter().cloned());
+        held.lock().unwrap_or_else(|p| p.into_inner()).extend(keys.iter().cloned());
         Release { held, keys }
     }
 
@@ -212,7 +212,7 @@ impl Release<'_> {
 
 impl Drop for Release<'_> {
     fn drop(&mut self) {
-        let mut held = self.held.lock().expect("copy poisoned");
+        let mut held = self.held.lock().unwrap_or_else(|p| p.into_inner());
         for key in &self.keys {
             if let Some(at) = held.iter().position(|k| k == key) {
                 held.swap_remove(at);
@@ -244,9 +244,9 @@ impl<A: Accounts> CalendarCopy<A> {
     /// person signs the account in again, which is how a permission is
     /// granted.
     pub fn permission_changed(&self, account_id: AccountId) {
-        self.refused.lock().expect("copy poisoned").remove(&account_id);
-        self.last_list.lock().expect("copy poisoned").remove(&account_id);
-        self.last_read.lock().expect("copy poisoned").remove(&account_id);
+        self.refused.lock().unwrap_or_else(|p| p.into_inner()).remove(&account_id);
+        self.last_list.lock().unwrap_or_else(|p| p.into_inner()).remove(&account_id);
+        self.last_read.lock().unwrap_or_else(|p| p.into_inner()).remove(&account_id);
     }
 
     /// Whether the account turned out to lack the calendar permission less
@@ -255,7 +255,7 @@ impl<A: Accounts> CalendarCopy<A> {
     fn refused_lately(&self, account_id: AccountId, now: EpochMillis) -> bool {
         self.refused
             .lock()
-            .expect("copy poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .get(&account_id)
             .is_some_and(|at| now - at < LIST_EVERY)
     }
@@ -292,7 +292,7 @@ impl<A: Accounts> CalendarCopy<A> {
                     tracing::warn!(account = account_id, %err, "could not send the calendar queue");
                 }
             }
-            let last = self.last_read.lock().expect("copy poisoned").get(&account_id).copied();
+            let last = self.last_read.lock().unwrap_or_else(|p| p.into_inner()).get(&account_id).copied();
             if last.is_some_and(|last| now - last < every) || self.refused_lately(account_id, now) {
                 continue;
             }
@@ -347,7 +347,7 @@ impl<A: Accounts> CalendarCopy<A> {
             return Ok(Permitted::NeedsPermission);
         }
         {
-            let mut tried = self.tried.lock().expect("copy poisoned");
+            let mut tried = self.tried.lock().unwrap_or_else(|p| p.into_inner());
             if tried.get(&account_id).is_some_and(|at| (now - at).abs() < READY_RETRY) {
                 return Ok(Permitted::Done(()));
             }
@@ -355,7 +355,7 @@ impl<A: Accounts> CalendarCopy<A> {
         }
         let read = self.refresh(account_id, now).await;
         if self.db.read(move |c| store::synced(c, account_id)).await? {
-            self.tried.lock().expect("copy poisoned").remove(&account_id);
+            self.tried.lock().unwrap_or_else(|p| p.into_inner()).remove(&account_id);
         }
         Ok(match read? {
             Permitted::Done(_) => Permitted::Done(()),
@@ -398,13 +398,13 @@ impl<A: Accounts> CalendarCopy<A> {
         // Recording the refusal makes the next tick wait LIST_EVERY too,
         // the same cadence a refusal Google itself answered gets below.
         if withheld.calendar {
-            self.refused.lock().expect("copy poisoned").insert(account_id, now);
+            self.refused.lock().unwrap_or_else(|p| p.into_inner()).insert(account_id, now);
             return Ok(Permitted::NeedsPermission);
         }
         let list_due = self
             .last_list
             .lock()
-            .expect("copy poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .get(&account_id)
             .is_none_or(|last| now - last >= LIST_EVERY);
         let before = match list_due {
@@ -414,7 +414,7 @@ impl<A: Accounts> CalendarCopy<A> {
         if list_due {
             // Recorded before the call, so a refusal still waits
             // LIST_EVERY instead of asking again on the very next tick.
-            self.last_list.lock().expect("copy poisoned").insert(account_id, now);
+            self.last_list.lock().unwrap_or_else(|p| p.into_inner()).insert(account_id, now);
             if withheld.calendar_list {
                 // The list scope alone is missing: the primary calendar
                 // needs no list call, so skip straight to it.
@@ -449,13 +449,13 @@ impl<A: Accounts> CalendarCopy<A> {
                     // LIST_EVERY: a copy never read has no calendars to
                     // read without it.
                     Err(err) => {
-                        self.last_list.lock().expect("copy poisoned").remove(&account_id);
+                        self.last_list.lock().unwrap_or_else(|p| p.into_inner()).remove(&account_id);
                         return Err(err.into());
                     }
                 }
             }
         }
-        self.last_read.lock().expect("copy poisoned").insert(account_id, now);
+        self.last_read.lock().unwrap_or_else(|p| p.into_inner()).insert(account_id, now);
         let calendars: Vec<Calendar> = self.db.read(move |c| store::calendars(c, account_id)).await?;
         let mut refreshed = Refreshed {
             calendars_changed: before.is_some_and(|before| before != calendars),
@@ -482,7 +482,7 @@ impl<A: Accounts> CalendarCopy<A> {
                 // the list is read again, so that is read on the next tick.
                 Err(SyncError::Backend(BackendError::NotFound)) => {
                     tracing::info!(account = account_id, calendar = entry.id, "a calendar is gone; reading the list again");
-                    self.last_list.lock().expect("copy poisoned").remove(&account_id);
+                    self.last_list.lock().unwrap_or_else(|p| p.into_inner()).remove(&account_id);
                 }
                 // The network or the rate limit would stop every other
                 // calendar the same way.
@@ -497,7 +497,7 @@ impl<A: Accounts> CalendarCopy<A> {
                     // scope from a missing calendar.events. This read
                     // can: the account has no calendar to read, and the
                     // fallback calendar would only ask again every minute.
-                    self.refused.lock().expect("copy poisoned").insert(account_id, now);
+                    self.refused.lock().unwrap_or_else(|p| p.into_inner()).insert(account_id, now);
                     self.db.write(move |c| store::save_calendars(c, account_id, &[])).await?;
                     return Ok(Permitted::NeedsPermission);
                 }
@@ -1376,7 +1376,7 @@ impl<A: Accounts> CalendarCopy<A> {
     /// The ids on one calendar that held changes write, and those they
     /// remove.
     fn held_in(&self, account_id: AccountId, calendar: &str) -> (Vec<String>, Vec<String>) {
-        let held = self.held.lock().expect("copy poisoned");
+        let held = self.held.lock().unwrap_or_else(|p| p.into_inner());
         let mine = held.iter().filter(|k| k.account_id == account_id && k.calendar == calendar);
         let ids = mine.clone().map(|k| k.id.clone()).collect();
         let removals = mine.filter(|k| k.removal).map(|k| k.id.clone()).collect();
@@ -1420,14 +1420,14 @@ struct Landed {
 
 /// Whether a held change owns event `id` on `calendar`.
 fn owns(held: &Mutex<Vec<HeldKey>>, account_id: AccountId, calendar: &str, id: &str) -> bool {
-    let held = held.lock().expect("copy poisoned");
+    let held = held.lock().unwrap_or_else(|p| p.into_inner());
     held.iter().any(|k| k.account_id == account_id && k.calendar == calendar && k.id == id)
 }
 
 /// Keeps `answer` for the held change that owns its row, in place of an
 /// earlier answer for the same row.
 fn keep_landed(landed: &Mutex<Vec<Landed>>, account_id: AccountId, answer: Event) {
-    let mut landed = landed.lock().expect("copy poisoned");
+    let mut landed = landed.lock().unwrap_or_else(|p| p.into_inner());
     landed.retain(|l| {
         !(l.account_id == account_id && l.answer.calendar == answer.calendar && l.answer.id == answer.id)
     });
@@ -1436,7 +1436,7 @@ fn keep_landed(landed: &Mutex<Vec<Landed>>, account_id: AccountId, answer: Event
 
 /// Takes the answers that landed on the rows `keys` name.
 fn take_landed(landed: &Mutex<Vec<Landed>>, keys: &[HeldKey]) -> Vec<Event> {
-    let mut landed = landed.lock().expect("copy poisoned");
+    let mut landed = landed.lock().unwrap_or_else(|p| p.into_inner());
     let named = |l: &Landed| {
         keys.iter().any(|k| k.account_id == l.account_id && k.calendar == l.answer.calendar && k.id == l.answer.id)
     };

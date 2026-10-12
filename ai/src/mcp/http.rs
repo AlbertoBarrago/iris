@@ -63,13 +63,13 @@ impl Http {
         *self
             .version
             .lock()
-            .expect("the version lock is never poisoned") = version.map(String::from);
+            .unwrap_or_else(|p| p.into_inner()) = version.map(String::from);
     }
 
     pub(super) fn session(&self) -> Option<String> {
         self.session
             .lock()
-            .expect("the session lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .clone()
     }
 
@@ -88,7 +88,7 @@ impl Http {
         let version = self
             .version
             .lock()
-            .expect("the version lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .clone();
         let mut put = |name: &str, value: &str| {
             if let (Ok(name), Ok(value)) = (
@@ -170,7 +170,7 @@ impl Http {
             *self
                 .session
                 .lock()
-                .expect("the session lock is never poisoned") = Some(session.to_string());
+                .unwrap_or_else(|p| p.into_inner()) = Some(session.to_string());
         }
         let status = response.status().as_u16();
         if (200..300).contains(&status) {

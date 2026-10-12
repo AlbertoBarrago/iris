@@ -936,10 +936,11 @@ impl Mail {
     /// Runs `work` on the runtime's own threads and waits for it. The sync
     /// code needs the large stacks those threads get
     /// (`mailrs_sync::WORKER_STACK`): run on the Swift thread that called,
-    /// an action overflowed its stack and took the app down.
+    /// an action overflowed its stack and took the app down. The wait goes
+    /// through `futures` rather than tokio's `block_on`, which panics on a
+    /// thread that already drives a runtime, as the assistant's does.
     pub(crate) fn run<T: Send + 'static>(&self, work: impl std::future::Future<Output = T> + Send + 'static) -> T {
-        self.runtime
-            .block_on(self.runtime.spawn(work))
+        futures::executor::block_on(self.runtime.spawn(work))
             .unwrap_or_else(|err| std::panic::resume_unwind(err.into_panic()))
     }
 
@@ -1244,5 +1245,26 @@ mod first_run {
         assert!(!path.parent().unwrap().exists());
         Mail::open(path.display().to_string()).expect("the store opens");
         assert!(path.exists());
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::sync::Arc;
+
+    use super::Mail;
+
+    /// The assistant's tools run on a thread that drives a current-thread
+    /// runtime, and they start, sign and send drafts through `Mail`. With
+    /// tokio's `block_on` there, every one of them panicked and the model
+    /// heard "The mail window closed".
+    #[test]
+    fn the_assistant_thread_can_reach_the_store() {
+        let dir = tempfile::tempdir().unwrap();
+        let mail = Arc::new(Mail::open(dir.path().join("mailrs.db").display().to_string()).unwrap());
+        let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+        let local = tokio::task::LocalSet::new();
+        let senders = local.block_on(&runtime, async { mail.senders() });
+        assert!(senders.unwrap().is_empty());
     }
 }

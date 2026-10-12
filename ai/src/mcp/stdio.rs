@@ -107,7 +107,7 @@ impl Stdio {
         let (reply, answer) = oneshot::channel();
         self.pending
             .lock()
-            .expect("the pending map lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .insert(id, reply);
         let message = json!({"jsonrpc": "2.0", "id": id, "method": method, "params": params});
         if let Err(failure) = self.write(&message).await {
@@ -169,7 +169,7 @@ impl Stdio {
     fn forget(&self, id: i64) {
         self.pending
             .lock()
-            .expect("the pending map lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .remove(&id);
     }
 
@@ -185,7 +185,7 @@ impl Stdio {
         let tail: Vec<String> = self
             .stderr
             .lock()
-            .expect("the stderr lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .iter()
             .cloned()
             .collect();
@@ -207,7 +207,7 @@ impl Stdio {
         if let Some(mut child) = self
             .child
             .lock()
-            .expect("the child lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .take()
         {
             let _ = child.start_kill();
@@ -262,7 +262,7 @@ async fn read_stdout(label: String, stdout: BufReader<tokio::process::ChildStdou
                 let waiting = id.as_i64().and_then(|id| {
                     pending
                         .lock()
-                        .expect("the pending map lock is never poisoned")
+                        .unwrap_or_else(|p| p.into_inner())
                         .remove(&id)
                 });
                 if let Some(reply) = waiting {
@@ -296,7 +296,7 @@ async fn read_stdout(label: String, stdout: BufReader<tokio::process::ChildStdou
     // Dropping every waiting sender tells each caller the server is gone.
     pending
         .lock()
-        .expect("the pending map lock is never poisoned")
+        .unwrap_or_else(|p| p.into_inner())
         .clear();
 }
 
@@ -309,7 +309,7 @@ async fn read_stderr(
     let mut lines = stderr.lines();
     while let Ok(Some(line)) = lines.next_line().await {
         tracing::info!(server = %label, "{line}");
-        let mut kept = kept.lock().expect("the stderr lock is never poisoned");
+        let mut kept = kept.lock().unwrap_or_else(|p| p.into_inner());
         if kept.len() == STDERR_KEPT {
             kept.pop_front();
         }

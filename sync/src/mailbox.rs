@@ -653,7 +653,7 @@ impl<A: Accounts> Mailboxes<A> {
     /// Throws away the kept Gmail search, so the next listing asks Gmail
     /// again. The window calls this when the reader asks for a refresh.
     pub fn forget_remote(&self) {
-        *self.remote.lock().expect("remote listing poisoned") = None;
+        *self.remote.lock().unwrap_or_else(|p| p.into_inner()) = None;
     }
 
     /// The page of `mailbox` that follows the rows the caller holds.
@@ -1023,7 +1023,7 @@ impl<A: Accounts> Mailboxes<A> {
             .collect();
 
         let kept = {
-            let mut held = self.remote.lock().expect("remote listing poisoned");
+            let mut held = self.remote.lock().unwrap_or_else(|p| p.into_inner());
             match held.take() {
                 Some(listing) if listing.answers(query, &ids, &changes) => Some(listing),
                 _ => None,
@@ -1055,7 +1055,7 @@ impl<A: Accounts> Mailboxes<A> {
 
         let more = rows.len() < limit && !listing.complete(limit);
         let notices = listing.notices.clone();
-        *self.remote.lock().expect("remote listing poisoned") = Some(listing);
+        *self.remote.lock().unwrap_or_else(|p| p.into_inner()) = Some(listing);
         Ok(Listing {
             rows: rows.split_off(from.min(rows.len())),
             notices,

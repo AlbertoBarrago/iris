@@ -216,7 +216,7 @@ impl AccountSync {
                 .or_default()
                 .insert(hit.id.clone());
         }
-        let mut kept = self.hits.lock().expect("search hits poisoned");
+        let mut kept = self.hits.lock().unwrap_or_else(|p| p.into_inner());
         kept.retain(|_, hits| hits.at.elapsed() < KEPT_FOR);
         for (thread, ids) in by_thread {
             kept.insert(
@@ -236,14 +236,14 @@ impl AccountSync {
         let whole = self
             .listed
             .lock()
-            .expect("listed threads poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .get(thread_id)
             .filter(|listed| listed.at.elapsed() < KEPT_FOR)
             .map(|listed| listed.metas.iter().map(|m| m.id.clone()).collect());
         whole.or_else(|| {
             self.hits
                 .lock()
-                .expect("search hits poisoned")
+                .unwrap_or_else(|p| p.into_inner())
                 .get(thread_id)
                 .filter(|hits| hits.at.elapsed() < KEPT_FOR)
                 .map(|hits| hits.ids.clone())
@@ -252,8 +252,8 @@ impl AccountSync {
 
     /// Lets go of what searches kept about threads that are gone.
     pub(super) fn forget_listed(&self, threads: &BTreeSet<String>) {
-        let mut listed = self.listed.lock().expect("listed threads poisoned");
-        let mut hits = self.hits.lock().expect("search hits poisoned");
+        let mut listed = self.listed.lock().unwrap_or_else(|p| p.into_inner());
+        let mut hits = self.hits.lock().unwrap_or_else(|p| p.into_inner());
         for thread in threads {
             listed.remove(thread);
             hits.remove(thread);
@@ -280,7 +280,7 @@ impl AccountSync {
             .map(Want::from)
             .collect();
         let fetched = self.fetch(wants).await?;
-        let mut kept = self.listed.lock().expect("listed threads poisoned");
+        let mut kept = self.listed.lock().unwrap_or_else(|p| p.into_inner());
         kept.retain(|_, listed| listed.at.elapsed() < KEPT_FOR);
         for whole in fetched.whole {
             if let Some(first) = whole.first() {
@@ -313,7 +313,7 @@ impl AccountSync {
         let kept = self
             .listed
             .lock()
-            .expect("listed threads poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .remove(thread_id);
         if let Some(listed) = kept {
             let (account_id, thread) = (self.account_id, thread_id.to_string());

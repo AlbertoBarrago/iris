@@ -53,7 +53,7 @@ impl Registry {
     fn servers(&self) -> std::sync::MutexGuard<'_, BTreeMap<String, Arc<Running>>> {
         self.servers
             .lock()
-            .expect("the server registry lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
     }
 
     /// Stops every server the settings no longer hold as they were, and
@@ -98,7 +98,7 @@ impl Registry {
         }
         self.tested
             .lock()
-            .expect("the test results lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .retain(|name, _| servers.iter().any(|s| &s.name == name));
     }
 
@@ -121,7 +121,7 @@ impl Registry {
         }
         self.tested
             .lock()
-            .expect("the test results lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .get(name)
             .cloned()
             .unwrap_or(Status::Waiting)
@@ -139,7 +139,7 @@ impl Registry {
         };
         self.tested
             .lock()
-            .expect("the test results lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .insert(server.name, status.clone());
         status
     }
@@ -202,7 +202,7 @@ impl Running {
     fn client(&self) -> Option<Arc<McpClient>> {
         self.client
             .lock()
-            .expect("the client lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .clone()
     }
 
@@ -210,7 +210,7 @@ impl Running {
         *self
             .status
             .lock()
-            .expect("the status lock is never poisoned") = status;
+            .unwrap_or_else(|p| p.into_inner()) = status;
     }
 
     fn status(&self) -> Status {
@@ -222,7 +222,7 @@ impl Running {
             None => self
                 .status
                 .lock()
-                .expect("the status lock is never poisoned")
+                .unwrap_or_else(|p| p.into_inner())
                 .clone(),
         }
     }
@@ -246,7 +246,7 @@ impl Running {
         let recent = self
             .failed_at
             .lock()
-            .expect("the failure time lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .is_some_and(|at| at.elapsed() < RETRY_AFTER);
         if recent {
             return;
@@ -268,22 +268,22 @@ impl Running {
                 *self
                     .client
                     .lock()
-                    .expect("the client lock is never poisoned") = Some(Arc::new(client));
+                    .unwrap_or_else(|p| p.into_inner()) = Some(Arc::new(client));
                 *self
                     .failed_at
                     .lock()
-                    .expect("the failure time lock is never poisoned") = None;
+                    .unwrap_or_else(|p| p.into_inner()) = None;
             }
             Err(err) => {
                 tracing::warn!(server = %self.config.name, error = %err, "could not start an MCP server");
                 *self
                     .client
                     .lock()
-                    .expect("the client lock is never poisoned") = None;
+                    .unwrap_or_else(|p| p.into_inner()) = None;
                 *self
                     .failed_at
                     .lock()
-                    .expect("the failure time lock is never poisoned") = Some(Instant::now());
+                    .unwrap_or_else(|p| p.into_inner()) = Some(Instant::now());
                 self.set_status(Status::Failed(err.to_string()));
             }
         }
@@ -302,7 +302,7 @@ impl Running {
     fn stop(&self) {
         self.client
             .lock()
-            .expect("the client lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .take();
         self.set_status(Status::Waiting);
     }

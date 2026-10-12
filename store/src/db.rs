@@ -153,7 +153,7 @@ impl Inner {
     /// An idle connection, a new one while fewer than [`READER_POOL`] are
     /// open, or else the next one a read gives back.
     fn checkout(&self) -> Result<Lease<'_>> {
-        let mut readers = self.readers.lock().expect("reader pool poisoned");
+        let mut readers = self.readers.lock().unwrap_or_else(|p| p.into_inner());
         loop {
             if let Some(conn) = readers.idle.pop() {
                 return Ok(Lease {
@@ -170,13 +170,13 @@ impl Inner {
                         conn: Some(conn),
                     }),
                     Err(err) => {
-                        self.readers.lock().expect("reader pool poisoned").open -= 1;
+                        self.readers.lock().unwrap_or_else(|p| p.into_inner()).open -= 1;
                         self.returned.notify_one();
                         Err(err)
                     }
                 };
             }
-            readers = self.returned.wait(readers).expect("reader pool poisoned");
+            readers = self.returned.wait(readers).unwrap_or_else(|p| p.into_inner());
         }
     }
 

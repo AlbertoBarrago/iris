@@ -262,7 +262,7 @@ impl Inner {
         match self.list_tools().await {
             Ok(tools) => {
                 tracing::info!(server = %self.label, tools = tools.len(), "the server's tools changed");
-                *self.tools.lock().expect("the tools lock is never poisoned") = tools;
+                *self.tools.lock().unwrap_or_else(|p| p.into_inner()) = tools;
                 self.changes.send_modify(|n| *n += 1);
             }
             Err(failure) => {
@@ -334,7 +334,7 @@ impl McpClient {
         *inner
             .tools
             .lock()
-            .expect("the tools lock is never poisoned") = tools;
+            .unwrap_or_else(|p| p.into_inner()) = tools;
 
         let mut tasks = vec![tokio::spawn(watch_notifications(
             Arc::clone(&inner),
@@ -354,7 +354,7 @@ impl McpClient {
         self.inner
             .tools
             .lock()
-            .expect("the tools lock is never poisoned")
+            .unwrap_or_else(|p| p.into_inner())
             .clone()
     }
 

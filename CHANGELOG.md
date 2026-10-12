@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- The assistant can write, save and send mail again, instead of saying the
+  mail window closed.
+
 ## 1.1.5 (2026-10-12)
 
 ### Fixed

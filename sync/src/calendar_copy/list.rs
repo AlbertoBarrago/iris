@@ -289,7 +289,7 @@ impl<A: Accounts> CalendarCopy<A> {
                         .await?;
                     // The next read of the list puts back what the provider
                     // holds: the old name, the calendar a delete took off.
-                    self.last_list.lock().expect("copy poisoned").remove(&account_id);
+                    self.last_list.lock().unwrap_or_else(|p| p.into_inner()).remove(&account_id);
                     turned_down.push(TurnedDown {
                         account_id,
                         calendar: queued.calendar.clone(),

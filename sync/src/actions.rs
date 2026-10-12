@@ -975,7 +975,7 @@ impl<A: Accounts> MailActions<A> {
     }
 
     fn lock(&self) -> std::sync::MutexGuard<'_, VecDeque<Undo>> {
-        self.stack.lock().expect("undo lock poisoned")
+        self.stack.lock().unwrap_or_else(|p| p.into_inner())
     }
 }
 

@@ -260,7 +260,7 @@ impl AccountSync {
     /// since, which lets the cache run over its cap by that much per
     /// account at most.
     fn due_for_eviction(&self, size: i64) -> bool {
-        let mut unswept = self.unswept.lock().expect("unswept bytes poisoned");
+        let mut unswept = self.unswept.lock().unwrap_or_else(|p| p.into_inner());
         let written = unswept.map_or(i64::MAX, |bytes| bytes.saturating_add(size));
         if written >= (self.body_cache_bytes / 64).max(1) {
             *unswept = Some(0);
@@ -275,7 +275,7 @@ impl AccountSync {
     /// first one share its transaction. A lost access time only makes that
     /// body look older to eviction, so failures are logged and dropped.
     fn touch_body(&self, message_id: &str, now: i64) {
-        let mut touched = self.touched.lock().expect("touched bodies poisoned");
+        let mut touched = self.touched.lock().unwrap_or_else(|p| p.into_inner());
         touched.push((message_id.to_string(), now));
         if touched.len() > 1 {
             return;
@@ -286,13 +286,13 @@ impl AccountSync {
             let written = db
                 .write(move |c| {
                     let reads =
-                        std::mem::take(&mut *pending.lock().expect("touched bodies poisoned"));
+                        std::mem::take(&mut *pending.lock().unwrap_or_else(|p| p.into_inner()));
                     bodies::touch_bodies(c, account_id, &reads)
                 })
                 .await;
             if let Err(err) = written {
                 // Empty the list so the next hit schedules a new write.
-                unsent.lock().expect("touched bodies poisoned").clear();
+                unsent.lock().unwrap_or_else(|p| p.into_inner()).clear();
                 tracing::debug!(error = %err, "could not record body reads");
             }
         });

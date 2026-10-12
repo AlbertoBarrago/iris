@@ -49,7 +49,7 @@ pub fn preload_keys() {
                 (!key.is_empty()).then(|| (name.to_string(), key))
             })
             .collect();
-        let mut cache = CACHE.lock().expect("the key cache lock is never poisoned");
+        let mut cache = CACHE.lock().unwrap_or_else(|p| p.into_inner());
         // Keys saved while loading win over what the keyring had.
         let mut merged = found;
         merged.extend(cache.take().unwrap_or_default());
@@ -61,7 +61,7 @@ pub fn preload_keys() {
 pub fn load_key(name: &str) -> Option<String> {
     CACHE
         .lock()
-        .expect("the key cache lock is never poisoned")
+        .unwrap_or_else(|p| p.into_inner())
         .as_ref()
         .and_then(|keys| keys.get(name).cloned())
 }
@@ -76,7 +76,7 @@ pub fn read_key(name: &str) -> Option<String> {
     let key = keys().load(name).ok().flatten().filter(|k| !k.is_empty())?;
     CACHE
         .lock()
-        .expect("the key cache lock is never poisoned")
+        .unwrap_or_else(|p| p.into_inner())
         .get_or_insert_with(HashMap::new)
         .insert(name.to_string(), key.clone());
     Some(key)
@@ -87,7 +87,7 @@ pub fn read_key(name: &str) -> Option<String> {
 pub fn save_key(name: &str, key: &str) {
     let (name, key) = (name.to_string(), key.trim().to_string());
     {
-        let mut cache = CACHE.lock().expect("the key cache lock is never poisoned");
+        let mut cache = CACHE.lock().unwrap_or_else(|p| p.into_inner());
         let keys = cache.get_or_insert_with(HashMap::new);
         if key.is_empty() {
             keys.remove(&name);
