@@ -371,50 +371,40 @@ enum FlagImage {
 /// suggestions show under it while it has them.
 struct MailSearchField: View {
     @Environment(MailModel.self) private var model
-    @State private var editing = false
 
     var body: some View {
         @Bindable var model = model
-        SearchFieldBox(text: $model.searchText, editing: $editing, placeholder: tr("Search mail")) {
+        SearchFieldBox(
+            text: $model.searchText,
+            suggestions: model.suggestions,
+            placeholder: tr("Search mail")
+        ) {
             model.searchNow()
+            model.dismissSuggestions()
+        } pick: { suggestion in
+            model.searchText = suggestion.query
+            model.searchNow()
+            model.dismissSuggestions()
+        } dismiss: {
             model.dismissSuggestions()
         } cancel: {
             model.searchOpen = false
-        }
-        .popover(isPresented: Binding(
-            get: { editing && !model.suggestions.isEmpty },
-            set: { if !$0 { model.dismissSuggestions() } }
-        ), arrowEdge: .bottom) {
-            VStack(alignment: .leading, spacing: 0) {
-                ForEach(model.suggestions, id: \.query) { suggestion in
-                    Button {
-                        model.searchText = suggestion.query
-                        model.searchNow()
-                        model.dismissSuggestions()
-                    } label: {
-                        Text(suggestion.label)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.vertical, 6)
-            .frame(width: 260)
         }
     }
 }
 
 /// An `NSSearchField` bound to `text`, which takes the keys once it is
 /// in a window. `submit` runs on Return, `cancel` on Escape when the
-/// field is already empty.
+/// field is already empty. Suggestions show in a panel under the field
+/// that never takes the keys, so typing always stays in the field; the
+/// arrow keys move through them and Return picks the one marked.
 private struct SearchFieldBox: NSViewRepresentable {
     @Binding var text: String
-    @Binding var editing: Bool
+    let suggestions: [SearchSuggestion]
     let placeholder: String
     let submit: () -> Void
+    let pick: (SearchSuggestion) -> Void
+    let dismiss: () -> Void
     let cancel: () -> Void
 
     func makeNSView(context: Context) -> NSSearchField {
@@ -424,36 +414,91 @@ private struct SearchFieldBox: NSViewRepresentable {
         field.delegate = context.coordinator
         field.target = context.coordinator
         field.action = #selector(Coordinator.changed(_:))
+        context.coordinator.field = field
         DispatchQueue.main.async { field.window?.makeFirstResponder(field) }
         return field
     }
 
     func updateNSView(_ field: NSSearchField, context: Context) {
-        context.coordinator.parent = self
-        if field.stringValue != text { field.stringValue = text }
+        let coordinator = context.coordinator
+        coordinator.parent = self
+        // While the person types, the model can lag the field by a key.
+        // Writing that older text back would move the cursor to the end
+        // and drop what was typed since, so only a change made elsewhere,
+        // such as a picked suggestion, is written into the field.
+        if field.stringValue != text, text != coordinator.reported {
+            field.stringValue = text
+            coordinator.reported = text
+            field.currentEditor()?.selectedRange = NSRange(location: (text as NSString).length, length: 0)
+        }
+        coordinator.showSuggestions()
+    }
+
+    static func dismantleNSView(_ field: NSSearchField, coordinator: Coordinator) {
+        coordinator.panel.close()
     }
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
+    @MainActor
     final class Coordinator: NSObject, NSSearchFieldDelegate {
         var parent: SearchFieldBox
+        weak var field: NSSearchField?
+        /// The text the field last reported, which the model may not
+        /// have caught up with yet.
+        var reported = ""
+        private var editing = false
+        let panel = SearchSuggestionPanel()
 
         init(_ parent: SearchFieldBox) {
             self.parent = parent
+            super.init()
+            panel.picked = { [weak self] suggestion in self?.parent.pick(suggestion) }
+        }
+
+        /// Shows the suggestions under the field while it is being typed
+        /// in and has some, and hides the panel otherwise.
+        func showSuggestions() {
+            guard let field else { return }
+            if editing, !parent.suggestions.isEmpty {
+                panel.show(parent.suggestions, under: field)
+            } else {
+                panel.close()
+            }
         }
 
         @objc func changed(_ field: NSSearchField) {
+            reported = field.stringValue
             if parent.text != field.stringValue { parent.text = field.stringValue }
         }
 
-        func controlTextDidBeginEditing(_ note: Notification) { parent.editing = true }
+        func controlTextDidBeginEditing(_ note: Notification) {
+            editing = true
+            showSuggestions()
+        }
 
-        func controlTextDidEndEditing(_ note: Notification) { parent.editing = false }
+        func controlTextDidEndEditing(_ note: Notification) {
+            editing = false
+            showSuggestions()
+        }
 
         func control(_ control: NSControl, textView: NSTextView, doCommandBy selector: Selector) -> Bool {
             switch selector {
+            case #selector(NSResponder.moveDown(_:)) where panel.isShowing:
+                panel.mark(by: 1)
+                return true
+            case #selector(NSResponder.moveUp(_:)) where panel.isShowing:
+                panel.mark(by: -1)
+                return true
             case #selector(NSResponder.insertNewline(_:)):
-                parent.submit()
+                if let suggestion = panel.marked {
+                    parent.pick(suggestion)
+                } else {
+                    parent.submit()
+                }
+                return true
+            case #selector(NSResponder.cancelOperation(_:)) where panel.isShowing:
+                parent.dismiss()
                 return true
             case #selector(NSResponder.cancelOperation(_:)) where parent.text.isEmpty:
                 parent.cancel()

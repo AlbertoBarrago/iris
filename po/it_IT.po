@@ -5597,6 +5597,10 @@ msgstr "Eliminala"
 msgid "New Rule"
 msgstr "Nuova regola"
 
+#: macos/Iris/SearchSuggestionPanel.swift:36
+msgid "Search suggestions"
+msgstr "Suggerimenti di ricerca"
+
 #: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:54
 msgid "General"
 msgstr "Generale"
@@ -6163,7 +6167,7 @@ msgstr ""
 msgid "Body"
 msgstr "Testo"
 
-#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:378
+#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:380
 msgid "Search mail"
 msgstr "Cerca nella posta"
 
@@ -8660,9 +8664,6 @@ msgstr "VIP"
 
 #~ msgid "Picture"
 #~ msgstr "Immagine"
-
-#~ msgid "No Suggestions"
-#~ msgstr "Nessun suggerimento"
 
 #~ msgid "Add to Dictionary"
 #~ msgstr "Aggiungi al dizionario"

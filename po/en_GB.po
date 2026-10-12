@@ -5162,6 +5162,10 @@ msgstr "Delete It"
 msgid "New Rule"
 msgstr "New Rule"
 
+#: macos/Iris/SearchSuggestionPanel.swift:36
+msgid "Search suggestions"
+msgstr "Search suggestions"
+
 #: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:54
 msgid "General"
 msgstr "General"
@@ -5700,7 +5704,7 @@ msgstr "The subject is optional. A template with one gives it to a message that 
 msgid "Body"
 msgstr "Body"
 
-#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:378
+#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:380
 msgid "Search mail"
 msgstr "Search mail"
 

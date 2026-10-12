@@ -5313,6 +5313,10 @@ msgstr ""
 msgid "New Rule"
 msgstr ""
 
+#: macos/Iris/SearchSuggestionPanel.swift:36
+msgid "Search suggestions"
+msgstr ""
+
 #: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:54
 msgid "General"
 msgstr ""
@@ -5860,7 +5864,7 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:378
+#: macos/Iris/ThreadListView.swift:88 macos/Iris/ThreadListView.swift:380
 msgid "Search mail"
 msgstr ""
 
