@@ -3745,27 +3745,27 @@ msgstr "The event is no longer on the calendar"
 msgid "Could not send your answer: {reason}"
 msgstr "Could not send your answer: {reason}"
 
-#: ffi/src/mail.rs:387
+#: ffi/src/mail.rs:389
 msgid "Will remind you {when}"
 msgstr "Will remind you {when}"
 
-#: ffi/src/mail.rs:390
+#: ffi/src/mail.rs:392
 msgid "Back in the Inbox"
 msgstr "Back in the Inbox"
 
-#: ffi/src/mail.rs:427
+#: ffi/src/mail.rs:429
 msgid "Could not cancel: {reason}"
 msgstr "Could not cancel: {reason}"
 
-#: ffi/src/mail.rs:451
+#: ffi/src/mail.rs:453
 msgid "Deleted. It will not be sent."
 msgstr "Deleted. It will not be sent."
 
-#: ffi/src/mail.rs:452
+#: ffi/src/mail.rs:454
 msgid "Deleted. They will not be sent."
 msgstr "Deleted. They will not be sent."
 
-#: ffi/src/mail.rs:461
+#: ffi/src/mail.rs:463
 msgid "Could not delete: {reason}"
 msgstr "Could not delete: {reason}"
 
@@ -3939,6 +3939,58 @@ msgstr "Rule deleted"
 msgid "Could Not Load the Rules"
 msgstr "Could Not Load the Rules"
 
+#: ffi/src/senders.rs:52
+msgid "Block {sender}?"
+msgstr "Block {sender}?"
+
+#: ffi/src/senders.rs:55
+msgid "New mail from {email} goes straight to the Trash. This conversation moves there now. Remove the rule under Rules to unblock."
+msgstr "New mail from {email} goes straight to the Trash. This conversation moves there now. Remove the rule under Rules to unblock."
+
+#: ffi/src/senders.rs:72 ffi/src/senders.rs:98
+msgid "Open a message from the sender first"
+msgstr "Open a message from the sender first"
+
+#: ffi/src/senders.rs:83
+msgid "Mail from {sender} now goes to {category}"
+msgstr "Mail from {sender} now goes to {category}"
+
+#: ffi/src/senders.rs:84
+msgid "Moved mail from {sender} to {category}"
+msgstr "Moved mail from {sender} to {category}"
+
+#: ffi/src/senders.rs:86
+msgid "Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
+msgstr "Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
+
+#: ffi/src/senders.rs:102
+msgid "Could not block the sender: {reason}"
+msgstr "Could not block the sender: {reason}"
+
+#: ffi/src/senders.rs:118
+msgid "Blocked {sender}"
+msgstr "Blocked {sender}"
+
+#: ffi/src/smart.rs:106
+msgid "Give the mailbox a name"
+msgstr "Give the mailbox a name"
+
+#: ffi/src/smart.rs:124
+msgid "Add a condition with a value"
+msgstr "Add a condition with a value"
+
+#: ffi/src/source.rs:42 ffi/src/source.rs:55
+msgid "Open a conversation first"
+msgstr "Open a conversation first"
+
+#: ffi/src/source.rs:44
+msgid "Could not load the source: {reason}"
+msgstr "Could not load the source: {reason}"
+
+#: ffi/src/source.rs:72
+msgid "Could not export the mail: {reason}"
+msgstr "Could not export the mail: {reason}"
+
 #: ffi/src/templates.rs:69
 msgid "Template not saved: {reason}"
 msgstr "Template not saved: {reason}"
@@ -3971,7 +4023,7 @@ msgstr "Ask Before Acting"
 msgid "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 msgstr "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:680
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:687
 msgid "Conversation"
 msgstr "Conversation"
 
@@ -4434,7 +4486,7 @@ msgstr "Month"
 
 #: macos/Iris/CalendarView.swift:83 macos/Iris/CalendarView.swift:84
 #: macos/Iris/CalendarView.swift:113 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:63 macos/Iris/SettingsView.swift:24
+#: macos/Iris/IrisApp.swift:74 macos/Iris/SettingsView.swift:24
 #: macos/Iris/SettingsView.swift:299
 msgid "Calendar"
 msgstr "Calendar"
@@ -4463,7 +4515,7 @@ msgstr "Next Week"
 msgid "Next Month"
 msgstr "Next Month"
 
-#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:61
+#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:72
 msgid "Mail"
 msgstr "Mail"
 
@@ -4490,7 +4542,8 @@ msgstr "Notes"
 #: macos/Iris/CalendarView.swift:645 macos/Iris/ContactCardView.swift:74
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:48
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:41
-#: macos/Iris/ThreadListView.swift:306 macos/Iris/ThreadListView.swift:307
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:306
+#: macos/Iris/ThreadListView.swift:307
 msgid "Close"
 msgstr "Close"
 
@@ -4512,7 +4565,8 @@ msgstr "Schedule"
 msgid "Save as Template"
 msgstr "Save as Template"
 
-#: macos/Iris/ComposeView.swift:83 macos/Iris/TemplatesSettings.swift:97
+#: macos/Iris/ComposeView.swift:83 macos/Iris/SmartEditorView.swift:28
+#: macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Name"
 
@@ -4681,34 +4735,46 @@ msgstr "Reply All"
 msgid "Forward"
 msgstr "Forward"
 
-#: macos/Iris/ConversationView.swift:104 macos/Iris/ConversationView.swift:266
+#: macos/Iris/ConversationView.swift:104 macos/Iris/ConversationView.swift:267
 #: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:237
 msgid "Mark as Unread"
 msgstr "Mark as Unread"
 
-#: macos/Iris/ConversationView.swift:258
+#: macos/Iris/ConversationView.swift:259
 msgid "Several Conversations Selected"
 msgstr "Several Conversations Selected"
 
-#: macos/Iris/ConversationView.swift:260
+#: macos/Iris/ConversationView.swift:261
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Actions and shortcuts apply to all of them. Esc clears the selection."
 
-#: macos/Iris/ConversationView.swift:270
+#: macos/Iris/ConversationView.swift:271
 msgid "Move to Trash"
 msgstr "Move to Trash"
 
-#: macos/Iris/ConversationView.swift:425
+#: macos/Iris/ConversationView.swift:426
 msgid "Checked"
 msgstr "Checked"
 
-#: macos/Iris/ConversationView.swift:426
+#: macos/Iris/ConversationView.swift:427
 msgid "Warning"
 msgstr "Warning"
 
-#: macos/Iris/ConversationView.swift:427
+#: macos/Iris/ConversationView.swift:428
 msgid "Not checked"
 msgstr "Not checked"
+
+#: macos/Iris/ConversationView.swift:444
+msgid "Categorize Sender"
+msgstr "Categorise Sender"
+
+#: macos/Iris/ConversationView.swift:451
+msgid "Block Sender…"
+msgstr "Block Sender…"
+
+#: macos/Iris/ConversationView.swift:460
+msgid "Block"
+msgstr "Block"
 
 #: macos/Iris/EventEditorView.swift:32
 msgid "Title"
@@ -4742,7 +4808,8 @@ msgstr "None of your calendars take new events"
 
 #: macos/Iris/FilingView.swift:70 macos/Iris/FilingView.swift:175
 #: macos/Iris/HideMyEmailView.swift:39 macos/Iris/RulesView.swift:198
-#: macos/Iris/SidebarView.swift:150 macos/Iris/TemplatesSettings.swift:119
+#: macos/Iris/SidebarView.swift:150 macos/Iris/SmartEditorView.swift:70
+#: macos/Iris/TemplatesSettings.swift:119
 msgid "Create"
 msgstr "Create"
 
@@ -4836,7 +4903,7 @@ msgstr "Where Did You Use It?"
 msgid "Your New Address"
 msgstr "Your New Address"
 
-#: macos/Iris/HideMyEmailView.swift:125
+#: macos/Iris/HideMyEmailView.swift:125 macos/Iris/SourceView.swift:31
 msgid "Copy"
 msgstr "Copy"
 
@@ -4916,47 +4983,56 @@ msgstr "Print…"
 msgid "Open in New Window"
 msgstr "Open in New Window"
 
+#: macos/Iris/IrisApp.swift:58
+msgid "New Smart Mailbox…"
+msgstr "New Smart Mailbox…"
+
+#: macos/Iris/IrisApp.swift:62
+msgid "Export…"
+msgstr "Export…"
+
+#: macos/Iris/IrisApp.swift:66
+msgid "View Source"
+msgstr "View Source"
+
 #: macos/Iris/LaterView.swift:91
 msgid "The conversation leaves the inbox now and comes back at this time, marked unread."
 msgstr "The conversation leaves the inbox now and comes back at this time, marked unread."
 
-#: macos/Iris/MailModel.swift:582
+#: macos/Iris/MailModel.swift:589
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: macos/Iris/MailModel.swift:584
+#: macos/Iris/MailModel.swift:591
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:609
+#: macos/Iris/MailModel.swift:616 macos/Iris/SourceView.swift:53
+#: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "Saved {file}"
 
-#: macos/Iris/MailModel.swift:650
-msgid "Open a conversation first"
-msgstr "Open a conversation first"
-
-#: macos/Iris/MailModel.swift:774
+#: macos/Iris/MailModel.swift:781
 msgid "Sending…"
 msgstr "Sending…"
 
-#: macos/Iris/MailModel.swift:863
+#: macos/Iris/MailModel.swift:870
 msgid "Cancel Send"
 msgstr "Cancel Send"
 
-#: macos/Iris/MailModel.swift:1112
+#: macos/Iris/MailModel.swift:1165
 msgid "Translating…"
 msgstr "Translating…"
 
-#: macos/Iris/MailModel.swift:1564
+#: macos/Iris/MailModel.swift:1617
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: macos/Iris/MailModel.swift:1569
+#: macos/Iris/MailModel.swift:1622
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1615
+#: macos/Iris/MailModel.swift:1668
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 
@@ -5413,6 +5489,74 @@ msgstr "Remove Account…"
 #: macos/Iris/SidebarView.swift:254
 msgid "Sign in again to keep syncing"
 msgstr "Sign in again to keep syncing"
+
+#: macos/Iris/SidebarView.swift:298 macos/Iris/SmartEditorView.swift:76
+msgid "Edit Smart Mailbox"
+msgstr "Edit Smart Mailbox"
+
+#: macos/Iris/SmartEditorView.swift:30
+msgid "All Accounts"
+msgstr "All Accounts"
+
+#: macos/Iris/SmartEditorView.swift:33
+msgid "Match"
+msgstr "Match"
+
+#: macos/Iris/SmartEditorView.swift:34
+msgid "All of the conditions"
+msgstr "All of the conditions"
+
+#: macos/Iris/SmartEditorView.swift:35
+msgid "Any of the conditions"
+msgstr "Any of the conditions"
+
+#: macos/Iris/SmartEditorView.swift:38
+msgid "Conditions"
+msgstr "Conditions"
+
+#: macos/Iris/SmartEditorView.swift:41
+msgid "Condition"
+msgstr "Condition"
+
+#: macos/Iris/SmartEditorView.swift:46
+msgid "Matches"
+msgstr "Matches"
+
+#: macos/Iris/SmartEditorView.swift:49
+msgid "Remove Condition"
+msgstr "Remove Condition"
+
+#: macos/Iris/SmartEditorView.swift:56
+msgid "Add Condition"
+msgstr "Add Condition"
+
+#: macos/Iris/SmartEditorView.swift:76
+msgid "New Smart Mailbox"
+msgstr "New Smart Mailbox"
+
+#: macos/Iris/SourceView.swift:26 macos/Iris/SourceView.swift:43
+msgid "Message Source"
+msgstr "Message Source"
+
+#: macos/Iris/SourceView.swift:35
+msgid "Save As…"
+msgstr "Save As…"
+
+#: macos/Iris/SourceView.swift:36
+msgid "Save as an .eml file"
+msgstr "Save as an .eml file"
+
+#: macos/Iris/SourceView.swift:48
+msgid "Save Message"
+msgstr "Save Message"
+
+#: macos/Iris/SourceView.swift:80
+msgid "Exporting…"
+msgstr "Exporting…"
+
+#: macos/Iris/SourceView.swift:87
+msgid "Export Mail"
+msgstr "Export Mail"
 
 #: macos/Iris/TemplatesSettings.swift:21 macos/Iris/TemplatesSettings.swift:95
 msgid "Edit Template"
@@ -6582,6 +6726,6 @@ msgstr "Smart Mailboxes"
 msgid "Accounts"
 msgstr "Accounts"
 
-#: view/src/sidebar.rs:153
+#: view/src/sidebar.rs:164
 msgid "VIPs"
 msgstr "VIPs"

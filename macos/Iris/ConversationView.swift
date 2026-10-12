@@ -108,6 +108,7 @@ struct ConversationView: View {
                     FlagMenu()
                     RemindMenu()
                     FilingButton()
+                    SenderButton()
                 }
                 .disabled(model.selection.isEmpty)
             }
@@ -425,6 +426,40 @@ private struct ProtectionBar: View {
         case "good": tr("Checked")
         case "bad": tr("Warning")
         default: tr("Not checked")
+        }
+    }
+}
+
+/// What Iris does about the person who wrote the conversation: sort their
+/// mail into a category, or block them, as the GTK window's sender menu
+/// did. Each leaves a rule on the server for the mail still to come.
+struct SenderButton: View {
+    @Environment(MailModel.self) private var model
+    @State private var blocking = false
+
+    var body: some View {
+        let menu = model.senderMenu
+        Menu {
+            if let menu, !menu.categories.isEmpty {
+                Menu(tr("Categorize Sender")) {
+                    ForEach(menu.categories, id: \.key) { category in
+                        Button(category.label) { model.categorizeSender(category.key) }
+                    }
+                }
+            }
+            if let menu, menu.canBlock {
+                Button(tr("Block Sender…"), role: .destructive) { blocking = true }
+            }
+        } label: {
+            Label(menu?.sender ?? "", systemImage: "person.crop.circle")
+        }
+        .help(menu?.sender ?? "")
+        .disabled(menu == nil || (menu?.categories.isEmpty ?? true) && !(menu?.canBlock ?? false))
+        .alert(menu?.blockHeading ?? "", isPresented: $blocking) {
+            Button(tr("Cancel"), role: .cancel) {}
+            Button(tr("Block"), role: .destructive) { model.blockSender() }
+        } message: {
+            Text(menu?.blockBody ?? "")
         }
     }
 }

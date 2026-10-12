@@ -26,6 +26,12 @@ struct ContentView: View {
         } message: { request in
             Text(request.question.body)
         }
+        .sheet(item: Bindable(model).smartEditing) { edit in
+            SmartEditorView(edit: edit)
+        }
+        .sheet(item: Bindable(model).source) { source in
+            SourceView(source: source)
+        }
         .sheet(item: Bindable(model).accountSheet) { sheet in
             switch sheet {
             case .autoReply(let account): AutoReplyView(account: account)

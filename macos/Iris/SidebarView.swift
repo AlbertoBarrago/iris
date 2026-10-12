@@ -293,6 +293,17 @@ struct MailboxRow: View {
         } isTargeted: { targeted = $0 }
         .background(targeted ? Color.accentColor.opacity(0.25) : .clear, in: RoundedRectangle(cornerRadius: 6))
         .modifier(LabelMenu(item: item))
+        .contextMenu {
+            if let id = item.smartId {
+                Button(tr("Edit Smart Mailbox")) {
+                    if let form = model.mail?.smartMailbox(id: id) { model.smartEditing = SmartEdit(form: form) }
+                }
+                Button(tr("Delete"), role: .destructive) {
+                    try? model.mail?.deleteSmartMailbox(id: id)
+                    model.refresh()
+                }
+            }
+        }
     }
 
     /// The SF Symbol for what a row's icon stands for.
@@ -315,6 +326,7 @@ struct MailboxRow: View {
         case "tag": "tag"
         case "vips": "star"
         case "person": "person.crop.circle"
+        case "smart": "gearshape.2"
         default: "folder"
         }
     }

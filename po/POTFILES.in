@@ -136,3 +136,8 @@ macos/Iris/WeekView.swift
 macos/Iris/Updates.swift
 appcore/src/erase.rs
 ffi/src/erase.rs
+ffi/src/source.rs
+macos/Iris/SourceView.swift
+ffi/src/senders.rs
+ffi/src/smart.rs
+macos/Iris/SmartEditorView.swift

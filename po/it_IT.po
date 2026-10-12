@@ -3899,7 +3899,8 @@ msgstr "Rimuovere {account}?"
 
 #: ffi/src/account_setup.rs:680
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
-msgstr "Un'altra copia di Iris sta sincronizzando la posta. Chiudila e riprova."
+msgstr ""
+"Un'altra copia di Iris sta sincronizzando la posta. Chiudila e riprova."
 
 #: ffi/src/ai_prefs.rs:247
 msgid "No answer: {reason}"
@@ -4087,27 +4088,27 @@ msgstr "L'evento non è più nel calendario"
 msgid "Could not send your answer: {reason}"
 msgstr "Impossibile inviare la tua risposta: {reason}"
 
-#: ffi/src/mail.rs:387
+#: ffi/src/mail.rs:389
 msgid "Will remind you {when}"
 msgstr "Te lo ricorderà {when}"
 
-#: ffi/src/mail.rs:390
+#: ffi/src/mail.rs:392
 msgid "Back in the Inbox"
 msgstr "Di nuovo in Posta in arrivo"
 
-#: ffi/src/mail.rs:427
+#: ffi/src/mail.rs:429
 msgid "Could not cancel: {reason}"
 msgstr "Impossibile annullare: {reason}"
 
-#: ffi/src/mail.rs:451
+#: ffi/src/mail.rs:453
 msgid "Deleted. It will not be sent."
 msgstr "Eliminato. Non verrà inviato."
 
-#: ffi/src/mail.rs:452
+#: ffi/src/mail.rs:454
 msgid "Deleted. They will not be sent."
 msgstr "Eliminati. Non verranno inviati."
 
-#: ffi/src/mail.rs:461
+#: ffi/src/mail.rs:463
 msgid "Could not delete: {reason}"
 msgstr "Impossibile eliminare: {reason}"
 
@@ -4302,6 +4303,65 @@ msgstr "Regola eliminata"
 msgid "Could Not Load the Rules"
 msgstr "Impossibile caricare le regole"
 
+#: ffi/src/senders.rs:52
+msgid "Block {sender}?"
+msgstr "Bloccare {sender}?"
+
+#: ffi/src/senders.rs:55
+msgid ""
+"New mail from {email} goes straight to the Trash. This conversation moves "
+"there now. Remove the rule under Rules to unblock."
+msgstr ""
+"La nuova posta da {email} va direttamente nel Cestino. Questa conversazione "
+"ci viene spostata ora. Rimuovi la regola in Regole per sbloccare."
+
+#: ffi/src/senders.rs:72 ffi/src/senders.rs:98
+msgid "Open a message from the sender first"
+msgstr "Apri prima un messaggio del mittente"
+
+#: ffi/src/senders.rs:83
+msgid "Mail from {sender} now goes to {category}"
+msgstr "La posta da {sender} ora va in {category}"
+
+#: ffi/src/senders.rs:84
+msgid "Moved mail from {sender} to {category}"
+msgstr "Posta da {sender} spostata in {category}"
+
+#: ffi/src/senders.rs:86
+msgid ""
+"Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
+msgstr ""
+"Posta da {sender} spostata in {category}, ma impossibile smistare la nuova "
+"posta: {reason}"
+
+#: ffi/src/senders.rs:102
+msgid "Could not block the sender: {reason}"
+msgstr "Impossibile bloccare il mittente: {reason}"
+
+#: ffi/src/senders.rs:118
+msgid "Blocked {sender}"
+msgstr "{sender} bloccato"
+
+#: ffi/src/smart.rs:106
+msgid "Give the mailbox a name"
+msgstr "Dai un nome alla casella"
+
+#: ffi/src/smart.rs:124
+msgid "Add a condition with a value"
+msgstr "Aggiungi una condizione con un valore"
+
+#: ffi/src/source.rs:42 ffi/src/source.rs:55
+msgid "Open a conversation first"
+msgstr "Apri prima una conversazione"
+
+#: ffi/src/source.rs:44
+msgid "Could not load the source: {reason}"
+msgstr "Impossibile caricare il sorgente: {reason}"
+
+#: ffi/src/source.rs:72
+msgid "Could not export the mail: {reason}"
+msgstr "Impossibile esportare la posta: {reason}"
+
 #: ffi/src/templates.rs:69
 msgid "Template not saved: {reason}"
 msgstr "Modello non salvato: {reason}"
@@ -4342,7 +4402,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:680
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:687
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -4839,7 +4899,7 @@ msgstr "Mese"
 
 #: macos/Iris/CalendarView.swift:83 macos/Iris/CalendarView.swift:84
 #: macos/Iris/CalendarView.swift:113 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:63 macos/Iris/SettingsView.swift:24
+#: macos/Iris/IrisApp.swift:74 macos/Iris/SettingsView.swift:24
 #: macos/Iris/SettingsView.swift:299
 msgid "Calendar"
 msgstr "Calendario"
@@ -4868,7 +4928,7 @@ msgstr "Settimana successiva"
 msgid "Next Month"
 msgstr "Mese successivo"
 
-#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:61
+#: macos/Iris/CalendarView.swift:112 macos/Iris/IrisApp.swift:72
 msgid "Mail"
 msgstr "Posta"
 
@@ -4895,7 +4955,8 @@ msgstr "Note"
 #: macos/Iris/CalendarView.swift:645 macos/Iris/ContactCardView.swift:74
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:48
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:41
-#: macos/Iris/ThreadListView.swift:306 macos/Iris/ThreadListView.swift:307
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:306
+#: macos/Iris/ThreadListView.swift:307
 msgid "Close"
 msgstr "Chiudi"
 
@@ -4919,7 +4980,8 @@ msgstr "Programma"
 msgid "Save as Template"
 msgstr "Salva come modello"
 
-#: macos/Iris/ComposeView.swift:83 macos/Iris/TemplatesSettings.swift:97
+#: macos/Iris/ComposeView.swift:83 macos/Iris/SmartEditorView.swift:28
+#: macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Nome"
 
@@ -5100,34 +5162,46 @@ msgstr "Rispondi a tutti"
 msgid "Forward"
 msgstr "Inoltra"
 
-#: macos/Iris/ConversationView.swift:104 macos/Iris/ConversationView.swift:266
+#: macos/Iris/ConversationView.swift:104 macos/Iris/ConversationView.swift:267
 #: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:237
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
-#: macos/Iris/ConversationView.swift:258
+#: macos/Iris/ConversationView.swift:259
 msgid "Several Conversations Selected"
 msgstr "Più conversazioni selezionate"
 
-#: macos/Iris/ConversationView.swift:260
+#: macos/Iris/ConversationView.swift:261
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 
-#: macos/Iris/ConversationView.swift:270
+#: macos/Iris/ConversationView.swift:271
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
-#: macos/Iris/ConversationView.swift:425
+#: macos/Iris/ConversationView.swift:426
 msgid "Checked"
 msgstr "Verificata"
 
-#: macos/Iris/ConversationView.swift:426
+#: macos/Iris/ConversationView.swift:427
 msgid "Warning"
 msgstr "Avviso"
 
-#: macos/Iris/ConversationView.swift:427
+#: macos/Iris/ConversationView.swift:428
 msgid "Not checked"
 msgstr "Non verificata"
+
+#: macos/Iris/ConversationView.swift:444
+msgid "Categorize Sender"
+msgstr "Classifica mittente"
+
+#: macos/Iris/ConversationView.swift:451
+msgid "Block Sender…"
+msgstr "Blocca mittente…"
+
+#: macos/Iris/ConversationView.swift:460
+msgid "Block"
+msgstr "Blocca"
 
 #: macos/Iris/EventEditorView.swift:32
 msgid "Title"
@@ -5161,7 +5235,8 @@ msgstr "Nessuno dei tuoi calendari accetta nuovi eventi"
 
 #: macos/Iris/FilingView.swift:70 macos/Iris/FilingView.swift:175
 #: macos/Iris/HideMyEmailView.swift:39 macos/Iris/RulesView.swift:198
-#: macos/Iris/SidebarView.swift:150 macos/Iris/TemplatesSettings.swift:119
+#: macos/Iris/SidebarView.swift:150 macos/Iris/SmartEditorView.swift:70
+#: macos/Iris/TemplatesSettings.swift:119
 msgid "Create"
 msgstr "Crea"
 
@@ -5255,7 +5330,7 @@ msgstr "Dove l'hai usato?"
 msgid "Your New Address"
 msgstr "Il tuo nuovo indirizzo"
 
-#: macos/Iris/HideMyEmailView.swift:125
+#: macos/Iris/HideMyEmailView.swift:125 macos/Iris/SourceView.swift:31
 msgid "Copy"
 msgstr "Copia"
 
@@ -5339,6 +5414,18 @@ msgstr "Stampa…"
 msgid "Open in New Window"
 msgstr "Apri in una nuova finestra"
 
+#: macos/Iris/IrisApp.swift:58
+msgid "New Smart Mailbox…"
+msgstr "Nuova casella smart…"
+
+#: macos/Iris/IrisApp.swift:62
+msgid "Export…"
+msgstr "Esporta…"
+
+#: macos/Iris/IrisApp.swift:66
+msgid "View Source"
+msgstr "Mostra sorgente"
+
 #: macos/Iris/LaterView.swift:91
 msgid ""
 "The conversation leaves the inbox now and comes back at this time, marked "
@@ -5347,43 +5434,40 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:582
+#: macos/Iris/MailModel.swift:589
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:584
+#: macos/Iris/MailModel.swift:591
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:609
+#: macos/Iris/MailModel.swift:616 macos/Iris/SourceView.swift:53
+#: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:650
-msgid "Open a conversation first"
-msgstr "Apri prima una conversazione"
-
-#: macos/Iris/MailModel.swift:774
+#: macos/Iris/MailModel.swift:781
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:863
+#: macos/Iris/MailModel.swift:870
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1112
+#: macos/Iris/MailModel.swift:1165
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1564
+#: macos/Iris/MailModel.swift:1617
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1569
+#: macos/Iris/MailModel.swift:1622
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1615
+#: macos/Iris/MailModel.swift:1668
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -5858,6 +5942,74 @@ msgstr "Rimuovi account…"
 #: macos/Iris/SidebarView.swift:254
 msgid "Sign in again to keep syncing"
 msgstr "Accedi di nuovo per continuare la sincronizzazione"
+
+#: macos/Iris/SidebarView.swift:298 macos/Iris/SmartEditorView.swift:76
+msgid "Edit Smart Mailbox"
+msgstr "Modifica casella smart"
+
+#: macos/Iris/SmartEditorView.swift:30
+msgid "All Accounts"
+msgstr "Tutti gli account"
+
+#: macos/Iris/SmartEditorView.swift:33
+msgid "Match"
+msgstr "Corrispondenza"
+
+#: macos/Iris/SmartEditorView.swift:34
+msgid "All of the conditions"
+msgstr "Tutte le condizioni"
+
+#: macos/Iris/SmartEditorView.swift:35
+msgid "Any of the conditions"
+msgstr "Una qualsiasi delle condizioni"
+
+#: macos/Iris/SmartEditorView.swift:38
+msgid "Conditions"
+msgstr "Condizioni"
+
+#: macos/Iris/SmartEditorView.swift:41
+msgid "Condition"
+msgstr "Condizione"
+
+#: macos/Iris/SmartEditorView.swift:46
+msgid "Matches"
+msgstr "Corrisponde a"
+
+#: macos/Iris/SmartEditorView.swift:49
+msgid "Remove Condition"
+msgstr "Rimuovi condizione"
+
+#: macos/Iris/SmartEditorView.swift:56
+msgid "Add Condition"
+msgstr "Aggiungi condizione"
+
+#: macos/Iris/SmartEditorView.swift:76
+msgid "New Smart Mailbox"
+msgstr "Nuova casella smart"
+
+#: macos/Iris/SourceView.swift:26 macos/Iris/SourceView.swift:43
+msgid "Message Source"
+msgstr "Sorgente del messaggio"
+
+#: macos/Iris/SourceView.swift:35
+msgid "Save As…"
+msgstr "Salva con nome…"
+
+#: macos/Iris/SourceView.swift:36
+msgid "Save as an .eml file"
+msgstr "Salva come file .eml"
+
+#: macos/Iris/SourceView.swift:48
+msgid "Save Message"
+msgstr "Salva messaggio"
+
+#: macos/Iris/SourceView.swift:80
+msgid "Exporting…"
+msgstr "Esportazione…"
+
+#: macos/Iris/SourceView.swift:87
+msgid "Export Mail"
+msgstr "Esporta posta"
 
 #: macos/Iris/TemplatesSettings.swift:21 macos/Iris/TemplatesSettings.swift:95
 msgid "Edit Template"
@@ -7101,7 +7253,7 @@ msgstr "Caselle smart"
 msgid "Accounts"
 msgstr "Account"
 
-#: view/src/sidebar.rs:153
+#: view/src/sidebar.rs:164
 msgid "VIPs"
 msgstr "VIP"
 
@@ -8502,23 +8654,11 @@ msgstr "VIP"
 #~ msgid "Tags…"
 #~ msgstr "Tag…"
 
-#~ msgid "View Source"
-#~ msgstr "Mostra sorgente"
-
-#~ msgid "Export…"
-#~ msgstr "Esporta…"
-
 #~ msgid "Add Sender to VIPs"
 #~ msgstr "Aggiungi mittente ai VIP"
 
 #~ msgid "Always Load Images…"
 #~ msgstr "Carica sempre le immagini…"
-
-#~ msgid "Block Sender…"
-#~ msgstr "Blocca mittente…"
-
-#~ msgid "Categorize Sender"
-#~ msgstr "Classifica mittente"
 
 #~ msgid "Tags"
 #~ msgstr "Tag"
@@ -8858,45 +8998,6 @@ msgstr "VIP"
 #~ msgid "Reading the file stopped."
 #~ msgstr "La lettura del file si è interrotta."
 
-#~ msgid "All Accounts"
-#~ msgstr "Tutti gli account"
-
-#~ msgid "Match"
-#~ msgstr "Corrispondenza"
-
-#~ msgid "All of the conditions"
-#~ msgstr "Tutte le condizioni"
-
-#~ msgid "Any of the conditions"
-#~ msgstr "Una qualsiasi delle condizioni"
-
-#~ msgid "Conditions"
-#~ msgstr "Condizioni"
-
-#~ msgid "Add Condition"
-#~ msgstr "Aggiungi condizione"
-
-#~ msgid "Remove Condition"
-#~ msgstr "Rimuovi condizione"
-
-#~ msgid "Condition"
-#~ msgstr "Condizione"
-
-#~ msgid "Matches"
-#~ msgstr "Corrisponde a"
-
-#~ msgid "Edit Smart Mailbox"
-#~ msgstr "Modifica casella smart"
-
-#~ msgid "New Smart Mailbox"
-#~ msgstr "Nuova casella smart"
-
-#~ msgid "Give the mailbox a name"
-#~ msgstr "Dai un nome alla casella"
-
-#~ msgid "Add a condition with a value"
-#~ msgstr "Aggiungi una condizione con un valore"
-
 #~ msgid "Search mail, e.g. from:ann has:attachment"
 #~ msgstr "Cerca nella posta, ad es. from:ann has:attachment"
 
@@ -8995,9 +9096,6 @@ msgstr "VIP"
 #~ msgid "Show Declined Events"
 #~ msgstr "Mostra eventi rifiutati"
 
-#~ msgid "New Smart Mailbox…"
-#~ msgstr "Nuova casella smart…"
-
 #~ msgid "Preferences"
 #~ msgstr "Impostazioni"
 
@@ -9061,50 +9159,10 @@ msgstr "VIP"
 #~ msgid "{file}, preview"
 #~ msgstr "{file}, anteprima"
 
-#~ msgid "Open a message from the sender first"
-#~ msgstr "Apri prima un messaggio del mittente"
-
-#~ msgid "Mail from {sender} now goes to {category}"
-#~ msgstr "La posta da {sender} ora va in {category}"
-
-#~ msgid "Moved mail from {sender} to {category}"
-#~ msgstr "Posta da {sender} spostata in {category}"
-
-#~ msgid ""
-#~ "Moved mail from {sender} to {category}, but could not sort new mail: "
-#~ "{reason}"
-#~ msgstr ""
-#~ "Posta da {sender} spostata in {category}, ma impossibile smistare la "
-#~ "nuova posta: {reason}"
-
 #~ msgid "{name}, {count} unread"
 #~ msgid_plural "{name}, {count} unread"
 #~ msgstr[0] "{name}, {count} non letto"
 #~ msgstr[1] "{name}, {count} non letti"
-
-#~ msgid "Could not load the source: {reason}"
-#~ msgstr "Impossibile caricare il sorgente: {reason}"
-
-#~ msgid "Message Source"
-#~ msgstr "Sorgente del messaggio"
-
-#~ msgid "Save As…"
-#~ msgstr "Salva con nome…"
-
-#~ msgid "Save as an .eml file"
-#~ msgstr "Salva come file .eml"
-
-#~ msgid "Save Message"
-#~ msgstr "Salva messaggio"
-
-#~ msgid "Export Mail"
-#~ msgstr "Esporta posta"
-
-#~ msgid "Exporting…"
-#~ msgstr "Esportazione…"
-
-#~ msgid "Could not export the mail: {reason}"
-#~ msgstr "Impossibile esportare la posta: {reason}"
 
 #~ msgid "Review"
 #~ msgstr "Rivedi"
@@ -9206,26 +9264,6 @@ msgstr "VIP"
 
 #~ msgid "Open a message from the sender to block"
 #~ msgstr "Apri un messaggio del mittente da bloccare"
-
-#~ msgid "Block {sender}?"
-#~ msgstr "Bloccare {sender}?"
-
-#~ msgid ""
-#~ "New mail from {email} goes straight to the Trash. This conversation moves "
-#~ "there now. Remove the rule under Rules to unblock."
-#~ msgstr ""
-#~ "La nuova posta da {email} va direttamente nel Cestino. Questa "
-#~ "conversazione ci viene spostata ora. Rimuovi la regola in Regole per "
-#~ "sbloccare."
-
-#~ msgid "Block"
-#~ msgstr "Blocca"
-
-#~ msgid "Blocked {sender}"
-#~ msgstr "{sender} bloccato"
-
-#~ msgid "Could not block the sender: {reason}"
-#~ msgstr "Impossibile bloccare il mittente: {reason}"
 
 #~ msgid "Organizing"
 #~ msgstr "Organizzazione"

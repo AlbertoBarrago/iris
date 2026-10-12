@@ -48,6 +48,8 @@ pub trait MailListener: Send + Sync {
 pub struct SidebarItem {
     /// `heading`, `account` or `mailbox`.
     pub kind: String,
+    /// The smart mailbox a row stands for, for its Edit and Delete.
+    pub smart_id: Option<String>,
     /// What selecting it asks `Mail::list` for; empty for a heading.
     pub key: String,
     pub title: String,
@@ -628,7 +630,7 @@ impl Mail {
             order.insert(account.id, self.label_positions(account.id).unwrap_or_default());
         }
         let vips: Vec<(String, String)> = settings.vips.iter().map(|(e, n)| (e.clone(), n.clone())).collect();
-        let entries = sidebar::entries(&accounts_and_labels, &order, &vips);
+        let entries = sidebar::entries(&accounts_and_labels, &order, &vips, &settings.smart_mailboxes);
         let counted = sidebar::counted(&entries);
         let view = view(None);
         let mailboxes = Arc::clone(&self.mailboxes);
@@ -653,6 +655,7 @@ impl Mail {
             match entry {
                 Entry::Heading(section) => items.push(SidebarItem {
                     kind: "heading".into(),
+                    smart_id: None,
                     key: String::new(),
                     title: section.title(),
                     icon: String::new(),
@@ -665,6 +668,7 @@ impl Mail {
                 }),
                 Entry::Account(id) => items.push(SidebarItem {
                     kind: "account".into(),
+                    smart_id: None,
                     key: format!("account-{id}"),
                     title: emails.get(&id).map(|(email, _)| email.clone()).unwrap_or_default(),
                     icon: String::new(),
@@ -685,6 +689,10 @@ impl Mail {
                     let (icon, flag) = icon_name(row.icon);
                     items.push(SidebarItem {
                         kind: "mailbox".into(),
+                        smart_id: match &row.mailbox {
+                            Mailbox::Smart(smart) => Some(smart.id.clone()),
+                            _ => None,
+                        },
                         key,
                         account_id: row.mailbox.account(),
                         title: row.title,
@@ -1136,6 +1144,7 @@ fn icon_name(icon: Icon) -> (&'static str, Option<String>) {
         Icon::Tag => "tag",
         Icon::Vips => "vips",
         Icon::Person => "person",
+        Icon::Smart => "smart",
     };
     (name, None)
 }

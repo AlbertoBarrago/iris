@@ -25,6 +25,13 @@ final class MailModel {
     fileprivate var translationKey: ThreadKey?
     /// Set while the model translates.
     private(set) var translating = false
+    /// What the sender menu offers for the open conversation.
+    private(set) var senderMenu: SenderMenu?
+    fileprivate var senderMenuKey: ThreadKey?
+    /// The smart mailbox open in its editor.
+    var smartEditing: SmartEdit?
+    /// View Source's message, while its sheet is up.
+    var source: MessageSource?
     /// Delete Forever's question, while it is up.
     var erasing: EraseRequest?
     /// The account sheet the sidebar's account menu opened.
@@ -982,6 +989,8 @@ final class MailModel {
         loadTranslationCard()
         if protectionKey != key { protectionMarks = [] }
         loadProtection()
+        if senderMenuKey != key { senderMenu = nil }
+        loadSenderMenu()
         markReadOnOpen(key)
         let theme = theme
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
@@ -1049,6 +1058,50 @@ extension MailModel {
                 } else {
                     self.say(tr("The event is no longer on the calendar"))
                 }
+            }
+        }
+    }
+}
+
+// MARK: The sender menu
+
+extension MailModel {
+    func loadSenderMenu() {
+        guard let mail, let key = openThread else {
+            senderMenu = nil
+            return
+        }
+        Task.detached {
+            let found = try? mail.senderMenu(accountId: key.account, threadId: key.thread)
+            await MainActor.run {
+                if self.openThread == key {
+                    self.senderMenu = found ?? nil
+                    self.senderMenuKey = key
+                }
+            }
+        }
+    }
+
+    /// Sorts the open conversation's sender into the category `key` names.
+    func categorizeSender(_ key: String) {
+        senderAction { mail, open in try mail.categorizeSender(accountId: open.account, threadId: open.thread, key: key) }
+    }
+
+    /// Blocks the open conversation's sender, once the person said yes.
+    func blockSender() {
+        senderAction { mail, open in try mail.blockSender(accountId: open.account, threadId: open.thread) }
+    }
+
+    private func senderAction(_ run: @escaping @Sendable (Mail, ThreadKey) throws -> String) {
+        guard let mail, let open = openThread else { return }
+        Task.detached {
+            let done = Result { try run(mail, open) }
+            await MainActor.run {
+                switch done {
+                case .success(let words): self.say(words)
+                case .failure(let error): self.say("\(error)")
+                }
+                self.refresh()
             }
         }
     }

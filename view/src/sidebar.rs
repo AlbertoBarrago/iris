@@ -39,6 +39,8 @@ pub enum Icon {
     Vips,
     /// One VIP's mail.
     Person,
+    /// A smart mailbox the person made.
+    Smart,
 }
 
 /// One line of the sidebar.
@@ -79,17 +81,26 @@ impl Row {
 
 /// The sidebar for `accounts`, each with its labels, in the order the
 /// person put each account's labels in (`label_order`, by label id), with
-/// the VIPs Preferences keeps as (address, name).
+/// the VIPs Preferences keeps as (address, name), and the smart
+/// mailboxes the person made, under their own heading while there are any.
 pub fn entries(
     accounts: &[(Account, Vec<Label>)],
     label_order: &HashMap<AccountId, HashMap<String, i64>>,
     vips: &[(String, String)],
+    smart: &[mailrs_domain::SmartMailbox],
 ) -> Vec<Entry> {
     let mut out = Vec::new();
     for (section, places) in sections::LAYOUT {
         out.push(Entry::Heading(section));
         for &place in places {
             unified(place, vips, &mut out);
+        }
+    }
+    if !smart.is_empty() {
+        out.push(Entry::Heading(Section::Smart));
+        for mailbox in smart {
+            let title = mailbox.name.clone();
+            out.push(Entry::Mailbox(Row::new(Mailbox::Smart(mailbox.clone()), title, Icon::Smart, 0)));
         }
     }
     if !accounts.is_empty() {
@@ -244,7 +255,7 @@ mod tests {
     #[test]
     fn unified_mailboxes_come_first_then_each_account_with_its_labels() {
         let accounts = vec![(account(1, "ann@example.com"), vec![label(1, "L1", "Work/Clients"), label(1, "L2", "Work")])];
-        let entries = entries(&accounts, &HashMap::new(), &[]);
+        let entries = entries(&accounts, &HashMap::new(), &[], &[]);
         assert_eq!(entries[0], Entry::Heading(Section::Favorites));
         let first = entries.iter().find_map(|e| match e {
             Entry::Mailbox(row) => Some(row),
@@ -267,7 +278,7 @@ mod tests {
 
     #[test]
     fn flag_colors_wait_until_they_are_used() {
-        let entries = entries(&[], &HashMap::new(), &[]);
+        let entries = entries(&[], &HashMap::new(), &[], &[]);
         let flags: Vec<&Row> = entries
             .iter()
             .filter_map(|e| match e {
@@ -283,7 +294,7 @@ mod tests {
     #[test]
     fn the_vips_get_a_row_and_one_each_under_it() {
         let vips = [("ann@example.com".to_string(), "Ann Lee".to_string())];
-        let rows: Vec<(String, Icon, u32)> = entries(&[], &HashMap::new(), &vips)
+        let rows: Vec<(String, Icon, u32)> = entries(&[], &HashMap::new(), &vips, &[])
             .into_iter()
             .filter_map(|entry| match entry {
                 Entry::Mailbox(row) if matches!(row.mailbox, Mailbox::Vips { .. }) => {
@@ -296,7 +307,23 @@ mod tests {
             rows,
             [("VIPs".to_string(), Icon::Vips, 0), ("Ann Lee".to_string(), Icon::Person, 1)]
         );
-        let none = entries(&[], &HashMap::new(), &[]);
+        let none = entries(&[], &HashMap::new(), &[], &[]);
         assert!(!none.iter().any(|e| matches!(e, Entry::Mailbox(r) if matches!(r.mailbox, Mailbox::Vips { .. }))));
+    }
+
+    #[test]
+    fn smart_mailboxes_get_their_heading_only_while_there_are_any() {
+        let smart = mailrs_domain::SmartMailbox {
+            id: "smart-1".into(),
+            name: "Receipts".into(),
+            account: None,
+            match_all: true,
+            conditions: Vec::new(),
+        };
+        let with = entries(&[], &HashMap::new(), &[], &[smart]);
+        assert!(with.contains(&Entry::Heading(Section::Smart)));
+        assert!(with.iter().any(|e| matches!(e, Entry::Mailbox(r) if r.title == "Receipts" && r.icon == Icon::Smart)));
+        let without = entries(&[], &HashMap::new(), &[], &[]);
+        assert!(!without.contains(&Entry::Heading(Section::Smart)));
     }
 }

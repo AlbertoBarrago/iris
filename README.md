@@ -32,10 +32,9 @@ through Sparkle with its accounts, mail and settings as they were. It has a
 Dock badge for unread mail, the Mac's own menus and shortcuts, secrets in
 the Keychain, and Open at Login; see [Install](#install).
 
-A few things are not back yet since the move: Smart Mailboxes, exporting
-mail as mbox or `.eml`, View Source, Categorize Sender, Delete Forever, the
-sample accounts of the old demo mode, and a skill's scripts (the sandbox
-they run in is Linux's bubblewrap).
+A few things are not back yet since the move: the sample accounts of the
+old demo mode, and a skill's scripts (the sandbox they run in is Linux's
+bubblewrap).
 
 A build signs in to Google and Microsoft only with OAuth clients compiled
 in. The test DMGs carry Iris's own; a build from source needs yours, as
@@ -62,7 +61,7 @@ and an IMAP account its rules over ManageSieve.
 - **Gmail search** with its full query syntax, across one account or all,
   with suggestions for subjects, people and labels as you type.
 - **Junk, Trash and All Mail**, for every account or one, read live from
-  Gmail.
+  Gmail. Delete in the Trash erases for good after asking.
 - **Translation.** A message in another language offers to translate
   itself into yours, through the model you choose, and turns back with one
   click.
@@ -102,6 +101,9 @@ and an IMAP account its rules over ManageSieve.
   Gmail's star, and the color stays on this computer.
 - **VIPs.** Their mail gathers in a VIPs mailbox, their rows get a star, and
   notifications can be limited to them.
+- **Smart Mailboxes**: saved conditions such as sender, subject, label, age,
+  size or attachments, for all accounts or one, from File > New Smart
+  Mailbox.
 - **Remind Me** takes a conversation out of the inbox and brings it back,
   unread, when you choose. **Follow Up** lists mail you sent that has had no
   answer for three days. **Mute** keeps a noisy thread out of the inbox.
@@ -111,6 +113,10 @@ and an IMAP account its rules over ManageSieve.
   each account under its heading. Iris remembers what you left open.
 - **Contacts.** A click on a sender opens their card: photo, addresses,
   phone, a new message, the VIP switch and all their mail.
+- **Sender actions.** Categorize Sender sorts someone's mail into a
+  category for good, and Block Sender sends it to the Trash.
+- **Export** conversations as mbox, and **View Source** (⌥⌘U) shows a
+  message as it arrived, with Save As for an `.eml` file.
 
 ### Gmail settings
 
@@ -292,9 +298,7 @@ badge, shortcuts, Keychain and Open at Login; updates through Sparkle; the
 winged-envelope identity; Google and Microsoft clients; the Italian
 translation.
 
-1. **What the move left behind**: Smart Mailboxes, mbox and `.eml` export,
-   View Source, Categorize Sender, Delete Forever, and sample accounts to
-   try Iris without one.
+1. **Sample accounts** to try Iris without one, as the old demo mode had.
 2. **A Developer ID and notarization**, so the DMG opens without the
    Privacy & Security step.
 3. **Device sync without a cloud.** Rules, settings and the local store

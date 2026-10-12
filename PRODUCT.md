@@ -51,8 +51,7 @@ use is supported, and VoiceOver reads the system's controls.
 - Assistant: models from Anthropic, OpenAI-compatible servers, local servers or a Claude subscription; MCP
   servers; skills, whose scripts do not run on macOS yet; every change asks first unless the person chose Always
   Allow.
-- Not back since the move to SwiftUI: Smart Mailboxes, mbox and `.eml` export, View Source, Categorize Sender,
-  and the demo accounts.
+- Not back since the move to SwiftUI: the demo accounts.
 - Languages: American English source strings, British English generated from them, and Italian kept
   complete.
 - Terms are defined in `CONTEXT.md`; the code's rules are in `AGENTS.md`.

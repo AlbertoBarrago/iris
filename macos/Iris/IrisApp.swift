@@ -55,6 +55,17 @@ struct IrisApp: App {
             CommandGroup(after: .newItem) {
                 Button(tr("Open in New Window")) { model.openInWindow() }
                     .keyboardShortcut("o")
+                Button(tr("New Smart Mailbox…")) {
+                    model.smartEditing = SmartEdit(form: SmartForm(id: "", name: "", account: "", matchAll: true, conditions: []))
+                }
+                Divider()
+                Button(tr("Export…")) { model.exportSelection() }
+                    .disabled(model.selection.isEmpty)
+            }
+            CommandGroup(after: .toolbar) {
+                Button(tr("View Source")) { model.viewSource() }
+                    .keyboardShortcut("u", modifiers: [.command, .option])
+                    .disabled(model.openThread == nil)
             }
             CommandGroup(after: .sidebar) {
                 // The GTK app's Alt+1 and Alt+2.
