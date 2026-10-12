@@ -5,6 +5,19 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.2 (2026-10-12)
+
+### New
+
+- Help > Keyboard Shortcuts (⇧⌘/) lists every key Iris answers.
+
+### Fixed
+
+- Iris opens on a Mac it never ran on; a first install stopped at
+  "unable to open database file".
+- Some mail, such as an invitation with many events, no longer stretches
+  the window to the height of the screen.
+
 ## 1.1.1 (2026-10-12)
 
 ### Fixed
