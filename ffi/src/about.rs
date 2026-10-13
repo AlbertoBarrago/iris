@@ -1,20 +1,11 @@
 //! The words of Iris's About window: who made it, what it is built
-//! on, a short poem for the messenger it is named after, and where to
-//! find it on GitHub.
+//! on, a short poem for the messenger it is named after, where to
+//! find it on GitHub, and the licence it comes under.
 
 use mailrs_domain::translate::{fill, gettext};
 
 /// Where Iris lives.
 const REPOSITORY: &str = "https://github.com/AlbertoBarrago/iris";
-
-/// One link at the bottom of the window.
-#[derive(Debug, Clone, PartialEq, uniffi::Record)]
-pub struct AboutLink {
-    pub title: String,
-    /// A line under the title, such as the licence's name; empty for none.
-    pub subtitle: String,
-    pub url: String,
-}
 
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
 pub struct AboutWords {
@@ -32,7 +23,10 @@ pub struct AboutWords {
     pub star_line: String,
     pub star_button: String,
     pub star_url: String,
-    pub links: Vec<AboutLink>,
+    /// The licence's name and text, linked beside the credit to Penguin
+    /// Mail at the foot of the window.
+    pub license_name: String,
+    pub license_url: String,
 }
 
 /// What the About window says.
@@ -56,28 +50,8 @@ pub fn about_words() -> AboutWords {
         star_line: gettext("If Iris makes your day a little lighter, leave it a star on GitHub."),
         star_button: gettext("Star on GitHub"),
         star_url: REPOSITORY.into(),
-        links: vec![
-            AboutLink {
-                title: gettext("What's New"),
-                subtitle: String::new(),
-                url: format!("{REPOSITORY}/blob/main/CHANGELOG.md"),
-            },
-            AboutLink {
-                title: gettext("Website"),
-                subtitle: String::new(),
-                url: REPOSITORY.into(),
-            },
-            AboutLink {
-                title: gettext("Report a Problem"),
-                subtitle: String::new(),
-                url: format!("{REPOSITORY}/issues/new/choose"),
-            },
-            AboutLink {
-                title: gettext("License"),
-                subtitle: "GPL-3.0-or-later".into(),
-                url: format!("{REPOSITORY}/blob/main/LICENSE"),
-            },
-        ],
+        license_name: "GPL-3.0-or-later".into(),
+        license_url: format!("{REPOSITORY}/blob/main/LICENSE"),
     }
 }
 

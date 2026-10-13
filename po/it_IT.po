@@ -3820,60 +3820,44 @@ msgstr "Non letto"
 msgid "Is flagged"
 msgstr "Contrassegnato"
 
-#: ffi/src/about.rs:42
+#: ffi/src/about.rs:36
 msgid "About Iris"
 msgstr "Informazioni su Iris"
 
-#: ffi/src/about.rs:46
+#: ffi/src/about.rs:40
 msgid "Based on {app}"
 msgstr "Basato su {app}"
 
-#: ffi/src/about.rs:49
+#: ffi/src/about.rs:43
 msgid "Mail and calendar for macOS. Your mail stays on your computer."
 msgstr "Posta e calendario per macOS. La tua posta resta sul tuo computer."
 
-#: ffi/src/about.rs:51
+#: ffi/src/about.rs:45
 msgid "Iris carried word between the sky and the sea,"
 msgstr "Iride portava parole tra il cielo e il mare,"
 
-#: ffi/src/about.rs:52
+#: ffi/src/about.rs:46
 msgid "and folded every message into light."
 msgstr "e piegava ogni messaggio nella luce."
 
-#: ffi/src/about.rs:53
+#: ffi/src/about.rs:47
 msgid "Here she keeps your letters close and quiet,"
 msgstr "Qui tiene le tue lettere vicine e silenziose,"
 
-#: ffi/src/about.rs:54
+#: ffi/src/about.rs:48
 msgid "with no cloud between you and the ones you write to."
 msgstr "senza nuvole tra te e chi ti scrive."
 
-#: ffi/src/about.rs:56
+#: ffi/src/about.rs:50
 msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
 msgstr ""
 "Se Iris ti alleggerisce un po' la giornata, lasciale una stella su GitHub."
 
-#: ffi/src/about.rs:57
+#: ffi/src/about.rs:51
 msgid "Star on GitHub"
 msgstr "Una stella su GitHub"
 
 #: ffi/src/about.rs:61
-msgid "What's New"
-msgstr "Novità"
-
-#: ffi/src/about.rs:66
-msgid "Website"
-msgstr "Sito web"
-
-#: ffi/src/about.rs:71
-msgid "Report a Problem"
-msgstr "Segnala un problema"
-
-#: ffi/src/about.rs:76
-msgid "License"
-msgstr "Licenza"
-
-#: ffi/src/about.rs:87
 msgid "Version {version}"
 msgstr "Versione {version}"
 
@@ -7417,6 +7401,18 @@ msgstr "Account"
 #: view/src/sidebar.rs:164
 msgid "VIPs"
 msgstr "VIP"
+
+#~ msgid "What's New"
+#~ msgstr "Novità"
+
+#~ msgid "Website"
+#~ msgstr "Sito web"
+
+#~ msgid "Report a Problem"
+#~ msgstr "Segnala un problema"
+
+#~ msgid "License"
+#~ msgstr "Licenza"
 
 #~ msgid ""
 #~ "Your preferences could not be read, so Iris started from the defaults. "

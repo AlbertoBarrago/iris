@@ -3610,59 +3610,43 @@ msgstr ""
 msgid "Is flagged"
 msgstr ""
 
-#: ffi/src/about.rs:42
+#: ffi/src/about.rs:36
 msgid "About Iris"
 msgstr ""
 
-#: ffi/src/about.rs:46
+#: ffi/src/about.rs:40
 msgid "Based on {app}"
 msgstr ""
 
-#: ffi/src/about.rs:49
+#: ffi/src/about.rs:43
 msgid "Mail and calendar for macOS. Your mail stays on your computer."
 msgstr ""
 
-#: ffi/src/about.rs:51
+#: ffi/src/about.rs:45
 msgid "Iris carried word between the sky and the sea,"
 msgstr ""
 
-#: ffi/src/about.rs:52
+#: ffi/src/about.rs:46
 msgid "and folded every message into light."
 msgstr ""
 
-#: ffi/src/about.rs:53
+#: ffi/src/about.rs:47
 msgid "Here she keeps your letters close and quiet,"
 msgstr ""
 
-#: ffi/src/about.rs:54
+#: ffi/src/about.rs:48
 msgid "with no cloud between you and the ones you write to."
 msgstr ""
 
-#: ffi/src/about.rs:56
+#: ffi/src/about.rs:50
 msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
 msgstr ""
 
-#: ffi/src/about.rs:57
+#: ffi/src/about.rs:51
 msgid "Star on GitHub"
 msgstr ""
 
 #: ffi/src/about.rs:61
-msgid "What's New"
-msgstr ""
-
-#: ffi/src/about.rs:66
-msgid "Website"
-msgstr ""
-
-#: ffi/src/about.rs:71
-msgid "Report a Problem"
-msgstr ""
-
-#: ffi/src/about.rs:76
-msgid "License"
-msgstr ""
-
-#: ffi/src/about.rs:87
 msgid "Version {version}"
 msgstr ""
 
