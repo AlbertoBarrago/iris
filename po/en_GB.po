@@ -3505,43 +3505,47 @@ msgstr "Is unread"
 msgid "Is flagged"
 msgstr "Is flagged"
 
-#: ffi/src/about.rs:36
+#: ffi/src/about.rs:40
 msgid "About Iris"
 msgstr "About Iris"
 
-#: ffi/src/about.rs:40
+#: ffi/src/about.rs:44
 msgid "Based on {app}"
 msgstr "Based on {app}"
 
-#: ffi/src/about.rs:43
+#: ffi/src/about.rs:47
 msgid "Mail and calendar for macOS. Your mail stays on your computer."
 msgstr "Mail and calendar for macOS. Your mail stays on your computer."
 
-#: ffi/src/about.rs:45
+#: ffi/src/about.rs:49
 msgid "Iris carried word between the sky and the sea,"
 msgstr "Iris carried word between the sky and the sea,"
 
-#: ffi/src/about.rs:46
+#: ffi/src/about.rs:50
 msgid "and folded every message into light."
 msgstr "and folded every message into light."
 
-#: ffi/src/about.rs:47
+#: ffi/src/about.rs:51
 msgid "Here she keeps your letters close and quiet,"
 msgstr "Here she keeps your letters close and quiet,"
 
-#: ffi/src/about.rs:48
+#: ffi/src/about.rs:52
 msgid "with no cloud between you and the ones you write to."
 msgstr "with no cloud between you and the ones you write to."
 
-#: ffi/src/about.rs:50
+#: ffi/src/about.rs:54
 msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
 msgstr "If Iris makes your day a little lighter, leave it a star on GitHub."
 
-#: ffi/src/about.rs:51
+#: ffi/src/about.rs:55
 msgid "Star on GitHub"
 msgstr "Star on GitHub"
 
-#: ffi/src/about.rs:61
+#: ffi/src/about.rs:59
+msgid "Report a Problem…"
+msgstr "Report a Problem…"
+
+#: ffi/src/about.rs:67
 msgid "Version {version}"
 msgstr "Version {version}"
 
@@ -4502,7 +4506,7 @@ msgstr "Month"
 
 #: macos/Iris/CalendarView.swift:86 macos/Iris/CalendarView.swift:87
 #: macos/Iris/CalendarView.swift:116 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:80 macos/Iris/SettingsView.swift:24
+#: macos/Iris/IrisApp.swift:85 macos/Iris/SettingsView.swift:24
 #: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:46
 msgid "Calendar"
 msgstr "Calendar"
@@ -4531,7 +4535,7 @@ msgstr "Next Week"
 msgid "Next Month"
 msgstr "Next Month"
 
-#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:78
+#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:83
 msgid "Mail"
 msgstr "Mail"
 
@@ -4565,7 +4569,7 @@ msgstr "Close"
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:47 macos/Iris/ThreadListView.swift:90
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:90
 #: macos/Iris/ThreadListView.swift:93
 msgid "New Message"
 msgstr "New Message"
@@ -4749,7 +4753,7 @@ msgstr "Iris can read an account's contacts: names, email addresses, photos, org
 msgid "Iris could not read the mail"
 msgstr "Iris could not read the mail"
 
-#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:39
+#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:40
 msgid "Check for Updates…"
 msgstr "Check for Updates…"
 
@@ -5009,32 +5013,32 @@ msgstr "Nobody"
 msgid "Propose"
 msgstr "Propose"
 
-#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:103
+#: macos/Iris/IrisApp.swift:44 macos/Iris/IrisApp.swift:108
 #: macos/Iris/ShortcutsView.swift:57
 msgid "Keyboard shortcuts"
 msgstr "Keyboard shortcuts"
 
-#: macos/Iris/IrisApp.swift:50
+#: macos/Iris/IrisApp.swift:55
 msgid "Add Account…"
 msgstr "Add Account…"
 
-#: macos/Iris/IrisApp.swift:53
+#: macos/Iris/IrisApp.swift:58
 msgid "Print…"
 msgstr "Print…"
 
-#: macos/Iris/IrisApp.swift:62
+#: macos/Iris/IrisApp.swift:67
 msgid "Open in New Window"
 msgstr "Open in New Window"
 
-#: macos/Iris/IrisApp.swift:64
+#: macos/Iris/IrisApp.swift:69
 msgid "New Smart Mailbox…"
 msgstr "New Smart Mailbox…"
 
-#: macos/Iris/IrisApp.swift:68
+#: macos/Iris/IrisApp.swift:73
 msgid "Export…"
 msgstr "Export…"
 
-#: macos/Iris/IrisApp.swift:72
+#: macos/Iris/IrisApp.swift:77
 msgid "View Source"
 msgstr "View Source"
 

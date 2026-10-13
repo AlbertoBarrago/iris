@@ -1,6 +1,7 @@
 //! The words of Iris's About window: who made it, what it is built
 //! on, a short poem for the messenger it is named after, where to
-//! find it on GitHub, and the licence it comes under.
+//! find it on GitHub, the licence it comes under, and where to report a
+//! problem.
 
 use mailrs_domain::translate::{fill, gettext};
 
@@ -27,6 +28,9 @@ pub struct AboutWords {
     /// Mail at the foot of the window.
     pub license_name: String,
     pub license_url: String,
+    /// The Help menu's item for opening an issue on GitHub.
+    pub report_title: String,
+    pub report_url: String,
 }
 
 /// What the About window says.
@@ -52,6 +56,8 @@ pub fn about_words() -> AboutWords {
         star_url: REPOSITORY.into(),
         license_name: "GPL-3.0-or-later".into(),
         license_url: format!("{REPOSITORY}/blob/main/LICENSE"),
+        report_title: gettext("Report a Problem…"),
+        report_url: format!("{REPOSITORY}/issues/new/choose"),
     }
 }
 

@@ -6,6 +6,7 @@ struct IrisApp: App {
     @State private var model = MailModel()
     @State private var assistant = AssistantModel()
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openURL) private var openURL
 
     init() {
         startLogging()
@@ -42,6 +43,10 @@ struct IrisApp: App {
             CommandGroup(replacing: .help) {
                 Button(tr("Keyboard shortcuts")) { openWindow(id: "shortcuts") }
                     .keyboardShortcut("/", modifiers: [.command, .shift])
+                Divider()
+                Button(aboutWords().reportTitle) {
+                    if let url = URL(string: aboutWords().reportUrl) { openURL(url) }
+                }
             }
             CommandGroup(replacing: .newItem) {
                 Button(tr("New Message")) { model.composeAsked = ComposeRequest(kind: .new) }

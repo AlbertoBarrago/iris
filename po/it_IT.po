@@ -3820,44 +3820,48 @@ msgstr "Non letto"
 msgid "Is flagged"
 msgstr "Contrassegnato"
 
-#: ffi/src/about.rs:36
+#: ffi/src/about.rs:40
 msgid "About Iris"
 msgstr "Informazioni su Iris"
 
-#: ffi/src/about.rs:40
+#: ffi/src/about.rs:44
 msgid "Based on {app}"
 msgstr "Basato su {app}"
 
-#: ffi/src/about.rs:43
+#: ffi/src/about.rs:47
 msgid "Mail and calendar for macOS. Your mail stays on your computer."
 msgstr "Posta e calendario per macOS. La tua posta resta sul tuo computer."
 
-#: ffi/src/about.rs:45
+#: ffi/src/about.rs:49
 msgid "Iris carried word between the sky and the sea,"
 msgstr "Iride portava parole tra il cielo e il mare,"
 
-#: ffi/src/about.rs:46
+#: ffi/src/about.rs:50
 msgid "and folded every message into light."
 msgstr "e piegava ogni messaggio nella luce."
 
-#: ffi/src/about.rs:47
+#: ffi/src/about.rs:51
 msgid "Here she keeps your letters close and quiet,"
 msgstr "Qui tiene le tue lettere vicine e silenziose,"
 
-#: ffi/src/about.rs:48
+#: ffi/src/about.rs:52
 msgid "with no cloud between you and the ones you write to."
 msgstr "senza nuvole tra te e chi ti scrive."
 
-#: ffi/src/about.rs:50
+#: ffi/src/about.rs:54
 msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
 msgstr ""
 "Se Iris ti alleggerisce un po' la giornata, lasciale una stella su GitHub."
 
-#: ffi/src/about.rs:51
+#: ffi/src/about.rs:55
 msgid "Star on GitHub"
 msgstr "Una stella su GitHub"
 
-#: ffi/src/about.rs:61
+#: ffi/src/about.rs:59
+msgid "Report a Problem…"
+msgstr "Segnala un problema…"
+
+#: ffi/src/about.rs:67
 msgid "Version {version}"
 msgstr "Versione {version}"
 
@@ -4919,7 +4923,7 @@ msgstr "Mese"
 
 #: macos/Iris/CalendarView.swift:86 macos/Iris/CalendarView.swift:87
 #: macos/Iris/CalendarView.swift:116 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:80 macos/Iris/SettingsView.swift:24
+#: macos/Iris/IrisApp.swift:85 macos/Iris/SettingsView.swift:24
 #: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:46
 msgid "Calendar"
 msgstr "Calendario"
@@ -4948,7 +4952,7 @@ msgstr "Settimana successiva"
 msgid "Next Month"
 msgstr "Mese successivo"
 
-#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:78
+#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:83
 msgid "Mail"
 msgstr "Posta"
 
@@ -4982,7 +4986,7 @@ msgstr "Chiudi"
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:47 macos/Iris/ThreadListView.swift:90
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:90
 #: macos/Iris/ThreadListView.swift:93
 msgid "New Message"
 msgstr "Nuovo messaggio"
@@ -5180,7 +5184,7 @@ msgstr ""
 msgid "Iris could not read the mail"
 msgstr "Iris non riesce a leggere la posta"
 
-#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:39
+#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:40
 msgid "Check for Updates…"
 msgstr "Controlla aggiornamenti…"
 
@@ -5444,32 +5448,32 @@ msgstr "Nessuno"
 msgid "Propose"
 msgstr "Proponi"
 
-#: macos/Iris/IrisApp.swift:43 macos/Iris/IrisApp.swift:103
+#: macos/Iris/IrisApp.swift:44 macos/Iris/IrisApp.swift:108
 #: macos/Iris/ShortcutsView.swift:57
 msgid "Keyboard shortcuts"
 msgstr "Abbreviazioni da tastiera"
 
-#: macos/Iris/IrisApp.swift:50
+#: macos/Iris/IrisApp.swift:55
 msgid "Add Account…"
 msgstr "Aggiungi account…"
 
-#: macos/Iris/IrisApp.swift:53
+#: macos/Iris/IrisApp.swift:58
 msgid "Print…"
 msgstr "Stampa…"
 
-#: macos/Iris/IrisApp.swift:62
+#: macos/Iris/IrisApp.swift:67
 msgid "Open in New Window"
 msgstr "Apri in una nuova finestra"
 
-#: macos/Iris/IrisApp.swift:64
+#: macos/Iris/IrisApp.swift:69
 msgid "New Smart Mailbox…"
 msgstr "Nuova casella smart…"
 
-#: macos/Iris/IrisApp.swift:68
+#: macos/Iris/IrisApp.swift:73
 msgid "Export…"
 msgstr "Esporta…"
 
-#: macos/Iris/IrisApp.swift:72
+#: macos/Iris/IrisApp.swift:77
 msgid "View Source"
 msgstr "Mostra sorgente"
 
@@ -7407,9 +7411,6 @@ msgstr "VIP"
 
 #~ msgid "Website"
 #~ msgstr "Sito web"
-
-#~ msgid "Report a Problem"
-#~ msgstr "Segnala un problema"
 
 #~ msgid "License"
 #~ msgstr "Licenza"

@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Improved
+
+- Report a problem from the Help menu.
+- The About window is shorter: the star on GitHub, then the credits.
+
 ## 1.1.8 (2026-10-12)
 
 ### New
