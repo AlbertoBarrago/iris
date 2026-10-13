@@ -32,6 +32,22 @@ use mailrs_appcore::settings::Settings;
 
 pub(crate) use mailrs_appcore::engine::RunningEngine as Running;
 
+/// The sample accounts' in-memory servers, in a demo run.
+#[cfg(any(feature = "demo", test))]
+use crate::demo::DemoMail;
+
+/// A build without the `demo` feature never holds a demo, so its stand-in
+/// has no values.
+#[cfg(not(any(feature = "demo", test)))]
+pub(crate) enum DemoMail {}
+
+#[cfg(not(any(feature = "demo", test)))]
+impl DemoMail {
+    fn services(&self, _account_id: AccountId) -> Option<AccountServices> {
+        match *self {}
+    }
+}
+
 /// Who hears the engine's news: the window, which reads the sidebar and
 /// the list again.
 #[uniffi::export(with_foreign)]
@@ -212,6 +228,10 @@ pub struct Mail {
     /// Each account's colour, as the last sidebar read it from
     /// Preferences, for the list's rows.
     account_colors: Mutex<HashMap<AccountId, Option<String>>>,
+    /// What the sample accounts sync with, in a demo run. Their accounts
+    /// connect to these instead of going through the Keychain and the
+    /// network.
+    demo: Option<Arc<DemoMail>>,
 }
 
 #[uniffi::export]
@@ -253,7 +273,50 @@ impl Mail {
             people: Arc::new(Mutex::new(None)),
             account_colors: Mutex::new(HashMap::new()),
             listener: Mutex::new(None),
+            demo: None,
         })
+    }
+
+    /// Makes a new store at `path`, fills it with the sample accounts, and
+    /// opens it the way `open` does. Their mail, calendars and contacts come
+    /// from in-memory servers, so nothing reaches the network or the
+    /// Keychain. For screenshots (`scripts/macos-screenshots.sh`); only a
+    /// build with the `demo` feature, as debug builds are, has it.
+    #[uniffi::constructor]
+    pub fn open_demo(path: String) -> Result<Mail, CoreError> {
+        #[cfg(any(feature = "demo", test))]
+        {
+            // Seeding a store that already holds mail would mix the samples
+            // into someone's real accounts.
+            if std::path::Path::new(&path).exists() {
+                return Err(CoreError::Store(format!("The demo makes a new store, and {path} already exists.")));
+            }
+            let mut mail = Mail::open(path)?;
+            let now = mailrs_sync::now_millis();
+            // Seeding runs on a worker, whose stack is `WORKER_STACK`: in a
+            // debug build its future overflows the caller's, such as a
+            // Swift task's thread.
+            let db = mail.db.clone();
+            let seeding = mail.runtime.spawn(async move { crate::demo::seed(&db, now).await });
+            let demo = mail
+                .runtime
+                .block_on(seeding)
+                .map_err(|err| CoreError::Store(err.to_string()))?
+                .map_err(|err| CoreError::Store(err.to_string()))?;
+            let photos = mail.dir.join("photos");
+            mail.runtime.block_on(mail.db.write(move |c| crate::demo::seed_contacts(c, &photos)))?;
+            // The samples' newsletters name lists nobody runs, so their
+            // one-click unsubscribe posts nowhere.
+            let one_click = OneClick::Fake(Arc::new(mailrs_sync::fake::FakeOneClick::default()));
+            mail.actions = Arc::new(MailActions::new(Arc::clone(&mail.running), mail.db.clone(), one_click));
+            mail.demo = Some(Arc::new(demo));
+            Ok(mail)
+        }
+        #[cfg(not(any(feature = "demo", test)))]
+        {
+            let _ = path;
+            Err(CoreError::Store("This build of Iris has no demo: build it with the demo feature.".into()))
+        }
     }
 
     /// Starts syncing every account, as the GTK app does when it opens,
@@ -359,11 +422,18 @@ impl Mail {
             listener,
         });
         let db = self.db.clone();
+        let demo = self.demo.clone();
         self.runtime.spawn(async move {
             let Ok(all) = db.read(accounts::list_accounts).await else { return };
             let connect = move |account: Account| {
-                let connector = Arc::clone(&connector);
+                let (connector, demo) = (Arc::clone(&connector), demo.clone());
                 async move {
+                    if let Some(demo) = demo {
+                        let services = demo
+                            .services(account.id)
+                            .ok_or(mailrs_sync::SyncError::UnknownAccount(account.id))?;
+                        return Ok(Connected::Ready(services));
+                    }
                     Ok(match connector.connect(&account).await? {
                         mailrs_sync::Connected::Ready(services) => Connected::Ready(services),
                         mailrs_sync::Connected::NeedsSignIn(_) => Connected::NeedsSignIn,
@@ -1267,5 +1337,21 @@ mod tests {
         let local = tokio::task::LocalSet::new();
         let senders = local.block_on(&runtime, async { mail.senders() });
         assert!(senders.unwrap().is_empty());
+    }
+
+    /// A demo run opens on the sample accounts, each with mail in its
+    /// inbox, and never seeds over a store that is already there.
+    #[test]
+    fn the_demo_fills_a_new_store_and_leaves_an_old_one_alone() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("mailrs.db").display().to_string();
+        let mail = Mail::open_demo(path.clone()).unwrap();
+        assert!(!mail.has_no_accounts());
+        let accounts = mail.sidebar().unwrap().into_iter().filter(|item| item.kind == "account").count();
+        assert_eq!(accounts, 6);
+        let inbox = mail.sidebar().unwrap().into_iter().find(|item| item.kind == "mailbox").unwrap();
+        assert!(!mail.list(inbox.key, None).unwrap().rows.is_empty());
+        drop(mail);
+        assert!(Mail::open_demo(path).is_err());
     }
 }

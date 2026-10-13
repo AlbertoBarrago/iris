@@ -32,6 +32,8 @@ mod hidden;
 mod invitation_answer;
 mod mail_invitation;
 mod mail;
+#[cfg(any(feature = "demo", test))]
+mod demo;
 mod notify;
 mod prefs;
 mod protection;

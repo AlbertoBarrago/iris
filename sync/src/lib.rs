@@ -32,7 +32,7 @@ mod triage;
 pub mod unsubscribe;
 
 /// An in-memory Gmail. Sync's own tests always have it; anyone else asks
-/// for the `fake` feature, as `iris` does for `--demo`.
+/// for the `fake` feature, as `mailrs-ffi` does for its demo.
 #[cfg(any(test, feature = "fake"))]
 pub mod fake;
 #[cfg(test)]

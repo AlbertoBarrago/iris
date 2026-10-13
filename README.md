@@ -13,6 +13,8 @@ A native Mac app for mail and calendar, with a core written in Rust.
 
 [Features](#features) · [Install](#install) · [Build](#build) · [Keyboard](#keyboard) · [Privacy](#privacy)
 
+<img src="docs/screenshots/iris-dark.png" width="880" alt="The Iris window: the sidebar with six accounts, the unified inbox, and a conversation about a Q4 roadmap review open beside it">
+
 </div>
 
 Iris is mail and calendar for your Mac. It reads Gmail accounts, Microsoft
@@ -222,6 +224,7 @@ is older) and XcodeGen, which writes the Xcode project from
 brew install xcodegen gettext librsvg
 cargo install xtr                 # for scripts/update-po.sh
 scripts/dev-macos.sh              # build the debug app and run it
+scripts/macos-screenshots.sh      # the README's screenshot, on sample accounts
 scripts/macos-install.sh          # build a release and install Iris.app
 scripts/macos-dmg.sh              # build the DMG and appcast in target/dmg/
 ```

@@ -3761,31 +3761,31 @@ msgstr "The event is no longer on the calendar"
 msgid "Could not send your answer: {reason}"
 msgstr "Could not send your answer: {reason}"
 
-#: ffi/src/lib.rs:69
+#: ffi/src/lib.rs:71
 msgid "A newer version of Iris has updated your mail since this one last ran. Update Iris to open it."
 msgstr "A newer version of Iris has updated your mail since this one last ran. Update Iris to open it."
 
-#: ffi/src/mail.rs:395
+#: ffi/src/mail.rs:465
 msgid "Will remind you {when}"
 msgstr "Will remind you {when}"
 
-#: ffi/src/mail.rs:398
+#: ffi/src/mail.rs:468
 msgid "Back in the Inbox"
 msgstr "Back in the Inbox"
 
-#: ffi/src/mail.rs:435
+#: ffi/src/mail.rs:505
 msgid "Could not cancel: {reason}"
 msgstr "Could not cancel: {reason}"
 
-#: ffi/src/mail.rs:459
+#: ffi/src/mail.rs:529
 msgid "Deleted. It will not be sent."
 msgstr "Deleted. It will not be sent."
 
-#: ffi/src/mail.rs:460
+#: ffi/src/mail.rs:530
 msgid "Deleted. They will not be sent."
 msgstr "Deleted. They will not be sent."
 
-#: ffi/src/mail.rs:469
+#: ffi/src/mail.rs:539
 msgid "Could not delete: {reason}"
 msgstr "Could not delete: {reason}"
 
@@ -4043,7 +4043,7 @@ msgstr "Ask Before Acting"
 msgid "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 msgstr "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:706
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:714
 msgid "Conversation"
 msgstr "Conversation"
 
@@ -5046,48 +5046,48 @@ msgstr "View Source"
 msgid "The conversation leaves the inbox now and comes back at this time, marked unread."
 msgstr "The conversation leaves the inbox now and comes back at this time, marked unread."
 
-#: macos/Iris/MailModel.swift:608
+#: macos/Iris/MailModel.swift:616
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: macos/Iris/MailModel.swift:610
+#: macos/Iris/MailModel.swift:618
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:635 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:643 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "Saved {file}"
 
-#: macos/Iris/MailModel.swift:778
+#: macos/Iris/MailModel.swift:786
 msgid "Message discarded"
 msgstr "Message discarded"
 
-#: macos/Iris/MailModel.swift:818
+#: macos/Iris/MailModel.swift:826
 msgid "Sending…"
 msgstr "Sending…"
 
-#: macos/Iris/MailModel.swift:907
+#: macos/Iris/MailModel.swift:915
 msgid "Cancel Send"
 msgstr "Cancel Send"
 
-#: macos/Iris/MailModel.swift:1203
+#: macos/Iris/MailModel.swift:1211
 msgid "Translating…"
 msgstr "Translating…"
 
-#: macos/Iris/MailModel.swift:1242
+#: macos/Iris/MailModel.swift:1250
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "This Mac cannot translate this message: {reason}"
 
-#: macos/Iris/MailModel.swift:1725
+#: macos/Iris/MailModel.swift:1733
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: macos/Iris/MailModel.swift:1730
+#: macos/Iris/MailModel.swift:1738
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1780
+#: macos/Iris/MailModel.swift:1788
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 

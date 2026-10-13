@@ -19,6 +19,7 @@ path = "src/bin/uniffi-bindgen.rs"
 [dependencies]
 mailrs-ai.workspace = true
 mailrs-gmail.workspace = true
+mailrs-graph.workspace = true
 mailrs-discover.workspace = true
 mailrs-domain.workspace = true
 mailrs-pgp.workspace = true
@@ -42,6 +43,12 @@ tracing-subscriber.workspace = true
 rusqlite.workspace = true
 thiserror.workspace = true
 uniffi = { version = "0.32.2", features = ["cli"] }
+
+[features]
+# The sample accounts a demo run opens on, over sync's in-memory servers.
+# Debug builds turn it on (scripts/build-ffi.sh), so a release app
+# carries no fakes.
+demo = ["mailrs-sync/fake"]
 
 [dev-dependencies]
 mailrs-sync = { workspace = true, features = ["fake"] }

@@ -30,6 +30,11 @@ cargo install xtr
 scripts/dev-macos.sh
 ```
 
+A debug build carries a demo: `scripts/macos-screenshots.sh` opens it
+on six sample accounts with a throwaway store, beside any Iris already
+running, and takes the README's screenshot into `docs/screenshots/`.
+Every sample address is on a reserved `.example` domain.
+
 `scripts/macos-install.sh` builds a release and installs it as
 `/Applications/Iris.app`. `macos/project.yml` signs with the author's
 Apple Development team; set your own `DEVELOPMENT_TEAM` there. A copy

@@ -51,7 +51,7 @@ use is supported, and VoiceOver reads the system's controls.
 - Assistant: models from Anthropic, OpenAI-compatible servers, local servers or a Claude subscription; MCP
   servers; skills, whose scripts do not run on macOS yet; every change asks first unless the person chose Always
   Allow.
-- Not back since the move to SwiftUI: the demo accounts.
+- A demo on six sample accounts, in debug builds only, for screenshots (`scripts/macos-screenshots.sh`).
 - Languages: American English source strings, British English generated from them, and Italian kept
   complete.
 - Terms are defined in `CONTEXT.md`; the code's rules are in `AGENTS.md`.
@@ -70,8 +70,8 @@ use is supported, and VoiceOver reads the system's controls.
 
 ## Evidence on Hand
 
-- Screenshots of the earlier GTK app in `docs/screenshots/` (inbox, dark, categories, composer, assistant, flags, VIPs,
-  selection, send later, rules, preferences, phone width, welcome, Hide My Email, automatic reply).
+- A screenshot of the Mac app on the demo's sample accounts, `docs/screenshots/iris-dark.png`, taken by
+  `scripts/macos-screenshots.sh`.
 - Approved mockups of the calendar and the refreshed mail screen in `docs/superpowers/specs/calendar-mockup/`.
 - No user counts, reviews, testimonials, press or benchmarks against other clients exist. Do not invent any.
 

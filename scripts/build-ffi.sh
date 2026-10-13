@@ -10,8 +10,10 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 profile="${1:-debug}"
+# A debug build carries the demo's sample accounts (`IRIS_DEMO=1`, see
+# scripts/macos-screenshots.sh); a release build carries no fakes.
 case $profile in
-debug) flag= ;;
+debug) flag="--features demo" ;;
 release) flag=--release ;;
 *) echo "build-ffi.sh: debug or release, not $profile" >&2; exit 2 ;;
 esac
@@ -27,10 +29,12 @@ if [ -f packaging/secrets.env ]; then
 fi
 # Xcode runs scripts with a PATH of its own, without cargo.
 export PATH="$HOME/.cargo/bin:$PATH"
+# shellcheck disable=SC2086
 cargo +1.98 build -p mailrs-ffi $flag
 lib="target/$profile"
 out=target/ffi
 mkdir -p "$out/headers"
+# shellcheck disable=SC2086
 cargo +1.98 run -q -p mailrs-ffi --bin uniffi-bindgen $flag -- \
     generate --library "$lib/libmailrs_ffi.dylib" --language swift --out-dir "$out/generated"
 cp "$out"/generated/*.h "$out/headers/"

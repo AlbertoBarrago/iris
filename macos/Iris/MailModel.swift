@@ -136,9 +136,8 @@ final class MailModel {
     private(set) var prefs: Preferences?
     private(set) var choices: PreferenceChoices?
 
-    /// Where the GTK app keeps the mail store, or the store `IRIS_STORE`
-    /// names, such as a demo run's, for comparing the two front ends on
-    /// the same sample mail.
+    /// Where Iris keeps the mail store, or the store `IRIS_STORE` names,
+    /// such as a demo run's throwaway one.
     nonisolated static var storePath: String {
         if let named = ProcessInfo.processInfo.environment["IRIS_STORE"], !named.isEmpty {
             return named
@@ -158,12 +157,17 @@ final class MailModel {
         opened = true
         Task.detached {
             do {
-                let mail = try Mail.open(path: MailModel.storePath)
+                // `IRIS_DEMO=1` makes the store `IRIS_STORE` names and fills
+                // it with the sample accounts, for screenshots.
+                let demo = ProcessInfo.processInfo.environment["IRIS_DEMO"] == "1"
+                let mail = demo
+                    ? try Mail.openDemo(path: MailModel.storePath)
+                    : try Mail.open(path: MailModel.storePath)
                 let store = try Store.open(path: MailModel.storePath)
                 let sidebar = try mail.sidebar()
                 let badge = mail.dockBadge()
                 // `IRIS_OPEN=<account id>:<thread id>` opens one conversation
-                // at start, for comparing pages with the GTK app's demo.
+                // at start, as the screenshots do.
                 let asked = ProcessInfo.processInfo.environment["IRIS_OPEN"]?
                     .split(separator: ":", maxSplits: 1).map(String.init)
                 await MainActor.run {
@@ -178,6 +182,10 @@ final class MailModel {
                     if let asked, asked.count == 2, let account = Int64(asked[0]) {
                         self.selection = [ThreadKey(account: account, thread: asked[1])]
                     }
+                    // A demo run starts from a script, not the Dock, so it
+                    // comes forward itself; a screenshot of a window in the
+                    // background shows it dimmed.
+                    if demo { NSApp.activate() }
                 }
             } catch {
                 await MainActor.run { self.show(problem: error) }
