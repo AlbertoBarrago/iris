@@ -18,8 +18,9 @@ pub struct AccountLook {
     pub email: String,
     /// The name the sidebar shows, or empty for the address.
     pub name: String,
-    /// The colour chosen, as an index into `colors`.
-    pub color: u32,
+    /// The colour it shows in, as an index into `colors`, or `None` when it
+    /// shows in none.
+    pub color: Option<u32>,
     pub colors: Vec<AccountColorChoice>,
     pub can_move_up: bool,
     pub can_move_down: bool,
@@ -45,6 +46,7 @@ impl Mail {
         let account = self.account_row(account_id)?;
         let settings = Settings::load(&Settings::default_path());
         let all = self.all_accounts()?;
+        let alone = all.len() == 1;
         let order = ordered(&settings, all);
         let at = order.iter().position(|a| a.id == account_id).unwrap_or(0);
         let filing = mailrs_appcore::offered::Filing::of([self.offers(account_id)]);
@@ -53,7 +55,7 @@ impl Mail {
             new_label_heading: filing.new_heading(),
             new_label_prompt: mailrs_domain::translate::gettext("Name, or Parent/Name to nest it"),
             name: settings.account_names.get(&account.email).cloned().unwrap_or_default(),
-            color: color_index(&settings, &account) as u32,
+            color: color_index(&settings, &account, alone).map(|i| i as u32),
             colors: palette(),
             can_move_up: at > 0,
             can_move_down: at + 1 < order.len(),
@@ -80,7 +82,16 @@ impl Mail {
     pub fn color_account(&self, account_id: i64, index: u32) -> Result<(), CoreError> {
         let email = self.account_row(account_id)?.email;
         let index = (index as usize).min(format::PALETTE.len() - 1);
-        self.change_accounts(Change::AccountColor { email, index })
+        self.change_accounts(Change::AccountColor {
+            email,
+            index: Some(index),
+        })
+    }
+
+    /// Shows `account_id` with no colour, in the sidebar and on its rows.
+    pub fn uncolor_account(&self, account_id: i64) -> Result<(), CoreError> {
+        let email = self.account_row(account_id)?.email;
+        self.change_accounts(Change::AccountColor { email, index: None })
     }
 
     /// Moves `account_id` one place up (`-1`) or down (`1`) in the
@@ -131,22 +142,36 @@ pub(crate) fn ordered(settings: &Settings, mut accounts: Vec<Account>) -> Vec<Ac
     accounts
 }
 
-/// The palette index `account` shows in: the one chosen, else the one its
-/// id gives, as the GTK app falls back to.
-pub(crate) fn color_index(settings: &Settings, account: &Account) -> usize {
-    settings
+/// The palette index `account` shows in, or `None` for no colour: the one
+/// chosen, else none when the person took the colour away, else none when
+/// it is the only account, since a colour tells accounts apart and there
+/// is nothing to tell it from. Otherwise the one its id gives, as the GTK
+/// app falls back to.
+pub(crate) fn color_index(settings: &Settings, account: &Account, alone: bool) -> Option<usize> {
+    if let Some(index) = settings
         .account_colors
         .get(&account.email)
         .copied()
         .filter(|i| *i < format::PALETTE.len())
-        .unwrap_or((account.id.max(1) - 1) as usize % format::PALETTE.len())
+    {
+        return Some(index);
+    }
+    if alone || settings.account_colorless.contains(&account.email) {
+        return None;
+    }
+    Some((account.id.max(1) - 1) as usize % format::PALETTE.len())
 }
 
-/// Every account's colour, for the list's rows.
-pub(crate) fn colors(settings: &Settings, accounts: &[Account]) -> HashMap<AccountId, String> {
+/// Every account's colour, for the list's rows; `None` for an account
+/// shown in none.
+pub(crate) fn colors(settings: &Settings, accounts: &[Account]) -> HashMap<AccountId, Option<String>> {
+    let alone = accounts.len() == 1;
     accounts
         .iter()
-        .map(|a| (a.id, format::PALETTE[color_index(settings, a)].to_string()))
+        .map(|a| {
+            let color = color_index(settings, a, alone).map(|i| format::PALETTE[i].to_string());
+            (a.id, color)
+        })
         .collect()
 }
 
@@ -177,12 +202,39 @@ mod tests {
         .apply_to(&mut settings);
         Change::AccountColor {
             email: "a@x.com".into(),
-            index: 5,
+            index: Some(5),
         }
         .apply_to(&mut settings);
         let order: Vec<AccountId> = ordered(&settings, all.clone()).iter().map(|a| a.id).collect();
         assert_eq!(order, [2, 1]);
-        assert_eq!(color_index(&settings, &all[0]), 5);
-        assert_eq!(color_index(&settings, &all[1]), 1);
+        assert_eq!(color_index(&settings, &all[0], false), Some(5));
+        assert_eq!(color_index(&settings, &all[1], false), Some(1));
+    }
+
+    #[test]
+    fn an_account_taken_out_of_colour_shows_none() {
+        let mut settings = Settings::default();
+        let all = vec![account(1, "a@x.com"), account(2, "b@x.com")];
+        Change::AccountColor {
+            email: "b@x.com".into(),
+            index: None,
+        }
+        .apply_to(&mut settings);
+        let shown = colors(&settings, &all);
+        assert_eq!(shown[&1].as_deref(), Some(format::PALETTE[0]));
+        assert_eq!(shown[&2], None);
+    }
+
+    #[test]
+    fn a_lone_account_shows_no_colour_unless_one_was_chosen() {
+        let mut settings = Settings::default();
+        let all = vec![account(1, "a@x.com")];
+        assert_eq!(colors(&settings, &all)[&1], None);
+        Change::AccountColor {
+            email: "a@x.com".into(),
+            index: Some(4),
+        }
+        .apply_to(&mut settings);
+        assert_eq!(colors(&settings, &all)[&1].as_deref(), Some(format::PALETTE[4]));
     }
 }

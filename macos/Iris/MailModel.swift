@@ -1754,6 +1754,10 @@ extension MailModel {
         changeAccount { try $0.colorAccount(accountId: id, index: UInt32(index)) }
     }
 
+    func uncolorAccount(_ id: Int64) {
+        changeAccount { try $0.uncolorAccount(accountId: id) }
+    }
+
     func moveAccount(_ id: Int64, step: Int32) {
         changeAccount { try $0.moveAccount(accountId: id, step: step) }
     }

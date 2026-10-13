@@ -153,7 +153,9 @@ struct ThreadRowView: View {
             .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 5) {
-                    Circle().fill(Color(hex: row.accountColor) ?? .accentColor).frame(width: 7, height: 7)
+                    if let color = Color(hex: row.accountColor) {
+                        Circle().fill(color).frame(width: 7, height: 7)
+                    }
                     Text(row.sender).fontWeight(row.unread ? .bold : .semibold).lineLimit(1)
                     if row.sender != row.senderEmail, !row.senderEmail.isEmpty {
                         Text(row.senderEmail).foregroundStyle(.secondary).lineLimit(1).truncationMode(.tail)

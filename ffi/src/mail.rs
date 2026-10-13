@@ -166,7 +166,8 @@ pub struct ListRow {
     pub avatar_color: String,
     /// The sender's contact photo on disk, or empty for initials.
     pub photo: String,
-    pub account_color: String,
+    /// The account's colour, or `None` when it shows in none.
+    pub account_color: Option<String>,
 }
 
 /// What the list shows for one mailbox.
@@ -210,7 +211,7 @@ pub struct Mail {
     pub(crate) calendar: Arc<mailrs_sync::calendar_copy::CalendarCopy<Running>>,
     /// Each account's colour, as the last sidebar read it from
     /// Preferences, for the list's rows.
-    account_colors: Mutex<HashMap<AccountId, String>>,
+    account_colors: Mutex<HashMap<AccountId, Option<String>>>,
 }
 
 #[uniffi::export]
@@ -680,7 +681,7 @@ impl Mail {
                     color: None,
                     depth: 0,
                     count: 0,
-                    account_color: colors.get(&id).cloned(),
+                    account_color: colors.get(&id).cloned().flatten(),
                     account_id: Some(id),
                     state: emails.get(&id).map(|(_, state)| state.as_str().to_string()).unwrap_or_default(),
                 }),
@@ -1086,7 +1087,7 @@ fn view(category: Option<Category>) -> View {
 fn row(
     thread: &ThreadSummary,
     now: chrono::DateTime<chrono::Local>,
-    colors: &HashMap<AccountId, String>,
+    colors: &HashMap<AccountId, Option<String>>,
     photos: &HashMap<String, std::path::PathBuf>,
 ) -> ListRow {
     let sender = if thread.from.trim().is_empty() {
@@ -1106,7 +1107,7 @@ fn row(
         account_color: colors
             .get(&thread.account_id)
             .cloned()
-            .unwrap_or_else(|| format::PALETTE[format::account_color_index(thread.account_id)].to_string()),
+            .unwrap_or_else(|| Some(format::PALETTE[format::account_color_index(thread.account_id)].to_string())),
         sender,
         sender_email: thread.from_email.clone(),
         // A draft not given a subject yet would show a blank line, as the

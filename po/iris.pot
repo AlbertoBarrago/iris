@@ -2880,200 +2880,200 @@ msgid ""
 "open for you to save."
 msgstr ""
 
-#: appcore/src/settings/mod.rs:237 appcore/src/settings/mod.rs:412
-#: appcore/src/settings/mod.rs:708
+#: appcore/src/settings/mod.rs:239 appcore/src/settings/mod.rs:414
+#: appcore/src/settings/mod.rs:711
 msgid "Off"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:238
+#: appcore/src/settings/mod.rs:240
 msgid "Local Server"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:239
+#: appcore/src/settings/mod.rs:241
 msgid "Anthropic API"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:240
+#: appcore/src/settings/mod.rs:242
 msgid "Claude Subscription"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:265
+#: appcore/src/settings/mod.rs:267
 msgid "Assistant"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:266
+#: appcore/src/settings/mod.rs:268
 msgid "Translation"
 msgstr ""
 
 #. The assistant's running label says "Unsubscribing" too, and
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: appcore/src/settings/mod.rs:270
+#: appcore/src/settings/mod.rs:272
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:276
+#: appcore/src/settings/mod.rs:278
 msgid "Answers questions and acts on your mail"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:277
+#: appcore/src/settings/mod.rs:279
 msgid "Translates a message when you ask"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:279
+#: appcore/src/settings/mod.rs:281
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:317
+#: appcore/src/settings/mod.rs:319
 msgid "Same as the Assistant"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:413
+#: appcore/src/settings/mod.rs:415
 msgid "Claude's own only"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:414
+#: appcore/src/settings/mod.rs:416
 msgid "Brave Search"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:415
+#: appcore/src/settings/mod.rs:417
 msgid "SearXNG"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:555
+#: appcore/src/settings/mod.rs:558
 msgid "Rich text"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:556
+#: appcore/src/settings/mod.rs:559
 msgid "Markdown"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:575
+#: appcore/src/settings/mod.rs:578
 msgid "Automatic"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:576
+#: appcore/src/settings/mod.rs:579
 msgid "Monday"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:577
+#: appcore/src/settings/mod.rs:580
 msgid "Sunday"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:615
+#: appcore/src/settings/mod.rs:618
 msgid "When opened"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:616
+#: appcore/src/settings/mod.rs:619
 msgid "After 2 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:617
+#: appcore/src/settings/mod.rs:620
 msgid "Only when I choose"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:633
+#: appcore/src/settings/mod.rs:636
 msgid "Ask each time"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:634
+#: appcore/src/settings/mod.rs:637
 msgid "Always load"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:668
+#: appcore/src/settings/mod.rs:671
 msgid "Small"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:669
+#: appcore/src/settings/mod.rs:672
 msgid "Default"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:670
+#: appcore/src/settings/mod.rs:673
 msgid "Large"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:671
+#: appcore/src/settings/mod.rs:674
 msgid "Larger"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:709 appcore/src/settings/mod.rs:752
+#: appcore/src/settings/mod.rs:712 appcore/src/settings/mod.rs:755
 msgid "5 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:710 appcore/src/settings/mod.rs:753
+#: appcore/src/settings/mod.rs:713 appcore/src/settings/mod.rs:756
 msgid "10 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:711 appcore/src/settings/mod.rs:754
+#: appcore/src/settings/mod.rs:714 appcore/src/settings/mod.rs:757
 msgid "20 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:712
+#: appcore/src/settings/mod.rs:715
 msgid "30 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:732
+#: appcore/src/settings/mod.rs:735
 msgid "Notices Stay For"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:733
+#: appcore/src/settings/mod.rs:736
 msgid "How long a notice in the window's corner stays before it goes"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:751
+#: appcore/src/settings/mod.rs:754
 msgid "3 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:771
+#: appcore/src/settings/mod.rs:774
 msgid "Follow system"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:772
+#: appcore/src/settings/mod.rs:775
 msgid "Light"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:773
+#: appcore/src/settings/mod.rs:776
 msgid "Dark"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:807
+#: appcore/src/settings/mod.rs:810
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/settings/mod.rs:815
+#: appcore/src/settings/mod.rs:818
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/settings/mod.rs:832
+#: appcore/src/settings/mod.rs:835
 msgid "2 weeks"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:833
+#: appcore/src/settings/mod.rs:836
 msgid "30 days"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:834
+#: appcore/src/settings/mod.rs:837
 msgid "90 days"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:835
+#: appcore/src/settings/mod.rs:838
 msgid "1 year"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:842
+#: appcore/src/settings/mod.rs:845
 msgid "256 MB"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:843
+#: appcore/src/settings/mod.rs:846
 msgid "1 GB"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:844
+#: appcore/src/settings/mod.rs:847
 msgid "4 GB"
 msgstr ""
 
@@ -3654,7 +3654,7 @@ msgstr ""
 msgid "Version {version}"
 msgstr ""
 
-#: ffi/src/account_menu.rs:54
+#: ffi/src/account_menu.rs:56
 msgid "Name, or Parent/Name to nest it"
 msgstr ""
 
@@ -3883,27 +3883,27 @@ msgid ""
 "Update Iris to open it."
 msgstr ""
 
-#: ffi/src/mail.rs:394
+#: ffi/src/mail.rs:395
 msgid "Will remind you {when}"
 msgstr ""
 
-#: ffi/src/mail.rs:397
+#: ffi/src/mail.rs:398
 msgid "Back in the Inbox"
 msgstr ""
 
-#: ffi/src/mail.rs:434
+#: ffi/src/mail.rs:435
 msgid "Could not cancel: {reason}"
 msgstr ""
 
-#: ffi/src/mail.rs:458
+#: ffi/src/mail.rs:459
 msgid "Deleted. It will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:459
+#: ffi/src/mail.rs:460
 msgid "Deleted. They will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:468
+#: ffi/src/mail.rs:469
 msgid "Could not delete: {reason}"
 msgstr ""
 
@@ -4706,8 +4706,8 @@ msgstr ""
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:308
-#: macos/Iris/ThreadListView.swift:309
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:310
+#: macos/Iris/ThreadListView.swift:311
 msgid "Close"
 msgstr ""
 
@@ -4931,7 +4931,7 @@ msgid "Edit Draft"
 msgstr ""
 
 #: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:291
-#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:239
+#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:241
 msgid "Mark as Unread"
 msgstr ""
 
@@ -4989,7 +4989,7 @@ msgstr ""
 msgid "Place"
 msgstr ""
 
-#: macos/Iris/EventEditorView.swift:73 macos/Iris/SidebarView.swift:141
+#: macos/Iris/EventEditorView.swift:73 macos/Iris/SidebarView.swift:143
 msgid "Remove"
 msgstr ""
 
@@ -5003,7 +5003,7 @@ msgstr ""
 
 #: macos/Iris/FilingView.swift:70 macos/Iris/FilingView.swift:175
 #: macos/Iris/HideMyEmailView.swift:39 macos/Iris/RulesView.swift:200
-#: macos/Iris/SidebarView.swift:150 macos/Iris/SmartEditorView.swift:72
+#: macos/Iris/SidebarView.swift:152 macos/Iris/SmartEditorView.swift:72
 #: macos/Iris/TemplatesSettings.swift:119
 msgid "Create"
 msgstr ""
@@ -5012,19 +5012,19 @@ msgstr ""
 msgid "Rename"
 msgstr ""
 
-#: macos/Iris/FilingView.swift:193 macos/Iris/SidebarView.swift:196
+#: macos/Iris/FilingView.swift:193 macos/Iris/SidebarView.swift:198
 msgid "Rename…"
 msgstr ""
 
-#: macos/Iris/FilingView.swift:204 macos/Iris/SidebarView.swift:202
+#: macos/Iris/FilingView.swift:204 macos/Iris/SidebarView.swift:204
 msgid "Color"
 msgstr ""
 
-#: macos/Iris/FilingView.swift:216 macos/Iris/SidebarView.swift:215
+#: macos/Iris/FilingView.swift:216 macos/Iris/SidebarView.swift:227
 msgid "Move Up"
 msgstr ""
 
-#: macos/Iris/FilingView.swift:219 macos/Iris/SidebarView.swift:219
+#: macos/Iris/FilingView.swift:219 macos/Iris/SidebarView.swift:231
 msgid "Move Down"
 msgstr ""
 
@@ -5240,7 +5240,7 @@ msgstr ""
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1776
+#: macos/Iris/MailModel.swift:1780
 msgid "{account} is signed in again."
 msgstr ""
 
@@ -5685,7 +5685,7 @@ msgstr ""
 msgid "Mute or unmute"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:284
+#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:286
 msgid "Undo"
 msgstr ""
 
@@ -5741,54 +5741,58 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:132
+#: macos/Iris/SidebarView.swift:134
 msgid "Account options"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:155
+#: macos/Iris/SidebarView.swift:157
 msgid "Name This Account"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:163
+#: macos/Iris/SidebarView.swift:165
 msgid ""
 "The sidebar shows the name instead of the address. Leave it empty for the "
 "address."
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:174 macos/Iris/ThreadListView.swift:81
+#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:81
 #: macos/Iris/ThreadListView.swift:82
 msgid "Check for Mail"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:178
+#: macos/Iris/SidebarView.swift:180
 msgid "Automatic Reply…"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:181
+#: macos/Iris/SidebarView.swift:183
 msgid "Signature…"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:185
+#: macos/Iris/SidebarView.swift:187
 msgid "Rules…"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:188
+#: macos/Iris/SidebarView.swift:190
 msgid "Hide My Email…"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:224
+#: macos/Iris/SidebarView.swift:209
+msgid "No Color"
+msgstr ""
+
+#: macos/Iris/SidebarView.swift:236
 msgid "Sign In Again…"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:228
+#: macos/Iris/SidebarView.swift:240
 msgid "Remove Account…"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:254
+#: macos/Iris/SidebarView.swift:277
 msgid "Sign in again to keep syncing"
 msgstr ""
 
-#: macos/Iris/SidebarView.swift:298 macos/Iris/SmartEditorView.swift:78
+#: macos/Iris/SidebarView.swift:321 macos/Iris/SmartEditorView.swift:78
 msgid "Edit Smart Mailbox"
 msgstr ""
 
@@ -5905,11 +5909,11 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: macos/Iris/ThreadListView.swift:89 macos/Iris/ThreadListView.swift:382
+#: macos/Iris/ThreadListView.swift:89 macos/Iris/ThreadListView.swift:384
 msgid "Search mail"
 msgstr ""
 
-#: macos/Iris/ThreadListView.swift:269
+#: macos/Iris/ThreadListView.swift:271
 msgid "Clear Flag"
 msgstr ""
 

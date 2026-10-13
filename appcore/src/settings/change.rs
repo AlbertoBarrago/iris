@@ -154,9 +154,11 @@ pub enum Change {
         email: String,
         name: String,
     },
+    /// The palette's colour at `index` for an account, or `None` for no
+    /// colour at all.
     AccountColor {
         email: String,
-        index: usize,
+        index: Option<usize>,
     },
     /// Every address an account may send as, as Gmail just reported them.
     SendAsAddresses {
@@ -408,9 +410,16 @@ impl Change {
                     settings.account_names.insert(email, name);
                 }
             }
-            Change::AccountColor { email, index } => {
-                settings.account_colors.insert(email, index);
-            }
+            Change::AccountColor { email, index } => match index {
+                Some(index) => {
+                    settings.account_colorless.remove(&email);
+                    settings.account_colors.insert(email, index);
+                }
+                None => {
+                    settings.account_colors.remove(&email);
+                    settings.account_colorless.insert(email);
+                }
+            },
             Change::SendAsAddresses {
                 account,
                 addresses,
@@ -594,6 +603,7 @@ settable! {
     }
     held_back {
         account_colors,
+        account_colorless,
         account_names,
         account_order,
         ai,
@@ -822,6 +832,7 @@ impl Effects {
             smart_mailboxes,
             account_order,
             account_colors,
+            account_colorless,
             account_names,
             mcp_servers,
             ai,
@@ -919,7 +930,8 @@ impl Effects {
             layout,
         );
         let smart_changed = *smart_mailboxes != before.smart_mailboxes;
-        let colors_changed = *account_colors != before.account_colors;
+        let colors_changed =
+            *account_colors != before.account_colors || *account_colorless != before.account_colorless;
         let vips_changed = *vips != before.vips;
         // Walking Effect::ALL keeps the order the window relies on.
         let shown = Effect::ALL
@@ -1377,10 +1389,18 @@ mod tests {
         let mut settings = Settings::default();
         let colored = Change::AccountColor {
             email: "ann@example.com".into(),
-            index: 3,
+            index: Some(3),
         }
         .apply(&mut settings);
         assert!(colored.has(Effect::Accounts) && colored.has(Effect::RowColors));
+        let plain = Change::AccountColor {
+            email: "ann@example.com".into(),
+            index: None,
+        }
+        .apply(&mut settings);
+        assert!(plain.has(Effect::Accounts) && plain.has(Effect::RowColors));
+        assert!(settings.account_colors.is_empty());
+        assert!(settings.account_colorless.contains("ann@example.com"));
         let named = Change::AccountName {
             email: "ann@example.com".into(),
             name: "Ann".into(),
@@ -1565,7 +1585,7 @@ mod tests {
             },
             Change::AccountColor {
                 email: "ann@example.com".into(),
-                index: 1,
+                index: Some(1),
             },
             Change::SaveSmartMailbox(Box::new(smart("s1", "From Ann"))),
             Change::ToggleVip {

@@ -1,7 +1,7 @@
 //! App preferences, kept in `~/.config/iris/settings.toml`. Sync options
 //! stay in `config.toml`, which the command-line tool reads too.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 use mailrs_domain::Category;
@@ -62,6 +62,8 @@ pub struct Settings {
     pub account_order: Vec<String>,
     /// A colour from the palette per account address.
     pub account_colors: BTreeMap<String, usize>,
+    /// Account addresses the person chose to show with no colour.
+    pub account_colorless: BTreeSet<String>,
     /// A name shown instead of the address in the sidebar.
     pub account_names: BTreeMap<String, String>,
     /// MCP servers whose tools the assistant may use, in the order the AI
@@ -503,6 +505,7 @@ impl Default for Settings {
             smart_mailboxes: Vec::new(),
             account_order: Vec::new(),
             account_colors: BTreeMap::new(),
+            account_colorless: BTreeSet::new(),
             account_names: BTreeMap::new(),
             mcp_servers: Vec::new(),
             ai: AiSettings::default(),

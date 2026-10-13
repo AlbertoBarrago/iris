@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### New
+
+- Take an account's color dot away from its menu, and a single account no
+  longer shows one.
+
 ### Improved
 
 - Report a problem from the Help menu.

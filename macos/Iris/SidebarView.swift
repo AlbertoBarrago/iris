@@ -107,7 +107,9 @@ struct AccountLine: View {
 
     var body: some View {
         HStack(spacing: 6) {
-            Circle().fill(Color(hex: item.accountColor) ?? .accentColor).frame(width: 8, height: 8)
+            if let color = Color(hex: item.accountColor) {
+                Circle().fill(color).frame(width: 8, height: 8)
+            }
             Text(item.title).lineLimit(1)
             Spacer(minLength: 4)
             if let (symbol, words) = state {
@@ -200,6 +202,16 @@ struct AccountLine: View {
                 renaming = true
             }
             Menu(tr("Color")) {
+                Button {
+                    if let id = item.accountId { model.uncolorAccount(id) }
+                } label: {
+                    Label {
+                        Text(tr("No Color"))
+                    } icon: {
+                        Image(nsImage: Self.swatch(nil, chosen: item.accountColor == nil))
+                    }
+                }
+                Divider()
                 ForEach(Array(model.accountPalette.enumerated()), id: \.offset) { index, choice in
                     Button {
                         if let id = item.accountId { model.colorAccount(id, index: index) }
@@ -231,12 +243,23 @@ struct AccountLine: View {
     }
 
     /// A colour's dot for the menu, which draws a picture but no SwiftUI
-    /// shape. The chosen colour gets a ring.
-    private static func swatch(_ hex: String, chosen: Bool) -> NSImage {
+    /// shape. The chosen colour gets a ring. No colour (`nil`) is an empty
+    /// circle struck through.
+    private static func swatch(_ hex: String?, chosen: Bool) -> NSImage {
         let image = NSImage(size: NSSize(width: 14, height: 14), flipped: false) { rect in
-            let color = Color(hex: hex).map(NSColor.init) ?? .gray
-            color.setFill()
-            NSBezierPath(ovalIn: rect.insetBy(dx: chosen ? 3 : 1.5, dy: chosen ? 3 : 1.5)).fill()
+            let color = hex == nil ? NSColor.secondaryLabelColor : Color(hex: hex).map(NSColor.init) ?? .gray
+            let dot = rect.insetBy(dx: chosen ? 3 : 1.5, dy: chosen ? 3 : 1.5)
+            if hex == nil {
+                color.setStroke()
+                let empty = NSBezierPath(ovalIn: dot.insetBy(dx: 0.5, dy: 0.5))
+                empty.move(to: NSPoint(x: dot.minX + 1, y: dot.minY + 1))
+                empty.line(to: NSPoint(x: dot.maxX - 1, y: dot.maxY - 1))
+                empty.lineWidth = 1
+                empty.stroke()
+            } else {
+                color.setFill()
+                NSBezierPath(ovalIn: dot).fill()
+            }
             if chosen {
                 color.setStroke()
                 let ring = NSBezierPath(ovalIn: rect.insetBy(dx: 0.75, dy: 0.75))
