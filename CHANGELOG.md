@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.9 (2026-10-13)
+
 ### New
 
 - Take an account's color dot away from its menu, and a single account no
