@@ -120,6 +120,8 @@ pub(super) struct Known {
     pub listed: bool,
     pub window_open: bool,
     pub last_slow: Option<Instant>,
+    /// Until when a message sent here may still be on its way to Sent.
+    pub awaiting_sent: Option<Instant>,
 }
 
 /// The attachment ids of the last structures fetched, by part path, so a

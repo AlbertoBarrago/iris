@@ -6769,11 +6769,11 @@ msgstr ""
 msgid "The message has no Message-ID."
 msgstr ""
 
-#: sync/src/services/microsoft/outgoing.rs:74
+#: sync/src/services/microsoft/outgoing.rs:75
 msgid "The message cannot be read."
 msgstr ""
 
-#: sync/src/services/microsoft/outgoing.rs:77
+#: sync/src/services/microsoft/outgoing.rs:78
 msgid ""
 "Microsoft cannot send a signed or encrypted message larger than 3 MB. Make "
 "the files smaller or send them apart."

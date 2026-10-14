@@ -116,6 +116,11 @@ pub struct GraphState {
     /// The ids of each metadata fetch, one entry a call.
     pub meta_fetches: Vec<Vec<String>>,
     pub sent: Vec<Vec<u8>>,
+    /// Whether `sendMail` leaves the message in Drafts until
+    /// [`FakeGraph::file_sent`], as Graph does for a few seconds.
+    pub files_late: bool,
+    /// Messages sent with `files_late`, waiting to move to Sent Items.
+    pub filing: Vec<String>,
     pub uploads: HashMap<String, Upload>,
     pub calendars: Vec<GraphCalendar>,
     /// Event id to its calendar and the event.

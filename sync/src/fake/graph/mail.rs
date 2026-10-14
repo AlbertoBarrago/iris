@@ -110,6 +110,20 @@ impl FakeGraph {
         self.with(|s| move_to(s, id, folder));
     }
 
+    /// Files in Sent Items what `sendMail` left in Drafts, as Graph does a
+    /// few seconds after a send.
+    pub fn file_sent(&self) {
+        self.with(|s| {
+            let Some(sent) = s.well_known.get("sentitems").cloned() else { return };
+            for id in std::mem::take(&mut s.filing) {
+                move_to(s, &id, &sent);
+                if let Some(message) = s.messages.get_mut(&id) {
+                    message.message.is_draft = Some(false);
+                }
+            }
+        });
+    }
+
     pub fn mark(&self, id: &str, read: Option<bool>, flagged: Option<bool>) {
         self.with(|s| {
             let Some(held) = s.messages.get_mut(id) else { return };
@@ -565,7 +579,16 @@ pub(super) fn set_category_color(s: &mut GraphState, id: &str, color: &str) -> A
 pub(super) fn send_mime(s: &mut GraphState, raw: &[u8]) -> Answer<()> {
     s.refuses(Area::Mail)?;
     let sent = s.well_known.get("sentitems").cloned().ok_or(GraphError::NotFound)?;
-    file_message(s, &sent, raw.to_vec(), false)?;
+    match s.files_late {
+        true => {
+            let drafts = s.well_known.get("drafts").cloned().ok_or(GraphError::NotFound)?;
+            let id = file_message(s, &drafts, raw.to_vec(), true)?;
+            s.filing.push(id);
+        }
+        false => {
+            file_message(s, &sent, raw.to_vec(), false)?;
+        }
+    }
     s.sent.push(raw.to_vec());
     Ok(())
 }

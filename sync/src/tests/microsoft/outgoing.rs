@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use mailrs_domain::query::{Query, Term};
 
 use super::outlook;
@@ -51,6 +53,31 @@ async fn a_draft_saved_here_shows_in_drafts_at_the_next_look() {
     assert!(h.stored(&saved.message_id).await, "the draft saved here is read at once");
     assert!(h.stored(&elsewhere).await);
     assert!(h.held(&saved.message_id).await.mailboxes.contains(&drafts));
+}
+
+/// Graph files a sent message in Sent Items a few seconds after
+/// `sendMail` answers, so the look a send triggers finds Sent empty. The
+/// looks stay quick and keep reading Sent until the copy shows, rather
+/// than leaving it to the slow poll five minutes on.
+#[tokio::test]
+async fn a_message_graph_files_late_shows_in_sent_at_a_quick_look() {
+    let h = outlook().await;
+    let mail = &h.sync.services().mail;
+    mail.set_window_open(true);
+    h.bootstrap_all().await;
+    h.look().await;
+    h.fake.with(|s| s.files_late = true);
+
+    h.sync.send(RAW.to_vec(), None, None).await.unwrap();
+    h.look().await;
+    assert_eq!(mail.poll_interval(), Some(Duration::from_secs(5)), "Sent is still empty, so the next look comes soon");
+
+    h.fake.file_sent();
+    h.look().await;
+    let sent = h.fake.folder_id("sentitems");
+    let filed = h.fake.with(|s| s.messages.values().find(|m| m.folder == sent).map(|m| m.message.id.clone())).unwrap();
+    assert!(h.held(&filed).await.mailboxes.contains(&sent), "the copy is read before the slow poll");
+    assert_eq!(mail.poll_interval(), Some(Duration::from_secs(30)), "the usual pace once Sent has it");
 }
 
 #[tokio::test]

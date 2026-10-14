@@ -63,6 +63,7 @@ impl<G: GraphApi> Microsoft<G> {
             false => self.graph().send_mime(raw).await.map_err(backend)?,
             true => self.send_large(raw, &id).await?,
         }
+        self.await_sent();
         Ok(id)
     }
 
@@ -159,6 +160,7 @@ impl<G: GraphApi> Microsoft<G> {
             .map(|m| m.trim_matches(['<', '>']).to_string())
             .unwrap_or_else(|| draft.to_string());
         self.graph().send_draft(draft).await.map_err(backend)?;
+        self.await_sent();
         Ok(message_id)
     }
 

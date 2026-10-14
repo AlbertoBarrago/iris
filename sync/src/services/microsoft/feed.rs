@@ -68,7 +68,10 @@ impl<G: GraphApi> Microsoft<G> {
         };
         let mut state = MicrosoftState::read(since)?;
         let (due, slow) = self.due(synced);
-        let inbox = self.known().roles.get(&Role::Inbox).cloned();
+        let (inbox, sent) = {
+            let known = self.known();
+            (known.roles.get(&Role::Inbox).cloned(), known.roles.get(&Role::Sent).cloned())
+        };
         let (mut removed, mut present) = (Vec::new(), Vec::new());
         for folder in due {
             let start = state.folders.get(&folder).cloned();
@@ -78,6 +81,9 @@ impl<G: GraphApi> Microsoft<G> {
                     let (gone, here) = (removed.len() - before.0, present.len() - before.1);
                     if gone + here > 0 {
                         tracing::info!(folder = %self.folder_word(&folder), present = here, removed = gone, "a Microsoft folder changed");
+                    }
+                    if here > 0 && Some(&folder) == sent.as_ref() {
+                        self.sent_filed();
                     }
                     state.folders.insert(folder, left.link());
                 }
