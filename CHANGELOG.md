@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- Text pasted from a web page or a chat takes the composer's own colors and
+  font instead of staying black, and keeps its bold, italics and links.
+
 ## 1.1.9 (2026-10-13)
 
 ### New

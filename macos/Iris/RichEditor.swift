@@ -479,6 +479,32 @@ final class AttachingTextView: NSTextView {
         registerForDraggedTypes(registeredDraggedTypes + FileDrop.types)
     }
 
+    /// Rich text from a web page or another app goes through the core's
+    /// lines on the way in, as the sent mail does. Its colors, backgrounds
+    /// and fonts would otherwise stay in the editor, black on a dark
+    /// window, while the mail drops them; what survives is bold, italic,
+    /// strikethrough, code and links.
+    override func readSelection(from pboard: NSPasteboard, type: NSPasteboard.PasteboardType) -> Bool {
+        guard Self.richTypes.contains(type),
+              let pasted = pboard.readObjects(forClasses: [NSAttributedString.self])?.first as? NSAttributedString
+        else { return super.readSelection(from: pboard, type: type) }
+        let words = RichController.attributed(RichController.blocks(pasted))
+        let range = rangeForUserTextChange
+        guard range.location != NSNotFound, shouldChangeText(in: range, replacementString: words.string) else { return false }
+        textStorage?.replaceCharacters(in: range, with: words)
+        didChangeText()
+        setSelectedRange(NSRange(location: range.location + words.length, length: 0))
+        return true
+    }
+
+    /// What a browser or a chat app puts on the pasteboard for styled text;
+    /// Safari offers its web archive ahead of RTF.
+    private static let richTypes: Set<NSPasteboard.PasteboardType> = [
+        .rtf, .rtfd, .html,
+        NSPasteboard.PasteboardType("com.apple.webarchive"),
+        NSPasteboard.PasteboardType("Apple Web Archive pasteboard type"),
+    ]
+
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
         carrying = FileDrop.carriesFiles(sender.draggingPasteboard)
         guard carrying else { return super.draggingEntered(sender) }
