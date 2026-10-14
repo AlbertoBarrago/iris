@@ -28,3 +28,4 @@ __pycache__/
 /macos/Iris.xcodeproj/
 /macos/Iris/Generated/
 /macos/build/
+.DS_Store
