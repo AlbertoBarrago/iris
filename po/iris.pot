@@ -1065,31 +1065,31 @@ msgstr ""
 msgid "Change {contact} in the contacts of {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:597
+#: appcore/src/assistant/run/manage.rs:591
 msgid "Always load images from anyone at {domain}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:601
+#: appcore/src/assistant/run/manage.rs:595
 msgid "Always load images from {sender}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:607
+#: appcore/src/assistant/run/manage.rs:601
 msgid "Loading a remote image tells the sender when you opened their mail."
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:632
+#: appcore/src/assistant/run/manage.rs:626
 msgid "Stop loading images from {sender}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:667
+#: appcore/src/assistant/run/manage.rs:661
 msgid "Export {what} to {file}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:673
+#: appcore/src/assistant/run/manage.rs:667
 msgid "A file with that name is there already, and exporting replaces it."
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:752
+#: appcore/src/assistant/run/manage.rs:746
 msgid "the message “{subject}”"
 msgstr ""
 
@@ -4002,6 +4002,14 @@ msgstr ""
 msgid "Iris opens when you log in and keeps your mail up to date"
 msgstr ""
 
+#: ffi/src/prefs.rs:307
+msgid "Images from anyone at {domain} will load from now on"
+msgstr ""
+
+#: ffi/src/prefs.rs:310
+msgid "Images from {sender} will load from now on"
+msgstr ""
+
 #: ffi/src/protection.rs:158
 msgid "Your OpenPGP Keys"
 msgstr ""
@@ -4082,38 +4090,38 @@ msgstr ""
 msgid "Could Not Load the Rules"
 msgstr ""
 
-#: ffi/src/senders.rs:52
+#: ffi/src/senders.rs:56
 msgid "Block {sender}?"
 msgstr ""
 
-#: ffi/src/senders.rs:55
+#: ffi/src/senders.rs:59
 msgid ""
 "New mail from {email} goes straight to the Trash. This conversation moves "
 "there now. Remove the rule under Rules to unblock."
 msgstr ""
 
-#: ffi/src/senders.rs:72 ffi/src/senders.rs:98
+#: ffi/src/senders.rs:77 ffi/src/senders.rs:103
 msgid "Open a message from the sender first"
 msgstr ""
 
-#: ffi/src/senders.rs:83
+#: ffi/src/senders.rs:88
 msgid "Mail from {sender} now goes to {category}"
 msgstr ""
 
-#: ffi/src/senders.rs:84
+#: ffi/src/senders.rs:89
 msgid "Moved mail from {sender} to {category}"
 msgstr ""
 
-#: ffi/src/senders.rs:86
+#: ffi/src/senders.rs:91
 msgid ""
 "Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
 msgstr ""
 
-#: ffi/src/senders.rs:102
+#: ffi/src/senders.rs:107
 msgid "Could not block the sender: {reason}"
 msgstr ""
 
-#: ffi/src/senders.rs:118
+#: ffi/src/senders.rs:123
 msgid "Blocked {sender}"
 msgstr ""
 
@@ -4914,10 +4922,6 @@ msgstr ""
 msgid "Remote images are hidden to protect your privacy"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:28
-msgid "Load Images"
-msgstr ""
-
 #: macos/Iris/ConversationView.swift:43
 msgid "This message is from a mailing list"
 msgstr ""
@@ -4930,44 +4934,60 @@ msgstr ""
 msgid "Edit Draft"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:291
+#: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:319
 #: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:241
 msgid "Mark as Unread"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:283
+#: macos/Iris/ConversationView.swift:145 macos/Iris/ConversationView.swift:161
+msgid "Load Images"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:146
+msgid "Always Load Images"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:147
+msgid "From {sender}"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:151
+msgid "From Anyone at {domain}"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:311
 msgid "Several Conversations Selected"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:285
+#: macos/Iris/ConversationView.swift:313
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:295
+#: macos/Iris/ConversationView.swift:323
 msgid "Move to Trash"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:450
+#: macos/Iris/ConversationView.swift:478
 msgid "Checked"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:451
+#: macos/Iris/ConversationView.swift:479
 msgid "Warning"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:452
+#: macos/Iris/ConversationView.swift:480
 msgid "Not checked"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:468
+#: macos/Iris/ConversationView.swift:496
 msgid "Categorize Sender"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:475
+#: macos/Iris/ConversationView.swift:503
 msgid "Block Sender…"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:484
+#: macos/Iris/ConversationView.swift:512
 msgid "Block"
 msgstr ""
 
@@ -5212,35 +5232,35 @@ msgstr ""
 msgid "Saved {file}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:786
+#: macos/Iris/MailModel.swift:801
 msgid "Message discarded"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:826
+#: macos/Iris/MailModel.swift:841
 msgid "Sending…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:915
+#: macos/Iris/MailModel.swift:930
 msgid "Cancel Send"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1211
+#: macos/Iris/MailModel.swift:1226
 msgid "Translating…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1250
+#: macos/Iris/MailModel.swift:1265
 msgid "This Mac cannot translate this message: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1743
+#: macos/Iris/MailModel.swift:1758
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1748
+#: macos/Iris/MailModel.swift:1763
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1798
+#: macos/Iris/MailModel.swift:1813
 msgid "{account} is signed in again."
 msgstr ""
 

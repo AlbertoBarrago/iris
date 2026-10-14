@@ -37,6 +37,25 @@ pub fn domain_of(address: &str) -> Option<&str> {
     (!domain.is_empty()).then_some(domain)
 }
 
+/// What the list keeps for `given`: the address itself, or its domain when
+/// `whole_domain` is set or `given` has nothing before an `@` (`example.com`,
+/// `@example.com`), lower case, with whether it
+/// stands for a domain. None when nothing is left, or when a domain has no
+/// dot, so a slip cannot let in a whole top-level domain.
+pub fn entry_for(given: &str, whole_domain: bool) -> Option<(String, bool)> {
+    let given = given.trim().to_lowercase();
+    let whole_domain = whole_domain || !given.contains('@') || given.starts_with('@');
+    let sender = match (whole_domain, domain_of(&given)) {
+        (true, Some(domain)) => domain.to_string(),
+        (true, None) => given.trim_start_matches('@').to_string(),
+        (false, _) => given,
+    };
+    if sender.is_empty() || (whole_domain && !sender.contains('.')) {
+        return None;
+    }
+    Some((sender, whole_domain))
+}
+
 /// Whether an entry for `rule` covers mail from `domain`: the same domain,
 /// or one under it. `example.com` covers `mail.example.com` and refuses
 /// both `notexample.com` and `example.com.evil.net`.
@@ -67,6 +86,23 @@ mod tests {
             whole_domain: true,
             allowed_at: 0,
         }
+    }
+
+    #[test]
+    fn an_entry_keeps_the_address_or_its_domain() {
+        assert_eq!(entry_for(" Ann@Example.com ", false), Some(("ann@example.com".into(), false)));
+        assert_eq!(entry_for("ann@mail.example.com", true), Some(("mail.example.com".into(), true)));
+        assert_eq!(entry_for("@example.com", false), Some(("example.com".into(), true)));
+        assert_eq!(entry_for("example.com", false), Some(("example.com".into(), true)));
+    }
+
+    #[test]
+    fn an_entry_refuses_nothing_and_a_bare_top_level_domain() {
+        assert_eq!(entry_for("", false), None);
+        assert_eq!(entry_for("   ", true), None);
+        assert_eq!(entry_for("ann@localhost", true), None);
+        assert_eq!(entry_for("com", false), None);
+        assert_eq!(entry_for("ann@", true), None);
     }
 
     #[test]

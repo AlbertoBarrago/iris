@@ -582,16 +582,10 @@ impl<A: Accounts> Tools<A> {
     /// Allows one address, or everyone at a domain. An address with
     /// `whole_domain` set stands for its domain.
     pub(super) async fn allow_images<'a>(&'a self, input: &'a Value) -> Result<Plan<'a>, String> {
-        let given = required(input, "sender")?.to_lowercase();
-        let whole_domain = flag(input, "whole_domain").unwrap_or(false) || !given.contains('@');
-        let sender = match (whole_domain, images::domain_of(&given)) {
-            (true, Some(domain)) => domain.to_string(),
-            (true, None) => given.trim_start_matches('@').to_string(),
-            (false, _) => given,
+        let given = required(input, "sender")?;
+        let Some((sender, whole_domain)) = images::entry_for(&given, flag(input, "whole_domain").unwrap_or(false)) else {
+            return Err(format!("{given} is not an address or a domain."));
         };
-        if sender.is_empty() || (whole_domain && !sender.contains('.')) {
-            return Err(format!("{sender} is not an address or a domain."));
-        }
         let ask = match whole_domain {
             true => fill(
                 &gettext("Always load images from anyone at {domain}?"),

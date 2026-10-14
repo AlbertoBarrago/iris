@@ -9,7 +9,7 @@ use mailrs_appcore::settings::{
     cache_choices, nearest, poll_choices, window_choices,
 };
 use mailrs_domain::Category;
-use mailrs_domain::translate::gettext;
+use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::calendar::hours::WorkingHours;
 use mailrs_domain::calendar::week::WeekStart;
 use mailrs_sync::config::{Config, config_path};
@@ -289,6 +289,26 @@ impl Mail {
                 whole_domain: entry.whole_domain,
             })
             .collect())
+    }
+
+    /// Lets remote images load from now on in mail from `email`, or from
+    /// anyone at its domain with `whole_domain`. Answers the toast.
+    pub fn allow_image_sender(&self, email: String, whole_domain: bool) -> Result<String, CoreError> {
+        let (sender, whole_domain) = mailrs_appcore::images::entry_for(&email, whole_domain)
+            .ok_or_else(|| CoreError::Store(format!("{email} is not an address or a domain")))?;
+        let db = self.db.clone();
+        let (saved, now) = (sender.clone(), chrono::Local::now().timestamp_millis());
+        self.run(async move {
+            db.write(move |c| mailrs_store::image_senders::allow(c, &saved, whole_domain, now))
+                .await
+        })?;
+        Ok(match whole_domain {
+            true => fill(
+                &gettext("Images from anyone at {domain} will load from now on"),
+                &[("domain", &sender)],
+            ),
+            false => fill(&gettext("Images from {sender} will load from now on"), &[("sender", &sender)]),
+        })
     }
 
     /// Takes `sender` off the list, so its images wait to be asked for.

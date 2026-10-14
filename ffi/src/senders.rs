@@ -5,6 +5,7 @@
 
 use std::sync::Arc;
 
+use mailrs_appcore::images;
 use mailrs_appcore::offered::{categorize_choices, sender_actions};
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{Address, Category, Target};
@@ -21,6 +22,9 @@ pub struct SenderMenu {
     /// The person the menu acts on, as the menu names them.
     pub sender: String,
     pub email: String,
+    /// The domain Always Load Images may let in as a whole; `None` when
+    /// the address has none the list would take.
+    pub image_domain: Option<String>,
     /// Categorize Sender's categories; empty when the account cannot
     /// sort senders.
     pub categories: Vec<ChoiceItem>,
@@ -57,6 +61,7 @@ impl Mail {
                 ),
                 &[("email", &sender.email)],
             ),
+            image_domain: images::entry_for(&sender.email, true).map(|(domain, _)| domain),
             sender: name,
             email: sender.email,
         }))

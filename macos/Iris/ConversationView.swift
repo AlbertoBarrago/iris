@@ -25,7 +25,7 @@ struct ConversationView: View {
                             HStack {
                                 Text(tr("Remote images are hidden to protect your privacy"))
                                 Spacer()
-                                Button(tr("Load Images")) { model.loadImages() }
+                                LoadImagesButton()
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
@@ -131,6 +131,34 @@ struct ConversationView: View {
         .onChange(of: colorScheme) { model.refreshTheme() }
         .onReceive(NotificationCenter.default.publisher(for: NSColor.systemColorsDidChangeNotification)) { _ in
             model.refreshTheme()
+        }
+    }
+}
+
+/// Load Images for this conversation, with a menu that lets the sender, or
+/// everyone at their domain, load images from now on, as Mail offers.
+private struct LoadImagesButton: View {
+    @Environment(MailModel.self) private var model
+
+    var body: some View {
+        if let menu = model.senderMenu {
+            Menu(tr("Load Images")) {
+                Section(tr("Always Load Images")) {
+                    Button(tr("From {sender}").replacingOccurrences(of: "{sender}", with: menu.email)) {
+                        model.alwaysLoadImages(from: menu.email, wholeDomain: false)
+                    }
+                    if let domain = menu.imageDomain {
+                        Button(tr("From Anyone at {domain}").replacingOccurrences(of: "{domain}", with: domain)) {
+                            model.alwaysLoadImages(from: menu.email, wholeDomain: true)
+                        }
+                    }
+                }
+            } primaryAction: {
+                model.loadImages()
+            }
+            .fixedSize()
+        } else {
+            Button(tr("Load Images")) { model.loadImages() }
         }
     }
 }

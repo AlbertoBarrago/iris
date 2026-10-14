@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### New
+
+- Always load images from a sender, or from anyone at their domain, from the
+  menu on Load Images.
+
 ### Fixed
 
 - Text pasted from a web page or a chat takes the composer's own colors and

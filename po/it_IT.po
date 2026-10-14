@@ -1144,33 +1144,33 @@ msgstr "questo contatto"
 msgid "Change {contact} in the contacts of {account}?"
 msgstr "Modificare {contact} nei contatti di {account}?"
 
-#: appcore/src/assistant/run/manage.rs:597
+#: appcore/src/assistant/run/manage.rs:591
 msgid "Always load images from anyone at {domain}?"
 msgstr "Caricare sempre le immagini da chiunque su {domain}?"
 
-#: appcore/src/assistant/run/manage.rs:601
+#: appcore/src/assistant/run/manage.rs:595
 msgid "Always load images from {sender}?"
 msgstr "Caricare sempre le immagini da {sender}?"
 
-#: appcore/src/assistant/run/manage.rs:607
+#: appcore/src/assistant/run/manage.rs:601
 msgid "Loading a remote image tells the sender when you opened their mail."
 msgstr ""
 "Caricare un'immagine remota comunica al mittente quando hai aperto la sua "
 "email."
 
-#: appcore/src/assistant/run/manage.rs:632
+#: appcore/src/assistant/run/manage.rs:626
 msgid "Stop loading images from {sender}?"
 msgstr "Smettere di caricare le immagini da {sender}?"
 
-#: appcore/src/assistant/run/manage.rs:667
+#: appcore/src/assistant/run/manage.rs:661
 msgid "Export {what} to {file}?"
 msgstr "Esportare {what} in {file}?"
 
-#: appcore/src/assistant/run/manage.rs:673
+#: appcore/src/assistant/run/manage.rs:667
 msgid "A file with that name is there already, and exporting replaces it."
 msgstr "Esiste già un file con quel nome, e l'esportazione lo sostituirà."
 
-#: appcore/src/assistant/run/manage.rs:752
+#: appcore/src/assistant/run/manage.rs:746
 msgid "the message “{subject}”"
 msgstr "il messaggio “{subject}”"
 
@@ -4242,6 +4242,14 @@ msgstr "Apri al login"
 msgid "Iris opens when you log in and keeps your mail up to date"
 msgstr "Iris si apre quando accedi e tiene aggiornata la posta"
 
+#: ffi/src/prefs.rs:307
+msgid "Images from anyone at {domain} will load from now on"
+msgstr "Da ora le immagini da chiunque su {domain} verranno caricate"
+
+#: ffi/src/prefs.rs:310
+msgid "Images from {sender} will load from now on"
+msgstr "Da ora le immagini da {sender} verranno caricate"
+
 #: ffi/src/protection.rs:158
 msgid "Your OpenPGP Keys"
 msgstr "Le tue chiavi OpenPGP"
@@ -4327,11 +4335,11 @@ msgstr "Regola eliminata"
 msgid "Could Not Load the Rules"
 msgstr "Impossibile caricare le regole"
 
-#: ffi/src/senders.rs:52
+#: ffi/src/senders.rs:56
 msgid "Block {sender}?"
 msgstr "Bloccare {sender}?"
 
-#: ffi/src/senders.rs:55
+#: ffi/src/senders.rs:59
 msgid ""
 "New mail from {email} goes straight to the Trash. This conversation moves "
 "there now. Remove the rule under Rules to unblock."
@@ -4339,30 +4347,30 @@ msgstr ""
 "La nuova posta da {email} va direttamente nel Cestino. Questa conversazione "
 "ci viene spostata ora. Rimuovi la regola in Regole per sbloccare."
 
-#: ffi/src/senders.rs:72 ffi/src/senders.rs:98
+#: ffi/src/senders.rs:77 ffi/src/senders.rs:103
 msgid "Open a message from the sender first"
 msgstr "Apri prima un messaggio del mittente"
 
-#: ffi/src/senders.rs:83
+#: ffi/src/senders.rs:88
 msgid "Mail from {sender} now goes to {category}"
 msgstr "La posta da {sender} ora va in {category}"
 
-#: ffi/src/senders.rs:84
+#: ffi/src/senders.rs:89
 msgid "Moved mail from {sender} to {category}"
 msgstr "Posta da {sender} spostata in {category}"
 
-#: ffi/src/senders.rs:86
+#: ffi/src/senders.rs:91
 msgid ""
 "Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
 msgstr ""
 "Posta da {sender} spostata in {category}, ma impossibile smistare la nuova "
 "posta: {reason}"
 
-#: ffi/src/senders.rs:102
+#: ffi/src/senders.rs:107
 msgid "Could not block the sender: {reason}"
 msgstr "Impossibile bloccare il mittente: {reason}"
 
-#: ffi/src/senders.rs:118
+#: ffi/src/senders.rs:123
 msgid "Blocked {sender}"
 msgstr "{sender} bloccato"
 
@@ -5196,10 +5204,6 @@ msgstr "OK"
 msgid "Remote images are hidden to protect your privacy"
 msgstr "Le immagini remote sono nascoste per proteggere la tua privacy"
 
-#: macos/Iris/ConversationView.swift:28
-msgid "Load Images"
-msgstr "Carica immagini"
-
 #: macos/Iris/ConversationView.swift:43
 msgid "This message is from a mailing list"
 msgstr "Questo messaggio proviene da una mailing list"
@@ -5212,44 +5216,60 @@ msgstr "Nessuna conversazione selezionata"
 msgid "Edit Draft"
 msgstr "Modifica bozza"
 
-#: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:291
+#: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:319
 #: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:241
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
-#: macos/Iris/ConversationView.swift:283
+#: macos/Iris/ConversationView.swift:145 macos/Iris/ConversationView.swift:161
+msgid "Load Images"
+msgstr "Carica immagini"
+
+#: macos/Iris/ConversationView.swift:146
+msgid "Always Load Images"
+msgstr "Carica sempre le immagini"
+
+#: macos/Iris/ConversationView.swift:147
+msgid "From {sender}"
+msgstr "Da {sender}"
+
+#: macos/Iris/ConversationView.swift:151
+msgid "From Anyone at {domain}"
+msgstr "Da chiunque su {domain}"
+
+#: macos/Iris/ConversationView.swift:311
 msgid "Several Conversations Selected"
 msgstr "Più conversazioni selezionate"
 
-#: macos/Iris/ConversationView.swift:285
+#: macos/Iris/ConversationView.swift:313
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 
-#: macos/Iris/ConversationView.swift:295
+#: macos/Iris/ConversationView.swift:323
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
-#: macos/Iris/ConversationView.swift:450
+#: macos/Iris/ConversationView.swift:478
 msgid "Checked"
 msgstr "Verificata"
 
-#: macos/Iris/ConversationView.swift:451
+#: macos/Iris/ConversationView.swift:479
 msgid "Warning"
 msgstr "Avviso"
 
-#: macos/Iris/ConversationView.swift:452
+#: macos/Iris/ConversationView.swift:480
 msgid "Not checked"
 msgstr "Non verificata"
 
-#: macos/Iris/ConversationView.swift:468
+#: macos/Iris/ConversationView.swift:496
 msgid "Categorize Sender"
 msgstr "Classifica mittente"
 
-#: macos/Iris/ConversationView.swift:475
+#: macos/Iris/ConversationView.swift:503
 msgid "Block Sender…"
 msgstr "Blocca mittente…"
 
-#: macos/Iris/ConversationView.swift:484
+#: macos/Iris/ConversationView.swift:512
 msgid "Block"
 msgstr "Blocca"
 
@@ -5498,35 +5518,35 @@ msgstr "Impossibile salvare {file}: {reason}"
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:786
+#: macos/Iris/MailModel.swift:801
 msgid "Message discarded"
 msgstr "Messaggio scartato"
 
-#: macos/Iris/MailModel.swift:826
+#: macos/Iris/MailModel.swift:841
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:915
+#: macos/Iris/MailModel.swift:930
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1211
+#: macos/Iris/MailModel.swift:1226
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1250
+#: macos/Iris/MailModel.swift:1265
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1743
+#: macos/Iris/MailModel.swift:1758
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1748
+#: macos/Iris/MailModel.swift:1763
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1798
+#: macos/Iris/MailModel.swift:1813
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -9324,21 +9344,6 @@ msgstr "VIP"
 
 #~ msgid "This message has no sender to remember."
 #~ msgstr "Questo messaggio non ha un mittente da ricordare."
-
-#~ msgid "Always Load Images?"
-#~ msgstr "Caricare sempre le immagini?"
-
-#~ msgid "From {sender}"
-#~ msgstr "Da {sender}"
-
-#~ msgid "From Anyone at {domain}"
-#~ msgstr "Da chiunque su {domain}"
-
-#~ msgid "Images from anyone at {domain} will load from now on"
-#~ msgstr "Da ora le immagini da chiunque su {domain} verranno caricate"
-
-#~ msgid "Images from {sender} will load from now on"
-#~ msgstr "Da ora le immagini da {sender} verranno caricate"
 
 #~ msgid "Could not remember that sender: {reason}"
 #~ msgstr "Impossibile ricordare il mittente: {reason}"

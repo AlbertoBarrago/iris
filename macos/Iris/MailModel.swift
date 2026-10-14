@@ -721,6 +721,21 @@ final class MailModel {
         loadConversation()
     }
 
+    /// Lets images load from now on in mail from `email`, or from anyone
+    /// at its domain, and loads them in the open conversation at once, even
+    /// where another sender in it is not on the list.
+    func alwaysLoadImages(from email: String, wholeDomain: Bool) {
+        guard let mail, let key = openThread else { return }
+        do {
+            let words = try mail.allowImageSender(email: email, wholeDomain: wholeDomain)
+            remoteAllowed.insert(key)
+            loadConversation()
+            toast = Toast(words: words, undo: false)
+        } catch {
+            toast = Toast(words: "\(error)", undo: false)
+        }
+    }
+
     /// Marks the conversations picked read, or unread when every one of
     /// them is read already.
     func toggleRead() {
