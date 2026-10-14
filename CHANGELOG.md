@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.10 (2026-10-14)
+
 ### New
 
 - Always load images from a sender, or from anyone at their domain, from the
