@@ -171,12 +171,15 @@ The app icon is a winged envelope: a cream envelope (`#fbf7f0` paper, a
 night-violet frame from `#33267a` to `#1d1547`) with an iridescent wing of
 five feathers rising from behind its top-left corner, cyan `#5ad1e8` to
 violet `#8b6cf0` to pink `#f07ab8` to amber `#f5c46b`. The app icon sets it
-on a macOS squircle shaded from `#5b3fd1` to `#1b1340`; the symbolic icon is
+on a macOS squircle shaded from `#5b3fd1` to `#1b1340`, or from `#2b2b30`
+to `#050508` when macOS shows icons dark; the symbolic icon is
 the same shape in one colour. The Add Account poses are the same envelope
 with the wing raised, spread or drooped. `scripts/iris-art.py` draws all of
 them into `data/` from the geometry `macos/Iris/PostBand.swift` uses, so
 change the two together and regenerate rather than editing the SVGs by
-hand; `scripts/macos-icon.sh` then draws the app icon set from them.
+hand; `scripts/macos-icon.sh` then writes the app icon from them as an Icon
+Composer document, `macos/Iris/AppIcon.icon`, whose fills hold both
+squircle colors.
 
 ## Agent skills
 

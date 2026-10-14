@@ -9,6 +9,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 - Always load images from a sender, or from anyone at their domain, from the
   menu on Load Images.
+- Iris's icon turns black when macOS shows icons dark, and follows the clear
+  and tinted icon styles too.
 
 ### Fixed
 

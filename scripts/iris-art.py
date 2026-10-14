@@ -189,6 +189,11 @@ def pose(name):
     raise ValueError(name)
 
 
+# The envelope on the app icon, (x, top, w, wing lift), shared by the icon
+# and its Icon Composer layer.
+ICON_ENVELOPE = (40, 56, 60, 16)
+
+
 def icon(size_attr):
     """The app icon: a macOS squircle, night to violet, the winged envelope."""
     extra = (
@@ -198,11 +203,22 @@ def icon(size_attr):
     body = (
         f'<path d="{rrect(12, 12, 104, 104, 23.5)}" fill="url(#bg)"/>'
         f'<path d="{rrect(12, 12, 104, 104, 23.5)}" fill="url(#sheen)"/>'
-        + envelope(40, 56, 60, 16)
+        + envelope(*ICON_ENVELOPE)
     )
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" {size_attr} viewBox="0 0 128 128">'
         + defs(extra) + body + "</svg>\n"
+    )
+
+
+def app_layer():
+    """The app icon's winged envelope without its squircle, framed on the
+    squircle's square, for the layer of the Icon Composer document that
+    scripts/macos-icon.sh writes. macOS draws the shape and the fill under
+    it, violet or, with dark icons, near black."""
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="12 12 104 104">'
+        + defs() + envelope(*ICON_ENVELOPE) + "</svg>\n"
     )
 
 
@@ -237,6 +253,8 @@ def main():
         out.write(icon('width="128" height="128"'))
     with open(os.path.join(ICONS, f"16x16/apps/{app}.svg"), "w") as out:
         out.write(icon('width="16" height="16"'))
+    with open(os.path.join(ICONS, "app-layer.svg"), "w") as out:
+        out.write(app_layer())
     # The app's symbolic icon, and the same mark where the app shows its
     # brand inside a window, such as the empty conversation pane.
     for path in (f"scalable/apps/{app}-symbolic.svg", "scalable/actions/iris-mark-symbolic.svg"):
