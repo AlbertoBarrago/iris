@@ -41,11 +41,13 @@ const REMOTE_FRESH: Duration = Duration::from_secs(60);
 
 const DAY: EpochMillis = 24 * 60 * 60 * 1000;
 
-/// Inbox, Flagged, Sent, Drafts or Muted: the five mailboxes the sidebar
-/// shows for all accounts together and for each one.
+/// Inbox, Unread, Flagged, Sent, Drafts or Muted: the six mailboxes the
+/// sidebar shows for all accounts together and for each one.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Standard {
     Inbox,
+    /// Unread mail wherever it sits, outside the Trash and Spam.
+    Unread,
     Flagged,
     Sent,
     Drafts,
@@ -54,8 +56,9 @@ pub enum Standard {
 
 impl Standard {
     /// In the order the sidebar lists them.
-    pub const ALL: [Standard; 5] = [
+    pub const ALL: [Standard; 6] = [
         Standard::Inbox,
+        Standard::Unread,
         Standard::Flagged,
         Standard::Sent,
         Standard::Drafts,
@@ -66,6 +69,7 @@ impl Standard {
     pub fn set(self) -> MailSet {
         match self {
             Standard::Inbox => MailSet::Role(Role::Inbox),
+            Standard::Unread => MailSet::Unseen,
             Standard::Flagged => MailSet::flagged(),
             Standard::Sent => MailSet::Role(Role::Sent),
             Standard::Drafts => MailSet::Role(Role::Drafts),
@@ -77,6 +81,7 @@ impl Standard {
     pub fn name(self) -> String {
         match self {
             Standard::Inbox => gettext("Inbox"),
+            Standard::Unread => gettext("Unread"),
             Standard::Flagged => gettext("Flagged"),
             Standard::Sent => gettext("Sent"),
             Standard::Drafts => gettext("Drafts"),
@@ -96,6 +101,7 @@ impl Standard {
     pub fn icon(self) -> &'static str {
         match self {
             Standard::Inbox => "iris-inbox-symbolic",
+            Standard::Unread => "mail-unread-symbolic",
             Standard::Flagged => "iris-flag-symbolic",
             Standard::Sent => "mail-send-symbolic",
             Standard::Drafts => "document-edit-symbolic",
@@ -107,6 +113,7 @@ impl Standard {
     pub fn key(self) -> &'static str {
         match self {
             Standard::Inbox => "inbox",
+            Standard::Unread => "unread",
             Standard::Flagged => "flagged",
             Standard::Sent => "sent",
             Standard::Drafts => "drafts",
@@ -119,6 +126,7 @@ impl Standard {
     pub fn from_key(key: &str) -> Option<Standard> {
         match key.to_ascii_lowercase().as_str() {
             "inbox" => Some(Standard::Inbox),
+            "unread" => Some(Standard::Unread),
             "flagged" | "starred" => Some(Standard::Flagged),
             "sent" => Some(Standard::Sent),
             "drafts" | "draft" => Some(Standard::Drafts),
@@ -285,6 +293,12 @@ impl Mailbox {
         self.standard() == Some(Standard::Inbox) || matches!(self, Mailbox::Vips { .. })
     }
 
+    /// Whether the list can narrow to unread mail. The store's mailboxes
+    /// can, but Unread already is that list.
+    pub fn filters_unread(&self) -> bool {
+        self.filter().is_some() && self.standard() != Some(Standard::Unread)
+    }
+
     /// Whether this mailbox splits into inbox categories.
     pub fn takes_categories(&self) -> bool {
         self.standard() == Some(Standard::Inbox)
@@ -350,6 +364,7 @@ impl Mailbox {
         }
         match self.standard() {
             Some(Standard::Inbox) => empty(gettext("Inbox Zero"), "iris-inbox-symbolic"),
+            Some(Standard::Unread) => empty(gettext("No Unread Mail"), "mail-unread-symbolic"),
             Some(Standard::Flagged) => empty(gettext("No Starred Mail"), "starred-symbolic"),
             Some(Standard::Sent) => empty(gettext("No Sent Mail"), "mail-send-symbolic"),
             Some(Standard::Drafts) => with(
@@ -409,6 +424,60 @@ pub fn folder_icon(folder: Folder) -> &'static str {
         Folder::Trash => "user-trash-symbolic",
         Folder::AllMail => "iris-all-mail-symbolic",
     }
+}
+
+/// The store query for `mailbox`, narrowed to the chosen category when
+/// the mailbox is an inbox and categories are on.
+fn categorized(mailbox: &Mailbox, view: &View) -> Option<ThreadFilter> {
+    let filter = mailbox.filter()?;
+    match view.category.filter(|_| mailbox.takes_categories()) {
+        Some(category) => {
+            let (any, none) = category.categories();
+            Some(filter.with_categories(any, none))
+        }
+        None => Some(filter),
+    }
+}
+
+/// The query the conversation the reader has open still has to meet to
+/// stay listed: the list's own, less being unread. `None` when the list
+/// does not ask for unread mail, so nothing read leaves it.
+fn kept_filter(mailbox: &Mailbox, view: &View) -> Option<ThreadFilter> {
+    if mailbox.standard() == Some(Standard::Unread) {
+        let everything = ThreadFilter::everything();
+        return Some(match mailbox.account() {
+            Some(account_id) => everything.in_account(account_id),
+            None => everything,
+        });
+    }
+    view.unread_only.then(|| categorized(mailbox, view)).flatten()
+}
+
+/// Where a row sits in a stored list: newest first, ties broken on
+/// account and id, as the store orders them.
+fn place_of(row: &ThreadSummary) -> (std::cmp::Reverse<EpochMillis>, AccountId, &str) {
+    let id = row.message_id.as_deref().unwrap_or(&row.id);
+    (std::cmp::Reverse(row.last_message_at), row.account_id, id)
+}
+
+/// Puts the kept conversation's `kept` rows into the page `rows`, which
+/// follows `last`, where they fall in its order. A row that falls on
+/// another page stays off this one, so paging shows it once.
+fn keep_rows(
+    rows: &mut Vec<ThreadSummary>,
+    kept: Vec<ThreadSummary>,
+    last: Option<&ThreadSummary>,
+    more: bool,
+) {
+    let end = rows.last().filter(|_| more).cloned();
+    for row in kept {
+        let after = last.is_none_or(|last| place_of(&row) > place_of(last));
+        let before = end.as_ref().is_none_or(|end| place_of(&row) < place_of(end));
+        if after && before {
+            rows.push(row);
+        }
+    }
+    rows.sort_by(|a, b| place_of(a).cmp(&place_of(b)));
 }
 
 /// What an empty list shows.
@@ -471,6 +540,12 @@ pub struct View {
     /// Most rows to return. `None` asks for one page of a stored mailbox,
     /// or as much as a Gmail search brings back.
     pub limit: Option<usize>,
+    /// Show only unread mail. Mailboxes the store does not list ignore it.
+    pub unread_only: bool,
+    /// The conversation the reader has open. Reading it takes it out of a
+    /// list of unread mail, and it stays listed until the reader moves on,
+    /// as Apple Mail keeps it, so the row does not vanish under the pointer.
+    pub keep: Option<(AccountId, String)>,
 }
 
 impl Default for View {
@@ -481,6 +556,8 @@ impl Default for View {
             follow_ups: true,
             now: 0,
             limit: None,
+            unread_only: false,
+            keep: None,
         }
     }
 }
@@ -934,16 +1011,14 @@ impl<A: Accounts> Mailboxes<A> {
     }
 
     /// The store query for `mailbox`, narrowed to the chosen category when
-    /// the mailbox is an inbox and categories are on.
+    /// the mailbox is an inbox and categories are on, and to unread mail
+    /// when the view asks for it.
     fn filter_of(&self, mailbox: &Mailbox, view: &View) -> Option<ThreadFilter> {
-        let filter = mailbox.filter()?;
-        match view.category.filter(|_| mailbox.takes_categories()) {
-            Some(category) => {
-                let (any, none) = category.categories();
-                Some(filter.with_categories(any, none))
-            }
-            None => Some(filter),
-        }
+        let filter = categorized(mailbox, view)?;
+        Some(match view.unread_only {
+            true => filter.only_unread(),
+            false => filter,
+        })
     }
 
     /// A mailbox the store holds, from the row after `last`, or from the
@@ -961,9 +1036,11 @@ impl<A: Accounts> Mailboxes<A> {
         };
         let limit = view.limit.unwrap_or(PAGE);
         let (threading, first) = (view.threading, last.is_none());
+        let keeping = view.keep.clone().zip(kept_filter(mailbox, view));
+        let after = last.clone();
         // One row past the page says whether another page follows.
         let asked = limit as i64 + 1;
-        let (mut rows, unread) = self
+        let (mut rows, unread, kept) = self
             .db
             .read(move |c| {
                 let rows = if threading {
@@ -976,12 +1053,36 @@ impl<A: Accounts> Mailboxes<A> {
                     (true, false) => threads::unread_messages(c, &filter)?,
                     (false, _) => 0,
                 };
-                Ok((rows, unread))
+                let kept = match keeping {
+                    Some(((account_id, thread_id), kept))
+                        if !rows.iter().any(|r| r.account_id == account_id && r.id == thread_id) =>
+                    {
+                        let kept = kept.in_account(account_id).with_threads(vec![thread_id]);
+                        if threading {
+                            threads::list_threads(c, &kept, 0, 1)?
+                        } else {
+                            // A thread can hold many messages.
+                            threads::list_messages(c, &kept, 0, 100)?
+                        }
+                    }
+                    _ => Vec::new(),
+                };
+                Ok((rows, unread, kept))
             })
             .await?;
         let more = rows.len() > limit;
         rows.truncate(limit);
+        keep_rows(&mut rows, kept, after.as_ref(), more);
+        let empty = match view.unread_only {
+            true => Empty {
+                title: gettext("No Unread Mail"),
+                icon: "mail-unread-symbolic",
+                description: String::new(),
+            },
+            false => base.empty.clone(),
+        };
         Ok(Listing {
+            empty,
             rows,
             unread,
             subtitle: if first {

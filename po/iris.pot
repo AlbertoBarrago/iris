@@ -3883,27 +3883,27 @@ msgid ""
 "Update Iris to open it."
 msgstr ""
 
-#: ffi/src/mail.rs:465
+#: ffi/src/mail.rs:467
 msgid "Will remind you {when}"
 msgstr ""
 
-#: ffi/src/mail.rs:468
+#: ffi/src/mail.rs:470
 msgid "Back in the Inbox"
 msgstr ""
 
-#: ffi/src/mail.rs:505
+#: ffi/src/mail.rs:507
 msgid "Could not cancel: {reason}"
 msgstr ""
 
-#: ffi/src/mail.rs:529
+#: ffi/src/mail.rs:531
 msgid "Deleted. It will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:530
+#: ffi/src/mail.rs:532
 msgid "Deleted. They will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:539
+#: ffi/src/mail.rs:541
 msgid "Could not delete: {reason}"
 msgstr ""
 
@@ -4181,7 +4181,7 @@ msgid ""
 "such as automatic replies and rules"
 msgstr ""
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:714
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:719
 msgid "Conversation"
 msgstr ""
 
@@ -4658,8 +4658,8 @@ msgstr ""
 
 #: macos/Iris/CalendarView.swift:86 macos/Iris/CalendarView.swift:87
 #: macos/Iris/CalendarView.swift:116 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:85 macos/Iris/SettingsView.swift:24
-#: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:46
+#: macos/Iris/IrisApp.swift:89 macos/Iris/SettingsView.swift:24
+#: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:47
 msgid "Calendar"
 msgstr ""
 
@@ -4687,7 +4687,7 @@ msgstr ""
 msgid "Next Month"
 msgstr ""
 
-#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:83
+#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:87
 msgid "Mail"
 msgstr ""
 
@@ -4714,15 +4714,15 @@ msgstr ""
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:310
-#: macos/Iris/ThreadListView.swift:311
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:320
+#: macos/Iris/ThreadListView.swift:321
 msgid "Close"
 msgstr ""
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:90
-#: macos/Iris/ThreadListView.swift:93
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:100
+#: macos/Iris/ThreadListView.swift:103
 msgid "New Message"
 msgstr ""
 
@@ -4935,7 +4935,7 @@ msgid "Edit Draft"
 msgstr ""
 
 #: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:319
-#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:241
+#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:251
 msgid "Mark as Unread"
 msgstr ""
 
@@ -5062,7 +5062,7 @@ msgid_plural "{position} of {total} matches"
 msgstr[0] ""
 msgstr[1] ""
 
-#: macos/Iris/FindView.swift:121 macos/Iris/ShortcutsView.swift:23
+#: macos/Iris/FindView.swift:121 macos/Iris/ShortcutsView.swift:24
 msgid "Find in the conversation"
 msgstr ""
 
@@ -5184,8 +5184,8 @@ msgstr ""
 msgid "Propose"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:44 macos/Iris/IrisApp.swift:108
-#: macos/Iris/ShortcutsView.swift:57
+#: macos/Iris/IrisApp.swift:44 macos/Iris/IrisApp.swift:112
+#: macos/Iris/ShortcutsView.swift:58
 msgid "Keyboard shortcuts"
 msgstr ""
 
@@ -5209,7 +5209,12 @@ msgstr ""
 msgid "Export…"
 msgstr ""
 
-#: macos/Iris/IrisApp.swift:77
+#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:86
+#: macos/Iris/ThreadListView.swift:91
+msgid "Show Only Unread"
+msgstr ""
+
+#: macos/Iris/IrisApp.swift:81
 msgid "View Source"
 msgstr ""
 
@@ -5219,48 +5224,48 @@ msgid ""
 "unread."
 msgstr ""
 
-#: macos/Iris/MailModel.swift:616
+#: macos/Iris/MailModel.swift:621
 msgid "Saved {file} to Downloads"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:618
+#: macos/Iris/MailModel.swift:623
 msgid "Could not save {file}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:643 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:648 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:801
+#: macos/Iris/MailModel.swift:806
 msgid "Message discarded"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:841
+#: macos/Iris/MailModel.swift:846
 msgid "Sending…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:930
+#: macos/Iris/MailModel.swift:935
 msgid "Cancel Send"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1226
+#: macos/Iris/MailModel.swift:1235
 msgid "Translating…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1265
+#: macos/Iris/MailModel.swift:1274
 msgid "This Mac cannot translate this message: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1758
+#: macos/Iris/MailModel.swift:1767
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1763
+#: macos/Iris/MailModel.swift:1772
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1813
+#: macos/Iris/MailModel.swift:1822
 msgid "{account} is signed in again."
 msgstr ""
 
@@ -5377,11 +5382,11 @@ msgstr ""
 msgid "Search suggestions"
 msgstr ""
 
-#: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:54
+#: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:55
 msgid "General"
 msgstr ""
 
-#: macos/Iris/SettingsView.swift:21 macos/Iris/ShortcutsView.swift:37
+#: macos/Iris/SettingsView.swift:21 macos/Iris/ShortcutsView.swift:38
 msgid "Writing"
 msgstr ""
 
@@ -5681,83 +5686,87 @@ msgstr ""
 msgid "Iris shows a new language after a restart"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:24
-msgid "Open in a new window"
+#: macos/Iris/ShortcutsView.swift:23
+msgid "Show only unread"
 msgstr ""
 
 #: macos/Iris/ShortcutsView.swift:25
-msgid "View source"
+msgid "Open in a new window"
 msgstr ""
 
 #: macos/Iris/ShortcutsView.swift:26
+msgid "View source"
+msgstr ""
+
+#: macos/Iris/ShortcutsView.swift:27
 msgid "Print"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:28
+#: macos/Iris/ShortcutsView.swift:29
 msgid "Organizing"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:32
+#: macos/Iris/ShortcutsView.swift:33
 msgid "Mark read or unread"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:33
+#: macos/Iris/ShortcutsView.swift:34
 msgid "Mute or unmute"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:286
+#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:296
 msgid "Undo"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:40
+#: macos/Iris/ShortcutsView.swift:41
 msgid "Reply all"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:43
+#: macos/Iris/ShortcutsView.swift:44
 msgid "Attach files"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:44
+#: macos/Iris/ShortcutsView.swift:45
 msgid "Bold, italic, link"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:47
+#: macos/Iris/ShortcutsView.swift:48
 msgid "Show mail"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:48
+#: macos/Iris/ShortcutsView.swift:49
 msgid "Show the calendar"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:49
+#: macos/Iris/ShortcutsView.swift:50
 msgid "Go to today"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:50
+#: macos/Iris/ShortcutsView.swift:51
 msgid "Day, week or month"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:51
+#: macos/Iris/ShortcutsView.swift:52
 msgid "Previous or next"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:52
+#: macos/Iris/ShortcutsView.swift:53
 msgid "New event"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:55
+#: macos/Iris/ShortcutsView.swift:56
 msgid "Settings"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:56
+#: macos/Iris/ShortcutsView.swift:57
 msgid "Show or hide the assistant"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:58
+#: macos/Iris/ShortcutsView.swift:59
 msgid "Close window"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:59
+#: macos/Iris/ShortcutsView.swift:60
 msgid "Quit"
 msgstr ""
 
@@ -5929,11 +5938,11 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: macos/Iris/ThreadListView.swift:89 macos/Iris/ThreadListView.swift:384
+#: macos/Iris/ThreadListView.swift:99 macos/Iris/ThreadListView.swift:394
 msgid "Search mail"
 msgstr ""
 
-#: macos/Iris/ThreadListView.swift:271
+#: macos/Iris/ThreadListView.swift:281
 msgid "Clear Flag"
 msgstr ""
 
@@ -6482,206 +6491,214 @@ msgstr ""
 msgid "could not reach {host}"
 msgstr ""
 
-#: sync/src/mailbox.rs:79
+#: sync/src/mailbox.rs:83
 msgid "Inbox"
 msgstr ""
 
-#: sync/src/mailbox.rs:80
+#: sync/src/mailbox.rs:84
+msgid "Unread"
+msgstr ""
+
+#: sync/src/mailbox.rs:85
 msgid "Flagged"
 msgstr ""
 
-#: sync/src/mailbox.rs:81
+#: sync/src/mailbox.rs:86
 msgid "Sent"
 msgstr ""
 
-#: sync/src/mailbox.rs:82
+#: sync/src/mailbox.rs:87
 msgid "Drafts"
 msgstr ""
 
-#: sync/src/mailbox.rs:83
+#: sync/src/mailbox.rs:88
 msgid "Muted"
 msgstr ""
 
-#: sync/src/mailbox.rs:90
+#: sync/src/mailbox.rs:95
 msgid "All Inboxes"
 msgstr ""
 
-#: sync/src/mailbox.rs:187
+#: sync/src/mailbox.rs:195
 msgid "Search"
 msgstr ""
 
-#: sync/src/mailbox.rs:189
+#: sync/src/mailbox.rs:197
 msgid "Send Later"
 msgstr ""
 
-#: sync/src/mailbox.rs:190
+#: sync/src/mailbox.rs:198
 msgid "Outbox"
 msgstr ""
 
-#: sync/src/mailbox.rs:192
+#: sync/src/mailbox.rs:200
 msgid "Follow Up"
 msgstr ""
 
-#: sync/src/mailbox.rs:193
+#: sync/src/mailbox.rs:201
 msgid "{color} Flag"
 msgstr ""
 
-#: sync/src/mailbox.rs:313
+#: sync/src/mailbox.rs:327
 msgid "No Results"
 msgstr ""
 
-#: sync/src/mailbox.rs:315
+#: sync/src/mailbox.rs:329
 msgid "Try other words, or fewer of them."
 msgstr ""
 
-#: sync/src/mailbox.rs:319
+#: sync/src/mailbox.rs:333
 msgid "Nothing Scheduled"
 msgstr ""
 
-#: sync/src/mailbox.rs:322
+#: sync/src/mailbox.rs:336
 msgid "Outbox Is Empty"
 msgstr ""
 
-#: sync/src/mailbox.rs:326
+#: sync/src/mailbox.rs:340
 msgid "No Reminders"
 msgstr ""
 
-#: sync/src/mailbox.rs:328
+#: sync/src/mailbox.rs:342
 msgid "Choose Remind Me on a conversation to bring it back here later."
 msgstr ""
 
-#: sync/src/mailbox.rs:332
+#: sync/src/mailbox.rs:346
 msgid "No Follow-Ups"
 msgstr ""
 
-#: sync/src/mailbox.rs:335
+#: sync/src/mailbox.rs:349
 msgid "No Flagged Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:337
+#: sync/src/mailbox.rs:351
 msgid "No Mail from VIPs"
 msgstr ""
 
-#: sync/src/mailbox.rs:339
+#: sync/src/mailbox.rs:353
 msgid "No Matching Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:344
+#: sync/src/mailbox.rs:358
 msgid "No Archived Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:345
+#: sync/src/mailbox.rs:359
 msgid "No Junk"
 msgstr ""
 
-#: sync/src/mailbox.rs:346
+#: sync/src/mailbox.rs:360
 msgid "Trash Is Empty"
 msgstr ""
 
-#: sync/src/mailbox.rs:347 sync/src/mailbox.rs:361 sync/src/mailbox.rs:426
+#: sync/src/mailbox.rs:361 sync/src/mailbox.rs:376 sync/src/mailbox.rs:495
 msgid "No Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:352
+#: sync/src/mailbox.rs:366
 msgid "Inbox Zero"
 msgstr ""
 
-#: sync/src/mailbox.rs:353
+#: sync/src/mailbox.rs:367 sync/src/mailbox.rs:1078
+msgid "No Unread Mail"
+msgstr ""
+
+#: sync/src/mailbox.rs:368
 msgid "No Starred Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:354
+#: sync/src/mailbox.rs:369
 msgid "No Sent Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:356
+#: sync/src/mailbox.rs:371
 msgid "No Drafts"
 msgstr ""
 
-#: sync/src/mailbox.rs:358
+#: sync/src/mailbox.rs:373
 msgid "Close a message without sending it and Iris keeps it here."
 msgstr ""
 
-#: sync/src/mailbox.rs:360
+#: sync/src/mailbox.rs:375
 msgid "No Muted Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:398
+#: sync/src/mailbox.rs:413
 msgctxt "mailbox"
 msgid "Archive"
 msgstr ""
 
-#: sync/src/mailbox.rs:399
+#: sync/src/mailbox.rs:414
 msgid "Junk"
 msgstr ""
 
-#: sync/src/mailbox.rs:400
+#: sync/src/mailbox.rs:415
 msgid "Trash"
 msgstr ""
 
-#: sync/src/mailbox.rs:401
+#: sync/src/mailbox.rs:416
 msgid "All Mail"
 msgstr ""
 
-#: sync/src/mailbox.rs:767
+#: sync/src/mailbox.rs:844
 msgid "This smart mailbox has no conditions"
 msgstr ""
 
-#: sync/src/mailbox.rs:1123
+#: sync/src/mailbox.rs:1224
 msgid "Results for {account} come from the mail on this computer alone"
 msgstr ""
 
-#: sync/src/mailbox.rs:1135
+#: sync/src/mailbox.rs:1236
 msgid "Could not load mail for {account}: {reason}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1256
+#: sync/src/mailbox.rs:1357
 msgid "Returns {when}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1299 sync/src/mailbox.rs:1381
+#: sync/src/mailbox.rs:1400 sync/src/mailbox.rs:1482
 msgid "No recipients"
 msgstr ""
 
-#: sync/src/mailbox.rs:1302 sync/src/mailbox.rs:1384
+#: sync/src/mailbox.rs:1403 sync/src/mailbox.rs:1485
 msgid "To {recipients}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1344
+#: sync/src/mailbox.rs:1445
 msgid "{count} unread · {category}"
 msgid_plural "{count} unread · {category}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sync/src/mailbox.rs:1349
+#: sync/src/mailbox.rs:1450
 msgid "{count} unread"
 msgid_plural "{count} unread"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sync/src/mailbox.rs:1356
+#: sync/src/mailbox.rs:1457
 msgid "Sent yesterday, no reply yet"
 msgstr ""
 
-#: sync/src/mailbox.rs:1358
+#: sync/src/mailbox.rs:1459
 msgid "Sent {days} day ago, no reply yet"
 msgid_plural "Sent {days} days ago, no reply yet"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sync/src/mailbox.rs:1396
+#: sync/src/mailbox.rs:1497
 msgid "Sends {when}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1400
+#: sync/src/mailbox.rs:1501
 msgid "Not sent"
 msgstr ""
 
-#: sync/src/mailbox.rs:1407
+#: sync/src/mailbox.rs:1508
 msgid "{problem}. Trying again {when}"
 msgstr ""
 
-#: sync/src/mailbox.rs:1414
+#: sync/src/mailbox.rs:1515
 msgid "{problem}. Iris stopped trying"
 msgstr ""
 
@@ -7082,6 +7099,6 @@ msgstr ""
 msgid "Accounts"
 msgstr ""
 
-#: view/src/sidebar.rs:164
+#: view/src/sidebar.rs:165
 msgid "VIPs"
 msgstr ""

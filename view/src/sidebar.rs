@@ -17,6 +17,7 @@ use crate::tree;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Icon {
     Inbox,
+    Unread,
     Flag(FlagColor),
     Sent,
     Drafts,
@@ -199,6 +200,7 @@ fn unified(place: Place, vips: &[(String, String)], out: &mut Vec<Entry>) {
 fn standard_icon(which: Standard) -> Icon {
     match which {
         Standard::Inbox => Icon::Inbox,
+        Standard::Unread => Icon::Unread,
         Standard::Flagged => Icon::Flag(FlagColor::Red),
         Standard::Sent => Icon::Sent,
         Standard::Drafts => Icon::Drafts,

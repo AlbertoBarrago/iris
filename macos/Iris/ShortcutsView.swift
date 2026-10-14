@@ -20,6 +20,7 @@ struct ShortcutsView: View {
         [
             Group(title: tr("Reading"), shortcuts: [
                 Shortcut(keys: "⌘F", words: tr("Search")),
+                Shortcut(keys: "⌘L", words: tr("Show only unread")),
                 Shortcut(keys: "⌘G  ⇧⌘G", words: tr("Find in the conversation")),
                 Shortcut(keys: "⌘O", words: tr("Open in a new window")),
                 Shortcut(keys: "⌥⌘U", words: tr("View source")),

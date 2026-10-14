@@ -9,13 +9,13 @@ use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{AccountId, Folder, MailSet, Role, Target};
 
 /// The mail set a move takes mail out of, when leaving `mailbox` means
-/// losing one: the inbox, Muted or a person's label. Flagged, Sent and
-/// Drafts are marks or records, not places mail leaves.
+/// losing one: the inbox, Muted or a person's label. Unread, Flagged, Sent
+/// and Drafts are marks or records, not places mail leaves.
 fn source(mailbox: &Mailbox) -> Option<MailSet> {
     match mailbox {
         Mailbox::Unified(which) | Mailbox::Standard { which, .. } => match which {
             Standard::Inbox | Standard::Muted => Some(which.set()),
-            Standard::Flagged | Standard::Sent | Standard::Drafts => None,
+            Standard::Unread | Standard::Flagged | Standard::Sent | Standard::Drafts => None,
         },
         Mailbox::Label { label_id, .. } => Some(MailSet::Mailbox(label_id.clone())),
         _ => None,

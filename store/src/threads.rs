@@ -151,6 +151,9 @@ pub struct ThreadFilter {
     no_categories: Vec<String>,
     /// Only these threads, by id. Empty means every thread.
     thread_ids: Vec<String>,
+    /// Only unread threads, or unread messages when the list shows
+    /// messages.
+    unread: bool,
 }
 
 /// SQL text with anonymous `?` placeholders, and their values in order.
@@ -518,6 +521,13 @@ impl ThreadFilter {
         self
     }
 
+    /// Narrows the list to unread threads, or to unread messages when it
+    /// lists messages.
+    pub fn only_unread(mut self) -> Self {
+        self.unread = true;
+        self
+    }
+
     /// The filter's mail set resolved to what it names, in its account or
     /// in all.
     fn resolve(&self, conn: &Connection) -> Result<Resolved> {
@@ -733,6 +743,12 @@ impl ThreadFilter {
             sql.push(" AND NOT ");
             rows.holds_any(sql, &resolved.none);
         }
+        if self.unread && *walk != Walk::Unread {
+            sql.push(match rows {
+                Rows::Threads => " AND t.unread = 1",
+                Rows::Messages => MESSAGE_UNREAD,
+            });
+        }
         if let Some(flag) = self.flag {
             if let Rows::Threads = rows {
                 // Only a thread with a starred message can match, and
@@ -816,7 +832,7 @@ impl ThreadFilter {
     /// to hold most of the mail, as the inbox does.
     fn starts(&self, resolved: &Resolved, unread: bool) -> Vec<Walk> {
         let mut starts = Vec::new();
-        if unread {
+        if unread || self.unread {
             starts.push(Walk::Unread);
         }
         // A flag needs a starred message, and so does its thread.
@@ -1544,6 +1560,12 @@ mod walk_tests {
             ThreadFilter::unified(set("CATEGORY_SOCIAL")),
             ThreadFilter::account(a, set("TRASH")),
             ThreadFilter::unified(set("SPAM")).with_flag(FlagColor::Red),
+            ThreadFilter::unified(set("INBOX")).only_unread(),
+            ThreadFilter::account(a, set("Label_1")).only_unread(),
+            ThreadFilter::unified(set("INBOX")).with_categories(social, &[]).only_unread(),
+            ThreadFilter::everything().with_flag(FlagColor::Red).only_unread(),
+            ThreadFilter::unified(set("UNREAD")).only_unread(),
+            ThreadFilter::unified(set("TRASH")).only_unread(),
         ]
     }
 
@@ -1690,6 +1712,28 @@ mod walk_tests {
                     assert_eq!(unread_by(&walk), scanned, "{filter:?} {walk:?}");
                 }
             }
+        }
+    }
+
+    #[test]
+    fn only_unread_keeps_the_unread_rows_of_the_list() {
+        let (conn, a, _) = mailbox();
+        for filter in filters(a) {
+            let narrowed = filter.clone().only_unread();
+            let threads = list_threads(&conn, &filter, 0, 1000).unwrap();
+            let unread: Vec<_> = threads.into_iter().filter(|t| t.unread).collect();
+            assert_eq!(
+                keys(list_threads(&conn, &narrowed, 0, 1000).unwrap()),
+                keys(unread),
+                "threads, {filter:?}"
+            );
+            let messages = list_messages(&conn, &filter, 0, 1000).unwrap();
+            let unread: Vec<_> = messages.into_iter().filter(|m| m.unread).collect();
+            assert_eq!(
+                keys(list_messages(&conn, &narrowed, 0, 1000).unwrap()),
+                keys(unread),
+                "messages, {filter:?}"
+            );
         }
     }
 

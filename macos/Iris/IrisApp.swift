@@ -74,6 +74,10 @@ struct IrisApp: App {
                     .disabled(model.selection.isEmpty)
             }
             CommandGroup(after: .toolbar) {
+                // ⌘L, as Mail's message filter.
+                Toggle(tr("Show Only Unread"), isOn: $model.unreadOnly)
+                    .keyboardShortcut("l")
+                    .disabled(model.listing?.filtersUnread != true)
                 Button(tr("View Source")) { model.viewSource() }
                     .keyboardShortcut("u", modifiers: [.command, .option])
                     .disabled(model.openThread == nil)

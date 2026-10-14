@@ -87,6 +87,11 @@ final class MailModel {
     var category: String? {
         didSet { if category != oldValue { loadList() } }
     }
+    /// Whether the list shows only unread mail, as Mail's message filter
+    /// does. It holds from one mailbox to the next until turned off.
+    var unreadOnly = false {
+        didSet { if unreadOnly != oldValue { loadList() } }
+    }
     /// The conversations picked in the list; one of them opens.
     var selection: Set<ThreadKey> = [] {
         didSet {
@@ -1008,14 +1013,18 @@ final class MailModel {
             }
             return
         }
-        let category = category
+        let (category, unreadOnly) = (category, unreadOnly)
+        // The conversation on screen stays listed once reading it takes it
+        // out of a list of unread mail.
+        let keep = openThread.map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
         Task.detached {
             do {
-                let listing = try mail.list(key: key, category: category)
+                let listing = try mail.list(key: key, category: category, unreadOnly: unreadOnly, keep: keep)
                 await MainActor.run {
                     // The person may have picked another mailbox, or
                     // started a search, meanwhile.
-                    if self.selectedMailbox == key, self.category == category, self.searching == nil {
+                    if self.selectedMailbox == key, self.category == category, self.unreadOnly == unreadOnly,
+                       self.searching == nil {
                         self.listing = listing
                     }
                 }

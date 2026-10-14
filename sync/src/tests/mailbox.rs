@@ -126,6 +126,129 @@ async fn the_muted_mailbox_lists_muted_threads_and_the_inbox_leaves_them_out() {
     assert!(inbox.rows.iter().all(|r| !r.muted));
 }
 
+/// Unread mail in the inbox, in a label, in the Trash and in Spam, newest
+/// first: u1, u2, u3, u4, with the read r1 in the inbox under them.
+async fn unread_seeded() -> Harness {
+    let h = harness().await;
+    let now = now_millis();
+    h.fake.seed(meta("a", "u1", now - 1000, &["INBOX", "UNREAD"]));
+    h.fake.seed(meta("b", "u2", now - 2000, &["Label_1", "UNREAD"]));
+    h.fake.seed(meta("c", "u3", now - 3000, &["TRASH", "UNREAD"]));
+    h.fake.seed(meta("d", "u4", now - 4000, &["SPAM", "UNREAD"]));
+    h.fake.seed(meta("e", "r1", now - 5000, &["INBOX"]));
+    h.bootstrap_all().await;
+    h
+}
+
+#[tokio::test]
+async fn unread_lists_unread_mail_outside_the_trash_and_spam() {
+    let h = unread_seeded().await;
+
+    let listing = list(&h, &Mailbox::Unified(Standard::Unread), &view()).await;
+    assert_eq!(ids(&listing), ["u1", "u2"]);
+    assert_eq!(listing.title, "Unread");
+    assert_eq!(listing.empty.title, "No Unread Mail");
+
+    let mine = Mailbox::Standard { account_id: h.account_id, which: Standard::Unread };
+    assert_eq!(ids(&list(&h, &mine, &view()).await), ["u1", "u2"]);
+}
+
+#[tokio::test]
+async fn unread_only_narrows_a_list_to_its_unread_mail() {
+    let h = unread_seeded().await;
+    let unread = View { unread_only: true, ..view() };
+
+    let inbox = list(&h, &Mailbox::Unified(Standard::Inbox), &unread).await;
+    assert_eq!(ids(&inbox), ["u1"]);
+    assert_eq!(inbox.empty.title, "No Unread Mail");
+    let flat = View { threading: false, ..unread.clone() };
+    assert_eq!(ids(&list(&h, &Mailbox::Unified(Standard::Inbox), &flat).await), ["u1"]);
+
+    h.sync.triage_thread("u1", &crate::TriageAction::MarkRead).await.unwrap();
+    assert!(list(&h, &Mailbox::Unified(Standard::Inbox), &unread).await.rows.is_empty());
+    assert_eq!(
+        ids(&list(&h, &Mailbox::Unified(Standard::Inbox), &view()).await),
+        ["u1", "r1"]
+    );
+}
+
+#[tokio::test]
+async fn the_open_conversation_stays_in_an_unread_list_once_read() {
+    let h = unread_seeded().await;
+    h.sync.triage_thread("u1", &crate::TriageAction::MarkRead).await.unwrap();
+    let keeping = |thread: &str| View {
+        keep: Some((h.account_id, thread.to_string())),
+        ..view()
+    };
+
+    let unread = list(&h, &Mailbox::Unified(Standard::Unread), &keeping("u1")).await;
+    assert_eq!(ids(&unread), ["u1", "u2"]);
+    assert!(!unread.rows[0].unread);
+
+    let inbox = View { unread_only: true, ..keeping("u1") };
+    assert_eq!(ids(&list(&h, &Mailbox::Unified(Standard::Inbox), &inbox).await), ["u1"]);
+    let flat = View { threading: false, ..inbox.clone() };
+    assert_eq!(ids(&list(&h, &Mailbox::Unified(Standard::Inbox), &flat).await), ["u1"]);
+}
+
+#[tokio::test]
+async fn keeping_the_open_conversation_never_brings_back_what_left_the_list() {
+    let h = unread_seeded().await;
+    h.sync.triage_thread("u1", &crate::TriageAction::Trash).await.unwrap();
+    h.sync.triage_thread("u1", &crate::TriageAction::MarkRead).await.unwrap();
+    let kept = Some((h.account_id, "u1".to_string()));
+
+    // Trashed while open: the Unread list and the inbox let it go.
+    let unread = View { keep: kept.clone(), ..view() };
+    assert_eq!(ids(&list(&h, &Mailbox::Unified(Standard::Unread), &unread).await), ["u2"]);
+    let inbox = View { unread_only: true, ..unread.clone() };
+    assert!(list(&h, &Mailbox::Unified(Standard::Inbox), &inbox).await.rows.is_empty());
+
+    // A list that does not ask for unread mail keeps nothing it would
+    // not list anyway.
+    let label = Mailbox::Label {
+        account_id: h.account_id,
+        label_id: "Label_1".into(),
+        name: "Label_1".into(),
+    };
+    assert_eq!(ids(&list(&h, &label, &unread).await), ["u2"]);
+}
+
+#[tokio::test]
+async fn the_open_conversation_stays_on_its_own_page() {
+    let h = harness().await;
+    let now = now_millis();
+    for (i, thread) in ["x1", "x2", "x3"].into_iter().enumerate() {
+        let id = format!("m{i}");
+        h.fake.seed(meta(&id, thread, now - 1000 * i as i64, &["INBOX", "UNREAD"]));
+    }
+    h.bootstrap_all().await;
+    h.sync.triage_thread("x2", &crate::TriageAction::MarkRead).await.unwrap();
+    let paged = View {
+        limit: Some(1),
+        keep: Some((h.account_id, "x2".to_string())),
+        ..view()
+    };
+    let unread = Mailbox::Unified(Standard::Unread);
+
+    // x2 falls after x1, the last row of the first page, so it waits for
+    // the page that follows rather than showing twice.
+    let first = list(&h, &unread, &paged).await;
+    assert_eq!(ids(&first), ["x1"]);
+    assert!(first.more);
+    let second = next(&h, &unread, &paged, &first).await;
+    assert_eq!(ids(&second), ["x2", "x3"]);
+}
+
+#[test]
+fn every_store_list_but_unread_filters_unread() {
+    assert!(Mailbox::Unified(Standard::Inbox).filters_unread());
+    assert!(Mailbox::Flag(FlagColor::Red).filters_unread());
+    assert!(!Mailbox::Unified(Standard::Unread).filters_unread());
+    assert!(!Mailbox::Outbox.filters_unread());
+    assert!(!Mailbox::Folder { account_id: None, folder: Folder::Trash }.filters_unread());
+}
+
 #[tokio::test]
 async fn a_category_narrows_the_inbox_but_not_a_label() {
     let h = seeded().await;
@@ -762,6 +885,7 @@ async fn without_threading_a_list_holds_one_row_per_message() {
 fn each_standard_mailbox_draws_from_its_mail_set() {
     use mailrs_domain::{MailSet, Role};
     assert_eq!(Standard::Inbox.set(), MailSet::Role(Role::Inbox));
+    assert_eq!(Standard::Unread.set(), MailSet::Unseen);
     assert_eq!(Standard::Flagged.set(), MailSet::flagged());
     assert_eq!(Standard::Sent.set(), MailSet::Role(Role::Sent));
     assert_eq!(Standard::Drafts.set(), MailSet::Role(Role::Drafts));

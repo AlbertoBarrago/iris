@@ -333,6 +333,7 @@ struct MailboxRow: View {
     static func symbol(_ icon: String) -> String {
         switch icon {
         case "inbox": "tray"
+        case "unread": "envelope.badge"
         case "flag": "flag.fill"
         case "sent": "paperplane"
         case "drafts": "pencil"

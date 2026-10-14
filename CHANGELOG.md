@@ -5,6 +5,14 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### New
+
+- An Unread mailbox in the sidebar gathers unread mail from every folder, for
+  all accounts together and for each one.
+- Show Only Unread (⌘L, or the filter button over the list) narrows any
+  mailbox to its unread mail. A conversation you open stays in the list
+  while you read it.
+
 ## 1.1.11 (2026-10-14)
 
 ### Fixed

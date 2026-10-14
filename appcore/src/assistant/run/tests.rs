@@ -273,8 +273,8 @@ async fn list_mail_says_why_a_system_label_is_empty_on_an_unsynced_account() {
             cold_id,
             vec![mailrs_domain::Label {
                 account_id: cold_id,
-                id: gmail::UNREAD.into(),
-                name: "UNREAD".into(),
+                id: gmail::CATEGORY_SOCIAL.into(),
+                name: "CATEGORY_SOCIAL".into(),
                 kind: mailrs_domain::LabelKind::System,
                 color: None,
             }],
@@ -283,7 +283,7 @@ async fn list_mail_says_why_a_system_label_is_empty_on_an_unsynced_account() {
     assert_eq!(
         h.run(
             "list_mail",
-            json!({"mailbox": "label", "label": "UNREAD", "account": "cold@example.com"})
+            json!({"mailbox": "label", "label": "CATEGORY_SOCIAL", "account": "cold@example.com"})
         )
         .await,
         Ok(json!({"unavailable": "cold@example.com is not syncing yet."}))

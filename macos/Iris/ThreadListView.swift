@@ -80,6 +80,16 @@ struct ThreadListView: View {
             ToolbarItemGroup {
                 Button(tr("Check for Mail"), systemImage: "arrow.clockwise") { model.checkNow() }
                     .help(tr("Check for Mail"))
+                // Mail's message filter, for unread mail alone.
+                Toggle(isOn: $model.unreadOnly) {
+                    Label(
+                        tr("Show Only Unread"),
+                        systemImage: model.unreadOnly
+                            ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle"
+                    )
+                }
+                .help(tr("Show Only Unread"))
+                .disabled(model.listing?.filtersUnread != true)
                 // As in the GTK app: the magnifier opens a search bar over
                 // the list. ⌘F opens it too, from the Edit menu, unless the
                 // conversation has the keys.

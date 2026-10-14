@@ -69,7 +69,7 @@ pub struct SidebarItem {
     /// What selecting it asks `Mail::list` for; empty for a heading.
     pub key: String,
     pub title: String,
-    /// What the icon stands for: `inbox`, `flag`, `sent`, `drafts`,
+    /// What the icon stands for: `inbox`, `unread`, `flag`, `sent`, `drafts`,
     /// `muted`, `outbox`, `send-later`, `remind-me`, `follow-up`,
     /// `archive`, `junk`, `trash`, `all-mail`, `label`, `group` or `tag`.
     pub icon: String,
@@ -195,6 +195,8 @@ pub struct MailboxListing {
     pub categories: Vec<CategoryTab>,
     /// What an empty list says.
     pub empty: String,
+    /// Whether the list can show only unread mail.
+    pub filters_unread: bool,
 }
 
 /// A search offered while one is typed: what the list shows, and the
@@ -787,8 +789,16 @@ impl Mail {
     }
 
     /// The conversations of the mailbox `key` names, narrowed to the
-    /// category `category` names when it is an inbox's.
-    pub fn list(&self, key: String, category: Option<String>) -> Result<MailboxListing, CoreError> {
+    /// category `category` names when it is an inbox's, and to unread
+    /// mail with `unread_only`. `keep` is the conversation the reader has
+    /// open, which stays listed after reading it while it is open.
+    pub fn list(
+        &self,
+        key: String,
+        category: Option<String>,
+        unread_only: bool,
+        keep: Option<ThreadRef>,
+    ) -> Result<MailboxListing, CoreError> {
         // The sidebar may be in the middle of being read again, as it is
         // when the engine's first news comes in right at start; reading it
         // once more settles which mailbox the key names.
@@ -800,7 +810,8 @@ impl Mail {
                     .ok_or_else(|| CoreError::Store("That mailbox is no longer in the sidebar.".into()))?
             }
         };
-        self.listing(mailbox, category)
+        let keep = keep.map(|t| (t.account_id, t.thread_id));
+        self.listing(mailbox, category, unread_only, keep)
     }
 
     /// The conversations that `query` finds, in Gmail's search language,
@@ -816,7 +827,7 @@ impl Mail {
             account_id,
         };
         if servers {
-            let found = self.listing(mailbox, None);
+            let found = self.listing(mailbox, None, false, None);
             match &found {
                 Ok(listing) => tracing::info!(rows = listing.rows.len(), ?account_id, "searched the servers"),
                 Err(err) => tracing::warn!(error = %err, "could not search the servers"),
@@ -848,6 +859,7 @@ impl Mail {
             rows: listing.rows.iter().map(|t| row(t, now, &colors, &photos)).collect(),
             categories: Vec::new(),
             empty: listing.empty.title,
+            filters_unread: false,
         })
     }
 
@@ -875,7 +887,13 @@ impl Mail {
 
 impl Mail {
     /// The list `mailbox` shows, as Preferences say it reads.
-    fn listing(&self, mailbox: Mailbox, category: Option<String>) -> Result<MailboxListing, CoreError> {
+    fn listing(
+        &self,
+        mailbox: Mailbox,
+        category: Option<String>,
+        unread_only: bool,
+        keep: Option<(AccountId, String)>,
+    ) -> Result<MailboxListing, CoreError> {
         // Preferences decide how the list reads: conversations or single
         // messages, an inbox in categories or whole, follow-ups or not.
         let settings = mailrs_appcore::settings::Settings::load(&mailrs_appcore::settings::Settings::default_path());
@@ -886,9 +904,12 @@ impl Mail {
             .filter(|_| categories_on);
         let db = self.db.clone();
         let accounts = self.run(async move { db.read(accounts::list_accounts).await })?;
+        let filters_unread = mailbox.filters_unread();
         let view = View {
             threading: settings.threading,
             follow_ups: settings.suggest_follow_ups,
+            unread_only: unread_only && filters_unread,
+            keep,
             ..view(category)
         };
         let (mailboxes, shown, asked) = (Arc::clone(&self.mailboxes), mailbox.clone(), view.clone());
@@ -928,6 +949,7 @@ impl Mail {
             rows: listing.rows.iter().map(|t| row(t, now, &colors, &photos)).collect(),
             categories,
             empty: listing.empty.title,
+            filters_unread,
         })
     }
 }
@@ -1204,6 +1226,7 @@ fn row(
 fn icon_name(icon: Icon) -> (&'static str, Option<String>) {
     let name = match icon {
         Icon::Inbox => "inbox",
+        Icon::Unread => "unread",
         Icon::Flag(color) => return ("flag", Some(flag_hex(color).to_string())),
         Icon::Sent => "sent",
         Icon::Drafts => "drafts",
@@ -1350,7 +1373,7 @@ mod tests {
         let accounts = mail.sidebar().unwrap().into_iter().filter(|item| item.kind == "account").count();
         assert_eq!(accounts, 6);
         let inbox = mail.sidebar().unwrap().into_iter().find(|item| item.kind == "mailbox").unwrap();
-        assert!(!mail.list(inbox.key, None).unwrap().rows.is_empty());
+        assert!(!mail.list(inbox.key, None, false, None).unwrap().rows.is_empty());
         drop(mail);
         assert!(Mail::open_demo(path).is_err());
     }

@@ -70,6 +70,7 @@ pub const LAYOUT: [(Section, &[Place]); 2] = [
         Section::Favorites,
         &[
             Place::Unified(Standard::Inbox),
+            Place::Unified(Standard::Unread),
             Place::Vips,
             Place::Unified(Standard::Flagged),
             Place::FlagColors,
@@ -141,6 +142,7 @@ mod tests {
             places,
             &[
                 Place::Unified(Standard::Inbox),
+                Place::Unified(Standard::Unread),
                 Place::Vips,
                 Place::Unified(Standard::Flagged),
                 Place::FlagColors,

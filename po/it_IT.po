@@ -4112,27 +4112,27 @@ msgstr ""
 "Una versione più recente di Iris ha aggiornato la tua posta dopo l'ultima "
 "volta che hai usato questa. Aggiorna Iris per aprirla."
 
-#: ffi/src/mail.rs:465
+#: ffi/src/mail.rs:467
 msgid "Will remind you {when}"
 msgstr "Te lo ricorderà {when}"
 
-#: ffi/src/mail.rs:468
+#: ffi/src/mail.rs:470
 msgid "Back in the Inbox"
 msgstr "Di nuovo in Posta in arrivo"
 
-#: ffi/src/mail.rs:505
+#: ffi/src/mail.rs:507
 msgid "Could not cancel: {reason}"
 msgstr "Impossibile annullare: {reason}"
 
-#: ffi/src/mail.rs:529
+#: ffi/src/mail.rs:531
 msgid "Deleted. It will not be sent."
 msgstr "Eliminato. Non verrà inviato."
 
-#: ffi/src/mail.rs:530
+#: ffi/src/mail.rs:532
 msgid "Deleted. They will not be sent."
 msgstr "Eliminati. Non verranno inviati."
 
-#: ffi/src/mail.rs:539
+#: ffi/src/mail.rs:541
 msgid "Could not delete: {reason}"
 msgstr "Impossibile eliminare: {reason}"
 
@@ -4434,7 +4434,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:714
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:719
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -4931,8 +4931,8 @@ msgstr "Mese"
 
 #: macos/Iris/CalendarView.swift:86 macos/Iris/CalendarView.swift:87
 #: macos/Iris/CalendarView.swift:116 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:85 macos/Iris/SettingsView.swift:24
-#: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:46
+#: macos/Iris/IrisApp.swift:89 macos/Iris/SettingsView.swift:24
+#: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:47
 msgid "Calendar"
 msgstr "Calendario"
 
@@ -4960,7 +4960,7 @@ msgstr "Settimana successiva"
 msgid "Next Month"
 msgstr "Mese successivo"
 
-#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:83
+#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:87
 msgid "Mail"
 msgstr "Posta"
 
@@ -4987,15 +4987,15 @@ msgstr "Note"
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:310
-#: macos/Iris/ThreadListView.swift:311
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:320
+#: macos/Iris/ThreadListView.swift:321
 msgid "Close"
 msgstr "Chiudi"
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:90
-#: macos/Iris/ThreadListView.swift:93
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:100
+#: macos/Iris/ThreadListView.swift:103
 msgid "New Message"
 msgstr "Nuovo messaggio"
 
@@ -5217,7 +5217,7 @@ msgid "Edit Draft"
 msgstr "Modifica bozza"
 
 #: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:319
-#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:241
+#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:251
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
@@ -5344,7 +5344,7 @@ msgid_plural "{position} of {total} matches"
 msgstr[0] "{position} di {total} corrispondenza"
 msgstr[1] "{position} di {total} corrispondenze"
 
-#: macos/Iris/FindView.swift:121 macos/Iris/ShortcutsView.swift:23
+#: macos/Iris/FindView.swift:121 macos/Iris/ShortcutsView.swift:24
 msgid "Find in the conversation"
 msgstr "Trova nella conversazione"
 
@@ -5468,8 +5468,8 @@ msgstr "Nessuno"
 msgid "Propose"
 msgstr "Proponi"
 
-#: macos/Iris/IrisApp.swift:44 macos/Iris/IrisApp.swift:108
-#: macos/Iris/ShortcutsView.swift:57
+#: macos/Iris/IrisApp.swift:44 macos/Iris/IrisApp.swift:112
+#: macos/Iris/ShortcutsView.swift:58
 msgid "Keyboard shortcuts"
 msgstr "Abbreviazioni da tastiera"
 
@@ -5493,7 +5493,12 @@ msgstr "Nuova casella smart…"
 msgid "Export…"
 msgstr "Esporta…"
 
-#: macos/Iris/IrisApp.swift:77
+#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:86
+#: macos/Iris/ThreadListView.swift:91
+msgid "Show Only Unread"
+msgstr "Mostra solo non letti"
+
+#: macos/Iris/IrisApp.swift:81
 msgid "View Source"
 msgstr "Mostra sorgente"
 
@@ -5505,48 +5510,48 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:616
+#: macos/Iris/MailModel.swift:621
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:618
+#: macos/Iris/MailModel.swift:623
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:643 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:648 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:801
+#: macos/Iris/MailModel.swift:806
 msgid "Message discarded"
 msgstr "Messaggio scartato"
 
-#: macos/Iris/MailModel.swift:841
+#: macos/Iris/MailModel.swift:846
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:930
+#: macos/Iris/MailModel.swift:935
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1226
+#: macos/Iris/MailModel.swift:1235
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1265
+#: macos/Iris/MailModel.swift:1274
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1758
+#: macos/Iris/MailModel.swift:1767
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1763
+#: macos/Iris/MailModel.swift:1772
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1813
+#: macos/Iris/MailModel.swift:1822
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -5663,11 +5668,11 @@ msgstr "Nuova regola"
 msgid "Search suggestions"
 msgstr "Suggerimenti di ricerca"
 
-#: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:54
+#: macos/Iris/SettingsView.swift:18 macos/Iris/ShortcutsView.swift:55
 msgid "General"
 msgstr "Generale"
 
-#: macos/Iris/SettingsView.swift:21 macos/Iris/ShortcutsView.swift:37
+#: macos/Iris/SettingsView.swift:21 macos/Iris/ShortcutsView.swift:38
 msgid "Writing"
 msgstr "Scrittura"
 
@@ -5979,83 +5984,87 @@ msgstr "Segui il sistema"
 msgid "Iris shows a new language after a restart"
 msgstr "Iris mostra una nuova lingua dopo il riavvio"
 
-#: macos/Iris/ShortcutsView.swift:24
+#: macos/Iris/ShortcutsView.swift:23
+msgid "Show only unread"
+msgstr "Mostra solo i non letti"
+
+#: macos/Iris/ShortcutsView.swift:25
 msgid "Open in a new window"
 msgstr "Apri in una nuova finestra"
 
-#: macos/Iris/ShortcutsView.swift:25
+#: macos/Iris/ShortcutsView.swift:26
 msgid "View source"
 msgstr "Mostra sorgente"
 
-#: macos/Iris/ShortcutsView.swift:26
+#: macos/Iris/ShortcutsView.swift:27
 msgid "Print"
 msgstr "Stampa"
 
-#: macos/Iris/ShortcutsView.swift:28
+#: macos/Iris/ShortcutsView.swift:29
 msgid "Organizing"
 msgstr "Organizzazione"
 
-#: macos/Iris/ShortcutsView.swift:32
+#: macos/Iris/ShortcutsView.swift:33
 msgid "Mark read or unread"
 msgstr "Segna come letto o non letto"
 
-#: macos/Iris/ShortcutsView.swift:33
+#: macos/Iris/ShortcutsView.swift:34
 msgid "Mute or unmute"
 msgstr "Silenzia o riattiva"
 
-#: macos/Iris/ShortcutsView.swift:35 macos/Iris/ThreadListView.swift:286
+#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:296
 msgid "Undo"
 msgstr "Annulla"
 
-#: macos/Iris/ShortcutsView.swift:40
+#: macos/Iris/ShortcutsView.swift:41
 msgid "Reply all"
 msgstr "Rispondi a tutti"
 
-#: macos/Iris/ShortcutsView.swift:43
+#: macos/Iris/ShortcutsView.swift:44
 msgid "Attach files"
 msgstr "Allega file"
 
-#: macos/Iris/ShortcutsView.swift:44
+#: macos/Iris/ShortcutsView.swift:45
 msgid "Bold, italic, link"
 msgstr "Grassetto, corsivo, link"
 
-#: macos/Iris/ShortcutsView.swift:47
+#: macos/Iris/ShortcutsView.swift:48
 msgid "Show mail"
 msgstr "Mostra la posta"
 
-#: macos/Iris/ShortcutsView.swift:48
+#: macos/Iris/ShortcutsView.swift:49
 msgid "Show the calendar"
 msgstr "Mostra il calendario"
 
-#: macos/Iris/ShortcutsView.swift:49
+#: macos/Iris/ShortcutsView.swift:50
 msgid "Go to today"
 msgstr "Vai a oggi"
 
-#: macos/Iris/ShortcutsView.swift:50
+#: macos/Iris/ShortcutsView.swift:51
 msgid "Day, week or month"
 msgstr "Giorno, settimana o mese"
 
-#: macos/Iris/ShortcutsView.swift:51
+#: macos/Iris/ShortcutsView.swift:52
 msgid "Previous or next"
 msgstr "Precedente o successivo"
 
-#: macos/Iris/ShortcutsView.swift:52
+#: macos/Iris/ShortcutsView.swift:53
 msgid "New event"
 msgstr "Nuovo evento"
 
-#: macos/Iris/ShortcutsView.swift:55
+#: macos/Iris/ShortcutsView.swift:56
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: macos/Iris/ShortcutsView.swift:56
+#: macos/Iris/ShortcutsView.swift:57
 msgid "Show or hide the assistant"
 msgstr "Mostra o nascondi l'assistente"
 
-#: macos/Iris/ShortcutsView.swift:58
+#: macos/Iris/ShortcutsView.swift:59
 msgid "Close window"
 msgstr "Chiudi finestra"
 
-#: macos/Iris/ShortcutsView.swift:59
+#: macos/Iris/ShortcutsView.swift:60
 msgid "Quit"
 msgstr "Esci"
 
@@ -6234,11 +6243,11 @@ msgstr ""
 msgid "Body"
 msgstr "Testo"
 
-#: macos/Iris/ThreadListView.swift:89 macos/Iris/ThreadListView.swift:384
+#: macos/Iris/ThreadListView.swift:99 macos/Iris/ThreadListView.swift:394
 msgid "Search mail"
 msgstr "Cerca nella posta"
 
-#: macos/Iris/ThreadListView.swift:271
+#: macos/Iris/ThreadListView.swift:281
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
 
@@ -6798,208 +6807,216 @@ msgstr ""
 msgid "could not reach {host}"
 msgstr "impossibile raggiungere {host}"
 
-#: sync/src/mailbox.rs:79
+#: sync/src/mailbox.rs:83
 msgid "Inbox"
 msgstr "Posta in arrivo"
 
-#: sync/src/mailbox.rs:80
+#: sync/src/mailbox.rs:84
+msgid "Unread"
+msgstr "Non letti"
+
+#: sync/src/mailbox.rs:85
 msgid "Flagged"
 msgstr "Contrassegnati"
 
-#: sync/src/mailbox.rs:81
+#: sync/src/mailbox.rs:86
 msgid "Sent"
 msgstr "Inviati"
 
-#: sync/src/mailbox.rs:82
+#: sync/src/mailbox.rs:87
 msgid "Drafts"
 msgstr "Bozze"
 
-#: sync/src/mailbox.rs:83
+#: sync/src/mailbox.rs:88
 msgid "Muted"
 msgstr "Silenziato"
 
-#: sync/src/mailbox.rs:90
+#: sync/src/mailbox.rs:95
 msgid "All Inboxes"
 msgstr "Tutte le caselle di Posta in arrivo"
 
-#: sync/src/mailbox.rs:187
+#: sync/src/mailbox.rs:195
 msgid "Search"
 msgstr "Cerca"
 
-#: sync/src/mailbox.rs:189
+#: sync/src/mailbox.rs:197
 msgid "Send Later"
 msgstr "Invia più tardi"
 
-#: sync/src/mailbox.rs:190
+#: sync/src/mailbox.rs:198
 msgid "Outbox"
 msgstr "Posta in uscita"
 
-#: sync/src/mailbox.rs:192
+#: sync/src/mailbox.rs:200
 msgid "Follow Up"
 msgstr "Da seguire"
 
-#: sync/src/mailbox.rs:193
+#: sync/src/mailbox.rs:201
 msgid "{color} Flag"
 msgstr "Contrassegno {color}"
 
-#: sync/src/mailbox.rs:313
+#: sync/src/mailbox.rs:327
 msgid "No Results"
 msgstr "Nessun risultato"
 
-#: sync/src/mailbox.rs:315
+#: sync/src/mailbox.rs:329
 msgid "Try other words, or fewer of them."
 msgstr "Prova altre parole, o meno parole."
 
-#: sync/src/mailbox.rs:319
+#: sync/src/mailbox.rs:333
 msgid "Nothing Scheduled"
 msgstr "Niente di programmato"
 
-#: sync/src/mailbox.rs:322
+#: sync/src/mailbox.rs:336
 msgid "Outbox Is Empty"
 msgstr "Posta in uscita vuota"
 
-#: sync/src/mailbox.rs:326
+#: sync/src/mailbox.rs:340
 msgid "No Reminders"
 msgstr "Nessun promemoria"
 
-#: sync/src/mailbox.rs:328
+#: sync/src/mailbox.rs:342
 msgid "Choose Remind Me on a conversation to bring it back here later."
 msgstr ""
 "Scegli Ricordamelo su una conversazione per farla tornare qui più tardi."
 
-#: sync/src/mailbox.rs:332
+#: sync/src/mailbox.rs:346
 msgid "No Follow-Ups"
 msgstr "Niente da seguire"
 
-#: sync/src/mailbox.rs:335
+#: sync/src/mailbox.rs:349
 msgid "No Flagged Mail"
 msgstr "Nessuna posta contrassegnata"
 
-#: sync/src/mailbox.rs:337
+#: sync/src/mailbox.rs:351
 msgid "No Mail from VIPs"
 msgstr "Nessuna posta dai VIP"
 
-#: sync/src/mailbox.rs:339
+#: sync/src/mailbox.rs:353
 msgid "No Matching Mail"
 msgstr "Nessuna posta corrispondente"
 
-#: sync/src/mailbox.rs:344
+#: sync/src/mailbox.rs:358
 msgid "No Archived Mail"
 msgstr "Nessuna posta archiviata"
 
-#: sync/src/mailbox.rs:345
+#: sync/src/mailbox.rs:359
 msgid "No Junk"
 msgstr "Nessuna posta indesiderata"
 
-#: sync/src/mailbox.rs:346
+#: sync/src/mailbox.rs:360
 msgid "Trash Is Empty"
 msgstr "Il Cestino è vuoto"
 
-#: sync/src/mailbox.rs:347 sync/src/mailbox.rs:361 sync/src/mailbox.rs:426
+#: sync/src/mailbox.rs:361 sync/src/mailbox.rs:376 sync/src/mailbox.rs:495
 msgid "No Mail"
 msgstr "Nessuna posta"
 
-#: sync/src/mailbox.rs:352
+#: sync/src/mailbox.rs:366
 msgid "Inbox Zero"
 msgstr "Posta in arrivo vuota"
 
-#: sync/src/mailbox.rs:353
+#: sync/src/mailbox.rs:367 sync/src/mailbox.rs:1078
+msgid "No Unread Mail"
+msgstr "Nessun messaggio non letto"
+
+#: sync/src/mailbox.rs:368
 msgid "No Starred Mail"
 msgstr "Nessuna posta speciale"
 
-#: sync/src/mailbox.rs:354
+#: sync/src/mailbox.rs:369
 msgid "No Sent Mail"
 msgstr "Nessuna posta inviata"
 
-#: sync/src/mailbox.rs:356
+#: sync/src/mailbox.rs:371
 msgid "No Drafts"
 msgstr "Nessuna bozza"
 
-#: sync/src/mailbox.rs:358
+#: sync/src/mailbox.rs:373
 msgid "Close a message without sending it and Iris keeps it here."
 msgstr "Chiudi un messaggio senza inviarlo e Iris lo conserva qui."
 
-#: sync/src/mailbox.rs:360
+#: sync/src/mailbox.rs:375
 msgid "No Muted Mail"
 msgstr "Nessuna posta silenziata"
 
-#: sync/src/mailbox.rs:398
+#: sync/src/mailbox.rs:413
 msgctxt "mailbox"
 msgid "Archive"
 msgstr "Archivio"
 
-#: sync/src/mailbox.rs:399
+#: sync/src/mailbox.rs:414
 msgid "Junk"
 msgstr "Indesiderata"
 
-#: sync/src/mailbox.rs:400
+#: sync/src/mailbox.rs:415
 msgid "Trash"
 msgstr "Cestino"
 
-#: sync/src/mailbox.rs:401
+#: sync/src/mailbox.rs:416
 msgid "All Mail"
 msgstr "Tutta la posta"
 
-#: sync/src/mailbox.rs:767
+#: sync/src/mailbox.rs:844
 msgid "This smart mailbox has no conditions"
 msgstr "Questa casella smart non ha condizioni"
 
-#: sync/src/mailbox.rs:1123
+#: sync/src/mailbox.rs:1224
 msgid "Results for {account} come from the mail on this computer alone"
 msgstr ""
 "I risultati per {account} provengono solo dalla posta su questo computer"
 
-#: sync/src/mailbox.rs:1135
+#: sync/src/mailbox.rs:1236
 msgid "Could not load mail for {account}: {reason}"
 msgstr "Impossibile caricare la posta per {account}: {reason}"
 
-#: sync/src/mailbox.rs:1256
+#: sync/src/mailbox.rs:1357
 msgid "Returns {when}"
 msgstr "Torna {when}"
 
-#: sync/src/mailbox.rs:1299 sync/src/mailbox.rs:1381
+#: sync/src/mailbox.rs:1400 sync/src/mailbox.rs:1482
 msgid "No recipients"
 msgstr "Nessun destinatario"
 
-#: sync/src/mailbox.rs:1302 sync/src/mailbox.rs:1384
+#: sync/src/mailbox.rs:1403 sync/src/mailbox.rs:1485
 msgid "To {recipients}"
 msgstr "A {recipients}"
 
-#: sync/src/mailbox.rs:1344
+#: sync/src/mailbox.rs:1445
 msgid "{count} unread · {category}"
 msgid_plural "{count} unread · {category}"
 msgstr[0] "{count} non letto · {category}"
 msgstr[1] "{count} non letti · {category}"
 
-#: sync/src/mailbox.rs:1349
+#: sync/src/mailbox.rs:1450
 msgid "{count} unread"
 msgid_plural "{count} unread"
 msgstr[0] "{count} non letto"
 msgstr[1] "{count} non letti"
 
-#: sync/src/mailbox.rs:1356
+#: sync/src/mailbox.rs:1457
 msgid "Sent yesterday, no reply yet"
 msgstr "Inviato ieri, ancora nessuna risposta"
 
-#: sync/src/mailbox.rs:1358
+#: sync/src/mailbox.rs:1459
 msgid "Sent {days} day ago, no reply yet"
 msgid_plural "Sent {days} days ago, no reply yet"
 msgstr[0] "Inviato {days} giorno fa, ancora nessuna risposta"
 msgstr[1] "Inviato {days} giorni fa, ancora nessuna risposta"
 
-#: sync/src/mailbox.rs:1396
+#: sync/src/mailbox.rs:1497
 msgid "Sends {when}"
 msgstr "Invio {when}"
 
-#: sync/src/mailbox.rs:1400
+#: sync/src/mailbox.rs:1501
 msgid "Not sent"
 msgstr "Non inviato"
 
-#: sync/src/mailbox.rs:1407
+#: sync/src/mailbox.rs:1508
 msgid "{problem}. Trying again {when}"
 msgstr "{problem}. Nuovo tentativo {when}"
 
-#: sync/src/mailbox.rs:1414
+#: sync/src/mailbox.rs:1515
 msgid "{problem}. Iris stopped trying"
 msgstr "{problem}. Iris ha smesso di riprovare"
 
@@ -7426,7 +7443,7 @@ msgstr "Caselle smart"
 msgid "Accounts"
 msgstr "Account"
 
-#: view/src/sidebar.rs:164
+#: view/src/sidebar.rs:165
 msgid "VIPs"
 msgstr "VIP"
 
@@ -8440,9 +8457,6 @@ msgstr "VIP"
 
 #~ msgid "Open in Maps"
 #~ msgstr "Apri in Mappe"
-
-#~ msgid "Show more"
-#~ msgstr "Mostra altro"
 
 #~ msgid "Show more of the notes"
 #~ msgstr "Mostra altro delle note"
@@ -9655,9 +9669,6 @@ msgstr "VIP"
 
 #~ msgid "Updates come from the Snap Store"
 #~ msgstr "Gli aggiornamenti arrivano dallo Snap Store"
-
-#~ msgid "No unread mail"
-#~ msgstr "Nessun messaggio non letto"
 
 #~ msgid "{count} unread message"
 #~ msgid_plural "{count} unread messages"
