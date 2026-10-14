@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Takes the README's screenshot: the debug Iris on the demo's sample
-# accounts, in dark, into docs/screenshots/iris-dark.png. `shoot light`
-# works the same way once the conversation page follows a light Style on
-# a dark Mac; today it stays dark.
+# Takes the README's screenshots: the debug Iris on the demo's sample
+# accounts, in dark and in light, into docs/screenshots/iris-dark.png and
+# docs/screenshots/iris-light.png.
 #
 #   scripts/macos-screenshots.sh              build, then shoot
 #   scripts/macos-screenshots.sh --no-build   shoot the build already there
@@ -121,3 +120,4 @@ shoot() {
 
 mkdir -p "$out"
 shoot dark
+shoot light

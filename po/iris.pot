@@ -5232,15 +5232,15 @@ msgstr ""
 msgid "This Mac cannot translate this message: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1733
+#: macos/Iris/MailModel.swift:1743
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1738
+#: macos/Iris/MailModel.swift:1748
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1788
+#: macos/Iris/MailModel.swift:1798
 msgid "{account} is signed in again."
 msgstr ""
 

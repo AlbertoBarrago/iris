@@ -1467,6 +1467,16 @@ extension MailModel {
         case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
         default: NSApp.appearance = nil
         }
+        refreshTheme()
+    }
+
+    /// Draws pages in the app's own appearance rather than the Mac's, so a
+    /// light Style on a dark Mac gives a light page. SwiftUI's color scheme
+    /// can still read the system's when the conversation first appears,
+    /// before Style has been applied.
+    func refreshTheme() {
+        let dark = NSApp.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        theme = PageTheme.current(dark: dark)
     }
 
     /// Marks a conversation read on opening, as Mark as Read says: at

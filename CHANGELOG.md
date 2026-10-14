@@ -9,6 +9,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 - Text pasted from a web page or a chat takes the composer's own colors and
   font instead of staying black, and keeps its bold, italics and links.
+- A conversation is drawn light when Style is set to Light on a Mac in dark
+  mode, and dark when it is set to Dark on a light one.
 
 ## 1.1.9 (2026-10-13)
 
