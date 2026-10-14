@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.11 (2026-10-14)
+
 ### Fixed
 
 - A reply sent from a Microsoft account shows in its conversation within
