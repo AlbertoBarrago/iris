@@ -10,80 +10,95 @@
 <meta property="og:title" content="Iris">
 <meta property="og:description" content="Native mail and calendar for your Mac. Your mail stays on your computer.">
 </head>
-<body>
+<body class="product">
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="band">
   <div class="wrap">
     <nav class="nav" aria-label="Iris">
       <span class="brand"><img src="icon.svg" alt="">Iris</span>
-      <span>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#story">Why Iris</a>
         <a href="privacy/">Privacy</a>
-        &nbsp;&middot;&nbsp;
-        <a href="/">albz.it</a>
-      </span>
-    </nav>
-    <div class="hero">
-      <img src="icon.svg" alt="The Iris icon: a cream envelope with an iridescent wing" width="220" height="220">
-      <div>
-        <h1>Iris</h1>
-        <p class="tag">Native mail and calendar for your Mac. Your mail stays on your computer.</p>
-        <span class="pill">Test build for macOS</span>
-        <p class="download">
-          <a class="button" href="https://github.com/AlbertoBarrago/iris/releases/download/v1.0.11/Iris-1.0.11.dmg">Download Iris 1.0.11</a>
-          <span>For Apple silicon Macs with macOS 26 or later.</span>
-        </p>
+        <a class="nav-try" href="#install">Try Iris</a>
       </div>
+    </nav>
+    <div class="product-hero">
+      <p class="intro">An independent mail app for macOS</p>
+      <h1>A home for your mail.<br>On your own Mac.</h1>
+      <p class="hero-copy">Mail, calendar and all your accounts together in a native Mac app. Built with care, for the way you spend your day.</p>
+      <div class="hero-actions">
+        <a class="button" href="#install">Try Iris for Mac</a>
+        <a class="secondary-link" href="https://github.com/AlbertoBarrago/iris">Explore the source</a>
+      </div>
+      <p class="requirements">Free test build. Apple silicon. macOS 26 or later.</p>
     </div>
+    <figure class="product-preview">
+      <a href="iris-dark.png" aria-label="View the Iris screenshot at full size">
+        <img src="iris-dark.png" width="1629" height="1172" fetchpriority="high" alt="Iris in dark mode: six accounts in the sidebar, a unified inbox, and a conversation about a Q4 roadmap review open beside it">
+      </a>
+      <figcaption>Your accounts together, with room for the conversation. Shown with sample mail.</figcaption>
+    </figure>
   </div>
 </header>
 
-<main>
+<main id="main">
   <div class="wrap">
-    <p class="lede">Iris reads Gmail, Microsoft 365, Outlook.com and any IMAP account, such as iCloud, Fastmail and Yahoo, and finds the server settings for you. It talks to Google and Microsoft straight from your Mac. No server of ours sits in between, and nothing about you or your mail is collected.</p>
+    <section class="benefits" id="features" aria-labelledby="features-title">
+      <div class="section-heading">
+        <h2 id="features-title">Your day, with fewer windows.</h2>
+        <p>Read, reply, make plans. Iris brings the things you need together and connects to your mail provider straight from your Mac.</p>
+      </div>
+      <div class="benefit-grid">
+        <section>
+          <h3>Every account, one inbox</h3>
+          <p>Gmail, Microsoft 365, Outlook.com and IMAP accounts such as iCloud and Fastmail. Read them together or give each account its own space.</p>
+        </section>
+        <section>
+          <h3>Mail and calendar, side by side</h3>
+          <p>Plan your day, move events and answer invitations from the message. Write with formatting, Undo Send, Send Later and templates.</p>
+        </section>
+        <section>
+          <h3>At home on the Mac</h3>
+          <p>Native windows, familiar shortcuts, notifications and a Dock badge. English and Italian, with controls named for VoiceOver.</p>
+        </section>
+        <section>
+          <h3>Your mail stays yours</h3>
+          <p>No Iris server between you and your provider. No analytics or advertising. Remote images wait for your permission, and sign-in tokens stay in the macOS Keychain.</p>
+        </section>
+      </div>
+      <p class="feature-note">OpenPGP and S/MIME work through your own GnuPG. An optional assistant stays off until you choose a model; use a local model to keep its work on your computer.</p>
+    </section>
 
-    <div class="grid">
-      <section class="card">
-        <h3>Made for the Mac</h3>
-        <p>A native SwiftUI app with the Mac's own menus, shortcuts, notifications, Dock badge and Open at Login, over a fast core written in Rust.</p>
-      </section>
-      <section class="card">
-        <h3>Every account, one inbox</h3>
-        <p>Gmail, Microsoft and IMAP side by side, each with its own folders and labels, or all of them together.</p>
-      </section>
-      <section class="card">
-        <h3>A calendar that answers invitations</h3>
-        <p>Day, week and month views you can drag events around in, with invitations you can accept right from the message.</p>
-      </section>
-      <section class="card">
-        <h3>Private by default</h3>
-        <p>Remote images stay blocked until you allow them, mail is read with scripts off, and sign-in tokens live in the macOS Keychain.</p>
-      </section>
-      <section class="card">
-        <h3>Signed and encrypted mail</h3>
-        <p>OpenPGP and S/MIME through your own GnuPG. Iris never holds your private keys.</p>
-      </section>
-      <section class="card">
-        <h3>Write the way you like</h3>
-        <p>Formatting as you type, Undo Send, Send Later, templates and an outbox that retries for you.</p>
-      </section>
-      <section class="card">
-        <h3>Contacts, rules and more</h3>
-        <p>Contact cards with photos, VIPs, server rules, automatic replies, Hide My Email and one-click unsubscribe.</p>
-      </section>
-      <section class="card">
-        <h3>An assistant, if you want one</h3>
-        <p>Off until you choose a model. It can also translate a message for you. A local model keeps everything on your computer.</p>
-      </section>
-    </div>
+    <section class="maker-story" id="story" aria-labelledby="story-title">
+      <div class="maker-heading">
+        <img src="icon.svg" width="88" height="88" alt="" loading="lazy">
+        <h2 id="story-title">Made for my own day.<br>Shared for yours.</h2>
+      </div>
+      <div class="maker-copy">
+        <p>I built Iris because I needed a mail app that felt right for me. I’m an indie developer, and I put my heart into it. If it can be useful to someone else too, I see no reason to keep it to myself.</p>
+        <p>Iris is free and open source. It’s a personal project in active development, and these are test builds. Try it, see how it fits your day, and tell me what works or what needs attention.</p>
+        <a class="maker-signature" href="/">Alberto Barrago</a>
+        <a class="feedback-link" href="https://github.com/AlbertoBarrago/iris/issues">Share feedback on GitHub</a>
+      </div>
+    </section>
 
-    <h2>Installing the test build</h2>
+    <section class="install-panel" id="install" aria-labelledby="install-title">
+      <h2 id="install-title">Give Iris a place on your Mac.</h2>
+      <p class="note">A free test build for Apple silicon Macs with macOS 26 or later.</p>
+      <p class="install-download"><a class="button" href="https://github.com/AlbertoBarrago/iris/releases/download/v1.0.11/Iris-1.0.11.dmg">Download Iris 1.0.11</a></p>
     <p class="note">The quickest way: paste this into Terminal. It fetches the newest build, puts Iris in Applications and opens it.</p>
     <pre class="command"><code>curl -fsSL https://albz.it/iris/install.sh | sh</code></pre>
     <p class="note">Or download the DMG above and drag Iris onto Applications. The test build is not signed with an Apple Developer ID yet, so macOS stops a copy downloaded in a browser. Choose <strong>Open Anyway</strong> beside Iris in <strong>System Settings &gt; Privacy &amp; Security</strong>, or clear the mark in Terminal:</p>
     <pre class="command"><code>xattr -cr /Applications/Iris.app</code></pre>
     <p class="note">From then on Iris opens like any other app and keeps itself up to date.</p>
 
-    <h2>Status</h2>
-    <p class="note">Iris is a personal project by <a href="/">Alberto Barrago</a>, in active development, with test builds for macOS. Since version 1.1 it is a native Mac app; an Iris you already have updates to it by itself, with your accounts and mail as they were. It began as a modified version of <a href="https://github.com/c9dev/penguin-mail">Penguin Mail</a>, a GTK mail client for Linux, and is free software under the GNU General Public License, version 3 or later. If you like it, <a href="https://github.com/AlbertoBarrago/iris">leave it a star on GitHub</a>.</p>
+    </section>
+
+    <section class="project-origin" aria-labelledby="origin-title">
+    <h2 id="origin-title">Open source, with roots</h2>
+    <p class="note">Iris began as a fork of <a href="https://github.com/c9dev/penguin-mail">Penguin Mail</a>, a GTK mail client for Linux. It has since become its own native Mac app, and remains free software under the GNU General Public License, version 3 or later. If Iris makes your day lighter, <a href="https://github.com/AlbertoBarrago/iris">a star on GitHub is welcome</a>.</p>
+    </section>
   </div>
 </main>
 
