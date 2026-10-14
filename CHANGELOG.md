@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.12 (2026-10-14)
+
 ### New
 
 - An Unread mailbox in the sidebar gathers unread mail from every folder, for
