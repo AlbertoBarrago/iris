@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Iris: mail and calendar for your own computer</title>
-<meta name="description" content="Iris is a native mail and calendar app for the Mac. It reads Gmail, Microsoft 365, Outlook.com and any IMAP account, and keeps your mail on your own computer.">
+<meta name="description" content="Native mail and calendar for the Mac, with a unified inbox, local contact lists and reply previews. Connect Gmail, Microsoft 365, Outlook.com and IMAP accounts.">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="iris.css">
 <link rel="canonical" href="https://albz.it/iris/">
@@ -12,7 +12,7 @@
 <meta property="og:url" content="https://albz.it/iris/">
 <meta property="og:site_name" content="Iris">
 <meta property="og:title" content="Iris: native mail and calendar for your Mac">
-<meta property="og:description" content="An independent, free and open source Mac app. All your accounts together, with your mail on your own computer. Try Iris for Mac.">
+<meta property="og:description" content="Your accounts together, reply previews and local contact lists. An independent, free and open source mail and calendar app for your Mac.">
 <meta property="og:image" content="https://albz.it/iris/iris-dark.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1629">
@@ -20,7 +20,7 @@
 <meta property="og:image:alt" content="Iris in dark mode, showing a unified inbox and an open conversation">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Iris: native mail and calendar for your Mac">
-<meta name="twitter:description" content="An independent, free and open source Mac app. All your accounts together, with your mail on your own computer. Try Iris for Mac.">
+<meta name="twitter:description" content="Your accounts together, reply previews and local contact lists. An independent, free and open source mail and calendar app for your Mac.">
 <meta name="twitter:image" content="https://albz.it/iris/iris-dark.png">
 <meta name="twitter:image:alt" content="Iris in dark mode, showing a unified inbox and an open conversation">
 </head>
@@ -69,8 +69,16 @@
           <p>Gmail, Microsoft 365, Outlook.com and IMAP accounts such as iCloud and Fastmail. Read them together or give each account its own space.</p>
         </section>
         <section>
+          <h3>Follow the conversation from your inbox</h3>
+          <p>Click a conversation's message count to see who replied, when, and the first words of each reply. Expand it without marking it read, then choose the message you want to open.</p>
+        </section>
+        <section>
+          <h3>Write to the whole team</h3>
+          <p>Keep a local contact list for your team, family or project. Type its name in To, Cc or Bcc to add the members as individual recipients, then adjust who gets this message.</p>
+        </section>
+        <section>
           <h3>Mail and calendar, side by side</h3>
-          <p>Plan your day, move events and answer invitations from the message. Write with formatting, Undo Send, Send Later and templates.</p>
+          <p>Plan your day, move events and answer invitations from the message. Write with formatting, Undo Send, Send Later and templates. Pasted text takes the composer's font and text color.</p>
         </section>
         <section>
           <h3>At home on the Mac</h3>
@@ -101,6 +109,7 @@
       <h2 id="install-title">Give Iris a place on your Mac.</h2>
       <p class="note">A free test build for Apple silicon Macs with macOS 26 or later.</p>
       <p class="install-download"><a class="button" href="https://github.com/AlbertoBarrago/iris/releases/download/v1.0.11/Iris-1.0.11.dmg">Download Iris 1.0.11</a></p>
+      <p class="note">Version 1.2.0 adds local contact lists and reply previews, improves long-message editing and Delete shortcuts, and lets you dismiss Follow Up suggestions. <a href="https://github.com/AlbertoBarrago/iris/releases/tag/v1.2.0">Read the release notes</a>.</p>
     <p class="note">The quickest way: paste this into Terminal. It fetches the newest build, puts Iris in Applications and opens it.</p>
     <pre class="command"><code>curl -fsSL https://albz.it/iris/install.sh | sh</code></pre>
     <p class="note">Or download the DMG above and drag Iris onto Applications. The test build is not signed with an Apple Developer ID yet, so macOS stops a copy downloaded in a browser. Choose <strong>Open Anyway</strong> beside Iris in <strong>System Settings &gt; Privacy &amp; Security</strong>, or clear the mark in Terminal:</p>
