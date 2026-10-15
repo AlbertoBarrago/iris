@@ -31,7 +31,14 @@ struct ThreadListView: View {
             // selection holds, so a click selects the row under it.
             List(model.listing?.rows ?? [], id: \.key, selection: $model.selection) { row in
                 let key = row.key
-                ThreadRowView(row: row)
+                VStack(alignment: .leading, spacing: 0) {
+                    ThreadRowView(row: row, expanded: model.expandedThreads.contains(key)) {
+                        if !model.expandedThreads.insert(key).inserted { model.expandedThreads.remove(key) }
+                    }
+                    if model.expandedThreads.contains(key) {
+                        ConversationSummaryView(row: row)
+                    }
+                }
                     // A drag from a picked row carries the whole selection,
                     // as Mail's list does; from any other row, that row.
                     .draggable(DraggedThreads.encode(model.selection.contains(key) ? Array(model.selection) : [key]))
@@ -150,6 +157,8 @@ struct CategoryBar: View {
 /// One conversation: who wrote last, when, the subject and the first words.
 struct ThreadRowView: View {
     let row: ListRow
+    var expanded = false
+    var toggle: () -> Void = {}
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -192,17 +201,92 @@ struct ThreadRowView: View {
                     Text(row.subject).fontWeight(row.unread ? .semibold : .regular).lineLimit(1)
                     Spacer(minLength: 4)
                     if row.messageCount > 1 {
-                        Text("\(row.messageCount)")
-                            .font(.caption.weight(.semibold))
+                        Button(action: toggle) {
+                            HStack(spacing: 3) {
+                                Image(systemName: expanded ? "chevron.down" : "chevron.right")
+                                    .font(.system(size: 8, weight: .bold))
+                                Text("\(row.messageCount)").font(.caption.weight(.semibold))
+                            }
                             .padding(.horizontal, 6)
-                            .padding(.vertical, 1)
+                            .padding(.vertical, 2)
                             .background(Capsule().fill(Color.secondary.opacity(0.2)))
+                        }
+                        .buttonStyle(.borderless)
+                        .help(expanded ? tr("Hide messages") : tr("Show messages"))
+                        .accessibilityLabel(expanded ? tr("Hide messages") : tr("Show messages"))
+                        .accessibilityValue(expanded ? tr("Expanded") : tr("Collapsed"))
                     }
                 }
                 Text(row.snippet).font(.callout).foregroundStyle(.secondary).lineLimit(2)
             }
         }
         .padding(.vertical, 6)
+    }
+}
+
+/// The metadata already on disk, loaded only while the conversation is
+/// expanded. Its buttons open mail; the count button only reveals rows.
+struct ConversationSummaryView: View {
+    @Environment(MailModel.self) private var model
+    let row: ListRow
+    @State private var summaries: [MessageSummary] = []
+    @State private var loading = true
+    @State private var failure: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if loading && summaries.isEmpty {
+                ProgressView(tr("Loading messages")).controlSize(.small).padding(8)
+            }
+            ForEach(summaries, id: \.id) { message in
+                Button { model.openMessage(message.id, in: row.key) } label: {
+                    HStack(alignment: .top, spacing: 8) {
+                        Circle().fill(message.unread ? Color.accentColor : .clear)
+                            .frame(width: 5, height: 5).padding(.top, 5)
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack {
+                                Text(message.sender)
+                                    .fontWeight(message.unread ? .semibold : .regular)
+                                    .lineLimit(1)
+                                Spacer(minLength: 8)
+                                Text(message.date).foregroundStyle(.secondary)
+                            }
+                            Text(message.snippet).foregroundStyle(.secondary).lineLimit(1)
+                        }
+                    }
+                    .font(.callout)
+                    .foregroundStyle(.primary)
+                    .padding(.vertical, 7)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+                .accessibilityElement(children: .combine)
+                Divider()
+            }
+            if !loading, summaries.isEmpty, failure == nil {
+                Text(tr("No message previews are stored on this Mac yet."))
+                    .font(.callout).foregroundStyle(.secondary).padding(.vertical, 8)
+            }
+            if let failure { Text(failure).font(.callout).foregroundStyle(.secondary).padding(.vertical, 8) }
+        }
+        .padding(.leading, 54)
+        .padding(.bottom, 6)
+        .task(id: row) {
+            loading = true
+            failure = nil
+            do {
+                let loaded = try await model.summaries(for: row.key)
+                try Task.checkCancellation()
+                summaries = loaded
+                loading = false
+            } catch {
+                guard !Task.isCancelled else { return }
+                failure = "\(error)"
+                loading = false
+            }
+        }
     }
 }
 

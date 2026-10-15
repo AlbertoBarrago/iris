@@ -65,7 +65,7 @@ struct ConversationView: View {
                         FindBar()
                         Divider()
                     }
-                    MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1, finder: model.finder) { url in model.followLink(url) }
+                    MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1, finder: model.finder, message: model.focusedMessage) { url in model.followLink(url) }
                         .frame(minHeight: 120)
                         .onKeyPress(characters: CharacterSet(charactersIn: "\u{7f}\u{8}\u{f728}"), phases: .down) { press in
                             guard press.modifiers.intersection([.command, .control, .option, .shift]).isEmpty,
@@ -214,6 +214,7 @@ struct MailPage: NSViewRepresentable {
     var zoom: Double = 1
     /// Finds in the page, for the find bar.
     var finder: PageFinder? = nil
+    var message: String? = nil
     /// What a click on one of the page's own `mailrs:` links asks for.
     var onLink: (URL) -> Void = { _ in }
 
@@ -247,13 +248,19 @@ struct MailPage: NSViewRepresentable {
     func updateNSView(_ view: WKWebView, context: Context) {
         if view.pageZoom != zoom { view.pageZoom = zoom }
         finder?.view = view
-        guard context.coordinator.loaded != html else { return }
+        let changed = context.coordinator.message != message
+        context.coordinator.message = message
+        guard context.coordinator.loaded != html else {
+            if changed, !view.isLoading { context.coordinator.scrollToMessage(in: view) }
+            return
+        }
         context.coordinator.loaded = html
         view.loadHTMLString(html, baseURL: nil)
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate {
         var loaded: String?
+        var message: String?
         let onLink: (URL) -> Void
         weak var finder: PageFinder?
 
@@ -263,8 +270,20 @@ struct MailPage: NSViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            scrollToMessage(in: webView)
             let finder = finder
             Task { @MainActor in finder?.pageLoaded() }
+        }
+
+        func scrollToMessage(in view: WKWebView) {
+            guard let message else { return }
+            Task { @MainActor in
+                guard self.message == message else { return }
+                _ = try? await view.callAsyncJavaScript(
+                    "document.getElementById(id)?.scrollIntoView({block: 'start'});",
+                    arguments: ["id": "m-" + message], in: nil, contentWorld: .defaultClient
+                )
+            }
         }
 
         func webView(

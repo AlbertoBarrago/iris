@@ -56,6 +56,8 @@ entries get their new names as they are next touched.
 
 **Listing**: one page of a mailbox, with its rows, its unread count, the title and subtitle the header shows, and what an empty list should say. `mailrs_sync::Mailboxes` produces it for the window and the assistant alike, so only it knows which mailboxes the store answers and which Gmail does. _Avoid_: result, page, query.
 
+**Message summary**: one message's sender, date, snippet and unread state beneath a conversation expanded in the list. `mailrs_ffi::MessageSummary` reads metadata already on this computer, without loading a body or marking mail read. Picking a summary opens that message in the reader. _Avoid_: body preview, downloaded message.
+
 **View**: the settings that change what a mailbox lists: conversation grouping, the inbox category on screen, whether Follow Up is on, the clock, and a row limit. `mailrs_sync::View`. _Avoid_: options, config, filter.
 
 **List feed**: what the thread list loads next, and which answers to that loading still count. It hands out the first page of the mailbox on screen, the next page once the reader scrolls to the end, and one refresh for a burst of change events, which re-reads the named threads, lists the mailbox again, or prunes a folder. `mailrs::ui::list_feed::ListFeed`. Every answer passes through it on its way to the window, and it drops the ones for a mailbox that has since left the screen. _Avoid_: loader, pager, generation.

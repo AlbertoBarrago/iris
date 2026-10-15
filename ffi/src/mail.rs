@@ -186,6 +186,16 @@ pub struct ListRow {
     pub account_color: Option<String>,
 }
 
+/// One message's metadata beneath an expanded conversation in the list.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct MessageSummary {
+    pub id: String,
+    pub sender: String,
+    pub date: String,
+    pub snippet: String,
+    pub unread: bool,
+}
+
 /// What the list shows for one mailbox.
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
 pub struct MailboxListing {

@@ -49,7 +49,7 @@ pub use prefs::{ChoiceItem, PreferenceChoices, Preferences, SignatureSetting, im
 
 pub use compose::{ComposeDraft, OutgoingFile, ReplyMode, RichBlock, RichSpan, Sender, Suggestion};
 
-pub use mail::{Action, ActionDone, AttachmentInfo, FilePart, ThreadRef, CategoryTab, ListRow, Mail, MailListener, MailboxListing, SidebarItem, bind_language, start_logging, translate};
+pub use mail::{Action, ActionDone, AttachmentInfo, FilePart, ThreadRef, CategoryTab, ListRow, Mail, MailListener, MailboxListing, MessageSummary, SidebarItem, bind_language, start_logging, translate};
 
 uniffi::setup_scaffolding!();
 
@@ -129,6 +129,20 @@ pub struct PageTheme {
 /// quoted history starts and ends.
 type Cleaned = (String, bool, Option<std::ops::Range<usize>>);
 
+/// Which messages the reader opens, including one picked from the list.
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct ConversationDisplay {
+    pub toggled: Vec<String>,
+    pub open_all: bool,
+    pub message: Option<String>,
+}
+
+impl ConversationDisplay {
+    fn expands(&self, id: &str, newest: bool, unread: bool) -> bool {
+        self.open_all || (newest || unread || self.message.as_deref() == Some(id)) != self.toggled.iter().any(|m| m == id)
+    }
+}
+
 /// A conversation's page, and whether its mail names pictures on the web
 /// that the page left out.
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
@@ -195,7 +209,7 @@ impl Store {
     /// nothing from the network.
     ///
     /// With `allow_remote`, pictures and styles on the web load too, as the
-    /// GTK app's Load Images does. The messages `toggled` names are drawn
+    /// GTK app's Load Images does. The messages `display.toggled` names are drawn
     /// the other way round: closed where they would open, open where they
     /// would stay closed.
     pub fn conversation_page(
@@ -204,8 +218,7 @@ impl Store {
         thread_id: String,
         theme: PageTheme,
         allow_remote: bool,
-        toggled: Vec<String>,
-        open_all: bool,
+        display: ConversationDisplay,
     ) -> Result<ConversationPage, CoreError> {
         // Cleaning a deeply nested newsletter recurses far, more than a
         // Swift task's thread holds, so the page is drawn on a thread with
@@ -213,7 +226,7 @@ impl Store {
         std::thread::scope(|scope| {
             std::thread::Builder::new()
                 .stack_size(16 * 1024 * 1024)
-                .spawn_scoped(scope, || self.draw(account_id, &thread_id, theme, allow_remote, &toggled, open_all))
+                .spawn_scoped(scope, || self.draw(account_id, &thread_id, theme, allow_remote, &display))
                 .map_err(|err| CoreError::Store(err.to_string()))?
                 .join()
                 .unwrap_or_else(|panic| std::panic::resume_unwind(panic))
@@ -229,8 +242,7 @@ impl Store {
         thread_id: &str,
         theme: PageTheme,
         allow_remote: bool,
-        toggled: &[String],
-        open_all: bool,
+        display: &ConversationDisplay,
     ) -> Result<ConversationPage, CoreError> {
         use mailrs_render::conversation::{
             self as page, BodyState, Head, MessageView, Sanitized, Theme,
@@ -311,7 +323,7 @@ impl Store {
                 body,
                 // Find in the conversation opens every message, so it
                 // finds what a closed one holds, as the GTK app's does.
-                expanded: open_all || (at == last || meta.is_unread()) != toggled.contains(&meta.id),
+                expanded: display.expands(&meta.id, at == last, meta.is_unread()),
                 thumbnails: &thumbnails,
                 sanitized: cleaned[at].as_ref().map(|(html, paints, history)| Sanitized {
                     html,
@@ -334,6 +346,23 @@ impl Store {
 
 #[uniffi::export]
 impl Store {
+
+    /// A conversation's metadata, oldest first, without reading bodies or
+    /// changing its unread state.
+    pub fn conversation_summaries(&self, account_id: i64, thread_id: String) -> Result<Vec<MessageSummary>, CoreError> {
+        let conn = self.conn();
+        let now = chrono::Local::now();
+        Ok(messages::thread_messages(&conn, account_id, &thread_id)?.into_iter().map(|meta| {
+            let unread = meta.is_unread();
+            MessageSummary {
+                id: meta.id,
+                sender: meta.from.map(|from| from.display().to_string()).unwrap_or_else(|| gettext("Unknown sender")),
+                date: mailrs_render::format::relative_date(meta.date, now),
+                snippet: meta.snippet,
+                unread,
+            }
+        }).collect())
+    }
 
     /// The messages of one conversation, oldest first.
     pub fn conversation(&self, account_id: i64, thread_id: String) -> Result<Vec<MessageItem>, CoreError> {
@@ -418,6 +447,47 @@ fn sender_photos(conn: &rusqlite::Connection, metas: &[mailrs_domain::MessageMet
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn expanding_a_conversation_reads_only_its_metadata_and_keeps_it_unread() {
+        use mailrs_domain::{Address, MessageMeta};
+        let conn = mailrs_store::open_in_memory().unwrap();
+        let a = accounts::insert_account(&conn, "a@example.com", 0).unwrap();
+        let b = accounts::insert_account(&conn, "b@example.com", 0).unwrap();
+        for (account, id, date, snippet) in [(a, "later", 2000, "Second reply"), (a, "first", 1000, "First reply"), (b, "first", 500, "Other account")] {
+            let meta = MessageMeta {
+                account_id: account, id: id.into(), thread_id: "t1".into(),
+                rfc822_msgid: None, from: Some(Address { name: Some("Ann".into()), email: "ann@example.com".into() }),
+                to: vec![], cc: vec![], subject: "Plans".into(), date, snippet: snippet.into(), size: 100,
+                has_attachments: false, held: Default::default(), roles: vec![], list_unsubscribe: None, one_click: false,
+            };
+            messages::apply(&conn, account, &[messages::Change::Upsert { meta: Box::new(meta), generation: 1 }]).unwrap();
+        }
+        let store = Store { conn: Mutex::new(conn) };
+        let summaries = store.conversation_summaries(a, "t1".into()).unwrap();
+        assert_eq!(summaries.iter().map(|m| m.id.as_str()).collect::<Vec<_>>(), ["first", "later"]);
+        assert_eq!(summaries[0].snippet, "First reply");
+        assert_eq!(summaries[0].sender, "Ann");
+        assert!(summaries.iter().all(|m| m.unread));
+        assert_eq!(store.conversation_summaries(b, "t1".into()).unwrap()[0].snippet, "Other account");
+        assert!(store.conversation_summaries(a, "missing".into()).unwrap().is_empty());
+        let conn = store.conn();
+        assert!(messages::thread_messages(&conn, a, "t1").unwrap().iter().all(|m| m.is_unread()));
+        assert!(bodies::peek_body(&conn, a, "first").unwrap().is_none());
+    }
+
+    #[test]
+    fn a_picked_message_opens_and_still_obeys_its_header_toggle() {
+        let mut display = ConversationDisplay { toggled: vec![], open_all: false, message: Some("first".into()) };
+        assert!(display.expands("first", false, false));
+        assert!(!display.expands("other", false, false));
+        assert!(display.expands("newest", true, false));
+        assert!(display.expands("unread", false, true));
+        display.toggled.push("first".into());
+        assert!(!display.expands("first", false, false));
+        display.open_all = true;
+        assert!(display.expands("first", false, false));
+    }
 
     #[test]
     fn a_store_written_by_the_app_reads_back_through_the_bridge() {

@@ -4112,27 +4112,31 @@ msgstr ""
 "Una versione più recente di Iris ha aggiornato la tua posta dopo l'ultima "
 "volta che hai usato questa. Aggiorna Iris per aprirla."
 
-#: ffi/src/mail.rs:467
+#: ffi/src/lib.rs:359
+msgid "Unknown sender"
+msgstr "Mittente sconosciuto"
+
+#: ffi/src/mail.rs:477
 msgid "Will remind you {when}"
 msgstr "Te lo ricorderà {when}"
 
-#: ffi/src/mail.rs:470
+#: ffi/src/mail.rs:480
 msgid "Back in the Inbox"
 msgstr "Di nuovo in Posta in arrivo"
 
-#: ffi/src/mail.rs:507
+#: ffi/src/mail.rs:517
 msgid "Could not cancel: {reason}"
 msgstr "Impossibile annullare: {reason}"
 
-#: ffi/src/mail.rs:531
+#: ffi/src/mail.rs:541
 msgid "Deleted. It will not be sent."
 msgstr "Eliminato. Non verrà inviato."
 
-#: ffi/src/mail.rs:532
+#: ffi/src/mail.rs:542
 msgid "Deleted. They will not be sent."
 msgstr "Eliminati. Non verranno inviati."
 
-#: ffi/src/mail.rs:541
+#: ffi/src/mail.rs:551
 msgid "Could not delete: {reason}"
 msgstr "Impossibile eliminare: {reason}"
 
@@ -4434,7 +4438,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:719
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:746
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -4987,15 +4991,15 @@ msgstr "Note"
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:326
-#: macos/Iris/ThreadListView.swift:327
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:410
+#: macos/Iris/ThreadListView.swift:411
 msgid "Close"
 msgstr "Chiudi"
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:106
-#: macos/Iris/ThreadListView.swift:109
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:113
+#: macos/Iris/ThreadListView.swift:116
 msgid "New Message"
 msgstr "Nuovo messaggio"
 
@@ -5216,8 +5220,8 @@ msgstr "Nessuna conversazione selezionata"
 msgid "Edit Draft"
 msgstr "Modifica bozza"
 
-#: macos/Iris/ConversationView.swift:123 macos/Iris/ConversationView.swift:325
-#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:257
+#: macos/Iris/ConversationView.swift:123 macos/Iris/ConversationView.swift:344
+#: macos/Iris/ThreadListView.swift:46 macos/Iris/ThreadListView.swift:341
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
@@ -5237,39 +5241,39 @@ msgstr "Da {sender}"
 msgid "From Anyone at {domain}"
 msgstr "Da chiunque su {domain}"
 
-#: macos/Iris/ConversationView.swift:317
+#: macos/Iris/ConversationView.swift:336
 msgid "Several Conversations Selected"
 msgstr "Più conversazioni selezionate"
 
-#: macos/Iris/ConversationView.swift:319
+#: macos/Iris/ConversationView.swift:338
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 
-#: macos/Iris/ConversationView.swift:329
+#: macos/Iris/ConversationView.swift:348
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
-#: macos/Iris/ConversationView.swift:484
+#: macos/Iris/ConversationView.swift:503
 msgid "Checked"
 msgstr "Verificata"
 
-#: macos/Iris/ConversationView.swift:485
+#: macos/Iris/ConversationView.swift:504
 msgid "Warning"
 msgstr "Avviso"
 
-#: macos/Iris/ConversationView.swift:486
+#: macos/Iris/ConversationView.swift:505
 msgid "Not checked"
 msgstr "Non verificata"
 
-#: macos/Iris/ConversationView.swift:502
+#: macos/Iris/ConversationView.swift:521
 msgid "Categorize Sender"
 msgstr "Classifica mittente"
 
-#: macos/Iris/ConversationView.swift:509
+#: macos/Iris/ConversationView.swift:528
 msgid "Block Sender…"
 msgstr "Blocca mittente…"
 
-#: macos/Iris/ConversationView.swift:518
+#: macos/Iris/ConversationView.swift:537
 msgid "Block"
 msgstr "Blocca"
 
@@ -5493,8 +5497,8 @@ msgstr "Nuova casella smart…"
 msgid "Export…"
 msgstr "Esporta…"
 
-#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:92
-#: macos/Iris/ThreadListView.swift:97
+#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:99
+#: macos/Iris/ThreadListView.swift:104
 msgid "Show Only Unread"
 msgstr "Mostra solo non letti"
 
@@ -5510,48 +5514,48 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:621
+#: macos/Iris/MailModel.swift:648
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:623
+#: macos/Iris/MailModel.swift:650
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:648 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:675 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:806
+#: macos/Iris/MailModel.swift:833
 msgid "Message discarded"
 msgstr "Messaggio scartato"
 
-#: macos/Iris/MailModel.swift:846
+#: macos/Iris/MailModel.swift:873
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:935
+#: macos/Iris/MailModel.swift:962
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1235
+#: macos/Iris/MailModel.swift:1267
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1274
+#: macos/Iris/MailModel.swift:1306
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1767
+#: macos/Iris/MailModel.swift:1799
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1772
+#: macos/Iris/MailModel.swift:1804
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1822
+#: macos/Iris/MailModel.swift:1854
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -6012,7 +6016,7 @@ msgstr "Segna come letto o non letto"
 msgid "Mute or unmute"
 msgstr "Silenzia o riattiva"
 
-#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:302
+#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:386
 msgid "Undo"
 msgstr "Annulla"
 
@@ -6084,8 +6088,8 @@ msgstr ""
 "La barra laterale mostra il nome al posto dell'indirizzo. Lascialo vuoto per "
 "usare l'indirizzo."
 
-#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:87
-#: macos/Iris/ThreadListView.swift:88
+#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:94
+#: macos/Iris/ThreadListView.swift:95
 msgid "Check for Mail"
 msgstr "Controlla la posta"
 
@@ -6243,11 +6247,35 @@ msgstr ""
 msgid "Body"
 msgstr "Testo"
 
-#: macos/Iris/ThreadListView.swift:105 macos/Iris/ThreadListView.swift:400
+#: macos/Iris/ThreadListView.swift:112 macos/Iris/ThreadListView.swift:484
 msgid "Search mail"
 msgstr "Cerca nella posta"
 
-#: macos/Iris/ThreadListView.swift:287
+#: macos/Iris/ThreadListView.swift:215 macos/Iris/ThreadListView.swift:216
+msgid "Hide messages"
+msgstr "Nascondi messaggi"
+
+#: macos/Iris/ThreadListView.swift:215 macos/Iris/ThreadListView.swift:216
+msgid "Show messages"
+msgstr "Mostra messaggi"
+
+#: macos/Iris/ThreadListView.swift:217
+msgid "Collapsed"
+msgstr "Compresso"
+
+#: macos/Iris/ThreadListView.swift:217
+msgid "Expanded"
+msgstr "Espanso"
+
+#: macos/Iris/ThreadListView.swift:239
+msgid "Loading messages"
+msgstr "Caricamento dei messaggi"
+
+#: macos/Iris/ThreadListView.swift:269
+msgid "No message previews are stored on this Mac yet."
+msgstr "Non ci sono ancora anteprime dei messaggi su questo Mac."
+
+#: macos/Iris/ThreadListView.swift:371
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
 
@@ -6436,10 +6464,6 @@ msgstr[1] "{count} messaggi"
 #: render/src/conversation.rs:203
 msgid "Summarize"
 msgstr "Riassumi"
-
-#: render/src/conversation.rs:245
-msgid "Unknown sender"
-msgstr "Mittente sconosciuto"
 
 #: render/src/conversation.rs:257
 msgid "Show or hide this message"

@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### New
+
+- Expand a conversation from its message count to preview each reply in the
+  list, then open the message you want to read.
+
 ### Fixed
 
 - Delete moves selected mail to the Trash from the message list or reader,

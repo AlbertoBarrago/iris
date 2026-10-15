@@ -7,7 +7,13 @@ import Observation
 @Observable
 final class MailModel {
     private(set) var sidebar: [SidebarItem] = []
-    private(set) var listing: MailboxListing?
+    private(set) var listing: MailboxListing? {
+        didSet { expandedThreads.formIntersection(Set(listing?.rows.map(\.key) ?? [])) }
+    }
+    var expandedThreads: Set<ThreadKey> = []
+    private(set) var focusedMessage: String?
+    private var requestedMessage: String?
+    private var conversationRequest = UUID()
     /// The open conversation as one page, drawn by the Rust core the way
     /// the GTK app draws it.
     private(set) var page: ConversationPage?
@@ -57,6 +63,7 @@ final class MailModel {
     var selectedMailbox: String? {
         didSet {
             guard selectedMailbox != oldValue else { return }
+            expandedThreads = []
             // Picking a mailbox ends a search and closes its bar, as in
             // the GTK app.
             if searching != nil { searchText = "" }
@@ -76,7 +83,7 @@ final class MailModel {
     }
     /// The search on screen, in place of the mailbox; nil shows the mailbox.
     private(set) var searching: String? {
-        didSet { if searching != oldValue { loadList() } }
+        didSet { if searching != oldValue { expandedThreads = []; loadList() } }
     }
     /// Whether the search on screen goes to the servers too, or only to
     /// the mail kept on this Mac.
@@ -85,17 +92,19 @@ final class MailModel {
     private(set) var suggestions: [SearchSuggestion] = []
     private var pause: Task<Void, Never>?
     var category: String? {
-        didSet { if category != oldValue { loadList() } }
+        didSet { if category != oldValue { expandedThreads = []; loadList() } }
     }
     /// Whether the list shows only unread mail, as Mail's message filter
     /// does. It holds from one mailbox to the next until turned off.
     var unreadOnly = false {
-        didSet { if unreadOnly != oldValue { loadList() } }
+        didSet { if unreadOnly != oldValue { expandedThreads = []; loadList() } }
     }
     /// The conversations picked in the list; one of them opens.
     var selection: Set<ThreadKey> = [] {
         didSet {
             if openThread != Self.single(oldValue) {
+                focusedMessage = requestedMessage
+                requestedMessage = nil
                 toggled = []
                 openHoldsDraft = false
                 // Another conversation closes the find bar and drops its
@@ -108,6 +117,24 @@ final class MailModel {
 
     /// The conversation on screen: the one picked, when only one is.
     var openThread: ThreadKey? { Self.single(selection) }
+
+    func summaries(for key: ThreadKey) async throws -> [MessageSummary] {
+        guard let store else { return [] }
+        return try await Task.detached {
+            try store.conversationSummaries(accountId: key.account, threadId: key.thread)
+        }.value
+    }
+
+    func openMessage(_ id: String, in key: ThreadKey) {
+        if selection == [key] {
+            focusedMessage = id
+            toggled = []
+            loadConversation()
+        } else {
+            requestedMessage = id
+            selection = [key]
+        }
+    }
 
     private static func single(_ keys: Set<ThreadKey>) -> ThreadKey? {
         keys.count == 1 ? keys.first : nil
@@ -700,7 +727,7 @@ final class MailModel {
         let theme = theme
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
         let page = try? await Task.detached {
-            try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, toggled: toggled, openAll: false)
+            try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, display: ConversationDisplay(toggled: toggled, openAll: false, message: nil))
         }.value
         // Bodies not fetched yet come from the server; the window asks
         // again once they are in.
@@ -1042,6 +1069,8 @@ final class MailModel {
     }
 
     fileprivate func loadConversation() {
+        let request = UUID()
+        conversationRequest = request
         guard let store, let key = openThread else {
             page = nil
             invitation = nil
@@ -1065,12 +1094,13 @@ final class MailModel {
         let remote = prefs?.remoteImages == "always" || remoteAllowed.contains(key)
         let toggled = toggled
         let openAll = findShown
+        let message = focusedMessage
         Task.detached {
             do {
-                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, toggled: toggled, openAll: openAll)
+                let page = try store.conversationPage(accountId: key.account, threadId: key.thread, theme: theme, allowRemote: remote, display: ConversationDisplay(toggled: toggled, openAll: openAll, message: message))
                 let draft = await self.mail?.holdsDraft(accountId: key.account, threadId: key.thread) ?? false
                 await MainActor.run {
-                    if self.openThread == key {
+                    if self.openThread == key, self.conversationRequest == request {
                         self.page = page
                         self.openHoldsDraft = draft
                     }
@@ -1081,12 +1111,14 @@ final class MailModel {
                     let came = (try? mail.fetchBodies(thread: ThreadRef(accountId: key.account, threadId: key.thread))) ?? 0
                     if came > 0 {
                         await MainActor.run {
-                            if self.openThread == key { self.loadConversation() }
+                            if self.openThread == key, self.conversationRequest == request { self.loadConversation() }
                         }
                     }
                 }
             } catch {
-                await MainActor.run { self.show(problem: error) }
+                await MainActor.run {
+                    if self.openThread == key, self.conversationRequest == request { self.show(problem: error) }
+                }
             }
         }
     }
