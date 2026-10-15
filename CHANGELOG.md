@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- Text pasted into the composer takes Iris's font and text color, including
+  plain text, and typing after it keeps the same style.
+
 ## 1.1.13 (2026-10-15)
 
 ### Improved
