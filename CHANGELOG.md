@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.0 (2026-10-15)
+
 ### New
 
 - Create local contact lists in Settings, Contacts, then choose a list in To,
