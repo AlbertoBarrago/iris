@@ -333,6 +333,10 @@ struct MailActionsMenu: View {
     let keys: Set<ThreadKey>
 
     var body: some View {
+        if model.inFollowUp {
+            Button(tr("Remove from Follow Up"), systemImage: "checkmark") { model.perform(.dismissFollowUp, on: keys) }
+            Divider()
+        }
         Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: keys) }
         Button(model.deleteWords, systemImage: "trash") { model.perform(.trash, on: keys) }
         Button(tr("Junk"), systemImage: "xmark.bin") { model.perform(.junk, on: keys) }

@@ -3887,27 +3887,27 @@ msgstr ""
 msgid "Unknown sender"
 msgstr ""
 
-#: ffi/src/mail.rs:477
+#: ffi/src/mail.rs:478
 msgid "Will remind you {when}"
 msgstr ""
 
-#: ffi/src/mail.rs:480
+#: ffi/src/mail.rs:481
 msgid "Back in the Inbox"
 msgstr ""
 
-#: ffi/src/mail.rs:517
+#: ffi/src/mail.rs:518
 msgid "Could not cancel: {reason}"
 msgstr ""
 
-#: ffi/src/mail.rs:541
+#: ffi/src/mail.rs:542
 msgid "Deleted. It will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:542
+#: ffi/src/mail.rs:543
 msgid "Deleted. They will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:551
+#: ffi/src/mail.rs:552
 msgid "Could not delete: {reason}"
 msgstr ""
 
@@ -4718,8 +4718,8 @@ msgstr ""
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:410
-#: macos/Iris/ThreadListView.swift:411
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:414
+#: macos/Iris/ThreadListView.swift:415
 msgid "Close"
 msgstr ""
 
@@ -4938,60 +4938,65 @@ msgstr ""
 msgid "Edit Draft"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:123 macos/Iris/ConversationView.swift:344
-#: macos/Iris/ThreadListView.swift:46 macos/Iris/ThreadListView.swift:341
+#: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:111
+#: macos/Iris/ThreadListView.swift:337
+msgid "Remove from Follow Up"
+msgstr ""
+
+#: macos/Iris/ConversationView.swift:127 macos/Iris/ConversationView.swift:348
+#: macos/Iris/ThreadListView.swift:46 macos/Iris/ThreadListView.swift:345
 msgid "Mark as Unread"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:151 macos/Iris/ConversationView.swift:167
+#: macos/Iris/ConversationView.swift:155 macos/Iris/ConversationView.swift:171
 msgid "Load Images"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:152
+#: macos/Iris/ConversationView.swift:156
 msgid "Always Load Images"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:153
+#: macos/Iris/ConversationView.swift:157
 msgid "From {sender}"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:157
+#: macos/Iris/ConversationView.swift:161
 msgid "From Anyone at {domain}"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:336
+#: macos/Iris/ConversationView.swift:340
 msgid "Several Conversations Selected"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:338
+#: macos/Iris/ConversationView.swift:342
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:348
+#: macos/Iris/ConversationView.swift:352
 msgid "Move to Trash"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:503
+#: macos/Iris/ConversationView.swift:507
 msgid "Checked"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:504
+#: macos/Iris/ConversationView.swift:508
 msgid "Warning"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:505
+#: macos/Iris/ConversationView.swift:509
 msgid "Not checked"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:521
+#: macos/Iris/ConversationView.swift:525
 msgid "Categorize Sender"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:528
+#: macos/Iris/ConversationView.swift:532
 msgid "Block Sender…"
 msgstr ""
 
-#: macos/Iris/ConversationView.swift:537
+#: macos/Iris/ConversationView.swift:541
 msgid "Block"
 msgstr ""
 
@@ -5249,27 +5254,27 @@ msgstr ""
 msgid "Sending…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:962
+#: macos/Iris/MailModel.swift:963
 msgid "Cancel Send"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1267
+#: macos/Iris/MailModel.swift:1268
 msgid "Translating…"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1306
+#: macos/Iris/MailModel.swift:1307
 msgid "This Mac cannot translate this message: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1799
+#: macos/Iris/MailModel.swift:1800
 msgid "Removed {account}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1804
+#: macos/Iris/MailModel.swift:1805
 msgid "Could not remove {account}: {reason}"
 msgstr ""
 
-#: macos/Iris/MailModel.swift:1854
+#: macos/Iris/MailModel.swift:1855
 msgid "{account} is signed in again."
 msgstr ""
 
@@ -5718,7 +5723,7 @@ msgstr ""
 msgid "Mute or unmute"
 msgstr ""
 
-#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:386
+#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:390
 msgid "Undo"
 msgstr ""
 
@@ -5942,7 +5947,7 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: macos/Iris/ThreadListView.swift:112 macos/Iris/ThreadListView.swift:484
+#: macos/Iris/ThreadListView.swift:112 macos/Iris/ThreadListView.swift:488
 msgid "Search mail"
 msgstr ""
 
@@ -5970,7 +5975,7 @@ msgstr ""
 msgid "No message previews are stored on this Mac yet."
 msgstr ""
 
-#: macos/Iris/ThreadListView.swift:371
+#: macos/Iris/ThreadListView.swift:375
 msgid "Clear Flag"
 msgstr ""
 

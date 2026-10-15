@@ -954,6 +954,7 @@ final class MailModel {
     /// cancels the sending or the reminder.
     var inSendLater: Bool { selectedMailbox == "Scheduled" }
     var inReminders: Bool { selectedMailbox == "Reminders" }
+    var inFollowUp: Bool { sidebar.contains { $0.key == selectedMailbox && $0.icon == "follow-up" } }
     /// A Trash, unified or one account's, where Delete erases for good.
     var inTrash: Bool { selectedMailbox?.contains("folder: Trash") ?? false }
 
@@ -1005,7 +1006,7 @@ final class MailModel {
     /// Whether an action takes the mail out of the list on screen.
     private static func leavesList(_ action: Action) -> Bool {
         switch action {
-        case .archive, .trash, .junk, .mute: true
+        case .archive, .trash, .junk, .mute, .dismissFollowUp: true
         default: false
         }
     }

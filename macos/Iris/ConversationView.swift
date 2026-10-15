@@ -106,6 +106,10 @@ struct ConversationView: View {
             }
             ToolbarItemGroup {
                 Group {
+                    if model.inFollowUp {
+                        Button(tr("Remove from Follow Up"), systemImage: "checkmark") { model.perform(.dismissFollowUp) }
+                            .help(tr("Remove from Follow Up"))
+                    }
                     Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive) }
                         .help(tr("Archive"))
                         .keyboardShortcut("a", modifiers: [.command, .option])

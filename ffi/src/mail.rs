@@ -114,6 +114,7 @@ pub enum Action {
     Remind { at: i64 },
     /// Drop the reminder and put the conversation back in the inbox now.
     CancelReminder,
+    DismissFollowUp,
 }
 
 /// When something happens later, with the words a menu shows for it.
@@ -1175,6 +1176,7 @@ fn mail_action(action: Action) -> MailAction {
         Action::Unmute => MailAction::Mute { muted: false },
         Action::Remind { at } => MailAction::Remind { at },
         Action::CancelReminder => MailAction::CancelReminder,
+        Action::DismissFollowUp => MailAction::DismissFollowUp,
     }
 }
 
@@ -1357,6 +1359,44 @@ mod tests {
     use std::sync::Arc;
 
     use super::Mail;
+
+    #[test]
+    fn dismissing_a_follow_up_survives_reopening_without_changing_the_email() {
+        use super::{Action, ThreadRef};
+        use mailrs_store::{follow_ups, messages};
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("mailrs.db").display().to_string();
+        let mail = Mail::open_demo(path.clone()).unwrap();
+        let now = mailrs_sync::now_millis();
+        let db = mail.db.clone();
+        let waiting = mail.run(async move { db.read(move |c| follow_ups::waiting(c, now)).await }).unwrap();
+        let first = waiting.first().expect("demo has a pending follow-up").clone();
+        let account = first.account_id;
+        let thread = first.thread_id.clone();
+        let db = mail.db.clone();
+        let before = mail.run(async move { db.read(move |c| messages::thread_messages(c, account, &thread)).await }).unwrap();
+        let target = ThreadRef { account_id: account, thread_id: first.thread_id.clone() };
+        let done = mail.act(vec![target.clone()], Action::DismissFollowUp, None);
+        assert_eq!(done.done, 1);
+        assert!(done.failed.is_none());
+        let id = first.thread_id.clone();
+        let db = mail.db.clone();
+        let after = mail.run(async move { db.read(move |c| {
+            assert!(!follow_ups::waiting(c, now)?.iter().any(|f| f.account_id == account && f.thread_id == id));
+            messages::thread_messages(c, account, &id)
+        }).await }).unwrap();
+        assert_eq!(before, after, "dismissal changes no message or mailbox");
+        assert_eq!(mail.undo().expect("dismissal can be undone").done, 1);
+        let db = mail.db.clone();
+        let id = first.thread_id.clone();
+        assert!(mail.run(async move { db.read(move |c| follow_ups::waiting(c, now)).await }).unwrap().iter().any(|f| f.account_id == account && f.thread_id == id));
+        assert_eq!(mail.act(vec![target], Action::DismissFollowUp, None).done, 1);
+        drop(mail);
+        let mail = Mail::open(path).unwrap();
+        let id = first.thread_id;
+        let db = mail.db.clone();
+        assert!(!mail.run(async move { db.read(move |c| follow_ups::waiting(c, now)).await }).unwrap().iter().any(|f| f.account_id == account && f.thread_id == id));
+    }
 
     /// The assistant's tools run on a thread that drives a current-thread
     /// runtime, and they start, sign and send drafts through `Mail`. With
