@@ -61,6 +61,11 @@ if [ -z "$public_key" ]; then
 fi
 
 command -v xcodegen >/dev/null || { echo "xcodegen is missing: brew install xcodegen" >&2; exit 1; }
+# xcodegen lists the files in macos/Iris when it runs, and the Swift
+# bindings land there only when the core is built. A fresh checkout has
+# none yet, so the core is built first; Xcode's own run of the script
+# then finds nothing to do.
+scripts/build-ffi.sh release
 (cd macos && xcodegen generate -q &&
     xcodebuild -project Iris.xcodeproj -scheme Iris -configuration Release -derivedDataPath build build -quiet)
 built="macos/build/Build/Products/Release/Iris.app"
