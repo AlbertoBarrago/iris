@@ -4,7 +4,7 @@
 #
 #   1. a GitHub release, tag v<version> on main, holding the DMG and the
 #      deltas the appcast names, with the version's CHANGELOG.md section as
-#      its notes;
+#      its notes; the tag goes on IRIS_RELEASE_TARGET, by default main;
 #   2. the download page on GitHub Pages: site/, the appcast and the
 #      installer, pushed as the one commit of the gh-pages branch.
 #
@@ -44,7 +44,7 @@ done
 if gh release view "$tag" --repo "$repo" >/dev/null 2>&1; then
     gh release upload "$tag" "${assets[@]}" --repo "$repo" --clobber
 else
-    gh release create "$tag" "${assets[@]}" --repo "$repo" --target main \
+    gh release create "$tag" "${assets[@]}" --repo "$repo" --target "${IRIS_RELEASE_TARGET:-main}" \
         --title "Iris $version" --notes-file "$notes"
 fi
 

@@ -16,7 +16,10 @@
 # keeps in the login Keychain, signs the app again, and writes
 # target/dmg/appcast.xml for every DMG in target/dmg, each pointing at
 # IRIS_DOWNLOAD_URL, by default this version's GitHub release.
-# scripts/macos-publish.sh puts them there. Sparkle offers a DMG only when
+# scripts/macos-publish.sh puts them there. The release workflow has no
+# login Keychain to read the key from, so it passes the public half in
+# IRIS_SPARKLE_PUBLIC_KEY and the private half in
+# IRIS_SPARKLE_PRIVATE_KEY. Sparkle offers a DMG only when
 # its CFBundleVersion, the version in Cargo.toml, is newer than the
 # running one.
 set -euo pipefail
@@ -51,8 +54,11 @@ if [ ! -d "$sparkle/Sparkle.framework" ]; then
     tar -xJf "$sparkle/Sparkle.tar.xz" -C "$sparkle"
 fi
 # The public half of the signing key; the private half stays in the Keychain.
-public_key="$("$sparkle/bin/generate_keys" -p 2>/dev/null)" ||
-    { echo "No Sparkle key in the Keychain; run $sparkle/bin/generate_keys once" >&2; exit 1; }
+public_key="${IRIS_SPARKLE_PUBLIC_KEY:-}"
+if [ -z "$public_key" ]; then
+    public_key="$("$sparkle/bin/generate_keys" -p 2>/dev/null)" ||
+        { echo "No Sparkle key in the Keychain; run $sparkle/bin/generate_keys once" >&2; exit 1; }
+fi
 
 command -v xcodegen >/dev/null || { echo "xcodegen is missing: brew install xcodegen" >&2; exit 1; }
 (cd macos && xcodegen generate -q &&
@@ -90,7 +96,13 @@ rm -rf "$staging"
 cp packaging/macos/install.sh "$out/install.sh"
 # The feed offers the newest build alone, with deltas from the three
 # before it, all on this version's release, and testers download a few MB.
-"$sparkle/bin/generate_appcast" --download-url-prefix "$download_url" \
-    --maximum-versions 1 --maximum-deltas 3 "$out" >&2
+appcast=("$sparkle/bin/generate_appcast" --download-url-prefix "$download_url"
+    --maximum-versions 1 --maximum-deltas 3)
+if [ -n "${IRIS_SPARKLE_PRIVATE_KEY:-}" ]; then
+    # Read from standard input, so the key never lands in a file.
+    printf '%s' "$IRIS_SPARKLE_PRIVATE_KEY" | "${appcast[@]}" --ed-key-file - "$out" >&2
+else
+    "${appcast[@]}" "$out" >&2
+fi
 echo "$dmg (macOS $minimum or later, Apple silicon)"
 echo "Publish it with: scripts/macos-publish.sh"

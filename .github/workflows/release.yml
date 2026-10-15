@@ -1,0 +1,124 @@
+name: Release
+
+# Builds, signs and publishes the version Cargo.toml names, the way
+# scripts/macos-dmg.sh and scripts/macos-publish.sh do on the owner's Mac:
+# bump the version, commit and push main, then run this workflow from the
+# Actions tab or with `gh workflow run release.yml`.
+#
+# The signing certificate, the Sparkle key and the OAuth clients live in
+# the `release` environment, which only main may use. A pull request never
+# reaches them: whoever holds the Sparkle key can sign an update that every
+# installed copy accepts.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    name: Build and publish
+    needs: gate
+    if: github.ref == 'refs/heads/main'
+    # Xcode 26 builds the app and its Icon Composer icon.
+    runs-on: macos-26
+    timeout-minutes: 90
+    environment: release
+    permissions:
+      contents: write
+      pages: read
+    env:
+      CARGO_TERM_COLOR: always
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check the version is new
+        run: |
+          version="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)"
+          if gh release view "v$version" >/dev/null 2>&1; then
+              echo "::error::Iris $version is already released; bump Cargo.toml first"
+              exit 1
+          fi
+          echo "Releasing Iris $version"
+          xcodebuild -version
+
+      # xcodegen writes the project; gettext and xtr compile the catalogs
+      # the app bundles from target/locale.
+      - name: Install build dependencies
+        run: brew install xcodegen gettext
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98 --profile minimal
+          rustup default 1.98
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          shared-key: release
+      - name: Install xtr
+        run: cargo install --locked xtr --version 0.1.11
+      - name: Compile the translations
+        run: scripts/update-po.sh
+
+      # A keychain of the run's own, holding the Apple Development
+      # certificate project.yml signs with, removed when the job ends.
+      - name: Import the signing certificate
+        env:
+          APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          password="$(uuidgen)"
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          printf '%s' "$APPLE_CERTIFICATE_P12" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security import "$RUNNER_TEMP/certificate.p12" -k "$keychain" \
+              -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          rm "$RUNNER_TEMP/certificate.p12"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$password" "$keychain" >/dev/null
+          # shellcheck disable=SC2046
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          security find-identity -v -p codesigning "$keychain"
+
+      # Sparkle makes deltas from the three releases before this one, so
+      # their DMGs go where scripts/macos-dmg.sh looks for them.
+      - name: Fetch the previous DMGs
+        run: |
+          mkdir -p target/dmg
+          gh release list --limit 3 --exclude-drafts --exclude-pre-releases \
+              --json tagName --jq '.[].tagName' |
+              while read -r tag; do
+                  gh release download "$tag" --pattern 'Iris-*.dmg' --dir target/dmg
+              done
+          ls target/dmg
+
+      - name: Build the DMG and the appcast
+        env:
+          IRIS_GOOGLE_CLIENT_ID: ${{ secrets.IRIS_GOOGLE_CLIENT_ID }}
+          IRIS_GOOGLE_CLIENT_SECRET: ${{ secrets.IRIS_GOOGLE_CLIENT_SECRET }}
+          IRIS_MICROSOFT_CLIENT_ID: ${{ secrets.IRIS_MICROSOFT_CLIENT_ID }}
+          IRIS_SPARKLE_PUBLIC_KEY: ${{ vars.SPARKLE_PUBLIC_KEY }}
+          IRIS_SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: scripts/macos-dmg.sh
+
+      # The tag goes on the commit this run built, even if main has moved
+      # on since.
+      - name: Publish the release and the page
+        env:
+          IRIS_RELEASE_TARGET: ${{ github.sha }}
+        run: |
+          git config --global user.name "Alberto Barrago"
+          git config --global user.email "albertobarrago@gmail.com"
+          gh auth setup-git
+          scripts/macos-publish.sh
+
+      - name: Remove the signing keychain
+        if: always()
+        run: security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true

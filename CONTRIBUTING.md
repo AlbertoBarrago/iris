@@ -150,6 +150,20 @@ Then:
    `IRIS_DOWNLOAD_URL` and `IRIS_APPCAST_URL` change where the feed and the
    app look.
 
+GitHub can do steps 2 and 3 instead. After step 1, commit and push
+`main`, then run the Release workflow from the Actions tab, or
+`gh workflow run release.yml`. It runs the gate, fetches the DMGs of the
+three releases before, builds and signs on a macOS 26 runner, and
+publishes the same way. It reads these from the `release` environment,
+which only `main` may use:
+
+- secrets `APPLE_CERTIFICATE_P12` (the Apple Development certificate and
+  its key, exported as `.p12` and base64-encoded),
+  `APPLE_CERTIFICATE_PASSWORD`, `SPARKLE_PRIVATE_KEY` (from
+  `generate_keys -x`), `IRIS_GOOGLE_CLIENT_ID`,
+  `IRIS_GOOGLE_CLIENT_SECRET` and `IRIS_MICROSOFT_CLIENT_ID`;
+- the variable `SPARKLE_PUBLIC_KEY` (from `generate_keys -p`).
+
 Every copy installed from a DMG checks the feed once a day, and
 **Check for Updates…** in the Iris menu checks at once.
 
