@@ -7,6 +7,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- Delete moves selected mail to the Trash from the message list or reader,
+  instead of playing the system alert sound.
 - Text pasted into the composer takes Iris's font and text color, including
   plain text, and typing after it keeps the same style.
 

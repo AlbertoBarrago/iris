@@ -4570,15 +4570,15 @@ msgstr "Notes"
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:320
-#: macos/Iris/ThreadListView.swift:321
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:326
+#: macos/Iris/ThreadListView.swift:327
 msgid "Close"
 msgstr "Close"
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:100
-#: macos/Iris/ThreadListView.swift:103
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:106
+#: macos/Iris/ThreadListView.swift:109
 msgid "New Message"
 msgstr "New Message"
 
@@ -4777,68 +4777,68 @@ msgstr "Remote images are hidden to protect your privacy"
 msgid "This message is from a mailing list"
 msgstr "This message is from a mailing list"
 
-#: macos/Iris/ConversationView.swift:72
+#: macos/Iris/ConversationView.swift:78
 msgid "No Conversation Selected"
 msgstr "No Conversation Selected"
 
-#: macos/Iris/ConversationView.swift:80 macos/Iris/ConversationView.swift:81
+#: macos/Iris/ConversationView.swift:86 macos/Iris/ConversationView.swift:87
 msgid "Edit Draft"
 msgstr "Edit Draft"
 
-#: macos/Iris/ConversationView.swift:117 macos/Iris/ConversationView.swift:319
-#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:251
+#: macos/Iris/ConversationView.swift:123 macos/Iris/ConversationView.swift:325
+#: macos/Iris/ThreadListView.swift:39 macos/Iris/ThreadListView.swift:257
 msgid "Mark as Unread"
 msgstr "Mark as Unread"
 
-#: macos/Iris/ConversationView.swift:145 macos/Iris/ConversationView.swift:161
+#: macos/Iris/ConversationView.swift:151 macos/Iris/ConversationView.swift:167
 msgid "Load Images"
 msgstr "Load Images"
 
-#: macos/Iris/ConversationView.swift:146
+#: macos/Iris/ConversationView.swift:152
 msgid "Always Load Images"
 msgstr "Always Load Images"
 
-#: macos/Iris/ConversationView.swift:147
+#: macos/Iris/ConversationView.swift:153
 msgid "From {sender}"
 msgstr "From {sender}"
 
-#: macos/Iris/ConversationView.swift:151
+#: macos/Iris/ConversationView.swift:157
 msgid "From Anyone at {domain}"
 msgstr "From Anyone at {domain}"
 
-#: macos/Iris/ConversationView.swift:311
+#: macos/Iris/ConversationView.swift:317
 msgid "Several Conversations Selected"
 msgstr "Several Conversations Selected"
 
-#: macos/Iris/ConversationView.swift:313
+#: macos/Iris/ConversationView.swift:319
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Actions and shortcuts apply to all of them. Esc clears the selection."
 
-#: macos/Iris/ConversationView.swift:323
+#: macos/Iris/ConversationView.swift:329
 msgid "Move to Trash"
 msgstr "Move to Trash"
 
-#: macos/Iris/ConversationView.swift:478
+#: macos/Iris/ConversationView.swift:484
 msgid "Checked"
 msgstr "Checked"
 
-#: macos/Iris/ConversationView.swift:479
+#: macos/Iris/ConversationView.swift:485
 msgid "Warning"
 msgstr "Warning"
 
-#: macos/Iris/ConversationView.swift:480
+#: macos/Iris/ConversationView.swift:486
 msgid "Not checked"
 msgstr "Not checked"
 
-#: macos/Iris/ConversationView.swift:496
+#: macos/Iris/ConversationView.swift:502
 msgid "Categorize Sender"
 msgstr "Categorise Sender"
 
-#: macos/Iris/ConversationView.swift:503
+#: macos/Iris/ConversationView.swift:509
 msgid "Block Sender…"
 msgstr "Block Sender…"
 
-#: macos/Iris/ConversationView.swift:512
+#: macos/Iris/ConversationView.swift:518
 msgid "Block"
 msgstr "Block"
 
@@ -5058,8 +5058,8 @@ msgstr "New Smart Mailbox…"
 msgid "Export…"
 msgstr "Export…"
 
-#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:86
-#: macos/Iris/ThreadListView.swift:91
+#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:92
+#: macos/Iris/ThreadListView.swift:97
 msgid "Show Only Unread"
 msgstr "Show Only Unread"
 
@@ -5559,7 +5559,7 @@ msgstr "Mark read or unread"
 msgid "Mute or unmute"
 msgstr "Mute or unmute"
 
-#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:296
+#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:302
 msgid "Undo"
 msgstr "Undo"
 
@@ -5627,8 +5627,8 @@ msgstr "Name This Account"
 msgid "The sidebar shows the name instead of the address. Leave it empty for the address."
 msgstr "The sidebar shows the name instead of the address. Leave it empty for the address."
 
-#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:81
-#: macos/Iris/ThreadListView.swift:82
+#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:87
+#: macos/Iris/ThreadListView.swift:88
 msgid "Check for Mail"
 msgstr "Check for Mail"
 
@@ -5776,11 +5776,11 @@ msgstr "The subject is optional. A template with one gives it to a message that 
 msgid "Body"
 msgstr "Body"
 
-#: macos/Iris/ThreadListView.swift:99 macos/Iris/ThreadListView.swift:394
+#: macos/Iris/ThreadListView.swift:105 macos/Iris/ThreadListView.swift:400
 msgid "Search mail"
 msgstr "Search mail"
 
-#: macos/Iris/ThreadListView.swift:281
+#: macos/Iris/ThreadListView.swift:287
 msgid "Clear Flag"
 msgstr "Clear Flag"
 

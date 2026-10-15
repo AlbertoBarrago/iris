@@ -67,6 +67,12 @@ struct ConversationView: View {
                     }
                     MailPage(html: page.html, pictures: model.pictures, zoom: model.prefs?.textZoom ?? 1, finder: model.finder) { url in model.followLink(url) }
                         .frame(minHeight: 120)
+                        .onKeyPress(characters: CharacterSet(charactersIn: "\u{7f}\u{8}\u{f728}"), phases: .down) { press in
+                            guard press.modifiers.intersection([.command, .control, .option, .shift]).isEmpty,
+                                  !model.selection.isEmpty else { return .ignored }
+                            model.perform(.trash)
+                            return .handled
+                        }
                 }
             } else {
                 ContentUnavailableView(tr("No Conversation Selected"), systemImage: "envelope")

@@ -55,7 +55,13 @@ struct ThreadListView: View {
                 // window of its own, as in the GTK app.
                 for key in keys { model.openInWindow(key) }
             }
-            .onDeleteCommand { model.perform(.trash) }
+            // Handle backward Delete as well as the system's forward Delete.
+            .onKeyPress(characters: CharacterSet(charactersIn: "\u{7f}\u{8}\u{f728}"), phases: .down) { press in
+                guard press.modifiers.intersection([.command, .control, .option, .shift]).isEmpty,
+                      !model.selection.isEmpty else { return .ignored }
+                model.perform(.trash)
+                return .handled
+            }
             .onExitCommand { model.selection = [] }
             // The GTK app's one-key shortcuts while the list has the keys.
             .onKeyPress(characters: ["e", "u", "M", "l"]) { press in
