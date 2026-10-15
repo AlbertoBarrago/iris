@@ -5,6 +5,13 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.1.13 (2026-10-15)
+
+### Improved
+
+- In Italian, All Inboxes now reads "In arrivo (tutti)", short enough for the
+  sidebar.
+
 ## 1.1.12 (2026-10-14)
 
 ### New
