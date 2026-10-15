@@ -27,40 +27,39 @@ struct ThreadListView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
             }
-            // Rows are known by their conversation, the same key the
-            // selection holds, so a click selects the row under it.
-            List(model.listing?.rows ?? [], id: \.key, selection: $model.selection) { row in
-                let key = row.key
-                VStack(alignment: .leading, spacing: 0) {
+            List(selection: $model.listSelection) {
+                ForEach(model.listing?.rows ?? [], id: \.key) { row in
+                    let key = row.key
                     ThreadRowView(row: row, expanded: model.expandedThreads.contains(key)) {
                         if !model.expandedThreads.insert(key).inserted { model.expandedThreads.remove(key) }
                     }
+                        .tag(ThreadListPick(key: key))
+                        // A drag from a picked row carries the whole selection,
+                        // as Mail's list does; from any other row, that row.
+                        .draggable(DraggedThreads.encode(model.selection.contains(key) ? Array(model.selection) : [key]))
+                        .swipeActions(edge: .leading) {
+                            Button(row.unread ? tr("Mark as Read") : tr("Mark as Unread"), systemImage: row.unread ? "envelope.open" : "envelope.badge") {
+                                model.perform(row.unread ? .markRead : .markUnread, on: [key])
+                            }
+                            .tint(.blue)
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button(model.deleteWords, systemImage: "trash", role: .destructive) { model.perform(.trash, on: [key]) }
+                            Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: [key]) }
+                                .tint(.purple)
+                        }
                     if model.expandedThreads.contains(key) {
                         ConversationSummaryView(row: row)
                     }
                 }
-                    // A drag from a picked row carries the whole selection,
-                    // as Mail's list does; from any other row, that row.
-                    .draggable(DraggedThreads.encode(model.selection.contains(key) ? Array(model.selection) : [key]))
-                    .swipeActions(edge: .leading) {
-                        Button(row.unread ? tr("Mark as Read") : tr("Mark as Unread"), systemImage: row.unread ? "envelope.open" : "envelope.badge") {
-                            model.perform(row.unread ? .markRead : .markUnread, on: [key])
-                        }
-                        .tint(.blue)
-                    }
-                    .swipeActions(edge: .trailing) {
-                        Button(model.deleteWords, systemImage: "trash", role: .destructive) { model.perform(.trash, on: [key]) }
-                        Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: [key]) }
-                            .tint(.purple)
-                    }
             }
             .listStyle(.inset)
-            .contextMenu(forSelectionType: ThreadKey.self) { keys in
-                MailActionsMenu(keys: keys)
-            } primaryAction: { keys in
+            .contextMenu(forSelectionType: ThreadListPick.self) { picks in
+                MailActionsMenu(keys: Set(picks.map(\.key)))
+            } primaryAction: { picks in
                 // A double click or Return opens the conversation in a
                 // window of its own, as in the GTK app.
-                for key in keys { model.openInWindow(key) }
+                for key in Set(picks.map(\.key)) { model.openInWindow(key) }
             }
             // Handle backward Delete as well as the system's forward Delete.
             .onKeyPress(characters: CharacterSet(charactersIn: "\u{7f}\u{8}\u{f728}"), phases: .down) { press in
@@ -232,11 +231,13 @@ struct ConversationSummaryView: View {
     @State private var summaries: [MessageSummary] = []
     @State private var loading = true
     @State private var failure: String?
+    @State private var requestedRow: ListRow?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        Group {
             if loading && summaries.isEmpty {
                 ProgressView(tr("Loading messages")).controlSize(.small).padding(8)
+                    .selectionDisabled()
             }
             ForEach(summaries, id: \.id) { message in
                 Button { model.openMessage(message.id, in: row.key) } label: {
@@ -262,8 +263,20 @@ struct ConversationSummaryView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.borderless)
+                .tag(ThreadListPick(key: row.key, message: message.id))
                 .accessibilityElement(children: .combine)
-                Divider()
+                .draggable(DraggedThreads.encode(model.selection.contains(row.key) ? Array(model.selection) : [row.key]))
+                .swipeActions(edge: .leading) {
+                    Button(row.unread ? tr("Mark as Read") : tr("Mark as Unread"), systemImage: row.unread ? "envelope.open" : "envelope.badge") {
+                        model.perform(row.unread ? .markRead : .markUnread, on: [row.key])
+                    }
+                    .tint(.blue)
+                }
+                .swipeActions(edge: .trailing) {
+                    Button(model.deleteWords, systemImage: "trash", role: .destructive) { model.perform(.trash, on: [row.key]) }
+                    Button(tr("Archive"), systemImage: "archivebox") { model.perform(.archive, on: [row.key]) }
+                        .tint(.purple)
+                }
             }
             if !loading, summaries.isEmpty, failure == nil {
                 Text(tr("No message previews are stored on this Mac yet."))
@@ -273,7 +286,14 @@ struct ConversationSummaryView: View {
         }
         .padding(.leading, 54)
         .padding(.bottom, 6)
+        .onDisappear {
+            if !model.expandedThreads.contains(row.key) { requestedRow = nil }
+        }
         .task(id: row) {
+            // A Group gives the task to each native row. One request
+            // loads this conversation, including when it ends in error.
+            guard requestedRow != row else { return }
+            requestedRow = row
             loading = true
             failure = nil
             do {
@@ -282,7 +302,10 @@ struct ConversationSummaryView: View {
                 summaries = loaded
                 loading = false
             } catch {
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else {
+                    if requestedRow == row { requestedRow = nil }
+                    return
+                }
                 failure = "\(error)"
                 loading = false
             }

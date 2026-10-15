@@ -118,6 +118,31 @@ final class MailModel {
     /// The conversation on screen: the one picked, when only one is.
     var openThread: ThreadKey? { Self.single(selection) }
 
+    /// The list draws a selected message on its own row. Mail actions
+    /// still use the conversations in `selection`.
+    var listSelection: Set<ThreadListPick> {
+        get {
+            Set(selection.map { key in
+                ThreadListPick(key: key, message: openThread == key && expandedThreads.contains(key) ? focusedMessage : nil)
+            })
+        }
+        set {
+            if newValue.count == 1, let picked = newValue.first, let message = picked.message {
+                openMessage(message, in: picked.key)
+                return
+            }
+            let previous = openThread
+            let hadMessage = focusedMessage != nil
+            focusedMessage = nil
+            requestedMessage = nil
+            selection = Set(newValue.map(\.key))
+            if hadMessage, openThread == previous {
+                toggled = []
+                loadConversation()
+            }
+        }
+    }
+
     func summaries(for key: ThreadKey) async throws -> [MessageSummary] {
         guard let store else { return [] }
         return try await Task.detached {
@@ -1625,6 +1650,12 @@ struct Toast: Equatable {
     /// The question after sending, with Save, about the recipients the
     /// address book lacks.
     var offer: SaveOffer? = nil
+}
+
+/// A conversation or one of its messages as a selectable list row.
+struct ThreadListPick: Hashable {
+    let key: ThreadKey
+    var message: String? = nil
 }
 
 /// A conversation, by the account it belongs to and its id.

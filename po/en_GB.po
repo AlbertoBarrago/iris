@@ -4069,7 +4069,7 @@ msgstr "Ask Before Acting"
 msgid "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 msgstr "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:746
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:771
 msgid "Conversation"
 msgstr "Conversation"
 
@@ -4588,15 +4588,15 @@ msgstr "Notes"
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:414
-#: macos/Iris/ThreadListView.swift:415
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:437
+#: macos/Iris/ThreadListView.swift:438
 msgid "Close"
 msgstr "Close"
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:113
-#: macos/Iris/ThreadListView.swift:116
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:112
+#: macos/Iris/ThreadListView.swift:115
 msgid "New Message"
 msgstr "New Message"
 
@@ -4868,12 +4868,13 @@ msgid "Edit Draft"
 msgstr "Edit Draft"
 
 #: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:111
-#: macos/Iris/ThreadListView.swift:337
+#: macos/Iris/ThreadListView.swift:360
 msgid "Remove from Follow Up"
 msgstr "Remove from Follow Up"
 
 #: macos/Iris/ConversationView.swift:127 macos/Iris/ConversationView.swift:348
-#: macos/Iris/ThreadListView.swift:46 macos/Iris/ThreadListView.swift:345
+#: macos/Iris/ThreadListView.swift:41 macos/Iris/ThreadListView.swift:270
+#: macos/Iris/ThreadListView.swift:368
 msgid "Mark as Unread"
 msgstr "Mark as Unread"
 
@@ -5138,8 +5139,8 @@ msgstr "New Smart Mailbox…"
 msgid "Export…"
 msgstr "Export…"
 
-#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:99
-#: macos/Iris/ThreadListView.swift:104
+#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:98
+#: macos/Iris/ThreadListView.swift:103
 msgid "Show Only Unread"
 msgstr "Show Only Unread"
 
@@ -5151,48 +5152,48 @@ msgstr "View Source"
 msgid "The conversation leaves the inbox now and comes back at this time, marked unread."
 msgstr "The conversation leaves the inbox now and comes back at this time, marked unread."
 
-#: macos/Iris/MailModel.swift:648
+#: macos/Iris/MailModel.swift:673
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: macos/Iris/MailModel.swift:650
+#: macos/Iris/MailModel.swift:675
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:675 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:700 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "Saved {file}"
 
-#: macos/Iris/MailModel.swift:833
+#: macos/Iris/MailModel.swift:858
 msgid "Message discarded"
 msgstr "Message discarded"
 
-#: macos/Iris/MailModel.swift:873
+#: macos/Iris/MailModel.swift:898
 msgid "Sending…"
 msgstr "Sending…"
 
-#: macos/Iris/MailModel.swift:963
+#: macos/Iris/MailModel.swift:988
 msgid "Cancel Send"
 msgstr "Cancel Send"
 
-#: macos/Iris/MailModel.swift:1268
+#: macos/Iris/MailModel.swift:1293
 msgid "Translating…"
 msgstr "Translating…"
 
-#: macos/Iris/MailModel.swift:1307
+#: macos/Iris/MailModel.swift:1332
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "This Mac cannot translate this message: {reason}"
 
-#: macos/Iris/MailModel.swift:1800
+#: macos/Iris/MailModel.swift:1831
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: macos/Iris/MailModel.swift:1805
+#: macos/Iris/MailModel.swift:1836
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1855
+#: macos/Iris/MailModel.swift:1886
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 
@@ -5639,7 +5640,7 @@ msgstr "Mark read or unread"
 msgid "Mute or unmute"
 msgstr "Mute or unmute"
 
-#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:390
+#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:413
 msgid "Undo"
 msgstr "Undo"
 
@@ -5707,8 +5708,8 @@ msgstr "Name This Account"
 msgid "The sidebar shows the name instead of the address. Leave it empty for the address."
 msgstr "The sidebar shows the name instead of the address. Leave it empty for the address."
 
-#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:94
-#: macos/Iris/ThreadListView.swift:95
+#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:93
+#: macos/Iris/ThreadListView.swift:94
 msgid "Check for Mail"
 msgstr "Check for Mail"
 
@@ -5852,23 +5853,23 @@ msgstr "The subject is optional. A template with one gives it to a message that 
 msgid "Body"
 msgstr "Body"
 
-#: macos/Iris/ThreadListView.swift:112 macos/Iris/ThreadListView.swift:488
+#: macos/Iris/ThreadListView.swift:111 macos/Iris/ThreadListView.swift:511
 msgid "Search mail"
 msgstr "Search mail"
 
-#: macos/Iris/ThreadListView.swift:215 macos/Iris/ThreadListView.swift:216
+#: macos/Iris/ThreadListView.swift:214 macos/Iris/ThreadListView.swift:215
 msgid "Hide messages"
 msgstr "Hide messages"
 
-#: macos/Iris/ThreadListView.swift:215 macos/Iris/ThreadListView.swift:216
+#: macos/Iris/ThreadListView.swift:214 macos/Iris/ThreadListView.swift:215
 msgid "Show messages"
 msgstr "Show messages"
 
-#: macos/Iris/ThreadListView.swift:217
+#: macos/Iris/ThreadListView.swift:216
 msgid "Collapsed"
 msgstr "Collapsed"
 
-#: macos/Iris/ThreadListView.swift:217
+#: macos/Iris/ThreadListView.swift:216
 msgid "Expanded"
 msgstr "Expanded"
 
@@ -5876,11 +5877,11 @@ msgstr "Expanded"
 msgid "Loading messages"
 msgstr "Loading messages"
 
-#: macos/Iris/ThreadListView.swift:269
+#: macos/Iris/ThreadListView.swift:282
 msgid "No message previews are stored on this Mac yet."
 msgstr "No message previews are stored on this Mac yet."
 
-#: macos/Iris/ThreadListView.swift:375
+#: macos/Iris/ThreadListView.swift:398
 msgid "Clear Flag"
 msgstr "Clear Flag"
 

@@ -14,6 +14,7 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- Selecting a reply in an expanded conversation highlights only that reply.
 - Long text in the composer stays visible as you write or paste, and quoted
   text follows the message without a fixed empty gap.
 - Remove a suggestion from Follow Up without archiving or deleting the email;
