@@ -869,6 +869,21 @@ CREATE TABLE contact_offers (
     r#"
 ALTER TABLE bodies ADD COLUMN reply_to TEXT;
 "#,
+    // Local lists belong to the person, so removing an account leaves
+    // them and their addresses intact. Members keep insertion order.
+    r#"
+CREATE TABLE contact_lists (
+    id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL CHECK (length(trim(name)) > 0)
+);
+CREATE TABLE contact_list_members (
+    list_id INTEGER NOT NULL REFERENCES contact_lists(id) ON DELETE CASCADE,
+    email   TEXT NOT NULL CHECK (length(trim(email)) > 0),
+    name    TEXT NOT NULL,
+    rank    INTEGER NOT NULL,
+    PRIMARY KEY (list_id, email)
+);
+"#,
 ];
 
 /// How long the copy taken before a migration stays once the store has
@@ -1075,3 +1090,37 @@ fn migrate(conn: &mut Connection, migrations: &[&str]) -> Result<()> {
 
 #[cfg(test)]
 mod migration_tests;
+
+#[test]
+fn contact_lists_migrate_an_existing_address_book_without_changing_it() {
+    use crate::{accounts, address_book, contact_lists};
+
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("mail.db");
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    let account = accounts::insert_account(&old, "me@example.org", 0).unwrap();
+    let contact = address_book::Contact {
+        account_id: account,
+        resource: "people/ana".into(),
+        name: Some("Ana".into()),
+        emails: vec!["ana@example.org".into()],
+        ..Default::default()
+    };
+    address_book::save(&old, std::slice::from_ref(&contact)).unwrap();
+    drop(old);
+    let conn = open_connection(&path).unwrap();
+    assert_eq!(schema_version(&conn).unwrap(), MIGRATIONS.len() as i64);
+    assert_eq!(address_book::list(&conn).unwrap(), vec![contact]);
+    assert!(contact_lists::list(&conn).unwrap().is_empty());
+    let id = contact_lists::create(&conn, "Family").unwrap();
+    contact_lists::add_member(
+        &conn,
+        id,
+        &contact_lists::Member {
+            name: "Ana".into(),
+            email: "ana@example.org".into(),
+        },
+    )
+    .unwrap();
+    assert_eq!(contact_lists::members(&conn, id).unwrap().len(), 1);
+}
