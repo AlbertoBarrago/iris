@@ -27,8 +27,9 @@ jobs:
     name: Build and publish
     needs: gate
     if: github.ref == 'refs/heads/main'
-    # Xcode 26 builds the app and its Icon Composer icon.
-    runs-on: macos-26
+    # The Xcode the owner builds with. Xcode 26.6's Swift 6.3.3 crashes
+    # type-checking CalendarView.swift, which Xcode 27 compiles.
+    runs-on: xcode-27
     timeout-minutes: 90
     environment: release
     permissions:
