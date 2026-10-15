@@ -7,6 +7,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### New
 
+- Create local contact lists in Settings, Contacts, then choose a list in To,
+  Cc, or Bcc to add its members as individual recipients.
 - Expand a conversation from its message count to preview each reply in the
   list, then open the message you want to read.
 

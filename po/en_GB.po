@@ -1358,53 +1358,63 @@ msgstr "Choose a time in the future"
 msgid "On {date}, {sender} wrote:"
 msgstr "On {date}, {sender} wrote:"
 
-#: appcore/src/contacts.rs:96
+#: appcore/src/contacts.rs:78
+msgid "Give the list a name"
+msgstr "Give the list a name"
+
+#: appcore/src/contacts.rs:150
+msgid "{count} member"
+msgid_plural "{count} members"
+msgstr[0] "{count} member"
+msgstr[1] "{count} members"
+
+#: appcore/src/contacts.rs:179
 msgid "from mail"
 msgstr "from mail"
 
-#: appcore/src/contacts.rs:118
+#: appcore/src/contacts.rs:201
 msgid "{account} and {count} more"
 msgid_plural "{account} and {count} more"
 msgstr[0] "{account} and {count} more"
 msgstr[1] "{account} and {count} more"
 
-#: appcore/src/contacts.rs:131
+#: appcore/src/contacts.rs:214
 msgid "contact in {accounts}"
 msgstr "contact in {accounts}"
 
-#: appcore/src/contacts.rs:157
+#: appcore/src/contacts.rs:240
 msgid "Added {person} to VIPs"
 msgstr "Added {person} to VIPs"
 
-#: appcore/src/contacts.rs:158
+#: appcore/src/contacts.rs:241
 msgid "Removed {person} from VIPs"
 msgstr "Removed {person} from VIPs"
 
-#: appcore/src/contacts.rs:167
+#: appcore/src/contacts.rs:250
 msgid "Save {name} to contacts in {account}?"
 msgstr "Save {name} to contacts in {account}?"
 
-#: appcore/src/contacts.rs:171
+#: appcore/src/contacts.rs:254
 msgid "Save {count} person to contacts in {account}?"
 msgid_plural "Save {count} people to contacts in {account}?"
 msgstr[0] "Save {count} person to contacts in {account}?"
 msgstr[1] "Save {count} people to contacts in {account}?"
 
-#: appcore/src/contacts.rs:220
+#: appcore/src/contacts.rs:303
 msgid "Saved {name} to contacts in {account}"
 msgstr "Saved {name} to contacts in {account}"
 
-#: appcore/src/contacts.rs:224
+#: appcore/src/contacts.rs:307
 msgid "Saved {count} person to contacts in {account}"
 msgid_plural "Saved {count} people to contacts in {account}"
 msgstr[0] "Saved {count} person to contacts in {account}"
 msgstr[1] "Saved {count} people to contacts in {account}"
 
-#: appcore/src/contacts.rs:236
+#: appcore/src/contacts.rs:319
 msgid "Could not save {name} to contacts in {account}"
 msgstr "Could not save {name} to contacts in {account}"
 
-#: appcore/src/contacts.rs:240
+#: appcore/src/contacts.rs:323
 msgid "Could not save {count} person to contacts in {account}"
 msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] "Could not save {count} person to contacts in {account}"
@@ -3641,35 +3651,39 @@ msgstr "{first} – {last}"
 msgid "%b"
 msgstr "%b"
 
-#: ffi/src/compose.rs:142
+#: ffi/src/compose.rs:144
 msgid "Add an account to write mail."
 msgstr "Add an account to write mail."
 
-#: ffi/src/compose.rs:239
+#: ffi/src/compose.rs:241
 msgid "Could not open the draft: {reason}"
 msgstr "Could not open the draft: {reason}"
 
-#: ffi/src/compose.rs:271
+#: ffi/src/compose.rs:273
 msgid "The saved draft stays in Drafts: {reason}"
 msgstr "The saved draft stays in Drafts: {reason}"
 
-#: ffi/src/compose.rs:275
+#: ffi/src/compose.rs:277
 msgid "the account is not connected."
 msgstr "the account is not connected."
 
-#: ffi/src/compose.rs:339 ffi/src/compose.rs:346
+#: ffi/src/compose.rs:397 ffi/src/compose.rs:404
 msgid "Not sent: {reason}"
 msgstr "Not sent: {reason}"
 
-#: ffi/src/compose.rs:343
+#: ffi/src/compose.rs:401
 msgid "Message sent"
 msgstr "Message sent"
 
-#: ffi/src/compose.rs:345
+#: ffi/src/compose.rs:403
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "Waiting in the Outbox. It goes out as soon as it can."
 
-#: ffi/src/contacts.rs:130
+#: ffi/src/contacts.rs:161
+msgid "The contact list is gone"
+msgstr "The contact list is gone"
+
+#: ffi/src/contacts.rs:248
 msgid "Not allowed when you signed in"
 msgstr "Not allowed when you signed in"
 
@@ -4602,8 +4616,8 @@ msgstr "Schedule"
 msgid "Save as Template"
 msgstr "Save as Template"
 
-#: macos/Iris/ComposeView.swift:111 macos/Iris/SmartEditorView.swift:28
-#: macos/Iris/TemplatesSettings.swift:97
+#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:179
+#: macos/Iris/SmartEditorView.swift:28 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Name"
 
@@ -4704,19 +4718,19 @@ msgstr "Image"
 msgid "Draft saved"
 msgstr "Draft saved"
 
-#: macos/Iris/ComposeView.swift:677
+#: macos/Iris/ComposeView.swift:684
 msgid "Save as Draft?"
 msgstr "Save as Draft?"
 
-#: macos/Iris/ComposeView.swift:678
+#: macos/Iris/ComposeView.swift:685
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr "The draft is kept in Gmail, so you can finish it later on any device."
 
-#: macos/Iris/ComposeView.swift:679
+#: macos/Iris/ComposeView.swift:686
 msgid "Save Draft"
 msgstr "Save Draft"
 
-#: macos/Iris/ComposeView.swift:680
+#: macos/Iris/ComposeView.swift:687
 msgid "Discard"
 msgstr "Discard"
 
@@ -4760,6 +4774,70 @@ msgstr "Contacts"
 #: macos/Iris/ContactsSettings.swift:45
 msgid "Iris can read an account's contacts: names, email addresses, photos, organizations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
 msgstr "Iris can read an account's contacts: names, email addresses, photos, organisations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."
+
+#: macos/Iris/ContactsSettings.swift:93 macos/Iris/ContactsSettings.swift:96
+#: macos/Iris/ContactsSettings.swift:178
+msgid "Edit List"
+msgstr "Edit List"
+
+#: macos/Iris/ContactsSettings.swift:97 macos/Iris/ContactsSettings.swift:100
+msgid "Delete List"
+msgstr "Delete List"
+
+#: macos/Iris/ContactsSettings.swift:103
+msgid "Add List"
+msgstr "Add List"
+
+#: macos/Iris/ContactsSettings.swift:108
+msgid "Try Again"
+msgstr "Try Again"
+
+#: macos/Iris/ContactsSettings.swift:111
+msgid "Contact Lists"
+msgstr "Contact Lists"
+
+#: macos/Iris/ContactsSettings.swift:113
+msgid "Keep a group on this computer, then type its name in To, Cc, or Bcc to add its members."
+msgstr "Keep a group on this computer, then type its name in To, Cc, or Bcc to add its members."
+
+#: macos/Iris/ContactsSettings.swift:132 macos/Iris/TemplatesSettings.swift:46
+msgid "Delete {name}?"
+msgstr "Delete {name}?"
+
+#: macos/Iris/ContactsSettings.swift:139
+msgid "The members stay in your address books."
+msgstr "The members stay in your address books."
+
+#: macos/Iris/ContactsSettings.swift:178
+msgid "New List"
+msgstr "New List"
+
+#: macos/Iris/ContactsSettings.swift:180
+msgid "Members"
+msgstr "Members"
+
+#: macos/Iris/ContactsSettings.swift:190 macos/Iris/ContactsSettings.swift:195
+msgid "Remove Member"
+msgstr "Remove Member"
+
+#: macos/Iris/ContactsSettings.swift:205
+msgid "Name or email address"
+msgstr "Name or email address"
+
+#: macos/Iris/ContactsSettings.swift:207
+msgid "Add"
+msgstr "Add"
+
+#: macos/Iris/ContactsSettings.swift:210
+msgid "Add an email address or choose a suggested contact. You can paste several addresses at once."
+msgstr "Add an email address or choose a suggested contact. You can paste several addresses at once."
+
+#: macos/Iris/ContactsSettings.swift:221 macos/Iris/FilingView.swift:70
+#: macos/Iris/FilingView.swift:175 macos/Iris/HideMyEmailView.swift:39
+#: macos/Iris/RulesView.swift:200 macos/Iris/SidebarView.swift:152
+#: macos/Iris/SmartEditorView.swift:72 macos/Iris/TemplatesSettings.swift:119
+msgid "Create"
+msgstr "Create"
 
 #: macos/Iris/ContentView.swift:106
 msgid "Iris could not read the mail"
@@ -4880,13 +4958,6 @@ msgstr "Add guests"
 #: macos/Iris/EventEditorView.swift:380
 msgid "None of your calendars take new events"
 msgstr "None of your calendars take new events"
-
-#: macos/Iris/FilingView.swift:70 macos/Iris/FilingView.swift:175
-#: macos/Iris/HideMyEmailView.swift:39 macos/Iris/RulesView.swift:200
-#: macos/Iris/SidebarView.swift:152 macos/Iris/SmartEditorView.swift:72
-#: macos/Iris/TemplatesSettings.swift:119
-msgid "Create"
-msgstr "Create"
 
 #: macos/Iris/FilingView.swift:167
 msgid "Rename"
@@ -5764,10 +5835,6 @@ msgstr "Add Template"
 #: macos/Iris/TemplatesSettings.swift:37
 msgid "Saved bodies the composer's Templates menu drops into a message. Markdown works, and {{first_name}}, {{name}}, {{email}}, {{subject}} and {{date}} fill in when you use one."
 msgstr "Saved bodies the composer's Templates menu drops into a message. Markdown works, and {{first_name}}, {{name}}, {{email}}, {{subject}} and {{date}} fill in when you use one."
-
-#: macos/Iris/TemplatesSettings.swift:46
-msgid "Delete {name}?"
-msgstr "Delete {name}?"
 
 #: macos/Iris/TemplatesSettings.swift:56
 msgid "This computer keeps the only copy."

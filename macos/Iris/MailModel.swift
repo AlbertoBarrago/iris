@@ -839,9 +839,9 @@ final class MailModel {
     }
 
     /// People a recipient field could mean.
-    func suggest(_ field: String, account: Int64) async -> [Suggestion] {
+    func suggest(_ field: String, account: Int64, excluding: Set<String> = []) async -> [Suggestion] {
         guard let mail else { return [] }
-        return await Task.detached { mail.suggest(field: field, accountId: account) }.value
+        return await Task.detached { mail.suggest(field: field, accountId: account, excluding: Array(excluding)) }.value
     }
 
     /// Puts up the notice that the mail could not be read, offering

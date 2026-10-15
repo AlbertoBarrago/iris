@@ -567,6 +567,8 @@ struct RecipientField: View {
                 .textFieldStyle(.plain)
                 .focused($focused)
                 .onChange(of: text) { look() }
+                .onChange(of: account) { look() }
+                .onChange(of: leaving) { look() }
                 .onKeyPress(.downArrow) { move(1) }
                 .onKeyPress(.upArrow) { move(-1) }
                 .onKeyPress(.escape) {
@@ -582,9 +584,12 @@ struct RecipientField: View {
                     ForEach(Array(offered.enumerated()), id: \.offset) { index, person in
                         Button { take(index) } label: {
                             HStack(spacing: 8) {
+                                if person.isList {
+                                    Image(systemName: "person.3").accessibilityHidden(true)
+                                }
                                 Text(person.name ?? person.email).fontWeight(.semibold)
-                                if person.name != nil {
-                                    Text(person.email).foregroundStyle(.secondary)
+                                if !person.detail.isEmpty {
+                                    Text(person.detail).foregroundStyle(.secondary)
                                 }
                                 Spacer()
                             }
@@ -605,9 +610,11 @@ struct RecipientField: View {
     private func look() {
         let field = text
         Task {
-            let found = await model.suggest(field, account: account)
-            if text == field {
-                offered = found.filter { !leaving.contains($0.email.lowercased()) }
+            let excluded = leaving
+            let sender = account
+            let found = await model.suggest(field, account: sender, excluding: excluded)
+            if text == field, account == sender, leaving == excluded {
+                offered = found
                 chosen = 0
             }
         }

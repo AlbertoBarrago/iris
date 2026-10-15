@@ -5,12 +5,12 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use mailrs_appcore::contacts::{failed_title, offer_title, saved_title, vip_message};
+use mailrs_appcore::contacts::{self, failed_title, offer_title, saved_title, vip_message};
 use mailrs_domain::Address;
 use mailrs_appcore::offered::{ContactsRow, contacts_row};
 use mailrs_appcore::settings::Change;
 use mailrs_domain::translate::gettext;
-use mailrs_store::accounts;
+use mailrs_store::{accounts, contact_lists};
 use mailrs_sync::{Accounts, ContactBook, Offers, Permitted, SyncEngine, Withheld};
 
 use crate::CoreError;
@@ -61,6 +61,124 @@ pub struct ContactCard {
     /// The contact's photo on disk, or empty for initials.
     pub photo: String,
     pub vip: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct ContactListMember {
+    pub name: String,
+    pub email: String,
+}
+
+#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+pub struct LocalContactList {
+    pub id: i64,
+    pub name: String,
+    pub members: Vec<ContactListMember>,
+    pub summary: String,
+}
+
+#[uniffi::export]
+impl Mail {
+    pub fn contact_lists(&self) -> Result<Vec<LocalContactList>, CoreError> {
+        let db = self.db.clone();
+        Ok(self.run(async move {
+            db.read(|c| {
+                contact_lists::list(c)?
+                    .into_iter()
+                    .map(|list| {
+                        let members = contact_lists::members(c, list.id)?;
+                        Ok(LocalContactList {
+                            id: list.id,
+                            name: list.name,
+                            summary: contacts::list_count(members.len()),
+                            members: members
+                                .into_iter()
+                                .map(|m| ContactListMember {
+                                    name: m.name,
+                                    email: m.email,
+                                })
+                                .collect(),
+                        })
+                    })
+                    .collect()
+            })
+            .await
+        })?)
+    }
+
+    /// Parses one or more typed recipients, preserving existing members.
+    pub fn contact_list_members(
+        &self,
+        existing: Vec<ContactListMember>,
+        adding: String,
+    ) -> Result<Vec<ContactListMember>, CoreError> {
+        let existing = stored_members(existing);
+        contacts::list_members(&existing, &adding)
+            .map(|members| {
+                members
+                    .into_iter()
+                    .map(|m| ContactListMember {
+                        name: m.name,
+                        email: m.email,
+                    })
+                    .collect()
+            })
+            .map_err(CoreError::Store)
+    }
+
+    /// Saves name and members in one transaction. An edit cannot recreate
+    /// a list another window has deleted while the editor was open.
+    pub fn save_contact_list(
+        &self,
+        id: i64,
+        name: String,
+        members: Vec<ContactListMember>,
+    ) -> Result<i64, CoreError> {
+        let name = contacts::list_name(&name).map_err(CoreError::Store)?;
+        let members =
+            contacts::list_members(&stored_members(members), "").map_err(CoreError::Store)?;
+        let db = self.db.clone();
+        let saved = self
+            .run(async move {
+                db.write(move |c| {
+                    let id = if id == 0 {
+                        contact_lists::create(c, &name)?
+                    } else if contact_lists::rename(c, id, &name)? {
+                        id
+                    } else {
+                        return Ok(None);
+                    };
+                    for member in contact_lists::members(c, id)? {
+                        contact_lists::remove_member(c, id, &member.email)?;
+                    }
+                    for member in &members {
+                        contact_lists::add_member(c, id, member)?;
+                    }
+                    Ok(Some(id))
+                })
+                .await
+            })?
+            .ok_or_else(|| CoreError::Store(gettext("The contact list is gone")))?;
+        self.contacts_changed();
+        Ok(saved)
+    }
+
+    pub fn delete_contact_list(&self, id: i64) -> Result<(), CoreError> {
+        let db = self.db.clone();
+        self.run(async move { db.write(move |c| contact_lists::remove(c, id)).await })?;
+        self.contacts_changed();
+        Ok(())
+    }
+}
+
+fn stored_members(members: Vec<ContactListMember>) -> Vec<contact_lists::Member> {
+    members
+        .into_iter()
+        .map(|m| contact_lists::Member {
+            name: m.name,
+            email: m.email,
+        })
+        .collect()
 }
 
 #[uniffi::export]
@@ -308,4 +426,94 @@ pub(crate) fn photo_dir() -> PathBuf {
     mailrs_appcore::dirs::user_cache_dir()
         .join(mailrs_sync::config::DIR_NAME)
         .join("contact-photos")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_local_list_is_managed_and_expanded_without_a_server() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("mail.db").display().to_string();
+        let mail = Mail::open(path.clone()).unwrap();
+        let members = mail
+            .contact_list_members(
+                vec![],
+                "\"Lee, Ana\" <Ana@example.org>, Rui <rui@example.org>".into(),
+            )
+            .unwrap();
+        let id = mail
+            .save_contact_list(0, " Team sviluppo ".into(), members.clone())
+            .unwrap();
+        mail.save_contact_list(0, "Team vuoto".into(), vec![])
+            .unwrap();
+        let offered = mail.suggest("svil".into(), None, vec![]);
+        assert_eq!(offered.len(), 1);
+        assert!(offered[0].is_list);
+        let addresses = mailrs_appcore::compose::parse_recipients(&offered[0].completed);
+        assert_eq!(addresses.len(), 2);
+        assert_eq!(addresses[0].name.as_deref(), Some("Lee, Ana"));
+        assert_eq!(addresses[0].email, "ana@example.org");
+        assert_eq!(addresses[1].email, "rui@example.org");
+        let offered = mail.suggest("rui@example.org, team".into(), None, vec![]);
+        assert_eq!(offered.len(), 1, "empty lists are not offered");
+        assert_eq!(
+            mailrs_appcore::compose::parse_recipients(&offered[0].completed)
+                .iter()
+                .map(|a| a.email.as_str())
+                .collect::<Vec<_>>(),
+            ["rui@example.org", "ana@example.org"]
+        );
+        let offered = mail.suggest("team".into(), None, vec!["ANA@example.org".into()]);
+        assert_eq!(
+            mailrs_appcore::compose::parse_recipients(&offered[0].completed)[0].email,
+            "rui@example.org"
+        );
+        assert!(
+            mail.suggest(
+                "team".into(),
+                None,
+                vec!["ana@example.org".into(), "rui@example.org".into()]
+            )
+            .is_empty()
+        );
+        let mut invalid = members.clone();
+        invalid.push(ContactListMember {
+            name: "Bad".into(),
+            email: "not-an-address".into(),
+        });
+        assert!(
+            mail.save_contact_list(id, "Changed".into(), invalid)
+                .is_err()
+        );
+        let unchanged = mail
+            .contact_lists()
+            .unwrap()
+            .into_iter()
+            .find(|l| l.id == id)
+            .unwrap();
+        assert_eq!(unchanged.name, "Team sviluppo");
+        assert_eq!(unchanged.members, members);
+        mail.save_contact_list(id, "Team design".into(), vec![members[0].clone()])
+            .unwrap();
+        assert!(mail.suggest("svil".into(), None, vec![]).is_empty());
+        assert_eq!(mail.suggest("design".into(), None, vec![]).len(), 1);
+        drop(mail);
+        let mail = Mail::open(path).unwrap();
+        let saved = mail
+            .contact_lists()
+            .unwrap()
+            .into_iter()
+            .find(|l| l.id == id)
+            .unwrap();
+        assert_eq!(saved.name, "Team design");
+        assert_eq!(saved.members.len(), 1);
+        mail.delete_contact_list(id).unwrap();
+        assert!(
+            mail.save_contact_list(id, "Recreated".into(), members)
+                .is_err()
+        );
+        assert!(mail.suggest("design".into(), None, vec![]).is_empty());
+    }
 }

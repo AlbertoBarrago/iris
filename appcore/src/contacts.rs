@@ -71,6 +71,89 @@ pub fn current_token(text: &str) -> (usize, &str) {
     (start + token.len() - trimmed.len(), trimmed.trim_end())
 }
 
+/// A local list needs a name before it can be saved.
+pub fn list_name(name: &str) -> Result<String, String> {
+    let name = name.trim();
+    if name.is_empty() {
+        return Err(gettext("Give the list a name"));
+    }
+    Ok(name.to_string())
+}
+
+/// Validates saved members and any newly entered recipients together.
+/// The first occurrence keeps its name and position.
+pub fn list_members(
+    existing: &[mailrs_store::contact_lists::Member],
+    adding: &str,
+) -> Result<Vec<mailrs_store::contact_lists::Member>, String> {
+    use mailrs_store::contact_lists::Member;
+    let entered = crate::compose::parse_recipients(adding);
+    let mut members = Vec::<Member>::new();
+    for (name, email) in existing
+        .iter()
+        .map(|m| (m.name.as_str(), m.email.as_str()))
+        .chain(
+            entered
+                .iter()
+                .map(|a| (a.name.as_deref().unwrap_or_default(), a.email.as_str())),
+        )
+    {
+        let email = email.trim().to_lowercase();
+        if !crate::compose::is_address(&email) {
+            return Err(fill(
+                &gettext("“{address}” is not an email address."),
+                &[("address", &email)],
+            ));
+        }
+        if !members.iter().any(|m| m.email == email) {
+            members.push(Member {
+                name: name.trim().to_string(),
+                email,
+            });
+        }
+    }
+    Ok(members)
+}
+
+pub fn list_matches(name: &str, query: &str) -> bool {
+    let query = query.trim().to_lowercase();
+    let name = name.to_lowercase();
+    !query.is_empty()
+        && (name.starts_with(&query)
+            || name
+                .split(|c: char| c.is_whitespace() || c == '-' || c == '_')
+                .any(|word| word.starts_with(&query)))
+}
+
+/// Expands a list without repeating addresses already in the field or
+/// excluded by its caller, such as guests already on an invitation.
+pub fn list_recipients(
+    members: &[mailrs_store::contact_lists::Member],
+    entered: &[String],
+) -> Vec<Address> {
+    let mut seen: std::collections::HashSet<String> =
+        entered.iter().map(|e| e.trim().to_lowercase()).collect();
+    members
+        .iter()
+        .filter_map(|m| {
+            let email = m.email.trim().to_lowercase();
+            (crate::compose::is_address(&email) && seen.insert(email.clone())).then(|| Address {
+                name: (!m.name.is_empty()).then(|| m.name.clone()),
+                email,
+            })
+        })
+        .collect()
+}
+
+pub fn list_count(count: usize) -> String {
+    fill_plural(
+        "{count} member",
+        "{count} members",
+        count,
+        &[("count", &count.to_string())],
+    )
+}
+
 /// What a suggestion row shows about where a person comes from.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Cue {
@@ -248,6 +331,48 @@ pub fn failed_title(people: &[Address], account: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_list_accepts_named_recipients_and_keeps_the_first_address_once() {
+        let members = list_members(&[], "\"Lee, Ana\" <Ana@example.org>, rui@example.org").unwrap();
+        let added = list_members(
+            &members,
+            "Another Ana <ANA@example.org>; Pat <pat@example.org>",
+        )
+        .unwrap();
+        assert_eq!(
+            added.iter().map(|m| m.email.as_str()).collect::<Vec<_>>(),
+            ["ana@example.org", "rui@example.org", "pat@example.org"]
+        );
+        assert_eq!(added[0].name, "Lee, Ana");
+        assert!(list_members(&added, "not-an-address").is_err());
+        assert_eq!(list_members(&members, " ").unwrap(), members);
+        assert!(list_name(" \n ").is_err());
+        assert_eq!(list_name(" Team sviluppo ").unwrap(), "Team sviluppo");
+    }
+
+    #[test]
+    fn a_list_expands_only_the_members_not_already_entered() {
+        let members = list_members(&[], "\"Lee, Ana\" <ana@example.org>, rui@example.org").unwrap();
+        let picked = list_recipients(&members, &["RUI@example.org".into()]);
+        assert_eq!(picked.len(), 1);
+        assert_eq!(picked[0].email, "ana@example.org");
+        assert_eq!(
+            crate::compose::parse_recipients(&crate::compose::format_recipients(&picked)),
+            picked
+        );
+        assert!(
+            list_recipients(
+                &members,
+                &["ana@example.org".into(), "rui@example.org".into()]
+            )
+            .is_empty()
+        );
+        assert!(list_matches("Team sviluppo", "svil"));
+        assert!(list_matches("Team-sviluppo", "TEAM"));
+        assert!(!list_matches("Team sviluppo", ""));
+        assert!(!list_matches("Team sviluppo", "marketing"));
+    }
 
     fn contact(name: Option<&str>, email: &str) -> Suggestion {
         Suggestion {

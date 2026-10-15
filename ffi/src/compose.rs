@@ -94,6 +94,8 @@ pub struct OutgoingFile {
 pub struct Suggestion {
     pub name: Option<String>,
     pub email: String,
+    pub detail: String,
+    pub is_list: bool,
     /// What the field holds once this one is picked: the earlier
     /// recipients, this person, and a comma to go on with.
     pub completed: String,
@@ -284,32 +286,88 @@ impl Mail {
     /// The people `field` could mean by what is being typed after its last
     /// comma, best first, the contacts of `account_id` before the rest,
     /// leaving out those already in the field.
-    pub fn suggest(&self, field: String, account_id: Option<i64>) -> Vec<Suggestion> {
+    pub fn suggest(
+        &self,
+        field: String,
+        account_id: Option<i64>,
+        excluding: Vec<String>,
+    ) -> Vec<Suggestion> {
         let (start, query) = mailrs_appcore::contacts::current_token(&field);
         if query.is_empty() {
             return Vec::new();
         }
-        let entered: Vec<String> = compose::parse_recipients(&field[..start])
+        let mut entered: Vec<String> = compose::parse_recipients(&field[..start])
             .into_iter()
             .map(|a| a.email)
             .collect();
-        let known = self.known_people();
-        mailrs_appcore::contacts::suggest(&known, query, &entered, 8, account_id)
-            .into_iter()
-            .map(|person| {
-                let picked = Address {
-                    name: person.name.clone(),
-                    email: person.email.clone(),
-                };
-                let before = field[..start].trim_end();
-                let joiner = if before.is_empty() { "" } else { " " };
-                Suggestion {
-                    name: person.name.clone(),
-                    email: person.email.clone(),
-                    completed: format!("{before}{joiner}{}, ", compose::format_recipients(&[picked])),
-                }
+        entered.extend(excluding);
+        let before = field[..start].trim_end();
+        let joiner = if before.is_empty() { "" } else { " " };
+        let db = self.db.clone();
+        let query_owned = query.to_string();
+        let lists = self.run(async move {
+            db.read(move |c| {
+                mailrs_store::contact_lists::list(c)?
+                    .into_iter()
+                    .filter(|list| mailrs_appcore::contacts::list_matches(&list.name, &query_owned))
+                    .map(|list| {
+                        let members = mailrs_store::contact_lists::members(c, list.id)?;
+                        Ok((list, members))
+                    })
+                    .collect::<mailrs_store::Result<Vec<_>>>()
             })
-            .collect()
+            .await
+        });
+        let mut found = Vec::new();
+        match lists {
+            Ok(lists) => {
+                for (list, members) in lists {
+                    let recipients = mailrs_appcore::contacts::list_recipients(&members, &entered);
+                    if !recipients.is_empty() {
+                        found.push(Suggestion {
+                            name: Some(list.name),
+                            email: String::new(),
+                            is_list: true,
+                            detail: mailrs_appcore::contacts::list_count(recipients.len()),
+                            completed: format!(
+                                "{before}{joiner}{}, ",
+                                compose::format_recipients(&recipients)
+                            ),
+                        });
+                    }
+                    if found.len() == 8 {
+                        break;
+                    }
+                }
+            }
+            Err(err) => tracing::warn!(%err, "could not read contact lists"),
+        }
+        let known = self.known_people();
+        found.extend(
+            mailrs_appcore::contacts::suggest(&known, query, &entered, 8 - found.len(), account_id)
+                .into_iter()
+                .map(|person| {
+                    let picked = Address {
+                        name: person.name.clone(),
+                        email: person.email.clone(),
+                    };
+                    Suggestion {
+                        name: person.name.clone(),
+                        email: person.email.clone(),
+                        detail: if person.name.is_some() {
+                            person.email.clone()
+                        } else {
+                            String::new()
+                        },
+                        is_list: false,
+                        completed: format!(
+                            "{before}{joiner}{}, ",
+                            compose::format_recipients(&[picked])
+                        ),
+                    }
+                }),
+        );
+        found
     }
 
     /// Why `composed` cannot go as it stands, such as no recipient or an
