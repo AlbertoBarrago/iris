@@ -6833,7 +6833,7 @@ msgstr "Silenziato"
 
 #: sync/src/mailbox.rs:95
 msgid "All Inboxes"
-msgstr "Tutte le caselle di Posta in arrivo"
+msgstr "In arrivo (tutti)"
 
 #: sync/src/mailbox.rs:195
 msgid "Search"
