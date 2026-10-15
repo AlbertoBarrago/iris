@@ -262,7 +262,6 @@ struct ComposeView: View {
                         blocks: Binding(get: { draft.wrappedValue.rich ?? [] }, set: { draft.wrappedValue.rich = $0 }),
                         controller: editor
                     )
-                    .frame(minHeight: 200)
                     if !draft.wrappedValue.attachments.isEmpty {
                         FlowLayout(spacing: 8) {
                             ForEach(Array(draft.wrappedValue.attachments.enumerated()), id: \.offset) { index, file in

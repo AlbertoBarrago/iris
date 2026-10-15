@@ -19,6 +19,10 @@ struct RichEditor: NSViewRepresentable {
         text.dropped = { [controller] urls, failed in controller.dropped(urls, failed) }
         text.hovering = { [controller] over in controller.hovering(over) }
         text.isRichText = true
+        text.isHorizontallyResizable = false
+        text.isVerticallyResizable = true
+        text.autoresizingMask = [.width]
+        text.textContainer?.widthTracksTextView = true
         text.allowsUndo = true
         text.drawsBackground = false
         text.importsGraphics = false
@@ -36,6 +40,26 @@ struct RichEditor: NSViewRepresentable {
     }
 
     func updateNSView(_ scroll: NSScrollView, context: Context) {}
+
+    func sizeThatFits(_ proposal: ProposedViewSize, nsView scroll: NSScrollView, context: Context) -> CGSize? {
+        guard let width = proposal.width, width.isFinite, width > 0,
+              let text = scroll.documentView as? NSTextView else { return nil }
+        // SwiftUI tries several widths. Measuring a copy keeps those
+        // proposals from changing the live editor's wrapping and cursor.
+        let storage = NSTextStorage(attributedString: text.attributedString())
+        let layout = NSLayoutManager()
+        let container = NSTextContainer(size: NSSize(width: width - 2 * text.textContainerInset.width, height: .greatestFiniteMagnitude))
+        container.lineFragmentPadding = text.textContainer?.lineFragmentPadding ?? 0
+        layout.addTextContainer(container)
+        storage.addLayoutManager(layout)
+        layout.ensureLayout(for: container)
+        let line = layout.defaultLineHeight(for: text.font ?? RichController.bodyFont)
+        let height = ceil(max(line, layout.usedRect(for: container).maxY, layout.extraLineFragmentUsedRect.maxY) + 2 * text.textContainerInset.height)
+        if scroll.frame.size != CGSize(width: width, height: height) {
+            context.coordinator.revealCaret(in: text)
+        }
+        return CGSize(width: width, height: height)
+    }
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
@@ -55,6 +79,31 @@ struct RichEditor: NSViewRepresentable {
         func push() {
             guard let text = parent.controller.text, let storage = text.textStorage else { return }
             parent.blocks = RichController.blocks(storage)
+            text.enclosingScrollView?.invalidateIntrinsicContentSize()
+            revealCaret(in: text)
+        }
+
+        func revealCaret(in text: NSTextView) {
+            DispatchQueue.main.async { [weak text] in
+                guard let text, let window = text.window, window.firstResponder === text,
+                      let outer = text.enclosingScrollView?.superview?.enclosingScrollView,
+                      let document = outer.documentView,
+                      let storage = text.textStorage, let layout = text.layoutManager,
+                      let container = text.textContainer else { return }
+                window.contentView?.layoutSubtreeIfNeeded()
+                layout.ensureLayout(for: container)
+                let end = min(NSMaxRange(text.selectedRange()), storage.length)
+                let rect: NSRect
+                if storage.length == 0 || (end == storage.length && text.string.hasSuffix("\n")) {
+                    rect = layout.extraLineFragmentRect
+                } else {
+                    let glyph = layout.glyphIndexForCharacter(at: min(end, storage.length - 1))
+                    rect = layout.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: container)
+                }
+                let origin = text.textContainerOrigin
+                let caret = rect.offsetBy(dx: origin.x, dy: origin.y).insetBy(dx: -1, dy: -text.textContainerInset.height)
+                document.scrollToVisible(document.convert(caret, from: text))
+            }
         }
 
         /// Return at the end of a list line carries the list on, and on an

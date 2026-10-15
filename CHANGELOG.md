@@ -12,6 +12,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ### Fixed
 
+- Long text in the composer stays visible as you write or paste, and quoted
+  text follows the message without a fixed empty gap.
 - Delete moves selected mail to the Trash from the message list or reader,
   instead of playing the system alert sound.
 - Text pasted into the composer takes Iris's font and text color, including
