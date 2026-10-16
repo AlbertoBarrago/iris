@@ -446,6 +446,18 @@ impl CalendarService for AnyCalendar {
 }
 
 impl ContactsService for AnyContacts {
+    fn directory_access(&self) -> Option<bool> {
+        match self {
+            Self::Google(adapter) => adapter.directory_access(),
+            Self::Microsoft(adapter) => adapter.directory_access(),
+            Self::Dav(adapter) => adapter.directory_access(),
+        }
+    }
+
+    async fn directory_people(&self, query: &str) -> Result<Vec<Person>, BackendError> {
+        forward_dav!(AnyContacts, self, directory_people(query))
+    }
+
     async fn connections(
         &self,
         page_token: Option<&str>,

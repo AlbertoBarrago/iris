@@ -305,3 +305,26 @@ async fn every_batch_entry_asks_for_immutable_ids() {
     assert_eq!(prefers[0], "IdType=\"ImmutableId\"");
     assert_eq!(prefers[1], "IdType=\"ImmutableId\", outlook.timezone=\"UTC\"");
 }
+
+#[tokio::test]
+async fn directory_search_escapes_names_and_only_offers_mail_addresses() {
+    use wiremock::matchers::query_param;
+    let server = MockServer::start().await;
+    token_endpoint(&server, "refresh-0").await;
+    Mock::given(method("GET"))
+        .and(path("/v1.0/users"))
+        .and(query_param("$filter", "startsWith(displayName,'O''Neil') or startsWith(mail,'O''Neil') or startsWith(givenName,'O''Neil') or startsWith(surname,'O''Neil')"))
+        .and(query_param("$select", "id,displayName,mail"))
+        .and(query_param("$top", "8"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({"value": [
+            {"id": "colleague", "displayName": "Ana O'Neil", "mail": "ana@example.org"},
+            {"id": "no-mail", "displayName": "O'Neil", "userPrincipalName": "not-a-mailbox@example.org"}
+        ]})))
+        .expect(1).mount(&server).await;
+    let people = graph(&server).directory_people("O'Neil").await.unwrap();
+    assert_eq!(people.len(), 1);
+    assert_eq!(
+        people[0].email_addresses[0].address.as_deref(),
+        Some("ana@example.org")
+    );
+}

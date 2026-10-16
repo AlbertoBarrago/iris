@@ -153,6 +153,9 @@ pub struct Settings {
     /// until the owner turns it on, because each asks Google for more
     /// access.
     pub contact_accounts: Vec<String>,
+    /// Accounts whose organization directory supplies recipient suggestions.
+    /// Separate from personal contacts and off until selected.
+    pub directory_accounts: Vec<String>,
     /// How the person left the mailbox sidebar.
     pub layout: Layout,
 }
@@ -528,6 +531,7 @@ impl Default for Settings {
             translate_on_device: true,
             contacts: false,
             contact_accounts: Vec::new(),
+            directory_accounts: Vec::new(),
             check_for_updates: true,
             space: Space::Mail,
             calendar_view: CalendarView::Week,
@@ -875,6 +879,10 @@ impl Settings {
     pub fn reads_contacts(&self, email: &str) -> bool {
         let email = email.to_lowercase();
         self.contact_accounts.contains(&email)
+    }
+
+    pub fn searches_directory(&self, email: &str) -> bool {
+        self.directory_accounts.contains(&email.to_lowercase())
     }
 
     /// The switches for one skill, off when the file has no entry for it.

@@ -559,6 +559,7 @@ struct RecipientField: View {
 
     @State private var offered: [Suggestion] = []
     @State private var chosen = 0
+    @State private var lookup: Task<Void, Never>?
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -572,6 +573,7 @@ struct RecipientField: View {
                 .onKeyPress(.downArrow) { move(1) }
                 .onKeyPress(.upArrow) { move(-1) }
                 .onKeyPress(.escape) {
+                    lookup?.cancel()
                     guard !offered.isEmpty else { return .ignored }
                     offered = []
                     return .handled
@@ -605,17 +607,27 @@ struct RecipientField: View {
                 .background(RoundedRectangle(cornerRadius: 8).fill(.background).shadow(radius: 3, y: 1))
             }
         }
+        .onDisappear { lookup?.cancel() }
     }
 
     private func look() {
+        lookup?.cancel()
+        offered = []
         let field = text
-        Task {
-            let excluded = leaving
-            let sender = account
+        let excluded = leaving
+        let sender = account
+        lookup = Task {
+            do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
+            guard !Task.isCancelled else { return }
+            let local = await model.suggest(field, account: sender, excluding: excluded, directory: false)
+            guard !Task.isCancelled, text == field, account == sender, leaving == excluded else { return }
+            offered = local
+            chosen = 0
             let found = await model.suggest(field, account: sender, excluding: excluded)
-            if text == field, account == sender, leaving == excluded {
+            if !Task.isCancelled, text == field, account == sender, leaving == excluded {
+                let selection = offered.indices.contains(chosen) ? offered[chosen].completed : nil
                 offered = found
-                chosen = 0
+                chosen = found.firstIndex(where: { $0.completed == selection }) ?? 0
             }
         }
     }

@@ -886,3 +886,26 @@ async fn an_api_switched_off_in_the_project_says_which_and_where() {
         other => panic!("unexpected result: {other:?}"),
     }
 }
+
+#[tokio::test]
+async fn directory_search_finds_a_person_without_previous_mail() {
+    let server = MockServer::start().await;
+    mount_token(&server, 1).await;
+    Mock::given(method("GET"))
+        .and(path("/v1/people:searchDirectoryPeople"))
+        .and(query_param("query", "Ana"))
+        .and(query_param("readMask", "names,emailAddresses"))
+        .and(query_param("pageSize", "8"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({"people": [
+            {"resourceName": "people/colleague", "names": [{"displayName": "Ana Colleague"}],
+             "emailAddresses": [{"value": "ana@example.org"}]},
+            {"resourceName": "people/no-email", "names": [{"displayName": "Ana"}]}
+        ]})))
+        .expect(1)
+        .mount(&server)
+        .await;
+    let people = client(&server).directory_people("Ana").await.unwrap();
+    assert_eq!(people.len(), 1);
+    assert_eq!(people[0].name.as_deref(), Some("Ana Colleague"));
+    assert_eq!(people[0].emails, ["ana@example.org"]);
+}

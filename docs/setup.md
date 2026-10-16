@@ -131,6 +131,19 @@ the redirect `http://localhost`. Put its id in `packaging/secrets.env`:
 IRIS_MICROSOFT_CLIENT_ID=...
 ```
 
+Directory searches are off by default and selected independently per account
+in Settings, Contacts, Search the company directory. They do not require
+personal contacts to be enabled. For Google Workspace, also register the
+optional `https://www.googleapis.com/auth/directory.readonly` scope. Iris
+requests it only when reconnecting an account whose directory switch is on.
+
+For Microsoft 365 directory suggestions, add the delegated permission
+`User.ReadBasic.All` to the app registration. The organization may require
+an administrator to approve access. Existing accounts can grant the new
+permission from Settings, Contacts, Grant Directory Access. Google Workspace
+uses the same control for its directory permission. Personal Google contacts
+and personal Outlook contacts continue to use their address books.
+
 ## The command line
 
 ```sh

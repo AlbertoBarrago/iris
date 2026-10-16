@@ -1,6 +1,6 @@
 # Iris privacy policy
 
-Last updated: 9 October 2026
+Last updated: 16 October 2026
 
 Iris is a mail and calendar app for macOS, published by Alberto
 Barrago (albz). It is a modified version of Penguin Mail, and like it, it
@@ -12,7 +12,9 @@ that data goes, and how it is protected.
 ## What Iris accesses in a Google account
 
 You grant access through Google's own sign-in page. Adding an account asks
-for every permission Iris uses, in one visit:
+for its mail, calendar and personal-contact permissions in one visit.
+Directory access is optional and requested only when you enable directory
+search for that account and choose Grant Directory Access:
 
 - `https://mail.google.com/`, to read your messages, labels and drafts so
   it can show them; to change labels, so you can archive, star, and mark
@@ -25,6 +27,9 @@ for every permission Iris uses, in one visit:
   recipients, once you turn contacts on in Preferences, and to write a
   contact to Google Contacts when you ask the assistant to add or change
   one.
+- `directory.readonly`, to search names and email addresses in your Google
+  Workspace directory as you type recipients or contact-list members, once
+  you turn directory search on for that account.
 - `calendar.events`, to read your calendars and show your events; to make,
   change and delete events when you do so in Iris; to mark your
   answer to a meeting invitation; to add the events in a calendar file you
@@ -51,7 +56,9 @@ top of its mail list that names what it lacks and offers the same button.
 
 This covers Outlook.com, Hotmail, Live and Microsoft 365 accounts. You
 grant access through Microsoft's own sign-in page. Adding an account asks
-for every permission Iris uses, in one visit:
+for its mail, calendar and personal-contact permissions in one visit.
+Directory access is optional and requested only when you enable directory
+search for that account and choose Grant Directory Access:
 
 - `openid` and `User.Read`, to learn your address and whether the account
   is a personal one or an organization's.
@@ -71,6 +78,9 @@ for every permission Iris uses, in one visit:
 - `Contacts.ReadWrite`, to show your contacts' names and suggest
   recipients, once you turn contacts on in Preferences, and to add or
   change a contact when you ask the assistant to.
+- `User.ReadBasic.All`, to search basic profiles in your Microsoft 365
+  organization for recipient and contact-list suggestions, once you turn
+  directory search on for that account.
 
 You may leave any of these unticked on Microsoft's screen. Iris
 then turns off the feature that needs it and says why where you would use
@@ -81,6 +91,11 @@ computer and kept in the same local database as for a Google account.
 For these accounts Iris talks only to `graph.microsoft.com` and
 `login.microsoftonline.com`. Microsoft's refresh token stays in your
 system's keychain, as described below.
+
+Directory searches send the text you type to the directory provider of each
+account with directory search enabled and directory access granted. Results are
+cached only in memory, reused for up to five minutes, and are not saved as
+personal contacts.
 
 ## Where your data goes
 

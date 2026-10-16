@@ -35,7 +35,49 @@ pub struct GraphContact {
     pub removed: Option<Removed>,
 }
 
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+struct DirectoryUser {
+    id: String,
+    display_name: Option<String>,
+    mail: Option<String>,
+}
+
 impl Graph {
+    /// Searches basic directory profiles, including people never mailed.
+    pub async fn directory_people(&self, query: &str) -> Result<Vec<GraphContact>, GraphError> {
+        let query = query.replace('\'', "''");
+        let filter = format!(
+            "startsWith(displayName,'{query}') or startsWith(mail,'{query}') or startsWith(givenName,'{query}') or startsWith(surname,'{query}')"
+        );
+        let page: Page<DirectoryUser> = self
+            .get(
+                "users",
+                &[
+                    ("$filter", &filter),
+                    ("$select", "id,displayName,mail"),
+                    ("$top", "8"),
+                ],
+            )
+            .await?;
+        Ok(page
+            .value
+            .into_iter()
+            .filter_map(|person| {
+                let email = person.mail.filter(|email| !email.trim().is_empty())?;
+                Some(GraphContact {
+                    id: person.id,
+                    display_name: person.display_name.clone(),
+                    email_addresses: vec![EmailAddress {
+                        name: person.display_name,
+                        address: Some(email),
+                    }],
+                    ..GraphContact::default()
+                })
+            })
+            .collect())
+    }
+
     /// The folders below the default one. The default "Contacts" folder is
     /// not among them; see [`Graph::default_contact_folder`].
     pub async fn contact_folders(&self) -> Result<Vec<ContactFolder>, GraphError> {

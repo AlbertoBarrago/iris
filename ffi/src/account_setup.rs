@@ -516,10 +516,22 @@ impl AccountSetup {
             (Browser::Microsoft, Some(address)) => Wanted::Suggested(address),
         };
         let engine = self.engine()?;
+        let mut clients = Clients::built_in();
+        let directory = self.lock().again.as_deref().is_some_and(|email| {
+            Settings::open(&Settings::default_path())
+                .settings
+                .searches_directory(email)
+        });
+        if directory {
+            clients.google = clients.google.map(|client| client.with_directory_access());
+            clients.microsoft = clients
+                .microsoft
+                .map(|client| client.with_directory_access());
+        }
         let connector = Connector {
             db: self.mail.db.clone(),
             config: read_config()?,
-            clients: Clients::built_in(),
+            clients,
             secrets: Secrets::keyring(),
         };
         let (cancel, canceled) = async_channel::bounded(1);

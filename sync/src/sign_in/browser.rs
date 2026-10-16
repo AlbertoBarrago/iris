@@ -6,7 +6,7 @@ use std::sync::Arc;
 
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{Account, Provider};
-use mailrs_gmail::{GMAIL_API_BASE, GmailError, Granted, SIGN_IN_SCOPES};
+use mailrs_gmail::{GMAIL_API_BASE, GmailError, Granted};
 use mailrs_graph::GraphError;
 
 use super::{MicrosoftSignInError, NewMicrosoft, SignInError, google_signed_in, microsoft_signed_in};
@@ -172,7 +172,7 @@ async fn with_google(
         &authorized.refresh_token,
         now_millis(),
         granted.as_deref(),
-        &SIGN_IN_SCOPES.join(" "),
+        &oauth.consent_scopes().join(" "),
     )
     .await?;
     let client = connect_account(oauth, Arc::clone(&secrets.google), &account, db).await?;
@@ -201,7 +201,14 @@ async fn with_microsoft(
         granted: authorized.granted.as_ref().map(mailrs_graph::Granted::to_scope),
     };
     let tokens = Arc::clone(&secrets.microsoft);
-    let account = microsoft_signed_in(db, Arc::clone(&tokens), new, now_millis(), &mailrs_graph::SCOPES.join(" ")).await?;
+    let account = microsoft_signed_in(
+        db,
+        Arc::clone(&tokens),
+        new,
+        now_millis(),
+        &client.consent_scopes().join(" "),
+    )
+    .await?;
     let window_days = config.engine_config().window_days;
     let services = connect_microsoft(db, tokens, client, &account, window_days).await?;
     Ok(SignedIn {

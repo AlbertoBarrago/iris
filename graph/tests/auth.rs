@@ -165,3 +165,48 @@ async fn a_refused_refresh_token_needs_a_new_sign_in() {
         Err(GraphError::NeedsReauth)
     ));
 }
+
+#[tokio::test]
+async fn refreshing_an_existing_account_does_not_request_new_permissions() {
+    use wiremock::matchers::{method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+    let server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/token"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "access_token": "existing-access", "expires_in": 3600,
+            "scope": "Mail.ReadWrite Contacts.ReadWrite"
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+    let client = MicrosoftClient::new(CLIENT).with_endpoints(
+        format!("{}/authorize", server.uri()),
+        format!("{}/token", server.uri()),
+    );
+    client.refresh("existing-refresh").await.unwrap();
+    let requests = server.received_requests().await.unwrap();
+    let form: std::collections::HashMap<_, _> = url::form_urlencoded::parse(&requests[0].body)
+        .into_owned()
+        .collect();
+    assert_eq!(form["refresh_token"], "existing-refresh");
+    assert_eq!(form["grant_type"], "refresh_token");
+    assert!(!form.contains_key("scope"));
+}
+
+#[test]
+fn directory_permission_is_requested_only_after_opt_in() {
+    let client = MicrosoftClient::new(CLIENT);
+    assert!(!client.consent_scopes().contains(&"User.ReadBasic.All"));
+    let url = client
+        .with_directory_access()
+        .authorize_url("http://localhost:1234", &Pkce::generate(), "state", None)
+        .unwrap();
+    let url = Url::parse(&url).unwrap();
+    let pairs: std::collections::HashMap<_, _> = url.query_pairs().into_owned().collect();
+    assert!(
+        pairs["scope"]
+            .split_whitespace()
+            .any(|s| s == "User.ReadBasic.All")
+    );
+}

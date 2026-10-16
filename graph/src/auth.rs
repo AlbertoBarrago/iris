@@ -24,7 +24,8 @@ use crate::http::Graph;
 pub const AUTHORIZE_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
 pub const TOKEN_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 
-/// Every scope sign-in asks for, in one consent. All are delegated and
+/// The base scopes sign-in asks for, in one consent. Directory access is
+/// requested separately after the person enables it. All are delegated and
 /// need no admin consent on a personal account. `openid` brings the id
 /// token whose tenant tells Outlook from Microsoft 365; `offline_access`
 /// brings the refresh token.
@@ -198,6 +199,7 @@ impl TokenAnswer {
 pub struct MicrosoftClient {
     http: reqwest::Client,
     client_id: String,
+    directory: bool,
     authorize_url: String,
     token_url: String,
 }
@@ -220,6 +222,7 @@ impl MicrosoftClient {
         MicrosoftClient {
             http,
             client_id: client_id.into(),
+            directory: false,
             authorize_url: AUTHORIZE_URL.into(),
             token_url: TOKEN_URL.into(),
         }
@@ -234,6 +237,20 @@ impl MicrosoftClient {
         self.authorize_url = authorize_url.into();
         self.token_url = token_url.into();
         self
+    }
+
+    /// Include directory access only for a sign-in the person requested.
+    pub fn with_directory_access(mut self) -> Self {
+        self.directory = true;
+        self
+    }
+
+    pub fn consent_scopes(&self) -> Vec<&'static str> {
+        let mut scopes = SCOPES.to_vec();
+        if self.directory {
+            scopes.push("User.ReadBasic.All");
+        }
+        scopes
     }
 
     pub fn id(&self) -> &str {
@@ -258,7 +275,7 @@ impl MicrosoftClient {
                 .append_pair("response_type", "code")
                 .append_pair("redirect_uri", redirect_uri)
                 .append_pair("response_mode", "query")
-                .append_pair("scope", &SCOPES.join(" "))
+                .append_pair("scope", &self.consent_scopes().join(" "))
                 .append_pair("state", state)
                 .append_pair("code_challenge", &pkce.challenge)
                 .append_pair("code_challenge_method", "S256")
@@ -282,17 +299,18 @@ impl MicrosoftClient {
             ("code", code),
             ("redirect_uri", redirect_uri),
             ("code_verifier", &pkce.verifier),
-            ("scope", &SCOPES.join(" ")),
+            ("scope", &self.consent_scopes().join(" ")),
         ])
         .await
     }
 
     pub async fn refresh(&self, refresh_token: &str) -> Result<Tokens, GraphError> {
+        // Omitting scope preserves the original grant. New permissions need
+        // the consent page rather than interrupting an existing account.
         self.post_token(&[
             ("grant_type", "refresh_token"),
             ("client_id", &self.client_id),
             ("refresh_token", refresh_token),
-            ("scope", &SCOPES.join(" ")),
         ])
         .await
     }

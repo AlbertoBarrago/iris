@@ -1496,63 +1496,63 @@ msgstr "Scegli un orario nel futuro"
 msgid "On {date}, {sender} wrote:"
 msgstr "Il giorno {date}, {sender} ha scritto:"
 
-#: appcore/src/contacts.rs:78
+#: appcore/src/contacts.rs:107
 msgid "Give the list a name"
 msgstr "Dai un nome alla lista"
 
-#: appcore/src/contacts.rs:150
+#: appcore/src/contacts.rs:179
 msgid "{count} member"
 msgid_plural "{count} members"
 msgstr[0] "{count} membro"
 msgstr[1] "{count} membri"
 
-#: appcore/src/contacts.rs:179
+#: appcore/src/contacts.rs:208
 msgid "from mail"
 msgstr "dalla posta"
 
-#: appcore/src/contacts.rs:201
+#: appcore/src/contacts.rs:230
 msgid "{account} and {count} more"
 msgid_plural "{account} and {count} more"
 msgstr[0] "{account} e {count} altro"
 msgstr[1] "{account} e altri {count}"
 
-#: appcore/src/contacts.rs:214
+#: appcore/src/contacts.rs:243
 msgid "contact in {accounts}"
 msgstr "contatto in {accounts}"
 
-#: appcore/src/contacts.rs:240
+#: appcore/src/contacts.rs:269
 msgid "Added {person} to VIPs"
 msgstr "{person} aggiunto ai VIP"
 
-#: appcore/src/contacts.rs:241
+#: appcore/src/contacts.rs:270
 msgid "Removed {person} from VIPs"
 msgstr "{person} rimosso dai VIP"
 
-#: appcore/src/contacts.rs:250
+#: appcore/src/contacts.rs:279
 msgid "Save {name} to contacts in {account}?"
 msgstr "Salvare {name} nei contatti di {account}?"
 
-#: appcore/src/contacts.rs:254
+#: appcore/src/contacts.rs:283
 msgid "Save {count} person to contacts in {account}?"
 msgid_plural "Save {count} people to contacts in {account}?"
 msgstr[0] "Salvare {count} persona nei contatti di {account}?"
 msgstr[1] "Salvare {count} persone nei contatti di {account}?"
 
-#: appcore/src/contacts.rs:303
+#: appcore/src/contacts.rs:332
 msgid "Saved {name} to contacts in {account}"
 msgstr "{name} salvato nei contatti di {account}"
 
-#: appcore/src/contacts.rs:307
+#: appcore/src/contacts.rs:336
 msgid "Saved {count} person to contacts in {account}"
 msgid_plural "Saved {count} people to contacts in {account}"
 msgstr[0] "{count} persona salvata nei contatti di {account}"
 msgstr[1] "{count} persone salvate nei contatti di {account}"
 
-#: appcore/src/contacts.rs:319
+#: appcore/src/contacts.rs:348
 msgid "Could not save {name} to contacts in {account}"
 msgstr "Impossibile salvare {name} nei contatti di {account}"
 
-#: appcore/src/contacts.rs:323
+#: appcore/src/contacts.rs:352
 msgid "Could not save {count} person to contacts in {account}"
 msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] "Impossibile salvare {count} persona nei contatti di {account}"
@@ -2015,27 +2015,27 @@ msgstr "Rosa"
 msgid "Gray"
 msgstr "Grigio"
 
-#: appcore/src/moving.rs:40
+#: appcore/src/moving.rs:50
 msgid "The mail is already there"
 msgstr "La posta è già lì"
 
-#: appcore/src/moving.rs:57
+#: appcore/src/moving.rs:67
 msgid "Move it from the Trash to the Inbox first"
 msgstr "Spostala prima dal Cestino alla Posta in arrivo"
 
-#: appcore/src/moving.rs:93
+#: appcore/src/moving.rs:103
 msgid "The mail is already in All Mail"
 msgstr "La posta è già in Tutta la posta"
 
-#: appcore/src/moving.rs:98
+#: appcore/src/moving.rs:108
 msgid "Mail cannot go there"
 msgstr "La posta non può andare lì"
 
-#: appcore/src/moving.rs:119
+#: appcore/src/moving.rs:129
 msgid "Drop mail on its own account's mailboxes"
 msgstr "Trascina la posta sulle caselle del suo stesso account"
 
-#: appcore/src/moving.rs:144
+#: appcore/src/moving.rs:154
 msgid "Moved to {mailbox}"
 msgstr "Spostato in {mailbox}"
 
@@ -3081,202 +3081,202 @@ msgstr ""
 "Non verranno inviati. Alcuni sono in Bozze, e quelli che Gmail non ha potuto "
 "prendere sono aperti per poterli salvare."
 
-#: appcore/src/settings/mod.rs:239 appcore/src/settings/mod.rs:414
-#: appcore/src/settings/mod.rs:711
+#: appcore/src/settings/mod.rs:242 appcore/src/settings/mod.rs:417
+#: appcore/src/settings/mod.rs:715
 msgid "Off"
 msgstr "Disattivato"
 
-#: appcore/src/settings/mod.rs:240
+#: appcore/src/settings/mod.rs:243
 msgid "Local Server"
 msgstr "Server locale"
 
-#: appcore/src/settings/mod.rs:241
+#: appcore/src/settings/mod.rs:244
 msgid "Anthropic API"
 msgstr "API Anthropic"
 
-#: appcore/src/settings/mod.rs:242
+#: appcore/src/settings/mod.rs:245
 msgid "Claude Subscription"
 msgstr "Abbonamento Claude"
 
-#: appcore/src/settings/mod.rs:267
+#: appcore/src/settings/mod.rs:270
 msgid "Assistant"
 msgstr "Assistente"
 
-#: appcore/src/settings/mod.rs:268
+#: appcore/src/settings/mod.rs:271
 msgid "Translation"
 msgstr "Traduzione"
 
 #. The assistant's running label says "Unsubscribing" too, and
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: appcore/src/settings/mod.rs:272
+#: appcore/src/settings/mod.rs:275
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr "Annullamento iscrizioni"
 
-#: appcore/src/settings/mod.rs:278
+#: appcore/src/settings/mod.rs:281
 msgid "Answers questions and acts on your mail"
 msgstr "Risponde alle domande e agisce sulla tua posta"
 
-#: appcore/src/settings/mod.rs:279
+#: appcore/src/settings/mod.rs:282
 msgid "Translates a message when you ask"
 msgstr "Traduce un messaggio quando lo chiedi"
 
-#: appcore/src/settings/mod.rs:281
+#: appcore/src/settings/mod.rs:284
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr ""
 "Legge la pagina di annullamento iscrizione di una newsletter quando le "
 "regole non bastano"
 
-#: appcore/src/settings/mod.rs:319
+#: appcore/src/settings/mod.rs:322
 msgid "Same as the Assistant"
 msgstr "Come l'Assistente"
 
-#: appcore/src/settings/mod.rs:415
+#: appcore/src/settings/mod.rs:418
 msgid "Claude's own only"
 msgstr "Solo quella di Claude"
 
-#: appcore/src/settings/mod.rs:416
+#: appcore/src/settings/mod.rs:419
 msgid "Brave Search"
 msgstr "Brave Search"
 
-#: appcore/src/settings/mod.rs:417
+#: appcore/src/settings/mod.rs:420
 msgid "SearXNG"
 msgstr "SearXNG"
 
-#: appcore/src/settings/mod.rs:558
+#: appcore/src/settings/mod.rs:562
 msgid "Rich text"
 msgstr "Testo formattato"
 
-#: appcore/src/settings/mod.rs:559
+#: appcore/src/settings/mod.rs:563
 msgid "Markdown"
 msgstr "Markdown"
 
-#: appcore/src/settings/mod.rs:578
+#: appcore/src/settings/mod.rs:582
 msgid "Automatic"
 msgstr "Automatico"
 
-#: appcore/src/settings/mod.rs:579
+#: appcore/src/settings/mod.rs:583
 msgid "Monday"
 msgstr "Lunedì"
 
-#: appcore/src/settings/mod.rs:580
+#: appcore/src/settings/mod.rs:584
 msgid "Sunday"
 msgstr "Domenica"
 
-#: appcore/src/settings/mod.rs:618
+#: appcore/src/settings/mod.rs:622
 msgid "When opened"
 msgstr "All'apertura"
 
-#: appcore/src/settings/mod.rs:619
+#: appcore/src/settings/mod.rs:623
 msgid "After 2 seconds"
 msgstr "Dopo 2 secondi"
 
-#: appcore/src/settings/mod.rs:620
+#: appcore/src/settings/mod.rs:624
 msgid "Only when I choose"
 msgstr "Solo quando lo scelgo"
 
-#: appcore/src/settings/mod.rs:636
+#: appcore/src/settings/mod.rs:640
 msgid "Ask each time"
 msgstr "Chiedi ogni volta"
 
-#: appcore/src/settings/mod.rs:637
+#: appcore/src/settings/mod.rs:641
 msgid "Always load"
 msgstr "Carica sempre"
 
-#: appcore/src/settings/mod.rs:671
+#: appcore/src/settings/mod.rs:675
 msgid "Small"
 msgstr "Piccolo"
 
-#: appcore/src/settings/mod.rs:672
+#: appcore/src/settings/mod.rs:676
 msgid "Default"
 msgstr "Predefinito"
 
-#: appcore/src/settings/mod.rs:673
+#: appcore/src/settings/mod.rs:677
 msgid "Large"
 msgstr "Grande"
 
-#: appcore/src/settings/mod.rs:674
+#: appcore/src/settings/mod.rs:678
 msgid "Larger"
 msgstr "Più grande"
 
-#: appcore/src/settings/mod.rs:712 appcore/src/settings/mod.rs:755
+#: appcore/src/settings/mod.rs:716 appcore/src/settings/mod.rs:759
 msgid "5 seconds"
 msgstr "5 secondi"
 
-#: appcore/src/settings/mod.rs:713 appcore/src/settings/mod.rs:756
+#: appcore/src/settings/mod.rs:717 appcore/src/settings/mod.rs:760
 msgid "10 seconds"
 msgstr "10 secondi"
 
-#: appcore/src/settings/mod.rs:714 appcore/src/settings/mod.rs:757
+#: appcore/src/settings/mod.rs:718 appcore/src/settings/mod.rs:761
 msgid "20 seconds"
 msgstr "20 secondi"
 
-#: appcore/src/settings/mod.rs:715
+#: appcore/src/settings/mod.rs:719
 msgid "30 seconds"
 msgstr "30 secondi"
 
-#: appcore/src/settings/mod.rs:735
+#: appcore/src/settings/mod.rs:739
 msgid "Notices Stay For"
 msgstr "Gli avvisi restano per"
 
-#: appcore/src/settings/mod.rs:736
+#: appcore/src/settings/mod.rs:740
 msgid "How long a notice in the window's corner stays before it goes"
 msgstr "Quanto resta un avviso nell'angolo della finestra prima di sparire"
 
-#: appcore/src/settings/mod.rs:754
+#: appcore/src/settings/mod.rs:758
 msgid "3 seconds"
 msgstr "3 secondi"
 
-#: appcore/src/settings/mod.rs:774
+#: appcore/src/settings/mod.rs:778
 msgid "Follow system"
 msgstr "Come il sistema"
 
-#: appcore/src/settings/mod.rs:775
+#: appcore/src/settings/mod.rs:779
 msgid "Light"
 msgstr "Chiaro"
 
-#: appcore/src/settings/mod.rs:776
+#: appcore/src/settings/mod.rs:780
 msgid "Dark"
 msgstr "Scuro"
 
-#: appcore/src/settings/mod.rs:810
+#: appcore/src/settings/mod.rs:814
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] "Ogni secondo"
 msgstr[1] "Ogni {count} secondi"
 
-#: appcore/src/settings/mod.rs:818
+#: appcore/src/settings/mod.rs:822
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] "Ogni minuto"
 msgstr[1] "Ogni {count} minuti"
 
-#: appcore/src/settings/mod.rs:835
+#: appcore/src/settings/mod.rs:839
 msgid "2 weeks"
 msgstr "2 settimane"
 
-#: appcore/src/settings/mod.rs:836
+#: appcore/src/settings/mod.rs:840
 msgid "30 days"
 msgstr "30 giorni"
 
-#: appcore/src/settings/mod.rs:837
+#: appcore/src/settings/mod.rs:841
 msgid "90 days"
 msgstr "90 giorni"
 
-#: appcore/src/settings/mod.rs:838
+#: appcore/src/settings/mod.rs:842
 msgid "1 year"
 msgstr "1 anno"
 
-#: appcore/src/settings/mod.rs:845
+#: appcore/src/settings/mod.rs:849
 msgid "256 MB"
 msgstr "256 MB"
 
-#: appcore/src/settings/mod.rs:846
+#: appcore/src/settings/mod.rs:850
 msgid "1 GB"
 msgstr "1 GB"
 
-#: appcore/src/settings/mod.rs:847
+#: appcore/src/settings/mod.rs:851
 msgid "4 GB"
 msgstr "4 GB"
 
@@ -3899,7 +3899,7 @@ msgstr "La risposta automatica è disattivata"
 msgid "Remove {account}?"
 msgstr "Rimuovere {account}?"
 
-#: ffi/src/account_setup.rs:689
+#: ffi/src/account_setup.rs:701
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr ""
 "Un'altra copia di Iris sta sincronizzando la posta. Chiudila e riprova."
@@ -3990,23 +3990,23 @@ msgstr "La bozza salvata resta in Bozze: {reason}"
 msgid "the account is not connected."
 msgstr "l'account non è connesso."
 
-#: ffi/src/compose.rs:397 ffi/src/compose.rs:404
+#: ffi/src/compose.rs:332 ffi/src/compose.rs:339
 msgid "Not sent: {reason}"
 msgstr "Non inviato: {reason}"
 
-#: ffi/src/compose.rs:401
+#: ffi/src/compose.rs:336
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: ffi/src/compose.rs:403
+#: ffi/src/compose.rs:338
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "In attesa in Posta in uscita. Partirà appena possibile."
 
-#: ffi/src/contacts.rs:161
+#: ffi/src/contacts.rs:167
 msgid "The contact list is gone"
 msgstr "La lista contatti non esiste più"
 
-#: ffi/src/contacts.rs:248
+#: ffi/src/contacts.rs:254
 msgid "Not allowed when you signed in"
 msgstr "Non consentito quando hai effettuato l'accesso"
 
@@ -4130,27 +4130,27 @@ msgstr ""
 msgid "Unknown sender"
 msgstr "Mittente sconosciuto"
 
-#: ffi/src/mail.rs:478
+#: ffi/src/mail.rs:485
 msgid "Will remind you {when}"
 msgstr "Te lo ricorderà {when}"
 
-#: ffi/src/mail.rs:481
+#: ffi/src/mail.rs:488
 msgid "Back in the Inbox"
 msgstr "Di nuovo in Posta in arrivo"
 
-#: ffi/src/mail.rs:518
+#: ffi/src/mail.rs:525
 msgid "Could not cancel: {reason}"
 msgstr "Impossibile annullare: {reason}"
 
-#: ffi/src/mail.rs:542
+#: ffi/src/mail.rs:549
 msgid "Deleted. It will not be sent."
 msgstr "Eliminato. Non verrà inviato."
 
-#: ffi/src/mail.rs:543
+#: ffi/src/mail.rs:550
 msgid "Deleted. They will not be sent."
 msgstr "Eliminati. Non verranno inviati."
 
-#: ffi/src/mail.rs:552
+#: ffi/src/mail.rs:559
 msgid "Could not delete: {reason}"
 msgstr "Impossibile eliminare: {reason}"
 
@@ -4452,7 +4452,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:771
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:811
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -5005,15 +5005,15 @@ msgstr "Note"
 #: macos/Iris/CalendarView.swift:648 macos/Iris/ContactCardView.swift:77
 #: macos/Iris/FindView.swift:150 macos/Iris/HideMyEmailView.swift:49
 #: macos/Iris/ProtectionSettings.swift:32 macos/Iris/RulesView.swift:42
-#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:437
-#: macos/Iris/ThreadListView.swift:438
+#: macos/Iris/SourceView.swift:37 macos/Iris/ThreadListView.swift:456
+#: macos/Iris/ThreadListView.swift:457
 msgid "Close"
 msgstr "Chiudi"
 
 #: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:112
-#: macos/Iris/ThreadListView.swift:115
+#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:122
+#: macos/Iris/ThreadListView.swift:125
 msgid "New Message"
 msgstr "Nuovo messaggio"
 
@@ -5035,7 +5035,7 @@ msgstr "Programma"
 msgid "Save as Template"
 msgstr "Salva come modello"
 
-#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:179
+#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:201
 #: macos/Iris/SmartEditorView.swift:28 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Nome"
@@ -5137,21 +5137,21 @@ msgstr "Immagine"
 msgid "Draft saved"
 msgstr "Bozza salvata"
 
-#: macos/Iris/ComposeView.swift:684
+#: macos/Iris/ComposeView.swift:696
 msgid "Save as Draft?"
 msgstr "Salvare come bozza?"
 
-#: macos/Iris/ComposeView.swift:685
+#: macos/Iris/ComposeView.swift:697
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 "La bozza resta in Gmail, così puoi completarla più tardi su qualsiasi "
 "dispositivo."
 
-#: macos/Iris/ComposeView.swift:686
+#: macos/Iris/ComposeView.swift:698
 msgid "Save Draft"
 msgstr "Salva bozza"
 
-#: macos/Iris/ComposeView.swift:687
+#: macos/Iris/ComposeView.swift:699
 msgid "Discard"
 msgstr "Scarta"
 
@@ -5188,11 +5188,19 @@ msgstr "Tutta la sua posta"
 msgid "No accounts yet"
 msgstr "Ancora nessun account"
 
-#: macos/Iris/ContactsSettings.swift:43 macos/Iris/SettingsView.swift:27
+#: macos/Iris/ContactsSettings.swift:42 macos/Iris/ContactsSettings.swift:46
+msgid "Search the company directory"
+msgstr "Cerca nella rubrica aziendale"
+
+#: macos/Iris/ContactsSettings.swift:48
+msgid "Grant Directory Access"
+msgstr "Concedi accesso alla rubrica aziendale"
+
+#: macos/Iris/ContactsSettings.swift:55 macos/Iris/SettingsView.swift:27
 msgid "Contacts"
 msgstr "Contatti"
 
-#: macos/Iris/ContactsSettings.swift:45
+#: macos/Iris/ContactsSettings.swift:57
 msgid ""
 "Iris can read an account's contacts: names, email addresses, photos, "
 "organizations, and phone numbers. It uses them to suggest recipients, to "
@@ -5206,28 +5214,28 @@ msgstr ""
 "un mittente. Ciò che legge resta su questo computer, e disattivando un "
 "account i suoi contatti vengono eliminati."
 
-#: macos/Iris/ContactsSettings.swift:93 macos/Iris/ContactsSettings.swift:96
-#: macos/Iris/ContactsSettings.swift:178
+#: macos/Iris/ContactsSettings.swift:115 macos/Iris/ContactsSettings.swift:118
+#: macos/Iris/ContactsSettings.swift:200
 msgid "Edit List"
 msgstr "Modifica lista"
 
-#: macos/Iris/ContactsSettings.swift:97 macos/Iris/ContactsSettings.swift:100
+#: macos/Iris/ContactsSettings.swift:119 macos/Iris/ContactsSettings.swift:122
 msgid "Delete List"
 msgstr "Elimina lista"
 
-#: macos/Iris/ContactsSettings.swift:103
+#: macos/Iris/ContactsSettings.swift:125
 msgid "Add List"
 msgstr "Aggiungi lista"
 
-#: macos/Iris/ContactsSettings.swift:108
+#: macos/Iris/ContactsSettings.swift:130
 msgid "Try Again"
 msgstr "Riprova"
 
-#: macos/Iris/ContactsSettings.swift:111
+#: macos/Iris/ContactsSettings.swift:133
 msgid "Contact Lists"
 msgstr "Liste contatti"
 
-#: macos/Iris/ContactsSettings.swift:113
+#: macos/Iris/ContactsSettings.swift:135
 msgid ""
 "Keep a group on this computer, then type its name in To, Cc, or Bcc to add "
 "its members."
@@ -5235,35 +5243,35 @@ msgstr ""
 "Salva un gruppo su questo computer, poi scrivi il suo nome in A, Cc o Ccn "
 "per aggiungere i membri."
 
-#: macos/Iris/ContactsSettings.swift:132 macos/Iris/TemplatesSettings.swift:46
+#: macos/Iris/ContactsSettings.swift:154 macos/Iris/TemplatesSettings.swift:46
 msgid "Delete {name}?"
 msgstr "Eliminare {name}?"
 
-#: macos/Iris/ContactsSettings.swift:139
+#: macos/Iris/ContactsSettings.swift:161
 msgid "The members stay in your address books."
 msgstr "I membri rimangono nelle tue rubriche."
 
-#: macos/Iris/ContactsSettings.swift:178
+#: macos/Iris/ContactsSettings.swift:200
 msgid "New List"
 msgstr "Nuova lista"
 
-#: macos/Iris/ContactsSettings.swift:180
+#: macos/Iris/ContactsSettings.swift:202
 msgid "Members"
 msgstr "Membri"
 
-#: macos/Iris/ContactsSettings.swift:190 macos/Iris/ContactsSettings.swift:195
+#: macos/Iris/ContactsSettings.swift:212 macos/Iris/ContactsSettings.swift:217
 msgid "Remove Member"
 msgstr "Rimuovi membro"
 
-#: macos/Iris/ContactsSettings.swift:205
+#: macos/Iris/ContactsSettings.swift:227
 msgid "Name or email address"
 msgstr "Nome o indirizzo email"
 
-#: macos/Iris/ContactsSettings.swift:207
+#: macos/Iris/ContactsSettings.swift:229
 msgid "Add"
 msgstr "Aggiungi"
 
-#: macos/Iris/ContactsSettings.swift:210
+#: macos/Iris/ContactsSettings.swift:232
 msgid ""
 "Add an email address or choose a suggested contact. You can paste several "
 "addresses at once."
@@ -5271,7 +5279,7 @@ msgstr ""
 "Aggiungi un indirizzo email o scegli un contatto suggerito. Puoi incollare "
 "più indirizzi insieme."
 
-#: macos/Iris/ContactsSettings.swift:221 macos/Iris/FilingView.swift:70
+#: macos/Iris/ContactsSettings.swift:243 macos/Iris/FilingView.swift:70
 #: macos/Iris/FilingView.swift:175 macos/Iris/HideMyEmailView.swift:39
 #: macos/Iris/RulesView.swift:200 macos/Iris/SidebarView.swift:152
 #: macos/Iris/SmartEditorView.swift:72 macos/Iris/TemplatesSettings.swift:119
@@ -5307,13 +5315,13 @@ msgid "Edit Draft"
 msgstr "Modifica bozza"
 
 #: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:111
-#: macos/Iris/ThreadListView.swift:360
+#: macos/Iris/ThreadListView.swift:379
 msgid "Remove from Follow Up"
 msgstr "Rimuovi da «Da seguire»"
 
 #: macos/Iris/ConversationView.swift:127 macos/Iris/ConversationView.swift:348
-#: macos/Iris/ThreadListView.swift:41 macos/Iris/ThreadListView.swift:270
-#: macos/Iris/ThreadListView.swift:368
+#: macos/Iris/ThreadListView.swift:43 macos/Iris/ThreadListView.swift:289
+#: macos/Iris/ThreadListView.swift:387
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
@@ -5582,8 +5590,8 @@ msgstr "Nuova casella smart…"
 msgid "Export…"
 msgstr "Esporta…"
 
-#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:98
-#: macos/Iris/ThreadListView.swift:103
+#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:108
+#: macos/Iris/ThreadListView.swift:113
 msgid "Show Only Unread"
 msgstr "Mostra solo non letti"
 
@@ -5599,48 +5607,48 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:673
+#: macos/Iris/MailModel.swift:713
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:675
+#: macos/Iris/MailModel.swift:715
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:700 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:740 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:858
+#: macos/Iris/MailModel.swift:898
 msgid "Message discarded"
 msgstr "Messaggio scartato"
 
-#: macos/Iris/MailModel.swift:898
+#: macos/Iris/MailModel.swift:943
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:988
+#: macos/Iris/MailModel.swift:1033
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1293
+#: macos/Iris/MailModel.swift:1340
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1332
+#: macos/Iris/MailModel.swift:1379
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1831
+#: macos/Iris/MailModel.swift:1878
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1836
+#: macos/Iris/MailModel.swift:1883
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1886
+#: macos/Iris/MailModel.swift:1933
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
@@ -6101,7 +6109,7 @@ msgstr "Segna come letto o non letto"
 msgid "Mute or unmute"
 msgstr "Silenzia o riattiva"
 
-#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:413
+#: macos/Iris/ShortcutsView.swift:36 macos/Iris/ThreadListView.swift:432
 msgid "Undo"
 msgstr "Annulla"
 
@@ -6173,8 +6181,8 @@ msgstr ""
 "La barra laterale mostra il nome al posto dell'indirizzo. Lascialo vuoto per "
 "usare l'indirizzo."
 
-#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:93
-#: macos/Iris/ThreadListView.swift:94
+#: macos/Iris/SidebarView.swift:176 macos/Iris/ThreadListView.swift:103
+#: macos/Iris/ThreadListView.swift:104
 msgid "Check for Mail"
 msgstr "Controlla la posta"
 
@@ -6328,35 +6336,35 @@ msgstr ""
 msgid "Body"
 msgstr "Testo"
 
-#: macos/Iris/ThreadListView.swift:111 macos/Iris/ThreadListView.swift:511
+#: macos/Iris/ThreadListView.swift:121 macos/Iris/ThreadListView.swift:530
 msgid "Search mail"
 msgstr "Cerca nella posta"
 
-#: macos/Iris/ThreadListView.swift:214 macos/Iris/ThreadListView.swift:215
+#: macos/Iris/ThreadListView.swift:229 macos/Iris/ThreadListView.swift:230
 msgid "Hide messages"
 msgstr "Nascondi messaggi"
 
-#: macos/Iris/ThreadListView.swift:214 macos/Iris/ThreadListView.swift:215
+#: macos/Iris/ThreadListView.swift:229 macos/Iris/ThreadListView.swift:230
 msgid "Show messages"
 msgstr "Mostra messaggi"
 
-#: macos/Iris/ThreadListView.swift:216
+#: macos/Iris/ThreadListView.swift:231
 msgid "Collapsed"
 msgstr "Compresso"
 
-#: macos/Iris/ThreadListView.swift:216
+#: macos/Iris/ThreadListView.swift:231
 msgid "Expanded"
 msgstr "Espanso"
 
-#: macos/Iris/ThreadListView.swift:239
+#: macos/Iris/ThreadListView.swift:255
 msgid "Loading messages"
 msgstr "Caricamento dei messaggi"
 
-#: macos/Iris/ThreadListView.swift:282
+#: macos/Iris/ThreadListView.swift:301
 msgid "No message previews are stored on this Mac yet."
 msgstr "Non ci sono ancora anteprime dei messaggi su questo Mac."
 
-#: macos/Iris/ThreadListView.swift:398
+#: macos/Iris/ThreadListView.swift:417
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
 
@@ -9571,9 +9579,6 @@ msgstr "VIP"
 
 #~ msgid "Delete the event, with Undo"
 #~ msgstr "Elimina l'evento, con Annulla"
-
-#~ msgid "Search the calendar"
-#~ msgstr "Cerca nel calendario"
 
 #~ msgid "Undo, while its toast is still up"
 #~ msgstr "Annulla, finché la notifica è visibile"

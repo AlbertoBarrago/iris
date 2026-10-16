@@ -5,6 +5,19 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- Selecting an expanded reply keeps keyboard navigation and Delete working;
+  deleting mail selects the next conversation, or the previous one at the end,
+  and closing mail search returns the keyboard to the message list.
+
+### Improved
+
+- Recipient and contact-list suggestions also search Microsoft 365 and Google
+  Workspace directories, including people you have never emailed. Enable
+  directory search and grant access separately for each account in Contacts
+  settings, independently of personal contacts.
+
 ## 1.2.0 (2026-10-15)
 
 ### New

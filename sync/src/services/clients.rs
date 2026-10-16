@@ -143,6 +143,7 @@ either_client! {
         fn label_threads(id: &str) -> Gmail<u64>;
         fn vacation() -> Gmail<Vacation>;
         fn set_vacation(vacation: &Vacation) -> Gmail<()>;
+        fn directory_people(query: &str) -> Gmail<Vec<Person>>;
         fn connections(page_token: Option<&str>, sync_token: Option<&str>) -> Gmail<ConnectionsPage>;
         fn contact_photo(url: &str) -> Gmail<Vec<u8>>;
         fn create_contact(fields: &ContactFields) -> Gmail<Person>;
@@ -207,6 +208,7 @@ either_client! {
         fn create_calendar(name: &str, hex: &str) -> Graphed<GraphCalendar>;
         fn update_calendar(id: &str, body: &Value) -> Graphed<GraphCalendar>;
         fn delete_calendar(id: &str) -> Graphed<()>;
+        fn directory_people(query: &str) -> Graphed<Vec<GraphContact>>;
         fn contact_folders() -> Graphed<Vec<ContactFolder>>;
         fn default_contact_folder() -> Graphed<Option<String>>;
         fn contact_delta(folder: &str, link: Option<&str>) -> Graphed<DeltaPage<GraphContact>>;

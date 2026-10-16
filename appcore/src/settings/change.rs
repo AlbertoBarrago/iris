@@ -62,6 +62,11 @@ pub enum Change {
         email: String,
         on: bool,
     },
+    /// Search one account's organization directory independently of contacts.
+    AccountDirectory {
+        email: String,
+        on: bool,
+    },
     /// The space the window shows, remembered for the next start.
     Space(super::Space),
     /// The grid the calendar shows.
@@ -292,6 +297,13 @@ impl Change {
                 settings.contact_accounts.retain(|e| *e != email);
                 if on {
                     settings.contact_accounts.push(email);
+                }
+            }
+            Change::AccountDirectory { email, on } => {
+                let email = email.to_lowercase();
+                settings.directory_accounts.retain(|e| *e != email);
+                if on {
+                    settings.directory_accounts.push(email);
                 }
             }
             Change::AllContacts(emails) => {
@@ -633,6 +645,7 @@ settable! {
         // Reading contacts asks Google for access of its own, so it stays a
         // choice the person makes in Preferences.
         contact_accounts,
+        directory_accounts,
         contacts,
         // How the inbox is arranged, and which slice of it opens first, is
         // the person's own view of their mail. It sits beside
@@ -855,6 +868,7 @@ impl Effects {
             translate_on_device,
             contacts,
             contact_accounts,
+            directory_accounts,
             check_for_updates,
             space,
             calendar_view,
@@ -869,6 +883,8 @@ impl Effects {
         // Send commits, and the rest are read when they are needed, so
         // changing one saves the file and stops there.
         let _quiet = (
+            // Directory queries read the current preference when they start.
+            directory_accounts,
             mark_read,
             remote_images,
             notifications,
@@ -1441,6 +1457,36 @@ mod tests {
         after.week_start = mailrs_domain::calendar::week::WeekStart::Monday;
         let effects = Effects::between(&before, &after);
         assert_eq!(effects.iter().collect::<Vec<_>>(), Effect::ALL);
+    }
+
+    #[test]
+    fn directory_is_opt_in_per_account_and_independent_of_personal_contacts() {
+        let mut settings = Settings::default();
+        assert!(!settings.searches_directory("google@example.org"));
+        Change::AccountContacts {
+            email: "microsoft@example.org".into(),
+            on: true,
+        }
+        .apply(&mut settings);
+        Change::AccountDirectory {
+            email: "GOOGLE@example.org".into(),
+            on: true,
+        }
+        .apply(&mut settings);
+        assert!(settings.searches_directory("google@example.org"));
+        assert!(!settings.searches_directory("microsoft@example.org"));
+        assert!(settings.reads_contacts("microsoft@example.org"));
+        assert!(!settings.reads_contacts("google@example.org"));
+        let saved = toml::to_string(&settings).unwrap();
+        let mut loaded: Settings = toml::from_str(&saved).unwrap();
+        assert!(loaded.searches_directory("Google@example.org"));
+        Change::AccountDirectory {
+            email: "google@example.org".into(),
+            on: false,
+        }
+        .apply(&mut loaded);
+        assert!(!loaded.searches_directory("google@example.org"));
+        assert!(loaded.reads_contacts("microsoft@example.org"));
     }
 
     #[test]

@@ -98,6 +98,33 @@ impl<G: GraphApi> Microsoft<G> {
 }
 
 impl<G: GraphApi> ContactsService for Microsoft<G> {
+    fn directory_access(&self) -> Option<bool> {
+        if self.settings.provider_name == "Outlook" {
+            return None;
+        }
+        Some(
+            self.graph
+                .granted()
+                .is_some_and(|g| g.has("User.ReadBasic.All")),
+        )
+    }
+
+    async fn directory_people(&self, query: &str) -> Result<Vec<Person>, BackendError> {
+        match self.directory_access() {
+            None => return Ok(Vec::new()),
+            Some(false) => return Err(BackendError::NeedsPermission),
+            Some(true) => {}
+        }
+        Ok(self
+            .graph
+            .directory_people(query)
+            .await
+            .map_err(super::backend)?
+            .iter()
+            .map(person_of)
+            .collect())
+    }
+
     async fn connections(
         &self,
         page_token: Option<&str>,

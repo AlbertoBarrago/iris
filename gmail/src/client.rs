@@ -642,6 +642,26 @@ impl GmailClient {
     /// token is too old to answer from.
     ///
     /// [`CONTACTS_SCOPE`]: crate::people::CONTACTS_SCOPE
+    /// Searches the Workspace directory without depending on previous mail.
+    pub async fn directory_people(&self, query: &str) -> Result<Vec<crate::Person>, GmailError> {
+        let url = format!("{}/people:searchDirectoryPeople", self.people_url);
+        let body = self
+            .send_request(cost::CONNECTIONS, || {
+                self.http().get(&url).query(&[
+                    ("query", query),
+                    ("readMask", "names,emailAddresses"),
+                    ("sources", "DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE"),
+                    ("sources", "DIRECTORY_SOURCE_TYPE_DOMAIN_CONTACT"),
+                    ("pageSize", "8"),
+                ])
+            })
+            .await?
+            .text()
+            .await
+            .map_err(|e| GmailError::Decode(e.to_string()))?;
+        Ok(people::parse_connections(&body)?.people)
+    }
+
     pub async fn connections(
         &self,
         page_token: Option<&str>,

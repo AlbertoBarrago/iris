@@ -56,6 +56,13 @@ pub trait GraphApi: Send + Sync + 'static {
     fn update_calendar(&self, id: &str, body: &Value) -> impl Future<Output = Answer<GraphCalendar>> + Send;
     fn delete_calendar(&self, id: &str) -> impl Future<Output = Answer<()>> + Send;
 
+    fn directory_people(
+        &self,
+        _query: &str,
+    ) -> impl Future<Output = Answer<Vec<GraphContact>>> + Send {
+        async { Ok(Vec::new()) }
+    }
+
     fn contact_folders(&self) -> impl Future<Output = Answer<Vec<ContactFolder>>> + Send;
     fn default_contact_folder(&self) -> impl Future<Output = Answer<Option<String>>> + Send;
     fn contact_delta(&self, folder: &str, link: Option<&str>) -> impl Future<Output = Answer<DeltaPage<GraphContact>>> + Send;
@@ -76,6 +83,10 @@ pub trait GraphApi: Send + Sync + 'static {
 }
 
 impl GraphApi for Graph {
+    async fn directory_people(&self, query: &str) -> Answer<Vec<GraphContact>> {
+        Graph::directory_people(self, query).await
+    }
+
     fn granted(&self) -> Option<Granted> {
         Graph::granted(self)
     }

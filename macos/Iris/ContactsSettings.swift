@@ -38,6 +38,18 @@ struct ContactsSettings: View {
                             Text(account.reason).font(.callout).foregroundStyle(.secondary)
                         }
                     }
+                    if account.directoryAvailable {
+                        Toggle(tr("Search the company directory"), isOn: Binding(
+                            get: { account.directoryOn },
+                            set: { setDirectory(account, on: $0) }
+                        ))
+                        .accessibilityLabel(tr("Search the company directory") + ": " + account.email)
+                        if account.directoryOn && account.directoryNeedsAccess {
+                            Button(tr("Grant Directory Access")) {
+                                model.addAccount = AddAccountRequest(again: account.accountId)
+                            }
+                        }
+                    }
                 }
             } header: {
                 Text(tr("Contacts"))
@@ -49,10 +61,20 @@ struct ContactsSettings: View {
         }
         .formStyle(.grouped)
         .onAppear { load() }
+        .onChange(of: model.addAccount == nil) { _, closed in
+            if closed { load() }
+        }
     }
 
     private func load() {
         accounts = (try? model.mail?.contactAccounts()) ?? []
+    }
+
+    private func setDirectory(_ account: ContactAccount, on: Bool) {
+        guard let mail = model.mail else { return }
+        do { try mail.setAccountDirectory(accountId: account.accountId, on: on) }
+        catch { model.say("\(error)") }
+        load()
     }
 
     /// Reads or forgets the account's address book off the main thread,

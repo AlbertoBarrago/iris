@@ -289,3 +289,24 @@ async fn invalid_grant_means_the_account_needs_reauthorizing() {
         Err(GmailError::NeedsReauth)
     ));
 }
+
+#[test]
+fn directory_permission_is_requested_only_after_opt_in() {
+    let client = OAuthClient::new("client", "secret");
+    assert!(
+        !client
+            .consent_scopes()
+            .contains(&mailrs_gmail::people::DIRECTORY_SCOPE)
+    );
+    let url = client
+        .with_directory_access()
+        .authorize_url("http://localhost:1234", &Pkce::generate(), "state")
+        .unwrap();
+    let url = url::Url::parse(&url).unwrap();
+    let pairs: HashMap<_, _> = url.query_pairs().into_owned().collect();
+    assert!(
+        pairs["scope"]
+            .split_whitespace()
+            .any(|s| s == mailrs_gmail::people::DIRECTORY_SCOPE)
+    );
+}

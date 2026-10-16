@@ -647,6 +647,21 @@ fn calendar_write_error(err: GmailError) -> BackendError {
 }
 
 impl<G: GmailApi> ContactsService for Google<G> {
+    fn directory_access(&self) -> Option<bool> {
+        Some(
+            self.gmail
+                .granted()
+                .is_some_and(|g| g.has(mailrs_gmail::people::DIRECTORY_SCOPE)),
+        )
+    }
+
+    async fn directory_people(&self, query: &str) -> Result<Vec<Person>, BackendError> {
+        if self.directory_access() != Some(true) {
+            return Err(BackendError::NeedsPermission);
+        }
+        Ok(paced(self.gmail.directory_people(query)).await?)
+    }
+
     async fn connections(
         &self,
         page_token: Option<&str>,

@@ -50,6 +50,35 @@ pub fn suggest<'a>(
     first
 }
 
+/// Personal contacts and directory matches precede mail-only correspondents.
+/// An address keeps the personal name and gathers the accounts that know it.
+pub fn with_directory(known: &[Suggestion], directory: Vec<Suggestion>) -> Vec<Suggestion> {
+    let mut merged: Vec<_> = known.iter().filter(|p| p.known()).cloned().collect();
+    for person in directory {
+        if let Some(held) = merged
+            .iter_mut()
+            .find(|held| held.email.eq_ignore_ascii_case(&person.email))
+        {
+            for account in person.accounts {
+                if !held.accounts.contains(&account) {
+                    held.accounts.push(account);
+                }
+            }
+        } else {
+            merged.push(person);
+        }
+    }
+    for person in known.iter().filter(|p| !p.known()) {
+        if !merged
+            .iter()
+            .any(|held| held.email.eq_ignore_ascii_case(&person.email))
+        {
+            merged.push(person.clone());
+        }
+    }
+    merged
+}
+
 /// Whether `contact` answers `query`, already trimmed and lower case.
 fn matches(contact: &Suggestion, query: &str) -> bool {
     let email = contact.email.to_lowercase();
@@ -331,6 +360,27 @@ pub fn failed_title(people: &[Address], account: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn directory_finds_people_never_mailed_and_merges_accounts() {
+        let mut personal = contact(Some("My Ana"), "ANA@example.org");
+        personal.accounts = vec![1];
+        let frequent = contact(Some("Anna Frequent"), "frequent@example.org");
+        let mut colleague = contact(Some("Ana Colleague"), "ana.colleague@example.org");
+        colleague.accounts = vec![2];
+        colleague.score = 0;
+        let mut duplicate = contact(Some("Directory Ana"), "ana@example.org");
+        duplicate.accounts = vec![2];
+        let merged = with_directory(&[personal, frequent], vec![duplicate, colleague]);
+        assert_eq!(merged.len(), 3);
+        assert_eq!(merged[0].name.as_deref(), Some("My Ana"));
+        assert_eq!(merged[0].accounts, [1, 2]);
+        assert_eq!(merged[1].email, "ana.colleague@example.org");
+        assert_eq!(suggest(&merged, "ana", &[], 8, Some(2)).len(), 2);
+        let picked = suggest(&merged, "ana", &["ANA@example.org".into()], 8, None);
+        assert_eq!(picked.len(), 1);
+        assert_eq!(picked[0].email, "ana.colleague@example.org");
+    }
 
     #[test]
     fn a_list_accepts_named_recipients_and_keeps_the_first_address_once() {

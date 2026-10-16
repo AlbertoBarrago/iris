@@ -193,6 +193,13 @@ pub trait GmailApi: Send + Sync + 'static {
     /// `GmailError::MissingScope` until the account grants the contacts
     /// permission, and `GmailError::ExpiredSyncToken` once a token is too
     /// old to answer from.
+    fn directory_people(
+        &self,
+        _query: &str,
+    ) -> impl Future<Output = Result<Vec<Person>, GmailError>> + Send {
+        async { Ok(Vec::new()) }
+    }
+
     fn connections(
         &self,
         page_token: Option<&str>,
@@ -640,6 +647,10 @@ impl GmailApi for AccountClient {
         color: &LabelColor,
     ) -> Result<RemoteLabel, GmailError> {
         self.client.set_label_color(id, color).await
+    }
+
+    async fn directory_people(&self, query: &str) -> Result<Vec<Person>, GmailError> {
+        self.client.directory_people(query).await
     }
 
     async fn connections(

@@ -22,6 +22,9 @@ pub const CONTACTS_SCOPE: &str = "https://www.googleapis.com/auth/contacts.reado
 /// first time the assistant adds or changes a contact.
 pub const CONTACTS_WRITE_SCOPE: &str = "https://www.googleapis.com/auth/contacts";
 
+/// Read names and addresses from a Google Workspace directory.
+pub const DIRECTORY_SCOPE: &str = "https://www.googleapis.com/auth/directory.readonly";
+
 pub const PEOPLE_API_BASE: &str = "https://people.googleapis.com/v1";
 
 /// The fields one page carries. Anything not named here comes back empty,
@@ -230,6 +233,7 @@ trait Marked {
 #[serde(rename_all = "camelCase")]
 struct Connections {
     #[serde(default)]
+    #[serde(alias = "people")]
     connections: Vec<Connection>,
     next_page_token: Option<String>,
     next_sync_token: Option<String>,

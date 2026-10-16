@@ -15,8 +15,10 @@ use url::Url;
 use mailrs_domain::sign_in_page::Finished;
 
 use crate::GmailError;
-use crate::calendar::{CALENDAR_LIST_SCOPE, CALENDAR_LIST_WRITE_SCOPE, CALENDAR_SCOPE, CALENDARS_SCOPE};
-use crate::people::{CONTACTS_SCOPE, CONTACTS_WRITE_SCOPE};
+use crate::calendar::{
+    CALENDAR_LIST_SCOPE, CALENDAR_LIST_WRITE_SCOPE, CALENDAR_SCOPE, CALENDARS_SCOPE,
+};
+use crate::people::{CONTACTS_SCOPE, CONTACTS_WRITE_SCOPE, DIRECTORY_SCOPE};
 
 /// Read, send, and organize mail. Sign-in no longer asks for this one on
 /// its own: [`DELETE_SCOPE`] covers it. [`Granted::has`] still checks it,
@@ -39,10 +41,11 @@ pub const GOOGLE_TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
 /// through Drive needs no second consent later; nothing uses it yet.
 pub const DRIVE_FILE_SCOPE: &str = "https://www.googleapis.com/auth/drive.file";
 
-/// Every scope sign-in asks Google for, in one consent: [`DELETE_SCOPE`]
+/// The base scopes sign-in asks Google for, in one consent: [`DELETE_SCOPE`]
 /// (mail, and deleting it for good), settings, [`CONTACTS_WRITE_SCOPE`]
 /// (contacts, and changing them), events, the calendar list and the
-/// calendars themselves, and [`DRIVE_FILE_SCOPE`]. Google's verification
+/// calendars themselves, and [`DRIVE_FILE_SCOPE`]. Directory access is added
+/// only after the person enables it for an account. Google's verification
 /// team asks for least privilege, so this leaves out [`GMAIL_SCOPE`],
 /// [`crate::people::CONTACTS_SCOPE`] and [`CALENDAR_LIST_SCOPE`]: each is
 /// already covered by the wider scope in the list. A person may untick
@@ -167,6 +170,7 @@ pub struct OAuthClient {
     http: reqwest::Client,
     client_id: String,
     client_secret: String,
+    directory: bool,
     auth_url: String,
     token_url: String,
     /// Google counts quota against the OAuth client, so every account
@@ -217,10 +221,25 @@ impl OAuthClient {
             http,
             client_id: client_id.into(),
             client_secret: client_secret.into(),
+            directory: false,
             auth_url: GOOGLE_AUTH_URL.into(),
             token_url: GOOGLE_TOKEN_URL.into(),
             quota: std::sync::Arc::new(crate::limiter::QuotaPool::new()),
         }
+    }
+
+    /// Include directory access only for a sign-in the person requested.
+    pub fn with_directory_access(mut self) -> Self {
+        self.directory = true;
+        self
+    }
+
+    pub fn consent_scopes(&self) -> Vec<&'static str> {
+        let mut scopes = SIGN_IN_SCOPES.to_vec();
+        if self.directory {
+            scopes.push(DIRECTORY_SCOPE);
+        }
+        scopes
     }
 
     /// The client ID, which Google shows on its consent screen and which
@@ -265,7 +284,7 @@ impl OAuthClient {
             .append_pair("client_id", &self.client_id)
             .append_pair("redirect_uri", redirect_uri)
             .append_pair("response_type", "code")
-            .append_pair("scope", &SIGN_IN_SCOPES.join(" "))
+            .append_pair("scope", &self.consent_scopes().join(" "))
             .append_pair("include_granted_scopes", "true")
             .append_pair("code_challenge", &pkce.challenge)
             .append_pair("code_challenge_method", "S256")

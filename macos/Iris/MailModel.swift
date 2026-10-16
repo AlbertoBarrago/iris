@@ -10,6 +10,8 @@ final class MailModel {
     private(set) var listing: MailboxListing? {
         didSet { expandedThreads.formIntersection(Set(listing?.rows.map(\.key) ?? [])) }
     }
+    @ObservationIgnored private var trashing: Set<ThreadKey> = []
+    @ObservationIgnored private var listRequest = UUID()
     var expandedThreads: Set<ThreadKey> = []
     private(set) var focusedMessage: String?
     private var requestedMessage: String?
@@ -349,31 +351,69 @@ final class MailModel {
     /// the window's undo stack and says what it did.
     func perform(_ action: Action, on keys: Set<ThreadKey>? = nil) {
         guard let mail else { return }
-        let picked = keys ?? selection
+        let picked = (keys ?? selection).subtracting(trashing)
         guard !picked.isEmpty else { return }
         let threads = picked.map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
         let from = selectedMailbox
         // Delete in the Trash erases for good, so it asks first.
         if action == .trash, let question = try? mail.eraseQuestion(threads: threads, from: from) {
-            erasing = EraseRequest(threads: threads, question: question, clears: keys == nil)
+            erasing = EraseRequest(threads: threads, question: question)
             return
         }
-        if keys == nil, Self.leavesList(action) { selection = [] }
+        if action == .trash {
+            removeFromList(picked)
+        } else if keys == nil, Self.leavesList(action) {
+            selection = []
+        }
         Task.detached {
             let done = mail.act(threads: threads, action: action, from: from)
-            await MainActor.run { self.finished(done, undoable: true) }
+            await MainActor.run {
+                self.trashing.subtract(picked)
+                self.finished(done, undoable: true)
+            }
         }
     }
 
     /// Erases what Delete Forever's question asked about, on a yes.
     func erase(_ request: EraseRequest) {
         guard let mail else { return }
-        if request.clears { selection = [] }
         let threads = request.threads
+        let picked = Set(threads.map { ThreadKey(account: $0.accountId, thread: $0.threadId) })
+        removeFromList(picked)
         Task.detached {
             let done = mail.erase(threads: threads)
-            await MainActor.run { self.finished(done, undoable: false) }
+            await MainActor.run {
+                self.trashing.subtract(picked)
+                self.finished(done, undoable: false)
+            }
         }
+    }
+
+    /// Remove rows now so a second Delete acts on the next conversation.
+    private func removeFromList(_ picked: Set<ThreadKey>) {
+        guard let mail, var shown = listing else { return }
+        let rows = shown.rows.map { ThreadRef(accountId: $0.accountId, threadId: $0.threadId) }
+        let removed = picked.map { ThreadRef(accountId: $0.account, threadId: $0.thread) }
+        if !selection.isDisjoint(with: picked) {
+            let remaining = selection.subtracting(picked)
+            if !remaining.isEmpty {
+                selection = remaining
+            } else {
+                selection = mail.nextAfterRemoval(rows: rows, removed: removed).map {
+                    [ThreadKey(account: $0.accountId, thread: $0.threadId)]
+                } ?? []
+            }
+        }
+        trashing.formUnion(picked)
+        listRequest = UUID()
+        shown.rows.removeAll { picked.contains($0.key) }
+        listing = shown
+    }
+
+    private func showList(_ listing: MailboxListing) {
+        var shown = listing
+        shown.rows.removeAll { trashing.contains($0.key) }
+        self.listing = shown
     }
 
     // MARK: Calendar state (see CalendarView.swift)
@@ -864,9 +904,14 @@ final class MailModel {
     }
 
     /// People a recipient field could mean.
-    func suggest(_ field: String, account: Int64, excluding: Set<String> = []) async -> [Suggestion] {
+    func suggest(_ field: String, account: Int64, excluding: Set<String> = [], directory: Bool = true) async -> [Suggestion] {
         guard let mail else { return [] }
-        return await Task.detached { mail.suggest(field: field, accountId: account, excluding: Array(excluding)) }.value
+        return await Task.detached {
+            if directory {
+                return mail.suggest(field: field, accountId: account, excluding: Array(excluding))
+            }
+            return mail.suggestLocal(field: field, accountId: account, excluding: Array(excluding))
+        }.value
     }
 
     /// Puts up the notice that the mail could not be read, offering
@@ -1038,6 +1083,8 @@ final class MailModel {
 
     fileprivate func loadList() {
         guard let mail, let key = selectedMailbox else { return }
+        let request = UUID()
+        listRequest = request
         if let query = searching {
             // The mail on this Mac answers first, then the servers, as in
             // the GTK app. When the servers find nothing, as when the
@@ -1047,20 +1094,20 @@ final class MailModel {
                 let stored = try? mail.search(query: query, scopeKey: key, servers: false)
                 if let stored {
                     await MainActor.run {
-                        if self.searching == query { self.listing = stored }
+                        if self.listRequest == request, self.selectedMailbox == key, self.searching == query { self.showList(stored) }
                     }
                 }
                 guard servers else { return }
                 do {
                     let found = try mail.search(query: query, scopeKey: key, servers: true)
                     await MainActor.run {
-                        guard self.searching == query else { return }
+                        guard self.listRequest == request, self.selectedMailbox == key, self.searching == query else { return }
                         if found.rows.isEmpty, let stored, !stored.rows.isEmpty { return }
-                        self.listing = found
+                        self.showList(found)
                     }
                 } catch {
                     await MainActor.run {
-                        if self.searching == query, stored == nil { self.toast = Toast(words: "\(error)", undo: false) }
+                        if self.listRequest == request, self.selectedMailbox == key, self.searching == query, stored == nil { self.toast = Toast(words: "\(error)", undo: false) }
                     }
                 }
             }
@@ -1076,9 +1123,9 @@ final class MailModel {
                 await MainActor.run {
                     // The person may have picked another mailbox, or
                     // started a search, meanwhile.
-                    if self.selectedMailbox == key, self.category == category, self.unreadOnly == unreadOnly,
+                    if self.listRequest == request, self.selectedMailbox == key, self.category == category, self.unreadOnly == unreadOnly,
                        self.searching == nil {
-                        self.listing = listing
+                        self.showList(listing)
                     }
                 }
             } catch {
@@ -1086,7 +1133,7 @@ final class MailModel {
                 // with nothing left under it, gives way to the first one
                 // rather than an alert.
                 await MainActor.run {
-                    if self.selectedMailbox == key {
+                    if self.listRequest == request, self.selectedMailbox == key {
                         self.selectedMailbox = self.sidebar.first { $0.kind == "mailbox" }?.key
                     }
                 }
@@ -1910,6 +1957,4 @@ struct EraseRequest: Identifiable {
     let id = UUID()
     let threads: [ThreadRef]
     let question: EraseQuestion
-    /// Whether the selection goes once the mail does.
-    let clears: Bool
 }

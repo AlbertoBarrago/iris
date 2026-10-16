@@ -234,6 +234,7 @@ pub struct Mail {
     keys: Mutex<HashMap<String, Mailbox>>,
     /// Everyone a recipient field can offer, read once.
     pub(crate) people: Arc<Mutex<Option<Arc<Vec<mailrs_store::contacts::Suggestion>>>>>,
+    pub(crate) directory: Arc<Mutex<crate::contacts::DirectoryCache>>,
     /// Who hears the engine, kept to start it again after a change.
     listener: Mutex<Option<Arc<dyn MailListener>>>,
     /// The local copy of every account's calendars.
@@ -284,6 +285,7 @@ impl Mail {
             db,
             keys: Mutex::new(HashMap::new()),
             people: Arc::new(Mutex::new(None)),
+            directory: Arc::new(Mutex::new(crate::contacts::DirectoryCache::default())),
             account_colors: Mutex::new(HashMap::new()),
             listener: Mutex::new(None),
             demo: None,
@@ -457,6 +459,11 @@ impl Mail {
         });
         *held = Some(lock);
         Ok(())
+    }
+
+    /// The conversation to select after the removed rows leave the list.
+    pub fn next_after_removal(&self, rows: Vec<ThreadRef>, removed: Vec<ThreadRef>) -> Option<ThreadRef> {
+        mailrs_appcore::moving::next_after_removal(&rows, &removed).cloned()
     }
 
     /// Runs `action` on `threads`, taken from the mailbox `from` names, and

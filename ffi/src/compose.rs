@@ -292,82 +292,17 @@ impl Mail {
         account_id: Option<i64>,
         excluding: Vec<String>,
     ) -> Vec<Suggestion> {
-        let (start, query) = mailrs_appcore::contacts::current_token(&field);
-        if query.is_empty() {
-            return Vec::new();
-        }
-        let mut entered: Vec<String> = compose::parse_recipients(&field[..start])
-            .into_iter()
-            .map(|a| a.email)
-            .collect();
-        entered.extend(excluding);
-        let before = field[..start].trim_end();
-        let joiner = if before.is_empty() { "" } else { " " };
-        let db = self.db.clone();
-        let query_owned = query.to_string();
-        let lists = self.run(async move {
-            db.read(move |c| {
-                mailrs_store::contact_lists::list(c)?
-                    .into_iter()
-                    .filter(|list| mailrs_appcore::contacts::list_matches(&list.name, &query_owned))
-                    .map(|list| {
-                        let members = mailrs_store::contact_lists::members(c, list.id)?;
-                        Ok((list, members))
-                    })
-                    .collect::<mailrs_store::Result<Vec<_>>>()
-            })
-            .await
-        });
-        let mut found = Vec::new();
-        match lists {
-            Ok(lists) => {
-                for (list, members) in lists {
-                    let recipients = mailrs_appcore::contacts::list_recipients(&members, &entered);
-                    if !recipients.is_empty() {
-                        found.push(Suggestion {
-                            name: Some(list.name),
-                            email: String::new(),
-                            is_list: true,
-                            detail: mailrs_appcore::contacts::list_count(recipients.len()),
-                            completed: format!(
-                                "{before}{joiner}{}, ",
-                                compose::format_recipients(&recipients)
-                            ),
-                        });
-                    }
-                    if found.len() == 8 {
-                        break;
-                    }
-                }
-            }
-            Err(err) => tracing::warn!(%err, "could not read contact lists"),
-        }
-        let known = self.known_people();
-        found.extend(
-            mailrs_appcore::contacts::suggest(&known, query, &entered, 8 - found.len(), account_id)
-                .into_iter()
-                .map(|person| {
-                    let picked = Address {
-                        name: person.name.clone(),
-                        email: person.email.clone(),
-                    };
-                    Suggestion {
-                        name: person.name.clone(),
-                        email: person.email.clone(),
-                        detail: if person.name.is_some() {
-                            person.email.clone()
-                        } else {
-                            String::new()
-                        },
-                        is_list: false,
-                        completed: format!(
-                            "{before}{joiner}{}, ",
-                            compose::format_recipients(&[picked])
-                        ),
-                    }
-                }),
-        );
-        found
+        self.recipient_suggestions(field, account_id, excluding, true)
+    }
+
+    /// Local results stay available while a directory is slow or offline.
+    pub fn suggest_local(
+        &self,
+        field: String,
+        account_id: Option<i64>,
+        excluding: Vec<String>,
+    ) -> Vec<Suggestion> {
+        self.recipient_suggestions(field, account_id, excluding, false)
     }
 
     /// Why `composed` cannot go as it stands, such as no recipient or an
@@ -670,5 +605,104 @@ pub(crate) fn queued(draft: &Draft, raw: Vec<u8>) -> Queued {
         raw: Some(raw),
         composer: serde_json::to_string(draft).unwrap_or_default(),
         ..Queued::default()
+    }
+}
+
+impl Mail {
+    fn recipient_suggestions(
+        &self,
+        field: String,
+        account_id: Option<i64>,
+        excluding: Vec<String>,
+        directory: bool,
+    ) -> Vec<Suggestion> {
+        let (start, query) = mailrs_appcore::contacts::current_token(&field);
+        if query.is_empty() {
+            return Vec::new();
+        }
+        let mut entered: Vec<String> = compose::parse_recipients(&field[..start])
+            .into_iter()
+            .map(|a| a.email)
+            .collect();
+        entered.extend(excluding);
+        let before = field[..start].trim_end();
+        let joiner = if before.is_empty() { "" } else { " " };
+        let db = self.db.clone();
+        let query_owned = query.to_string();
+        let lists = self.run(async move {
+            db.read(move |c| {
+                mailrs_store::contact_lists::list(c)?
+                    .into_iter()
+                    .filter(|list| mailrs_appcore::contacts::list_matches(&list.name, &query_owned))
+                    .map(|list| {
+                        let members = mailrs_store::contact_lists::members(c, list.id)?;
+                        Ok((list, members))
+                    })
+                    .collect::<mailrs_store::Result<Vec<_>>>()
+            })
+            .await
+        });
+        let mut found = Vec::new();
+        match lists {
+            Ok(lists) => {
+                for (list, members) in lists {
+                    let recipients = mailrs_appcore::contacts::list_recipients(&members, &entered);
+                    if !recipients.is_empty() {
+                        found.push(Suggestion {
+                            name: Some(list.name),
+                            email: String::new(),
+                            is_list: true,
+                            detail: mailrs_appcore::contacts::list_count(recipients.len()),
+                            completed: format!(
+                                "{before}{joiner}{}, ",
+                                compose::format_recipients(&recipients)
+                            ),
+                        });
+                    }
+                    if found.len() == 8 {
+                        break;
+                    }
+                }
+            }
+            Err(err) => tracing::warn!(%err, "could not read contact lists"),
+        }
+        let known = self.known_people();
+        let directory = if directory {
+            self.directory_people(query)
+        } else {
+            Vec::new()
+        };
+        let merged = mailrs_appcore::contacts::with_directory(&known, directory);
+        found.extend(
+            mailrs_appcore::contacts::suggest(
+                &merged,
+                query,
+                &entered,
+                8 - found.len(),
+                account_id,
+            )
+            .into_iter()
+            .map(|person| {
+                let picked = Address {
+                    name: person.name.clone(),
+                    email: person.email.clone(),
+                };
+                Suggestion {
+                    name: person.name.clone(),
+                    email: person.email.clone(),
+                    detail: if person.name.is_some() {
+                        person.email.clone()
+                    } else {
+                        String::new()
+                    },
+                    is_list: false,
+                    completed: format!(
+                        "{before}{joiner}{}, ",
+                        compose::format_recipients(&[picked])
+                    ),
+                }
+            }),
+        );
+        found
     }
 }

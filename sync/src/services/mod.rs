@@ -1140,6 +1140,19 @@ pub trait CalendarService: Send + Sync + 'static {
 
 /// The account's address book.
 pub trait ContactsService: Send + Sync + 'static {
+    /// Whether a directory is available and its read permission was granted.
+    fn directory_access(&self) -> Option<bool> {
+        None
+    }
+
+    /// Directory matches, separate from the personal address book.
+    fn directory_people(
+        &self,
+        _query: &str,
+    ) -> impl Future<Output = Result<Vec<Person>, BackendError>> + Send {
+        async { Ok(Vec::new()) }
+    }
+
     /// One page of the contacts. `sync_token` from the last read asks for
     /// changes alone. Answers `BackendError::NeedsPermission` until the
     /// account grants the contacts permission.

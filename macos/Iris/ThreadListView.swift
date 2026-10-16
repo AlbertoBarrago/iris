@@ -5,6 +5,7 @@ import SwiftUI
 /// the category tabs over an inbox, and one row per conversation.
 struct ThreadListView: View {
     @Environment(MailModel.self) private var model
+    @FocusState private var listFocused: Bool
 
     var body: some View {
         @Bindable var model = model
@@ -32,6 +33,7 @@ struct ThreadListView: View {
                     let key = row.key
                     ThreadRowView(row: row, expanded: model.expandedThreads.contains(key)) {
                         if !model.expandedThreads.insert(key).inserted { model.expandedThreads.remove(key) }
+                        focusList()
                     }
                         .tag(ThreadListPick(key: key))
                         // A drag from a picked row carries the whole selection,
@@ -49,11 +51,13 @@ struct ThreadListView: View {
                                 .tint(.purple)
                         }
                     if model.expandedThreads.contains(key) {
-                        ConversationSummaryView(row: row)
+                        ConversationSummaryView(row: row) { focusList() }
                     }
                 }
             }
             .listStyle(.inset)
+            .focused($listFocused)
+            .simultaneousGesture(TapGesture().onEnded { focusList() })
             .contextMenu(forSelectionType: ThreadListPick.self) { picks in
                 MailActionsMenu(keys: Set(picks.map(\.key)))
             } primaryAction: { picks in
@@ -86,6 +90,12 @@ struct ThreadListView: View {
                 }
             }
         }
+        .onChange(of: model.listSelection) { _, selection in
+            if !selection.isEmpty { focusList() }
+        }
+        .onChange(of: model.searchOpen) { _, open in
+            if !open { focusList() }
+        }
         .navigationTitle(model.listing?.title ?? "")
         .navigationSubtitle(model.listing?.subtitle ?? "")
         .toolbar {
@@ -115,6 +125,11 @@ struct ThreadListView: View {
                 .help(tr("New Message"))
             }
         }
+    }
+
+    private func focusList() {
+        // Let the native row finish its click before restoring its keys.
+        DispatchQueue.main.async { listFocused = true }
     }
 }
 
@@ -228,6 +243,7 @@ struct ThreadRowView: View {
 struct ConversationSummaryView: View {
     @Environment(MailModel.self) private var model
     let row: ListRow
+    var picked: () -> Void = {}
     @State private var summaries: [MessageSummary] = []
     @State private var loading = true
     @State private var failure: String?
@@ -240,7 +256,10 @@ struct ConversationSummaryView: View {
                     .selectionDisabled()
             }
             ForEach(summaries, id: \.id) { message in
-                Button { model.openMessage(message.id, in: row.key) } label: {
+                Button {
+                    model.openMessage(message.id, in: row.key)
+                    picked()
+                } label: {
                     HStack(alignment: .top, spacing: 8) {
                         Circle().fill(message.unread ? Color.accentColor : .clear)
                             .frame(width: 5, height: 5).padding(.top, 5)

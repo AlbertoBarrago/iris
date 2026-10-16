@@ -10,6 +10,8 @@ entries get their new names as they are next touched.
 
 ## Glossary
 
+**Directory**: the people an organization makes searchable through Microsoft 365 or Google Workspace, including people never emailed. Recipient and contact-list suggestions search the directories of accounts with directory search enabled and directory access granted. Matches stay separate from saved personal contacts. `ContactsService::directory_people`. _Avoid_: frequent contacts, personal address book.
+
 **Contact list**: a named group of recipients, such as Family or a project team. A local list belongs to the person rather than to an account and keeps each member's name and address in insertion order. Removing a list does not remove its members from an address book. `mailrs_store::contact_lists`. _Avoid_: mailing list, distribution account.
 
 **System label**: a label Gmail defines, with the same id in every account, such as `INBOX`, `SPAM`, `UNREAD`, and the category labels. `mailrs_gmail::labels` names them and maps each to a role, a keyword or a category; only the Google adapter and the Gmail fake read them. _Avoid_: system folder.

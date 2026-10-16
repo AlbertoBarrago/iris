@@ -11,7 +11,9 @@ use mailrs_appcore::offered::{ContactsRow, contacts_row};
 use mailrs_appcore::settings::Change;
 use mailrs_domain::translate::gettext;
 use mailrs_store::{accounts, contact_lists};
-use mailrs_sync::{Accounts, ContactBook, Offers, Permitted, SyncEngine, Withheld};
+use mailrs_sync::{
+    Accounts, ContactBook, ContactsService, Offers, Permitted, SyncEngine, Withheld,
+};
 
 use crate::CoreError;
 use crate::mail::{Mail, MailListener, Running};
@@ -46,6 +48,10 @@ pub struct ContactAccount {
     /// Why there is no switch: the server's lack, or "Not allowed when
     /// you signed in".
     pub reason: String,
+    /// The directory needs a new sign-in before it can suggest colleagues.
+    pub directory_needs_access: bool,
+    pub directory_available: bool,
+    pub directory_on: bool,
 }
 
 /// One person as the contact card shows them.
@@ -248,7 +254,21 @@ impl Mail {
                     ContactsRow::Withheld => ("withheld", gettext("Not allowed when you signed in")),
                     ContactsRow::NotOffered(reason) => ("none", reason),
                 };
+                let personal_google = personal_google(&account.email);
+                let directory_available = !personal_google
+                    && services
+                        .as_ref()
+                        .and_then(|s| s.contacts.as_ref())
+                        .is_some_and(|s| s.directory_access().is_some());
+                let directory_needs_access = !personal_google
+                    && services
+                        .as_ref()
+                        .and_then(|s| s.contacts.as_ref())
+                        .is_some_and(|s| s.directory_access() == Some(false));
                 ContactAccount {
+                    directory_needs_access,
+                    directory_available,
+                    directory_on: settings.searches_directory(&account.email),
                     account_id: account.id,
                     on: settings.reads_contacts(&account.email),
                     email: account.email,
@@ -257,6 +277,17 @@ impl Mail {
                 }
             })
             .collect())
+    }
+
+    /// Enable or stop directory queries without changing personal contacts.
+    pub fn set_account_directory(&self, account_id: i64, on: bool) -> Result<(), CoreError> {
+        let account = self.account_row(account_id)?;
+        prefs::save(Change::AccountDirectory {
+            email: account.email,
+            on,
+        })?;
+        self.contacts_changed();
+        Ok(())
     }
 
     /// Turns reading account `account_id`'s contacts on or off. On reads
@@ -368,6 +399,11 @@ impl Mail {
     /// window draws what shows it.
     pub(crate) fn contacts_changed(&self) {
         *self.people.lock().unwrap_or_else(|p| p.into_inner()) = None;
+        self.directory
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .entries
+            .clear();
         self.changed("contacts");
     }
 
@@ -515,5 +551,126 @@ mod tests {
                 .is_err()
         );
         assert!(mail.suggest("design".into(), None, vec![]).is_empty());
+    }
+}
+
+fn personal_google(email: &str) -> bool {
+    email.rsplit_once('@').is_some_and(|(_, domain)| {
+        domain.eq_ignore_ascii_case("gmail.com") || domain.eq_ignore_ascii_case("googlemail.com")
+    })
+}
+
+/// Directory answers expire without becoming entries in a personal address book.
+#[derive(Default)]
+pub(crate) struct DirectoryCache {
+    entries:
+        std::collections::HashMap<(i64, String), (std::time::Instant, Vec<mailrs_gmail::Person>)>,
+}
+
+impl DirectoryCache {
+    fn get(&self, account: i64, query: &str) -> Option<Vec<mailrs_gmail::Person>> {
+        self.entries
+            .get(&(account, query.to_lowercase()))
+            .filter(|(at, _)| at.elapsed() < std::time::Duration::from_secs(300))
+            .map(|(_, people)| people.clone())
+    }
+
+    fn put(&mut self, account: i64, query: &str, people: Vec<mailrs_gmail::Person>) {
+        self.entries
+            .retain(|_, (at, _)| at.elapsed() < std::time::Duration::from_secs(300));
+        if self.entries.len() >= 64
+            && let Some(oldest) = self
+                .entries
+                .iter()
+                .min_by_key(|(_, (at, _))| *at)
+                .map(|(key, _)| key.clone())
+        {
+            self.entries.remove(&oldest);
+        }
+        self.entries.insert(
+            (account, query.to_lowercase()),
+            (std::time::Instant::now(), people),
+        );
+    }
+}
+
+impl Mail {
+    pub(crate) fn directory_people(&self, query: &str) -> Vec<mailrs_store::contacts::Suggestion> {
+        if query.chars().count() < 2 {
+            return Vec::new();
+        }
+        let db = self.db.clone();
+        let running = Arc::clone(&self.running);
+        let cache = Arc::clone(&self.directory);
+        let query = query.to_string();
+        let settings = prefs::load();
+        self.run(async move {
+            let accounts = db.read(accounts::list_accounts).await?;
+            let mut pending = tokio::task::JoinSet::new();
+            for account in accounts {
+                if !settings.searches_directory(&account.email) || personal_google(&account.email) {
+                    continue;
+                }
+                let Some(contacts) = running.services(account.id).and_then(|s| s.contacts) else {
+                    continue;
+                };
+                if contacts.directory_access() != Some(true) {
+                    continue;
+                }
+                let query = query.clone();
+                let cache = Arc::clone(&cache);
+                pending.spawn(async move {
+                    let held = cache.lock().unwrap_or_else(|p| p.into_inner()).get(account.id, &query);
+                    let people = match held {
+                        Some(people) => people,
+                        None => match tokio::time::timeout(std::time::Duration::from_secs(3), contacts.directory_people(&query)).await {
+                            Ok(Ok(people)) => {
+                                cache.lock().unwrap_or_else(|p| p.into_inner()).put(account.id, &query, people.clone());
+                                people
+                            }
+                            Ok(Err(err)) => { tracing::warn!(account_id = account.id, %err, "could not search the directory"); Vec::new() }
+                            Err(_) => Vec::new(),
+                        }
+                    };
+                    (account.id, people)
+                });
+            }
+            let mut found = Vec::new();
+            while let Some(done) = pending.join_next().await {
+                if let Ok((account, people)) = done {
+                    for person in people {
+                        for email in person.emails {
+                            found.push(mailrs_store::contacts::Suggestion {
+                                name: person.name.clone(), email, organization: None, photo_file: None,
+                                accounts: vec![account], score: 0, last_seen: 0,
+                            });
+                        }
+                    }
+                }
+            }
+            found.sort_by(|a, b| a.email.cmp(&b.email));
+            Ok::<_, mailrs_store::StoreError>(found)
+        }).unwrap_or_default()
+    }
+}
+
+#[cfg(test)]
+mod directory_tests {
+    use super::*;
+
+    #[test]
+    fn directory_cache_expires_and_is_bounded_per_account_and_query() {
+        let mut cache = DirectoryCache::default();
+        cache.put(1, "Ana", vec![mailrs_gmail::Person::default()]);
+        assert_eq!(cache.get(1, "ANA").unwrap().len(), 1);
+        assert!(cache.get(2, "Ana").is_none());
+        cache.entries.get_mut(&(1, "ana".into())).unwrap().0 =
+            std::time::Instant::now() - std::time::Duration::from_secs(301);
+        assert!(cache.get(1, "Ana").is_none());
+        for n in 0..100 {
+            cache.put(1, &n.to_string(), Vec::new());
+        }
+        assert_eq!(cache.entries.len(), 64);
+        assert!(cache.get(1, "99").is_some());
     }
 }

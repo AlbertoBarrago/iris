@@ -8,6 +8,16 @@ use mailrs_sync::{MailAction, Mailbox, TriageAction};
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{AccountId, Folder, MailSet, Role, Target};
 
+/// After removing the picked rows, prefer the next surviving row below
+/// the first removed one, or the nearest row above at the end of the list.
+pub fn next_after_removal<'a, T: PartialEq>(rows: &'a [T], removed: &[T]) -> Option<&'a T> {
+    let first = rows.iter().position(|row| removed.contains(row))?;
+    rows[first..]
+        .iter()
+        .find(|row| !removed.contains(row))
+        .or_else(|| rows[..first].iter().rev().find(|row| !removed.contains(row)))
+}
+
 /// The mail set a move takes mail out of, when leaving `mailbox` means
 /// losing one: the inbox, Muted or a person's label. Unread, Flagged, Sent
 /// and Drafts are marks or records, not places mail leaves.
@@ -147,6 +157,25 @@ pub fn moved_to(name: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn removing_rows_selects_below_then_above_and_never_a_removed_row() {
+        let rows = [1, 2, 3, 4];
+        assert_eq!(next_after_removal(&rows, &[2]), Some(&3));
+        assert_eq!(next_after_removal(&rows, &[4]), Some(&3));
+        assert_eq!(next_after_removal(&rows, &[2, 3]), Some(&4));
+        assert_eq!(next_after_removal(&rows, &[1, 3]), Some(&2));
+        assert_eq!(next_after_removal(&rows, &[3, 4]), Some(&2));
+        assert_eq!(next_after_removal(&rows, &rows), None);
+        assert_eq!(next_after_removal(&rows, &[]), None);
+        assert_eq!(next_after_removal(&rows, &[9]), None);
+        assert_eq!(next_after_removal(&[] as &[i32], &[1]), None);
+        let accounts = [(1, "same-id"), (2, "same-id"), (2, "next")];
+        assert_eq!(
+            next_after_removal(&accounts, &accounts[..1]),
+            Some(&accounts[1])
+        );
+    }
 
     fn label(id: &str) -> Mailbox {
         Mailbox::Label {
