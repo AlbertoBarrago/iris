@@ -11,7 +11,7 @@ the owner's own workflow, and wins where the two disagree.
 ## What this repo is
 
 Iris is a mail and calendar app for macOS: a SwiftUI and AppKit app
-(`macos/`) over a Rust core (`ffi/`, UniFFI). Until 1.1 its front end was
+(`macos/`) over a Rust core (`crates/ffi/`, UniFFI). Until 1.1 its front end was
 GTK4 and libadwaita, removed when the Swift app replaced it. It started from [Penguin Mail](https://github.com/c9dev/penguin-mail)
 1.0.0, a Linux app by David Santos; the first commit imports that tree,
 and Iris has been its own project since. The README, `LICENSE` and the
@@ -64,7 +64,7 @@ CONTRIBUTING.md, "Releasing".
 
 Google and Microsoft sign-in need OAuth clients compiled in through
 `IRIS_GOOGLE_CLIENT_ID`, `IRIS_GOOGLE_CLIENT_SECRET` and
-`IRIS_MICROSOFT_CLIENT_ID` (see `gmail/src/oauth.rs`). Local builds read
+`IRIS_MICROSOFT_CLIENT_ID` (see `crates/gmail/src/oauth.rs`). Local builds read
 them from `packaging/secrets.env`, which is gitignored.
 
 ## macOS specifics
@@ -75,8 +75,8 @@ them from `packaging/secrets.env`, which is gitignored.
   bindings into `macos/Iris/Generated/`.
 - Sparkle comes in as a Swift package; `macos/Info.plist` names the
   appcast, and `scripts/macos-dmg.sh` adds the public EdDSA key.
-- Secrets go through `keyring` in `gmail/src/token_store.rs` and
-  `sync/src/passwords.rs`, which stores them in the Keychain.
+- Secrets go through `keyring` in `crates/gmail/src/token_store.rs` and
+  `crates/sync/src/passwords.rs`, which stores them in the Keychain.
 - Not on macOS yet, each to be made to work the macOS way: the action
   buttons on new-mail notifications (`UNUserNotificationCenter`
   categories) and the sandbox for skill scripts, which is bubblewrap

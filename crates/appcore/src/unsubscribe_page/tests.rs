@@ -515,7 +515,7 @@ async fn a_submission_that_times_out_fails() {
 /// so a reason left in English would sit inside an Italian sentence.
 #[test]
 fn every_reason_a_page_gives_is_translated() {
-    const IT: &str = include_str!("../../../po/it_IT.po");
+    const IT: &str = include_str!("../../../../po/it_IT.po");
     for english in [
         "the page took longer than 20 seconds",
         "the page did not load: {reason}",

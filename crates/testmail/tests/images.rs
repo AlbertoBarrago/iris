@@ -3,7 +3,7 @@
 
 #[test]
 fn the_pull_script_names_every_pinned_image() {
-    let script = include_str!("../../scripts/test-images.sh");
+    let script = include_str!("../../../scripts/test-images.sh");
     for image in [
         mailrs_testmail::DOVECOT_IMAGE,
         mailrs_testmail::MAILPIT_IMAGE,

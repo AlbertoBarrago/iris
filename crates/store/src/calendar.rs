@@ -26,7 +26,7 @@ const DAY: EpochMillis = 24 * 60 * 60 * 1000;
 const MAX_RANGE: EpochMillis = 366 * DAY;
 
 /// The most occurrences [`occurrences`] returns, the live path's own
-/// `MOST_EVENTS` (`gmail/src/calendar.rs`).
+/// `MOST_EVENTS` (`crates/gmail/src/calendar.rs`).
 const MOST_EVENTS: usize = 500;
 
 /// Which of an account's calendars an [`occurrences`] query reads.

@@ -90,7 +90,7 @@ python3 scripts/en-gb.py "$pot" po/en_GB.po
 # POTFILES.in is what the extraction reads, so a file left out of it is a
 # file whose words nobody can translate. Say so loudly.
 {
-    grep -rlE '(gettext|fill_plural)\(' --include='*.rs' appcore/src domain/src sync/src ffi/src render/src view/src
+    grep -rlE '(gettext|fill_plural)\(' --include='*.rs' crates/appcore/src crates/domain/src crates/sync/src crates/ffi/src crates/render/src crates/view/src
     grep -rlE '\btr(Plural)?\("' --include='*.swift' macos/Iris
 } | LC_ALL=C sort > "$work/rust.txt"
 forgotten=$(comm -13 <(printf '%s\n%s\n' "$listed" "$swift" | grep -v '^$' | LC_ALL=C sort) "$work/rust.txt")

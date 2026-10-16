@@ -10,293 +10,294 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: appcore/src/accounts.rs:55
+#: crates/appcore/src/accounts.rs:55
 msgid "Canceled."
 msgstr ""
 
-#: appcore/src/accounts.rs:57
+#: crates/appcore/src/accounts.rs:57
 msgid "Gave up waiting for the browser after five minutes."
 msgstr ""
 
-#: appcore/src/add_account.rs:113
+#: crates/appcore/src/add_account.rs:113
 msgid "Did you mean {address}?"
 msgstr ""
 
-#: appcore/src/add_account.rs:147
+#: crates/appcore/src/add_account.rs:147
 msgid "Type the whole address, such as dana@example.com."
 msgstr ""
 
-#: appcore/src/add_account.rs:254
+#: crates/appcore/src/add_account.rs:254
 msgid "Leave on Server"
 msgstr ""
 
-#: appcore/src/add_account.rs:255
+#: crates/appcore/src/add_account.rs:255
 msgid "Remove After Downloading"
 msgstr ""
 
-#: appcore/src/add_account.rs:257
+#: crates/appcore/src/add_account.rs:257
 msgid "Remove After {count} Day"
 msgid_plural "Remove After {count} Days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/add_account.rs:285
+#: crates/appcore/src/add_account.rs:285
 msgid "This copy of Iris was built without Microsoft sign-in."
 msgstr ""
 
-#: appcore/src/add_account.rs:305
+#: crates/appcore/src/add_account.rs:305
 msgid "{provider} has no IMAP, so other mail apps cannot reach it."
 msgstr ""
 
-#: appcore/src/add_account.rs:312
+#: crates/appcore/src/add_account.rs:312
 msgid "Iris cannot reach {provider} yet."
 msgstr ""
 
-#: appcore/src/add_account.rs:429
+#: crates/appcore/src/add_account.rs:429
 msgid "{provider} also offers POP3"
 msgstr ""
 
-#: appcore/src/add_account.rs:438
+#: crates/appcore/src/add_account.rs:438
 msgid "Incoming"
 msgstr ""
 
-#: appcore/src/add_account.rs:439
+#: crates/appcore/src/add_account.rs:439
 msgid "Incoming over {protocol}"
 msgstr ""
 
-#: appcore/src/add_account.rs:447
+#: crates/appcore/src/add_account.rs:447
 msgid "Iris found no mail servers for {domain}. Enter them below."
 msgstr ""
 
-#: appcore/src/add_account.rs:472
+#: crates/appcore/src/add_account.rs:472
 msgid "{provider} needs an app password."
 msgstr ""
 
-#: appcore/src/add_account.rs:474
+#: crates/appcore/src/add_account.rs:474
 msgid "With two-step sign-in on, {provider} needs an app password."
 msgstr ""
 
-#: appcore/src/add_account.rs:480
+#: crates/appcore/src/add_account.rs:480
 msgid "Make one in {provider}'s settings."
 msgstr ""
 
-#: appcore/src/add_account.rs:490
+#: crates/appcore/src/add_account.rs:490
 msgid "App Password"
 msgstr ""
 
-#: appcore/src/add_account.rs:491
+#: crates/appcore/src/add_account.rs:491
 msgid "Password"
 msgstr ""
 
-#: appcore/src/add_account.rs:526
+#: crates/appcore/src/add_account.rs:526
 msgid "{host} · port {port} · {security}"
 msgstr ""
 
-#: appcore/src/add_account.rs:543 appcore/src/add_account.rs:547
+#: crates/appcore/src/add_account.rs:543 crates/appcore/src/add_account.rs:547
 msgid "{first} and {host}"
 msgstr ""
 
-#: appcore/src/add_account.rs:555
+#: crates/appcore/src/add_account.rs:555
 msgid "{first} and {second}"
 msgstr ""
 
-#: appcore/src/add_account.rs:563
+#: crates/appcore/src/add_account.rs:563
 msgid "{hosts} · {security}"
 msgstr ""
 
-#: appcore/src/add_account.rs:573
+#: crates/appcore/src/add_account.rs:573
 msgid "Iris's own list knows this provider. Nothing has left this computer."
 msgstr ""
 
-#: appcore/src/add_account.rs:575
+#: crates/appcore/src/add_account.rs:575
 msgid "Found by its mail servers. Nothing else was asked."
 msgstr ""
 
-#: appcore/src/add_account.rs:577
+#: crates/appcore/src/add_account.rs:577
 msgid "Found in the domain's own settings."
 msgstr ""
 
-#: appcore/src/add_account.rs:579
+#: crates/appcore/src/add_account.rs:579
 msgid "Found in Mozilla's provider list."
 msgstr ""
 
-#: appcore/src/add_account.rs:580
+#: crates/appcore/src/add_account.rs:580
 msgid "Found by trying common server names."
 msgstr ""
 
-#: appcore/src/add_account.rs:581
+#: crates/appcore/src/add_account.rs:581
 msgid "The servers you gave."
 msgstr ""
 
-#: appcore/src/add_account.rs:590
+#: crates/appcore/src/add_account.rs:590
 msgid "{time} left"
 msgstr ""
 
-#: appcore/src/add_account.rs:599
+#: crates/appcore/src/add_account.rs:599
 msgid "two"
 msgstr ""
 
-#: appcore/src/add_account.rs:600
+#: crates/appcore/src/add_account.rs:600
 msgid "three"
 msgstr ""
 
-#: appcore/src/add_account.rs:601
+#: crates/appcore/src/add_account.rs:601
 msgid "four"
 msgstr ""
 
-#: appcore/src/add_account.rs:602
+#: crates/appcore/src/add_account.rs:602
 msgid "five"
 msgstr ""
 
-#: appcore/src/add_account.rs:603
+#: crates/appcore/src/add_account.rs:603
 msgid "six"
 msgstr ""
 
-#: appcore/src/add_account.rs:604
+#: crates/appcore/src/add_account.rs:604
 msgid "seven"
 msgstr ""
 
-#: appcore/src/add_account.rs:605
+#: crates/appcore/src/add_account.rs:605
 msgid "eight"
 msgstr ""
 
-#: appcore/src/add_account.rs:606
+#: crates/appcore/src/add_account.rs:606
 msgid "nine"
 msgstr ""
 
-#: appcore/src/add_account.rs:617
+#: crates/appcore/src/add_account.rs:617
 msgid "Waiting"
 msgstr ""
 
-#: appcore/src/add_account.rs:618
+#: crates/appcore/src/add_account.rs:618
 msgid "Empty"
 msgstr ""
 
-#: appcore/src/add_account.rs:622
+#: crates/appcore/src/add_account.rs:622
 msgid "{count} conversation"
 msgid_plural "{count} conversations"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/add_account.rs:744
+#: crates/appcore/src/add_account.rs:744
 msgid "Could not sign in"
 msgstr ""
 
-#: appcore/src/add_account.rs:757
+#: crates/appcore/src/add_account.rs:757
 msgid "Could not sign in: {reason}"
 msgstr ""
 
-#: appcore/src/add_account.rs:764
+#: crates/appcore/src/add_account.rs:764
 msgid "The server refused the password."
 msgstr ""
 
-#: appcore/src/add_account.rs:772
+#: crates/appcore/src/add_account.rs:772
 msgid "IMAP is off for this account."
 msgstr ""
 
-#: appcore/src/add_account.rs:775
+#: crates/appcore/src/add_account.rs:775
 msgid "IMAP is off for this account"
 msgstr ""
 
-#: appcore/src/add_account.rs:778
+#: crates/appcore/src/add_account.rs:778
 msgid "Turn on IMAP in {provider}'s settings, then choose Sign In."
 msgstr ""
 
-#: appcore/src/add_account.rs:781
+#: crates/appcore/src/add_account.rs:781
 msgid "Turn on IMAP in your mail settings, then choose Sign In."
 msgstr ""
 
-#: appcore/src/add_account.rs:789
+#: crates/appcore/src/add_account.rs:789
 msgid "The server's certificate does not match {host}."
 msgstr ""
 
-#: appcore/src/add_account.rs:794
+#: crates/appcore/src/add_account.rs:794
 msgid "The certificate does not match"
 msgstr ""
 
-#: appcore/src/add_account.rs:800
+#: crates/appcore/src/add_account.rs:800
 msgid "Could not reach {host}: {reason}"
 msgstr ""
 
-#: appcore/src/add_account.rs:804
+#: crates/appcore/src/add_account.rs:804
 msgid "No answer on port {port}"
 msgstr ""
 
-#: appcore/src/add_account.rs:808
+#: crates/appcore/src/add_account.rs:808
 msgid ""
 "The server did not answer. Check the server name and port, or try again when "
 "you are online."
 msgstr ""
 
-#: appcore/src/add_account.rs:828
+#: crates/appcore/src/add_account.rs:828
 msgid ""
 "{host} answered but turned down another connection. Try again in a few "
 "minutes."
 msgstr ""
 
-#: appcore/src/add_account.rs:832
+#: crates/appcore/src/add_account.rs:832
 msgid "Too many connections"
 msgstr ""
 
-#: appcore/src/add_account.rs:838
+#: crates/appcore/src/add_account.rs:838
 msgid "{host} answered in a way this app cannot work with."
 msgstr ""
 
-#: appcore/src/add_account.rs:849
+#: crates/appcore/src/add_account.rs:849
 msgid "This app cannot send these sign-in details to the server."
 msgstr ""
 
-#: appcore/src/add_account.rs:875
+#: crates/appcore/src/add_account.rs:875
 msgid "{provider} refused the password"
 msgstr ""
 
-#: appcore/src/add_account.rs:878
+#: crates/appcore/src/add_account.rs:878
 msgid "The server refused the password"
 msgstr ""
 
-#: appcore/src/add_account.rs:886
+#: crates/appcore/src/add_account.rs:886
 msgid ""
 "{provider} wants an app password here, not your website password. Make one, "
 "paste it above, then choose Sign In."
 msgstr ""
 
-#: appcore/src/add_account.rs:890
+#: crates/appcore/src/add_account.rs:890
 msgid "Check the password, then choose Sign In."
 msgstr ""
 
-#: appcore/src/add_account.rs:907
+#: crates/appcore/src/add_account.rs:907
 msgid "The server said: {reason}"
 msgstr ""
 
-#: appcore/src/add_account.rs:927
+#: crates/appcore/src/add_account.rs:927
 msgid "Make an App Password"
 msgstr ""
 
-#: appcore/src/add_account.rs:931
+#: crates/appcore/src/add_account.rs:931
 msgid "Turn On IMAP"
 msgstr ""
 
-#: appcore/src/add_account.rs:1077
+#: crates/appcore/src/add_account.rs:1077
 msgid "{host} is not a server name."
 msgstr ""
 
-#: appcore/src/add_account.rs:1083
+#: crates/appcore/src/add_account.rs:1083
 msgid "Type the incoming server's name."
 msgstr ""
 
-#: appcore/src/add_account.rs:1084
+#: crates/appcore/src/add_account.rs:1084
 msgid "Type the outgoing server's name."
 msgstr ""
 
-#: appcore/src/add_account.rs:1210
+#: crates/appcore/src/add_account.rs:1210
 msgid "Mail is downloading. You can close this window."
 msgstr ""
 
-#: appcore/src/add_account.rs:1211 appcore/src/add_account.rs:1240
+#: crates/appcore/src/add_account.rs:1211
+#: crates/appcore/src/add_account.rs:1240
 msgid "Your mail is here."
 msgstr ""
 
-#: appcore/src/add_account.rs:1225
+#: crates/appcore/src/add_account.rs:1225
 msgid ""
 "Your organization did not allow one of the permissions Iris asked for, so "
 "this feature stays off:"
@@ -306,41 +307,41 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/add_account.rs:1232
+#: crates/appcore/src/add_account.rs:1232
 msgid "You left one box unticked on Google's page, so this feature stays off:"
 msgid_plural ""
 "You left {count} boxes unticked on Google's page, so these features stay off:"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/add_account.rs:1239
+#: crates/appcore/src/add_account.rs:1239
 msgid "Mail is downloading."
 msgstr ""
 
-#: appcore/src/add_account.rs:1259
+#: crates/appcore/src/add_account.rs:1259
 msgid ""
 "Newest mail comes first. Older mail keeps coming in the background, even "
 "with the window closed."
 msgstr ""
 
-#: appcore/src/add_account.rs:1261
+#: crates/appcore/src/add_account.rs:1261
 msgid "Iris keeps checking for new mail, even with the window closed."
 msgstr ""
 
-#: appcore/src/add_account.rs:1271
+#: crates/appcore/src/add_account.rs:1271
 msgid ""
 "Iris downloads the server's mail into Inbox and keeps checking in the "
 "background, even with the window closed. Mail stays on the server."
 msgstr ""
 
-#: appcore/src/add_account.rs:1274
+#: crates/appcore/src/add_account.rs:1274
 msgid ""
 "Iris downloads the server's mail into Inbox and keeps checking in the "
 "background, even with the window closed. It removes each message from the "
 "server after downloading it."
 msgstr ""
 
-#: appcore/src/add_account.rs:1277
+#: crates/appcore/src/add_account.rs:1277
 msgid ""
 "Iris downloads the server's mail into Inbox and keeps checking in the "
 "background, even with the window closed. It removes each message from the "
@@ -352,249 +353,250 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/add_account.rs:1293
+#: crates/appcore/src/add_account.rs:1293
 msgid "Iris needs the password for {address} again."
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:33
+#: crates/appcore/src/add_account/lookup.rs:33
 msgid "Iris's own list"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:34
+#: crates/appcore/src/add_account/lookup.rs:34
 msgid "Mail servers (MX)"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:35
+#: crates/appcore/src/add_account/lookup.rs:35
 msgid "{domain}'s own settings"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:36
+#: crates/appcore/src/add_account/lookup.rs:36
 msgid "Mozilla's provider list"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:37
+#: crates/appcore/src/add_account/lookup.rs:37
 msgid "Common server names"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:80
+#: crates/appcore/src/add_account/lookup.rs:80
 msgid "Not listed"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:81
+#: crates/appcore/src/add_account/lookup.rs:81
 msgid "Waits for MX"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:82
+#: crates/appcore/src/add_account/lookup.rs:82
 msgid "Asking…"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:83
+#: crates/appcore/src/add_account/lookup.rs:83
 msgid "Answered"
 msgstr ""
 
-#: appcore/src/add_account/lookup.rs:84
+#: crates/appcore/src/add_account/lookup.rs:84
 msgid "Nothing there"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:67
+#: crates/appcore/src/add_account/post.rs:67
 msgid "Ready to sign in"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:68
+#: crates/appcore/src/add_account/post.rs:68
 msgid "Waiting for your browser"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:69
+#: crates/appcore/src/add_account/post.rs:69
 msgid "Looking for your mail servers"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:70
+#: crates/appcore/src/add_account/post.rs:70
 msgid "Sign-in stopped"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:71
+#: crates/appcore/src/add_account/post.rs:71
 msgid "The server does not answer"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:72
+#: crates/appcore/src/add_account/post.rs:72
 msgid "Your account is added"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:76
+#: crates/appcore/src/add_account/post.rs:76
 msgid "{state}, {provider}"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:233
+#: crates/appcore/src/add_account/post.rs:233
 msgid "Choose your {provider} account."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:236
+#: crates/appcore/src/add_account/post.rs:236
 msgid ""
 "If {provider} says it has not verified the app, choose Advanced, then Go to "
 "Iris."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:240
+#: crates/appcore/src/add_account/post.rs:240
 msgid "Leave every box ticked and choose Continue."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:243
+#: crates/appcore/src/add_account/post.rs:243
 msgid "Choose or type your Microsoft account."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:244
+#: crates/appcore/src/add_account/post.rs:244
 msgid "Read what Iris asks for and choose Accept."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:259
+#: crates/appcore/src/add_account/post.rs:259
 msgid "Other"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:265
+#: crates/appcore/src/add_account/post.rs:265
 msgid "Gmail, Workspace"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:266
+#: crates/appcore/src/add_account/post.rs:266
 msgid "Outlook, 365"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:268
+#: crates/appcore/src/add_account/post.rs:268
 msgid "Custom domains too"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:270
+#: crates/appcore/src/add_account/post.rs:270
 msgid "Any server"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:310
+#: crates/appcore/src/add_account/post.rs:310
 msgid "{title}, {subtitle}"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:315
+#: crates/appcore/src/add_account/post.rs:315
 msgid "{tile}, signs in through your browser"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:381
+#: crates/appcore/src/add_account/post.rs:381
 msgid "Iris's own list knows this address. Nothing has left this computer."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:399
+#: crates/appcore/src/add_account/post.rs:399
 msgid "This copy cannot sign in to Microsoft"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:406
+#: crates/appcore/src/add_account/post.rs:406
 msgid "{provider} has no IMAP"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:408
+#: crates/appcore/src/add_account/post.rs:408
 msgid ""
 "{provider} keeps its mail in its own apps, so other mail apps cannot reach "
 "it. Use another address instead."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:412
+#: crates/appcore/src/add_account/post.rs:412
 msgid "Iris cannot reach {provider} yet"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:414
+#: crates/appcore/src/add_account/post.rs:414
 msgid ""
 "{provider} lets other mail apps in only through an app of its own, which "
 "Iris does not support yet. Use another address instead."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:439
+#: crates/appcore/src/add_account/post.rs:439
 msgid "{provider} needs an app password"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:441
+#: crates/appcore/src/add_account/post.rs:441
 msgid "With two-step sign-in on, {provider} needs an app password"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:450
+#: crates/appcore/src/add_account/post.rs:450
 msgid ""
 "On the next page, paste an app-specific password from your Apple Account "
 "page, not your Apple password."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:453
+#: crates/appcore/src/add_account/post.rs:453
 msgid "Open Apple Account Page"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:461
+#: crates/appcore/src/add_account/post.rs:461
 msgid ""
 "On the next page, paste an app password from {provider}'s settings, not your "
 "{provider} password."
 msgstr ""
 
-#: appcore/src/add_account/post.rs:466
+#: crates/appcore/src/add_account/post.rs:466
 msgid "Open {provider}'s Settings"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:487
+#: crates/appcore/src/add_account/post.rs:487
 msgid "{provider} signs in through your browser"
 msgstr ""
 
-#: appcore/src/add_account/post.rs:489
+#: crates/appcore/src/add_account/post.rs:489
 msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:120
+#: crates/appcore/src/assistant/mod.rs:120
 msgid "The assistant is off. Choose a model in Preferences."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:122
+#: crates/appcore/src/assistant/mod.rs:122
 msgid "Translation has no model. Choose one in Preferences, on the AI page."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:125
+#: crates/appcore/src/assistant/mod.rs:125
 msgid "Unsubscribing has no model. Choose one in Preferences, on the AI page."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:131
+#: crates/appcore/src/assistant/mod.rs:131
 msgid "Choose a model for the local server in Preferences."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:143
+#: crates/appcore/src/assistant/mod.rs:143
 msgid "Add an Anthropic API key in Preferences."
 msgstr ""
 
-#: appcore/src/assistant/mod.rs:150
+#: crates/appcore/src/assistant/mod.rs:150
 msgid "Claude Code is not installed. Install it and sign in, then try again."
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1031
+#: crates/appcore/src/assistant/run.rs:1031
 msgid "Move {count} conversation to the Trash?"
 msgid_plural "Move {count} conversations to the Trash?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run.rs:1196
+#: crates/appcore/src/assistant/run.rs:1196
 msgid ""
 "Don't Allow labels only the mail in accounts that have the label already."
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1233
+#: crates/appcore/src/assistant/run.rs:1233
 msgid "Block {address}? Their future mail goes straight to the Trash."
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1315 appcore/src/assistant/run/calendar.rs:228
-#: appcore/src/assistant/run/calendar.rs:726
+#: crates/appcore/src/assistant/run.rs:1315
+#: crates/appcore/src/assistant/run/calendar.rs:228
+#: crates/appcore/src/assistant/run/calendar.rs:726
 msgid "%a %-d %b"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1321
+#: crates/appcore/src/assistant/run.rs:1321
 msgid " from {first} to {last}"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1324
+#: crates/appcore/src/assistant/run.rs:1324
 msgid " until {last}"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1325
+#: crates/appcore/src/assistant/run.rs:1325
 msgid " from {first}"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1331
+#: crates/appcore/src/assistant/run.rs:1331
 msgid ""
 "Turn on the automatic reply for {account}{dates}?\n"
 "\n"
@@ -602,432 +604,434 @@ msgid ""
 "{body}"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1342
+#: crates/appcore/src/assistant/run.rs:1342
 msgid "Turn off the automatic reply for {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1444
+#: crates/appcore/src/assistant/run.rs:1444
 msgid "Create a rule for {account}: {when} → {then}?"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1487
+#: crates/appcore/src/assistant/run.rs:1487
 msgid "Delete a rule from {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1686 appcore/src/assistant/run.rs:1720
+#: crates/appcore/src/assistant/run.rs:1686
+#: crates/appcore/src/assistant/run.rs:1720
 msgid "Hide My Email works with Gmail accounts."
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1829
+#: crates/appcore/src/assistant/run.rs:1829
 msgid ""
 "Move mail from {sender} to {category} in {account}, and send their future "
 "mail there too?"
 msgstr ""
 
-#: appcore/src/assistant/run.rs:1841
+#: crates/appcore/src/assistant/run.rs:1841
 msgid ""
 "Move mail from {sender} to {category} in {account}, and add a {provider} "
 "rule for their future mail?"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:234
-#: appcore/src/assistant/run/calendar.rs:730
+#: crates/appcore/src/assistant/run/calendar.rs:234
+#: crates/appcore/src/assistant/run/calendar.rs:730
 msgid "%a %-d %b %H:%M"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:247
-#: appcore/src/assistant/run/calendar.rs:251
-#: appcore/src/assistant/run/calendar.rs:255
+#: crates/appcore/src/assistant/run/calendar.rs:247
+#: crates/appcore/src/assistant/run/calendar.rs:251
+#: crates/appcore/src/assistant/run/calendar.rs:255
 msgid "{first} to {last}"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:483
+#: crates/appcore/src/assistant/run/calendar.rs:483
 msgid "Add “{title}” to the calendar “{calendar}” for {account}, {when}?"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:492
+#: crates/appcore/src/assistant/run/calendar.rs:492
 msgid "Add “{title}” to the calendar for {account}, {when}?"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:499
+#: crates/appcore/src/assistant/run/calendar.rs:499
 msgid "Guests get an invitation: {guests}."
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:553
+#: crates/appcore/src/assistant/run/calendar.rs:553
 msgid "Title: {value}"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:556
+#: crates/appcore/src/assistant/run/calendar.rs:556
 msgid "Starts: {value}"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:559
+#: crates/appcore/src/assistant/run/calendar.rs:559
 msgid "Ends: {value}"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:562
+#: crates/appcore/src/assistant/run/calendar.rs:562
 msgid "Where: {value}"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:565
+#: crates/appcore/src/assistant/run/calendar.rs:565
 msgid "Guests: {value}"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:569
+#: crates/appcore/src/assistant/run/calendar.rs:569
 msgid "Description: {value}"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:574
+#: crates/appcore/src/assistant/run/calendar.rs:574
 msgid "Change “{title}” on the calendar for {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:578
+#: crates/appcore/src/assistant/run/calendar.rs:578
 msgid "Change an event on the calendar for {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:606
+#: crates/appcore/src/assistant/run/calendar.rs:606
 msgid "Delete “{title}” from the calendar for {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:610
+#: crates/appcore/src/assistant/run/calendar.rs:610
 msgid "Delete an event from the calendar for {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:633
+#: crates/appcore/src/assistant/run/calendar.rs:633
 msgid "The new guests get their invitation, and the others get an update."
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:634
-#: appcore/src/assistant/run/calendar.rs:636
+#: crates/appcore/src/assistant/run/calendar.rs:634
+#: crates/appcore/src/assistant/run/calendar.rs:636
 msgid "Its guests are told."
 msgstr ""
 
-#: appcore/src/assistant/run/calendar.rs:663
+#: crates/appcore/src/assistant/run/calendar.rs:663
 msgid "Answer {answer} to “{title}”?"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:259
+#: crates/appcore/src/assistant/run/catalog.rs:259
 msgid "Looking at the screen"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:267
+#: crates/appcore/src/assistant/run/catalog.rs:267
 msgid "Reading a mailbox"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:285
+#: crates/appcore/src/assistant/run/catalog.rs:285
 msgid "Searching mail"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:299
+#: crates/appcore/src/assistant/run/catalog.rs:299
 msgid "Reading a conversation"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:312
+#: crates/appcore/src/assistant/run/catalog.rs:312
 msgid "Organizing mail"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:327
+#: crates/appcore/src/assistant/run/catalog.rs:327
 msgid "Changing labels"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:342
+#: crates/appcore/src/assistant/run/catalog.rs:342
 msgid "Setting reminders"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:356
+#: crates/appcore/src/assistant/run/catalog.rs:356
 msgid "Writing a draft"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:364
+#: crates/appcore/src/assistant/run/catalog.rs:364
 msgid "Sending mail"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:372
+#: crates/appcore/src/assistant/run/catalog.rs:372
 msgid "Reading drafts"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:380
+#: crates/appcore/src/assistant/run/catalog.rs:380
 msgid "Changing a draft"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:402
+#: crates/appcore/src/assistant/run/catalog.rs:402
 msgid "Deleting a draft"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:415
+#: crates/appcore/src/assistant/run/catalog.rs:415
 msgid "Blocking a sender"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:428
+#: crates/appcore/src/assistant/run/catalog.rs:428
 msgid "Checking the automatic reply"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:436
+#: crates/appcore/src/assistant/run/catalog.rs:436
 msgid "Setting the automatic reply"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:454
+#: crates/appcore/src/assistant/run/catalog.rs:454
 msgid "Reading rules"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:462
+#: crates/appcore/src/assistant/run/catalog.rs:462
 msgid "Creating a rule"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:486
+#: crates/appcore/src/assistant/run/catalog.rs:486
 msgid "Deleting a rule"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:494
+#: crates/appcore/src/assistant/run/catalog.rs:494
 msgid "Creating a label"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:502
+#: crates/appcore/src/assistant/run/catalog.rs:502
 msgid "Renaming a label"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:516
+#: crates/appcore/src/assistant/run/catalog.rs:516
 msgid "Coloring a label"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:530
+#: crates/appcore/src/assistant/run/catalog.rs:530
 msgid "Deleting a label"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:538
+#: crates/appcore/src/assistant/run/catalog.rs:538
 msgid "Reading smart mailboxes"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:546
+#: crates/appcore/src/assistant/run/catalog.rs:546
 msgid "Changing a smart mailbox"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:574
+#: crates/appcore/src/assistant/run/catalog.rs:574
 msgid "Deleting a smart mailbox"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:582
+#: crates/appcore/src/assistant/run/catalog.rs:582
 msgid "Saving a template"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:596
+#: crates/appcore/src/assistant/run/catalog.rs:596
 msgid "Deleting a template"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:604
+#: crates/appcore/src/assistant/run/catalog.rs:604
 msgid "Adding a contact"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:620
+#: crates/appcore/src/assistant/run/catalog.rs:620
 msgid "Changing a contact"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:637
+#: crates/appcore/src/assistant/run/catalog.rs:637
 msgid "Reading who may load images"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:645
+#: crates/appcore/src/assistant/run/catalog.rs:645
 msgid "Allowing remote images"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:658
+#: crates/appcore/src/assistant/run/catalog.rs:658
 msgid "Blocking remote images"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:666
+#: crates/appcore/src/assistant/run/catalog.rs:666
 msgid "Exporting mail"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:680
+#: crates/appcore/src/assistant/run/catalog.rs:680
 msgid "Reading settings"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:688
+#: crates/appcore/src/assistant/run/catalog.rs:688
 msgid "Changing a setting"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:701
+#: crates/appcore/src/assistant/run/catalog.rs:701
 msgid "Setting a signature"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:709
+#: crates/appcore/src/assistant/run/catalog.rs:709
 msgid "Updating VIPs"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:723
+#: crates/appcore/src/assistant/run/catalog.rs:723
 msgid "Creating a smart mailbox"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:749
+#: crates/appcore/src/assistant/run/catalog.rs:749
 msgid "Sorting a sender"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:764
+#: crates/appcore/src/assistant/run/catalog.rs:764
 msgid "Dismissing a follow-up"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:772
+#: crates/appcore/src/assistant/run/catalog.rs:772
 msgid "Reading hidden addresses"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:780
+#: crates/appcore/src/assistant/run/catalog.rs:780
 msgid "Making a hidden address"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:793
+#: crates/appcore/src/assistant/run/catalog.rs:793
 msgid "Changing a hidden address"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:801
+#: crates/appcore/src/assistant/run/catalog.rs:801
 msgid "Opening a conversation"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:809
+#: crates/appcore/src/assistant/run/catalog.rs:809
 msgid "Muting conversations"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:823
+#: crates/appcore/src/assistant/run/catalog.rs:823
 msgid "Deleting mail forever"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:831
+#: crates/appcore/src/assistant/run/catalog.rs:831
 msgid "Scheduling a message"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:853
+#: crates/appcore/src/assistant/run/catalog.rs:853
 msgid "Sending a waiting message"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:861
+#: crates/appcore/src/assistant/run/catalog.rs:861
 msgid "Canceling a scheduled message"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:869
+#: crates/appcore/src/assistant/run/catalog.rs:869
 msgid "Deleting from the Outbox"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:877
+#: crates/appcore/src/assistant/run/catalog.rs:877
 msgid "Changing when a message goes"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:890
+#: crates/appcore/src/assistant/run/catalog.rs:890
 msgid "Reading reminders"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:898
+#: crates/appcore/src/assistant/run/catalog.rs:898
 msgid "Canceling a reminder"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:906
+#: crates/appcore/src/assistant/run/catalog.rs:906
 msgid "Changing a reminder"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:919
+#: crates/appcore/src/assistant/run/catalog.rs:919
 msgid "Unmuting conversations"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:927
+#: crates/appcore/src/assistant/run/catalog.rs:927
 msgid "Undoing the last change"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:935
+#: crates/appcore/src/assistant/run/catalog.rs:935
 msgid "Reading templates"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:943
+#: crates/appcore/src/assistant/run/catalog.rs:943
 msgid "Writing from a template"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:958
+#: crates/appcore/src/assistant/run/catalog.rs:958
 msgid "Finding your newsletters"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:971
+#: crates/appcore/src/assistant/run/catalog.rs:971
 msgid "Unsubscribing"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1002
+#: crates/appcore/src/assistant/run/catalog.rs:1002
 msgid "Reading an attachment"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1016
+#: crates/appcore/src/assistant/run/catalog.rs:1016
 msgid "Looking up a contact"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1024
+#: crates/appcore/src/assistant/run/catalog.rs:1024
 msgid "Reading the calendar"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1038
+#: crates/appcore/src/assistant/run/catalog.rs:1038
 msgid "Finding free time"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1056
+#: crates/appcore/src/assistant/run/catalog.rs:1056
 msgid "Listing the calendars"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1064
+#: crates/appcore/src/assistant/run/catalog.rs:1064
 msgid "Adding an event"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1083
+#: crates/appcore/src/assistant/run/catalog.rs:1083
 msgid "Changing an event"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1103
+#: crates/appcore/src/assistant/run/catalog.rs:1103
 msgid "Deleting an event"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1117
+#: crates/appcore/src/assistant/run/catalog.rs:1117
 msgid "Answering an invitation"
 msgstr ""
 
-#: appcore/src/assistant/run/catalog.rs:1163 appcore/src/assistant/turn.rs:287
+#: crates/appcore/src/assistant/run/catalog.rs:1163
+#: crates/appcore/src/assistant/turn.rs:287
 msgid "Working"
 msgstr ""
 
-#: appcore/src/assistant/run/mail.rs:257
+#: crates/appcore/src/assistant/run/mail.rs:257
 msgid "Send “{subject}” to {recipients} {when}?"
 msgstr ""
 
-#: appcore/src/assistant/run/mail.rs:408
+#: crates/appcore/src/assistant/run/mail.rs:408
 msgid "Each account's server"
 msgstr ""
 
-#: appcore/src/assistant/run/mail.rs:411
+#: crates/appcore/src/assistant/run/mail.rs:411
 msgid "Delete {count} conversation forever? {provider} cannot bring it back."
 msgid_plural ""
 "Delete {count} conversations forever? {provider} cannot bring them back."
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/manage.rs:127
+#: crates/appcore/src/assistant/run/manage.rs:127
 msgid "Name: {name}"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:131
+#: crates/appcore/src/assistant/run/manage.rs:131
 msgid "Addresses: {addresses}"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:137
+#: crates/appcore/src/assistant/run/manage.rs:137
 msgid "Phones: {phones}"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:143
+#: crates/appcore/src/assistant/run/manage.rs:143
 msgid "Organization: {organisation}"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:233
+#: crates/appcore/src/assistant/run/manage.rs:233
 msgid ""
 "Rename the label “{label}” in {account} to “{name}”? Labels nested under it "
 "move along."
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:262
+#: crates/appcore/src/assistant/run/manage.rs:262
 msgid "Color the label “{label}” in {account} {color}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:296
+#: crates/appcore/src/assistant/run/manage.rs:296
 msgid ""
 "Delete the label “{label}” from {account}? {count} conversation carries it. "
 "The mail stays in Gmail, without the label."
@@ -1037,260 +1041,260 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/manage.rs:360
+#: crates/appcore/src/assistant/run/manage.rs:360
 msgid "Delete the smart mailbox “{name}”? The mail it lists stays where it is."
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:421
+#: crates/appcore/src/assistant/run/manage.rs:421
 msgid "Replace the template “{name}” with this one? The saved one is lost."
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:425
+#: crates/appcore/src/assistant/run/manage.rs:425
 msgid "Save a template called “{name}”?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:463
+#: crates/appcore/src/assistant/run/manage.rs:463
 msgid "Delete the template “{name}”?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:494
+#: crates/appcore/src/assistant/run/manage.rs:494
 msgid "Add {contact} to the contacts of {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:538
+#: crates/appcore/src/assistant/run/manage.rs:538
 msgid "this contact"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:550
+#: crates/appcore/src/assistant/run/manage.rs:550
 msgid "Change {contact} in the contacts of {account}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:591
+#: crates/appcore/src/assistant/run/manage.rs:591
 msgid "Always load images from anyone at {domain}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:595
+#: crates/appcore/src/assistant/run/manage.rs:595
 msgid "Always load images from {sender}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:601
+#: crates/appcore/src/assistant/run/manage.rs:601
 msgid "Loading a remote image tells the sender when you opened their mail."
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:626
+#: crates/appcore/src/assistant/run/manage.rs:626
 msgid "Stop loading images from {sender}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:661
+#: crates/appcore/src/assistant/run/manage.rs:661
 msgid "Export {what} to {file}?"
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:667
+#: crates/appcore/src/assistant/run/manage.rs:667
 msgid "A file with that name is there already, and exporting replaces it."
 msgstr ""
 
-#: appcore/src/assistant/run/manage.rs:746
+#: crates/appcore/src/assistant/run/manage.rs:746
 msgid "the message “{subject}”"
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:17
-#: appcore/src/assistant/run/writing.rs:228
+#: crates/appcore/src/assistant/run/queue.rs:17
+#: crates/appcore/src/assistant/run/writing.rs:228
 msgid "(no subject)"
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:91
+#: crates/appcore/src/assistant/run/queue.rs:91
 msgid "Send “{subject}” now?"
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:94
+#: crates/appcore/src/assistant/run/queue.rs:94
 msgid "Send {count} waiting message now?"
 msgid_plural "Send {count} waiting messages now?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/queue.rs:146
+#: crates/appcore/src/assistant/run/queue.rs:146
 msgid "Cancel sending “{subject}”? It goes back to Drafts."
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:152
+#: crates/appcore/src/assistant/run/queue.rs:152
 msgid "Cancel {count} scheduled message? It goes back to Drafts."
 msgid_plural "Cancel {count} scheduled messages? They go back to Drafts."
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/queue.rs:223
+#: crates/appcore/src/assistant/run/queue.rs:223
 msgid "Delete “{subject}” from the Outbox? It will not be sent."
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:229
+#: crates/appcore/src/assistant/run/queue.rs:229
 msgid "Delete {count} message from the Outbox? It will not be sent."
 msgid_plural "Delete {count} messages from the Outbox? They will not be sent."
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/queue.rs:261
+#: crates/appcore/src/assistant/run/queue.rs:261
 msgid "Send “{subject}” {when} instead?"
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:267
+#: crates/appcore/src/assistant/run/queue.rs:267
 msgid "Send {count} scheduled message {when} instead?"
 msgid_plural "Send {count} scheduled messages {when} instead?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/queue.rs:345
+#: crates/appcore/src/assistant/run/queue.rs:345
 msgid "Cancel the reminder on “{subject}” and put it back in the Inbox?"
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:351
+#: crates/appcore/src/assistant/run/queue.rs:351
 msgid "Cancel {count} reminder and put its conversation back in the Inbox?"
 msgid_plural ""
 "Cancel {count} reminders and put their conversations back in the Inbox?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/queue.rs:385
+#: crates/appcore/src/assistant/run/queue.rs:385
 msgid "Bring “{subject}” back {when} instead?"
 msgstr ""
 
-#: appcore/src/assistant/run/queue.rs:391
+#: crates/appcore/src/assistant/run/queue.rs:391
 msgid "Bring {count} conversation back {when} instead?"
 msgid_plural "Bring {count} conversations back {when} instead?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/queue.rs:426
+#: crates/appcore/src/assistant/run/queue.rs:426
 msgid "Undo “{action}”?"
 msgstr ""
 
-#: appcore/src/assistant/run/unsubscribe.rs:373
+#: crates/appcore/src/assistant/run/unsubscribe.rs:373
 msgid "this list"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:241
+#: crates/appcore/src/assistant/run/writing.rs:241
 msgid "Signed with {standard}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:242
+#: crates/appcore/src/assistant/run/writing.rs:242
 msgid "Encrypted with {standard}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:243
+#: crates/appcore/src/assistant/run/writing.rs:243
 msgid "Signed and encrypted with {standard}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:255
+#: crates/appcore/src/assistant/run/writing.rs:255
 msgid "Blind copy to {recipients}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:261
+#: crates/appcore/src/assistant/run/writing.rs:261
 msgid "Forwards “{subject}” from {sender}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:271
-#: appcore/src/assistant/run/writing.rs:917
+#: crates/appcore/src/assistant/run/writing.rs:271
+#: crates/appcore/src/assistant/run/writing.rs:917
 msgid "Attached: {files}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:287
+#: crates/appcore/src/assistant/run/writing.rs:287
 msgid "From this computer: {files}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:319
+#: crates/appcore/src/assistant/run/writing.rs:319
 msgid "Put a file from this computer in a draft?"
 msgid_plural "Put {count} files from this computer in a draft?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/assistant/run/writing.rs:351
+#: crates/appcore/src/assistant/run/writing.rs:351
 msgid "Send “{subject}” to {recipients}?"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:738
+#: crates/appcore/src/assistant/run/writing.rs:738
 msgid "Change the draft “{subject}”?"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:885
+#: crates/appcore/src/assistant/run/writing.rs:885
 msgid "nobody"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:891
+#: crates/appcore/src/assistant/run/writing.rs:891
 msgid "To: {recipients}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:894
+#: crates/appcore/src/assistant/run/writing.rs:894
 msgid "Cc: {recipients}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:897
+#: crates/appcore/src/assistant/run/writing.rs:897
 msgid "Bcc: {recipients}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:901
+#: crates/appcore/src/assistant/run/writing.rs:901
 msgid "Subject: {subject}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:906
+#: crates/appcore/src/assistant/run/writing.rs:906
 msgid "New text in place of the old"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:910
+#: crates/appcore/src/assistant/run/writing.rs:910
 msgid "Takes out: {files}"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:925
+#: crates/appcore/src/assistant/run/writing.rs:925
 msgid "Goes out encrypted"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:926
+#: crates/appcore/src/assistant/run/writing.rs:926
 msgid "Goes out unencrypted"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:930
+#: crates/appcore/src/assistant/run/writing.rs:930
 msgid "Goes out signed"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:931
+#: crates/appcore/src/assistant/run/writing.rs:931
 msgid "Goes out unsigned"
 msgstr ""
 
-#: appcore/src/assistant/run/writing.rs:941
+#: crates/appcore/src/assistant/run/writing.rs:941
 msgid "Delete the draft “{subject}”? {provider} cannot bring it back."
 msgstr ""
 
-#: appcore/src/assistant/sources/mcp/mod.rs:154
+#: crates/appcore/src/assistant/sources/mcp/mod.rs:154
 msgid "Run {tool} on the MCP server {server}?"
 msgstr ""
 
-#: appcore/src/assistant/sources/skills/mod.rs:59
+#: crates/appcore/src/assistant/sources/skills/mod.rs:59
 msgid "Iris"
 msgstr ""
 
-#: appcore/src/assistant/sources/skills/mod.rs:60
+#: crates/appcore/src/assistant/sources/skills/mod.rs:60
 msgid "Claude Code"
 msgstr ""
 
-#: appcore/src/assistant/sources/skills/sandbox.rs:230
+#: crates/appcore/src/assistant/sources/skills/sandbox.rs:230
 msgid ""
 "Skill scripts need bubblewrap, which is not installed. Install the "
 "bubblewrap package to run them."
 msgstr ""
 
-#: appcore/src/assistant/sources/skills/sandbox.rs:249
-#: appcore/src/assistant/sources/skills/sandbox.rs:255
+#: crates/appcore/src/assistant/sources/skills/sandbox.rs:249
+#: crates/appcore/src/assistant/sources/skills/sandbox.rs:255
 msgid ""
 "Skill scripts cannot run: bubblewrap failed to start a sandbox ({reason})."
 msgstr ""
 
-#: appcore/src/assistant/sources/skills/shell.rs:181
+#: crates/appcore/src/assistant/sources/skills/shell.rs:181
 msgid "It can reach the internet."
 msgstr ""
 
-#: appcore/src/assistant/sources/skills/shell.rs:183
+#: crates/appcore/src/assistant/sources/skills/shell.rs:183
 msgid "It cannot reach the internet."
 msgstr ""
 
-#: appcore/src/assistant/sources/skills/shell.rs:187
+#: crates/appcore/src/assistant/sources/skills/shell.rs:187
 msgid ""
 "Run this command for the skill {skill}?\n"
 "\n"
@@ -1300,204 +1304,205 @@ msgid ""
 "Always Allow covers this exact command only."
 msgstr ""
 
-#: appcore/src/assistant/sources/web.rs:60
+#: crates/appcore/src/assistant/sources/web.rs:60
 msgid "Add a Brave Search API key."
 msgstr ""
 
-#: appcore/src/assistant/sources/web.rs:62
+#: crates/appcore/src/assistant/sources/web.rs:62
 msgid "Enter the address of a SearXNG server."
 msgstr ""
 
-#: appcore/src/assistant/sources/web.rs:66
+#: crates/appcore/src/assistant/sources/web.rs:66
 msgid "Choose Brave Search or SearXNG for a local model to search with."
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:57
+#: crates/appcore/src/assistant/turn.rs:57
 msgid "Waiting for the model…"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:58 appcore/src/assistant/turn.rs:259
+#: crates/appcore/src/assistant/turn.rs:58
+#: crates/appcore/src/assistant/turn.rs:259
 msgid "Thinking…"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:59
+#: crates/appcore/src/assistant/turn.rs:59
 msgid "{activity}…"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:60
+#: crates/appcore/src/assistant/turn.rs:60
 msgid "Waiting for your answer…"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:61
+#: crates/appcore/src/assistant/turn.rs:61
 msgid "Writing…"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:264
+#: crates/appcore/src/assistant/turn.rs:264
 msgid "Thought for {count} second"
 msgid_plural "Thought for {count} seconds"
 msgstr[0] ""
 msgstr[1] ""
 
 #. The app's own web tools, Anthropic's, and Claude Code's.
-#: appcore/src/assistant/turn.rs:282
+#: crates/appcore/src/assistant/turn.rs:282
 msgid "Searching the web"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:283
+#: crates/appcore/src/assistant/turn.rs:283
 msgid "Reading a web page"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:284
+#: crates/appcore/src/assistant/turn.rs:284
 msgid "Reading a skill"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:285
+#: crates/appcore/src/assistant/turn.rs:285
 msgid "Reading a skill's file"
 msgstr ""
 
-#: appcore/src/assistant/turn.rs:286
+#: crates/appcore/src/assistant/turn.rs:286
 msgid "Running a command in the sandbox"
 msgstr ""
 
-#: appcore/src/auto_reply.rs:13
+#: crates/appcore/src/auto_reply.rs:13
 msgid "Your mail server"
 msgstr ""
 
-#: appcore/src/auto_reply.rs:18
+#: crates/appcore/src/auto_reply.rs:18
 msgid ""
 "{provider} answers new mail while you are away, even when this computer is "
 "off"
 msgstr ""
 
-#: appcore/src/calendar_draft.rs:103
+#: crates/appcore/src/calendar_draft.rs:103
 msgid "Out of office"
 msgstr ""
 
-#: appcore/src/calendar_draft.rs:104
+#: crates/appcore/src/calendar_draft.rs:104
 msgid "Focus time"
 msgstr ""
 
-#: appcore/src/calendar_draft.rs:373
+#: crates/appcore/src/calendar_draft.rs:373
 msgid "Declined because I am out of office"
 msgstr ""
 
-#: appcore/src/compose.rs:592 appcore/src/compose.rs:2861
+#: crates/appcore/src/compose.rs:592 crates/appcore/src/compose.rs:2861
 msgid "Add at least one recipient."
 msgstr ""
 
-#: appcore/src/compose.rs:601
+#: crates/appcore/src/compose.rs:601
 msgid "“{address}” is not an email address."
 msgstr ""
 
-#: appcore/src/compose.rs:849 appcore/src/compose.rs:2867
+#: crates/appcore/src/compose.rs:849 crates/appcore/src/compose.rs:2867
 msgid "Choose a time in the future"
 msgstr ""
 
-#: appcore/src/compose.rs:1083
+#: crates/appcore/src/compose.rs:1083
 msgid "On {date}, {sender} wrote:"
 msgstr ""
 
-#: appcore/src/contacts.rs:107
+#: crates/appcore/src/contacts.rs:107
 msgid "Give the list a name"
 msgstr ""
 
-#: appcore/src/contacts.rs:179
+#: crates/appcore/src/contacts.rs:179
 msgid "{count} member"
 msgid_plural "{count} members"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/contacts.rs:208
+#: crates/appcore/src/contacts.rs:208
 msgid "from mail"
 msgstr ""
 
-#: appcore/src/contacts.rs:230
+#: crates/appcore/src/contacts.rs:230
 msgid "{account} and {count} more"
 msgid_plural "{account} and {count} more"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/contacts.rs:243
+#: crates/appcore/src/contacts.rs:243
 msgid "contact in {accounts}"
 msgstr ""
 
-#: appcore/src/contacts.rs:269
+#: crates/appcore/src/contacts.rs:269
 msgid "Added {person} to VIPs"
 msgstr ""
 
-#: appcore/src/contacts.rs:270
+#: crates/appcore/src/contacts.rs:270
 msgid "Removed {person} from VIPs"
 msgstr ""
 
-#: appcore/src/contacts.rs:279
+#: crates/appcore/src/contacts.rs:279
 msgid "Save {name} to contacts in {account}?"
 msgstr ""
 
-#: appcore/src/contacts.rs:283
+#: crates/appcore/src/contacts.rs:283
 msgid "Save {count} person to contacts in {account}?"
 msgid_plural "Save {count} people to contacts in {account}?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/contacts.rs:332
+#: crates/appcore/src/contacts.rs:332
 msgid "Saved {name} to contacts in {account}"
 msgstr ""
 
-#: appcore/src/contacts.rs:336
+#: crates/appcore/src/contacts.rs:336
 msgid "Saved {count} person to contacts in {account}"
 msgid_plural "Saved {count} people to contacts in {account}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/contacts.rs:348
+#: crates/appcore/src/contacts.rs:348
 msgid "Could not save {name} to contacts in {account}"
 msgstr ""
 
-#: appcore/src/contacts.rs:352
+#: crates/appcore/src/contacts.rs:352
 msgid "Could not save {count} person to contacts in {account}"
 msgid_plural "Could not save {count} people to contacts in {account}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/erase.rs:25
+#: crates/appcore/src/erase.rs:25
 msgid "Delete This Conversation Forever?"
 msgstr ""
 
-#: appcore/src/erase.rs:27
+#: crates/appcore/src/erase.rs:27
 msgid "Delete {count} Conversation Forever?"
 msgid_plural "Delete {count} Conversations Forever?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/erase.rs:32
+#: crates/appcore/src/erase.rs:32
 msgid "Delete This Message Forever?"
 msgstr ""
 
-#: appcore/src/erase.rs:34
+#: crates/appcore/src/erase.rs:34
 msgid "Delete {count} Message Forever?"
 msgid_plural "Delete {count} Messages Forever?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/erase.rs:42
+#: crates/appcore/src/erase.rs:42
 msgid "{provider} deletes it from every device and cannot bring it back."
 msgstr ""
 
-#: appcore/src/erase.rs:46
+#: crates/appcore/src/erase.rs:46
 msgid "{provider} deletes them from every device and cannot bring them back."
 msgstr ""
 
-#: appcore/src/erase.rs:49
+#: crates/appcore/src/erase.rs:49
 msgid "The server deletes it from every device and cannot bring it back."
 msgstr ""
 
-#: appcore/src/erase.rs:51
+#: crates/appcore/src/erase.rs:51
 msgid ""
 "Each account's server deletes them from every device and cannot bring them "
 "back."
 msgstr ""
 
-#: appcore/src/erase.rs:59
+#: crates/appcore/src/erase.rs:59
 msgid ""
 "Mail in {accounts} stays in the Trash, since its server cannot delete mail "
 "for good."
@@ -1507,2339 +1512,2345 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/erase.rs:70
+#: crates/appcore/src/erase.rs:70
 msgid "Delete Forever"
 msgstr ""
 
-#: appcore/src/erase.rs:80
+#: crates/appcore/src/erase.rs:80
 msgid "Deleted forever"
 msgstr ""
 
-#: appcore/src/erase.rs:82
+#: crates/appcore/src/erase.rs:82
 msgid "Deleted {count} conversation forever"
 msgid_plural "Deleted {count} conversations forever"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/erase.rs:88
+#: crates/appcore/src/erase.rs:88
 msgid "Deleted {count} message forever"
 msgid_plural "Deleted {count} messages forever"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/event_question.rs:71
+#: crates/appcore/src/event_question.rs:71
 msgid "This event only"
 msgstr ""
 
-#: appcore/src/event_question.rs:72
+#: crates/appcore/src/event_question.rs:72
 msgid "This and following events"
 msgstr ""
 
-#: appcore/src/event_question.rs:73
+#: crates/appcore/src/event_question.rs:73
 msgid "All events"
 msgstr ""
 
-#: appcore/src/event_question.rs:83
+#: crates/appcore/src/event_question.rs:83
 msgid "Keep Old Time"
 msgstr ""
 
-#: appcore/src/event_question.rs:84 appcore/src/event_question.rs:107
+#: crates/appcore/src/event_question.rs:84
+#: crates/appcore/src/event_question.rs:107
 msgid "Move"
 msgstr ""
 
-#: appcore/src/event_question.rs:89
+#: crates/appcore/src/event_question.rs:89
 msgid "Cancel"
 msgstr ""
 
-#: appcore/src/event_question.rs:93
+#: crates/appcore/src/event_question.rs:93
 msgid "Don't send"
 msgstr ""
 
-#: appcore/src/event_question.rs:97
+#: crates/appcore/src/event_question.rs:97
 msgid "Send a cancellation to the guests"
 msgstr ""
 
-#: appcore/src/event_question.rs:99
+#: crates/appcore/src/event_question.rs:99
 msgid "Send an update to the guests"
 msgstr ""
 
-#: appcore/src/event_question.rs:108
+#: crates/appcore/src/event_question.rs:108
 msgid "Save"
 msgstr ""
 
-#: appcore/src/event_question.rs:109
+#: crates/appcore/src/event_question.rs:109
 msgid "Delete"
 msgstr ""
 
-#: appcore/src/event_question.rs:110
+#: crates/appcore/src/event_question.rs:110
 msgid "Send"
 msgstr ""
 
-#: appcore/src/event_question.rs:169
+#: crates/appcore/src/event_question.rs:169
 msgid "Move “{title}”?"
 msgstr ""
 
-#: appcore/src/event_question.rs:170
+#: crates/appcore/src/event_question.rs:170
 msgid "Delete “{title}”?"
 msgstr ""
 
-#: appcore/src/event_question.rs:171
+#: crates/appcore/src/event_question.rs:171
 msgid "Move a repeating event"
 msgstr ""
 
-#: appcore/src/event_question.rs:172
+#: crates/appcore/src/event_question.rs:172
 msgid "Delete a repeating event"
 msgstr ""
 
-#: appcore/src/event_question.rs:173
+#: crates/appcore/src/event_question.rs:173
 msgid "Save changes to “{title}”?"
 msgstr ""
 
-#: appcore/src/event_question.rs:174
+#: crates/appcore/src/event_question.rs:174
 msgid "Change a repeating event"
 msgstr ""
 
-#: appcore/src/event_question.rs:175
+#: crates/appcore/src/event_question.rs:175
 msgid "Answer “{title}”?"
 msgstr ""
 
-#: appcore/src/event_question.rs:176
+#: crates/appcore/src/event_question.rs:176
 msgid "Answer a repeating event"
 msgstr ""
 
-#: appcore/src/event_question.rs:186
+#: crates/appcore/src/event_question.rs:186
 msgid "Keep Old Time saves your other changes at the time the event had."
 msgstr ""
 
-#: appcore/src/event_question.rs:190
+#: crates/appcore/src/event_question.rs:190
 msgid "The guests get a cancellation by mail."
 msgstr ""
 
-#: appcore/src/event_question.rs:192
+#: crates/appcore/src/event_question.rs:192
 msgid "The guests get an update by mail."
 msgstr ""
 
-#: appcore/src/invitation_card.rs:42
+#: crates/appcore/src/invitation_card.rs:42
 msgid "{calendar} ({account})"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:154
+#: crates/appcore/src/invitation_card.rs:154
 msgid "Half an Hour Later"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:157
+#: crates/appcore/src/invitation_card.rs:157
 msgid "An Hour Later"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:159
+#: crates/appcore/src/invitation_card.rs:159
 msgid "Same Time Tomorrow"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:163
+#: crates/appcore/src/invitation_card.rs:163
 msgid "Same Time Next Week"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:178
+#: crates/appcore/src/invitation_card.rs:178
 msgid "You have {event} then"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:180
+#: crates/appcore/src/invitation_card.rs:180
 msgid "You have {event} and {other} then"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:184
+#: crates/appcore/src/invitation_card.rs:184
 msgid "You have {event} and {count} more then"
 msgid_plural "You have {event} and {count} more then"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/invitation_card.rs:197
+#: crates/appcore/src/invitation_card.rs:197
 msgid "Reply to the invitation from {organizer}"
 msgstr ""
 
 #. The calendar's popover words its people line the same way.
-#: appcore/src/invitation_card.rs:201
+#: crates/appcore/src/invitation_card.rs:201
 msgid "{name}, organizer"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:239
+#: crates/appcore/src/invitation_card.rs:239
 msgid "You"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:265
+#: crates/appcore/src/invitation_card.rs:265
 msgid "{count} yes"
 msgid_plural "{count} yes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/invitation_card.rs:273
+#: crates/appcore/src/invitation_card.rs:273
 msgid "{count} no"
 msgid_plural "{count} no"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/invitation_card.rs:281
+#: crates/appcore/src/invitation_card.rs:281
 msgid "{count} maybe"
 msgid_plural "{count} maybe"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/invitation_card.rs:289
+#: crates/appcore/src/invitation_card.rs:289
 msgid "{count} awaiting"
 msgid_plural "{count} awaiting"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/invitation_card.rs:297
+#: crates/appcore/src/invitation_card.rs:297
 msgid "{count} guest"
 msgid_plural "{count} guests"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/invitation_card.rs:303
+#: crates/appcore/src/invitation_card.rs:303
 msgid "{guests} · {answers}"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:313
+#: crates/appcore/src/invitation_card.rs:313
 msgid "This meeting moved from {when}"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:316
+#: crates/appcore/src/invitation_card.rs:316
 msgid "The organizer changed this meeting"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:317
+#: crates/appcore/src/invitation_card.rs:317
 msgid "The organizer canceled this meeting"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:318
+#: crates/appcore/src/invitation_card.rs:318
 msgid "This meeting is canceled"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:356
+#: crates/appcore/src/invitation_card.rs:356
 msgid "Replied Yes"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:357
+#: crates/appcore/src/invitation_card.rs:357
 msgid "Replied No"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:358
+#: crates/appcore/src/invitation_card.rs:358
 msgid "Replied Maybe"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:361
+#: crates/appcore/src/invitation_card.rs:361
 msgid "{answer}. The organizer has been told."
 msgstr ""
 
-#: appcore/src/invitation_card.rs:362
+#: crates/appcore/src/invitation_card.rs:362
 msgid "{answer}. Your reply is on its way to the organizer."
 msgstr ""
 
-#: appcore/src/invitation_card.rs:372
+#: crates/appcore/src/invitation_card.rs:372
 msgid "Answered on your calendar"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:374
+#: crates/appcore/src/invitation_card.rs:374
 msgid "Replied by email to {organizer}"
 msgstr ""
 
-#: appcore/src/invitation_card.rs:377
+#: crates/appcore/src/invitation_card.rs:377
 msgid "Replied by email"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:63
+#: crates/appcore/src/invitation_strip.rs:63
 msgid "Your morning"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:64
+#: crates/appcore/src/invitation_strip.rs:64
 msgid "Your afternoon"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:65
+#: crates/appcore/src/invitation_strip.rs:65
 msgid "Your evening"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:96 appcore/src/invitation_strip.rs:100
+#: crates/appcore/src/invitation_strip.rs:96
+#: crates/appcore/src/invitation_strip.rs:100
 msgid "Nothing else at that hour"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:101
+#: crates/appcore/src/invitation_strip.rs:101
 msgid "Clashes with {event}"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:103
+#: crates/appcore/src/invitation_strip.rs:103
 msgid "Clashes with {event} and {other}"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:107
+#: crates/appcore/src/invitation_strip.rs:107
 msgid "Clashes with {event} and {count} more"
 msgid_plural "Clashes with {event} and {count} more"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/invitation_strip.rs:168
+#: crates/appcore/src/invitation_strip.rs:168
 msgid "Untitled event"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:207
+#: crates/appcore/src/invitation_strip.rs:207
 msgid "This meeting"
 msgstr ""
 
-#: appcore/src/invitation_strip.rs:265
+#: crates/appcore/src/invitation_strip.rs:265
 msgid "%H:%M"
 msgstr ""
 
-#: appcore/src/key_import.rs:62
+#: crates/appcore/src/key_import.rs:62
 msgid "Key Not Imported"
 msgstr ""
 
-#: appcore/src/key_import.rs:63
+#: crates/appcore/src/key_import.rs:63
 msgid "Certificate Not Imported"
 msgstr ""
 
-#: appcore/src/key_import.rs:81
+#: crates/appcore/src/key_import.rs:81
 msgid "Already Imported"
 msgstr ""
 
-#: appcore/src/key_import.rs:83
+#: crates/appcore/src/key_import.rs:83
 msgid "Key Imported"
 msgid_plural "{count} Keys Imported"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/key_import.rs:89
+#: crates/appcore/src/key_import.rs:89
 msgid "Certificate Imported"
 msgid_plural "{count} Certificates Imported"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/key_import.rs:96
+#: crates/appcore/src/key_import.rs:96
 msgid "gpg already holds everything in this file."
 msgstr ""
 
-#: appcore/src/key_import.rs:97
+#: crates/appcore/src/key_import.rs:97
 msgid "gpgsm already holds everything in this file."
 msgstr ""
 
-#: appcore/src/key_import.rs:99
+#: crates/appcore/src/key_import.rs:99
 msgid ""
 "You can sign and decrypt with the secret key now. gpg asks for its "
 "passphrase the first time."
 msgstr ""
 
-#: appcore/src/key_import.rs:102
+#: crates/appcore/src/key_import.rs:102
 msgid "You can sign and decrypt with the secret key now."
 msgstr ""
 
-#: appcore/src/key_import.rs:104
+#: crates/appcore/src/key_import.rs:104
 msgid "You can encrypt to this person and check their signatures."
 msgid_plural "You can encrypt to these people and check their signatures."
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/key_import.rs:110
+#: crates/appcore/src/key_import.rs:110
 msgid "Iris can check signatures made with this certificate."
 msgid_plural "Iris can check signatures made with these certificates."
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/key_import.rs:133
+#: crates/appcore/src/key_import.rs:133
 msgid "New, with secret key"
 msgstr ""
 
-#: appcore/src/key_import.rs:134
+#: crates/appcore/src/key_import.rs:134
 msgid "New"
 msgstr ""
 
-#: appcore/src/key_import.rs:135
+#: crates/appcore/src/key_import.rs:135
 msgid "Updated"
 msgstr ""
 
-#: appcore/src/key_import.rs:136
+#: crates/appcore/src/key_import.rs:136
 msgid "Already here"
 msgstr ""
 
-#: appcore/src/key_import.rs:161
+#: crates/appcore/src/key_import.rs:161
 msgid "And {count} more"
 msgid_plural "And {count} more"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/key_import.rs:171
+#: crates/appcore/src/key_import.rs:171
 msgid "Could not read {file}: {reason}"
 msgstr ""
 
-#: appcore/src/label_colors.rs:22
+#: crates/appcore/src/label_colors.rs:22
 msgid "Red"
 msgstr ""
 
-#: appcore/src/label_colors.rs:23
+#: crates/appcore/src/label_colors.rs:23
 msgid "Orange"
 msgstr ""
 
-#: appcore/src/label_colors.rs:24
+#: crates/appcore/src/label_colors.rs:24
 msgid "Yellow"
 msgstr ""
 
-#: appcore/src/label_colors.rs:25
+#: crates/appcore/src/label_colors.rs:25
 msgid "Green"
 msgstr ""
 
-#: appcore/src/label_colors.rs:26
+#: crates/appcore/src/label_colors.rs:26
 msgid "Teal"
 msgstr ""
 
-#: appcore/src/label_colors.rs:27
+#: crates/appcore/src/label_colors.rs:27
 msgid "Blue"
 msgstr ""
 
-#: appcore/src/label_colors.rs:28
+#: crates/appcore/src/label_colors.rs:28
 msgid "Purple"
 msgstr ""
 
-#: appcore/src/label_colors.rs:29
+#: crates/appcore/src/label_colors.rs:29
 msgid "Pink"
 msgstr ""
 
-#: appcore/src/label_colors.rs:30
+#: crates/appcore/src/label_colors.rs:30
 msgid "Gray"
 msgstr ""
 
-#: appcore/src/moving.rs:50
+#: crates/appcore/src/moving.rs:50
 msgid "The mail is already there"
 msgstr ""
 
-#: appcore/src/moving.rs:67
+#: crates/appcore/src/moving.rs:67
 msgid "Move it from the Trash to the Inbox first"
 msgstr ""
 
-#: appcore/src/moving.rs:103
+#: crates/appcore/src/moving.rs:103
 msgid "The mail is already in All Mail"
 msgstr ""
 
-#: appcore/src/moving.rs:108
+#: crates/appcore/src/moving.rs:108
 msgid "Mail cannot go there"
 msgstr ""
 
-#: appcore/src/moving.rs:129
+#: crates/appcore/src/moving.rs:129
 msgid "Drop mail on its own account's mailboxes"
 msgstr ""
 
-#: appcore/src/moving.rs:154
+#: crates/appcore/src/moving.rs:154
 msgid "Moved to {mailbox}"
 msgstr ""
 
-#: appcore/src/notify.rs:48
+#: crates/appcore/src/notify.rs:48
 msgid "Archive"
 msgstr ""
 
-#: appcore/src/notify.rs:49
+#: crates/appcore/src/notify.rs:49
 msgid "Mark as Read"
 msgstr ""
 
-#: appcore/src/notify.rs:51
+#: crates/appcore/src/notify.rs:51
 msgid "Reply"
 msgstr ""
 
-#: appcore/src/notify.rs:114
+#: crates/appcore/src/notify.rs:114
 msgid "{count} new message"
 msgid_plural "{count} new messages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/notify.rs:138
+#: crates/appcore/src/notify.rs:138
 msgid "New message"
 msgstr ""
 
-#: appcore/src/notify.rs:160
+#: crates/appcore/src/notify.rs:160
 msgid "From {senders}"
 msgstr ""
 
-#: appcore/src/notify.rs:220
+#: crates/appcore/src/notify.rs:220
 msgid "Open"
 msgstr ""
 
-#: appcore/src/offered.rs:237
+#: crates/appcore/src/offered.rs:237
 msgid "Labels"
 msgstr ""
 
-#: appcore/src/offered.rs:238
+#: crates/appcore/src/offered.rs:238
 msgid "Move to folder"
 msgstr ""
 
-#: appcore/src/offered.rs:244
+#: crates/appcore/src/offered.rs:244
 msgid "Labels…"
 msgstr ""
 
-#: appcore/src/offered.rs:245
+#: crates/appcore/src/offered.rs:245
 msgid "Move to Folder…"
 msgstr ""
 
-#: appcore/src/offered.rs:254
+#: crates/appcore/src/offered.rs:254
 msgid "Choose Labels"
 msgstr ""
 
-#: appcore/src/offered.rs:255
+#: crates/appcore/src/offered.rs:255
 msgid "Choose a Folder"
 msgstr ""
 
-#: appcore/src/offered.rs:262
+#: crates/appcore/src/offered.rs:262
 msgid "Labels (L)"
 msgstr ""
 
-#: appcore/src/offered.rs:263
+#: crates/appcore/src/offered.rs:263
 msgid "Move to Folder (L)"
 msgstr ""
 
-#: appcore/src/offered.rs:280
+#: crates/appcore/src/offered.rs:280
 msgid "New Label…"
 msgstr ""
 
-#: appcore/src/offered.rs:281
+#: crates/appcore/src/offered.rs:281
 msgid "New Folder…"
 msgstr ""
 
-#: appcore/src/offered.rs:289
+#: crates/appcore/src/offered.rs:289
 msgid "New Label Inside…"
 msgstr ""
 
-#: appcore/src/offered.rs:290
+#: crates/appcore/src/offered.rs:290
 msgid "New Folder Inside…"
 msgstr ""
 
-#: appcore/src/offered.rs:297
+#: crates/appcore/src/offered.rs:297
 msgid "Label Options for {name}"
 msgstr ""
 
-#: appcore/src/offered.rs:298
+#: crates/appcore/src/offered.rs:298
 msgid "Folder Options for {name}"
 msgstr ""
 
-#: appcore/src/offered.rs:305
+#: crates/appcore/src/offered.rs:305
 msgid "Label options"
 msgstr ""
 
-#: appcore/src/offered.rs:306
+#: crates/appcore/src/offered.rs:306
 msgid "Folder options"
 msgstr ""
 
-#: appcore/src/offered.rs:313
+#: crates/appcore/src/offered.rs:313
 msgid "A label cannot go inside a label nested under it"
 msgstr ""
 
-#: appcore/src/offered.rs:314
+#: crates/appcore/src/offered.rs:314
 msgid "A folder cannot go inside a folder nested under it"
 msgstr ""
 
-#: appcore/src/offered.rs:322
+#: crates/appcore/src/offered.rs:322
 msgid "There is a label called “{name}” already"
 msgstr ""
 
-#: appcore/src/offered.rs:324
+#: crates/appcore/src/offered.rs:324
 msgid "There is a folder called “{name}” already"
 msgstr ""
 
-#: appcore/src/offered.rs:332
+#: crates/appcore/src/offered.rs:332
 msgid "New Label"
 msgstr ""
 
-#: appcore/src/offered.rs:333
+#: crates/appcore/src/offered.rs:333
 msgid "New Folder"
 msgstr ""
 
-#: appcore/src/offered.rs:341
+#: crates/appcore/src/offered.rs:341
 msgid "Could not create the label: {reason}"
 msgstr ""
 
-#: appcore/src/offered.rs:342
+#: crates/appcore/src/offered.rs:342
 msgid "Could not create the folder: {reason}"
 msgstr ""
 
-#: appcore/src/offered.rs:349
+#: crates/appcore/src/offered.rs:349
 msgid "Open or select mail to label it."
 msgstr ""
 
-#: appcore/src/offered.rs:350
+#: crates/appcore/src/offered.rs:350
 msgid "Open or select mail to move it."
 msgstr ""
 
-#: appcore/src/offered.rs:358
+#: crates/appcore/src/offered.rs:358
 msgid "Select mail from one account to label it."
 msgstr ""
 
-#: appcore/src/offered.rs:359
+#: crates/appcore/src/offered.rs:359
 msgid "Select mail from one account to move it."
 msgstr ""
 
-#: appcore/src/offered.rs:365
+#: crates/appcore/src/offered.rs:365
 msgid "Rename Label"
 msgstr ""
 
-#: appcore/src/offered.rs:366
+#: crates/appcore/src/offered.rs:366
 msgid "Rename Folder"
 msgstr ""
 
-#: appcore/src/offered.rs:372
+#: crates/appcore/src/offered.rs:372
 msgid "Labels nested under it move along."
 msgstr ""
 
-#: appcore/src/offered.rs:373
+#: crates/appcore/src/offered.rs:373
 msgid "Folders nested under it move along."
 msgstr ""
 
-#: appcore/src/offered.rs:381
+#: crates/appcore/src/offered.rs:381
 msgid "Could not rename the label: {reason}"
 msgstr ""
 
-#: appcore/src/offered.rs:382
+#: crates/appcore/src/offered.rs:382
 msgid "Could not rename the folder: {reason}"
 msgstr ""
 
-#: appcore/src/offered.rs:392
+#: crates/appcore/src/offered.rs:392
 msgid "Its mail stays in Gmail, without the label. Nested labels stay too."
 msgstr ""
 
-#: appcore/src/offered.rs:394
+#: crates/appcore/src/offered.rs:394
 msgid "The mail in the folder is deleted with it."
 msgstr ""
 
-#: appcore/src/offered.rs:402
+#: crates/appcore/src/offered.rs:402
 msgid "Could not delete the label: {reason}"
 msgstr ""
 
-#: appcore/src/offered.rs:403
+#: crates/appcore/src/offered.rs:403
 msgid "Could not delete the folder: {reason}"
 msgstr ""
 
-#: appcore/src/offered.rs:410
+#: crates/appcore/src/offered.rs:410
 msgid "This account has no labels yet."
 msgstr ""
 
-#: appcore/src/offered.rs:411
+#: crates/appcore/src/offered.rs:411
 msgid "This account has no folders yet."
 msgstr ""
 
-#: appcore/src/offered.rs:427
+#: crates/appcore/src/offered.rs:427
 msgid "Your organization does not allow Iris to use this calendar."
 msgstr ""
 
-#: appcore/src/offered.rs:430
+#: crates/appcore/src/offered.rs:430
 msgid "Your organization does not allow Iris to read these contacts."
 msgstr ""
 
-#: appcore/src/offered.rs:433
+#: crates/appcore/src/offered.rs:433
 msgid "Your organization does not allow Iris to change these rules."
 msgstr ""
 
-#: appcore/src/offered.rs:436
+#: crates/appcore/src/offered.rs:436
 msgid "Your organization does not allow Iris to change the automatic reply."
 msgstr ""
 
-#: appcore/src/offered.rs:440
+#: crates/appcore/src/offered.rs:440
 msgid ""
 "{provider} refused the password for calendars. Some providers need an app "
 "password with access to calendars and contacts."
 msgstr ""
 
-#: appcore/src/offered.rs:444
+#: crates/appcore/src/offered.rs:444
 msgid "Iris could not reach the calendar server for {provider}."
 msgstr ""
 
-#: appcore/src/offered.rs:447
+#: crates/appcore/src/offered.rs:447
 msgid "Iris found no calendar server for {provider}."
 msgstr ""
 
-#: appcore/src/offered.rs:452
+#: crates/appcore/src/offered.rs:452
 msgid ""
 "{provider} refused the password for contacts. Some providers need an app "
 "password with access to calendars and contacts."
 msgstr ""
 
-#: appcore/src/offered.rs:456
+#: crates/appcore/src/offered.rs:456
 msgid "Iris could not reach the contacts server for {provider}."
 msgstr ""
 
-#: appcore/src/offered.rs:459
+#: crates/appcore/src/offered.rs:459
 msgid "Iris found no contacts server for {provider}."
 msgstr ""
 
-#: appcore/src/offered.rs:463
+#: crates/appcore/src/offered.rs:463
 msgid "{provider} cannot send automatic replies over POP3."
 msgstr ""
 
-#: appcore/src/offered.rs:466
+#: crates/appcore/src/offered.rs:466
 msgid "{provider} cannot send automatic replies."
 msgstr ""
 
-#: appcore/src/offered.rs:468
+#: crates/appcore/src/offered.rs:468
 msgid "{provider} has no calendar that other apps can reach."
 msgstr ""
 
-#: appcore/src/offered.rs:470
+#: crates/appcore/src/offered.rs:470
 msgid "{provider} keeps no contacts that other apps can reach."
 msgstr ""
 
-#: appcore/src/offered.rs:472
+#: crates/appcore/src/offered.rs:472
 msgid "{provider} has no rules that other apps can change."
 msgstr ""
 
-#: appcore/src/offered.rs:474
+#: crates/appcore/src/offered.rs:474
 msgid "{provider} has no automatic reply that other apps can change."
 msgstr ""
 
-#: appcore/src/offered.rs:477
+#: crates/appcore/src/offered.rs:477
 msgid "{provider} cannot delete mail for good. Delete moves it to the Trash."
 msgstr ""
 
-#: appcore/src/offered.rs:479
+#: crates/appcore/src/offered.rs:479
 msgid "{provider} does not sort the inbox into categories."
 msgstr ""
 
-#: appcore/src/offered.rs:513
+#: crates/appcore/src/offered.rs:513
 msgid "{address}: {reason}"
 msgstr ""
 
-#: appcore/src/offered.rs:528
+#: crates/appcore/src/offered.rs:528
 msgid "The server would not hand it over."
 msgstr ""
 
-#: appcore/src/offered.rs:530
+#: crates/appcore/src/offered.rs:530
 msgid "The message is larger than Iris downloads."
 msgstr ""
 
-#: appcore/src/offered.rs:533
+#: crates/appcore/src/offered.rs:533
 msgid "Iris could not read the server's answer."
 msgstr ""
 
-#: appcore/src/offered.rs:536
+#: crates/appcore/src/offered.rs:536
 msgid "The connection closed while the message downloaded."
 msgstr ""
 
-#: appcore/src/offered.rs:542
+#: crates/appcore/src/offered.rs:542
 msgid "“{subject}” from {sender}: {words}"
 msgstr ""
 
-#: appcore/src/offered.rs:546
+#: crates/appcore/src/offered.rs:546
 msgid "“{subject}”: {words}"
 msgstr ""
 
-#: appcore/src/offered.rs:550
+#: crates/appcore/src/offered.rs:550
 msgid "A message from {sender}: {words}"
 msgstr ""
 
-#: appcore/src/offered.rs:554
+#: crates/appcore/src/offered.rs:554
 msgid "Message {number}: {words}"
 msgstr ""
 
-#: appcore/src/offered.rs:569
+#: crates/appcore/src/offered.rs:569
 msgid ""
 "Removing the account deletes this computer's copy of its mail and the saved "
 "sign-in. Mail still on the server stays there."
 msgstr ""
 
-#: appcore/src/offered.rs:573
+#: crates/appcore/src/offered.rs:573
 msgid ""
 "Mail already removed from the server exists only on this computer, and "
 "removing the account deletes it with the saved sign-in. Mail still on the "
 "server stays there."
 msgstr ""
 
-#: appcore/src/offered.rs:579
+#: crates/appcore/src/offered.rs:579
 msgid ""
 "Its downloaded mail and saved sign-in are deleted from this computer. "
 "Nothing changes in {provider}."
 msgstr ""
 
-#: appcore/src/offered.rs:595
+#: crates/appcore/src/offered.rs:595
 msgid ""
 "Mail from {address} is kept only on this computer. To keep a copy, quit "
 "Iris, then back up this file."
 msgstr ""
 
-#: appcore/src/permission.rs:82
+#: crates/appcore/src/permission.rs:82
 msgid "Iris needs permission to change {service} settings"
 msgstr ""
 
-#: appcore/src/permission.rs:121
+#: crates/appcore/src/permission.rs:121
 msgid "Allow Changes to {service} Settings"
 msgstr ""
 
-#: appcore/src/permission.rs:125
+#: crates/appcore/src/permission.rs:125
 msgid ""
 "Iris needs permission to change {service} settings for {account}. {company} "
 "asks you to confirm in your browser."
 msgstr ""
 
-#: appcore/src/permission.rs:130
+#: crates/appcore/src/permission.rs:130
 msgid "Allow Iris to Delete Mail"
 msgstr ""
 
-#: appcore/src/permission.rs:132
+#: crates/appcore/src/permission.rs:132
 msgid ""
 "Deleting mail for good needs one more permission for {account}. {company} "
 "asks you to confirm in your browser."
 msgstr ""
 
-#: appcore/src/permission.rs:137
+#: crates/appcore/src/permission.rs:137
 msgid "Allow Iris to Read Your Contacts"
 msgstr ""
 
-#: appcore/src/permission.rs:139
+#: crates/appcore/src/permission.rs:139
 msgid ""
 "Reading the contacts of {account} needs one more permission. {company} asks "
 "you to confirm in your browser. Names and photos stay on this computer."
 msgstr ""
 
-#: appcore/src/permission.rs:145
+#: crates/appcore/src/permission.rs:145
 msgid "Allow Iris to Change Your Contacts"
 msgstr ""
 
-#: appcore/src/permission.rs:147
+#: crates/appcore/src/permission.rs:147
 msgid ""
 "The assistant needs permission to add and change the contacts of {account}. "
 "{company} asks you to confirm in your browser."
 msgstr ""
 
-#: appcore/src/permission.rs:152 appcore/src/permission.rs:159
+#: crates/appcore/src/permission.rs:152 crates/appcore/src/permission.rs:159
 msgid "Allow Iris to Use Your Calendar"
 msgstr ""
 
-#: appcore/src/permission.rs:154
+#: crates/appcore/src/permission.rs:154
 msgid ""
 "The assistant needs permission to read and change events on the calendar for "
 "{account}. {company} asks you to confirm in your browser."
 msgstr ""
 
-#: appcore/src/permission.rs:161
+#: crates/appcore/src/permission.rs:161
 msgid ""
 "Your reply went to the organizer as mail. With permission to change events "
 "on the calendar for {account}, the meeting is marked on your own calendar "
 "too. {company} asks you to confirm in your browser."
 msgstr ""
 
-#: appcore/src/permission.rs:167
+#: crates/appcore/src/permission.rs:167
 msgid "Allow Iris to Manage Your Calendars"
 msgstr ""
 
-#: appcore/src/permission.rs:169
+#: crates/appcore/src/permission.rs:169
 msgid ""
 "Making, renaming and deleting calendars, and subscribing to one, needs one "
 "more permission for {account}. {company} asks you to confirm in your browser."
 msgstr ""
 
-#: appcore/src/permission.rs:175
+#: crates/appcore/src/permission.rs:175
 msgid "Allow Iris to Add Files to Google Drive"
 msgstr ""
 
-#: appcore/src/permission.rs:177
+#: crates/appcore/src/permission.rs:177
 msgid ""
 "Attaching a file from this computer to an event puts it in Google Drive for "
 "{account}. Iris can reach only the files it adds there. Google asks you to "
 "confirm in your browser."
 msgstr ""
 
-#: appcore/src/permission.rs:246
+#: crates/appcore/src/permission.rs:246
 msgid "change {service} settings"
 msgstr ""
 
-#: appcore/src/permission.rs:249
+#: crates/appcore/src/permission.rs:249
 msgid "delete mail for good"
 msgstr ""
 
-#: appcore/src/permission.rs:250
+#: crates/appcore/src/permission.rs:250
 msgid "read contacts"
 msgstr ""
 
-#: appcore/src/permission.rs:251
+#: crates/appcore/src/permission.rs:251
 msgid "add and change contacts"
 msgstr ""
 
-#: appcore/src/permission.rs:252
+#: crates/appcore/src/permission.rs:252
 msgid "use the calendar"
 msgstr ""
 
-#: appcore/src/permission.rs:253
+#: crates/appcore/src/permission.rs:253
 msgid "manage calendars"
 msgstr ""
 
-#: appcore/src/permission.rs:254
+#: crates/appcore/src/permission.rs:254
 msgid "add files to Google Drive"
 msgstr ""
 
-#: appcore/src/permission.rs:266
+#: crates/appcore/src/permission.rs:266
 msgid "Change {service} settings"
 msgstr ""
 
-#: appcore/src/permission.rs:269
+#: crates/appcore/src/permission.rs:269
 msgid "Rules and automatic reply"
 msgstr ""
 
-#: appcore/src/permission.rs:272
+#: crates/appcore/src/permission.rs:272
 msgid "Change Gmail settings"
 msgstr ""
 
-#: appcore/src/permission.rs:273
+#: crates/appcore/src/permission.rs:273
 msgid "Rules, automatic reply, send-as addresses"
 msgstr ""
 
-#: appcore/src/permission.rs:276
+#: crates/appcore/src/permission.rs:276
 msgid "Delete mail for good"
 msgstr ""
 
-#: appcore/src/permission.rs:277
+#: crates/appcore/src/permission.rs:277
 msgid "Emptying the trash and spam"
 msgstr ""
 
-#: appcore/src/permission.rs:280
+#: crates/appcore/src/permission.rs:280
 msgid "Read contacts"
 msgstr ""
 
-#: appcore/src/permission.rs:281
+#: crates/appcore/src/permission.rs:281
 msgid "Names and photos as you write"
 msgstr ""
 
-#: appcore/src/permission.rs:284
+#: crates/appcore/src/permission.rs:284
 msgid "Add and change contacts"
 msgstr ""
 
-#: appcore/src/permission.rs:285
+#: crates/appcore/src/permission.rs:285
 msgid "Saving a sender as a contact"
 msgstr ""
 
-#: appcore/src/permission.rs:288
+#: crates/appcore/src/permission.rs:288
 msgid "Use the calendar"
 msgstr ""
 
-#: appcore/src/permission.rs:289
+#: crates/appcore/src/permission.rs:289
 msgid "Events, invitations, reminders"
 msgstr ""
 
-#: appcore/src/permission.rs:292
+#: crates/appcore/src/permission.rs:292
 msgid "Manage calendars"
 msgstr ""
 
-#: appcore/src/permission.rs:293
+#: crates/appcore/src/permission.rs:293
 msgid "New calendars, colors, subscriptions"
 msgstr ""
 
-#: appcore/src/permission.rs:296
+#: crates/appcore/src/permission.rs:296
 msgid "Add files to Google Drive"
 msgstr ""
 
-#: appcore/src/permission.rs:297
+#: crates/appcore/src/permission.rs:297
 msgid "Files attached to events"
 msgstr ""
 
-#: appcore/src/permission.rs:323
+#: crates/appcore/src/permission.rs:323
 msgid "{account} has not allowed Iris to {missing}"
 msgstr ""
 
-#: appcore/src/pgp.rs:110
+#: crates/appcore/src/pgp.rs:110
 msgid "Add a recipient whose key gpg holds."
 msgstr ""
 
-#: appcore/src/pgp.rs:119
+#: crates/appcore/src/pgp.rs:119
 msgid "gpg holds no key for {addresses}."
 msgstr ""
 
-#: appcore/src/pgp.rs:136
+#: crates/appcore/src/pgp.rs:136
 msgid "gpg holds no key for any of the addresses you send from."
 msgstr ""
 
-#: appcore/src/pgp.rs:138
+#: crates/appcore/src/pgp.rs:138
 msgid "gpg holds a key for {addresses}."
 msgstr ""
 
-#: appcore/src/pgp.rs:142
+#: crates/appcore/src/pgp.rs:142
 msgid "gpg holds a key for {addresses}, and none for {without}."
 msgstr ""
 
-#: appcore/src/pgp.rs:245
+#: crates/appcore/src/pgp.rs:245
 msgid "This computer has no gpg. Install GnuPG to read or send OpenPGP mail."
 msgstr ""
 
-#: appcore/src/pgp.rs:248
+#: crates/appcore/src/pgp.rs:248
 msgid "Could not run {program}: {reason}"
 msgstr ""
 
-#: appcore/src/pgp.rs:252
+#: crates/appcore/src/pgp.rs:252
 msgid "Could not write a temporary file: {reason}"
 msgstr ""
 
-#: appcore/src/pgp.rs:256
+#: crates/appcore/src/pgp.rs:256
 msgid "This message is encrypted to a key this computer does not hold."
 msgstr ""
 
-#: appcore/src/pgp.rs:259
+#: crates/appcore/src/pgp.rs:259
 msgid "gpg holds no secret key to sign as {address}."
 msgstr ""
 
-#: appcore/src/pgp.rs:263
+#: crates/appcore/src/pgp.rs:263
 msgid "gpg holds no key it can encrypt to for {address}."
 msgstr ""
 
-#: appcore/src/pgp.rs:266
+#: crates/appcore/src/pgp.rs:266
 msgid "This text holds no OpenPGP block."
 msgstr ""
 
-#: appcore/src/pgp.rs:267
+#: crates/appcore/src/pgp.rs:267
 msgid "This file holds no OpenPGP key."
 msgstr ""
 
-#: appcore/src/pgp.rs:268
+#: crates/appcore/src/pgp.rs:268
 msgid "gpg failed: {reason}"
 msgstr ""
 
-#: appcore/src/protection.rs:114
+#: crates/appcore/src/protection.rs:114
 msgid "{smime} {pgp}"
 msgstr ""
 
-#: appcore/src/protection.rs:127
+#: crates/appcore/src/protection.rs:127
 msgid "This computer has nothing to encrypt with."
 msgstr ""
 
-#: appcore/src/protection.rs:134
+#: crates/appcore/src/protection.rs:134
 msgid ""
 "S/MIME names every recipient inside an encrypted message, so a blind copy "
 "would not stay blind."
 msgstr ""
 
-#: appcore/src/protection.rs:248
+#: crates/appcore/src/protection.rs:248
 msgid "Signed"
 msgstr ""
 
-#: appcore/src/protection.rs:249
+#: crates/appcore/src/protection.rs:249
 msgid "Encrypted"
 msgstr ""
 
-#: appcore/src/protection.rs:250
+#: crates/appcore/src/protection.rs:250
 msgid "Signed and encrypted"
 msgstr ""
 
-#: appcore/src/protection.rs:259
+#: crates/appcore/src/protection.rs:259
 msgid "Encrypt this message to the recipients' keys"
 msgstr ""
 
-#: appcore/src/protection.rs:260
+#: crates/appcore/src/protection.rs:260
 msgid "Encrypt this message to the recipients' certificates"
 msgstr ""
 
-#: appcore/src/protection.rs:286
+#: crates/appcore/src/protection.rs:286
 msgid "gpg holds no key and gpgsm no trusted certificate for {addresses}."
 msgstr ""
 
-#: appcore/src/protection.rs:294
+#: crates/appcore/src/protection.rs:294
 msgid "A message goes out under one standard or the other. {pgp} {smime}"
 msgstr ""
 
-#: appcore/src/protection.rs:554
+#: crates/appcore/src/protection.rs:554
 msgid ""
 "This key does not name {sender}, the address the message says it is from."
 msgstr ""
 
-#: appcore/src/protection.rs:558
+#: crates/appcore/src/protection.rs:558
 msgid ""
 "This certificate does not name {sender}, the address the message says it is "
 "from."
 msgstr ""
 
-#: appcore/src/protection.rs:567
+#: crates/appcore/src/protection.rs:567
 msgid "Signed by {signer}"
 msgstr ""
 
-#: appcore/src/protection.rs:573
+#: crates/appcore/src/protection.rs:573
 msgid "This message changed after it was signed"
 msgstr ""
 
-#: appcore/src/protection.rs:575
+#: crates/appcore/src/protection.rs:575
 msgid "The signature of {signer} does not match what arrived."
 msgstr ""
 
-#: appcore/src/protection.rs:582
+#: crates/appcore/src/protection.rs:582
 msgid "Signed by {signer}, whose key has expired"
 msgstr ""
 
-#: appcore/src/protection.rs:586
+#: crates/appcore/src/protection.rs:586
 msgid "The text is as it was written, and the key behind it ran out."
 msgstr ""
 
-#: appcore/src/protection.rs:592
+#: crates/appcore/src/protection.rs:592
 msgid "Signed by {signer}, whose certificate has run out"
 msgstr ""
 
-#: appcore/src/protection.rs:596
+#: crates/appcore/src/protection.rs:596
 msgid ""
 "The text is as it was written, and the certificate behind it has expired."
 msgstr ""
 
-#: appcore/src/protection.rs:602
+#: crates/appcore/src/protection.rs:602
 msgid "Signed by {signer}, who took this key back"
 msgstr ""
 
-#: appcore/src/protection.rs:606
+#: crates/appcore/src/protection.rs:606
 msgid "The owner revoked it, so it says nothing about who wrote this."
 msgstr ""
 
-#: appcore/src/protection.rs:612
+#: crates/appcore/src/protection.rs:612
 msgid "Signed by {signer}, whose certificate was taken back"
 msgstr ""
 
-#: appcore/src/protection.rs:616
+#: crates/appcore/src/protection.rs:616
 msgid "Whoever issued it revoked it, so it says nothing about who wrote this."
 msgstr ""
 
-#: appcore/src/protection.rs:622
+#: crates/appcore/src/protection.rs:622
 msgid "Signed by {signer}, and the signature has run out"
 msgstr ""
 
-#: appcore/src/protection.rs:626
+#: crates/appcore/src/protection.rs:626
 msgid "It carried a date to stop being good on, and that date has passed."
 msgstr ""
 
-#: appcore/src/protection.rs:631
+#: crates/appcore/src/protection.rs:631
 msgid "Signed by a key this computer does not hold"
 msgstr ""
 
-#: appcore/src/protection.rs:633
+#: crates/appcore/src/protection.rs:633
 msgid "Nothing here can check it. Ask gpg for key {key}."
 msgstr ""
 
-#: appcore/src/protection.rs:640
+#: crates/appcore/src/protection.rs:640
 msgid "it names"
 msgstr ""
 
-#: appcore/src/protection.rs:646
+#: crates/appcore/src/protection.rs:646
 msgid "Signed by a certificate this computer does not hold"
 msgstr ""
 
-#: appcore/src/protection.rs:648
+#: crates/appcore/src/protection.rs:648
 msgid ""
 "The message carried none either, so there is nothing here to check it "
 "against."
 msgstr ""
 
-#: appcore/src/protection.rs:654
+#: crates/appcore/src/protection.rs:654
 msgid "gpg could not check this signature"
 msgstr ""
 
-#: appcore/src/protection.rs:659
+#: crates/appcore/src/protection.rs:659
 msgid "gpgsm could not check this signature"
 msgstr ""
 
-#: appcore/src/protection.rs:682
+#: crates/appcore/src/protection.rs:682
 msgid "Encrypted, and signed by {signer}"
 msgstr ""
 
-#: appcore/src/protection.rs:691
+#: crates/appcore/src/protection.rs:691
 msgid "Encrypted. {what}"
 msgstr ""
 
-#: appcore/src/protection.rs:697
+#: crates/appcore/src/protection.rs:697
 msgid "This message arrived encrypted"
 msgstr ""
 
-#: appcore/src/protection.rs:699
+#: crates/appcore/src/protection.rs:699
 msgid "Nobody signed it, so it says nothing about who sent it."
 msgstr ""
 
-#: appcore/src/protection.rs:707
+#: crates/appcore/src/protection.rs:707
 msgid "{detail} {files}"
 msgstr ""
 
-#: appcore/src/protection.rs:721
+#: crates/appcore/src/protection.rs:721
 msgid "This message is encrypted to a key you do not hold"
 msgstr ""
 
-#: appcore/src/protection.rs:723
+#: crates/appcore/src/protection.rs:723
 msgid "Whoever sent it used a key gpg has no secret half of."
 msgstr ""
 
-#: appcore/src/protection.rs:728
+#: crates/appcore/src/protection.rs:728
 msgid "This message is encrypted to a certificate you do not hold"
 msgstr ""
 
-#: appcore/src/protection.rs:730
+#: crates/appcore/src/protection.rs:730
 msgid "Whoever sent it used a certificate gpgsm has no secret key for."
 msgstr ""
 
-#: appcore/src/protection.rs:736
+#: crates/appcore/src/protection.rs:736
 msgid "This message says it is OpenPGP and is not"
 msgstr ""
 
-#: appcore/src/protection.rs:737
+#: crates/appcore/src/protection.rs:737
 msgid "This message says it is S/MIME and is not"
 msgstr ""
 
-#: appcore/src/protection.rs:740
+#: crates/appcore/src/protection.rs:740
 msgid "Its parts are not where a signed or encrypted message keeps them."
 msgstr ""
 
-#: appcore/src/protection.rs:746
+#: crates/appcore/src/protection.rs:746
 msgid "gpg could not open this message"
 msgstr ""
 
-#: appcore/src/protection.rs:747
+#: crates/appcore/src/protection.rs:747
 msgid "gpgsm could not open this message"
 msgstr ""
 
-#: appcore/src/protection.rs:760
+#: crates/appcore/src/protection.rs:760
 msgid "You marked this key as one not to trust."
 msgstr ""
 
-#: appcore/src/protection.rs:761
+#: crates/appcore/src/protection.rs:761
 msgid "This is one of your own keys."
 msgstr ""
 
-#: appcore/src/protection.rs:762
+#: crates/appcore/src/protection.rs:762
 msgid "You have vouched for this key."
 msgstr ""
 
-#: appcore/src/protection.rs:764
+#: crates/appcore/src/protection.rs:764
 msgid ""
 "Only people you partly trust have vouched for this key, so it is not fully "
 "checked."
 msgstr ""
 
-#: appcore/src/protection.rs:767
+#: crates/appcore/src/protection.rs:767
 msgid "Nobody has vouched for this key, so it names no one."
 msgstr ""
 
-#: appcore/src/protection.rs:770
+#: crates/appcore/src/protection.rs:770
 msgid ""
 "Its certificate leads back to an authority you trust, but this computer "
 "could not check whether it was revoked."
 msgstr ""
 
-#: appcore/src/protection.rs:774
+#: crates/appcore/src/protection.rs:774
 msgid "Its certificate leads back to an authority you trust."
 msgstr ""
 
-#: appcore/src/protection.rs:777
+#: crates/appcore/src/protection.rs:777
 msgid "Its certificate leads back to nobody you trust, so it names no one."
 msgstr ""
 
-#: appcore/src/protection.rs:780
+#: crates/appcore/src/protection.rs:780
 msgid "Nothing here says who that certificate belongs to."
 msgstr ""
 
-#: appcore/src/protection.rs:816
+#: crates/appcore/src/protection.rs:816
 msgid "key {key}"
 msgstr ""
 
-#: appcore/src/protection.rs:819
+#: crates/appcore/src/protection.rs:819
 msgid "a key gpg would not name"
 msgstr ""
 
-#: appcore/src/protection.rs:820
+#: crates/appcore/src/protection.rs:820
 msgid "a certificate gpgsm would not name"
 msgstr ""
 
-#: appcore/src/protection.rs:831
+#: crates/appcore/src/protection.rs:831
 msgid "It carries a file, kept in this window only."
 msgstr ""
 
-#: appcore/src/protection.rs:833
+#: crates/appcore/src/protection.rs:833
 msgid "It carries {count} file, kept in this window only."
 msgid_plural "It carries {count} files, kept in this window only."
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/protection.rs:864
+#: crates/appcore/src/protection.rs:864
 msgid "{names} or {last}"
 msgstr ""
 
-#: appcore/src/protection.rs:876
+#: crates/appcore/src/protection.rs:876
 msgid "{names} and {last}"
 msgstr ""
 
-#: appcore/src/rules.rs:13
+#: crates/appcore/src/rules.rs:13
 msgid "These rules run on this computer while Iris is open."
 msgstr ""
 
-#: appcore/src/rules.rs:16
+#: crates/appcore/src/rules.rs:16
 msgid ""
 "{provider} runs these on new mail as it arrives, even when this computer is "
 "off."
 msgstr ""
 
-#: appcore/src/rules.rs:25
+#: crates/appcore/src/rules.rs:25
 msgid "{provider} is not answering. Changes wait here and go out when it does."
 msgstr ""
 
-#: appcore/src/rules.rs:203
+#: crates/appcore/src/rules.rs:203
 msgid "From {address}"
 msgstr ""
 
-#: appcore/src/rules.rs:206
+#: crates/appcore/src/rules.rs:206
 msgid "To {address}"
 msgstr ""
 
-#: appcore/src/rules.rs:210
+#: crates/appcore/src/rules.rs:210
 msgid "Subject has “{words}”"
 msgstr ""
 
-#: appcore/src/rules.rs:215
+#: crates/appcore/src/rules.rs:215
 msgid "Has “{words}”"
 msgstr ""
 
-#: appcore/src/rules.rs:219
+#: crates/appcore/src/rules.rs:219
 msgid "Doesn't have “{words}”"
 msgstr ""
 
-#: appcore/src/rules.rs:224
+#: crates/appcore/src/rules.rs:224
 msgid "Has an attachment"
 msgstr ""
 
-#: appcore/src/rules.rs:229
+#: crates/appcore/src/rules.rs:229
 msgid "Smaller than {size}"
 msgstr ""
 
-#: appcore/src/rules.rs:230
+#: crates/appcore/src/rules.rs:230
 msgid "Larger than {size}"
 msgstr ""
 
-#: appcore/src/rules.rs:235
+#: crates/appcore/src/rules.rs:235
 msgid "All mail"
 msgstr ""
 
-#: appcore/src/rules.rs:255
+#: crates/appcore/src/rules.rs:255
 msgid "Delete it"
 msgstr ""
 
-#: appcore/src/rules.rs:257
+#: crates/appcore/src/rules.rs:257
 msgid "Skip the Inbox"
 msgstr ""
 
-#: appcore/src/rules.rs:262
+#: crates/appcore/src/rules.rs:262
 msgid "Apply {label}"
 msgstr ""
 
-#: appcore/src/rules.rs:268
+#: crates/appcore/src/rules.rs:268
 msgid "Star it"
 msgstr ""
 
-#: appcore/src/rules.rs:271
+#: crates/appcore/src/rules.rs:271
 msgid "Mark as read"
 msgstr ""
 
-#: appcore/src/rules.rs:274
+#: crates/appcore/src/rules.rs:274
 msgid "Mark as important"
 msgstr ""
 
-#: appcore/src/rules.rs:277
+#: crates/appcore/src/rules.rs:277
 msgid "Never mark as important"
 msgstr ""
 
-#: appcore/src/rules.rs:280
+#: crates/appcore/src/rules.rs:280
 msgid "Never send to Spam"
 msgstr ""
 
-#: appcore/src/rules.rs:283
+#: crates/appcore/src/rules.rs:283
 msgid "Forward to {address}"
 msgstr ""
 
-#: appcore/src/rules.rs:286
+#: crates/appcore/src/rules.rs:286
 msgid "Nothing"
 msgstr ""
 
-#: appcore/src/search.rs:33
+#: crates/appcore/src/search.rs:33
 msgid "Subject contains “{words}”"
 msgstr ""
 
-#: appcore/src/search.rs:49
+#: crates/appcore/src/search.rs:49
 msgid "From {person}"
 msgstr ""
 
-#: appcore/src/search.rs:55
+#: crates/appcore/src/search.rs:55
 msgid "To {person}"
 msgstr ""
 
-#: appcore/src/search.rs:78
+#: crates/appcore/src/search.rs:78
 msgid "In {label}"
 msgstr ""
 
-#: appcore/src/send_later.rs:11
+#: crates/appcore/src/send_later.rs:11
 msgid ""
 "Gmail is out of reach and Iris cannot reopen a message, so it stays in Send "
 "Later."
 msgstr ""
 
-#: appcore/src/send_later.rs:14
+#: crates/appcore/src/send_later.rs:14
 msgid ""
 "Won't be sent. Gmail is out of reach, so the message is open for you to save."
 msgstr ""
 
-#: appcore/src/send_later.rs:17
+#: crates/appcore/src/send_later.rs:17
 msgid ""
 "Won't be sent. Gmail is out of reach, so the messages are open for you to "
 "save."
 msgstr ""
 
-#: appcore/src/send_later.rs:19
+#: crates/appcore/src/send_later.rs:19
 msgid "Won't be sent. The message is in Drafts."
 msgstr ""
 
-#: appcore/src/send_later.rs:20
+#: crates/appcore/src/send_later.rs:20
 msgid "Won't be sent. The messages are in Drafts."
 msgstr ""
 
-#: appcore/src/send_later.rs:22
+#: crates/appcore/src/send_later.rs:22
 msgid ""
 "Won't be sent. Some are in Drafts, and the ones Gmail could not take are "
 "open for you to save."
 msgstr ""
 
-#: appcore/src/settings/mod.rs:242 appcore/src/settings/mod.rs:417
-#: appcore/src/settings/mod.rs:715
+#: crates/appcore/src/settings/mod.rs:242
+#: crates/appcore/src/settings/mod.rs:417
+#: crates/appcore/src/settings/mod.rs:715
 msgid "Off"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:243
+#: crates/appcore/src/settings/mod.rs:243
 msgid "Local Server"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:244
+#: crates/appcore/src/settings/mod.rs:244
 msgid "Anthropic API"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:245
+#: crates/appcore/src/settings/mod.rs:245
 msgid "Claude Subscription"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:270
+#: crates/appcore/src/settings/mod.rs:270
 msgid "Assistant"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:271
+#: crates/appcore/src/settings/mod.rs:271
 msgid "Translation"
 msgstr ""
 
 #. The assistant's running label says "Unsubscribing" too, and
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: appcore/src/settings/mod.rs:275
+#: crates/appcore/src/settings/mod.rs:275
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:281
+#: crates/appcore/src/settings/mod.rs:281
 msgid "Answers questions and acts on your mail"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:282
+#: crates/appcore/src/settings/mod.rs:282
 msgid "Translates a message when you ask"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:284
+#: crates/appcore/src/settings/mod.rs:284
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:322
+#: crates/appcore/src/settings/mod.rs:322
 msgid "Same as the Assistant"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:418
+#: crates/appcore/src/settings/mod.rs:418
 msgid "Claude's own only"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:419
+#: crates/appcore/src/settings/mod.rs:419
 msgid "Brave Search"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:420
+#: crates/appcore/src/settings/mod.rs:420
 msgid "SearXNG"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:562
+#: crates/appcore/src/settings/mod.rs:562
 msgid "Rich text"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:563
+#: crates/appcore/src/settings/mod.rs:563
 msgid "Markdown"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:582
+#: crates/appcore/src/settings/mod.rs:582
 msgid "Automatic"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:583
+#: crates/appcore/src/settings/mod.rs:583
 msgid "Monday"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:584
+#: crates/appcore/src/settings/mod.rs:584
 msgid "Sunday"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:622
+#: crates/appcore/src/settings/mod.rs:622
 msgid "When opened"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:623
+#: crates/appcore/src/settings/mod.rs:623
 msgid "After 2 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:624
+#: crates/appcore/src/settings/mod.rs:624
 msgid "Only when I choose"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:640
+#: crates/appcore/src/settings/mod.rs:640
 msgid "Ask each time"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:641
+#: crates/appcore/src/settings/mod.rs:641
 msgid "Always load"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:675
+#: crates/appcore/src/settings/mod.rs:675
 msgid "Small"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:676
+#: crates/appcore/src/settings/mod.rs:676
 msgid "Default"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:677
+#: crates/appcore/src/settings/mod.rs:677
 msgid "Large"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:678
+#: crates/appcore/src/settings/mod.rs:678
 msgid "Larger"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:716 appcore/src/settings/mod.rs:759
+#: crates/appcore/src/settings/mod.rs:716
+#: crates/appcore/src/settings/mod.rs:759
 msgid "5 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:717 appcore/src/settings/mod.rs:760
+#: crates/appcore/src/settings/mod.rs:717
+#: crates/appcore/src/settings/mod.rs:760
 msgid "10 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:718 appcore/src/settings/mod.rs:761
+#: crates/appcore/src/settings/mod.rs:718
+#: crates/appcore/src/settings/mod.rs:761
 msgid "20 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:719
+#: crates/appcore/src/settings/mod.rs:719
 msgid "30 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:739
+#: crates/appcore/src/settings/mod.rs:739
 msgid "Notices Stay For"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:740
+#: crates/appcore/src/settings/mod.rs:740
 msgid "How long a notice in the window's corner stays before it goes"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:758
+#: crates/appcore/src/settings/mod.rs:758
 msgid "3 seconds"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:778
+#: crates/appcore/src/settings/mod.rs:778
 msgid "Follow system"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:779
+#: crates/appcore/src/settings/mod.rs:779
 msgid "Light"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:780
+#: crates/appcore/src/settings/mod.rs:780
 msgid "Dark"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:814
+#: crates/appcore/src/settings/mod.rs:814
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/settings/mod.rs:822
+#: crates/appcore/src/settings/mod.rs:822
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/settings/mod.rs:839
+#: crates/appcore/src/settings/mod.rs:839
 msgid "2 weeks"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:840
+#: crates/appcore/src/settings/mod.rs:840
 msgid "30 days"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:841
+#: crates/appcore/src/settings/mod.rs:841
 msgid "90 days"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:842
+#: crates/appcore/src/settings/mod.rs:842
 msgid "1 year"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:849
+#: crates/appcore/src/settings/mod.rs:849
 msgid "256 MB"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:850
+#: crates/appcore/src/settings/mod.rs:850
 msgid "1 GB"
 msgstr ""
 
-#: appcore/src/settings/mod.rs:851
+#: crates/appcore/src/settings/mod.rs:851
 msgid "4 GB"
 msgstr ""
 
-#: appcore/src/smime.rs:93
+#: crates/appcore/src/smime.rs:93
 msgid "Add a recipient whose certificate gpgsm trusts."
 msgstr ""
 
-#: appcore/src/smime.rs:103
+#: crates/appcore/src/smime.rs:103
 msgid ""
 "gpgsm holds no trusted certificate for {addresses}. A certificate that only "
 "arrived in mail does not count."
 msgstr ""
 
-#: appcore/src/smime.rs:123
+#: crates/appcore/src/smime.rs:123
 msgid "gpgsm holds no certificate for any of the addresses you send from."
 msgstr ""
 
-#: appcore/src/smime.rs:125
+#: crates/appcore/src/smime.rs:125
 msgid "gpgsm holds a certificate for {addresses}."
 msgstr ""
 
-#: appcore/src/smime.rs:129
+#: crates/appcore/src/smime.rs:129
 msgid "gpgsm holds a certificate for {addresses}, and none for {without}."
 msgstr ""
 
-#: appcore/src/smime.rs:254
+#: crates/appcore/src/smime.rs:254
 msgid "This computer has no gpgsm. Install GnuPG to read or send S/MIME mail."
 msgstr ""
 
-#: appcore/src/smime.rs:265
+#: crates/appcore/src/smime.rs:265
 msgid "This message is encrypted to a certificate this computer does not hold."
 msgstr ""
 
-#: appcore/src/smime.rs:268
+#: crates/appcore/src/smime.rs:268
 msgid "gpgsm holds no secret key to sign as {address}."
 msgstr ""
 
-#: appcore/src/smime.rs:272
+#: crates/appcore/src/smime.rs:272
 msgid "gpgsm holds no trusted certificate it can encrypt to for {address}."
 msgstr ""
 
-#: appcore/src/smime.rs:275
+#: crates/appcore/src/smime.rs:275
 msgid "This part holds no S/MIME data."
 msgstr ""
 
-#: appcore/src/smime.rs:276
+#: crates/appcore/src/smime.rs:276
 msgid "This file holds no certificate."
 msgstr ""
 
-#: appcore/src/smime.rs:278
+#: crates/appcore/src/smime.rs:278
 msgid "That passphrase does not open this file. Nothing was imported."
 msgstr ""
 
-#: appcore/src/smime.rs:281
+#: crates/appcore/src/smime.rs:281
 msgid ""
 "The file needs its passphrase, and none was given. Nothing was imported."
 msgstr ""
 
-#: appcore/src/smime.rs:284
+#: crates/appcore/src/smime.rs:284
 msgid "gpgsm failed: {reason}"
 msgstr ""
 
-#: appcore/src/templates.rs:29
+#: crates/appcore/src/templates.rs:29
 msgid "%-d %B %Y"
 msgstr ""
 
-#: appcore/src/translation.rs:75
+#: crates/appcore/src/translation.rs:75
 msgid "Portuguese"
 msgstr ""
 
-#: appcore/src/translation.rs:76
+#: crates/appcore/src/translation.rs:76
 msgid "Spanish"
 msgstr ""
 
-#: appcore/src/translation.rs:77
+#: crates/appcore/src/translation.rs:77
 msgid "French"
 msgstr ""
 
-#: appcore/src/translation.rs:78
+#: crates/appcore/src/translation.rs:78
 msgid "German"
 msgstr ""
 
-#: appcore/src/translation.rs:79
+#: crates/appcore/src/translation.rs:79
 msgid "Italian"
 msgstr ""
 
-#: appcore/src/translation.rs:80
+#: crates/appcore/src/translation.rs:80
 msgid "Dutch"
 msgstr ""
 
-#: appcore/src/translation.rs:81
+#: crates/appcore/src/translation.rs:81
 msgid "Greek"
 msgstr ""
 
-#: appcore/src/translation.rs:82
+#: crates/appcore/src/translation.rs:82
 msgid "Hebrew"
 msgstr ""
 
-#: appcore/src/translation.rs:83
+#: crates/appcore/src/translation.rs:83
 msgid "Japanese"
 msgstr ""
 
-#: appcore/src/translation.rs:84
+#: crates/appcore/src/translation.rs:84
 msgid "Korean"
 msgstr ""
 
-#: appcore/src/translation.rs:85
+#: crates/appcore/src/translation.rs:85
 msgid "Chinese"
 msgstr ""
 
-#: appcore/src/translation.rs:86
+#: crates/appcore/src/translation.rs:86
 msgid "English"
 msgstr ""
 
-#: appcore/src/translation.rs:829
+#: crates/appcore/src/translation.rs:829
 msgid "This message is in {language}"
 msgstr ""
 
-#: appcore/src/translation.rs:832
+#: crates/appcore/src/translation.rs:832
 msgid "This message is in another language"
 msgstr ""
 
-#: appcore/src/translation.rs:835
+#: crates/appcore/src/translation.rs:835
 msgid "Translate"
 msgstr ""
 
-#: appcore/src/translation.rs:846
+#: crates/appcore/src/translation.rs:846
 msgid "Showing the message as it arrived"
 msgstr ""
 
-#: appcore/src/translation.rs:848
+#: crates/appcore/src/translation.rs:848
 msgid "Translated from {language}"
 msgstr ""
 
-#: appcore/src/translation.rs:851
+#: crates/appcore/src/translation.rs:851
 msgid "Translated"
 msgstr ""
 
-#: appcore/src/translation.rs:854
+#: crates/appcore/src/translation.rs:854
 msgid "The message was long, so only the start of it was translated."
 msgstr ""
 
-#: appcore/src/translation.rs:858
+#: crates/appcore/src/translation.rs:858
 msgid "Show Original"
 msgstr ""
 
-#: appcore/src/translation.rs:859
+#: crates/appcore/src/translation.rs:859
 msgid "Show Translation"
 msgstr ""
 
-#: appcore/src/translation.rs:869
+#: crates/appcore/src/translation.rs:869
 msgid "The model sent nothing back to put in the message."
 msgstr ""
 
-#: appcore/src/translation.rs:871
+#: crates/appcore/src/translation.rs:871
 msgid "The model could not translate this: {reason}"
 msgstr ""
 
-#: appcore/src/translation.rs:880
+#: crates/appcore/src/translation.rs:880
 msgid "The message is translated on this Mac and does not leave it."
 msgstr ""
 
-#: appcore/src/translation.rs:893
+#: crates/appcore/src/translation.rs:893
 msgid "The message goes to {host}, for {model} to read."
 msgstr ""
 
-#: appcore/src/translation.rs:897
+#: crates/appcore/src/translation.rs:897
 msgid "The message goes to {model} on this computer and no further."
 msgstr ""
 
-#: appcore/src/translation.rs:902
+#: crates/appcore/src/translation.rs:902
 msgid "The message goes to Anthropic, for {model} to read."
 msgstr ""
 
-#: appcore/src/translation.rs:906
+#: crates/appcore/src/translation.rs:906
 msgid ""
 "The message goes to Anthropic, for Claude to read through your subscription."
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:38
+#: crates/appcore/src/unsubscribe_lines.rs:38
 msgid "Unsubscribe from {sender}?"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:42
+#: crates/appcore/src/unsubscribe_lines.rs:42
 msgid "Unsubscribe from {count} list?"
 msgid_plural "Unsubscribe from {count} lists?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: appcore/src/unsubscribe_lines.rs:57
+#: crates/appcore/src/unsubscribe_lines.rs:57
 msgid "Loading a page tells the sender you acted, as opening it yourself does."
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:63
+#: crates/appcore/src/unsubscribe_lines.rs:63
 msgid "Reading the page…"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:64
+#: crates/appcore/src/unsubscribe_lines.rs:64
 msgid "ask the sender to take you off the list"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:66
+#: crates/appcore/src/unsubscribe_lines.rs:66
 msgid "send a request from {address}"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:78
+#: crates/appcore/src/unsubscribe_lines.rs:78
 msgid "nothing: the page says you are off the list already"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:79
+#: crates/appcore/src/unsubscribe_lines.rs:79
 msgid "open the page in the browser"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:92
+#: crates/appcore/src/unsubscribe_lines.rs:92
 msgid "press “{button}” on {site} with {address}, all emails"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:96
+#: crates/appcore/src/unsubscribe_lines.rs:96
 msgid "press “{button}” on {site} with {address}"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:99
+#: crates/appcore/src/unsubscribe_lines.rs:99
 msgid "press “{button}” on {site}, all emails"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:100
+#: crates/appcore/src/unsubscribe_lines.rs:100
 msgid "press “{button}” on {site}"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:109
+#: crates/appcore/src/unsubscribe_lines.rs:109
 msgid "Unsubscribed from {sender}"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:110
+#: crates/appcore/src/unsubscribe_lines.rs:110
 msgid "Sent, but the page did not say it worked"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:111
+#: crates/appcore/src/unsubscribe_lines.rs:111
 msgid "The page needs you to finish it"
 msgstr ""
 
-#: appcore/src/unsubscribe_lines.rs:113
+#: crates/appcore/src/unsubscribe_lines.rs:113
 msgid "Could not unsubscribe from {sender}: {reason}"
 msgstr ""
 
-#: appcore/src/unsubscribe_page.rs:169
+#: crates/appcore/src/unsubscribe_page.rs:169
 msgid "the page took longer than 20 seconds"
 msgstr ""
 
-#: appcore/src/unsubscribe_page.rs:171
+#: crates/appcore/src/unsubscribe_page.rs:171
 msgid "the page did not load: {reason}"
 msgstr ""
 
-#: appcore/src/unsubscribe_page.rs:175
+#: crates/appcore/src/unsubscribe_page.rs:175
 msgid "the page could not be read: {reason}"
 msgstr ""
 
-#: appcore/src/unsubscribe_page.rs:178
+#: crates/appcore/src/unsubscribe_page.rs:178
 msgid "the page changed while it was waiting to be asked"
 msgstr ""
 
 #. A leading zero on the hour would read "03:05 PM" where every
 #. 12-hour clock on the desktop reads "3:05 PM".
-#: domain/src/calendar/clock.rs:29
+#: crates/domain/src/calendar/clock.rs:29
 msgid "%-I:%M %p"
 msgstr ""
 
-#: domain/src/category.rs:89
+#: crates/domain/src/category.rs:89
 msgid "All"
 msgstr ""
 
-#: domain/src/category.rs:90
+#: crates/domain/src/category.rs:90
 msgid "Primary"
 msgstr ""
 
-#: domain/src/category.rs:91
+#: crates/domain/src/category.rs:91
 msgid "Updates"
 msgstr ""
 
-#: domain/src/category.rs:92
+#: crates/domain/src/category.rs:92
 msgid "Promotions"
 msgstr ""
 
-#: domain/src/category.rs:93
+#: crates/domain/src/category.rs:93
 msgid "Social"
 msgstr ""
 
 #. Outlook's two inboxes. "Focused" alone already names a
 #. calendar event kind, so these carry a context of their own.
-#: domain/src/category.rs:96
+#: crates/domain/src/category.rs:96
 msgctxt "inbox"
 msgid "Focused"
 msgstr ""
 
-#: domain/src/category.rs:97
+#: crates/domain/src/category.rs:97
 msgctxt "inbox"
 msgid "Other"
 msgstr ""
 
-#: domain/src/invitation.rs:84
+#: crates/domain/src/invitation.rs:84
 msgid "Yes"
 msgstr ""
 
-#: domain/src/invitation.rs:85
+#: crates/domain/src/invitation.rs:85
 msgid "No"
 msgstr ""
 
-#: domain/src/invitation.rs:86 domain/src/invitation.rs:95
+#: crates/domain/src/invitation.rs:86 crates/domain/src/invitation.rs:95
 msgid "Maybe"
 msgstr ""
 
-#: domain/src/invitation.rs:93
+#: crates/domain/src/invitation.rs:93
 msgid "Going"
 msgstr ""
 
-#: domain/src/invitation.rs:94
+#: crates/domain/src/invitation.rs:94
 msgid "Not going"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:28
+#: crates/domain/src/invitation/recurrence.rs:28
 msgid "Every day"
 msgid_plural "Every {count} days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: domain/src/invitation/recurrence.rs:30
+#: crates/domain/src/invitation/recurrence.rs:30
 msgid "Every week"
 msgid_plural "Every {count} weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: domain/src/invitation/recurrence.rs:32
+#: crates/domain/src/invitation/recurrence.rs:32
 msgid "Every {days}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:34
+#: crates/domain/src/invitation/recurrence.rs:34
 msgid "{every} on {days}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:42
+#: crates/domain/src/invitation/recurrence.rs:42
 msgid "Every month"
 msgid_plural "Every {count} months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: domain/src/invitation/recurrence.rs:49
+#: crates/domain/src/invitation/recurrence.rs:49
 msgid "{every} on {day}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:55
+#: crates/domain/src/invitation/recurrence.rs:55
 msgid "Every year"
 msgid_plural "Every {count} years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: domain/src/invitation/recurrence.rs:56
+#: crates/domain/src/invitation/recurrence.rs:56
 msgid "Every hour"
 msgid_plural "Every {count} hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: domain/src/invitation/recurrence.rs:67
+#: crates/domain/src/invitation/recurrence.rs:67
 msgid "{every} until {day}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:72
+#: crates/domain/src/invitation/recurrence.rs:72
 msgid "once"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:74
+#: crates/domain/src/invitation/recurrence.rs:74
 msgid "{count} time"
 msgid_plural "{count} times"
 msgstr[0] ""
 msgstr[1] ""
 
-#: domain/src/invitation/recurrence.rs:81
+#: crates/domain/src/invitation/recurrence.rs:81
 msgid "{every}, {repeats}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:104
+#: crates/domain/src/invitation/recurrence.rs:104
 msgid "{every}, no end date"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:119
+#: crates/domain/src/invitation/recurrence.rs:119
 msgid "{every}, none left"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:121
+#: crates/domain/src/invitation/recurrence.rs:121
 msgid "{every}, {count} left"
 msgid_plural "{every}, {count} left"
 msgstr[0] ""
 msgstr[1] ""
 
-#: domain/src/invitation/recurrence.rs:200
+#: crates/domain/src/invitation/recurrence.rs:200
 msgid "{days} and {last}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:209
+#: crates/domain/src/invitation/recurrence.rs:209
 msgid "Tuesday"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:210
+#: crates/domain/src/invitation/recurrence.rs:210
 msgid "Wednesday"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:211
+#: crates/domain/src/invitation/recurrence.rs:211
 msgid "Thursday"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:212
+#: crates/domain/src/invitation/recurrence.rs:212
 msgid "Friday"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:213
+#: crates/domain/src/invitation/recurrence.rs:213
 msgid "Saturday"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:224
+#: crates/domain/src/invitation/recurrence.rs:224
 msgid "the last day"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:233
+#: crates/domain/src/invitation/recurrence.rs:233
 msgid "the last {weekday}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:235
+#: crates/domain/src/invitation/recurrence.rs:235
 msgid "the {nth} {weekday}"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:244
+#: crates/domain/src/invitation/recurrence.rs:244
 msgid "first"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:245
+#: crates/domain/src/invitation/recurrence.rs:245
 msgid "second"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:246
+#: crates/domain/src/invitation/recurrence.rs:246
 msgid "third"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:247
+#: crates/domain/src/invitation/recurrence.rs:247
 msgid "fourth"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:248
+#: crates/domain/src/invitation/recurrence.rs:248
 msgid "fifth"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:261
-#: domain/src/invitation/recurrence.rs:265
+#: crates/domain/src/invitation/recurrence.rs:261
+#: crates/domain/src/invitation/recurrence.rs:265
 msgid "the {day}th"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:262
+#: crates/domain/src/invitation/recurrence.rs:262
 msgid "the {day}st"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:263
+#: crates/domain/src/invitation/recurrence.rs:263
 msgid "the {day}nd"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:264
+#: crates/domain/src/invitation/recurrence.rs:264
 msgid "the {day}rd"
 msgstr ""
 
-#: domain/src/invitation/recurrence.rs:296
+#: crates/domain/src/invitation/recurrence.rs:296
 msgid "%-d %B"
 msgstr ""
 
-#: domain/src/sign_in_page.rs:36
+#: crates/domain/src/sign_in_page.rs:36
 msgid "Signed in to Iris"
 msgstr ""
 
-#: domain/src/sign_in_page.rs:37
+#: crates/domain/src/sign_in_page.rs:37
 msgid "You can close this tab and go back to Iris."
 msgstr ""
 
-#: domain/src/sign_in_page.rs:42
+#: crates/domain/src/sign_in_page.rs:42
 msgid "You didn't allow access"
 msgstr ""
 
-#: domain/src/sign_in_page.rs:44
+#: crates/domain/src/sign_in_page.rs:44
 msgid ""
 "Iris has not been signed in. To try again, go back to Iris and press Grant "
 "Access."
 msgstr ""
 
-#: domain/src/sign_in_page.rs:50
+#: crates/domain/src/sign_in_page.rs:50
 msgid "Sign-in didn't finish"
 msgstr ""
 
-#: domain/src/sign_in_page.rs:51
+#: crates/domain/src/sign_in_page.rs:51
 msgid "Go back to Iris to see why and try again. You can close this tab."
 msgstr ""
 
-#: domain/src/sign_in_page.rs:56
+#: crates/domain/src/sign_in_page.rs:56
 msgid "Nothing here"
 msgstr ""
 
-#: domain/src/smart.rs:69
+#: crates/domain/src/smart.rs:69
 msgid "From contains"
 msgstr ""
 
-#: domain/src/smart.rs:70
+#: crates/domain/src/smart.rs:70
 msgid "To contains"
 msgstr ""
 
-#: domain/src/smart.rs:71
+#: crates/domain/src/smart.rs:71
 msgid "Subject contains"
 msgstr ""
 
-#: domain/src/smart.rs:72
+#: crates/domain/src/smart.rs:72
 msgid "Message contains"
 msgstr ""
 
-#: domain/src/smart.rs:73
+#: crates/domain/src/smart.rs:73
 msgid "Has label"
 msgstr ""
 
-#: domain/src/smart.rs:74
+#: crates/domain/src/smart.rs:74
 msgid "Received in the last (days)"
 msgstr ""
 
-#: domain/src/smart.rs:75
+#: crates/domain/src/smart.rs:75
 msgid "Larger than (MB)"
 msgstr ""
 
-#: domain/src/smart.rs:77
+#: crates/domain/src/smart.rs:77
 msgid "Is unread"
 msgstr ""
 
-#: domain/src/smart.rs:78
+#: crates/domain/src/smart.rs:78
 msgid "Is flagged"
 msgstr ""
 
-#: ffi/src/about.rs:40
+#: crates/ffi/src/about.rs:40
 msgid "About Iris"
 msgstr ""
 
-#: ffi/src/about.rs:44
+#: crates/ffi/src/about.rs:44
 msgid "Based on {app}"
 msgstr ""
 
-#: ffi/src/about.rs:47
+#: crates/ffi/src/about.rs:47
 msgid "Mail and calendar for macOS. Your mail stays on your computer."
 msgstr ""
 
-#: ffi/src/about.rs:49
+#: crates/ffi/src/about.rs:49
 msgid "Iris carried word between the sky and the sea,"
 msgstr ""
 
-#: ffi/src/about.rs:50
+#: crates/ffi/src/about.rs:50
 msgid "and folded every message into light."
 msgstr ""
 
-#: ffi/src/about.rs:51
+#: crates/ffi/src/about.rs:51
 msgid "Here she keeps your letters close and quiet,"
 msgstr ""
 
-#: ffi/src/about.rs:52
+#: crates/ffi/src/about.rs:52
 msgid "with no cloud between you and the ones you write to."
 msgstr ""
 
-#: ffi/src/about.rs:54
+#: crates/ffi/src/about.rs:54
 msgid "If Iris makes your day a little lighter, leave it a star on GitHub."
 msgstr ""
 
-#: ffi/src/about.rs:55
+#: crates/ffi/src/about.rs:55
 msgid "Star on GitHub"
 msgstr ""
 
-#: ffi/src/about.rs:59
+#: crates/ffi/src/about.rs:59
 msgid "Report a Problem…"
 msgstr ""
 
-#: ffi/src/about.rs:67
+#: crates/ffi/src/about.rs:67
 msgid "Version {version}"
 msgstr ""
 
-#: ffi/src/account_menu.rs:56
+#: crates/ffi/src/account_menu.rs:56
 msgid "Name, or Parent/Name to nest it"
 msgstr ""
 
-#: ffi/src/account_settings.rs:56
+#: crates/ffi/src/account_settings.rs:56
 msgid "This account is not syncing yet."
 msgstr ""
 
-#: ffi/src/account_settings.rs:111
+#: crates/ffi/src/account_settings.rs:111
 msgid "Could not save: {reason}"
 msgstr ""
 
-#: ffi/src/account_settings.rs:114
+#: crates/ffi/src/account_settings.rs:114
 msgid "Automatic reply is on"
 msgstr ""
 
-#: ffi/src/account_settings.rs:115
+#: crates/ffi/src/account_settings.rs:115
 msgid "Automatic reply is off"
 msgstr ""
 
-#: ffi/src/account_setup.rs:269
+#: crates/ffi/src/account_setup.rs:269
 msgid "Remove {account}?"
 msgstr ""
 
-#: ffi/src/account_setup.rs:701
+#: crates/ffi/src/account_setup.rs:701
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr ""
 
-#: ffi/src/ai_prefs.rs:135
+#: crates/ffi/src/ai_prefs.rs:135
 msgid "Apple, on This Mac"
 msgstr ""
 
-#: ffi/src/ai_prefs.rs:267
+#: crates/ffi/src/ai_prefs.rs:267
 msgid "No answer: {reason}"
 msgstr ""
 
-#: ffi/src/assistant.rs:455
+#: crates/ffi/src/assistant.rs:455
 msgid "Stopped."
 msgstr ""
 
-#: ffi/src/assistant.rs:778
+#: crates/ffi/src/assistant.rs:778
 msgid ""
 "The Google Cloud project Iris signs in with has the {service} switched off, "
 "so Google refuses before it can ask for your permission. Turn it on, wait a "
 "minute, and try again."
 msgstr ""
 
-#: ffi/src/assistant.rs:797 ffi/src/assistant.rs:807
+#: crates/ffi/src/assistant.rs:797 crates/ffi/src/assistant.rs:807
 msgid "Not scheduled: {reason}"
 msgstr ""
 
-#: ffi/src/assistant.rs:802
+#: crates/ffi/src/assistant.rs:802
 msgid "Will send {when}"
 msgstr ""
 
-#: ffi/src/assistant.rs:1002
+#: crates/ffi/src/assistant.rs:1002
 msgid "That account is not connected."
 msgstr ""
 
-#: ffi/src/assistant.rs:1011
+#: crates/ffi/src/assistant.rs:1011
 msgid "Draft not saved: {reason}"
 msgstr ""
 
-#: ffi/src/assistant.rs:1023
+#: crates/ffi/src/assistant.rs:1023
 msgid "Could not build the message: {reason}"
 msgstr ""
 
-#: ffi/src/assistant_link.rs:35
+#: crates/ffi/src/assistant_link.rs:35
 msgid "Iris cannot open that link."
 msgstr ""
 
-#: ffi/src/assistant_link.rs:42
+#: crates/ffi/src/assistant_link.rs:42
 msgid "That conversation is no longer in Iris."
 msgstr ""
 
-#: ffi/src/assistant_link.rs:51
+#: crates/ffi/src/assistant_link.rs:51
 msgid "That event is no longer on the calendar."
 msgstr ""
 
-#: ffi/src/calendar.rs:355 ffi/src/calendar.rs:484
+#: crates/ffi/src/calendar.rs:355 crates/ffi/src/calendar.rs:484
 msgid "%B %Y"
 msgstr ""
 
-#: ffi/src/calendar.rs:358 ffi/src/calendar.rs:500
+#: crates/ffi/src/calendar.rs:358 crates/ffi/src/calendar.rs:500
 msgid "%a"
 msgstr ""
 
-#: ffi/src/calendar.rs:487
+#: crates/ffi/src/calendar.rs:487
 msgid "{first} – {last}"
 msgstr ""
 
-#: ffi/src/calendar.rs:489 ffi/src/calendar.rs:490
+#: crates/ffi/src/calendar.rs:489 crates/ffi/src/calendar.rs:490
 msgid "%b"
 msgstr ""
 
-#: ffi/src/compose.rs:144
+#: crates/ffi/src/compose.rs:144
 msgid "Add an account to write mail."
 msgstr ""
 
-#: ffi/src/compose.rs:241
+#: crates/ffi/src/compose.rs:241
 msgid "Could not open the draft: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:273
+#: crates/ffi/src/compose.rs:273
 msgid "The saved draft stays in Drafts: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:277
+#: crates/ffi/src/compose.rs:277
 msgid "the account is not connected."
 msgstr ""
 
-#: ffi/src/compose.rs:332 ffi/src/compose.rs:339
+#: crates/ffi/src/compose.rs:332 crates/ffi/src/compose.rs:339
 msgid "Not sent: {reason}"
 msgstr ""
 
-#: ffi/src/compose.rs:336
+#: crates/ffi/src/compose.rs:336
 msgid "Message sent"
 msgstr ""
 
-#: ffi/src/compose.rs:338
+#: crates/ffi/src/compose.rs:338
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr ""
 
-#: ffi/src/contacts.rs:167
+#: crates/ffi/src/contacts.rs:167
 msgid "The contact list is gone"
 msgstr ""
 
-#: ffi/src/contacts.rs:254
+#: crates/ffi/src/contacts.rs:254
 msgid "Not allowed when you signed in"
 msgstr ""
 
-#: ffi/src/erase.rs:108
+#: crates/ffi/src/erase.rs:108
 msgid "Could not delete the mail: {reason}"
 msgstr ""
 
-#: ffi/src/event_editor.rs:256
+#: crates/ffi/src/event_editor.rs:256
 msgid "Could not save the event: {reason}"
 msgstr ""
 
-#: ffi/src/event_editor.rs:258
+#: crates/ffi/src/event_editor.rs:258
 msgid "Moved “{title}”"
 msgstr ""
 
-#: ffi/src/event_editor.rs:277
+#: crates/ffi/src/event_editor.rs:277
 msgid "Could not delete the event: {reason}"
 msgstr ""
 
-#: ffi/src/event_editor.rs:278
+#: crates/ffi/src/event_editor.rs:278
 msgid "Deleted “{title}”"
 msgstr ""
 
-#: ffi/src/event_editor.rs:338
+#: crates/ffi/src/event_editor.rs:338
 msgid "Iris has no permission to use this calendar. Allow it in Preferences."
 msgstr ""
 
-#: ffi/src/filing.rs:97
+#: crates/ffi/src/filing.rs:97
 msgid "Delete “{name}”?"
 msgstr ""
 
-#: ffi/src/filing.rs:139
+#: crates/ffi/src/filing.rs:139
 msgid "Deleted “{name}”"
 msgstr ""
 
-#: ffi/src/filing.rs:154
+#: crates/ffi/src/filing.rs:154
 msgid "Could not change the color: {reason}"
 msgstr ""
 
-#: ffi/src/filing.rs:301
+#: crates/ffi/src/filing.rs:301
 msgid "That account is not connected"
 msgstr ""
 
-#: ffi/src/filing.rs:384
+#: crates/ffi/src/filing.rs:384
 msgid "{label}, on this mail"
 msgstr ""
 
-#: ffi/src/hidden.rs:46
+#: crates/ffi/src/hidden.rs:46
 msgid ""
 "Gmail delivers mail sent to these addresses to your inbox. Each one shows "
 "which site shared your address, and you can turn one off when the spam "
@@ -3847,342 +3858,1498 @@ msgid ""
 "can still reach you, and your replies come from your main address."
 msgstr ""
 
-#: ffi/src/hidden.rs:52
+#: crates/ffi/src/hidden.rs:52
 msgid ""
 "You get a new address that ends in your own, such as "
 "name+kite.fern482@gmail.com. Give it to one site only."
 msgstr ""
 
-#: ffi/src/hidden.rs:64
+#: crates/ffi/src/hidden.rs:64
 msgid "Off: mail goes to the Trash"
 msgstr ""
 
-#: ffi/src/hidden.rs:95 ffi/src/hidden.rs:115 ffi/src/hidden.rs:131
+#: crates/ffi/src/hidden.rs:95 crates/ffi/src/hidden.rs:115
+#: crates/ffi/src/hidden.rs:131
 msgid "Allow Hide My Email"
 msgstr ""
 
-#: ffi/src/hidden.rs:111
+#: crates/ffi/src/hidden.rs:111
 msgid "Mail to this address reaches you again"
 msgstr ""
 
-#: ffi/src/hidden.rs:112
+#: crates/ffi/src/hidden.rs:112
 msgid "Mail to this address now goes to the Trash"
 msgstr ""
 
-#: ffi/src/hidden.rs:129
+#: crates/ffi/src/hidden.rs:129
 msgid "Address deleted"
 msgstr ""
 
-#: ffi/src/hidden.rs:139
+#: crates/ffi/src/hidden.rs:139
 msgid ""
 "Mail sent to {address} arrives in your inbox again, without the Hide My "
 "Email label. To stop that mail, turn the address off instead."
 msgstr ""
 
-#: ffi/src/hidden.rs:172
+#: crates/ffi/src/hidden.rs:172
 msgid "Created {date}"
 msgstr ""
 
-#: ffi/src/invitation_answer.rs:49
+#: crates/ffi/src/invitation_answer.rs:49
 msgid "The event is no longer on the calendar"
 msgstr ""
 
-#: ffi/src/invitation_answer.rs:69
+#: crates/ffi/src/invitation_answer.rs:69
 msgid "Could not send your answer: {reason}"
 msgstr ""
 
-#: ffi/src/lib.rs:71
+#: crates/ffi/src/lib.rs:71
 msgid ""
 "A newer version of Iris has updated your mail since this one last ran. "
 "Update Iris to open it."
 msgstr ""
 
-#: ffi/src/lib.rs:359
+#: crates/ffi/src/lib.rs:359
 msgid "Unknown sender"
 msgstr ""
 
-#: ffi/src/mail.rs:485
+#: crates/ffi/src/mail.rs:485
 msgid "Will remind you {when}"
 msgstr ""
 
-#: ffi/src/mail.rs:488
+#: crates/ffi/src/mail.rs:488
 msgid "Back in the Inbox"
 msgstr ""
 
-#: ffi/src/mail.rs:525
+#: crates/ffi/src/mail.rs:525
 msgid "Could not cancel: {reason}"
 msgstr ""
 
-#: ffi/src/mail.rs:549
+#: crates/ffi/src/mail.rs:549
 msgid "Deleted. It will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:550
+#: crates/ffi/src/mail.rs:550
 msgid "Deleted. They will not be sent."
 msgstr ""
 
-#: ffi/src/mail.rs:559
+#: crates/ffi/src/mail.rs:559
 msgid "Could not delete: {reason}"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:238
+#: crates/ffi/src/mail_invitation.rs:238
 msgid "Could not send your reply: {reason}"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:241
+#: crates/ffi/src/mail_invitation.rs:241
 msgid "This invitation names no organizer, so there is nobody to reply to"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:255
+#: crates/ffi/src/mail_invitation.rs:255
 msgid "The {service} is switched off for Iris, so your answer went by email"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:280
+#: crates/ffi/src/mail_invitation.rs:280
 msgid "This invitation has no time to move"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:286
+#: crates/ffi/src/mail_invitation.rs:286
 msgid "Could not send your proposal: {reason}"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:289
+#: crates/ffi/src/mail_invitation.rs:289
 msgid "This invitation names no organizer, so there is nobody to ask"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:294
+#: crates/ffi/src/mail_invitation.rs:294
 msgid "Proposed a new time to {organizer}"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:295
+#: crates/ffi/src/mail_invitation.rs:295
 msgid "Proposed a new time"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:297
+#: crates/ffi/src/mail_invitation.rs:297
 msgid "New time proposed. The organizer decides."
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:325
+#: crates/ffi/src/mail_invitation.rs:325
 msgid "Could not add to your calendar: {reason}"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:336
+#: crates/ffi/src/mail_invitation.rs:336
 msgid ""
 "Nothing in this file can be added, since its events have no id or start time"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:343
+#: crates/ffi/src/mail_invitation.rs:343
 msgid "Added to your calendar"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:345
+#: crates/ffi/src/mail_invitation.rs:345
 msgid "Added {count} events to your calendar"
 msgid_plural "Added {count} events to your calendar"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ffi/src/mail_invitation.rs:350
+#: crates/ffi/src/mail_invitation.rs:350
 msgid "Added to {calendar}"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:352
+#: crates/ffi/src/mail_invitation.rs:352
 msgid "Added {count} events to {calendar}"
 msgid_plural "Added {count} events to {calendar}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ffi/src/mail_invitation.rs:360
+#: crates/ffi/src/mail_invitation.rs:360
 msgid "Some events were left out, since they have no id or start time"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:435 ffi/src/mail_invitation.rs:438
+#: crates/ffi/src/mail_invitation.rs:435 crates/ffi/src/mail_invitation.rs:438
 msgid "This invitation names no event, so there is nothing to answer"
 msgstr ""
 
-#: ffi/src/mail_invitation.rs:603
+#: crates/ffi/src/mail_invitation.rs:603
 msgid "{count} events"
 msgid_plural "{count} events"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ffi/src/mail_invitation.rs:639
+#: crates/ffi/src/mail_invitation.rs:639
 msgid "No reply yet"
 msgstr ""
 
-#: ffi/src/prefs.rs:178
+#: crates/ffi/src/prefs.rs:178
 msgid "Startup"
 msgstr ""
 
-#: ffi/src/prefs.rs:179
+#: crates/ffi/src/prefs.rs:179
 msgid "Open at Login"
 msgstr ""
 
-#: ffi/src/prefs.rs:180
+#: crates/ffi/src/prefs.rs:180
 msgid "Iris opens when you log in and keeps your mail up to date"
 msgstr ""
 
-#: ffi/src/prefs.rs:307
+#: crates/ffi/src/prefs.rs:307
 msgid "Images from anyone at {domain} will load from now on"
 msgstr ""
 
-#: ffi/src/prefs.rs:310
+#: crates/ffi/src/prefs.rs:310
 msgid "Images from {sender} will load from now on"
 msgstr ""
 
-#: ffi/src/protection.rs:158
+#: crates/ffi/src/protection.rs:158
 msgid "Your OpenPGP Keys"
 msgstr ""
 
-#: ffi/src/protection.rs:161
+#: crates/ffi/src/protection.rs:161
 msgid "gpg could not be asked: {reason}"
 msgstr ""
 
-#: ffi/src/protection.rs:168
+#: crates/ffi/src/protection.rs:168
 msgid "Your S/MIME Certificates"
 msgstr ""
 
-#: ffi/src/protection.rs:171
+#: crates/ffi/src/protection.rs:171
 msgid "gpgsm could not be asked: {reason}"
 msgstr ""
 
-#: ffi/src/protection.rs:177
+#: crates/ffi/src/protection.rs:177
 msgid "Signing and Encryption"
 msgstr ""
 
-#: ffi/src/protection.rs:179
+#: crates/ffi/src/protection.rs:179
 msgid ""
 "Iris signs and encrypts through GnuPG, which holds your keys and asks for "
 "your passphrase itself."
 msgstr ""
 
-#: ffi/src/protection.rs:186
+#: crates/ffi/src/protection.rs:186
 msgid "Import…"
 msgstr ""
 
-#: ffi/src/protection.rs:187
+#: crates/ffi/src/protection.rs:187
 msgid "Sign My Messages by Default"
 msgstr ""
 
-#: ffi/src/protection.rs:188
+#: crates/ffi/src/protection.rs:188
 msgid "New messages open with Sign turned on"
 msgstr ""
 
-#: ffi/src/protection.rs:190
+#: crates/ffi/src/protection.rs:190
 msgid "Encrypt When I Can"
 msgstr ""
 
-#: ffi/src/protection.rs:191
+#: crates/ffi/src/protection.rs:191
 msgid "Turn Encrypt on as soon as every recipient has a key or a certificate"
 msgstr ""
 
-#: ffi/src/protection.rs:253
+#: crates/ffi/src/protection.rs:253
 msgid "Add a recipient this computer can encrypt to."
 msgstr ""
 
-#: ffi/src/protection.rs:286
+#: crates/ffi/src/protection.rs:286
 msgid "Not encrypted, so not sent: {reason}"
 msgstr ""
 
-#: ffi/src/protection.rs:287
+#: crates/ffi/src/protection.rs:287
 msgid "Not signed, so not sent: {reason}"
 msgstr ""
 
-#: ffi/src/protection.rs:356
+#: crates/ffi/src/protection.rs:356
 msgid ""
 "Draft not saved. An encrypted message waits in Drafts encrypted to your own "
 "key, and this computer holds no key or certificate for {address}."
 msgstr ""
 
-#: ffi/src/rules.rs:162
+#: crates/ffi/src/rules.rs:162
 msgid "Rule added"
 msgstr ""
 
-#: ffi/src/rules.rs:171
+#: crates/ffi/src/rules.rs:171
 msgid "Rule saved"
 msgstr ""
 
-#: ffi/src/rules.rs:189
+#: crates/ffi/src/rules.rs:189
 msgid "Rule deleted"
 msgstr ""
 
-#: ffi/src/rules.rs:207 ffi/src/rules.rs:208
+#: crates/ffi/src/rules.rs:207 crates/ffi/src/rules.rs:208
 msgid "Could Not Load the Rules"
 msgstr ""
 
-#: ffi/src/senders.rs:56
+#: crates/ffi/src/senders.rs:56
 msgid "Block {sender}?"
 msgstr ""
 
-#: ffi/src/senders.rs:59
+#: crates/ffi/src/senders.rs:59
 msgid ""
 "New mail from {email} goes straight to the Trash. This conversation moves "
 "there now. Remove the rule under Rules to unblock."
 msgstr ""
 
-#: ffi/src/senders.rs:77 ffi/src/senders.rs:103
+#: crates/ffi/src/senders.rs:77 crates/ffi/src/senders.rs:103
 msgid "Open a message from the sender first"
 msgstr ""
 
-#: ffi/src/senders.rs:88
+#: crates/ffi/src/senders.rs:88
 msgid "Mail from {sender} now goes to {category}"
 msgstr ""
 
-#: ffi/src/senders.rs:89
+#: crates/ffi/src/senders.rs:89
 msgid "Moved mail from {sender} to {category}"
 msgstr ""
 
-#: ffi/src/senders.rs:91
+#: crates/ffi/src/senders.rs:91
 msgid ""
 "Moved mail from {sender} to {category}, but could not sort new mail: {reason}"
 msgstr ""
 
-#: ffi/src/senders.rs:107
+#: crates/ffi/src/senders.rs:107
 msgid "Could not block the sender: {reason}"
 msgstr ""
 
-#: ffi/src/senders.rs:123
+#: crates/ffi/src/senders.rs:123
 msgid "Blocked {sender}"
 msgstr ""
 
-#: ffi/src/smart.rs:106
+#: crates/ffi/src/smart.rs:106
 msgid "Give the mailbox a name"
 msgstr ""
 
-#: ffi/src/smart.rs:124
+#: crates/ffi/src/smart.rs:124
 msgid "Add a condition with a value"
 msgstr ""
 
-#: ffi/src/source.rs:42 ffi/src/source.rs:55
+#: crates/ffi/src/source.rs:42 crates/ffi/src/source.rs:55
 msgid "Open a conversation first"
 msgstr ""
 
-#: ffi/src/source.rs:44
+#: crates/ffi/src/source.rs:44
 msgid "Could not load the source: {reason}"
 msgstr ""
 
-#: ffi/src/source.rs:72
+#: crates/ffi/src/source.rs:72
 msgid "Could not export the mail: {reason}"
 msgstr ""
 
-#: ffi/src/templates.rs:69
+#: crates/ffi/src/templates.rs:69
 msgid "Template not saved: {reason}"
 msgstr ""
 
-#: ffi/src/templates.rs:93
+#: crates/ffi/src/templates.rs:93
 msgid "The template is gone"
 msgstr ""
 
-#: ffi/src/templates.rs:102
+#: crates/ffi/src/templates.rs:102
 msgid "Give the template a name"
 msgstr ""
 
-#: ffi/src/unsubscribe.rs:71
+#: crates/ffi/src/unsubscribe.rs:71
 msgid "This message has no unsubscribe link"
 msgstr ""
 
-#: ffi/src/unsubscribe.rs:91
+#: crates/ffi/src/unsubscribe.rs:91
 msgid ""
 "The request to leave {sender} waits in the Outbox. It goes out as soon as it "
 "can."
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:28
+msgid "%A %-d %B"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:34
+msgid "%A %-d"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:66
+#: crates/render/src/calendar_words.rs:161
+msgid "All day"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:72
+msgid "{date} · {start}–{end}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:91
+msgid "{date} · All day"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:130
+msgid "{title}, {days}, all day, {calendar}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:140
+msgid "{date} {time}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:148
+msgid "{title}, {start} to {end}, {calendar}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:164
+msgid "{start}–{end}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:175
+msgid "{place} · {calendar}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:215
+msgid "{yes} of {count} said yes"
+msgid_plural "{yes} of {count} said yes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:235
+msgid "{organizer} · {answers}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:246
+msgid "Could not undo, so the change stays: {reason}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:252
+msgid "and {count} more"
+msgid_plural "and {count} more"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:263
+msgid "Join with Google Meet"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:265
+msgid "Join Call"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:279
+msgid "Google Meet"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:281
+msgid "Microsoft Teams"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:283
+msgid "Zoom"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:285
+msgid "Video Call"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:297
+msgid "Open {place} in Maps"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:312
+msgid "{count} more"
+msgid_plural "{count} more"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:323
+msgid "{count} more event on {date}"
+msgid_plural "{count} more events on {date}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:338
+msgid "{date}, has events"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:357
+msgid "Offline, last updated {time}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:358
+msgid "Offline"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:378
+msgid "{weekday} {time}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:399
+msgid "{day}, {time}"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:417
+msgid "Open the invitation for “{title}” in Mail"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:429
+msgid "At the start"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:431
+msgid "{count} week before"
+msgid_plural "{count} weeks before"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:437
+msgid "{count} day before"
+msgid_plural "{count} days before"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:443
+msgid "{count} hour before"
+msgid_plural "{count} hours before"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:449
+msgid "{count} minute before"
+msgid_plural "{count} minutes before"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/calendar_words.rs:466
+msgid "Never"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:468
+msgid "Every weekday"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:473
+msgid "A rule set in another app"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:556
+msgid "Organizer"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:566
+msgid "No answer yet"
+msgstr ""
+
+#: crates/render/src/calendar_words.rs:692
+msgid "{time} {city}"
+msgstr ""
+
+#: crates/render/src/conversation.rs:195
+msgid "{count} message"
+msgid_plural "{count} messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/conversation.rs:203
+msgid "Summarize"
+msgstr ""
+
+#: crates/render/src/conversation.rs:257
+msgid "Show or hide this message"
+msgstr ""
+
+#: crates/render/src/conversation.rs:259
+msgid "Contact"
+msgstr ""
+
+#: crates/render/src/conversation.rs:264
+msgid "Contact card for {person}"
+msgstr ""
+
+#: crates/render/src/conversation.rs:303
+msgid "Reply All"
+msgstr ""
+
+#: crates/render/src/conversation.rs:304
+msgid "Forward"
+msgstr ""
+
+#: crates/render/src/conversation.rs:340
+msgid "Invitation"
+msgstr ""
+
+#: crates/render/src/conversation.rs:353
+msgid "Loading…"
+msgstr ""
+
+#: crates/render/src/conversation.rs:358
+msgid "This message could not be loaded: {reason}"
+msgstr ""
+
+#: crates/render/src/conversation.rs:408
+msgid "Details"
+msgstr ""
+
+#: crates/render/src/conversation.rs:429
+msgid "from"
+msgstr ""
+
+#: crates/render/src/conversation.rs:440
+msgid "to"
+msgstr ""
+
+#: crates/render/src/conversation.rs:442
+msgid "cc"
+msgstr ""
+
+#: crates/render/src/conversation.rs:444
+msgid "date"
+msgstr ""
+
+#: crates/render/src/conversation.rs:445
+msgid "subject"
+msgstr ""
+
+#: crates/render/src/conversation.rs:447
+msgid "mailed-by"
+msgstr ""
+
+#: crates/render/src/conversation.rs:450
+msgid "signed-by"
+msgstr ""
+
+#: crates/render/src/conversation.rs:454
+msgid "security"
+msgstr ""
+
+#: crates/render/src/conversation.rs:456
+msgid "Standard encryption (TLS)"
+msgstr ""
+
+#: crates/render/src/conversation.rs:461
+msgid "Not encrypted in transit"
+msgstr ""
+
+#: crates/render/src/conversation.rs:498
+msgid "{count} attachment"
+msgid_plural "{count} attachments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/conversation.rs:530
+msgid "Quick Look"
+msgstr ""
+
+#: crates/render/src/conversation.rs:531
+msgid "Save to Downloads"
+msgstr ""
+
+#: crates/render/src/conversation.rs:533
+msgid "Open {file}, {size}"
+msgstr ""
+
+#: crates/render/src/conversation.rs:540
+msgid "Save {file} to Downloads"
+msgstr ""
+
+#: crates/render/src/conversation.rs:547
+msgid "Save All ({count})"
+msgid_plural "Save All ({count})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/conversation.rs:558
+msgid "Save every attachment to a folder"
+msgstr ""
+
+#: crates/render/src/conversation.rs:622
+msgid "undisclosed recipients"
+msgstr ""
+
+#: crates/render/src/conversation.rs:625
+msgid "{named}, and {count} other"
+msgid_plural "{named}, and {count} others"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/render/src/conversation.rs:638
+msgid "me"
+msgstr ""
+
+#: crates/render/src/conversation.rs:648
+msgid "Show trimmed content"
+msgstr ""
+
+#: crates/render/src/format.rs:36 crates/render/src/format.rs:384
+msgid "Yesterday"
+msgstr ""
+
+#: crates/render/src/format.rs:37 crates/render/src/format.rs:383
+msgid "Tomorrow"
+msgstr ""
+
+#: crates/render/src/format.rs:38 crates/render/src/format.rs:385
+msgid "%A"
+msgstr ""
+
+#: crates/render/src/format.rs:39
+msgid "%-d %b"
+msgstr ""
+
+#: crates/render/src/format.rs:40
+msgid "%Y-%m-%d"
+msgstr ""
+
+#: crates/render/src/format.rs:55
+msgid "Today at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:56
+msgid "Yesterday at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:57
+msgid "Tomorrow at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:58 crates/render/src/format.rs:111
+msgid "%a %-d %b at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:59 crates/render/src/format.rs:112
+msgid "%-d %b %Y at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:60
+msgid "%-d %b %Y"
+msgstr ""
+
+#: crates/render/src/format.rs:70
+msgid "%a, %-d %b"
+msgstr ""
+
+#: crates/render/src/format.rs:71
+msgid "%a, %-d %b %Y"
+msgstr ""
+
+#: crates/render/src/format.rs:79 crates/render/src/format.rs:387
+msgid "%A, %-d %B %Y"
+msgstr ""
+
+#: crates/render/src/format.rs:87
+msgid "{date} at {time}"
+msgstr ""
+
+#: crates/render/src/format.rs:108
+msgid "today at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:109
+msgid "tomorrow at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:110
+msgid "%A at %H:%M"
+msgstr ""
+
+#: crates/render/src/format.rs:122
+msgid "Send {when}"
+msgstr ""
+
+#: crates/render/src/format.rs:129
+msgid "In 1 Hour"
+msgstr ""
+
+#: crates/render/src/format.rs:149
+msgid "Tonight at 21:00"
+msgstr ""
+
+#: crates/render/src/format.rs:153
+msgid "Tomorrow at 08:00"
+msgstr ""
+
+#: crates/render/src/format.rs:160
+msgid "Monday at 08:00"
+msgstr ""
+
+#: crates/render/src/format.rs:235
+msgid "Slate"
+msgstr ""
+
+#: crates/render/src/format.rs:356
+msgid "{date} · {start}"
+msgstr ""
+
+#: crates/render/src/format.rs:382
+msgid "Today"
+msgstr ""
+
+#: crates/render/src/format.rs:386
+msgid "%A, %-d %B"
+msgstr ""
+
+#: crates/render/src/format.rs:403
+msgid "{day} {time}"
+msgstr ""
+
+#: crates/sync/src/account/writes.rs:776
+msgid "{provider} is busy. Still working on {conversations}."
+msgstr ""
+
+#: crates/sync/src/account/writes.rs:799
+msgid ""
+"{provider} is busy, so “{action}” did not go through for {conversations}. "
+"Try again in a moment."
+msgstr ""
+
+#: crates/sync/src/account/writes.rs:808
+msgid ""
+"{provider} stayed busy for {waited}, so “{action}” did not go through for "
+"{conversations}."
+msgstr ""
+
+#: crates/sync/src/account/writes.rs:815
+msgid "{action} failed: {reason}"
+msgstr ""
+
+#: crates/sync/src/account/writes.rs:833
+msgid "a moment"
+msgstr ""
+
+#: crates/sync/src/account/writes.rs:835
+msgid "{count} second"
+msgid_plural "{count} seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/sync/src/account/writes.rs:840
+msgid "a minute"
+msgstr ""
+
+#: crates/sync/src/actions.rs:117
+msgid "Flag"
+msgstr ""
+
+#: crates/sync/src/actions.rs:118
+msgid "Unflag"
+msgstr ""
+
+#: crates/sync/src/actions.rs:119
+msgid "Remind Me"
+msgstr ""
+
+#: crates/sync/src/actions.rs:120
+msgid "Cancel Reminder"
+msgstr ""
+
+#: crates/sync/src/actions.rs:123 crates/sync/src/actions.rs:681
+msgid "Change labels"
+msgstr ""
+
+#: crates/sync/src/actions.rs:124
+msgid "Dismiss Follow-Up"
+msgstr ""
+
+#: crates/sync/src/actions.rs:349
+msgid "Delete Forever failed: {reason}"
+msgstr ""
+
+#: crates/sync/src/actions.rs:573
+msgid "This mail has moved since, so Undo left it where it is."
+msgstr ""
+
+#: crates/sync/src/actions.rs:634 crates/sync/src/actions.rs:688
+msgid "Could not undo: {reason}"
+msgstr ""
+
+#: crates/sync/src/actions/labelling.rs:101
+msgid "Create the label {names}?"
+msgid_plural "Create the labels {names}?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/sync/src/actions/labelling.rs:112
+msgid "{accounts} will get a new label."
+msgid_plural "{accounts} will get new labels."
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/sync/src/calendar_copy.rs:905 crates/sync/src/calendar_copy.rs:974
+#: crates/sync/src/calendar_copy.rs:1019
+msgid "deleted elsewhere"
+msgstr ""
+
+#. A new event's id cannot be missing, so it is the
+#. calendar that went: its rows in the queue outlive it.
+#: crates/sync/src/calendar_copy.rs:910
+msgid "the calendar is gone"
+msgstr ""
+
+#: crates/sync/src/calendar_copy.rs:1671
+msgid ""
+"Google Calendar offers out of office and focus time only on some work and "
+"school accounts ({reason})"
+msgstr ""
+
+#: crates/sync/src/error.rs:143
+msgid "Gmail keeps “{name}” for its own label. Choose another name."
+msgstr ""
+
+#: crates/sync/src/error.rs:150
+msgid ""
+"Google Calendar makes “{title}” itself, so only Google Calendar can change "
+"it."
+msgstr ""
+
+#: crates/sync/src/error.rs:158
+msgid "{host} refused the request to unsubscribe (HTTP {status})"
+msgstr ""
+
+#: crates/sync/src/error.rs:162
+msgid "could not reach {host}"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:83
+msgid "Inbox"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:84
+msgid "Unread"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:85
+msgid "Flagged"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:86
+msgid "Sent"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:87
+msgid "Drafts"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:88
+msgid "Muted"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:95
+msgid "All Inboxes"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:195
+msgid "Search"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:197
+msgid "Send Later"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:198
+msgid "Outbox"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:200
+msgid "Follow Up"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:201
+msgid "{color} Flag"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:327
+msgid "No Results"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:329
+msgid "Try other words, or fewer of them."
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:333
+msgid "Nothing Scheduled"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:336
+msgid "Outbox Is Empty"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:340
+msgid "No Reminders"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:342
+msgid "Choose Remind Me on a conversation to bring it back here later."
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:346
+msgid "No Follow-Ups"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:349
+msgid "No Flagged Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:351
+msgid "No Mail from VIPs"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:353
+msgid "No Matching Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:358
+msgid "No Archived Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:359
+msgid "No Junk"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:360
+msgid "Trash Is Empty"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:361 crates/sync/src/mailbox.rs:376
+#: crates/sync/src/mailbox.rs:495
+msgid "No Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:366
+msgid "Inbox Zero"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:367 crates/sync/src/mailbox.rs:1078
+msgid "No Unread Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:368
+msgid "No Starred Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:369
+msgid "No Sent Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:371
+msgid "No Drafts"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:373
+msgid "Close a message without sending it and Iris keeps it here."
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:375
+msgid "No Muted Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:413
+msgctxt "mailbox"
+msgid "Archive"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:414
+msgid "Junk"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:415
+msgid "Trash"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:416
+msgid "All Mail"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:844
+msgid "This smart mailbox has no conditions"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1224
+msgid "Results for {account} come from the mail on this computer alone"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1236
+msgid "Could not load mail for {account}: {reason}"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1357
+msgid "Returns {when}"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1400 crates/sync/src/mailbox.rs:1482
+msgid "No recipients"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1403 crates/sync/src/mailbox.rs:1485
+msgid "To {recipients}"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1445
+msgid "{count} unread · {category}"
+msgid_plural "{count} unread · {category}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/sync/src/mailbox.rs:1450
+msgid "{count} unread"
+msgid_plural "{count} unread"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/sync/src/mailbox.rs:1457
+msgid "Sent yesterday, no reply yet"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1459
+msgid "Sent {days} day ago, no reply yet"
+msgid_plural "Sent {days} days ago, no reply yet"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/sync/src/mailbox.rs:1497
+msgid "Sends {when}"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1501
+msgid "Not sent"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1508
+msgid "{problem}. Trying again {when}"
+msgstr ""
+
+#: crates/sync/src/mailbox.rs:1515
+msgid "{problem}. Iris stopped trying"
+msgstr ""
+
+#: crates/sync/src/passwords.rs:21
+msgid "The keyring refused: {reason}"
+msgstr ""
+
+#: crates/sync/src/rules/forward.rs:28
+msgid "A rule on this computer forwarded the attached message from {address}."
+msgstr ""
+
+#: crates/sync/src/services/caldav.rs:443
+msgid "An event needs an ID to be imported."
+msgstr ""
+
+#: crates/sync/src/services/caldav.rs:464
+msgid "A CalDAV calendar cannot store attached files."
+msgstr ""
+
+#: crates/sync/src/services/caldav.rs:468
+msgid "A CalDAV calendar has no files to share."
+msgstr ""
+
+#: crates/sync/src/services/caldav.rs:498
+msgid "You are not a guest of this event."
+msgstr ""
+
+#: crates/sync/src/services/caldav.rs:502
+msgid "Iris cannot change the calendar list of a CalDAV server."
+msgstr ""
+
+#: crates/sync/src/services/finding.rs:197
+msgid "Iris reaches calendar and contact servers over HTTPS only."
+msgstr ""
+
+#: crates/sync/src/services/imap/outgoing.rs:86
+msgid "The message names nobody to send it to."
+msgstr ""
+
+#: crates/sync/src/services/local.rs:29
+msgid "This rule is read-only, so Iris leaves it as it is."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/calendar.rs:359
+msgid "Outlook cannot repeat an event that way."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/calendar.rs:651
+msgid "Outlook cannot attach a file to an event."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/calendar.rs:655
+msgid "Outlook has no files to share."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/calendar.rs:664
+msgid "Outlook cannot move an event to another calendar."
+msgstr ""
+
+#. What Outlook has no call for is a refusal, not `Unsupported`:
+#. that answer would keep the change in the queue for good.
+#: crates/sync/src/services/microsoft/calendar.rs:698
+msgid "Outlook cannot take a calendar off the list."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/calendar.rs:699
+msgid "Outlook cannot hide a calendar on all your devices."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/calendar.rs:700
+msgid "Outlook cannot subscribe to a calendar by its address."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/calendar.rs:701
+msgid "Outlook has no other calendars to add."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/errors.rs:18
+msgid ""
+"This mailbox is on your organization's own Exchange server, which Iris "
+"cannot reach."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/outgoing.rs:61
+msgid "The message has no Message-ID."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/outgoing.rs:75
+msgid "The message cannot be read."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/outgoing.rs:78
+msgid ""
+"Microsoft cannot send a signed or encrypted message larger than 3 MB. Make "
+"the files smaller or send them apart."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/rules.rs:96
+msgid "Outlook's rules cannot do that."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/settings.rs:169
+msgid "Outlook answered but did not keep the automatic reply."
+msgstr ""
+
+#: crates/sync/src/services/microsoft/writes.rs:163
+msgid "A folder needs a name."
+msgstr ""
+
+#: crates/sync/src/services/pop3/mod.rs:416
+msgid "Iris keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive."
+msgstr ""
+
+#: crates/sync/src/services/pop3/mod.rs:432
+msgid "Iris keeps Inbox, Sent, Drafts, Trash, Junk and Archive."
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:95
+msgid ""
+"{provider} offers no encrypted connection for rules, so Iris does not send "
+"your password there."
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:108
+msgid ""
+"{provider} cannot run this rule: its server lacks the Sieve extension "
+"“{extension}”."
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:113
+msgid "The folder this rule files into is not on the server yet."
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:116
+msgid "A rule on {provider} cannot keep mail out of Spam."
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:120
+msgid "{provider} does not mark mail as important."
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:124
+msgid "A rule can file mail into one folder."
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:127
+msgid "Say which mail the rule is for"
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:129
+msgid "Choose what the rule does"
+msgstr ""
+
+#: crates/sync/src/services/sieve.rs:196
+msgid "The rule is read-only."
+msgstr ""
+
+#: crates/sync/src/settings.rs:333
+msgid "Made elsewhere. Change it where you made it."
+msgstr ""
+
+#: crates/sync/src/sign_in.rs:168
+msgid "{address} is already in Iris as a {provider} account."
+msgstr ""
+
+#: crates/sync/src/sign_in.rs:389
+msgid ""
+"This server cannot tell its messages apart, so Iris cannot download from it "
+"safely."
+msgstr ""
+
+#: crates/sync/src/sign_in/browser.rs:96
+msgid ""
+"This copy of Iris was built without Google sign-in. Get a release from "
+"github.com/AlbertoBarrago/iris/releases."
+msgstr ""
+
+#: crates/sync/src/sign_in/browser.rs:100
+msgid ""
+"This copy of Iris was built without Microsoft sign-in. Get a release from "
+"github.com/AlbertoBarrago/iris/releases."
+msgstr ""
+
+#: crates/sync/src/sign_in/browser.rs:109
+msgid "You signed in as {account}. Choose {wanted} to reconnect that account."
+msgstr ""
+
+#: crates/sync/src/sign_in/browser.rs:119
+msgid ""
+"Iris cannot work without access to your mail. Sign in again and leave the "
+"Gmail permission ticked."
+msgstr ""
+
+#: crates/sync/src/sign_in/browser.rs:128
+msgid "Your organization's administrator must approve Iris."
+msgstr ""
+
+#: crates/sync/src/sign_in/browser.rs:130
+msgid ""
+"Iris cannot work without access to your mail. Sign in again and allow it."
+msgstr ""
+
+#: crates/sync/src/triage.rs:53
+msgid "Mark read"
+msgstr ""
+
+#: crates/sync/src/triage.rs:54
+msgid "Mark unread"
+msgstr ""
+
+#: crates/sync/src/triage.rs:55
+msgid "Star"
+msgstr ""
+
+#: crates/sync/src/triage.rs:56
+msgid "Unstar"
+msgstr ""
+
+#: crates/sync/src/triage.rs:58
+msgid "Add label {label}"
+msgstr ""
+
+#: crates/sync/src/triage.rs:61
+msgid "Remove label {label}"
+msgstr ""
+
+#: crates/sync/src/triage.rs:63
+msgid "Move to trash"
+msgstr ""
+
+#: crates/sync/src/triage.rs:64
+msgid "Move out of trash"
+msgstr ""
+
+#: crates/sync/src/triage.rs:65
+msgid "Mark as junk"
+msgstr ""
+
+#: crates/sync/src/triage.rs:66
+msgid "Mark as not junk"
+msgstr ""
+
+#: crates/sync/src/triage.rs:67
+msgid "Mute"
+msgstr ""
+
+#: crates/sync/src/triage.rs:68
+msgid "Unmute"
+msgstr ""
+
+#: crates/sync/src/triage.rs:70
+msgid "Move to {folder}"
+msgstr ""
+
+#: crates/view/src/done.rs:12
+msgid "Flagged red"
+msgstr ""
+
+#: crates/view/src/done.rs:13
+msgid "Flagged orange"
+msgstr ""
+
+#: crates/view/src/done.rs:14
+msgid "Flagged yellow"
+msgstr ""
+
+#: crates/view/src/done.rs:15
+msgid "Flagged green"
+msgstr ""
+
+#: crates/view/src/done.rs:16
+msgid "Flagged blue"
+msgstr ""
+
+#: crates/view/src/done.rs:17
+msgid "Flagged purple"
+msgstr ""
+
+#: crates/view/src/done.rs:18
+msgid "Flagged gray"
+msgstr ""
+
+#: crates/view/src/done.rs:29 crates/view/src/done.rs:127
+msgid "Labels changed"
+msgstr ""
+
+#: crates/view/src/done.rs:33
+msgid "Unmuted"
+msgstr ""
+
+#: crates/view/src/done.rs:35
+msgid "Muted {count} conversation"
+msgid_plural "Muted {count} conversations"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:41
+msgid "Muted {count} message"
+msgid_plural "Muted {count} messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:47
+msgid "Unmuted {count} conversation"
+msgid_plural "Unmuted {count} conversations"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:53
+msgid "Unmuted {count} message"
+msgid_plural "Unmuted {count} messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:63
+msgid "Dismissed {count} follow-up"
+msgid_plural "Dismissed {count} follow-ups"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:72
+msgid "Archived"
+msgstr ""
+
+#: crates/view/src/done.rs:74
+msgid "Archived {count} conversation"
+msgid_plural "Archived {count} conversations"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:80
+msgid "Archived {count} message"
+msgid_plural "Archived {count} messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:85
+msgid "Moved to Trash"
+msgstr ""
+
+#: crates/view/src/done.rs:87
+msgid "Moved {count} conversation to Trash"
+msgid_plural "Moved {count} conversations to Trash"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:93
+msgid "Moved {count} message to Trash"
+msgid_plural "Moved {count} messages to Trash"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:98
+msgid "Marked as junk"
+msgstr ""
+
+#: crates/view/src/done.rs:100
+msgid "Marked {count} conversation as junk"
+msgid_plural "Marked {count} conversations as junk"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:106
+msgid "Marked {count} message as junk"
+msgid_plural "Marked {count} messages as junk"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:111
+msgid "Moved to the Inbox"
+msgstr ""
+
+#: crates/view/src/done.rs:113
+msgid "Moved {count} conversation to the Inbox"
+msgid_plural "Moved {count} conversations to the Inbox"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/done.rs:119
+msgid "Moved {count} message to the Inbox"
+msgid_plural "Moved {count} messages to the Inbox"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crates/view/src/sections.rs:26
+msgid "Favorites"
+msgstr ""
+
+#: crates/view/src/sections.rs:27
+msgid "Mailboxes"
+msgstr ""
+
+#: crates/view/src/sections.rs:28
+msgid "Smart Mailboxes"
+msgstr ""
+
+#: crates/view/src/sections.rs:29
+msgid "Accounts"
+msgstr ""
+
+#: crates/view/src/sidebar.rs:165
+msgid "VIPs"
 msgstr ""
 
 #: macos/Iris/AISettingsView.swift:20
@@ -6057,1157 +7224,4 @@ msgstr ""
 
 #: macos/Iris/ThreadListView.swift:417
 msgid "Clear Flag"
-msgstr ""
-
-#: render/src/calendar_words.rs:28
-msgid "%A %-d %B"
-msgstr ""
-
-#: render/src/calendar_words.rs:34
-msgid "%A %-d"
-msgstr ""
-
-#: render/src/calendar_words.rs:66 render/src/calendar_words.rs:161
-msgid "All day"
-msgstr ""
-
-#: render/src/calendar_words.rs:72
-msgid "{date} · {start}–{end}"
-msgstr ""
-
-#: render/src/calendar_words.rs:91
-msgid "{date} · All day"
-msgstr ""
-
-#: render/src/calendar_words.rs:130
-msgid "{title}, {days}, all day, {calendar}"
-msgstr ""
-
-#: render/src/calendar_words.rs:140
-msgid "{date} {time}"
-msgstr ""
-
-#: render/src/calendar_words.rs:148
-msgid "{title}, {start} to {end}, {calendar}"
-msgstr ""
-
-#: render/src/calendar_words.rs:164
-msgid "{start}–{end}"
-msgstr ""
-
-#: render/src/calendar_words.rs:175
-msgid "{place} · {calendar}"
-msgstr ""
-
-#: render/src/calendar_words.rs:215
-msgid "{yes} of {count} said yes"
-msgid_plural "{yes} of {count} said yes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:235
-msgid "{organizer} · {answers}"
-msgstr ""
-
-#: render/src/calendar_words.rs:246
-msgid "Could not undo, so the change stays: {reason}"
-msgstr ""
-
-#: render/src/calendar_words.rs:252
-msgid "and {count} more"
-msgid_plural "and {count} more"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:263
-msgid "Join with Google Meet"
-msgstr ""
-
-#: render/src/calendar_words.rs:265
-msgid "Join Call"
-msgstr ""
-
-#: render/src/calendar_words.rs:279
-msgid "Google Meet"
-msgstr ""
-
-#: render/src/calendar_words.rs:281
-msgid "Microsoft Teams"
-msgstr ""
-
-#: render/src/calendar_words.rs:283
-msgid "Zoom"
-msgstr ""
-
-#: render/src/calendar_words.rs:285
-msgid "Video Call"
-msgstr ""
-
-#: render/src/calendar_words.rs:297
-msgid "Open {place} in Maps"
-msgstr ""
-
-#: render/src/calendar_words.rs:312
-msgid "{count} more"
-msgid_plural "{count} more"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:323
-msgid "{count} more event on {date}"
-msgid_plural "{count} more events on {date}"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:338
-msgid "{date}, has events"
-msgstr ""
-
-#: render/src/calendar_words.rs:357
-msgid "Offline, last updated {time}"
-msgstr ""
-
-#: render/src/calendar_words.rs:358
-msgid "Offline"
-msgstr ""
-
-#: render/src/calendar_words.rs:378
-msgid "{weekday} {time}"
-msgstr ""
-
-#: render/src/calendar_words.rs:399
-msgid "{day}, {time}"
-msgstr ""
-
-#: render/src/calendar_words.rs:417
-msgid "Open the invitation for “{title}” in Mail"
-msgstr ""
-
-#: render/src/calendar_words.rs:429
-msgid "At the start"
-msgstr ""
-
-#: render/src/calendar_words.rs:431
-msgid "{count} week before"
-msgid_plural "{count} weeks before"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:437
-msgid "{count} day before"
-msgid_plural "{count} days before"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:443
-msgid "{count} hour before"
-msgid_plural "{count} hours before"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:449
-msgid "{count} minute before"
-msgid_plural "{count} minutes before"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/calendar_words.rs:466
-msgid "Never"
-msgstr ""
-
-#: render/src/calendar_words.rs:468
-msgid "Every weekday"
-msgstr ""
-
-#: render/src/calendar_words.rs:473
-msgid "A rule set in another app"
-msgstr ""
-
-#: render/src/calendar_words.rs:556
-msgid "Organizer"
-msgstr ""
-
-#: render/src/calendar_words.rs:566
-msgid "No answer yet"
-msgstr ""
-
-#: render/src/calendar_words.rs:692
-msgid "{time} {city}"
-msgstr ""
-
-#: render/src/conversation.rs:195
-msgid "{count} message"
-msgid_plural "{count} messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/conversation.rs:203
-msgid "Summarize"
-msgstr ""
-
-#: render/src/conversation.rs:257
-msgid "Show or hide this message"
-msgstr ""
-
-#: render/src/conversation.rs:259
-msgid "Contact"
-msgstr ""
-
-#: render/src/conversation.rs:264
-msgid "Contact card for {person}"
-msgstr ""
-
-#: render/src/conversation.rs:303
-msgid "Reply All"
-msgstr ""
-
-#: render/src/conversation.rs:304
-msgid "Forward"
-msgstr ""
-
-#: render/src/conversation.rs:340
-msgid "Invitation"
-msgstr ""
-
-#: render/src/conversation.rs:353
-msgid "Loading…"
-msgstr ""
-
-#: render/src/conversation.rs:358
-msgid "This message could not be loaded: {reason}"
-msgstr ""
-
-#: render/src/conversation.rs:408
-msgid "Details"
-msgstr ""
-
-#: render/src/conversation.rs:429
-msgid "from"
-msgstr ""
-
-#: render/src/conversation.rs:440
-msgid "to"
-msgstr ""
-
-#: render/src/conversation.rs:442
-msgid "cc"
-msgstr ""
-
-#: render/src/conversation.rs:444
-msgid "date"
-msgstr ""
-
-#: render/src/conversation.rs:445
-msgid "subject"
-msgstr ""
-
-#: render/src/conversation.rs:447
-msgid "mailed-by"
-msgstr ""
-
-#: render/src/conversation.rs:450
-msgid "signed-by"
-msgstr ""
-
-#: render/src/conversation.rs:454
-msgid "security"
-msgstr ""
-
-#: render/src/conversation.rs:456
-msgid "Standard encryption (TLS)"
-msgstr ""
-
-#: render/src/conversation.rs:461
-msgid "Not encrypted in transit"
-msgstr ""
-
-#: render/src/conversation.rs:498
-msgid "{count} attachment"
-msgid_plural "{count} attachments"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/conversation.rs:530
-msgid "Quick Look"
-msgstr ""
-
-#: render/src/conversation.rs:531
-msgid "Save to Downloads"
-msgstr ""
-
-#: render/src/conversation.rs:533
-msgid "Open {file}, {size}"
-msgstr ""
-
-#: render/src/conversation.rs:540
-msgid "Save {file} to Downloads"
-msgstr ""
-
-#: render/src/conversation.rs:547
-msgid "Save All ({count})"
-msgid_plural "Save All ({count})"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/conversation.rs:558
-msgid "Save every attachment to a folder"
-msgstr ""
-
-#: render/src/conversation.rs:622
-msgid "undisclosed recipients"
-msgstr ""
-
-#: render/src/conversation.rs:625
-msgid "{named}, and {count} other"
-msgid_plural "{named}, and {count} others"
-msgstr[0] ""
-msgstr[1] ""
-
-#: render/src/conversation.rs:638
-msgid "me"
-msgstr ""
-
-#: render/src/conversation.rs:648
-msgid "Show trimmed content"
-msgstr ""
-
-#: render/src/format.rs:36 render/src/format.rs:384
-msgid "Yesterday"
-msgstr ""
-
-#: render/src/format.rs:37 render/src/format.rs:383
-msgid "Tomorrow"
-msgstr ""
-
-#: render/src/format.rs:38 render/src/format.rs:385
-msgid "%A"
-msgstr ""
-
-#: render/src/format.rs:39
-msgid "%-d %b"
-msgstr ""
-
-#: render/src/format.rs:40
-msgid "%Y-%m-%d"
-msgstr ""
-
-#: render/src/format.rs:55
-msgid "Today at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:56
-msgid "Yesterday at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:57
-msgid "Tomorrow at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:58 render/src/format.rs:111
-msgid "%a %-d %b at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:59 render/src/format.rs:112
-msgid "%-d %b %Y at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:60
-msgid "%-d %b %Y"
-msgstr ""
-
-#: render/src/format.rs:70
-msgid "%a, %-d %b"
-msgstr ""
-
-#: render/src/format.rs:71
-msgid "%a, %-d %b %Y"
-msgstr ""
-
-#: render/src/format.rs:79 render/src/format.rs:387
-msgid "%A, %-d %B %Y"
-msgstr ""
-
-#: render/src/format.rs:87
-msgid "{date} at {time}"
-msgstr ""
-
-#: render/src/format.rs:108
-msgid "today at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:109
-msgid "tomorrow at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:110
-msgid "%A at %H:%M"
-msgstr ""
-
-#: render/src/format.rs:122
-msgid "Send {when}"
-msgstr ""
-
-#: render/src/format.rs:129
-msgid "In 1 Hour"
-msgstr ""
-
-#: render/src/format.rs:149
-msgid "Tonight at 21:00"
-msgstr ""
-
-#: render/src/format.rs:153
-msgid "Tomorrow at 08:00"
-msgstr ""
-
-#: render/src/format.rs:160
-msgid "Monday at 08:00"
-msgstr ""
-
-#: render/src/format.rs:235
-msgid "Slate"
-msgstr ""
-
-#: render/src/format.rs:356
-msgid "{date} · {start}"
-msgstr ""
-
-#: render/src/format.rs:382
-msgid "Today"
-msgstr ""
-
-#: render/src/format.rs:386
-msgid "%A, %-d %B"
-msgstr ""
-
-#: render/src/format.rs:403
-msgid "{day} {time}"
-msgstr ""
-
-#: sync/src/account/writes.rs:776
-msgid "{provider} is busy. Still working on {conversations}."
-msgstr ""
-
-#: sync/src/account/writes.rs:799
-msgid ""
-"{provider} is busy, so “{action}” did not go through for {conversations}. "
-"Try again in a moment."
-msgstr ""
-
-#: sync/src/account/writes.rs:808
-msgid ""
-"{provider} stayed busy for {waited}, so “{action}” did not go through for "
-"{conversations}."
-msgstr ""
-
-#: sync/src/account/writes.rs:815
-msgid "{action} failed: {reason}"
-msgstr ""
-
-#: sync/src/account/writes.rs:833
-msgid "a moment"
-msgstr ""
-
-#: sync/src/account/writes.rs:835
-msgid "{count} second"
-msgid_plural "{count} seconds"
-msgstr[0] ""
-msgstr[1] ""
-
-#: sync/src/account/writes.rs:840
-msgid "a minute"
-msgstr ""
-
-#: sync/src/actions.rs:117
-msgid "Flag"
-msgstr ""
-
-#: sync/src/actions.rs:118
-msgid "Unflag"
-msgstr ""
-
-#: sync/src/actions.rs:119
-msgid "Remind Me"
-msgstr ""
-
-#: sync/src/actions.rs:120
-msgid "Cancel Reminder"
-msgstr ""
-
-#: sync/src/actions.rs:123 sync/src/actions.rs:681
-msgid "Change labels"
-msgstr ""
-
-#: sync/src/actions.rs:124
-msgid "Dismiss Follow-Up"
-msgstr ""
-
-#: sync/src/actions.rs:349
-msgid "Delete Forever failed: {reason}"
-msgstr ""
-
-#: sync/src/actions.rs:573
-msgid "This mail has moved since, so Undo left it where it is."
-msgstr ""
-
-#: sync/src/actions.rs:634 sync/src/actions.rs:688
-msgid "Could not undo: {reason}"
-msgstr ""
-
-#: sync/src/actions/labelling.rs:101
-msgid "Create the label {names}?"
-msgid_plural "Create the labels {names}?"
-msgstr[0] ""
-msgstr[1] ""
-
-#: sync/src/actions/labelling.rs:112
-msgid "{accounts} will get a new label."
-msgid_plural "{accounts} will get new labels."
-msgstr[0] ""
-msgstr[1] ""
-
-#: sync/src/calendar_copy.rs:905 sync/src/calendar_copy.rs:974
-#: sync/src/calendar_copy.rs:1019
-msgid "deleted elsewhere"
-msgstr ""
-
-#. A new event's id cannot be missing, so it is the
-#. calendar that went: its rows in the queue outlive it.
-#: sync/src/calendar_copy.rs:910
-msgid "the calendar is gone"
-msgstr ""
-
-#: sync/src/calendar_copy.rs:1671
-msgid ""
-"Google Calendar offers out of office and focus time only on some work and "
-"school accounts ({reason})"
-msgstr ""
-
-#: sync/src/error.rs:143
-msgid "Gmail keeps “{name}” for its own label. Choose another name."
-msgstr ""
-
-#: sync/src/error.rs:150
-msgid ""
-"Google Calendar makes “{title}” itself, so only Google Calendar can change "
-"it."
-msgstr ""
-
-#: sync/src/error.rs:158
-msgid "{host} refused the request to unsubscribe (HTTP {status})"
-msgstr ""
-
-#: sync/src/error.rs:162
-msgid "could not reach {host}"
-msgstr ""
-
-#: sync/src/mailbox.rs:83
-msgid "Inbox"
-msgstr ""
-
-#: sync/src/mailbox.rs:84
-msgid "Unread"
-msgstr ""
-
-#: sync/src/mailbox.rs:85
-msgid "Flagged"
-msgstr ""
-
-#: sync/src/mailbox.rs:86
-msgid "Sent"
-msgstr ""
-
-#: sync/src/mailbox.rs:87
-msgid "Drafts"
-msgstr ""
-
-#: sync/src/mailbox.rs:88
-msgid "Muted"
-msgstr ""
-
-#: sync/src/mailbox.rs:95
-msgid "All Inboxes"
-msgstr ""
-
-#: sync/src/mailbox.rs:195
-msgid "Search"
-msgstr ""
-
-#: sync/src/mailbox.rs:197
-msgid "Send Later"
-msgstr ""
-
-#: sync/src/mailbox.rs:198
-msgid "Outbox"
-msgstr ""
-
-#: sync/src/mailbox.rs:200
-msgid "Follow Up"
-msgstr ""
-
-#: sync/src/mailbox.rs:201
-msgid "{color} Flag"
-msgstr ""
-
-#: sync/src/mailbox.rs:327
-msgid "No Results"
-msgstr ""
-
-#: sync/src/mailbox.rs:329
-msgid "Try other words, or fewer of them."
-msgstr ""
-
-#: sync/src/mailbox.rs:333
-msgid "Nothing Scheduled"
-msgstr ""
-
-#: sync/src/mailbox.rs:336
-msgid "Outbox Is Empty"
-msgstr ""
-
-#: sync/src/mailbox.rs:340
-msgid "No Reminders"
-msgstr ""
-
-#: sync/src/mailbox.rs:342
-msgid "Choose Remind Me on a conversation to bring it back here later."
-msgstr ""
-
-#: sync/src/mailbox.rs:346
-msgid "No Follow-Ups"
-msgstr ""
-
-#: sync/src/mailbox.rs:349
-msgid "No Flagged Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:351
-msgid "No Mail from VIPs"
-msgstr ""
-
-#: sync/src/mailbox.rs:353
-msgid "No Matching Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:358
-msgid "No Archived Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:359
-msgid "No Junk"
-msgstr ""
-
-#: sync/src/mailbox.rs:360
-msgid "Trash Is Empty"
-msgstr ""
-
-#: sync/src/mailbox.rs:361 sync/src/mailbox.rs:376 sync/src/mailbox.rs:495
-msgid "No Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:366
-msgid "Inbox Zero"
-msgstr ""
-
-#: sync/src/mailbox.rs:367 sync/src/mailbox.rs:1078
-msgid "No Unread Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:368
-msgid "No Starred Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:369
-msgid "No Sent Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:371
-msgid "No Drafts"
-msgstr ""
-
-#: sync/src/mailbox.rs:373
-msgid "Close a message without sending it and Iris keeps it here."
-msgstr ""
-
-#: sync/src/mailbox.rs:375
-msgid "No Muted Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:413
-msgctxt "mailbox"
-msgid "Archive"
-msgstr ""
-
-#: sync/src/mailbox.rs:414
-msgid "Junk"
-msgstr ""
-
-#: sync/src/mailbox.rs:415
-msgid "Trash"
-msgstr ""
-
-#: sync/src/mailbox.rs:416
-msgid "All Mail"
-msgstr ""
-
-#: sync/src/mailbox.rs:844
-msgid "This smart mailbox has no conditions"
-msgstr ""
-
-#: sync/src/mailbox.rs:1224
-msgid "Results for {account} come from the mail on this computer alone"
-msgstr ""
-
-#: sync/src/mailbox.rs:1236
-msgid "Could not load mail for {account}: {reason}"
-msgstr ""
-
-#: sync/src/mailbox.rs:1357
-msgid "Returns {when}"
-msgstr ""
-
-#: sync/src/mailbox.rs:1400 sync/src/mailbox.rs:1482
-msgid "No recipients"
-msgstr ""
-
-#: sync/src/mailbox.rs:1403 sync/src/mailbox.rs:1485
-msgid "To {recipients}"
-msgstr ""
-
-#: sync/src/mailbox.rs:1445
-msgid "{count} unread · {category}"
-msgid_plural "{count} unread · {category}"
-msgstr[0] ""
-msgstr[1] ""
-
-#: sync/src/mailbox.rs:1450
-msgid "{count} unread"
-msgid_plural "{count} unread"
-msgstr[0] ""
-msgstr[1] ""
-
-#: sync/src/mailbox.rs:1457
-msgid "Sent yesterday, no reply yet"
-msgstr ""
-
-#: sync/src/mailbox.rs:1459
-msgid "Sent {days} day ago, no reply yet"
-msgid_plural "Sent {days} days ago, no reply yet"
-msgstr[0] ""
-msgstr[1] ""
-
-#: sync/src/mailbox.rs:1497
-msgid "Sends {when}"
-msgstr ""
-
-#: sync/src/mailbox.rs:1501
-msgid "Not sent"
-msgstr ""
-
-#: sync/src/mailbox.rs:1508
-msgid "{problem}. Trying again {when}"
-msgstr ""
-
-#: sync/src/mailbox.rs:1515
-msgid "{problem}. Iris stopped trying"
-msgstr ""
-
-#: sync/src/passwords.rs:21
-msgid "The keyring refused: {reason}"
-msgstr ""
-
-#: sync/src/rules/forward.rs:28
-msgid "A rule on this computer forwarded the attached message from {address}."
-msgstr ""
-
-#: sync/src/services/caldav.rs:443
-msgid "An event needs an ID to be imported."
-msgstr ""
-
-#: sync/src/services/caldav.rs:464
-msgid "A CalDAV calendar cannot store attached files."
-msgstr ""
-
-#: sync/src/services/caldav.rs:468
-msgid "A CalDAV calendar has no files to share."
-msgstr ""
-
-#: sync/src/services/caldav.rs:498
-msgid "You are not a guest of this event."
-msgstr ""
-
-#: sync/src/services/caldav.rs:502
-msgid "Iris cannot change the calendar list of a CalDAV server."
-msgstr ""
-
-#: sync/src/services/finding.rs:197
-msgid "Iris reaches calendar and contact servers over HTTPS only."
-msgstr ""
-
-#: sync/src/services/imap/outgoing.rs:86
-msgid "The message names nobody to send it to."
-msgstr ""
-
-#: sync/src/services/local.rs:29
-msgid "This rule is read-only, so Iris leaves it as it is."
-msgstr ""
-
-#: sync/src/services/microsoft/calendar.rs:359
-msgid "Outlook cannot repeat an event that way."
-msgstr ""
-
-#: sync/src/services/microsoft/calendar.rs:651
-msgid "Outlook cannot attach a file to an event."
-msgstr ""
-
-#: sync/src/services/microsoft/calendar.rs:655
-msgid "Outlook has no files to share."
-msgstr ""
-
-#: sync/src/services/microsoft/calendar.rs:664
-msgid "Outlook cannot move an event to another calendar."
-msgstr ""
-
-#. What Outlook has no call for is a refusal, not `Unsupported`:
-#. that answer would keep the change in the queue for good.
-#: sync/src/services/microsoft/calendar.rs:698
-msgid "Outlook cannot take a calendar off the list."
-msgstr ""
-
-#: sync/src/services/microsoft/calendar.rs:699
-msgid "Outlook cannot hide a calendar on all your devices."
-msgstr ""
-
-#: sync/src/services/microsoft/calendar.rs:700
-msgid "Outlook cannot subscribe to a calendar by its address."
-msgstr ""
-
-#: sync/src/services/microsoft/calendar.rs:701
-msgid "Outlook has no other calendars to add."
-msgstr ""
-
-#: sync/src/services/microsoft/errors.rs:18
-msgid ""
-"This mailbox is on your organization's own Exchange server, which Iris "
-"cannot reach."
-msgstr ""
-
-#: sync/src/services/microsoft/outgoing.rs:61
-msgid "The message has no Message-ID."
-msgstr ""
-
-#: sync/src/services/microsoft/outgoing.rs:75
-msgid "The message cannot be read."
-msgstr ""
-
-#: sync/src/services/microsoft/outgoing.rs:78
-msgid ""
-"Microsoft cannot send a signed or encrypted message larger than 3 MB. Make "
-"the files smaller or send them apart."
-msgstr ""
-
-#: sync/src/services/microsoft/rules.rs:96
-msgid "Outlook's rules cannot do that."
-msgstr ""
-
-#: sync/src/services/microsoft/settings.rs:169
-msgid "Outlook answered but did not keep the automatic reply."
-msgstr ""
-
-#: sync/src/services/microsoft/writes.rs:163
-msgid "A folder needs a name."
-msgstr ""
-
-#: sync/src/services/pop3/mod.rs:416
-msgid "Iris keeps the names of Inbox, Sent, Drafts, Trash, Junk and Archive."
-msgstr ""
-
-#: sync/src/services/pop3/mod.rs:432
-msgid "Iris keeps Inbox, Sent, Drafts, Trash, Junk and Archive."
-msgstr ""
-
-#: sync/src/services/sieve.rs:95
-msgid ""
-"{provider} offers no encrypted connection for rules, so Iris does not send "
-"your password there."
-msgstr ""
-
-#: sync/src/services/sieve.rs:108
-msgid ""
-"{provider} cannot run this rule: its server lacks the Sieve extension "
-"“{extension}”."
-msgstr ""
-
-#: sync/src/services/sieve.rs:113
-msgid "The folder this rule files into is not on the server yet."
-msgstr ""
-
-#: sync/src/services/sieve.rs:116
-msgid "A rule on {provider} cannot keep mail out of Spam."
-msgstr ""
-
-#: sync/src/services/sieve.rs:120
-msgid "{provider} does not mark mail as important."
-msgstr ""
-
-#: sync/src/services/sieve.rs:124
-msgid "A rule can file mail into one folder."
-msgstr ""
-
-#: sync/src/services/sieve.rs:127
-msgid "Say which mail the rule is for"
-msgstr ""
-
-#: sync/src/services/sieve.rs:129
-msgid "Choose what the rule does"
-msgstr ""
-
-#: sync/src/services/sieve.rs:196
-msgid "The rule is read-only."
-msgstr ""
-
-#: sync/src/settings.rs:333
-msgid "Made elsewhere. Change it where you made it."
-msgstr ""
-
-#: sync/src/sign_in.rs:168
-msgid "{address} is already in Iris as a {provider} account."
-msgstr ""
-
-#: sync/src/sign_in.rs:389
-msgid ""
-"This server cannot tell its messages apart, so Iris cannot download from it "
-"safely."
-msgstr ""
-
-#: sync/src/sign_in/browser.rs:96
-msgid ""
-"This copy of Iris was built without Google sign-in. Get a release from "
-"github.com/AlbertoBarrago/iris/releases."
-msgstr ""
-
-#: sync/src/sign_in/browser.rs:100
-msgid ""
-"This copy of Iris was built without Microsoft sign-in. Get a release from "
-"github.com/AlbertoBarrago/iris/releases."
-msgstr ""
-
-#: sync/src/sign_in/browser.rs:109
-msgid "You signed in as {account}. Choose {wanted} to reconnect that account."
-msgstr ""
-
-#: sync/src/sign_in/browser.rs:119
-msgid ""
-"Iris cannot work without access to your mail. Sign in again and leave the "
-"Gmail permission ticked."
-msgstr ""
-
-#: sync/src/sign_in/browser.rs:128
-msgid "Your organization's administrator must approve Iris."
-msgstr ""
-
-#: sync/src/sign_in/browser.rs:130
-msgid ""
-"Iris cannot work without access to your mail. Sign in again and allow it."
-msgstr ""
-
-#: sync/src/triage.rs:53
-msgid "Mark read"
-msgstr ""
-
-#: sync/src/triage.rs:54
-msgid "Mark unread"
-msgstr ""
-
-#: sync/src/triage.rs:55
-msgid "Star"
-msgstr ""
-
-#: sync/src/triage.rs:56
-msgid "Unstar"
-msgstr ""
-
-#: sync/src/triage.rs:58
-msgid "Add label {label}"
-msgstr ""
-
-#: sync/src/triage.rs:61
-msgid "Remove label {label}"
-msgstr ""
-
-#: sync/src/triage.rs:63
-msgid "Move to trash"
-msgstr ""
-
-#: sync/src/triage.rs:64
-msgid "Move out of trash"
-msgstr ""
-
-#: sync/src/triage.rs:65
-msgid "Mark as junk"
-msgstr ""
-
-#: sync/src/triage.rs:66
-msgid "Mark as not junk"
-msgstr ""
-
-#: sync/src/triage.rs:67
-msgid "Mute"
-msgstr ""
-
-#: sync/src/triage.rs:68
-msgid "Unmute"
-msgstr ""
-
-#: sync/src/triage.rs:70
-msgid "Move to {folder}"
-msgstr ""
-
-#: view/src/done.rs:12
-msgid "Flagged red"
-msgstr ""
-
-#: view/src/done.rs:13
-msgid "Flagged orange"
-msgstr ""
-
-#: view/src/done.rs:14
-msgid "Flagged yellow"
-msgstr ""
-
-#: view/src/done.rs:15
-msgid "Flagged green"
-msgstr ""
-
-#: view/src/done.rs:16
-msgid "Flagged blue"
-msgstr ""
-
-#: view/src/done.rs:17
-msgid "Flagged purple"
-msgstr ""
-
-#: view/src/done.rs:18
-msgid "Flagged gray"
-msgstr ""
-
-#: view/src/done.rs:29 view/src/done.rs:127
-msgid "Labels changed"
-msgstr ""
-
-#: view/src/done.rs:33
-msgid "Unmuted"
-msgstr ""
-
-#: view/src/done.rs:35
-msgid "Muted {count} conversation"
-msgid_plural "Muted {count} conversations"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:41
-msgid "Muted {count} message"
-msgid_plural "Muted {count} messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:47
-msgid "Unmuted {count} conversation"
-msgid_plural "Unmuted {count} conversations"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:53
-msgid "Unmuted {count} message"
-msgid_plural "Unmuted {count} messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:63
-msgid "Dismissed {count} follow-up"
-msgid_plural "Dismissed {count} follow-ups"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:72
-msgid "Archived"
-msgstr ""
-
-#: view/src/done.rs:74
-msgid "Archived {count} conversation"
-msgid_plural "Archived {count} conversations"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:80
-msgid "Archived {count} message"
-msgid_plural "Archived {count} messages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:85
-msgid "Moved to Trash"
-msgstr ""
-
-#: view/src/done.rs:87
-msgid "Moved {count} conversation to Trash"
-msgid_plural "Moved {count} conversations to Trash"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:93
-msgid "Moved {count} message to Trash"
-msgid_plural "Moved {count} messages to Trash"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:98
-msgid "Marked as junk"
-msgstr ""
-
-#: view/src/done.rs:100
-msgid "Marked {count} conversation as junk"
-msgid_plural "Marked {count} conversations as junk"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:106
-msgid "Marked {count} message as junk"
-msgid_plural "Marked {count} messages as junk"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:111
-msgid "Moved to the Inbox"
-msgstr ""
-
-#: view/src/done.rs:113
-msgid "Moved {count} conversation to the Inbox"
-msgid_plural "Moved {count} conversations to the Inbox"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/done.rs:119
-msgid "Moved {count} message to the Inbox"
-msgid_plural "Moved {count} messages to the Inbox"
-msgstr[0] ""
-msgstr[1] ""
-
-#: view/src/sections.rs:26
-msgid "Favorites"
-msgstr ""
-
-#: view/src/sections.rs:27
-msgid "Mailboxes"
-msgstr ""
-
-#: view/src/sections.rs:28
-msgid "Smart Mailboxes"
-msgstr ""
-
-#: view/src/sections.rs:29
-msgid "Accounts"
-msgstr ""
-
-#: view/src/sidebar.rs:165
-msgid "VIPs"
 msgstr ""

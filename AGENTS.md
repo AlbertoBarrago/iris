@@ -1,7 +1,7 @@
 # Iris
 
 Mail and calendar for macOS: a SwiftUI and AppKit app (`macos/`) over a
-Rust core it reaches through UniFFI (`ffi/`), several accounts synced into
+Rust core it reaches through UniFFI (`crates/ffi/`), several accounts synced into
 SQLite. Targets macOS 26 on Apple silicon, Swift 6 and Rust 1.98. The crate map is in `CONTRIBUTING.md` under "How it is built"; the words
 the code uses are in `CONTEXT.md`. Read both before changing behaviour.
 
@@ -64,27 +64,27 @@ signed `Iris.app` into `/Applications`.
   decrypting, signing and importing a file the person picked may ask for
   a passphrase. A test that imports a passphrase-protected PKCS#12 file
   names a pinentry script that answers from the fixture
-  (`smime/tests/import.rs`), so nobody is asked.
+  (`crates/smime/tests/import.rs`), so nobody is asked.
 - **Sandbox tests** for skill scripts run real `bwrap` and skip when it
   is missing, which on macOS it always is: skill scripts do not run on
   macOS until the sandbox moves to the Mac's own.
   `IRIS_REQUIRE_SANDBOX=1` turns the skip into a failure.
-- **Docker tests** (`testmail/`, `imap/tests/dovecot*.rs`,
-  `sync/tests/dovecot.rs`) start Dovecot and Mailpit and skip when Docker
+- **Docker tests** (`crates/testmail/`, `crates/imap/tests/dovecot*.rs`,
+  `crates/sync/tests/dovecot.rs`) start Dovecot and Mailpit and skip when Docker
   is missing or cannot start (on the owner's Mac, Docker runs through
   Colima). `IRIS_REQUIRE_IMAP=1` turns the skip into a failure; the gate
   does not set it. The tests
   never pull an image (`docker create --pull never`); run
   `scripts/test-images.sh` once on a new computer. Radicale serves the
   CalDAV and CardDAV tests, and `Profile::Sieve` Dovecot's ManageSieve. The
-  files under `imap/tests/` and `sync/tests/` hold one test each, because
+  files under `crates/imap/tests/` and `crates/sync/tests/` hold one test each, because
   that test points `SSL_CERT_FILE` at a root made for the run: add a step
   to it rather than a second test. The sync suite spawns its body on a
   runtime built with `mailrs_sync::WORKER_STACK`, as the app does, so a
   stack too small for a debug build fails there. Containers
   go by id when a test ends; one left by a killed run carries the label
   `io.github.AlbertoBarrago.iris.test`. Remove it by its id.
-- **Migrations** live in one ordered array in `store/src/schema.rs`,
+- **Migrations** live in one ordered array in `crates/store/src/schema.rs`,
   numbered by position and tracked with `PRAGMA user_version`. Append
   only. Two branches that each add one collide on the number: renumber
   the later one on merge. Tests that hand-build an old schema must
@@ -109,7 +109,7 @@ a good icon look broken.
   starts doing its own Gmail work is drifting.
 - **Late answers.** Any `await` in the UI can finish after the reader
   has moved to another conversation. A run that talks to the window
-  holds a `Wanted` (`appcore/src/wanted.rs`) for the `Target` it started on
+  holds a `Wanted` (`crates/appcore/src/wanted.rs`) for the `Target` it started on
   and reaches its effect port only through it: `wait` and `ask` drop an
   answer once that target has left the screen, and `on_screen` makes a
   change only while it is there. In the Swift app, a task that awaits the

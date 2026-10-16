@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The invitation in the open conversation, as a card above the page: the
 /// GTK card's lines and buttons, worded by the core
-/// (`ffi/src/mail_invitation.rs`). The message below still holds the
+/// (`crates/ffi/src/mail_invitation.rs`). The message below still holds the
 /// organizer's own links, for whoever would rather use those.
 struct InvitationCard: View {
     @Environment(MailModel.self) private var model

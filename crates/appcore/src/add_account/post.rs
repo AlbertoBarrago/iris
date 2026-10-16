@@ -694,7 +694,7 @@ mod tests {
     #[test]
     fn every_logo_a_stamp_names_ships_in_the_resources() {
         // The app bundles data/logos as it is, so each logo is a file there.
-        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/logos");
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../data/logos");
         let files: Vec<String> = std::fs::read_dir(&dir)
             .expect("data/logos is there")
             .flatten()

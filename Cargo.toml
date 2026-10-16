@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["domain", "mime", "gmail", "graph", "discover", "imap", "dav", "sieve", "pop3", "store", "sync", "pgp", "smime", "ai", "cli", "testmail", "render", "ffi", "view", "appcore"]
+members = ["crates/*"]
 
 [workspace.package]
 version = "1.2.0"
@@ -10,24 +10,24 @@ license = "GPL-3.0-or-later"
 repository = "https://github.com/AlbertoBarrago/iris"
 
 [workspace.dependencies]
-mailrs-domain = { path = "domain" }
-mailrs-mime = { path = "mime" }
-mailrs-gmail = { path = "gmail" }
-mailrs-graph = { path = "graph" }
-mailrs-discover = { path = "discover" }
-mailrs-imap = { path = "imap" }
-mailrs-dav = { path = "dav" }
-mailrs-sieve = { path = "sieve" }
-mailrs-pop3 = { path = "pop3" }
-mailrs-store = { path = "store" }
-mailrs-sync = { path = "sync" }
-mailrs-pgp = { path = "pgp" }
-mailrs-smime = { path = "smime" }
-mailrs-ai = { path = "ai" }
-mailrs-render = { path = "render" }
-mailrs-view = { path = "view" }
-mailrs-appcore = { path = "appcore" }
-mailrs-testmail = { path = "testmail" }
+mailrs-domain = { path = "crates/domain" }
+mailrs-mime = { path = "crates/mime" }
+mailrs-gmail = { path = "crates/gmail" }
+mailrs-graph = { path = "crates/graph" }
+mailrs-discover = { path = "crates/discover" }
+mailrs-imap = { path = "crates/imap" }
+mailrs-dav = { path = "crates/dav" }
+mailrs-sieve = { path = "crates/sieve" }
+mailrs-pop3 = { path = "crates/pop3" }
+mailrs-store = { path = "crates/store" }
+mailrs-sync = { path = "crates/sync" }
+mailrs-pgp = { path = "crates/pgp" }
+mailrs-smime = { path = "crates/smime" }
+mailrs-ai = { path = "crates/ai" }
+mailrs-render = { path = "crates/render" }
+mailrs-view = { path = "crates/view" }
+mailrs-appcore = { path = "crates/appcore" }
+mailrs-testmail = { path = "crates/testmail" }
 
 ammonia = "4.2.0"
 anyhow = "1.0.104"

@@ -45,33 +45,34 @@ says how to give it one.
 ## How it is built
 
 ```
-domain/   shared types, Gmail's label names, categories
-mime/     reading mail: charsets, address lists, HTML to text
-gmail/    Gmail REST client, OAuth, quota limiter
-graph/    Microsoft Graph client and Microsoft's sign-in
-imap/     IMAP and SMTP clients for one account
-pop3/     POP3 client
-discover/ from an address to its mail servers: the provider table, MX,
-          autoconfig files, SRV records and a probe
-dav/      CalDAV and CardDAV: WebDAV's XML, a client, and calendars and
-          contacts read from iCalendar and vCard
-sieve/    Sieve rules and the automatic reply, and a ManageSieve client
-store/    SQLite schema and queries
-sync/     one sync loop per account: bootstrap, history replay, backfill,
-          mail actions, mailbox listing, and each account's Gmail settings
-pgp/      OpenPGP mail through the person's own gpg
-smime/    S/MIME mail through their gpgsm
-ai/       model providers, tool calls, the Claude Code bridge
-cli/      iris-cli
-render/   the conversation page, sanitizing, dates and times as people
-          read them
-view/     the sidebar and the words a window shows, free of any toolkit
-appcore/  what Iris does between a window and the engine: writing mail,
-          signatures, settings, protection, rules, and the assistant
-ffi/      the Rust core for the Swift app, through UniFFI
+crates/   Rust workspace packages
+  domain/   shared types, Gmail's label names, categories
+  mime/     reading mail: charsets, address lists, HTML to text
+  gmail/    Gmail REST client, OAuth, quota limiter
+  graph/    Microsoft Graph client and Microsoft's sign-in
+  imap/     IMAP and SMTP clients for one account
+  pop3/     POP3 client
+  discover/ from an address to its mail servers: the provider table, MX,
+            autoconfig files, SRV records and a probe
+  dav/      CalDAV and CardDAV: WebDAV's XML, a client, and calendars and
+            contacts read from iCalendar and vCard
+  sieve/    Sieve rules and the automatic reply, and a ManageSieve client
+  store/    SQLite schema and queries
+  sync/     one sync loop per account: bootstrap, history replay, backfill,
+            mail actions, mailbox listing, and each account's Gmail settings
+  pgp/      OpenPGP mail through the person's own gpg
+  smime/    S/MIME mail through their gpgsm
+  ai/       model providers, tool calls, the Claude Code bridge
+  cli/      iris-cli
+  render/   the conversation page, sanitizing, dates and times as people
+            read them
+  view/     the sidebar and the words a window shows, free of any toolkit
+  appcore/  what Iris does between a window and the engine: writing mail,
+            signatures, settings, protection, rules, and the assistant
+  ffi/      the Rust core for the Swift app, through UniFFI
+  testmail/ Dovecot and Mailpit in Docker, for the IMAP and SMTP tests
 macos/    Iris, the SwiftUI and AppKit app, and project.yml for XcodeGen
 data/     the app icon, the Add Account poses and the providers' logos
-testmail/ Dovecot and Mailpit in Docker, for the IMAP and SMTP tests
 ```
 
 Windows and dialogs stay thin. Archiving, flagging, listing a mailbox and

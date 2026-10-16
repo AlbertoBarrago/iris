@@ -2,7 +2,7 @@
 # Pulls the mail and calendar servers the Docker-backed tests start, each
 # pinned by digest. The tests never pull: without an image they skip, or
 # fail under IRIS_REQUIRE_IMAP. Run this once on a new computer
-# and after a digest changes in testmail/src/lib.rs.
+# and after a digest changes in crates/testmail/src/lib.rs.
 set -eu
 for image in \
     "dovecot/dovecot:2.4.5@sha256:c807be4fb5a97d9c3a90770569d3a6c4cbdcb36742ad41f90409cbd929166553" \
