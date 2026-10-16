@@ -1,42 +1,36 @@
 import SwiftUI
 
-/// Settings, Contacts: one switch per account for reading its address
-/// book, as the GTK Preferences' Contacts group has it. An account whose
-/// sign-in left contacts out offers Grant Access; one whose server keeps
-/// none says why.
+/// Each account keeps its personal contacts and directory choices together.
+/// Permission buttons appear beside the enabled source that needs access.
 struct ContactsSettings: View {
     @Environment(MailModel.self) private var model
     @State private var accounts: [ContactAccount] = []
 
     var body: some View {
         Form {
-            Section {
-                if accounts.isEmpty {
+            if accounts.isEmpty {
+                Section(tr("Contacts")) {
                     Text(tr("No accounts yet")).foregroundStyle(.secondary)
                 }
-                ForEach(accounts, id: \.accountId) { account in
+            }
+            ForEach(accounts, id: \.accountId) { account in
+                Section {
                     switch account.kind {
-                    case "switch":
-                        Toggle(account.email, isOn: Binding(
+                    case "switch", "withheld":
+                        Toggle(tr("Personal contacts"), isOn: Binding(
                             get: { account.on },
                             set: { set(account, on: $0) }
                         ))
-                    case "withheld":
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(account.email)
-                                Text(account.reason).font(.callout).foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Button(tr("Grant Access")) {
+                        .accessibilityLabel(tr("Personal contacts") + ": " + account.email)
+                        if account.on && account.kind == "withheld" {
+                            Text(account.reason).font(.callout).foregroundStyle(.secondary)
+                            Button(tr("Authorize contacts for {account}")
+                                .replacingOccurrences(of: "{account}", with: account.email)) {
                                 model.addAccount = AddAccountRequest(again: account.accountId)
                             }
                         }
                     default:
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(account.email)
-                            Text(account.reason).font(.callout).foregroundStyle(.secondary)
-                        }
+                        Text(account.reason).font(.callout).foregroundStyle(.secondary)
                     }
                     if account.directoryAvailable {
                         Toggle(tr("Search the company directory"), isOn: Binding(
@@ -45,17 +39,21 @@ struct ContactsSettings: View {
                         ))
                         .accessibilityLabel(tr("Search the company directory") + ": " + account.email)
                         if account.directoryOn && account.directoryNeedsAccess {
-                            Button(tr("Grant Directory Access")) {
+                            Button(tr("Authorize directory for {account}")
+                                .replacingOccurrences(of: "{account}", with: account.email)) {
                                 model.addAccount = AddAccountRequest(again: account.accountId)
                             }
                         }
                     }
+                } header: {
+                    Text(account.email)
                 }
-            } header: {
-                Text(tr("Contacts"))
-            } footer: {
+            }
+            Section {
                 Text(tr("Iris can read an account's contacts: names, email addresses, photos, organizations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."))
+                    .font(.callout)
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             ContactListsSection()
         }

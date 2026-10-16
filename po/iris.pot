@@ -5771,8 +5771,8 @@ msgstr ""
 msgid "Allow Automatic Replies"
 msgstr ""
 
-#: macos/Iris/AutoReplyView.swift:40 macos/Iris/ContactsSettings.swift:31
-#: macos/Iris/InvitationCard.swift:75 macos/Iris/RulesView.swift:26
+#: macos/Iris/AutoReplyView.swift:40 macos/Iris/InvitationCard.swift:75
+#: macos/Iris/RulesView.swift:26
 msgid "Grant Access"
 msgstr ""
 
@@ -5927,7 +5927,7 @@ msgstr ""
 msgid "Save as Template"
 msgstr ""
 
-#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:201
+#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:199
 #: macos/Iris/SmartEditorView.swift:28 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr ""
@@ -6074,23 +6074,31 @@ msgstr ""
 msgid "All Their Mail"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:15
-msgid "No accounts yet"
-msgstr ""
-
-#: macos/Iris/ContactsSettings.swift:42 macos/Iris/ContactsSettings.swift:46
-msgid "Search the company directory"
-msgstr ""
-
-#: macos/Iris/ContactsSettings.swift:48
-msgid "Grant Directory Access"
-msgstr ""
-
-#: macos/Iris/ContactsSettings.swift:55 macos/Iris/SettingsView.swift:27
+#: macos/Iris/ContactsSettings.swift:12 macos/Iris/SettingsView.swift:27
 msgid "Contacts"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:57
+#: macos/Iris/ContactsSettings.swift:13
+msgid "No accounts yet"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:20 macos/Iris/ContactsSettings.swift:24
+msgid "Personal contacts"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:27
+msgid "Authorize contacts for {account}"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:36 macos/Iris/ContactsSettings.swift:40
+msgid "Search the company directory"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:42
+msgid "Authorize directory for {account}"
+msgstr ""
+
+#: macos/Iris/ContactsSettings.swift:53
 msgid ""
 "Iris can read an account's contacts: names, email addresses, photos, "
 "organizations, and phone numbers. It uses them to suggest recipients, to "
@@ -6099,68 +6107,68 @@ msgid ""
 "contacts."
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:115 macos/Iris/ContactsSettings.swift:118
-#: macos/Iris/ContactsSettings.swift:200
+#: macos/Iris/ContactsSettings.swift:113 macos/Iris/ContactsSettings.swift:116
+#: macos/Iris/ContactsSettings.swift:198
 msgid "Edit List"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:119 macos/Iris/ContactsSettings.swift:122
+#: macos/Iris/ContactsSettings.swift:117 macos/Iris/ContactsSettings.swift:120
 msgid "Delete List"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:125
+#: macos/Iris/ContactsSettings.swift:123
 msgid "Add List"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:130
+#: macos/Iris/ContactsSettings.swift:128
 msgid "Try Again"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:133
+#: macos/Iris/ContactsSettings.swift:131
 msgid "Contact Lists"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:135
+#: macos/Iris/ContactsSettings.swift:133
 msgid ""
 "Keep a group on this computer, then type its name in To, Cc, or Bcc to add "
 "its members."
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:154 macos/Iris/TemplatesSettings.swift:46
+#: macos/Iris/ContactsSettings.swift:152 macos/Iris/TemplatesSettings.swift:46
 msgid "Delete {name}?"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:161
+#: macos/Iris/ContactsSettings.swift:159
 msgid "The members stay in your address books."
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:200
+#: macos/Iris/ContactsSettings.swift:198
 msgid "New List"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:202
+#: macos/Iris/ContactsSettings.swift:200
 msgid "Members"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:212 macos/Iris/ContactsSettings.swift:217
+#: macos/Iris/ContactsSettings.swift:210 macos/Iris/ContactsSettings.swift:215
 msgid "Remove Member"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:227
+#: macos/Iris/ContactsSettings.swift:225
 msgid "Name or email address"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:229
+#: macos/Iris/ContactsSettings.swift:227
 msgid "Add"
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:232
+#: macos/Iris/ContactsSettings.swift:230
 msgid ""
 "Add an email address or choose a suggested contact. You can paste several "
 "addresses at once."
 msgstr ""
 
-#: macos/Iris/ContactsSettings.swift:243 macos/Iris/FilingView.swift:70
+#: macos/Iris/ContactsSettings.swift:241 macos/Iris/FilingView.swift:70
 #: macos/Iris/FilingView.swift:175 macos/Iris/HideMyEmailView.swift:39
 #: macos/Iris/RulesView.swift:200 macos/Iris/SidebarView.swift:152
 #: macos/Iris/SmartEditorView.swift:72 macos/Iris/TemplatesSettings.swift:119

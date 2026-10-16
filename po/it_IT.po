@@ -6082,8 +6082,8 @@ msgstr "Annulla iscrizione"
 msgid "Allow Automatic Replies"
 msgstr "Consenti le risposte automatiche"
 
-#: macos/Iris/AutoReplyView.swift:40 macos/Iris/ContactsSettings.swift:31
-#: macos/Iris/InvitationCard.swift:75 macos/Iris/RulesView.swift:26
+#: macos/Iris/AutoReplyView.swift:40 macos/Iris/InvitationCard.swift:75
+#: macos/Iris/RulesView.swift:26
 msgid "Grant Access"
 msgstr "Concedi accesso"
 
@@ -6241,7 +6241,7 @@ msgstr "Programma"
 msgid "Save as Template"
 msgstr "Salva come modello"
 
-#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:201
+#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:199
 #: macos/Iris/SmartEditorView.swift:28 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Nome"
@@ -6390,23 +6390,31 @@ msgstr "Rimuovi dai VIP"
 msgid "All Their Mail"
 msgstr "Tutta la sua posta"
 
-#: macos/Iris/ContactsSettings.swift:15
-msgid "No accounts yet"
-msgstr "Ancora nessun account"
-
-#: macos/Iris/ContactsSettings.swift:42 macos/Iris/ContactsSettings.swift:46
-msgid "Search the company directory"
-msgstr "Cerca nella rubrica aziendale"
-
-#: macos/Iris/ContactsSettings.swift:48
-msgid "Grant Directory Access"
-msgstr "Concedi accesso alla rubrica aziendale"
-
-#: macos/Iris/ContactsSettings.swift:55 macos/Iris/SettingsView.swift:27
+#: macos/Iris/ContactsSettings.swift:12 macos/Iris/SettingsView.swift:27
 msgid "Contacts"
 msgstr "Contatti"
 
-#: macos/Iris/ContactsSettings.swift:57
+#: macos/Iris/ContactsSettings.swift:13
+msgid "No accounts yet"
+msgstr "Ancora nessun account"
+
+#: macos/Iris/ContactsSettings.swift:20 macos/Iris/ContactsSettings.swift:24
+msgid "Personal contacts"
+msgstr "Contatti personali"
+
+#: macos/Iris/ContactsSettings.swift:27
+msgid "Authorize contacts for {account}"
+msgstr "Autorizza i contatti di {account}"
+
+#: macos/Iris/ContactsSettings.swift:36 macos/Iris/ContactsSettings.swift:40
+msgid "Search the company directory"
+msgstr "Cerca nella rubrica aziendale"
+
+#: macos/Iris/ContactsSettings.swift:42
+msgid "Authorize directory for {account}"
+msgstr "Autorizza la rubrica aziendale di {account}"
+
+#: macos/Iris/ContactsSettings.swift:53
 msgid ""
 "Iris can read an account's contacts: names, email addresses, photos, "
 "organizations, and phone numbers. It uses them to suggest recipients, to "
@@ -6420,28 +6428,28 @@ msgstr ""
 "un mittente. Ciò che legge resta su questo computer, e disattivando un "
 "account i suoi contatti vengono eliminati."
 
-#: macos/Iris/ContactsSettings.swift:115 macos/Iris/ContactsSettings.swift:118
-#: macos/Iris/ContactsSettings.swift:200
+#: macos/Iris/ContactsSettings.swift:113 macos/Iris/ContactsSettings.swift:116
+#: macos/Iris/ContactsSettings.swift:198
 msgid "Edit List"
 msgstr "Modifica lista"
 
-#: macos/Iris/ContactsSettings.swift:119 macos/Iris/ContactsSettings.swift:122
+#: macos/Iris/ContactsSettings.swift:117 macos/Iris/ContactsSettings.swift:120
 msgid "Delete List"
 msgstr "Elimina lista"
 
-#: macos/Iris/ContactsSettings.swift:125
+#: macos/Iris/ContactsSettings.swift:123
 msgid "Add List"
 msgstr "Aggiungi lista"
 
-#: macos/Iris/ContactsSettings.swift:130
+#: macos/Iris/ContactsSettings.swift:128
 msgid "Try Again"
 msgstr "Riprova"
 
-#: macos/Iris/ContactsSettings.swift:133
+#: macos/Iris/ContactsSettings.swift:131
 msgid "Contact Lists"
 msgstr "Liste contatti"
 
-#: macos/Iris/ContactsSettings.swift:135
+#: macos/Iris/ContactsSettings.swift:133
 msgid ""
 "Keep a group on this computer, then type its name in To, Cc, or Bcc to add "
 "its members."
@@ -6449,35 +6457,35 @@ msgstr ""
 "Salva un gruppo su questo computer, poi scrivi il suo nome in A, Cc o Ccn "
 "per aggiungere i membri."
 
-#: macos/Iris/ContactsSettings.swift:154 macos/Iris/TemplatesSettings.swift:46
+#: macos/Iris/ContactsSettings.swift:152 macos/Iris/TemplatesSettings.swift:46
 msgid "Delete {name}?"
 msgstr "Eliminare {name}?"
 
-#: macos/Iris/ContactsSettings.swift:161
+#: macos/Iris/ContactsSettings.swift:159
 msgid "The members stay in your address books."
 msgstr "I membri rimangono nelle tue rubriche."
 
-#: macos/Iris/ContactsSettings.swift:200
+#: macos/Iris/ContactsSettings.swift:198
 msgid "New List"
 msgstr "Nuova lista"
 
-#: macos/Iris/ContactsSettings.swift:202
+#: macos/Iris/ContactsSettings.swift:200
 msgid "Members"
 msgstr "Membri"
 
-#: macos/Iris/ContactsSettings.swift:212 macos/Iris/ContactsSettings.swift:217
+#: macos/Iris/ContactsSettings.swift:210 macos/Iris/ContactsSettings.swift:215
 msgid "Remove Member"
 msgstr "Rimuovi membro"
 
-#: macos/Iris/ContactsSettings.swift:227
+#: macos/Iris/ContactsSettings.swift:225
 msgid "Name or email address"
 msgstr "Nome o indirizzo email"
 
-#: macos/Iris/ContactsSettings.swift:229
+#: macos/Iris/ContactsSettings.swift:227
 msgid "Add"
 msgstr "Aggiungi"
 
-#: macos/Iris/ContactsSettings.swift:232
+#: macos/Iris/ContactsSettings.swift:230
 msgid ""
 "Add an email address or choose a suggested contact. You can paste several "
 "addresses at once."
@@ -6485,7 +6493,7 @@ msgstr ""
 "Aggiungi un indirizzo email o scegli un contatto suggerito. Puoi incollare "
 "più indirizzi insieme."
 
-#: macos/Iris/ContactsSettings.swift:243 macos/Iris/FilingView.swift:70
+#: macos/Iris/ContactsSettings.swift:241 macos/Iris/FilingView.swift:70
 #: macos/Iris/FilingView.swift:175 macos/Iris/HideMyEmailView.swift:39
 #: macos/Iris/RulesView.swift:200 macos/Iris/SidebarView.swift:152
 #: macos/Iris/SmartEditorView.swift:72 macos/Iris/TemplatesSettings.swift:119
@@ -7573,6 +7581,9 @@ msgstr "Non ci sono ancora anteprime dei messaggi su questo Mac."
 #: macos/Iris/ThreadListView.swift:417
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
+
+#~ msgid "Grant Directory Access"
+#~ msgstr "Concedi accesso alla rubrica aziendale"
 
 #~ msgid "What's New"
 #~ msgstr "Novità"
