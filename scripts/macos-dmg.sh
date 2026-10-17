@@ -44,7 +44,7 @@ download_url="${IRIS_DOWNLOAD_URL:-https://github.com/AlbertoBarrago/iris/releas
 sparkle_version=2.10.0
 sparkle_sha256=c2bf58aa8387266ac179357b1415d6f2635f044da8be41042af32425dae6da0c
 sparkle="target/sparkle-$sparkle_version"
-if [ ! -d "$sparkle/Sparkle.framework" ]; then
+if [ ! -d "$sparkle/Sparkle.framework" ] || [ ! -x "$sparkle/bin/generate_appcast" ]; then
     rm -rf "$sparkle"
     mkdir -p "$sparkle"
     curl -sSfL -o "$sparkle/Sparkle.tar.xz" \
