@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.1 (2026-10-17)
+
 ### Fixed
 
 - Selecting an expanded reply keeps keyboard navigation and Delete working;
