@@ -3910,7 +3910,7 @@ msgstr "La risposta automatica è disattivata"
 msgid "Remove {account}?"
 msgstr "Rimuovere {account}?"
 
-#: crates/ffi/src/account_setup.rs:701
+#: crates/ffi/src/account_setup.rs:703
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr ""
 "Un'altra copia di Iris sta sincronizzando la posta. Chiudila e riprova."

@@ -524,9 +524,11 @@ impl AccountSetup {
         });
         if directory {
             clients.google = clients.google.map(|client| client.with_directory_access());
-            clients.microsoft = clients
-                .microsoft
-                .map(|client| client.with_directory_access());
+            if mailrs_sync::MICROSOFT_DIRECTORY {
+                clients.microsoft = clients
+                    .microsoft
+                    .map(|client| client.with_directory_access());
+            }
         }
         let connector = Connector {
             db: self.mail.db.clone(),

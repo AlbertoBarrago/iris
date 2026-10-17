@@ -99,7 +99,7 @@ impl<G: GraphApi> Microsoft<G> {
 
 impl<G: GraphApi> ContactsService for Microsoft<G> {
     fn directory_access(&self) -> Option<bool> {
-        if self.settings.provider_name == "Outlook" {
+        if !crate::MICROSOFT_DIRECTORY || self.settings.provider_name == "Outlook" {
             return None;
         }
         Some(

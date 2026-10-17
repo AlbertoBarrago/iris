@@ -16,10 +16,10 @@ Each release of Iris, newest first. GitHub shows the same text on the
 - Contacts settings group switches and permission buttons by account; accounts
   you turn off no longer show a request to authorize their contacts.
 
-- Recipient and contact-list suggestions also search Microsoft 365 and Google
-  Workspace directories, including people you have never emailed. Enable
-  directory search and grant access separately for each account in Contacts
-  settings, independently of personal contacts.
+- Recipient and contact-list suggestions also search Google Workspace
+  directories, including people you have never emailed. Enable directory
+  search and grant access separately for each account in Contacts settings,
+  independently of personal contacts.
 
 ## 1.2.0 (2026-10-15)
 

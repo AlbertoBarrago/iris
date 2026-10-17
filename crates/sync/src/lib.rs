@@ -51,6 +51,12 @@ pub const WAIT_CEILING: std::time::Duration = std::time::Duration::from_secs(60)
 /// only the pages a thread touches take memory.
 pub const WORKER_STACK: usize = 8 << 20;
 
+/// Whether Microsoft 365 accounts offer the company directory. Off until
+/// Microsoft grants the app registration `User.ReadBasic.All`: until then
+/// the consent page stops at "admin approval required", so the switch
+/// would only lead people into a sign-in that cannot finish.
+pub const MICROSOFT_DIRECTORY: bool = false;
+
 pub use account::{
     AccountSync, DEFAULT_BODY_CACHE_BYTES, DEFAULT_WINDOW_DAYS, FETCH_CONCURRENCY, Searched,
 };
