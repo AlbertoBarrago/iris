@@ -293,6 +293,10 @@ struct AssistantPane: View {
             TextField(tr("Ask Iris…"), text: $text, axis: .vertical)
                 .textFieldStyle(.plain)
                 .lineLimit(1...6)
+                // Held to the pane's width so a long question wraps
+                // instead of widening the field past the Send button.
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
                 .focused($typing)
                 .disabled(assistant.running)
                 .onSubmit(send)

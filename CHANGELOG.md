@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- A space typed in a smart mailbox's name shows at once, and a long question
+  to the assistant wraps onto new lines.
+
 ## 1.2.1 (2026-10-17)
 
 ### Fixed

@@ -6033,15 +6033,15 @@ msgstr "Scegli un modello"
 msgid "Ask Iris…"
 msgstr "Chiedi a Iris…"
 
-#: macos/Iris/AssistantView.swift:299
+#: macos/Iris/AssistantView.swift:303
 msgid "Ask Iris"
 msgstr "Chiedi a Iris"
 
-#: macos/Iris/AssistantView.swift:307 macos/Iris/AssistantView.swift:308
+#: macos/Iris/AssistantView.swift:311 macos/Iris/AssistantView.swift:312
 msgid "Stop"
 msgstr "Interrompi"
 
-#: macos/Iris/AssistantView.swift:327
+#: macos/Iris/AssistantView.swift:331
 msgid ""
 "Ask about your mail, or tell me what to tidy. I can search, summarize, sort, "
 "draft, and change settings."
@@ -6049,31 +6049,31 @@ msgstr ""
 "Chiedimi della tua posta o dimmi cosa riordinare. Posso cercare, riassumere, "
 "ordinare, scrivere bozze e cambiare impostazioni."
 
-#: macos/Iris/AssistantView.swift:452
+#: macos/Iris/AssistantView.swift:456
 msgid "Don't Allow"
 msgstr "Non consentire"
 
-#: macos/Iris/AssistantView.swift:454
+#: macos/Iris/AssistantView.swift:458
 msgid "Always Allow"
 msgstr "Consenti sempre"
 
-#: macos/Iris/AssistantView.swift:456
+#: macos/Iris/AssistantView.swift:460
 msgid "Allow"
 msgstr "Consenti"
 
-#: macos/Iris/AssistantView.swift:468
+#: macos/Iris/AssistantView.swift:472
 msgid "Allowed"
 msgstr "Consentito"
 
-#: macos/Iris/AssistantView.swift:469
+#: macos/Iris/AssistantView.swift:473
 msgid "Always allowed"
 msgstr "Sempre consentito"
 
-#: macos/Iris/AssistantView.swift:470
+#: macos/Iris/AssistantView.swift:474
 msgid "Not allowed"
 msgstr "Non consentito"
 
-#: macos/Iris/AssistantView.swift:507 macos/Iris/ConversationView.swift:45
+#: macos/Iris/AssistantView.swift:511 macos/Iris/ConversationView.swift:45
 #: macos/Iris/ConversationView.swift:53
 msgid "Unsubscribe"
 msgstr "Annulla iscrizione"
@@ -6242,7 +6242,7 @@ msgid "Save as Template"
 msgstr "Salva come modello"
 
 #: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:199
-#: macos/Iris/SmartEditorView.swift:28 macos/Iris/TemplatesSettings.swift:97
+#: macos/Iris/SmartEditorView.swift:31 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Nome"
 
@@ -6496,7 +6496,7 @@ msgstr ""
 #: macos/Iris/ContactsSettings.swift:241 macos/Iris/FilingView.swift:70
 #: macos/Iris/FilingView.swift:175 macos/Iris/HideMyEmailView.swift:39
 #: macos/Iris/RulesView.swift:200 macos/Iris/SidebarView.swift:152
-#: macos/Iris/SmartEditorView.swift:72 macos/Iris/TemplatesSettings.swift:119
+#: macos/Iris/SmartEditorView.swift:76 macos/Iris/TemplatesSettings.swift:119
 msgid "Create"
 msgstr "Crea"
 
@@ -7432,47 +7432,47 @@ msgstr "Rimuovi account…"
 msgid "Sign in again to keep syncing"
 msgstr "Accedi di nuovo per continuare la sincronizzazione"
 
-#: macos/Iris/SidebarView.swift:321 macos/Iris/SmartEditorView.swift:78
+#: macos/Iris/SidebarView.swift:321 macos/Iris/SmartEditorView.swift:82
 msgid "Edit Smart Mailbox"
 msgstr "Modifica casella smart"
 
-#: macos/Iris/SmartEditorView.swift:30
+#: macos/Iris/SmartEditorView.swift:34
 msgid "All Accounts"
 msgstr "Tutti gli account"
 
-#: macos/Iris/SmartEditorView.swift:33
+#: macos/Iris/SmartEditorView.swift:37
 msgid "Match"
 msgstr "Corrispondenza"
 
-#: macos/Iris/SmartEditorView.swift:34
+#: macos/Iris/SmartEditorView.swift:38
 msgid "All of the conditions"
 msgstr "Tutte le condizioni"
 
-#: macos/Iris/SmartEditorView.swift:35
+#: macos/Iris/SmartEditorView.swift:39
 msgid "Any of the conditions"
 msgstr "Una qualsiasi delle condizioni"
 
-#: macos/Iris/SmartEditorView.swift:38
+#: macos/Iris/SmartEditorView.swift:42
 msgid "Conditions"
 msgstr "Condizioni"
 
-#: macos/Iris/SmartEditorView.swift:41
+#: macos/Iris/SmartEditorView.swift:45
 msgid "Condition"
 msgstr "Condizione"
 
-#: macos/Iris/SmartEditorView.swift:46
+#: macos/Iris/SmartEditorView.swift:50
 msgid "Matches"
 msgstr "Corrisponde a"
 
-#: macos/Iris/SmartEditorView.swift:49 macos/Iris/SmartEditorView.swift:52
+#: macos/Iris/SmartEditorView.swift:53 macos/Iris/SmartEditorView.swift:56
 msgid "Remove Condition"
 msgstr "Rimuovi condizione"
 
-#: macos/Iris/SmartEditorView.swift:57 macos/Iris/SmartEditorView.swift:60
+#: macos/Iris/SmartEditorView.swift:61 macos/Iris/SmartEditorView.swift:64
 msgid "Add Condition"
 msgstr "Aggiungi condizione"
 
-#: macos/Iris/SmartEditorView.swift:78
+#: macos/Iris/SmartEditorView.swift:82
 msgid "New Smart Mailbox"
 msgstr "Nuova casella smart"
 

@@ -25,7 +25,11 @@ struct SmartEditorView: View {
         VStack(spacing: 0) {
             Form {
                 Section {
+                    // A grouped form sets its fields flush right, where
+                    // AppKit hides a trailing space until the next letter
+                    // comes, so the name reads as if spaces did not take.
                     TextField(tr("Name"), text: $form.name)
+                        .multilineTextAlignment(.leading)
                     Picker(tr("Accounts"), selection: $form.account) {
                         Text(tr("All Accounts")).tag("")
                         ForEach(accounts, id: \.self) { Text($0).tag($0) }
