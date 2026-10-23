@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.3 (2026-10-23)
+
+This release adds the XERJ Corpus Hub contributor badge to the README.
+The app's behavior is unchanged.
+
 ## 1.2.2 (2026-10-19)
 
 ### Fixed

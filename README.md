@@ -10,6 +10,7 @@ A native Mac app for mail and calendar, with a core written in Rust.
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![SwiftUI on macOS 26](https://img.shields.io/badge/SwiftUI-macOS_26-0a84ff?logo=apple)](https://developer.apple.com/xcode/swiftui/)
 [![Rust 1.98](https://img.shields.io/badge/rust-1.98-orange?logo=rust)](https://www.rust-lang.org)
+[![XERJ Corpus Hub contributor](https://hub.xerj.org/contributors/AlbertoBarrago/badge.svg)](https://hub.xerj.org/contributors/AlbertoBarrago)
 
 [Features](#features) · [Install](#install) · [Build](#build) · [Keyboard](#keyboard) · [Privacy](#privacy)
 
