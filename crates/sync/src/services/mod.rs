@@ -1145,6 +1145,23 @@ pub trait ContactsService: Send + Sync + 'static {
         None
     }
 
+    /// Whether the account lets the app read the people its provider
+    /// collected without the owner saving them: `None` where the provider
+    /// keeps no such list, `Some(false)` until the account grants it.
+    fn other_contacts_access(&self) -> Option<bool> {
+        None
+    }
+
+    /// One page of those people, read and synced apart from the saved
+    /// contacts. Providers without them answer an empty page.
+    fn other_contacts(
+        &self,
+        _page_token: Option<&str>,
+        _sync_token: Option<&str>,
+    ) -> impl Future<Output = Result<ConnectionsPage, BackendError>> + Send {
+        async { Ok(ConnectionsPage::default()) }
+    }
+
     /// Directory matches, separate from the personal address book.
     fn directory_people(
         &self,

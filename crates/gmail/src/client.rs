@@ -634,14 +634,6 @@ impl GmailClient {
             .map_err(|e| GmailError::Decode(e.to_string()))
     }
 
-    /// One page of the account's Google contacts. Pass `page_token` to
-    /// walk a long address book, or `sync_token` from the last refresh to
-    /// ask only for what changed. Gmail answers
-    /// [`GmailError::MissingScope`] until the account grants
-    /// [`CONTACTS_SCOPE`], and [`GmailError::ExpiredSyncToken`] when the
-    /// token is too old to answer from.
-    ///
-    /// [`CONTACTS_SCOPE`]: crate::people::CONTACTS_SCOPE
     /// Searches the Workspace directory without depending on previous mail.
     pub async fn directory_people(&self, query: &str) -> Result<Vec<crate::Person>, GmailError> {
         let url = format!("{}/people:searchDirectoryPeople", self.people_url);
@@ -662,6 +654,14 @@ impl GmailClient {
         Ok(people::parse_connections(&body)?.people)
     }
 
+    /// One page of the account's Google contacts. Pass `page_token` to
+    /// walk a long address book, or `sync_token` from the last refresh to
+    /// ask only for what changed. Gmail answers
+    /// [`GmailError::MissingScope`] until the account grants
+    /// [`CONTACTS_SCOPE`], and [`GmailError::ExpiredSyncToken`] when the
+    /// token is too old to answer from.
+    ///
+    /// [`CONTACTS_SCOPE`]: crate::people::CONTACTS_SCOPE
     pub async fn connections(
         &self,
         page_token: Option<&str>,
@@ -672,6 +672,41 @@ impl GmailClient {
             .send_request(cost::CONNECTIONS, || {
                 let mut request = self.http().get(&url).query(&[
                     ("personFields", people::PERSON_FIELDS),
+                    ("pageSize", &people::PAGE_SIZE.to_string()),
+                    ("requestSyncToken", "true"),
+                ]);
+                if let Some(token) = page_token {
+                    request = request.query(&[("pageToken", token)]);
+                }
+                if let Some(token) = sync_token {
+                    request = request.query(&[("syncToken", token)]);
+                }
+                request
+            })
+            .await?
+            .text()
+            .await
+            .map_err(|e| GmailError::Decode(e.to_string()))?;
+        people::parse_connections(&body)
+    }
+
+    /// One page of the people Google collected for the account without
+    /// the owner saving them, its other contacts, paged and synced as
+    /// [`connections`](Self::connections) are. Gmail answers
+    /// [`GmailError::MissingScope`] until the account grants
+    /// [`OTHER_CONTACTS_SCOPE`], which `contacts` does not cover.
+    ///
+    /// [`OTHER_CONTACTS_SCOPE`]: crate::people::OTHER_CONTACTS_SCOPE
+    pub async fn other_contacts(
+        &self,
+        page_token: Option<&str>,
+        sync_token: Option<&str>,
+    ) -> Result<ConnectionsPage, GmailError> {
+        let url = format!("{}/otherContacts", self.people_url);
+        let body = self
+            .send_request(cost::CONNECTIONS, || {
+                let mut request = self.http().get(&url).query(&[
+                    ("readMask", "names,emailAddresses,photos"),
                     ("pageSize", &people::PAGE_SIZE.to_string()),
                     ("requestSyncToken", "true"),
                 ]);

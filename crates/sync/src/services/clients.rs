@@ -144,6 +144,7 @@ either_client! {
         fn vacation() -> Gmail<Vacation>;
         fn set_vacation(vacation: &Vacation) -> Gmail<()>;
         fn directory_people(query: &str) -> Gmail<Vec<Person>>;
+        fn other_contacts(page_token: Option<&str>, sync_token: Option<&str>) -> Gmail<ConnectionsPage>;
         fn connections(page_token: Option<&str>, sync_token: Option<&str>) -> Gmail<ConnectionsPage>;
         fn contact_photo(url: &str) -> Gmail<Vec<u8>>;
         fn create_contact(fields: &ContactFields) -> Gmail<Person>;

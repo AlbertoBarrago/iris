@@ -19,7 +19,7 @@ use std::sync::Arc;
 use mailrs_domain::{AccountId, Address, EpochMillis};
 use mailrs_gmail::{ContactFields, GmailError, Person};
 use mailrs_store::Db;
-use mailrs_store::address_book::{self, Contact};
+use mailrs_store::address_book::{self, Contact, Source};
 use mailrs_store::contact_offers::{self, Answer};
 use mailrs_store::contacts::is_automated;
 
@@ -98,7 +98,12 @@ impl<A: Accounts> ContactBook<A> {
             .read(move |c| address_book::book(c, account_id))
             .await?;
         let mut refreshed = match self
-            .read_pages(&contacts, account_id, stored.and_then(|(t, _)| t))
+            .read_pages(
+                &contacts,
+                account_id,
+                Source::Saved,
+                stored.and_then(|(t, _)| t),
+            )
             .await?
         {
             Permitted::Done(refreshed) => refreshed,
@@ -106,6 +111,27 @@ impl<A: Accounts> ContactBook<A> {
             // address book again, which is what an empty token does.
             Permitted::NeedsPermission => return Ok(Permitted::NeedsPermission),
         };
+        if contacts.other_contacts_access() == Some(true) {
+            let stored = self
+                .db
+                .read(move |c| address_book::other_book(c, account_id))
+                .await?;
+            match self
+                .read_pages(
+                    &contacts,
+                    account_id,
+                    Source::Other,
+                    stored.and_then(|(t, _)| t),
+                )
+                .await
+            {
+                Ok(Permitted::Done(other)) => refreshed.contacts += other.contacts,
+                Ok(Permitted::NeedsPermission) => {}
+                Err(error) => {
+                    tracing::warn!(account = account_id, %error, "could not refresh other contacts")
+                }
+            }
+        }
         refreshed.photos = self.fetch_photos(&contacts, account_id).await?;
         Ok(Permitted::Done(refreshed))
     }
@@ -127,7 +153,19 @@ impl<A: Accounts> ContactBook<A> {
                 })
                 .await?;
             if stored.is_some_and(|(_, at)| now.saturating_sub(at) < REFRESH_AFTER) {
-                continue;
+                let other_is_current =
+                    if self.contacts(*account_id)?.other_contacts_access() == Some(true) {
+                        let id = *account_id;
+                        self.db
+                            .read(move |c| address_book::other_book(c, id))
+                            .await?
+                            .is_some_and(|(_, at)| now.saturating_sub(at) < REFRESH_AFTER)
+                    } else {
+                        true
+                    };
+                if other_is_current {
+                    continue;
+                }
             }
             match self.refresh(*account_id).await? {
                 Permitted::Done(one) => {
@@ -147,7 +185,7 @@ impl<A: Accounts> ContactBook<A> {
         let files = self
             .db
             .read(move |c| {
-                Ok(address_book::list(c)?
+                Ok(address_book::list_all(c)?
                     .into_iter()
                     .filter(|contact| contact.account_id == account_id)
                     .filter_map(|contact| contact.photo_file)
@@ -367,6 +405,7 @@ impl<A: Accounts> ContactBook<A> {
         &self,
         contacts: &AnyContacts,
         account_id: AccountId,
+        source: Source,
         sync_token: Option<String>,
     ) -> Result<Permitted<Refreshed>, SyncError> {
         let mut token = sync_token;
@@ -377,10 +416,19 @@ impl<A: Accounts> ContactBook<A> {
             let mut read: Vec<Contact> = Vec::new();
             let mut deleted: Vec<String> = Vec::new();
             for _ in 0..PAGE_LIMIT {
-                let page = match contacts
-                    .connections(page_token.as_deref(), token.as_deref())
-                    .await
-                {
+                let response = match source {
+                    Source::Saved => {
+                        contacts
+                            .connections(page_token.as_deref(), token.as_deref())
+                            .await
+                    }
+                    Source::Other => {
+                        contacts
+                            .other_contacts(page_token.as_deref(), token.as_deref())
+                            .await
+                    }
+                };
+                let page = match response {
                     Ok(page) => page,
                     Err(BackendError::NeedsPermission) => {
                         return Ok(Permitted::NeedsPermission);
@@ -423,7 +471,7 @@ impl<A: Accounts> ContactBook<A> {
                             .write(move |c| {
                                 if whole {
                                     // Whoever the new read left out has gone.
-                                    let stale: Vec<String> = address_book::list(c)?
+                                    let stale: Vec<String> = address_book::list_source(c, source)?
                                         .into_iter()
                                         .filter(|held| held.account_id == account_id)
                                         .filter(|held| {
@@ -433,9 +481,19 @@ impl<A: Accounts> ContactBook<A> {
                                         .collect();
                                     address_book::forget(c, account_id, &stale)?;
                                 }
-                                address_book::save(c, &read)?;
+                                address_book::save_from(c, &read, source)?;
                                 address_book::forget(c, account_id, &deleted)?;
-                                address_book::set_book(c, account_id, book.as_deref(), at)
+                                match source {
+                                    Source::Saved => {
+                                        address_book::set_book(c, account_id, book.as_deref(), at)
+                                    }
+                                    Source::Other => address_book::set_other_book(
+                                        c,
+                                        account_id,
+                                        book.as_deref(),
+                                        at,
+                                    ),
+                                }
                             })
                             .await?;
                         return Ok(Permitted::Done(Refreshed {
@@ -455,7 +513,7 @@ impl<A: Accounts> ContactBook<A> {
             let stored = read.len();
             self.db
                 .write(move |c| {
-                    address_book::save(c, &read)?;
+                    address_book::save_from(c, &read, source)?;
                     address_book::forget(c, account_id, &deleted)
                 })
                 .await?;

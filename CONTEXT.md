@@ -10,6 +10,8 @@ entries get their new names as they are next touched.
 
 ## Glossary
 
+**Other contacts**: the people Google collected for an account from the mail it exchanged, without the owner saving them. Iris reads their names, addresses and photos under a permission of their own (`contacts.other.readonly`, which `contacts` does not cover) and with a sync token of their own, under the same Personal contacts switch. They give a sender a face and a name and come up as recipients, after saved contacts, but they are not part of the address book: they cannot be edited, the assistant does not list them as contacts, and they do not stop the offer to save a new recipient. `mailrs_store::address_book::Source::Other`. _Avoid_: frequent contacts, auto contacts.
+
 **Directory**: the people an organization makes searchable through Microsoft 365 or Google Workspace, including people never emailed. Recipient and contact-list suggestions search the directories of accounts with directory search enabled and directory access granted. Matches stay separate from saved personal contacts. `ContactsService::directory_people`. _Avoid_: frequent contacts, personal address book.
 
 **Contact list**: a named group of recipients, such as Family or a project team. A local list belongs to the person rather than to an account and keeps each member's name and address in insertion order. Removing a list does not remove its members from an address book. `mailrs_store::contact_lists`. _Avoid_: mailing list, distribution account.

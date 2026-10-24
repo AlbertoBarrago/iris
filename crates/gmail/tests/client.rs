@@ -909,3 +909,79 @@ async fn directory_search_finds_a_person_without_previous_mail() {
     assert_eq!(people[0].name.as_deref(), Some("Ana Colleague"));
     assert_eq!(people[0].emails, ["ana@example.org"]);
 }
+
+#[tokio::test]
+async fn other_contacts_use_their_own_mask_pages_and_sync_token() {
+    let server = MockServer::start().await;
+    mount_token(&server, 1).await;
+    Mock::given(method("GET"))
+        .and(path("/v1/otherContacts"))
+        .and(query_param("readMask", "names,emailAddresses,photos"))
+        .and(query_param("pageSize", "200"))
+        .and(query_param("requestSyncToken", "true"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            include_str!("people/other-contacts-page-1.json"),
+            "application/json",
+        ))
+        .expect(1)
+        .mount(&server)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/v1/otherContacts"))
+        .and(query_param("pageToken", "other-page-2"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_json(json!({"nextSyncToken": "other-sync-1"})),
+        )
+        // Every request carries the first page's parameters too, so
+        // the narrower match goes first.
+        .with_priority(1)
+        .expect(1)
+        .mount(&server)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/v1/otherContacts"))
+        .and(query_param("syncToken", "other-sync-1"))
+        .respond_with(ResponseTemplate::new(400).set_body_json(json!({"error": {
+            "code": 400, "status": "FAILED_PRECONDITION",
+            "details": [{"reason": "EXPIRED_SYNC_TOKEN"}]
+        }})))
+        // Every request carries the first page's parameters too, so
+        // the narrower match goes first.
+        .with_priority(1)
+        .expect(1)
+        .mount(&server)
+        .await;
+    let client = client(&server);
+    let page = client.other_contacts(None, None).await.unwrap();
+    assert_eq!(page.people.len(), 2);
+    let page = client
+        .other_contacts(page.next_page_token.as_deref(), None)
+        .await
+        .unwrap();
+    assert_eq!(page.next_sync_token.as_deref(), Some("other-sync-1"));
+    assert!(matches!(
+        client
+            .other_contacts(None, page.next_sync_token.as_deref())
+            .await,
+        Err(GmailError::ExpiredSyncToken)
+    ));
+}
+
+#[tokio::test]
+async fn other_contacts_report_a_missing_scope() {
+    let server = MockServer::start().await;
+    mount_token(&server, 1).await;
+    Mock::given(method("GET"))
+        .and(path("/v1/otherContacts"))
+        .respond_with(ResponseTemplate::new(403).set_body_json(json!({"error": {
+            "code": 403, "message": "Request had insufficient authentication scopes.",
+            "status": "PERMISSION_DENIED",
+            "details": [{"reason": "ACCESS_TOKEN_SCOPE_INSUFFICIENT"}]
+        }})))
+        .mount(&server)
+        .await;
+    assert!(matches!(
+        client(&server).other_contacts(None, None).await,
+        Err(GmailError::MissingScope)
+    ));
+}

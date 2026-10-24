@@ -22,6 +22,9 @@ pub const CONTACTS_SCOPE: &str = "https://www.googleapis.com/auth/contacts.reado
 /// first time the assistant adds or changes a contact.
 pub const CONTACTS_WRITE_SCOPE: &str = "https://www.googleapis.com/auth/contacts";
 
+/// Read automatically collected contacts, separately from saved contacts.
+pub const OTHER_CONTACTS_SCOPE: &str = "https://www.googleapis.com/auth/contacts.other.readonly";
+
 /// Read names and addresses from a Google Workspace directory.
 pub const DIRECTORY_SCOPE: &str = "https://www.googleapis.com/auth/directory.readonly";
 
@@ -233,7 +236,7 @@ trait Marked {
 #[serde(rename_all = "camelCase")]
 struct Connections {
     #[serde(default)]
-    #[serde(alias = "people")]
+    #[serde(alias = "people", alias = "otherContacts")]
     connections: Vec<Connection>,
     next_page_token: Option<String>,
     next_sync_token: Option<String>,
@@ -327,6 +330,22 @@ mod tests {
     const FIRST_PAGE: &str = include_str!("../tests/people/connections-page-1.json");
     const LAST_PAGE: &str = include_str!("../tests/people/connections-page-2.json");
     const CHANGED: &str = include_str!("../tests/people/connections-changed.json");
+
+    #[test]
+    fn other_contacts_include_names_photos_and_deletions() {
+        let page =
+            parse_connections(include_str!("../tests/people/other-contacts-page-1.json")).unwrap();
+        assert_eq!(page.next_page_token.as_deref(), Some("other-page-2"));
+        assert_eq!(page.people.len(), 2);
+        assert_eq!(page.people[0].resource, "otherContacts/c1");
+        assert_eq!(page.people[0].name.as_deref(), Some("Ana Lima"));
+        assert_eq!(
+            page.people[0].photo_url.as_deref(),
+            Some("https://photos.example/ana=s128-c")
+        );
+        assert_eq!(page.people[1].photo_url, None);
+        assert_eq!(page.deleted, ["otherContacts/deleted"]);
+    }
 
     #[test]
     fn a_page_flattens_into_people() {

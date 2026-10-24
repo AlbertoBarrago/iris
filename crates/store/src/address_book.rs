@@ -2,13 +2,29 @@
 //! organizations, and phone numbers, as the People API gives them.
 //!
 //! The `contacts` module holds whoever wrote to the account; this holds
-//! whoever the account owner wrote down. Recipient suggestions read both,
+//! saved contacts and Google's automatically collected contacts. Recipient suggestions read both,
 //! and a contact outranks an address that only ever appeared in mail.
 
 use mailrs_domain::{AccountId, EpochMillis};
 use rusqlite::{Connection, OptionalExtension, params};
 
 use crate::Result;
+
+/// The source determines which feed owns a contact and whether it is editable.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Source {
+    Saved,
+    Other,
+}
+
+impl Source {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Saved => "saved",
+            Self::Other => "other",
+        }
+    }
+}
 
 /// One person in an account's address book.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -48,6 +64,10 @@ impl Contact {
 /// disk stays with its contact while Google serves it from the same URL, so
 /// refreshing an address book downloads no photo twice.
 pub fn save(conn: &Connection, contacts: &[Contact]) -> Result<()> {
+    save_from(conn, contacts, Source::Saved)
+}
+
+pub fn save_from(conn: &Connection, contacts: &[Contact], source: Source) -> Result<()> {
     for contact in contacts {
         let kept: Option<(Option<String>, Option<String>)> = conn
             .query_row(
@@ -66,11 +86,11 @@ pub fn save(conn: &Connection, contacts: &[Contact]) -> Result<()> {
             _ => contact.photo_file.clone(),
         };
         conn.execute(
-            "INSERT INTO contacts (account_id, resource, name, organization, phone, photo_url, photo_file) \
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) \
+            "INSERT INTO contacts (account_id, resource, name, organization, phone, photo_url, photo_file, source) \
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) \
              ON CONFLICT (account_id, resource) DO UPDATE SET \
              name = excluded.name, organization = excluded.organization, phone = excluded.phone, \
-             photo_url = excluded.photo_url, photo_file = excluded.photo_file",
+             photo_url = excluded.photo_url, photo_file = excluded.photo_file, source = excluded.source",
             params![
                 contact.account_id,
                 contact.resource,
@@ -79,6 +99,7 @@ pub fn save(conn: &Connection, contacts: &[Contact]) -> Result<()> {
                 contact.phone,
                 contact.photo_url,
                 photo_file,
+                source.as_str(),
             ],
         )?;
         conn.execute(
@@ -127,8 +148,18 @@ pub fn clear(conn: &Connection, account_id: AccountId) -> Result<()> {
     Ok(())
 }
 
-/// Every contact of every account, by name.
+/// Saved contacts of every account, by name.
 pub fn list(conn: &Connection) -> Result<Vec<Contact>> {
+    list_source(conn, Source::Saved)
+}
+
+/// Contacts owned by one feed, without mixing saved and suggested people.
+pub fn list_source(conn: &Connection, source: Source) -> Result<Vec<Contact>> {
+    read(conn, "c.source = ?1", [source.as_str()])
+}
+
+/// Both sources, including photos to remove when the account is disabled.
+pub fn list_all(conn: &Connection) -> Result<Vec<Contact>> {
     read(conn, "1 = 1", [])
 }
 
@@ -162,11 +193,22 @@ pub fn search(conn: &Connection, query: &str) -> Result<Vec<Contact>> {
 const HOLDS_EMAIL: &str = "(c.account_id, c.resource) IN \
      (SELECT account_id, resource FROM contact_addresses WHERE email = ?1)";
 
-/// The contact holding `email`, whichever account wrote it down.
+/// A contact card for `email`, preferring saved details and filling missing ones.
 pub fn find(conn: &Connection, email: &str) -> Result<Option<Contact>> {
     let key = email.trim().to_lowercase();
     let found = read(conn, HOLDS_EMAIL, [key])?;
-    Ok(found.into_iter().next())
+    let mut found = found.into_iter();
+    let Some(mut contact) = found.next() else {
+        return Ok(None);
+    };
+    for other in found {
+        contact.name = contact.name.or(other.name);
+        if contact.photo_file.is_none() && other.photo_file.is_some() {
+            contact.photo_url = other.photo_url;
+            contact.photo_file = other.photo_file;
+        }
+    }
+    Ok(Some(contact))
 }
 
 /// Whether `account_id`'s address book has a contact with the address
@@ -175,7 +217,8 @@ pub fn holds(conn: &Connection, account_id: AccountId, email: &str) -> Result<bo
     let key = email.trim().to_lowercase();
     Ok(conn
         .query_row(
-            "SELECT 1 FROM contact_addresses WHERE email = ?1 AND account_id = ?2 LIMIT 1",
+            "SELECT 1 FROM contact_addresses a JOIN contacts c USING (account_id, resource) \
+             WHERE a.email = ?1 AND a.account_id = ?2 AND c.source = 'saved' LIMIT 1",
             params![key, account_id],
             |_| Ok(()),
         )
@@ -237,9 +280,35 @@ pub fn set_book(
     at: EpochMillis,
 ) -> Result<()> {
     conn.execute(
-        "INSERT OR REPLACE INTO contact_books (account_id, sync_token, synced_at) \
-         VALUES (?1, ?2, ?3)",
+        "INSERT INTO contact_books (account_id, sync_token, synced_at) \
+         VALUES (?1, ?2, ?3) ON CONFLICT (account_id) DO UPDATE SET \
+         sync_token = excluded.sync_token, synced_at = excluded.synced_at",
         params![account_id, sync_token, at],
+    )?;
+    Ok(())
+}
+
+/// The independent cursor for Google's automatically collected contacts.
+pub fn other_book(
+    conn: &Connection,
+    account_id: AccountId,
+) -> Result<Option<(Option<String>, EpochMillis)>> {
+    Ok(conn.query_row(
+        "SELECT other_sync_token, other_synced_at FROM contact_books WHERE account_id = ?1 AND other_synced_at IS NOT NULL",
+        [account_id], |row| Ok((row.get(0)?, row.get(1)?)),
+    ).optional()?)
+}
+
+pub fn set_other_book(
+    conn: &Connection,
+    account_id: AccountId,
+    token: Option<&str>,
+    at: EpochMillis,
+) -> Result<()> {
+    conn.execute(
+        "INSERT INTO contact_books (account_id, synced_at, other_sync_token, other_synced_at) VALUES (?1, 0, ?2, ?3) \
+         ON CONFLICT (account_id) DO UPDATE SET other_sync_token = excluded.other_sync_token, other_synced_at = excluded.other_synced_at",
+        params![account_id, token, at],
     )?;
     Ok(())
 }
@@ -250,7 +319,7 @@ fn query(filter: &str) -> String {
         "SELECT c.account_id, c.resource, c.name, c.organization, c.phone, c.photo_url, NULLIF(c.photo_file, ''), \
          (SELECT group_concat(a.email, char(10)) FROM (SELECT email FROM contact_addresses \
           WHERE account_id = c.account_id AND resource = c.resource ORDER BY rank) a) \
-         FROM contacts c WHERE {filter} ORDER BY c.name IS NULL, c.name COLLATE NOCASE, c.resource"
+         FROM contacts c WHERE {filter} ORDER BY c.source = 'saved' DESC, c.name IS NULL, c.name COLLATE NOCASE, c.resource"
     )
 }
 
@@ -290,6 +359,56 @@ mod tests {
             emails: emails.iter().map(|e| e.to_string()).collect(),
             ..Contact::default()
         }
+    }
+
+    #[test]
+    fn other_contacts_enrich_cards_but_are_not_saved_contacts() {
+        let conn = open_in_memory().unwrap();
+        let id = accounts::insert_account(&conn, "me@example.org", 0).unwrap();
+        let mut other = contact(id, "otherContacts/c1", "Ana", &["ana@example.org"]);
+        other.photo_file = Some("ana.jpg".into());
+        save_from(&conn, &[other], Source::Other).unwrap();
+        assert!(!holds(&conn, id, "ana@example.org").unwrap());
+        assert!(list(&conn).unwrap().is_empty());
+        assert!(search(&conn, "Ana").unwrap().is_empty());
+        assert_eq!(
+            find(&conn, "ana@example.org")
+                .unwrap()
+                .unwrap()
+                .name
+                .as_deref(),
+            Some("Ana")
+        );
+        save(
+            &conn,
+            &[contact(id, "people/c1", "Ana Saved", &["ana@example.org"])],
+        )
+        .unwrap();
+        let card = find(&conn, "ana@example.org").unwrap().unwrap();
+        assert_eq!(card.resource, "people/c1");
+        assert_eq!(card.name.as_deref(), Some("Ana Saved"));
+        assert_eq!(card.photo_file.as_deref(), Some("ana.jpg"));
+        assert!(holds(&conn, id, "ana@example.org").unwrap());
+        assert_eq!(list(&conn).unwrap().len(), 1);
+        assert_eq!(list_all(&conn).unwrap().len(), 2);
+    }
+
+    #[test]
+    fn both_cursors_survive_updates_to_the_other_feed() {
+        let conn = open_in_memory().unwrap();
+        let id = accounts::insert_account(&conn, "me@example.org", 0).unwrap();
+        set_book(&conn, id, Some("saved-1"), 10).unwrap();
+        set_other_book(&conn, id, Some("other-1"), 20).unwrap();
+        set_book(&conn, id, Some("saved-2"), 30).unwrap();
+        assert_eq!(
+            other_book(&conn, id).unwrap(),
+            Some((Some("other-1".into()), 20))
+        );
+        set_other_book(&conn, id, Some("other-2"), 40).unwrap();
+        assert_eq!(book(&conn, id).unwrap(), Some((Some("saved-2".into()), 30)));
+        clear(&conn, id).unwrap();
+        assert_eq!(book(&conn, id).unwrap(), None);
+        assert_eq!(other_book(&conn, id).unwrap(), None);
     }
 
     #[test]

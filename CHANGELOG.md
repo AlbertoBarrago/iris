@@ -11,6 +11,9 @@ Each release of Iris, newest first. GitHub shows the same text on the
   answers, with who reacted, instead of as a message of its own.
 - React to a message with an emoji, from the smiley beside Reply or the
   React menu in the toolbar. Gmail shows it as a reaction, not as an email.
+- People you write to but never saved in Google Contacts now get their name
+  and photo beside their mail, and come up when you type a recipient, as in
+  Gmail. An account signed in earlier asks once, in Settings, Contacts.
 
 ## 1.2.4 (2026-10-24)
 

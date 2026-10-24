@@ -1,0 +1,11 @@
+{
+  "otherContacts": [
+    {"resourceName": "otherContacts/c1", "names": [{"displayName": "Ana Lima"}],
+     "emailAddresses": [{"value": "ana@example.org"}],
+     "photos": [{"url": "https://photos.example/ana=s100"}]},
+    {"resourceName": "otherContacts/c2", "emailAddresses": [{"value": "bo@example.org"}],
+     "photos": [{"url": "https://photos.example/default", "default": true}]},
+    {"resourceName": "otherContacts/deleted", "metadata": {"deleted": true}}
+  ],
+  "nextPageToken": "other-page-2"
+}

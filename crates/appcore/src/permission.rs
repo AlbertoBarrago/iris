@@ -359,6 +359,19 @@ mod tests {
     const OCCASIONS: [Occasion; 2] = [Occasion::Needed, Occasion::Offer];
 
     #[test]
+    fn optional_other_contacts_do_not_reopen_the_access_banner() {
+        let asked = SIGN_IN_SCOPES.join(" ");
+        assert!(!asked.contains(mailrs_gmail::people::OTHER_CONTACTS_SCOPE));
+        assert!(!wants_banner(
+            Withheld {
+                contacts: true,
+                ..Withheld::NONE
+            },
+            Some(&asked)
+        ));
+    }
+
+    #[test]
     fn add_account_names_each_feature_left_off_in_the_mockups_words() {
         assert_eq!(
             Permission::Settings.feature(Provider::Gmail),

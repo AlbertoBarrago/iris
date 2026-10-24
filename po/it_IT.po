@@ -4030,11 +4030,11 @@ msgstr "Hai reagito con {emoji}"
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."
 
-#: crates/ffi/src/contacts.rs:167
+#: crates/ffi/src/contacts.rs:168
 msgid "The contact list is gone"
 msgstr "La lista contatti non esiste più"
 
-#: crates/ffi/src/contacts.rs:254
+#: crates/ffi/src/contacts.rs:255
 msgid "Not allowed when you signed in"
 msgstr "Non consentito quando hai effettuato l'accesso"
 
@@ -6300,7 +6300,7 @@ msgstr "Programma"
 msgid "Save as Template"
 msgstr "Salva come modello"
 
-#: macos/Iris/ComposeView.swift:114 macos/Iris/ContactsSettings.swift:199
+#: macos/Iris/ComposeView.swift:114 macos/Iris/ContactsSettings.swift:207
 #: macos/Iris/SmartEditorView.swift:31 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Nome"
@@ -6465,50 +6465,57 @@ msgstr "Contatti personali"
 msgid "Authorize contacts for {account}"
 msgstr "Autorizza i contatti di {account}"
 
-#: macos/Iris/ContactsSettings.swift:36 macos/Iris/ContactsSettings.swift:40
+#: macos/Iris/ContactsSettings.swift:35
+msgid "Authorize other Google contacts for {account}"
+msgstr "Autorizza gli altri contatti Google di {account}"
+
+#: macos/Iris/ContactsSettings.swift:44 macos/Iris/ContactsSettings.swift:48
 msgid "Search the company directory"
 msgstr "Cerca nella rubrica aziendale"
 
-#: macos/Iris/ContactsSettings.swift:42
+#: macos/Iris/ContactsSettings.swift:50
 msgid "Authorize directory for {account}"
 msgstr "Autorizza la rubrica aziendale di {account}"
 
-#: macos/Iris/ContactsSettings.swift:53
+#: macos/Iris/ContactsSettings.swift:61
 msgid ""
 "Iris can read an account's contacts: names, email addresses, photos, "
-"organizations, and phone numbers. It uses them to suggest recipients, to "
-"show faces beside mail, and to fill the card behind a sender's name. What it "
-"reads stays on this computer, and turning an account off deletes its "
-"contacts."
+"organizations, and phone numbers. From a Google account it also reads the "
+"people Google keeps from your mail but you never saved. It uses them to "
+"suggest recipients, to show faces beside mail, and to fill the card behind a "
+"sender's name. What it reads stays on this computer, and turning an account "
+"off deletes its contacts."
 msgstr ""
 "Iris può leggere i contatti di un account: nomi, indirizzi email, foto, "
-"organizzazioni e numeri di telefono. Li usa per suggerire destinatari, "
+"organizzazioni e numeri di telefono. Da un account Google legge anche le "
+"persone che Google ricorda dalla tua posta ma che non hai mai salvato. Li "
+"usa per suggerire destinatari, "
 "mostrare i volti accanto alla posta e compilare la scheda dietro il nome di "
 "un mittente. Ciò che legge resta su questo computer, e disattivando un "
 "account i suoi contatti vengono eliminati."
 
-#: macos/Iris/ContactsSettings.swift:113 macos/Iris/ContactsSettings.swift:116
-#: macos/Iris/ContactsSettings.swift:198
+#: macos/Iris/ContactsSettings.swift:121 macos/Iris/ContactsSettings.swift:124
+#: macos/Iris/ContactsSettings.swift:206
 msgid "Edit List"
 msgstr "Modifica lista"
 
-#: macos/Iris/ContactsSettings.swift:117 macos/Iris/ContactsSettings.swift:120
+#: macos/Iris/ContactsSettings.swift:125 macos/Iris/ContactsSettings.swift:128
 msgid "Delete List"
 msgstr "Elimina lista"
 
-#: macos/Iris/ContactsSettings.swift:123
+#: macos/Iris/ContactsSettings.swift:131
 msgid "Add List"
 msgstr "Aggiungi lista"
 
-#: macos/Iris/ContactsSettings.swift:128
+#: macos/Iris/ContactsSettings.swift:136
 msgid "Try Again"
 msgstr "Riprova"
 
-#: macos/Iris/ContactsSettings.swift:131
+#: macos/Iris/ContactsSettings.swift:139
 msgid "Contact Lists"
 msgstr "Liste contatti"
 
-#: macos/Iris/ContactsSettings.swift:133
+#: macos/Iris/ContactsSettings.swift:141
 msgid ""
 "Keep a group on this computer, then type its name in To, Cc, or Bcc to add "
 "its members."
@@ -6516,35 +6523,35 @@ msgstr ""
 "Salva un gruppo su questo computer, poi scrivi il suo nome in A, Cc o Ccn "
 "per aggiungere i membri."
 
-#: macos/Iris/ContactsSettings.swift:152 macos/Iris/TemplatesSettings.swift:46
+#: macos/Iris/ContactsSettings.swift:160 macos/Iris/TemplatesSettings.swift:46
 msgid "Delete {name}?"
 msgstr "Eliminare {name}?"
 
-#: macos/Iris/ContactsSettings.swift:159
+#: macos/Iris/ContactsSettings.swift:167
 msgid "The members stay in your address books."
 msgstr "I membri rimangono nelle tue rubriche."
 
-#: macos/Iris/ContactsSettings.swift:198
+#: macos/Iris/ContactsSettings.swift:206
 msgid "New List"
 msgstr "Nuova lista"
 
-#: macos/Iris/ContactsSettings.swift:200
+#: macos/Iris/ContactsSettings.swift:208
 msgid "Members"
 msgstr "Membri"
 
-#: macos/Iris/ContactsSettings.swift:210 macos/Iris/ContactsSettings.swift:215
+#: macos/Iris/ContactsSettings.swift:218 macos/Iris/ContactsSettings.swift:223
 msgid "Remove Member"
 msgstr "Rimuovi membro"
 
-#: macos/Iris/ContactsSettings.swift:225
+#: macos/Iris/ContactsSettings.swift:233
 msgid "Name or email address"
 msgstr "Nome o indirizzo email"
 
-#: macos/Iris/ContactsSettings.swift:227
+#: macos/Iris/ContactsSettings.swift:235
 msgid "Add"
 msgstr "Aggiungi"
 
-#: macos/Iris/ContactsSettings.swift:230
+#: macos/Iris/ContactsSettings.swift:238
 msgid ""
 "Add an email address or choose a suggested contact. You can paste several "
 "addresses at once."
@@ -6552,7 +6559,7 @@ msgstr ""
 "Aggiungi un indirizzo email o scegli un contatto suggerito. Puoi incollare "
 "più indirizzi insieme."
 
-#: macos/Iris/ContactsSettings.swift:241 macos/Iris/FilingView.swift:70
+#: macos/Iris/ContactsSettings.swift:249 macos/Iris/FilingView.swift:70
 #: macos/Iris/FilingView.swift:175 macos/Iris/HideMyEmailView.swift:39
 #: macos/Iris/RulesView.swift:200 macos/Iris/SidebarView.swift:158
 #: macos/Iris/SmartEditorView.swift:76 macos/Iris/TemplatesSettings.swift:119

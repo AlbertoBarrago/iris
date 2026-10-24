@@ -29,6 +29,14 @@ struct ContactsSettings: View {
                                 model.addAccount = AddAccountRequest(again: account.accountId)
                             }
                         }
+                        // An account signed in before Iris asked for
+                        // other contacts gets them by signing in again.
+                        if account.on && account.kind == "switch" && account.otherContactsNeedsAccess {
+                            Button(tr("Authorize other Google contacts for {account}")
+                                .replacingOccurrences(of: "{account}", with: account.email)) {
+                                model.addAccount = AddAccountRequest(again: account.accountId)
+                            }
+                        }
                     default:
                         Text(account.reason).font(.callout).foregroundStyle(.secondary)
                     }
@@ -50,7 +58,7 @@ struct ContactsSettings: View {
                 }
             }
             Section {
-                Text(tr("Iris can read an account's contacts: names, email addresses, photos, organizations, and phone numbers. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."))
+                Text(tr("Iris can read an account's contacts: names, email addresses, photos, organizations, and phone numbers. From a Google account it also reads the people Google keeps from your mail but you never saved. It uses them to suggest recipients, to show faces beside mail, and to fill the card behind a sender's name. What it reads stays on this computer, and turning an account off deletes its contacts."))
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

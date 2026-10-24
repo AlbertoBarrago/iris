@@ -52,6 +52,7 @@ pub struct ContactAccount {
     pub directory_needs_access: bool,
     pub directory_available: bool,
     pub directory_on: bool,
+    pub other_contacts_needs_access: bool,
 }
 
 /// One person as the contact card shows them.
@@ -265,7 +266,12 @@ impl Mail {
                         .as_ref()
                         .and_then(|s| s.contacts.as_ref())
                         .is_some_and(|s| s.directory_access() == Some(false));
+                let other_contacts_needs_access = services
+                    .as_ref()
+                    .and_then(|s| s.contacts.as_ref())
+                    .is_some_and(|s| s.other_contacts_access() == Some(false));
                 ContactAccount {
+                    other_contacts_needs_access,
                     directory_needs_access,
                     directory_available,
                     directory_on: settings.searches_directory(&account.email),

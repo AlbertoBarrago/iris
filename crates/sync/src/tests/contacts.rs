@@ -442,3 +442,182 @@ async fn save_without_the_permission_asks_for_it_and_writes_nothing() {
         .unwrap();
     assert_eq!(emails(&new), ["ana@example.pt"]);
 }
+
+#[tokio::test]
+async fn other_contacts_sync_independently_and_disappear_when_disabled() {
+    let h = harness().await;
+    let b = book(&h);
+    h.fake.with(|s| {
+        s.contacts = vec![person("people/c1", "Saved", &["saved@example.org"], None)];
+        s.other_contacts = (1..=3)
+            .map(|n| {
+                person(
+                    &format!("otherContacts/c{n}"),
+                    &format!("Other {n}"),
+                    &[&format!("other{n}@example.org")],
+                    Some("p/other"),
+                )
+            })
+            .collect();
+        s.photos.insert("p/other".into(), b"jpeg".to_vec());
+    });
+    b.book.refresh(h.account_id).await.unwrap();
+    assert_eq!(h.fake.with(|s| s.usage.calls_to("otherContacts.list")), 2);
+    let card = b.book.card("other1@example.org").await.unwrap().unwrap();
+    let photo = card.photo.unwrap();
+    assert!(photo.exists());
+    let new = b
+        .book
+        .new_recipients(h.account_id, &[to(None, "other1@example.org")])
+        .await
+        .unwrap();
+    assert_eq!(new.len(), 1, "other contacts can still be saved");
+    let id = h.account_id;
+    h.db.write(move |c| address_book::set_book(c, id, None, 0))
+        .await
+        .unwrap();
+    b.book.refresh(id).await.unwrap();
+    assert!(
+        b.book.card("other1@example.org").await.unwrap().is_some(),
+        "a saved-contact full refresh keeps other contacts"
+    );
+    h.fake.with(|s| {
+        s.expire_other_contact_tokens = true;
+        s.other_contacts.remove(0);
+    });
+    b.book.refresh(id).await.unwrap();
+    assert!(b.book.card("other1@example.org").await.unwrap().is_none());
+    assert!(
+        b.book.card("saved@example.org").await.unwrap().is_some(),
+        "an other-contact full refresh keeps saved contacts"
+    );
+    let kept_photo = b
+        .book
+        .card("other2@example.org")
+        .await
+        .unwrap()
+        .unwrap()
+        .photo
+        .unwrap();
+    b.book.forget(id).await.unwrap();
+    assert!(!kept_photo.exists());
+    assert!(h.db.read(address_book::list_all).await.unwrap().is_empty());
+    assert!(
+        h.db.read(move |c| address_book::other_book(c, id))
+            .await
+            .unwrap()
+            .is_none()
+    );
+}
+
+#[tokio::test]
+async fn missing_other_contacts_permission_does_not_block_saved_contacts() {
+    let h = harness().await;
+    let b = book(&h);
+    h.fake.withhold(mailrs_gmail::people::OTHER_CONTACTS_SCOPE);
+    h.fake.with(|s| {
+        s.contacts = vec![person("people/c1", "Saved", &["saved@example.org"], None)];
+        s.other_contacts = vec![person(
+            "otherContacts/c1",
+            "Other",
+            &["other@example.org"],
+            None,
+        )];
+    });
+    assert!(matches!(
+        b.book.refresh(h.account_id).await.unwrap(),
+        Permitted::Done(_)
+    ));
+    assert!(b.book.card("saved@example.org").await.unwrap().is_some());
+    assert!(b.book.card("other@example.org").await.unwrap().is_none());
+    assert_eq!(h.fake.with(|s| s.usage.calls_to("otherContacts.list")), 0);
+    h.fake.grant(mailrs_gmail::people::OTHER_CONTACTS_SCOPE);
+    b.book
+        .refresh_stale(&[h.account_id], crate::now_millis())
+        .await
+        .unwrap();
+    assert!(
+        b.book.card("other@example.org").await.unwrap().is_some(),
+        "new consent reads other contacts even while saved contacts are fresh"
+    );
+}
+
+#[tokio::test]
+async fn a_failed_other_contacts_page_keeps_the_previous_snapshot_and_token() {
+    let h = harness().await;
+    let b = book(&h);
+    h.fake.with(|s| {
+        s.other_contacts = vec![person(
+            "otherContacts/old",
+            "Old",
+            &["old@example.org"],
+            None,
+        )]
+    });
+    b.book.refresh(h.account_id).await.unwrap();
+    let id = h.account_id;
+    let before =
+        h.db.read(move |c| address_book::other_book(c, id))
+            .await
+            .unwrap();
+    h.fake.with(|s| {
+        s.expire_other_contact_tokens = true;
+        s.other_contacts = (1..=3)
+            .map(|n| {
+                person(
+                    &format!("otherContacts/c{n}"),
+                    "New",
+                    &[&format!("new{n}@example.org")],
+                    None,
+                )
+            })
+            .collect();
+    });
+    // The expired-token call and first full page succeed; the second page fails.
+    h.fake
+        .fail_call("otherContacts.list", 2, GmailError::MissingScope);
+    assert!(matches!(
+        b.book.refresh(id).await.unwrap(),
+        Permitted::Done(_)
+    ));
+    assert!(b.book.card("old@example.org").await.unwrap().is_some());
+    assert!(b.book.card("new1@example.org").await.unwrap().is_none());
+    assert_eq!(
+        h.db.read(move |c| address_book::other_book(c, id))
+            .await
+            .unwrap(),
+        before
+    );
+}
+
+#[tokio::test]
+async fn other_contacts_network_errors_leave_saved_contacts_usable() {
+    let h = harness().await;
+    let b = book(&h);
+    h.fake.with(|s| {
+        s.contacts = vec![person(
+            "people/c1",
+            "Saved",
+            &["saved@example.org"],
+            Some("p/saved"),
+        )]
+    });
+    h.fake.with(|s| {
+        s.photos.insert("p/saved".into(), b"jpeg".to_vec());
+    });
+    h.fake
+        .fail_call("otherContacts.list", 0, GmailError::NotFound);
+    assert!(matches!(
+        b.book.refresh(h.account_id).await.unwrap(),
+        Permitted::Done(_)
+    ));
+    assert!(
+        b.book
+            .card("saved@example.org")
+            .await
+            .unwrap()
+            .unwrap()
+            .photo
+            .is_some()
+    );
+}

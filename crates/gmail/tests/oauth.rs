@@ -43,7 +43,7 @@ fn authorize_url_carries_pkce_and_offline_access() {
     assert_eq!(q["client_id"], "cid");
     assert_eq!(q["redirect_uri"], "http://127.0.0.1:5000");
     assert_eq!(q["response_type"], "code");
-    assert_eq!(q["scope"], SIGN_IN_SCOPES.join(" "));
+    assert_eq!(q["scope"], client.consent_scopes().join(" "));
     assert_eq!(q["include_granted_scopes"], "true");
     assert_eq!(q["code_challenge"], pkce.challenge);
     assert_eq!(q["code_challenge_method"], "S256");
@@ -66,7 +66,13 @@ fn sign_in_asks_for_every_scope_at_once() {
         .into_owned()
         .collect::<HashMap<String, String>>()["scope"]
         .clone();
-    assert_eq!(scope, SIGN_IN_SCOPES.join(" "));
+    assert_eq!(scope, client.consent_scopes().join(" "));
+    assert!(
+        client
+            .consent_scopes()
+            .contains(&mailrs_gmail::people::OTHER_CONTACTS_SCOPE)
+    );
+    assert!(!SIGN_IN_SCOPES.contains(&mailrs_gmail::people::OTHER_CONTACTS_SCOPE));
     for asked in [DELETE_SCOPE, SETTINGS_SCOPE, CONTACTS_WRITE_SCOPE, CALENDAR_SCOPE] {
         assert!(scope.contains(asked), "{asked} missing from {scope}");
     }

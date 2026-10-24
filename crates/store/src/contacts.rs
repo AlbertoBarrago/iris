@@ -34,7 +34,7 @@ pub struct Suggestion {
     /// The file under the photo directory holding this person's photo.
     pub photo_file: Option<String>,
     /// The accounts whose address books hold this address, in id order.
-    /// Empty for someone known only from mail. Contacts rank first.
+    /// Empty for other contacts and people known only from mail. Saved contacts rank first.
     pub accounts: Vec<AccountId>,
     pub score: i64,
     pub last_seen: EpochMillis,
@@ -86,6 +86,31 @@ pub fn suggestions(conn: &Connection) -> Result<Vec<Suggestion>> {
             }
         }
     }
+    let mut other_addresses = HashSet::new();
+    for contact in address_book::list_source(conn, address_book::Source::Other)? {
+        for email in &contact.emails {
+            let key = email.trim().to_lowercase();
+            if key.is_empty() {
+                continue;
+            }
+            other_addresses.insert(key.clone());
+            let held = found.entry(key).or_insert_with(|| Suggestion {
+                name: contact.name.clone(),
+                email: email.clone(),
+                organization: None,
+                photo_file: contact.photo_file.clone(),
+                accounts: Vec::new(),
+                score: 0,
+                last_seen: 0,
+            });
+            if held.name.is_none() {
+                held.name = contact.name.clone();
+            }
+            if held.photo_file.is_none() {
+                held.photo_file = contact.photo_file.clone();
+            }
+        }
+    }
     for person in list_correspondents(conn)? {
         let key = person.email.trim().to_lowercase();
         match found.get_mut(&key) {
@@ -119,6 +144,15 @@ pub fn suggestions(conn: &Connection) -> Result<Vec<Suggestion>> {
     all.sort_by(|a, b| {
         b.known()
             .cmp(&a.known())
+            .then_with(|| {
+                if a.known() {
+                    std::cmp::Ordering::Equal
+                } else {
+                    other_addresses
+                        .contains(&b.email.to_lowercase())
+                        .cmp(&other_addresses.contains(&a.email.to_lowercase()))
+                }
+            })
             .then(b.score.cmp(&a.score))
             .then(b.last_seen.cmp(&a.last_seen))
             .then_with(|| a.email.cmp(&b.email))
@@ -265,6 +299,42 @@ mod tests {
         };
         set_label_ids(&mut meta, &[label.into()]);
         meta
+    }
+
+    #[test]
+    fn other_contacts_follow_saved_contacts_without_claiming_an_address_book() {
+        let conn = crate::open_in_memory().unwrap();
+        let id = crate::accounts::insert_account(&conn, "me@example.org", 0).unwrap();
+        let contact = |resource: &str, name: &str, email: &str| address_book::Contact {
+            account_id: id,
+            resource: resource.into(),
+            name: Some(name.into()),
+            emails: vec![email.into()],
+            ..Default::default()
+        };
+        address_book::save(
+            &conn,
+            &[contact("people/c1", "Zoe Saved", "zoe@example.org")],
+        )
+        .unwrap();
+        let mut duplicate = contact("otherContacts/c2", "Zoe Other", "zoe@example.org");
+        duplicate.photo_file = Some("zoe.jpg".into());
+        address_book::save_from(
+            &conn,
+            &[
+                duplicate,
+                contact("otherContacts/c1", "Ana", "ana@example.org"),
+            ],
+            address_book::Source::Other,
+        )
+        .unwrap();
+        let found = suggestions(&conn).unwrap();
+        assert_eq!(found.len(), 2);
+        assert_eq!(found[0].name.as_deref(), Some("Zoe Saved"));
+        assert_eq!(found[0].photo_file.as_deref(), Some("zoe.jpg"));
+        assert_eq!(found[0].accounts, [id]);
+        assert_eq!(found[1].email, "ana@example.org");
+        assert!(found[1].accounts.is_empty());
     }
 
     #[test]

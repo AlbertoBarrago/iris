@@ -892,6 +892,16 @@ CREATE TABLE contact_list_members (
 ALTER TABLE messages ADD COLUMN reaction TEXT;
 ALTER TABLE messages ADD COLUMN reaction_to TEXT;
 "#,
+    // Google's other contacts, the people it collected without the owner
+    // saving them, sit beside the saved ones with a change feed of their
+    // own. The source keeps the two apart, so a full read of one never
+    // drops the other and only saved contacts can be edited.
+    r#"
+ALTER TABLE contacts ADD COLUMN source TEXT NOT NULL DEFAULT 'saved'
+    CHECK (source IN ('saved', 'other'));
+ALTER TABLE contact_books ADD COLUMN other_sync_token TEXT;
+ALTER TABLE contact_books ADD COLUMN other_synced_at INTEGER;
+"#,
 ];
 
 /// How long the copy taken before a migration stays once the store has
@@ -1105,7 +1115,7 @@ fn contact_lists_migrate_an_existing_address_book_without_changing_it() {
 
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("mail.db");
-    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 3]).unwrap();
     let account = accounts::insert_account(&old, "me@example.org", 0).unwrap();
     let contact = address_book::Contact {
         account_id: account,
@@ -1114,7 +1124,15 @@ fn contact_lists_migrate_an_existing_address_book_without_changing_it() {
         emails: vec!["ana@example.org".into()],
         ..Default::default()
     };
-    address_book::save(&old, std::slice::from_ref(&contact)).unwrap();
+    // Written by hand: `address_book::save` writes the source column a
+    // later migration adds.
+    old.execute("INSERT INTO contacts (account_id, resource, name) VALUES (?1, 'people/ana', 'Ana')", [account])
+        .unwrap();
+    old.execute(
+        "INSERT INTO contact_addresses (account_id, resource, email, rank) VALUES (?1, 'people/ana', 'ana@example.org', 0)",
+        [account],
+    )
+    .unwrap();
     drop(old);
     let conn = open_connection(&path).unwrap();
     assert_eq!(schema_version(&conn).unwrap(), MIGRATIONS.len() as i64);
@@ -1139,7 +1157,7 @@ fn reactions_migrate_existing_messages_as_plain_ones() {
 
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("mail.db");
-    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 2]).unwrap();
     let account = accounts::insert_account(&old, "me@example.org", 0).unwrap();
     old.execute(
         "INSERT INTO messages (account_id, id, thread_id, rfc822_msgid, to_addrs, cc_addrs, subject, \
@@ -1152,4 +1170,34 @@ fn reactions_migrate_existing_messages_as_plain_ones() {
     let conn = open_connection(&path).unwrap();
     assert_eq!(schema_version(&conn).unwrap(), MIGRATIONS.len() as i64);
     assert!(messages::thread_reactions(&conn, account, "t").unwrap().is_empty());
+}
+
+#[test]
+fn other_contacts_migrate_saved_contacts_and_their_cursor_unchanged() {
+    use crate::{accounts, address_book};
+
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("mail.db");
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    let id = accounts::insert_account(&old, "me@example.org", 0).unwrap();
+    old.execute(
+        "INSERT INTO contacts (account_id, resource, name, photo_file) VALUES (?1, 'people/c1', 'Ana', 'ana.jpg')",
+        [id],
+    )
+    .unwrap();
+    old.execute(
+        "INSERT INTO contact_addresses (account_id, resource, email, rank) VALUES (?1, 'people/c1', 'ana@example.org', 0)",
+        [id],
+    )
+    .unwrap();
+    old.execute("INSERT INTO contact_books (account_id, sync_token, synced_at) VALUES (?1, 'saved-token', 12)", [id])
+        .unwrap();
+    drop(old);
+    let conn = open_connection(&path).unwrap();
+    let saved = address_book::list(&conn).unwrap();
+    assert_eq!(saved.len(), 1);
+    assert_eq!(saved[0].photo_file.as_deref(), Some("ana.jpg"));
+    assert!(address_book::holds(&conn, id, "ana@example.org").unwrap());
+    assert_eq!(address_book::book(&conn, id).unwrap(), Some((Some("saved-token".into()), 12)));
+    assert_eq!(address_book::other_book(&conn, id).unwrap(), None);
 }

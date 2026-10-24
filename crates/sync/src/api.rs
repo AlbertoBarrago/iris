@@ -200,6 +200,12 @@ pub trait GmailApi: Send + Sync + 'static {
         async { Ok(Vec::new()) }
     }
 
+    fn other_contacts(
+        &self,
+        page_token: Option<&str>,
+        sync_token: Option<&str>,
+    ) -> impl Future<Output = Result<ConnectionsPage, GmailError>> + Send;
+
     fn connections(
         &self,
         page_token: Option<&str>,
@@ -651,6 +657,14 @@ impl GmailApi for AccountClient {
 
     async fn directory_people(&self, query: &str) -> Result<Vec<Person>, GmailError> {
         self.client.directory_people(query).await
+    }
+
+    async fn other_contacts(
+        &self,
+        page_token: Option<&str>,
+        sync_token: Option<&str>,
+    ) -> Result<ConnectionsPage, GmailError> {
+        self.client.other_contacts(page_token, sync_token).await
     }
 
     async fn connections(

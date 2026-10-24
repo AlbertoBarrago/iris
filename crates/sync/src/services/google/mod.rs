@@ -670,6 +670,25 @@ impl<G: GmailApi> ContactsService for Google<G> {
         Ok(paced(self.gmail.connections(page_token, sync_token)).await?)
     }
 
+    fn other_contacts_access(&self) -> Option<bool> {
+        Some(
+            self.gmail
+                .granted()
+                .is_some_and(|g| g.has(mailrs_gmail::people::OTHER_CONTACTS_SCOPE)),
+        )
+    }
+
+    async fn other_contacts(
+        &self,
+        page_token: Option<&str>,
+        sync_token: Option<&str>,
+    ) -> Result<ConnectionsPage, BackendError> {
+        if self.other_contacts_access() != Some(true) {
+            return Err(BackendError::NeedsPermission);
+        }
+        Ok(paced(self.gmail.other_contacts(page_token, sync_token)).await?)
+    }
+
     async fn contact_photo(&self, url: &str) -> Result<Vec<u8>, BackendError> {
         Ok(paced(self.gmail.contact_photo(url)).await?)
     }

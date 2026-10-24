@@ -236,6 +236,8 @@ impl OAuthClient {
 
     pub fn consent_scopes(&self) -> Vec<&'static str> {
         let mut scopes = SIGN_IN_SCOPES.to_vec();
+        // Optional enrichment must not change the baseline used by permission banners.
+        scopes.push(crate::people::OTHER_CONTACTS_SCOPE);
         if self.directory {
             scopes.push(DIRECTORY_SCOPE);
         }

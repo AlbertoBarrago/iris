@@ -160,6 +160,12 @@ pub struct FakeState {
     /// The account's contacts, in the order the People API would list
     /// them. A fake with none answers an empty address book.
     pub contacts: Vec<Person>,
+    /// The people Google collected for the account without it saving
+    /// them, as the People API's other contacts list them.
+    pub other_contacts: Vec<Person>,
+    /// Answers every other-contacts sync token as expired, as Google does
+    /// once a token is a week old.
+    pub expire_other_contact_tokens: bool,
     /// Photo bytes by URL. A URL nobody seeded answers `NotFound`.
     pub photos: HashMap<String, Vec<u8>>,
     /// Each answer given on a calendar event by its id, oldest first: the
@@ -388,6 +394,8 @@ impl FakeGmail {
                 filters: Vec::new(),
                 filters_made: 0,
                 contacts: Vec::new(),
+                other_contacts: Vec::new(),
+                expire_other_contact_tokens: false,
                 photos: HashMap::new(),
                 answered_events: Vec::new(),
                 calendars: Vec::new(),
@@ -911,6 +919,11 @@ impl GmailApi for FakeGmail {
                 .collect();
             if s.withheld.contains(CALENDAR_LIST_WRITE_SCOPE) && !s.withheld.contains(CALENDAR_LIST_SCOPE) {
                 scopes.push(CALENDAR_LIST_SCOPE);
+            }
+            // Sign-in asks for other contacts beside the rest, so a
+            // fresh account holds them unless a test withholds them.
+            if !s.withheld.contains(mailrs_gmail::people::OTHER_CONTACTS_SCOPE) {
+                scopes.push(mailrs_gmail::people::OTHER_CONTACTS_SCOPE);
             }
             Granted::parse(&scopes.join(" "))
         }))
@@ -1888,6 +1901,33 @@ impl GmailApi for FakeGmail {
                 deleted: Vec::new(),
                 next_page_token: more.then(|| next.to_string()),
                 next_sync_token: (!more).then(|| format!("sync-{}", s.contacts.len())),
+            })
+        })
+    }
+
+    async fn other_contacts(
+        &self,
+        page_token: Option<&str>,
+        sync_token: Option<&str>,
+    ) -> Result<ConnectionsPage, GmailError> {
+        self.call("otherContacts.list", cost::CONNECTIONS).await?;
+        self.needs(mailrs_gmail::people::OTHER_CONTACTS_SCOPE)?;
+        if sync_token.is_some() && self.with(|s| s.expire_other_contact_tokens) {
+            return Err(GmailError::ExpiredSyncToken);
+        }
+        if let Some(token) = sync_token {
+            return Ok(ConnectionsPage { next_sync_token: Some(token.to_string()), ..ConnectionsPage::default() });
+        }
+        let from: usize = page_token.and_then(|t| t.parse().ok()).unwrap_or(0);
+        self.with(|s| {
+            let page: Vec<Person> = s.other_contacts.iter().skip(from).take(s.page_size).cloned().collect();
+            let next = from + page.len();
+            let more = next < s.other_contacts.len();
+            Ok(ConnectionsPage {
+                people: page,
+                deleted: Vec::new(),
+                next_page_token: more.then(|| next.to_string()),
+                next_sync_token: (!more).then(|| format!("other-sync-{}", s.other_contacts.len())),
             })
         })
     }
