@@ -480,6 +480,22 @@ pub struct MessageBody {
     /// before the field existed.
     #[serde(default)]
     pub reply_to: Vec<Address>,
+    /// The emoji this message answers another with, when it is a
+    /// reaction rather than a reply. `None` for a body stored before the
+    /// field existed.
+    #[serde(default)]
+    pub reaction: Option<Reaction>,
+}
+
+/// A message that answers another with one emoji: Gmail's
+/// `text/vnd.google.email-reaction+json` part, or RFC 9078's
+/// `Content-Disposition: reaction`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Reaction {
+    pub emoji: String,
+    /// The Message-ID it reacts to, from `In-Reply-To`, in angle brackets
+    /// as `MessageMeta::rfc822_msgid` keeps one.
+    pub to: String,
 }
 
 /// What a message arrived wrapped in: a signature beside the message, or

@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### New
+
+- An emoji reaction someone sends from Gmail shows under the message it
+  answers, with who reacted, instead of as a message of its own.
+
 ## 1.2.4 (2026-10-24)
 
 ### New

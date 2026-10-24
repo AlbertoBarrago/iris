@@ -127,7 +127,10 @@ fn text_paths(parts: &Parts) -> Vec<String> {
         .into_iter()
         .filter(|part| {
             let file = part.attachment || part.filename.is_some();
-            let text = (part.mime_type == "text/plain" || part.mime_type == "text/html") && !file;
+            let text = matches!(
+                part.mime_type.as_str(),
+                "text/plain" | "text/html" | mailrs_mime::reaction::GMAIL_REACTION
+            ) && !file;
             let calendar = part.mime_type == "text/calendar"
                 || (!has_calendar
                     && mailrs_mime::is_calendar(

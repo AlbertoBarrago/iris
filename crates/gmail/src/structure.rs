@@ -76,7 +76,8 @@ pub fn text_by_reference(payload: &MessagePart) -> Vec<(String, String)> {
                 .is_some_and(|d| d.trim_start().to_ascii_lowercase().starts_with("attachment"));
         let wanted = mime == "text/calendar"
             || (!has_text_calendar && mailrs_mime::is_calendar(&mime, &part.filename))
-            || ((mime == "text/plain" || mime == "text/html") && !is_file);
+            || ((mime == "text/plain" || mime == "text/html" || mime == mailrs_mime::reaction::GMAIL_REACTION)
+                && !is_file);
         if let (true, None, Some(handle)) = (wanted, &part.body.data, &part.body.attachment_id) {
             found.push((path_of(&part.part_id, multipart), handle.clone()));
         }
@@ -159,6 +160,9 @@ fn convert(part: &MessagePart, root_multipart: bool) -> Part {
         subject: forwarded_subject(part),
         attachment: find_header(part, "Content-Disposition")
             .is_some_and(|d| d.trim_start().to_ascii_lowercase().starts_with("attachment")),
+        reaction: find_header(part, "Content-Disposition")
+            .and_then(|d| d.split(';').next())
+            .is_some_and(|ty| ty.trim().eq_ignore_ascii_case("reaction")),
         size: data.as_ref().map_or(part.body.size, |d| d.len() as i64),
         data,
         children: match has_children(part) {

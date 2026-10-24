@@ -341,3 +341,42 @@ async fn opening_a_body_then_its_file_asks_gmail_once() {
     assert_eq!(h.sync.attachment("m1", &path).await.unwrap(), vec![1, 2, 3]);
     assert_eq!(h.fake.with(|s| (s.raw_fetches, s.structure_fetches)), (1, 0));
 }
+
+/// A reaction is only known once its body is read. Reading it puts the
+/// emoji on the message, which takes it out of the thread's count and
+/// gives the row its emoji.
+#[tokio::test]
+async fn reading_a_reaction_folds_it_into_the_thread() {
+    let h = harness().await;
+    let now = now_millis();
+    h.fake.seed(meta("a", "t1", now - 1000, &["INBOX"]));
+    h.fake.seed(meta("r", "t1", now, &["INBOX"]));
+    h.fake.with(|s| {
+        s.raws.insert(
+            "r".into(),
+            b"From: Bob <bob@example.com>\r\n\
+              To: me@example.com\r\n\
+              Subject: Re: Subject a\r\n\
+              In-Reply-To: <a@example.com>\r\n\
+              MIME-Version: 1.0\r\n\
+              Content-Type: multipart/alternative; boundary=b\r\n\
+              \r\n\
+              --b\r\n\
+              Content-Type: text/plain; charset=UTF-8\r\n\
+              \r\n\
+              Bob reacted\r\n\
+              --b\r\n\
+              Content-Type: text/vnd.google.email-reaction+json; charset=UTF-8\r\n\
+              \r\n\
+              {\"version\":1,\"emoji\":\"\xF0\x9F\x91\x8D\"}\r\n\
+              --b--\r\n"
+                .to_vec(),
+        );
+    });
+    h.bootstrap_all().await;
+    assert_eq!(h.thread("t1").await.unwrap().message_count, 2);
+    let body = h.sync.body("r").await.unwrap();
+    assert_eq!(body.reaction.map(|r| (r.emoji, r.to)), Some(("👍".into(), "<a@example.com>".into())));
+    let row = h.thread("t1").await.unwrap();
+    assert_eq!((row.message_count, row.snippet.as_str()), (1, "👍"));
+}

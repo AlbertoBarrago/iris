@@ -4,7 +4,7 @@
 //! its text parts alone. The rules treat both alike, so a body read either
 //! way lists the same texts, files and part paths.
 
-use mailrs_domain::{Attachment, MessageBody, Protection};
+use mailrs_domain::{Attachment, MessageBody, Protection, Reaction};
 
 use crate::charset::decode_charset;
 
@@ -42,6 +42,9 @@ pub struct Part {
     pub subject: Option<String>,
     /// `Content-Disposition: attachment`.
     pub attachment: bool,
+    /// `Content-Disposition: reaction`, RFC 9078's mark on a part that
+    /// holds an emoji answering the message `In-Reply-To` names.
+    pub reaction: bool,
     /// Decoded bytes, as the source counts them.
     pub size: i64,
     /// The bytes with the transfer encoding undone and the charset left
@@ -134,6 +137,14 @@ pub fn body(parts: &Parts) -> MessageBody {
         walk(start, &mut body, false);
     }
     drop_calendar_twin(&mut body);
+    // A reaction answers one message. Without it named, Gmail shows the
+    // message as a plain one, and so does the app.
+    if let Some(reaction) = body.reaction.as_mut() {
+        match parts.header("In-Reply-To").and_then(crate::reaction::answered) {
+            Some(to) => reaction.to = to,
+            None => body.reaction = None,
+        }
+    }
     body
 }
 
@@ -178,6 +189,16 @@ fn walk(part: &Part, body: &mut MessageBody, nested: bool) {
             content_id: part.content_id.clone(),
         });
         return;
+    }
+    if !nested && body.reaction.is_none() {
+        let emoji = match part.mime_type.as_str() {
+            crate::reaction::GMAIL_REACTION => text(part).and_then(|json| crate::reaction::from_gmail_part(&json)),
+            "text/plain" if part.reaction => text(part).and_then(|t| crate::reaction::one_emoji(&t)),
+            _ => None,
+        };
+        // The Message-ID it answers comes from the headers, which `body`
+        // reads once the walk is done.
+        body.reaction = emoji.map(|emoji| Reaction { emoji, to: String::new() });
     }
     match part.mime_type.as_str() {
         _ if nested => {}

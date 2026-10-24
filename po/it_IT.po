@@ -4138,7 +4138,7 @@ msgstr ""
 "Una versione più recente di Iris ha aggiornato la tua posta dopo l'ultima "
 "volta che hai usato questa. Aggiorna Iris per aprirla."
 
-#: crates/ffi/src/lib.rs:359
+#: crates/ffi/src/lib.rs:381
 msgid "Unknown sender"
 msgstr "Mittente sconosciuto"
 
@@ -4625,139 +4625,147 @@ msgstr "Nessuna risposta"
 msgid "{time} {city}"
 msgstr "{time} {city}"
 
-#: crates/render/src/conversation.rs:195
+#: crates/render/src/conversation.rs:268
 msgid "{count} message"
 msgid_plural "{count} messages"
 msgstr[0] "{count} messaggio"
 msgstr[1] "{count} messaggi"
 
-#: crates/render/src/conversation.rs:203
+#: crates/render/src/conversation.rs:276
 msgid "Summarize"
 msgstr "Riassumi"
 
-#: crates/render/src/conversation.rs:257
+#: crates/render/src/conversation.rs:330
 msgid "Show or hide this message"
 msgstr "Mostra o nascondi questo messaggio"
 
-#: crates/render/src/conversation.rs:259
+#: crates/render/src/conversation.rs:332
 msgid "Contact"
 msgstr "Contatto"
 
-#: crates/render/src/conversation.rs:264
+#: crates/render/src/conversation.rs:337
 msgid "Contact card for {person}"
 msgstr "Scheda contatto di {person}"
 
-#: crates/render/src/conversation.rs:303
+#: crates/render/src/conversation.rs:376
 msgid "Reply All"
 msgstr "Rispondi a tutti"
 
-#: crates/render/src/conversation.rs:304
+#: crates/render/src/conversation.rs:377
 msgid "Forward"
 msgstr "Inoltra"
 
-#: crates/render/src/conversation.rs:340
+#: crates/render/src/conversation.rs:414
 msgid "Invitation"
 msgstr "Invito"
 
-#: crates/render/src/conversation.rs:353
+#: crates/render/src/conversation.rs:430
+msgid "Reactions"
+msgstr "Reazioni"
+
+#: crates/render/src/conversation.rs:434
+msgid "{emoji} from {people}"
+msgstr "{emoji} da {people}"
+
+#: crates/render/src/conversation.rs:455
 msgid "Loading…"
 msgstr "Caricamento…"
 
-#: crates/render/src/conversation.rs:358
+#: crates/render/src/conversation.rs:460
 msgid "This message could not be loaded: {reason}"
 msgstr "Impossibile caricare questo messaggio: {reason}"
 
-#: crates/render/src/conversation.rs:408
+#: crates/render/src/conversation.rs:510
 msgid "Details"
 msgstr "Dettagli"
 
-#: crates/render/src/conversation.rs:429
+#: crates/render/src/conversation.rs:531
 msgid "from"
 msgstr "da"
 
-#: crates/render/src/conversation.rs:440
+#: crates/render/src/conversation.rs:542
 msgid "to"
 msgstr "a"
 
-#: crates/render/src/conversation.rs:442
+#: crates/render/src/conversation.rs:544
 msgid "cc"
 msgstr "cc"
 
-#: crates/render/src/conversation.rs:444
+#: crates/render/src/conversation.rs:546
 msgid "date"
 msgstr "data"
 
-#: crates/render/src/conversation.rs:445
+#: crates/render/src/conversation.rs:547
 msgid "subject"
 msgstr "oggetto"
 
-#: crates/render/src/conversation.rs:447
+#: crates/render/src/conversation.rs:549
 msgid "mailed-by"
 msgstr "inviato da"
 
-#: crates/render/src/conversation.rs:450
+#: crates/render/src/conversation.rs:552
 msgid "signed-by"
 msgstr "firmato da"
 
-#: crates/render/src/conversation.rs:454
+#: crates/render/src/conversation.rs:556
 msgid "security"
 msgstr "sicurezza"
 
-#: crates/render/src/conversation.rs:456
+#: crates/render/src/conversation.rs:558
 msgid "Standard encryption (TLS)"
 msgstr "Crittografia standard (TLS)"
 
-#: crates/render/src/conversation.rs:461
+#: crates/render/src/conversation.rs:563
 msgid "Not encrypted in transit"
 msgstr "Non cifrato durante il transito"
 
-#: crates/render/src/conversation.rs:498
+#: crates/render/src/conversation.rs:600
 msgid "{count} attachment"
 msgid_plural "{count} attachments"
 msgstr[0] "{count} allegato"
 msgstr[1] "{count} allegati"
 
-#: crates/render/src/conversation.rs:530
+#: crates/render/src/conversation.rs:632
 msgid "Quick Look"
 msgstr "Quick Look"
 
-#: crates/render/src/conversation.rs:531
+#: crates/render/src/conversation.rs:633
 msgid "Save to Downloads"
 msgstr "Salva in Download"
 
-#: crates/render/src/conversation.rs:533
+#: crates/render/src/conversation.rs:635
 msgid "Open {file}, {size}"
 msgstr "Apri {file}, {size}"
 
-#: crates/render/src/conversation.rs:540
+#: crates/render/src/conversation.rs:642
 msgid "Save {file} to Downloads"
 msgstr "Salva {file} in Download"
 
-#: crates/render/src/conversation.rs:547
+#: crates/render/src/conversation.rs:649
 msgid "Save All ({count})"
 msgid_plural "Save All ({count})"
 msgstr[0] "Salva tutto ({count})"
 msgstr[1] "Salva tutti ({count})"
 
-#: crates/render/src/conversation.rs:558
+#: crates/render/src/conversation.rs:660
 msgid "Save every attachment to a folder"
 msgstr "Salva tutti gli allegati in una cartella"
 
-#: crates/render/src/conversation.rs:622
+#: crates/render/src/conversation.rs:724
 msgid "undisclosed recipients"
 msgstr "destinatari nascosti"
 
-#: crates/render/src/conversation.rs:625
+#: crates/render/src/conversation.rs:727
 msgid "{named}, and {count} other"
 msgid_plural "{named}, and {count} others"
 msgstr[0] "{named} e {count} altro"
 msgstr[1] "{named} e altri {count}"
 
-#: crates/render/src/conversation.rs:638
+#: crates/render/src/conversation.rs:740
 msgid "me"
 msgstr "me"
 
-#: crates/render/src/conversation.rs:648
+#: crates/render/src/conversation.rs:750
 msgid "Show trimmed content"
 msgstr "Mostra il contenuto tagliato"
 
@@ -8433,9 +8441,6 @@ msgstr "Rimuovi contrassegno"
 
 #~ msgid "Elsewhere"
 #~ msgstr "Altrove"
-
-#~ msgid "{date}, working from {place}"
-#~ msgstr "{date}, lavoro da {place}"
 
 #~ msgid "{kind}. Declines new meetings."
 #~ msgstr "{kind}. Rifiuta le nuove riunioni."

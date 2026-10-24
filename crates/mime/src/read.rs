@@ -146,6 +146,7 @@ impl Skim {
             filename: part.attachment_name().map(str::to_string),
             content_id: part.content_id().map(content_id),
             attachment: part.content_disposition().is_some_and(|d| d.is_attachment()),
+            reaction: part.content_disposition().is_some_and(|d| d.ctype().eq_ignore_ascii_case("reaction")),
             ..Part::default()
         };
         if skimmed.mime_type.starts_with("multipart/") {
@@ -163,7 +164,8 @@ impl Skim {
         } else {
             let name = skimmed.filename.as_deref().unwrap_or_default();
             let wanted = (is_readable(&skimmed.mime_type) && !is_attachment(&skimmed))
-                || is_calendar(&skimmed.mime_type, name);
+                || is_calendar(&skimmed.mime_type, name)
+                || skimmed.mime_type == crate::reaction::GMAIL_REACTION;
             if wanted {
                 skimmed.data = undo_transfer_encoding(encoding, body);
                 skimmed.size = skimmed.data.as_ref().map_or(0, |d| d.len() as i64);
@@ -362,6 +364,7 @@ fn convert(message: &Message, raw: &[u8], id: u32, path: String, depth: usize) -
         content_id: part.content_id().map(content_id),
         subject: None,
         attachment: part.content_disposition().is_some_and(|d| d.is_attachment()),
+        reaction: part.content_disposition().is_some_and(|d| d.ctype().eq_ignore_ascii_case("reaction")),
         size: data.as_ref().map_or(0, |d| d.len() as i64),
         data,
         children,

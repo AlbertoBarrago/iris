@@ -624,6 +624,33 @@ pub fn thread_messages(
         .collect()
 }
 
+/// A message of a thread that answers another with an emoji.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ThreadReaction {
+    pub message_id: String,
+    pub emoji: String,
+    /// The Message-ID it answers, in angle brackets.
+    pub to: String,
+}
+
+/// The reactions among a thread's messages whose bodies have been read,
+/// oldest first.
+pub fn thread_reactions(
+    conn: &Connection,
+    account_id: AccountId,
+    thread_id: &str,
+) -> Result<Vec<ThreadReaction>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT id, reaction, reaction_to FROM messages \
+         WHERE account_id = ?1 AND thread_id = ?2 AND reaction IS NOT NULL AND reaction_to IS NOT NULL \
+         ORDER BY date ASC, id",
+    )?;
+    let rows = stmt.query_map(params![account_id, thread_id], |row| {
+        Ok(ThreadReaction { message_id: row.get(0)?, emoji: row.get(1)?, to: row.get(2)? })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
 /// Each message's memberships, from `(message id, kind, value)` rows,
 /// where kind is `m` for a mailbox, `k` for a keyword and `c` for a
 /// category.
@@ -836,13 +863,19 @@ pub(crate) fn refresh_thread(
     account_id: AccountId,
     thread_id: &str,
 ) -> Result<()> {
-    let (count, last, has_attachments): (i64, Option<i64>, Option<bool>) = conn
+    // A reaction to a message of the same thread shows on that message,
+    // so the row does not count it as one of its own.
+    let (count, shown, last, has_attachments): (i64, i64, Option<i64>, Option<bool>) = conn
         .prepare_cached(
-            "SELECT COUNT(*), MAX(date), MAX(has_attachments) FROM messages \
-             WHERE account_id = ?1 AND thread_id = ?2",
+            "SELECT COUNT(*), \
+             SUM(m.reaction IS NULL OR NOT EXISTS (SELECT 1 FROM messages t \
+                 WHERE t.account_id = m.account_id AND t.thread_id = m.thread_id \
+                 AND t.rfc822_msgid = m.reaction_to)), \
+             MAX(m.date), MAX(m.has_attachments) FROM messages m \
+             WHERE m.account_id = ?1 AND m.thread_id = ?2",
         )?
         .query_row(params![account_id, thread_id], |row| {
-            Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+            Ok((row.get(0)?, row.get::<_, Option<i64>>(1)?.unwrap_or(0), row.get(2)?, row.get(3)?))
         })?;
     if count == 0 {
         conn.execute(
@@ -859,7 +892,9 @@ pub(crate) fn refresh_thread(
         .query_row(params![account_id, thread_id], |row| row.get(0))?;
     let (snippet, from, from_email): (String, String, String) = conn
         .prepare_cached(
-            "SELECT snippet, COALESCE(from_name, from_addr, ''), COALESCE(from_addr, '') \
+            // A reaction's own text is a fallback for clients that do not
+            // know reactions, so the row shows its emoji beside the name.
+            "SELECT COALESCE(reaction, snippet), COALESCE(from_name, from_addr, ''), COALESCE(from_addr, '') \
              FROM messages WHERE account_id = ?1 AND thread_id = ?2 \
              ORDER BY date DESC, id DESC LIMIT 1",
         )?
@@ -905,7 +940,7 @@ pub(crate) fn refresh_thread(
         subject,
         snippet,
         from,
-        count,
+        shown,
         unread,
         starred,
         has_attachments.unwrap_or(false),

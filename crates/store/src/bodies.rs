@@ -1,9 +1,32 @@
 //! Message bodies, cached separately from metadata and evicted least recently read first.
 
-use mailrs_domain::{AccountId, Attachment, EpochMillis, MessageBody, Protection};
+use mailrs_domain::{AccountId, Attachment, EpochMillis, MessageBody, Protection, Reaction};
 use rusqlite::{Connection, OptionalExtension, params};
 
 use crate::Result;
+
+/// Records on the message whether its body is a reaction, and redoes its
+/// thread's row when that changed, since a reaction neither counts as a
+/// message there nor gives the row its text.
+fn keep_reaction(
+    conn: &Connection,
+    account_id: AccountId,
+    message_id: &str,
+    reaction: Option<&Reaction>,
+) -> Result<()> {
+    let (emoji, to) = (reaction.map(|r| r.emoji.as_str()), reaction.map(|r| r.to.as_str()));
+    let changed = conn.execute(
+        "UPDATE messages SET reaction = ?3, reaction_to = ?4 \
+         WHERE account_id = ?1 AND id = ?2 AND (reaction IS NOT ?3 OR reaction_to IS NOT ?4)",
+        params![account_id, message_id, emoji, to],
+    )?;
+    if changed > 0
+        && let Some(thread_id) = crate::messages::thread_id_of(conn, account_id, message_id)?
+    {
+        crate::messages::refresh_thread(conn, account_id, &thread_id)?;
+    }
+    Ok(())
+}
 
 /// Stores a body and its attachment list. The message must already be stored.
 pub fn put_body(
@@ -46,6 +69,7 @@ pub fn put_body(
                 .flatten()
         ],
     )?;
+    keep_reaction(conn, account_id, message_id, body.reaction.as_ref())?;
     conn.execute(
         "DELETE FROM attachments WHERE account_id = ?1 AND message_id = ?2",
         params![account_id, message_id],
@@ -151,6 +175,14 @@ pub fn peek_body(
             })
         })?
         .collect::<rusqlite::Result<Vec<_>>>()?;
+    let reaction = conn
+        .query_row(
+            "SELECT reaction, reaction_to FROM messages WHERE account_id = ?1 AND id = ?2",
+            params![account_id, message_id],
+            |row| Ok((row.get::<_, Option<String>>(0)?, row.get::<_, Option<String>>(1)?)),
+        )
+        .optional()?
+        .and_then(|(emoji, to)| Some(Reaction { emoji: emoji?, to: to? }));
     Ok(Some(MessageBody {
         html,
         text,
@@ -165,6 +197,7 @@ pub fn peek_body(
         reply_to: reply_to
             .and_then(|stored| serde_json::from_str(&stored).ok())
             .unwrap_or_default(),
+        reaction,
     }))
 }
 

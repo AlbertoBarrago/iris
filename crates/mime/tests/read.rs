@@ -408,6 +408,7 @@ fn a_file_without_its_bytes_is_still_listed() {
         content_id: None,
         subject: None,
         attachment: false,
+        reaction: false,
         size: 0,
         data: None,
         children: vec![],
@@ -712,4 +713,71 @@ fn a_part_fetched_on_its_own_decodes_by_its_transfer_encoding() {
     );
     assert_eq!(undo_transfer_encoding(None, b"as is").as_deref(), Some(&b"as is"[..]));
     assert_eq!(undo_transfer_encoding(Some("base64"), b"!!!!"), None);
+}
+
+/// A reaction as Gmail sends one: plain text, the reaction part, then
+/// HTML, answering the message `In-Reply-To` names.
+fn gmail_reaction(json: &str, in_reply_to: &str) -> String {
+    format!(
+        "From: Mario <mario@example.com>\r\n\
+         To: me@example.com\r\n\
+         Subject: Re: Plans\r\n\
+         Message-ID: <r1@example.com>\r\n\
+         {in_reply_to}\
+         MIME-Version: 1.0\r\n\
+         Content-Type: multipart/alternative; boundary=b\r\n\
+         \r\n\
+         --b\r\n\
+         Content-Type: text/plain; charset=UTF-8\r\n\
+         \r\n\
+         Mario reacted via Gmail\r\n\
+         --b\r\n\
+         Content-Type: text/vnd.google.email-reaction+json; charset=UTF-8\r\n\
+         \r\n\
+         {json}\r\n\
+         --b\r\n\
+         Content-Type: text/html; charset=UTF-8\r\n\
+         \r\n\
+         <p>Mario reacted via Gmail</p>\r\n\
+         --b--\r\n"
+    )
+}
+
+#[test]
+fn a_gmail_reaction_names_its_emoji_and_the_message_it_answers() {
+    let raw = gmail_reaction(r#"{"version":1,"emoji":"👍"}"#, "In-Reply-To: <plans@example.com>\r\n");
+    let body = read(raw.as_bytes());
+    let reaction = body.reaction.expect("a reaction");
+    assert_eq!(reaction.emoji, "👍");
+    assert_eq!(reaction.to, "<plans@example.com>");
+    // The fallback stays the body, for when the message it answers is not
+    // in the conversation.
+    assert_eq!(body.text.as_deref().map(str::trim), Some("Mario reacted via Gmail"));
+}
+
+#[test]
+fn a_reaction_gmail_would_refuse_is_a_plain_message() {
+    let answered = "In-Reply-To: <plans@example.com>\r\n";
+    for json in [r#"{"version":2,"emoji":"👍"}"#, r#"{"version":1,"emoji":"👍👍"}"#, "{"] {
+        assert_eq!(read(gmail_reaction(json, answered).as_bytes()).reaction, None, "{json}");
+    }
+    let unanswered = gmail_reaction(r#"{"version":1,"emoji":"👍"}"#, "");
+    assert_eq!(read(unanswered.as_bytes()).reaction, None);
+}
+
+#[test]
+fn an_rfc_9078_reaction_is_read_from_its_disposition() {
+    let raw = "From: Ada <ada@example.com>\r\n\
+               To: me@example.com\r\n\
+               Subject: Re: Plans\r\n\
+               In-Reply-To: <plans@example.com>\r\n\
+               MIME-Version: 1.0\r\n\
+               Content-Type: text/plain; charset=utf-8\r\n\
+               Content-Disposition: reaction\r\n\
+               \r\n\
+               \u{1F389}\r\n";
+    let body = read(raw.as_bytes());
+    assert_eq!(body.reaction.map(|r| r.emoji).as_deref(), Some("🎉"));
+    let plain = raw.replace("Content-Disposition: reaction\r\n", "");
+    assert_eq!(read(plain.as_bytes()).reaction, None);
 }

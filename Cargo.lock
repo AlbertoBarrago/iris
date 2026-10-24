@@ -2271,6 +2271,7 @@ dependencies = [
  "html5ever",
  "mail-parser",
  "mailrs-domain",
+ "serde_json",
 ]
 
 [[package]]

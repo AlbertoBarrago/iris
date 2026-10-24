@@ -1,7 +1,7 @@
 mod common;
 
 use common::{db, meta, store};
-use mailrs_domain::{Address, Attachment, MessageBody, Protection, Provenance};
+use mailrs_domain::{Address, Attachment, MessageBody, Protection, Provenance, Reaction};
 use mailrs_store::messages::Change;
 use mailrs_store::{bodies, messages};
 
@@ -30,6 +30,7 @@ fn body(text: &str) -> MessageBody {
             name: Some("The list".into()),
             email: "list@news.example".into(),
         }],
+        reaction: None,
     }
 }
 
@@ -152,4 +153,47 @@ fn recorded_reads_only_move_access_times_forward() {
     assert_eq!(bodies::evict_bodies(&conn, 15).unwrap(), 1);
     assert!(bodies::peek_body(&conn, id, "a").unwrap().is_some());
     assert!(bodies::peek_body(&conn, id, "b").unwrap().is_none());
+}
+
+/// A reaction to the first message: it outlives its cached body, does not
+/// count as a message of the thread, and gives the row its emoji.
+#[test]
+fn a_reaction_folds_into_the_message_it_answers() {
+    use mailrs_store::{messages::ThreadReaction, threads};
+
+    let (conn, id) = db();
+    store(&conn, &[meta(id, "a", "t1", 100, &["INBOX"]), meta(id, "r", "t1", 200, &["INBOX"])]);
+    assert_eq!(threads::get_thread(&conn, id, "t1").unwrap().unwrap().message_count, 2);
+    let reaction = MessageBody {
+        text: Some("Mario reacted via Gmail".into()),
+        reaction: Some(Reaction { emoji: "👍".into(), to: "<a@example.com>".into() }),
+        ..MessageBody::default()
+    };
+    bodies::put_body(&conn, id, "r", &reaction, 1).unwrap();
+    let row = threads::get_thread(&conn, id, "t1").unwrap().unwrap();
+    assert_eq!((row.message_count, row.snippet.as_str()), (1, "👍"));
+    assert_eq!(
+        messages::thread_reactions(&conn, id, "t1").unwrap(),
+        vec![ThreadReaction { message_id: "r".into(), emoji: "👍".into(), to: "<a@example.com>".into() }]
+    );
+    assert_eq!(bodies::get_body(&conn, id, "r", 2).unwrap().unwrap().reaction, reaction.reaction);
+    // Evicting every body leaves the reaction on the message.
+    bodies::evict_bodies(&conn, 0).unwrap();
+    assert_eq!(messages::thread_reactions(&conn, id, "t1").unwrap().len(), 1);
+}
+
+/// A reaction to a message the thread does not hold stays a message of
+/// its own, as Gmail shows it.
+#[test]
+fn a_reaction_to_a_message_elsewhere_still_counts() {
+    use mailrs_store::threads;
+
+    let (conn, id) = db();
+    store(&conn, &[meta(id, "a", "t1", 100, &["INBOX"]), meta(id, "r", "t1", 200, &["INBOX"])]);
+    let reaction = MessageBody {
+        reaction: Some(Reaction { emoji: "🎉".into(), to: "<gone@example.com>".into() }),
+        ..MessageBody::default()
+    };
+    bodies::put_body(&conn, id, "r", &reaction, 1).unwrap();
+    assert_eq!(threads::get_thread(&conn, id, "t1").unwrap().unwrap().message_count, 2);
 }

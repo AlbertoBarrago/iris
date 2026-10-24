@@ -53,6 +53,79 @@ pub struct MessageView<'a> {
     /// article then keeps an empty place between the header and the body,
     /// which the card, a widget of the window, is laid over.
     pub event_slot: bool,
+    /// The emoji other messages of the thread answered this one with,
+    /// drawn under its header. See [`fold_reactions`].
+    pub reactions: &'a [ReactionChip],
+}
+
+/// One emoji under a message, and who answered with it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReactionChip {
+    pub emoji: String,
+    /// Each person once, in the order they reacted. The account's own
+    /// address reads as "You".
+    pub people: Vec<String>,
+    /// Whether one of the reactions came from an account of the app's own.
+    pub mine: bool,
+}
+
+/// A reaction among a thread's messages: its own id, its emoji, and the
+/// Message-ID it answers.
+pub struct Reacted<'a> {
+    pub message_id: &'a str,
+    pub emoji: &'a str,
+    pub to: &'a str,
+}
+
+/// What reactions do to a thread's page.
+#[derive(Debug, Default, PartialEq, Eq)]
+pub struct Folded {
+    /// The reactions drawn on the message they answer, which then get no
+    /// article of their own.
+    pub hidden: std::collections::HashSet<String>,
+    /// By the id of the message answered, its chips in the order their
+    /// emoji first arrived.
+    pub chips: HashMap<String, Vec<ReactionChip>>,
+}
+
+/// Puts each reaction on the message it answers, when that message is in
+/// `metas`. A reaction to one that is not stays a message of its own, as
+/// Gmail shows it.
+pub fn fold_reactions(metas: &[MessageMeta], reactions: &[Reacted], me: &[String]) -> Folded {
+    let by_msgid: HashMap<&str, &str> = metas
+        .iter()
+        .filter_map(|m| Some((m.rfc822_msgid.as_deref()?.trim(), m.id.as_str())))
+        .collect();
+    let by_id: HashMap<&str, &MessageMeta> = metas.iter().map(|m| (m.id.as_str(), m)).collect();
+    let mut folded = Folded::default();
+    let mut seen: std::collections::HashSet<(String, String, String)> = Default::default();
+    for reaction in reactions {
+        let (Some(target), Some(meta)) = (by_msgid.get(reaction.to.trim()), by_id.get(reaction.message_id))
+        else {
+            continue;
+        };
+        folded.hidden.insert(reaction.message_id.to_string());
+        let address = meta.from.as_ref().map(|a| a.email.to_lowercase()).unwrap_or_default();
+        // One person answering with the same emoji twice counts once.
+        if !seen.insert((target.to_string(), reaction.emoji.to_string(), address.clone())) {
+            continue;
+        }
+        let mine = me.iter().any(|m| m.eq_ignore_ascii_case(&address));
+        let person = match (&meta.from, mine) {
+            (_, true) => gettext("You"),
+            (Some(from), false) => from.display().to_string(),
+            (None, false) => gettext("Unknown sender"),
+        };
+        let chips = folded.chips.entry(target.to_string()).or_default();
+        match chips.iter_mut().find(|c| c.emoji == reaction.emoji) {
+            Some(chip) => {
+                chip.people.push(person);
+                chip.mine |= mine;
+            }
+            None => chips.push(ReactionChip { emoji: reaction.emoji.to_string(), people: vec![person], mine }),
+        }
+    }
+    folded
 }
 
 /// A body's cleaned HTML, and whether it chooses its own colours. Mail
@@ -321,6 +394,7 @@ fn render_message(
         "<span class=\"line snippet\">{}</span></div>",
         escape(&meta.snippet)
     );
+    render_reactions(html, view.reactions);
     // The body and its files live in one fold, which is what the expand
     // animation grows and shrinks. A collapsed message keeps them in the
     // page at zero height rather than dropping them, so the two states
@@ -342,6 +416,34 @@ fn render_message(
     }
     render_body(html, view);
     html.push_str("</div></div></article>");
+}
+
+/// The chips under a message's header, outside its fold, so a closed
+/// message shows them too.
+fn render_reactions(html: &mut String, chips: &[ReactionChip]) {
+    if chips.is_empty() {
+        return;
+    }
+    let _ = write!(
+        html,
+        "<div class=\"reactions\" role=\"list\" aria-label=\"{}\">",
+        escape(&gettext("Reactions"))
+    );
+    for chip in chips {
+        let people = chip.people.join(", ");
+        let said = fill(&gettext("{emoji} from {people}"), &[("emoji", &chip.emoji), ("people", &people)]);
+        let _ = write!(
+            html,
+            "<span class=\"reaction{mine}\" role=\"listitem\" title=\"{people}\" aria-label=\"{said}\">\
+             <span aria-hidden=\"true\">{emoji}</span><span class=\"count\" aria-hidden=\"true\">{count}</span></span>",
+            mine = if chip.mine { " mine" } else { "" },
+            people = escape(&people),
+            said = escape(&said),
+            emoji = escape(&chip.emoji),
+            count = chip.people.len(),
+        );
+    }
+    html.push_str("</div>");
 }
 
 fn render_body(html: &mut String, view: &MessageView) {
@@ -868,6 +970,12 @@ column-gap:12px;align-items:center;color:inherit}}\
 .message:hover .act{{opacity:.8}}\
 .act:hover,.act:focus-visible{{opacity:1;background:var(--accent)}}\
 @media print{{.acts{{display:none}}}}\
+.reactions{{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 52px}}\
+.reaction{{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;\
+background:var(--card);font-size:14px;line-height:22px;cursor:default}}\
+.reaction .count{{font-size:12px;font-weight:700;color:var(--dim)}}\
+.reaction.mine{{background:color-mix(in srgb,var(--accent) 16%,var(--bg));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent)}}\
+.reaction.mine .count{{color:var(--accent-text)}}\
 .chev{{grid-column:4;grid-row:1;width:16px;height:16px;margin-right:-6px;background:var(--dim);opacity:0;\
 -webkit-mask:url(\"{CHEV}\") center/14px no-repeat;\
 transition:transform 200ms cubic-bezier(0.23,1,0.32,1),opacity 120ms ease}}\
@@ -946,7 +1054,7 @@ color:inherit;text-decoration:none;min-width:0}}\
 .thumb{{width:32px;height:32px;flex:none;border-radius:5px;object-fit:cover;background:var(--card)}}\
 .clip{{width:16px;height:16px;flex:none;background:var(--dim);-webkit-mask:url(\"{CLIP}\") center/contain no-repeat}}\
 @media (max-width:{PAGE_NARROW}px){{body{{padding:18px {PAGE_NARROW_SIDE}px 40px}}.body,.attachments{{margin-left:0}}.thread h1{{font-size:20px}}\
-.address{{display:none}}.message{{padding:14px 8px 16px;margin:0 -8px}}.chev{{display:none}}}}",
+.address{{display:none}}.reactions{{margin-left:0}}.message{{padding:14px 8px 16px;margin:0 -8px}}.chev{{display:none}}}}",
         fold = FOLD_MS,
         trimmed = TRIMMED_CSS,
         scheme = if theme.dark { "dark" } else { "light" },
@@ -1164,6 +1272,7 @@ mod tests {
                 expanded: false,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1185,6 +1294,7 @@ mod tests {
             thumbnails: &no_thumbs,
             // Both fixtures are already clean.
             event_slot: false,
+            reactions: &[],
             sanitized: body.html.as_deref().map(|html| Sanitized {
                 html,
                 paints,
@@ -1236,6 +1346,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1290,6 +1401,7 @@ mod tests {
             expanded: false,
             thumbnails: &no_thumbs,
             event_slot: false,
+            reactions: &[],
             sanitized: None,
         };
         let initials = page("Hi", vec![view()]);
@@ -1332,6 +1444,7 @@ mod tests {
                     expanded: false,
                     thumbnails: &no_thumbs,
                     event_slot: false,
+                    reactions: &[],
                     sanitized: None,
                 },
                 MessageView {
@@ -1340,6 +1453,7 @@ mod tests {
                     expanded: true,
                     thumbnails: &no_thumbs,
                     event_slot: false,
+                    reactions: &[],
                     sanitized: None,
                 },
             ],
@@ -1399,6 +1513,7 @@ mod tests {
             thumbnails: &no_thumbs,
             sanitized: None,
             event_slot,
+            reactions: &[],
         };
         let html = page("Hello", vec![view(&first, false), view(&second, true)]);
         assert_eq!(html.matches("class=\"event-slot\"").count(), 1);
@@ -1434,6 +1549,7 @@ mod tests {
                 thumbnails: &no_thumbs,
                 sanitized: None,
                 event_slot: true,
+                reactions: &[],
             }],
         );
         assert!(html.contains(
@@ -1457,6 +1573,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: Some(Sanitized {
                     html: "<p>Hi</p>",
                     paints: false,
@@ -1504,6 +1621,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1546,6 +1664,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1591,6 +1710,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1629,6 +1749,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1656,6 +1777,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1684,6 +1806,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1711,6 +1834,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1738,6 +1862,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1770,6 +1895,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1801,6 +1927,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1819,6 +1946,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1831,6 +1959,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -1873,6 +2002,7 @@ mod tests {
                 expanded: true,
                 thumbnails: &no_thumbs,
                 event_slot: false,
+                reactions: &[],
                 sanitized: None,
             }],
         );
@@ -2002,6 +2132,7 @@ mod tests {
                 thumbnails: &thumbs,
                 sanitized: None,
                 event_slot: false,
+                reactions: &[],
             }],
         );
         assert!(
@@ -2011,5 +2142,71 @@ mod tests {
             ),
             "{html}"
         );
+    }
+
+    /// A message from `email` with Message-ID `<id@x>`.
+    fn sent(id: &str, name: &str, email: &str) -> MessageMeta {
+        let mut m = meta(id, name, &[]);
+        m.rfc822_msgid = Some(format!("<{id}@x>"));
+        m.from = Some(Address { name: Some(name.into()), email: email.into() });
+        m
+    }
+
+    #[test]
+    fn reactions_gather_on_the_message_they_answer() {
+        let metas = [
+            sent("a", "Ann", "ann@example.com"),
+            sent("r1", "Bob", "bob@example.com"),
+            sent("r2", "Me", "me@example.com"),
+            sent("r3", "Bob", "bob@example.com"),
+            sent("r4", "Cy", "cy@example.com"),
+            sent("r5", "Cy", "cy@example.com"),
+        ];
+        let reactions = [
+            Reacted { message_id: "r1", emoji: "👍", to: "<a@x>" },
+            Reacted { message_id: "r2", emoji: "👍", to: "<a@x>" },
+            // The same person and emoji again counts once.
+            Reacted { message_id: "r3", emoji: "👍", to: "<a@x>" },
+            Reacted { message_id: "r4", emoji: "🎉", to: "<a@x>" },
+            // Its message is not in the thread, so it stays a message.
+            Reacted { message_id: "r5", emoji: "🙏", to: "<gone@x>" },
+        ];
+        let folded = fold_reactions(&metas, &reactions, &["Me@Example.com".to_string()]);
+        let hidden: std::collections::BTreeSet<&str> = folded.hidden.iter().map(String::as_str).collect();
+        assert_eq!(hidden, ["r1", "r2", "r3", "r4"].into());
+        assert_eq!(
+            folded.chips["a"],
+            vec![
+                ReactionChip { emoji: "👍".into(), people: vec!["Bob".into(), "You".into()], mine: true },
+                ReactionChip { emoji: "🎉".into(), people: vec!["Cy".into()], mine: false },
+            ]
+        );
+    }
+
+    #[test]
+    fn chips_show_under_the_header_even_when_the_message_is_closed() {
+        let one = meta("m1", "Ann", &[]);
+        let no_thumbs = HashMap::new();
+        let chips = [ReactionChip { emoji: "👍".into(), people: vec!["Bob".into(), "You".into()], mine: true }];
+        let html = page(
+            "Hello",
+            vec![MessageView {
+                meta: &one,
+                body: BodyState::Loading,
+                expanded: false,
+                thumbnails: &no_thumbs,
+                sanitized: None,
+                event_slot: false,
+                reactions: &chips,
+            }],
+        );
+        let header_ends = html.find("snippet of m1</span></div>").expect("the header");
+        let chips_at = html.find("<div class=\"reactions\"").expect("the chips");
+        let fold_at = html[header_ends..].find("<div class=\"fold\">").expect("the fold") + header_ends;
+        assert!(header_ends < chips_at && chips_at < fold_at);
+        assert!(html.contains("class=\"reaction mine\""));
+        assert!(html.contains("title=\"Bob, You\""));
+        assert!(html.contains("aria-label=\"👍 from Bob, You\""));
+        assert!(html.contains("<span class=\"count\" aria-hidden=\"true\">2</span>"));
     }
 }

@@ -147,6 +147,7 @@ fn leaf(
         content_id: other.id.as_deref().map(content_id),
         subject: None,
         attachment: disposition.is_some_and(|d| d.ty.eq_ignore_ascii_case("attachment")),
+        reaction: disposition.is_some_and(|d| d.ty.eq_ignore_ascii_case("reaction")),
         size,
         data: None,
         children: Vec::new(),

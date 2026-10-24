@@ -884,6 +884,14 @@ CREATE TABLE contact_list_members (
     PRIMARY KEY (list_id, email)
 );
 "#,
+    // A reaction answers another message with one emoji. What it says is
+    // only known once its body is read, and bodies are a cache that gets
+    // evicted, so the emoji and the Message-ID it answers stay with the
+    // message itself.
+    r#"
+ALTER TABLE messages ADD COLUMN reaction TEXT;
+ALTER TABLE messages ADD COLUMN reaction_to TEXT;
+"#,
 ];
 
 /// How long the copy taken before a migration stays once the store has
@@ -1123,4 +1131,25 @@ fn contact_lists_migrate_an_existing_address_book_without_changing_it() {
     )
     .unwrap();
     assert_eq!(contact_lists::members(&conn, id).unwrap().len(), 1);
+}
+
+#[test]
+fn reactions_migrate_existing_messages_as_plain_ones() {
+    use crate::{accounts, messages};
+
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("mail.db");
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    let account = accounts::insert_account(&old, "me@example.org", 0).unwrap();
+    old.execute(
+        "INSERT INTO messages (account_id, id, thread_id, rfc822_msgid, to_addrs, cc_addrs, subject, \
+         date, snippet, size, has_attachments, sync_gen) \
+         VALUES (?1, 'a', 't', '<a@x>', '[]', '[]', 'Hi', 1, '', 0, 0, 1)",
+        [account],
+    )
+    .unwrap();
+    drop(old);
+    let conn = open_connection(&path).unwrap();
+    assert_eq!(schema_version(&conn).unwrap(), MIGRATIONS.len() as i64);
+    assert!(messages::thread_reactions(&conn, account, "t").unwrap().is_empty());
 }

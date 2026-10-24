@@ -249,6 +249,7 @@ impl Store {
         };
         let conn = self.conn();
         let metas = messages::thread_messages(&conn, account_id, thread_id)?;
+        let reactions = messages::thread_reactions(&conn, account_id, thread_id)?;
         // A message translated in this run draws its translation while
         // the person has it shown, and one the engine decrypted draws what
         // it opened.
@@ -274,6 +275,13 @@ impl Store {
             || prefs::loads_remote_images()
             || (!senders.is_empty() && senders.iter().all(|from| mailrs_appcore::images::allowed(&listed, *from)));
         drop(conn);
+        // A reaction to a message of this thread shows as a chip on it
+        // rather than as a message of its own.
+        let reacted: Vec<page::Reacted> = reactions
+            .iter()
+            .map(|r| page::Reacted { message_id: &r.message_id, emoji: &r.emoji, to: &r.to })
+            .collect();
+        let folded = page::fold_reactions(&metas, &reacted, &me);
         // Cleaned once, kept for the borrow each article takes.
         let cleaned: Vec<Option<Cleaned>> = bodies
             .iter()
@@ -300,7 +308,7 @@ impl Store {
         let mut html = page::head(
             &Head {
                 subject: &subject,
-                count: metas.len(),
+                count: metas.len() - folded.hidden.len(),
                 allow_remote,
             },
             &theme,
@@ -312,8 +320,11 @@ impl Store {
                 .any(|(html, _, _)| page::loads_remote(&html.to_ascii_lowercase()));
         let thumbnails = std::collections::HashMap::new();
         let photos = sender_photos(&self.conn(), &metas);
-        let last = metas.len().saturating_sub(1);
+        let last = metas.iter().rposition(|m| !folded.hidden.contains(&m.id)).unwrap_or(0);
         for (at, meta) in metas.iter().enumerate() {
+            if folded.hidden.contains(&meta.id) {
+                continue;
+            }
             let body = match &bodies[at] {
                 Some(body) => BodyState::Loaded(body),
                 None => BodyState::Loading,
@@ -331,6 +342,7 @@ impl Store {
                     history: history.clone(),
                 }),
                 event_slot: false,
+                reactions: folded.chips.get(&meta.id).map_or(&[], Vec::as_slice),
             };
             html.push_str(&page::article(&view, &me, &photos));
         }
@@ -352,7 +364,17 @@ impl Store {
     pub fn conversation_summaries(&self, account_id: i64, thread_id: String) -> Result<Vec<MessageSummary>, CoreError> {
         let conn = self.conn();
         let now = chrono::Local::now();
-        Ok(messages::thread_messages(&conn, account_id, &thread_id)?.into_iter().map(|meta| {
+        let metas = messages::thread_messages(&conn, account_id, &thread_id)?;
+        // The same messages the conversation draws: a reaction to one of
+        // them is a chip there, not a message.
+        let reactions = messages::thread_reactions(&conn, account_id, &thread_id)?;
+        let reacted: Vec<mailrs_render::conversation::Reacted> = reactions
+            .iter()
+            .map(|r| mailrs_render::conversation::Reacted { message_id: &r.message_id, emoji: &r.emoji, to: &r.to })
+            .collect();
+        let me: Vec<String> = accounts::list_accounts(&conn)?.into_iter().map(|a| a.email).collect();
+        let hidden = mailrs_render::conversation::fold_reactions(&metas, &reacted, &me).hidden;
+        Ok(metas.into_iter().filter(|meta| !hidden.contains(&meta.id)).map(|meta| {
             let unread = meta.is_unread();
             MessageSummary {
                 id: meta.id,

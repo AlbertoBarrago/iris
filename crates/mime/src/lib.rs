@@ -9,6 +9,7 @@ pub mod notes;
 mod parts;
 mod read;
 pub mod provenance;
+pub mod reaction;
 pub mod snippet;
 mod summary;
 
