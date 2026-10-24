@@ -804,4 +804,11 @@ pub enum ChangeEvent {
         account_id: AccountId,
         name: String,
     },
+    /// The account started (`busy`) or finished a check for new mail the
+    /// window shows: its first after starting, or one the person asked
+    /// for. The checks on the timer go unannounced.
+    Checking {
+        account_id: AccountId,
+        busy: bool,
+    },
 }

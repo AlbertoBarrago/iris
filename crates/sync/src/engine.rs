@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 use std::panic::AssertUnwindSafe;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicI64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 
@@ -72,7 +72,26 @@ pub struct SyncEngine {
 struct Running {
     sync: Arc<AccountSync>,
     poke: Arc<Notify>,
+    checks: Arc<Checks>,
     task: JoinHandle<()>,
+}
+
+/// What the window shows of an account's checks for new mail.
+struct Checks {
+    /// Whether the next pass is one to announce: the first after the
+    /// account starts, and one the person asked for.
+    shown: AtomicBool,
+    /// When a pass last finished without an error, 0 before the first.
+    last: AtomicI64,
+}
+
+impl Default for Checks {
+    fn default() -> Self {
+        Checks {
+            shown: AtomicBool::new(true),
+            last: AtomicI64::new(0),
+        }
+    }
 }
 
 impl SyncEngine {
@@ -102,6 +121,7 @@ impl SyncEngine {
                 .with_limits(self.config.window_days, self.config.body_cache_bytes),
         );
         let poke = Arc::new(Notify::new());
+        let checks = Arc::new(Checks::default());
         let mut running = self.lock();
         // The old loop may be in the middle of a POP3 check, and a server
         // that locks the maildrop refuses a second session until the first
@@ -114,6 +134,7 @@ impl SyncEngine {
         let loop_ = supervise(
             Arc::clone(&sync),
             Arc::clone(&poke),
+            Arc::clone(&checks),
             Arc::clone(&self.network),
             self.config.clone(),
         );
@@ -124,7 +145,15 @@ impl SyncEngine {
             }
             loop_.await;
         });
-        running.insert(account_id, Running { sync, poke, task });
+        running.insert(
+            account_id,
+            Running {
+                sync,
+                poke,
+                checks,
+                task,
+            },
+        );
     }
 
     pub fn stop_account(&self, account_id: AccountId) {
@@ -144,6 +173,42 @@ impl SyncEngine {
         for running in self.lock().values() {
             running.poke.notify_one();
         }
+    }
+
+    /// Checks the account for new mail now, as the person asked, and
+    /// announces the check so the window can show it going on. A poke
+    /// does the same work unannounced.
+    pub fn check(&self, account_id: AccountId) {
+        if let Some(running) = self.lock().get(&account_id) {
+            running.checks.shown.store(true, Ordering::SeqCst);
+            running.poke.notify_one();
+        }
+    }
+
+    /// Checks every account now, announced, as Check for Mail asks.
+    pub fn check_all(&self) {
+        for running in self.lock().values() {
+            running.checks.shown.store(true, Ordering::SeqCst);
+            running.poke.notify_one();
+        }
+    }
+
+    /// The longest ago any account that has checked last did, so a line
+    /// for every account together never says more than the stalest one.
+    pub fn oldest_check(&self) -> Option<mailrs_domain::EpochMillis> {
+        self.lock()
+            .values()
+            .map(|r| r.checks.last.load(Ordering::SeqCst))
+            .filter(|last| *last > 0)
+            .min()
+    }
+
+    /// When the account last finished a pass without an error, announced
+    /// or not; `None` before its first one.
+    pub fn checked_at(&self, account_id: AccountId) -> Option<mailrs_domain::EpochMillis> {
+        let running = self.lock();
+        let last = running.get(&account_id)?.checks.last.load(Ordering::SeqCst);
+        (last > 0).then_some(last)
     }
 
     /// Tells the loops whether the computer has a network. Without one a
@@ -238,6 +303,7 @@ fn classify(err: &SyncError) -> Failure {
 async fn supervise(
     sync: Arc<AccountSync>,
     poke: Arc<Notify>,
+    checks: Arc<Checks>,
     network: Arc<AtomicBool>,
     config: EngineConfig,
 ) {
@@ -246,6 +312,7 @@ async fn supervise(
         let run = run_account(
             Arc::clone(&sync),
             Arc::clone(&poke),
+            Arc::clone(&checks),
             Arc::clone(&network),
             config.clone(),
         );
@@ -274,6 +341,7 @@ async fn supervise(
 async fn run_account(
     sync: Arc<AccountSync>,
     poke: Arc<Notify>,
+    checks: Arc<Checks>,
     network: Arc<AtomicBool>,
     config: EngineConfig,
 ) {
@@ -303,20 +371,28 @@ async fn run_account(
             poke.notified().await;
             next_poll = Instant::now();
         }
+        let shown = checks.shown.swap(false, Ordering::SeqCst);
+        if shown {
+            sync.report_checking(true);
+        }
         // Everything this loop asks Gmail for is background work, so it
         // waits behind whatever the user is doing and leaves the account
         // budget the user's next action needs.
-        match background(tick(
+        let passed = background(tick(
             &sync,
             &mut next_poll,
             &mut next_prune,
             &mut stagger,
             &config,
         ))
-        .await
-        {
+        .await;
+        if shown {
+            sync.report_checking(false);
+        }
+        match passed {
             Ok(more_backfill) => {
                 failures = 0;
+                checks.last.store(now_millis(), Ordering::SeqCst);
                 if reported != Some(AccountState::Ok) {
                     reported = Some(AccountState::Ok);
                     report(&sync, AccountState::Ok).await;

@@ -112,7 +112,13 @@ struct AccountLine: View {
             }
             Text(item.title).lineLimit(1)
             Spacer(minLength: 4)
-            if let (symbol, words) = state {
+            if let account = item.accountId, model.checkingAccounts.contains(account) {
+                // Mail's spinner beside an account looking for new mail.
+                ProgressView()
+                    .controlSize(.mini)
+                    .help(tr("Checking for mail…"))
+                    .accessibilityLabel(tr("Checking for mail…"))
+            } else if let (symbol, words) = state {
                 Image(systemName: symbol).foregroundStyle(.secondary).help(words)
             }
             // The account's menu, offered under the pointer as the GTK

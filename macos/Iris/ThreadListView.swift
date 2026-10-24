@@ -89,6 +89,14 @@ struct ThreadListView: View {
                     ContentUnavailableView(listing.empty, systemImage: "tray")
                 }
             }
+            if !model.checkedLine.isEmpty {
+                Divider()
+                Text(model.checkedLine)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 5)
+                    .frame(maxWidth: .infinity)
+            }
         }
         .onChange(of: model.listSelection) { _, selection in
             if !selection.isEmpty { focusList() }
@@ -102,6 +110,7 @@ struct ThreadListView: View {
             ToolbarItemGroup {
                 Button(tr("Check for Mail"), systemImage: "arrow.clockwise") { model.checkNow() }
                     .help(tr("Check for Mail"))
+                    .disabled(!model.checkingAccounts.isEmpty)
                 // Mail's message filter, for unread mail alone.
                 Toggle(isOn: $model.unreadOnly) {
                     Label(

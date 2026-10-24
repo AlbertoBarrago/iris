@@ -66,6 +66,7 @@ final class MailModel {
         didSet {
             guard selectedMailbox != oldValue else { return }
             expandedThreads = []
+            readCheckedLine()
             // Picking a mailbox ends a search and closes its bar, as in
             // the GTK app.
             if searching != nil { searchText = "" }
@@ -267,6 +268,8 @@ final class MailModel {
             Task { @MainActor in self?.heardChange() }
         } news: { [weak self] notices in
             Task { @MainActor in self?.announce(notices) }
+        } checking: { [weak self] account, busy in
+            Task { @MainActor in self?.heardChecking(account, busy: busy) }
         }
         // Taking the store can wait a few seconds for a copy that is still
         // quitting, so it runs off the main thread.
@@ -282,6 +285,49 @@ final class MailModel {
     }
 
     private var refreshing: Task<Void, Never>?
+
+    /// The accounts checking for new mail in a way the window shows: at
+    /// start, and after Check for Mail.
+    private(set) var checkingAccounts: Set<Int64> = []
+    /// When each shown check began, so a quick one stays on screen long
+    /// enough to be seen rather than flickering, as Mail's spinner does.
+    private var checkStarted: [Int64: ContinuousClock.Instant] = [:]
+    /// The line under the message list, from `Mail.checkedLine`.
+    private(set) var checkedLine = ""
+    /// Reads `checkedLine` again each half minute, so "Updated 1 minute
+    /// ago" goes on counting.
+    private var checkedLineTimer: Timer?
+
+    private func heardChecking(_ account: Int64, busy: Bool) {
+        if busy {
+            checkStarted[account] = .now
+            checkingAccounts.insert(account)
+            readCheckedLine()
+            return
+        }
+        let shown = checkStarted.removeValue(forKey: account).map { ContinuousClock.now - $0 } ?? .zero
+        Task { @MainActor in
+            try? await Task.sleep(for: max(.zero, .milliseconds(800) - shown))
+            // A newer check began meanwhile and keeps the spinner.
+            guard self.checkStarted[account] == nil else { return }
+            self.checkingAccounts.remove(account)
+            self.readCheckedLine()
+        }
+    }
+
+    /// Reads the line under the message list for the mailbox picked: its
+    /// account's, or every account's for a unified one.
+    func readCheckedLine() {
+        guard let mail else { return }
+        let account = sidebar.first { $0.key == selectedMailbox }?.accountId
+        let checking = account.map { checkingAccounts.contains($0) } ?? !checkingAccounts.isEmpty
+        checkedLine = mail.checkedLine(checking: checking, accountId: account)
+        if checkedLineTimer == nil {
+            checkedLineTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+                Task { @MainActor in self?.readCheckedLine() }
+            }
+        }
+    }
 
     /// Waits half a second for the rest of a burst, then reads again.
     private func heardChange() {
@@ -302,6 +348,7 @@ final class MailModel {
             if let sidebar = try? mail.sidebar() {
                 await MainActor.run {
                     self.sidebar = sidebar
+                    self.readCheckedLine()
                     self.loadList()
                     if self.space == .calendar { self.loadCalendar() }
                 }
@@ -1733,10 +1780,20 @@ struct ThreadKey: Hashable, Sendable, Codable {
 final class Listener: MailListener, @unchecked Sendable {
     private let heard: @Sendable () -> Void
     private let news: @Sendable ([MailNotice]) -> Void
+    private let check: @Sendable (Int64, Bool) -> Void
 
-    init(_ heard: @escaping @Sendable () -> Void, news: @escaping @Sendable ([MailNotice]) -> Void) {
+    init(
+        _ heard: @escaping @Sendable () -> Void,
+        news: @escaping @Sendable ([MailNotice]) -> Void,
+        checking: @escaping @Sendable (Int64, Bool) -> Void
+    ) {
         self.heard = heard
         self.news = news
+        self.check = checking
+    }
+
+    func checking(accountId: Int64, busy: Bool) {
+        check(accountId, busy)
     }
 
     func changed(what: String) {

@@ -353,6 +353,10 @@ fn print_event(emails: &HashMap<AccountId, String>, event: &ChangeEvent) {
                 who(emails, *account_id)
             );
         }
+        ChangeEvent::Checking { account_id, busy } => {
+            let what = if *busy { "checking for mail" } else { "checked for mail" };
+            println!("{}: {what}", who(emails, *account_id));
+        }
     }
 }
 

@@ -73,6 +73,46 @@ async fn the_engine_bootstraps_and_polls_when_poked() {
     assert!(s.engine.account(2).is_err());
 }
 
+fn checking(busy: bool) -> impl Fn(&ChangeEvent) -> bool {
+    move |event| matches!(event, ChangeEvent::Checking { busy: b, .. } if *b == busy)
+}
+
+#[tokio::test]
+async fn the_first_check_after_starting_is_announced() {
+    let s = setup().await;
+    assert_eq!(s.engine.checked_at(1), None);
+    s.engine.start_account(1, AccountServices::google(Arc::clone(&s.fake)));
+    wait_for(&s.events, checking(true)).await;
+    wait_for(&s.events, checking(false)).await;
+    assert!(s.engine.checked_at(1).is_some());
+}
+
+#[tokio::test]
+async fn a_poke_checks_quietly_and_check_for_mail_announces_itself() {
+    let s = setup().await;
+    s.engine.start_account(1, AccountServices::google(Arc::clone(&s.fake)));
+    wait_for(&s.events, checking(false)).await;
+
+    s.fake
+        .deliver(meta("n", "tn", now_millis(), &["INBOX", "UNREAD"]));
+    s.engine.poke(1);
+    tokio::time::timeout(Duration::from_secs(5), async {
+        loop {
+            match s.events.recv().await.expect("the engine closed its event channel") {
+                ChangeEvent::NewMail { .. } => return,
+                ChangeEvent::Checking { .. } => panic!("a poke announced its check"),
+                _ => {}
+            }
+        }
+    })
+    .await
+    .expect("timed out waiting for the poke's new mail");
+
+    s.engine.check(1);
+    wait_for(&s.events, checking(true)).await;
+    wait_for(&s.events, checking(false)).await;
+}
+
 #[tokio::test]
 async fn the_engine_corrects_a_stale_inbox_when_it_starts() {
     let s = setup().await;

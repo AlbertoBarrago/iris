@@ -57,6 +57,9 @@ pub trait MailListener: Send + Sync {
     fn changed(&self, what: String);
     /// New mail worth a notification arrived, worded as Preferences asks.
     fn new_mail(&self, notices: Vec<crate::notify::MailNotice>);
+    /// An account started (`busy`) or finished a check for new mail the
+    /// window shows: its first after starting, or Check for Mail.
+    fn checking(&self, account_id: i64, busy: bool);
 }
 
 /// One line of the sidebar.
@@ -379,6 +382,12 @@ impl Mail {
         let (rules, running) = (self.rules_engine(), Arc::clone(&self.running));
         self.runtime.spawn(async move {
             while let Ok(event) = events.recv().await {
+                // A check going on changes nothing on screen but its
+                // spinner, so it skips the reading again a change asks for.
+                if let ChangeEvent::Checking { account_id, busy } = event {
+                    heard.checking(account_id, busy);
+                    continue;
+                }
                 heard.changed(what_changed(&event).into());
                 if let ChangeEvent::NewMail { account_id, message_ids } = &event {
                     let (db, heard, rules, running) = (db.clone(), Arc::clone(&heard), Arc::clone(&rules), Arc::clone(&running));
@@ -690,18 +699,30 @@ impl Mail {
             .collect())
     }
 
-    /// Asks one account to look for new mail now.
+    /// Asks one account to look for new mail now, announced.
     pub fn check_account(&self, account_id: i64) {
         if let Some(engine) = self.running.current() {
-            engine.poke(account_id);
+            engine.check(account_id);
         }
     }
 
-    /// Asks every account to look for new mail now.
+    /// Asks every account to look for new mail now, announced.
     pub fn check_now(&self) {
         if let Some(engine) = self.running.current() {
-            engine.poke_all();
+            engine.check_all();
         }
+    }
+
+    /// The line under the message list: "Checking for mail…" while
+    /// `checking`, else when `account_id`'s mail, or every account's when
+    /// it names none, was last brought up to date. With several accounts
+    /// the one that checked longest ago speaks for them all.
+    pub fn checked_line(&self, checking: bool, account_id: Option<i64>) -> String {
+        let last = self.running.current().and_then(|engine| match account_id {
+            Some(id) => engine.checked_at(id),
+            None => engine.oldest_check(),
+        });
+        format::checked_line(checking, last, chrono::Local::now())
     }
 
     /// The sidebar, with each row's count.

@@ -262,6 +262,14 @@ impl AccountSync {
         let _ = self.events.try_send(event);
     }
 
+    /// Tells the window the account started or finished a check it shows.
+    pub(crate) fn report_checking(&self, busy: bool) {
+        self.emit(ChangeEvent::Checking {
+            account_id: self.account_id,
+            busy,
+        });
+    }
+
     fn emit_threads(&self, thread_ids: BTreeSet<String>) {
         if !thread_ids.is_empty() {
             self.emit(ChangeEvent::ThreadsChanged {

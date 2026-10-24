@@ -7,7 +7,7 @@
 
 use chrono::{DateTime, Datelike, Local, NaiveDate, TimeZone, Timelike};
 use mailrs_domain::invitation::When;
-use mailrs_domain::translate::{date_locale, fill, gettext};
+use mailrs_domain::translate::{date_locale, fill, fill_plural, gettext};
 use mailrs_domain::{AccountId, EpochMillis};
 
 /// Accent colours from the libadwaita palette.
@@ -110,6 +110,37 @@ pub fn future_date(ts: EpochMillis, now: DateTime<Local>) -> String {
         2..=6 => gettext("%A at %H:%M"),
         _ if when.year() == now.year() => gettext("%a %-d %b at %H:%M"),
         _ => gettext("%-d %b %Y at %H:%M"),
+    };
+    when.format_localized(&pattern, date_locale()).to_string()
+}
+
+/// The line under the message list, as Apple Mail has it: "Checking for
+/// mail…" while a check the window shows is going on, else when the mail
+/// was last brought up to date, "Updated just now", "Updated 5 minutes
+/// ago", "Updated at 09:40", then the day. Nothing before the first check.
+pub fn checked_line(checking: bool, last: Option<EpochMillis>, now: DateTime<Local>) -> String {
+    if checking {
+        return gettext("Checking for mail…");
+    }
+    let Some(when) = last.and_then(local) else {
+        return String::new();
+    };
+    let minutes = (now - when).num_minutes();
+    let pattern = match minutes {
+        ..1 => return gettext("Updated just now"),
+        1..60 => {
+            return fill_plural(
+                "Updated {count} minute ago",
+                "Updated {count} minutes ago",
+                minutes as usize,
+                &[("count", &minutes.to_string())],
+            );
+        }
+        _ => match (now.date_naive() - when.date_naive()).num_days() {
+            0 => gettext("Updated at %H:%M"),
+            1 => gettext("Updated yesterday at %H:%M"),
+            _ => gettext("Updated %-d %b at %H:%M"),
+        },
     };
     when.format_localized(&pattern, date_locale()).to_string()
 }
@@ -431,6 +462,19 @@ mod tests {
         assert_eq!(relative_date(at(2026, 9, 18, 8, 0), now), "Tomorrow");
         assert_eq!(relative_date(at(2026, 9, 21, 8, 0), now), "Monday");
         assert_eq!(relative_date(at(2026, 11, 3, 8, 0), now), "3 Nov");
+    }
+
+    #[test]
+    fn the_checked_line_says_how_fresh_the_mail_is() {
+        let now = Local.with_ymd_and_hms(2026, 9, 17, 15, 0, 0).unwrap();
+        assert_eq!(checked_line(false, None, now), "");
+        assert_eq!(checked_line(true, Some(at(2026, 9, 17, 14, 0)), now), "Checking for mail…");
+        assert_eq!(checked_line(false, Some(at(2026, 9, 17, 15, 0)), now), "Updated just now");
+        assert_eq!(checked_line(false, Some(at(2026, 9, 17, 14, 59)), now), "Updated 1 minute ago");
+        assert_eq!(checked_line(false, Some(at(2026, 9, 17, 14, 35)), now), "Updated 25 minutes ago");
+        assert_eq!(checked_line(false, Some(at(2026, 9, 17, 9, 40)), now), "Updated at 09:40");
+        assert_eq!(checked_line(false, Some(at(2026, 9, 16, 22, 5)), now), "Updated yesterday at 22:05");
+        assert_eq!(checked_line(false, Some(at(2026, 9, 12, 8, 0)), now), "Updated 12 Sep at 08:00");
     }
 
     #[test]

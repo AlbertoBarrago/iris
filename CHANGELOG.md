@@ -10,6 +10,9 @@ Each release of Iris, newest first. GitHub shows the same text on the
 - Iris can be your default mail app (Settings, General): an email link on a
   website or in another app opens a new message in Iris, with the address,
   subject and text the link carries.
+- A spinner beside each account shows Iris checking for mail when it opens
+  and when you choose Check for Mail, and a line under the message list says
+  when the mail was last updated.
 
 ## 1.2.3 (2026-10-23)
 
