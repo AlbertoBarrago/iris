@@ -97,6 +97,44 @@ private struct LoginItemToggle: View {
     }
 }
 
+/// The app `mailto:` links open in, which Launch Services keeps, so the
+/// row asks it each time it shows rather than keeping a setting of its
+/// own. macOS asks the person to confirm the change.
+private struct DefaultMailApp: View {
+    @Environment(MailModel.self) private var model
+    @State private var isDefault = DefaultMailApp.irisIsDefault
+
+    var body: some View {
+        LabeledContent {
+            if isDefault {
+                Text(verbatim: "Iris").foregroundStyle(.secondary)
+            } else {
+                Button(tr("Make Default")) { makeDefault() }
+            }
+        } label: {
+            Titled(title: tr("Default Mail App"), subtitle: tr("Open email links from websites and other apps in Iris"))
+        }
+        .onAppear { isDefault = Self.irisIsDefault }
+    }
+
+    private static var irisIsDefault: Bool {
+        guard let probe = URL(string: "mailto:"),
+              let handler = NSWorkspace.shared.urlForApplication(toOpen: probe) else { return false }
+        return Bundle(url: handler)?.bundleIdentifier == Bundle.main.bundleIdentifier
+    }
+
+    private func makeDefault() {
+        Task {
+            do {
+                try await NSWorkspace.shared.setDefaultApplication(at: Bundle.main.bundleURL, toOpenURLsWithScheme: "mailto")
+            } catch {
+                model.say(error.localizedDescription)
+            }
+            isDefault = Self.irisIsDefault
+        }
+    }
+}
+
 /// Check for Updates, which Sparkle keeps in its own defaults.
 private struct UpdatesToggle: View {
     @State private var on = Updates.shared.automatic
@@ -151,6 +189,7 @@ private struct GeneralSettings: View {
             Form {
                 Section(choices.startupTitle) {
                     LoginItemToggle(title: choices.loginTitle, subtitle: choices.loginSubtitle)
+                    DefaultMailApp()
                     UpdatesToggle()
                         .disabled(!Updates.shared.available)
                 }

@@ -136,13 +136,17 @@ impl Mail {
     /// A new message from `account_id`'s own address, or the first
     /// account's, signed.
     pub fn new_draft(&self, account_id: Option<i64>) -> Result<ComposeDraft, CoreError> {
-        let senders = self.senders()?;
-        let sender = account_id
-            .and_then(|id| senders.iter().find(|s| s.account_id == id))
-            .or_else(|| senders.first())
-            .cloned()
-            .ok_or_else(|| CoreError::Store(gettext("Add an account to write mail.")))?;
+        let sender = self.sender_for(account_id)?;
         let draft = Draft::new(sender.account_id, address(&sender));
+        Ok(self.shown(self.signed(draft)))
+    }
+
+    /// A new message filled from a `mailto:` link, from `account_id`'s
+    /// address or the first account's, signed under the link's body.
+    pub fn mailto_draft(&self, account_id: Option<i64>, uri: String) -> Result<ComposeDraft, CoreError> {
+        let sender = self.sender_for(account_id)?;
+        let mut draft = Draft::new(sender.account_id, address(&sender));
+        compose::Mailto::parse(&uri).fill(&mut draft);
         Ok(self.shown(self.signed(draft)))
     }
 
@@ -439,6 +443,17 @@ impl Mail {
             .rev()
             .find(|m| m.in_role(mailrs_domain::Role::Drafts))
             .map(|m| (m, several)))
+    }
+
+    /// `account_id`'s own address, or the first account's when it names
+    /// none.
+    fn sender_for(&self, account_id: Option<i64>) -> Result<Sender, CoreError> {
+        let senders = self.senders()?;
+        account_id
+            .and_then(|id| senders.iter().find(|s| s.account_id == id))
+            .or_else(|| senders.first())
+            .cloned()
+            .ok_or_else(|| CoreError::Store(gettext("Add an account to write mail.")))
     }
 
     /// A blank message from `account_id`'s own address, unsigned.

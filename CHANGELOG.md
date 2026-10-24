@@ -5,6 +5,12 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### New
+
+- Iris can be your default mail app (Settings, General): an email link on a
+  website or in another app opens a new message in Iris, with the address,
+  subject and text the link carries.
+
 ## 1.2.3 (2026-10-23)
 
 This release adds the XERJ Corpus Hub contributor badge to the README.

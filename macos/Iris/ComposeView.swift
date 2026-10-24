@@ -20,6 +20,9 @@ struct ComposeRequest: Codable, Hashable {
     var restore: UUID?
     /// Who a new message is to, as the recipient field reads.
     var to: String?
+    /// A `mailto:` link a new message starts from, with its recipients,
+    /// subject and body.
+    var mailto: String?
 }
 
 /// One message being written, in a window of its own as in Mail.

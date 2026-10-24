@@ -245,6 +245,10 @@ final class MailModel {
                     // comes forward itself; a screenshot of a window in the
                     // background shows it dimmed.
                     if demo { NSApp.activate() }
+                    if let mailto = self.waitingMailto {
+                        self.waitingMailto = nil
+                        self.composeAsked = ComposeRequest(kind: .new, mailto: mailto)
+                    }
                 }
             } catch {
                 await MainActor.run { self.show(problem: error) }
@@ -646,13 +650,10 @@ final class MailModel {
             saveAttachment(message: id, index: index, account: account)
         } else if let id = text.removingPrefix("mailrs:attachments/") {
             saveAllAttachments(message: id.removingPercentEncoding ?? id, account: account)
-        } else if let address = text.removingPrefix("mailrs:contact/") ?? text.removingPrefix("mailto:") {
-            let address = address.components(separatedBy: "?")[0].removingPercentEncoding ?? address
-            if text.hasPrefix("mailto:") {
-                composeAsked = ComposeRequest(kind: .new, to: address)
-            } else {
-                showContact(address)
-            }
+        } else if text.hasPrefix("mailto:") {
+            composeAsked = ComposeRequest(kind: .new, mailto: text)
+        } else if let address = text.removingPrefix("mailrs:contact/") {
+            showContact(address.components(separatedBy: "?")[0].removingPercentEncoding ?? address)
         }
     }
 
@@ -870,6 +871,9 @@ final class MailModel {
                 }
                 return try mail.editDraft(accountId: account, threadId: thread)
             default:
+                if let mailto = request.mailto {
+                    return try mail.mailtoDraft(accountId: account, uri: mailto)
+                }
                 var draft = try mail.newDraft(accountId: account)
                 if let to = request.to { draft.to = to }
                 return draft
@@ -934,6 +938,20 @@ final class MailModel {
     /// Asks the window to open a composer; ContentView carries it out,
     /// since only a view can open a window.
     var composeAsked: ComposeRequest?
+
+    /// A `mailto:` link that arrived before the store was open, as one
+    /// does when a click on a website launches Iris.
+    private var waitingMailto: String?
+
+    /// Opens a composer on a `mailto:` link another app handed over.
+    func compose(mailto url: URL) {
+        guard mail != nil else {
+            waitingMailto = url.absoluteString
+            return
+        }
+        NSApp.activate()
+        composeAsked = ComposeRequest(kind: .new, mailto: url.absoluteString)
+    }
 
     /// Sends `draft` after the Undo Send delay, saying so in a toast with
     /// Undo, which brings the message back in a composer instead.

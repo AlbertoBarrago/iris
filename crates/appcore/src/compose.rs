@@ -1274,8 +1274,6 @@ pub fn format_recipients(list: &[Address]) -> String {
         .join(", ")
 }
 
-/// Parses what the user typed into a recipient field. Semicolons work as
-/// separators too.
 /// What a `mailto:` link asks for, after RFC 6068: the addresses in its
 /// path, and the `to`, `cc`, `bcc`, `subject` and `body` fields of its
 /// query. Fields it does not know, such as `in-reply-to`, are left out.
@@ -1323,6 +1321,16 @@ impl Mailto {
         }
         mailto
     }
+
+    /// Writes what the link asks for into a new `draft`, before its
+    /// signature goes in, so the link's body sits above the signature.
+    pub fn fill(&self, draft: &mut Draft) {
+        draft.to = parse_recipients(&self.to);
+        draft.cc = parse_recipients(&self.cc);
+        draft.bcc = parse_recipients(&self.bcc);
+        draft.subject = self.subject.clone();
+        draft.markdown = self.body.clone();
+    }
 }
 
 /// `text` with each `%XX` turned back into its byte, read as UTF-8.
@@ -1345,6 +1353,8 @@ fn percent_decode(text: &str) -> String {
     String::from_utf8_lossy(&out).into_owned()
 }
 
+/// Parses what the user typed into a recipient field. Semicolons work as
+/// separators too.
 pub fn parse_recipients(text: &str) -> Vec<Address> {
     parse_address_list_keeping_invalid(&text.replace(';', ","))
 }
@@ -3245,7 +3255,26 @@ mod tests {
 
 #[cfg(test)]
 mod mailto_tests {
-    use super::Mailto;
+    use super::{Draft, Mailto};
+    use mailrs_domain::Address;
+
+    #[test]
+    fn a_link_fills_a_new_draft() {
+        let from = Address {
+            name: None,
+            email: "me@example.com".into(),
+        };
+        let mut draft = Draft::new(1, from);
+        Mailto::parse("mailto:Ann%20Lee%20%3Cann@example.com%3E?cc=bo@example.com&subject=Hi&body=One%0D%0ATwo")
+            .fill(&mut draft);
+        assert_eq!(draft.to.len(), 1);
+        assert_eq!(draft.to[0].email, "ann@example.com");
+        assert_eq!(draft.to[0].name.as_deref(), Some("Ann Lee"));
+        assert_eq!(draft.cc[0].email, "bo@example.com");
+        assert!(draft.bcc.is_empty());
+        assert_eq!(draft.subject, "Hi");
+        assert_eq!(draft.markdown, "One\nTwo");
+    }
 
     #[test]
     fn a_plain_link_names_its_address() {

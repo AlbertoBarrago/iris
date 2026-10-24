@@ -29,6 +29,13 @@ struct IrisApp: App {
                     assistant.mail = model
                     model.open()
                 }
+                // A `mailto:` link clicked on a website or in another app.
+                .onOpenURL { url in
+                    if url.scheme?.lowercased() == "mailto" { model.compose(mailto: url) }
+                }
+                // The window already open takes the link, rather than
+                // SwiftUI opening a second main window for each one.
+                .handlesExternalEvents(preferring: ["mailto"], allowing: ["*"])
         }
         .defaultSize(width: 1100, height: 720)
         .commands {

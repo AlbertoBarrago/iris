@@ -1347,7 +1347,7 @@ msgstr "Focus time"
 msgid "Declined because I am out of office"
 msgstr "Declined because I am out of office"
 
-#: crates/appcore/src/compose.rs:592 crates/appcore/src/compose.rs:2861
+#: crates/appcore/src/compose.rs:592 crates/appcore/src/compose.rs:2871
 msgid "Add at least one recipient."
 msgstr "Add at least one recipient."
 
@@ -1355,7 +1355,7 @@ msgstr "Add at least one recipient."
 msgid "“{address}” is not an email address."
 msgstr "“{address}” is not an email address."
 
-#: crates/appcore/src/compose.rs:849 crates/appcore/src/compose.rs:2867
+#: crates/appcore/src/compose.rs:849 crates/appcore/src/compose.rs:2877
 msgid "Choose a time in the future"
 msgstr "Choose a time in the future"
 
@@ -3662,33 +3662,33 @@ msgstr "{first} – {last}"
 msgid "%b"
 msgstr "%b"
 
-#: crates/ffi/src/compose.rs:144
-msgid "Add an account to write mail."
-msgstr "Add an account to write mail."
-
-#: crates/ffi/src/compose.rs:241
+#: crates/ffi/src/compose.rs:245
 msgid "Could not open the draft: {reason}"
 msgstr "Could not open the draft: {reason}"
 
-#: crates/ffi/src/compose.rs:273
+#: crates/ffi/src/compose.rs:277
 msgid "The saved draft stays in Drafts: {reason}"
 msgstr "The saved draft stays in Drafts: {reason}"
 
-#: crates/ffi/src/compose.rs:277
+#: crates/ffi/src/compose.rs:281
 msgid "the account is not connected."
 msgstr "the account is not connected."
 
-#: crates/ffi/src/compose.rs:332 crates/ffi/src/compose.rs:339
+#: crates/ffi/src/compose.rs:336 crates/ffi/src/compose.rs:343
 msgid "Not sent: {reason}"
 msgstr "Not sent: {reason}"
 
-#: crates/ffi/src/compose.rs:336
+#: crates/ffi/src/compose.rs:340
 msgid "Message sent"
 msgstr "Message sent"
 
-#: crates/ffi/src/compose.rs:338
+#: crates/ffi/src/compose.rs:342
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "Waiting in the Outbox. It goes out as soon as it can."
+
+#: crates/ffi/src/compose.rs:456
+msgid "Add an account to write mail."
+msgstr "Add an account to write mail."
 
 #: crates/ffi/src/contacts.rs:167
 msgid "The contact list is gone"
@@ -5211,7 +5211,7 @@ msgstr "Ask Before Acting"
 msgid "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 msgstr "Approve each message the assistant sends and each change to Gmail settings, such as automatic replies and rules"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:811
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:812
 msgid "Conversation"
 msgstr "Conversation"
 
@@ -5635,7 +5635,7 @@ msgstr "First Day"
 msgid "Last Day"
 msgstr "Last Day"
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:251
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:254
 #: macos/Iris/RulesView.swift:171 macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr "Subject"
@@ -5674,8 +5674,8 @@ msgstr "Month"
 
 #: macos/Iris/CalendarView.swift:86 macos/Iris/CalendarView.swift:87
 #: macos/Iris/CalendarView.swift:116 macos/Iris/EventEditorView.swift:34
-#: macos/Iris/IrisApp.swift:89 macos/Iris/SettingsView.swift:24
-#: macos/Iris/SettingsView.swift:298 macos/Iris/ShortcutsView.swift:47
+#: macos/Iris/IrisApp.swift:96 macos/Iris/SettingsView.swift:24
+#: macos/Iris/SettingsView.swift:337 macos/Iris/ShortcutsView.swift:47
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -5703,7 +5703,7 @@ msgstr "Next Week"
 msgid "Next Month"
 msgstr "Next Month"
 
-#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:87
+#: macos/Iris/CalendarView.swift:115 macos/Iris/IrisApp.swift:94
 msgid "Mail"
 msgstr "Mail"
 
@@ -5735,144 +5735,144 @@ msgstr "Notes"
 msgid "Close"
 msgstr "Close"
 
-#: macos/Iris/ComposeView.swift:72 macos/Iris/ContactCardView.swift:42
+#: macos/Iris/ComposeView.swift:75 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
-#: macos/Iris/IrisApp.swift:52 macos/Iris/ThreadListView.swift:122
+#: macos/Iris/IrisApp.swift:59 macos/Iris/ThreadListView.swift:122
 #: macos/Iris/ThreadListView.swift:125
 msgid "New Message"
 msgstr "New Message"
 
-#: macos/Iris/ComposeView.swift:88
+#: macos/Iris/ComposeView.swift:91
 msgid "Drop to attach"
 msgstr "Drop to attach"
 
-#: macos/Iris/ComposeView.swift:106
+#: macos/Iris/ComposeView.swift:109
 msgid "Iris sends it at this time while it runs, even in the tray."
 msgstr "Iris sends it at this time while it runs, even in the tray."
 
-#: macos/Iris/ComposeView.swift:107
+#: macos/Iris/ComposeView.swift:110
 msgid "Schedule"
 msgstr "Schedule"
 
-#: macos/Iris/ComposeView.swift:110
+#: macos/Iris/ComposeView.swift:113
 msgid "Save as Template"
 msgstr "Save as Template"
 
-#: macos/Iris/ComposeView.swift:111 macos/Iris/ContactsSettings.swift:199
+#: macos/Iris/ComposeView.swift:114 macos/Iris/ContactsSettings.swift:199
 #: macos/Iris/SmartEditorView.swift:31 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Name"
 
-#: macos/Iris/ComposeView.swift:116
+#: macos/Iris/ComposeView.swift:119
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr "Placeholders such as {{first_name}} fill in each time you use it."
 
-#: macos/Iris/ComposeView.swift:132
+#: macos/Iris/ComposeView.swift:135
 msgid "Sign"
 msgstr "Sign"
 
-#: macos/Iris/ComposeView.swift:137 macos/Iris/ComposeView.swift:370
+#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:373
 msgid "Encrypt"
 msgstr "Encrypt"
 
-#: macos/Iris/ComposeView.swift:155
+#: macos/Iris/ComposeView.swift:158
 msgid "No Templates Yet"
 msgstr "No Templates Yet"
 
-#: macos/Iris/ComposeView.swift:161
+#: macos/Iris/ComposeView.swift:164
 msgid "Save as Template…"
 msgstr "Save as Template…"
 
-#: macos/Iris/ComposeView.swift:166 macos/Iris/ComposeView.swift:168
+#: macos/Iris/ComposeView.swift:169 macos/Iris/ComposeView.swift:171
 #: macos/Iris/TemplatesSettings.swift:35
 msgid "Templates"
 msgstr "Templates"
 
-#: macos/Iris/ComposeView.swift:172 macos/Iris/ComposeView.swift:173
+#: macos/Iris/ComposeView.swift:175 macos/Iris/ComposeView.swift:176
 msgid "Attach Files (Ctrl+Shift+A)"
 msgstr "Attach Files (Ctrl+Shift+A)"
 
-#: macos/Iris/ComposeView.swift:185 macos/Iris/LaterView.swift:86
+#: macos/Iris/ComposeView.swift:188 macos/Iris/LaterView.swift:86
 msgid "Choose a Time…"
 msgstr "Choose a Time…"
 
-#: macos/Iris/ComposeView.swift:204 macos/Iris/RulesView.swift:169
+#: macos/Iris/ComposeView.swift:207 macos/Iris/RulesView.swift:169
 msgid "From"
 msgstr "From"
 
-#: macos/Iris/ComposeView.swift:224 macos/Iris/RulesView.swift:170
+#: macos/Iris/ComposeView.swift:227 macos/Iris/RulesView.swift:170
 msgid "To"
 msgstr "To"
 
-#: macos/Iris/ComposeView.swift:226
+#: macos/Iris/ComposeView.swift:229
 msgid "Recipients"
 msgstr "Recipients"
 
-#: macos/Iris/ComposeView.swift:227
+#: macos/Iris/ComposeView.swift:230
 msgid "Cc/Bcc"
 msgstr "Cc/Bcc"
 
-#: macos/Iris/ComposeView.swift:242
+#: macos/Iris/ComposeView.swift:245
 msgid "Cc"
 msgstr "Cc"
 
-#: macos/Iris/ComposeView.swift:246
+#: macos/Iris/ComposeView.swift:249
 msgid "Bcc"
 msgstr "Bcc"
 
-#: macos/Iris/ComposeView.swift:273 macos/Iris/ComposeView.swift:276
+#: macos/Iris/ComposeView.swift:276 macos/Iris/ComposeView.swift:279
 msgid "Remove {file}"
 msgstr "Remove {file}"
 
-#: macos/Iris/ComposeView.swift:294 macos/Iris/ComposeView.swift:299
+#: macos/Iris/ComposeView.swift:297 macos/Iris/ComposeView.swift:302
 msgid "Remove Quoted Text"
 msgstr "Remove Quoted Text"
 
-#: macos/Iris/ComposeView.swift:309
+#: macos/Iris/ComposeView.swift:312
 msgid "Forwarded Message"
 msgstr "Forwarded Message"
 
-#: macos/Iris/ComposeView.swift:404
+#: macos/Iris/ComposeView.swift:407
 msgid "Template saved"
 msgstr "Template saved"
 
-#: macos/Iris/ComposeView.swift:415
+#: macos/Iris/ComposeView.swift:418
 msgid "Attach Files"
 msgstr "Attach Files"
 
-#: macos/Iris/ComposeView.swift:436
+#: macos/Iris/ComposeView.swift:439
 msgid "Could not read {count} file"
 msgid_plural "Could not read {count} files"
 msgstr[0] "Could not read {count} file"
 msgstr[1] "Could not read {count} files"
 
-#: macos/Iris/ComposeView.swift:441
+#: macos/Iris/ComposeView.swift:444
 msgid "Attached {count} file"
 msgid_plural "Attached {count} files"
 msgstr[0] "Attached {count} file"
 msgstr[1] "Attached {count} files"
 
-#: macos/Iris/ComposeView.swift:460 macos/Iris/FileDrop.swift:39
+#: macos/Iris/ComposeView.swift:463 macos/Iris/FileDrop.swift:39
 msgid "Image"
 msgstr "Image"
 
-#: macos/Iris/ComposeView.swift:505
+#: macos/Iris/ComposeView.swift:508
 msgid "Draft saved"
 msgstr "Draft saved"
 
-#: macos/Iris/ComposeView.swift:696
+#: macos/Iris/ComposeView.swift:699
 msgid "Save as Draft?"
 msgstr "Save as Draft?"
 
-#: macos/Iris/ComposeView.swift:697
+#: macos/Iris/ComposeView.swift:700
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr "The draft is kept in Gmail, so you can finish it later on any device."
 
-#: macos/Iris/ComposeView.swift:698
+#: macos/Iris/ComposeView.swift:701
 msgid "Save Draft"
 msgstr "Save Draft"
 
-#: macos/Iris/ComposeView.swift:699
+#: macos/Iris/ComposeView.swift:702
 msgid "Discard"
 msgstr "Discard"
 
@@ -6001,7 +6001,7 @@ msgstr "Create"
 msgid "Iris could not read the mail"
 msgstr "Iris could not read the mail"
 
-#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:40
+#: macos/Iris/ContentView.swift:108 macos/Iris/IrisApp.swift:47
 msgid "Check for Updates…"
 msgstr "Check for Updates…"
 
@@ -6093,12 +6093,12 @@ msgid "Title"
 msgstr "Title"
 
 #: macos/Iris/EventEditorView.swift:54 macos/Iris/EventEditorView.swift:57
-#: macos/Iris/InvitationCard.swift:304 macos/Iris/SettingsView.swift:327
+#: macos/Iris/InvitationCard.swift:304 macos/Iris/SettingsView.swift:366
 msgid "Starts"
 msgstr "Starts"
 
 #: macos/Iris/EventEditorView.swift:55 macos/Iris/EventEditorView.swift:58
-#: macos/Iris/SettingsView.swift:333
+#: macos/Iris/SettingsView.swift:372
 msgid "Ends"
 msgstr "Ends"
 
@@ -6272,37 +6272,37 @@ msgstr "Nobody"
 msgid "Propose"
 msgstr "Propose"
 
-#: macos/Iris/IrisApp.swift:44 macos/Iris/IrisApp.swift:112
+#: macos/Iris/IrisApp.swift:51 macos/Iris/IrisApp.swift:119
 #: macos/Iris/ShortcutsView.swift:58
 msgid "Keyboard shortcuts"
 msgstr "Keyboard shortcuts"
 
-#: macos/Iris/IrisApp.swift:55
+#: macos/Iris/IrisApp.swift:62
 msgid "Add Account…"
 msgstr "Add Account…"
 
-#: macos/Iris/IrisApp.swift:58
+#: macos/Iris/IrisApp.swift:65
 msgid "Print…"
 msgstr "Print…"
 
-#: macos/Iris/IrisApp.swift:67
+#: macos/Iris/IrisApp.swift:74
 msgid "Open in New Window"
 msgstr "Open in New Window"
 
-#: macos/Iris/IrisApp.swift:69
+#: macos/Iris/IrisApp.swift:76
 msgid "New Smart Mailbox…"
 msgstr "New Smart Mailbox…"
 
-#: macos/Iris/IrisApp.swift:73
+#: macos/Iris/IrisApp.swift:80
 msgid "Export…"
 msgstr "Export…"
 
-#: macos/Iris/IrisApp.swift:78 macos/Iris/ThreadListView.swift:108
+#: macos/Iris/IrisApp.swift:85 macos/Iris/ThreadListView.swift:108
 #: macos/Iris/ThreadListView.swift:113
 msgid "Show Only Unread"
 msgstr "Show Only Unread"
 
-#: macos/Iris/IrisApp.swift:81
+#: macos/Iris/IrisApp.swift:88
 msgid "View Source"
 msgstr "View Source"
 
@@ -6310,48 +6310,48 @@ msgstr "View Source"
 msgid "The conversation leaves the inbox now and comes back at this time, marked unread."
 msgstr "The conversation leaves the inbox now and comes back at this time, marked unread."
 
-#: macos/Iris/MailModel.swift:713
+#: macos/Iris/MailModel.swift:714
 msgid "Saved {file} to Downloads"
 msgstr "Saved {file} to Downloads"
 
-#: macos/Iris/MailModel.swift:715
+#: macos/Iris/MailModel.swift:716
 msgid "Could not save {file}: {reason}"
 msgstr "Could not save {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:740 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:741 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "Saved {file}"
 
-#: macos/Iris/MailModel.swift:898
+#: macos/Iris/MailModel.swift:902
 msgid "Message discarded"
 msgstr "Message discarded"
 
-#: macos/Iris/MailModel.swift:943
+#: macos/Iris/MailModel.swift:961
 msgid "Sending…"
 msgstr "Sending…"
 
-#: macos/Iris/MailModel.swift:1033
+#: macos/Iris/MailModel.swift:1051
 msgid "Cancel Send"
 msgstr "Cancel Send"
 
-#: macos/Iris/MailModel.swift:1340
+#: macos/Iris/MailModel.swift:1358
 msgid "Translating…"
 msgstr "Translating…"
 
-#: macos/Iris/MailModel.swift:1379
+#: macos/Iris/MailModel.swift:1397
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "This Mac cannot translate this message: {reason}"
 
-#: macos/Iris/MailModel.swift:1878
+#: macos/Iris/MailModel.swift:1896
 msgid "Removed {account}"
 msgstr "Removed {account}"
 
-#: macos/Iris/MailModel.swift:1883
+#: macos/Iris/MailModel.swift:1901
 msgid "Could not remove {account}: {reason}"
 msgstr "Could not remove {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:1933
+#: macos/Iris/MailModel.swift:1951
 msgid "{account} is signed in again."
 msgstr "{account} is signed in again."
 
@@ -6484,289 +6484,301 @@ msgstr "Sync"
 msgid "AI"
 msgstr "AI"
 
-#: macos/Iris/SettingsView.swift:36 macos/Iris/SettingsView.swift:551
+#: macos/Iris/SettingsView.swift:36 macos/Iris/SettingsView.swift:590
 msgid "Language"
 msgstr "Language"
 
-#: macos/Iris/SettingsView.swift:106
+#: macos/Iris/SettingsView.swift:112
+msgid "Make Default"
+msgstr "Make Default"
+
+#: macos/Iris/SettingsView.swift:115
+msgid "Default Mail App"
+msgstr "Default Mail App"
+
+#: macos/Iris/SettingsView.swift:115
+msgid "Open email links from websites and other apps in Iris"
+msgstr "Open email links from websites and other apps in Iris"
+
+#: macos/Iris/SettingsView.swift:144
 msgid "Check for Updates"
 msgstr "Check for Updates"
 
-#: macos/Iris/SettingsView.swift:106
+#: macos/Iris/SettingsView.swift:144
 msgid "Look for a new release once a day"
 msgstr "Look for a new release once a day"
 
-#: macos/Iris/SettingsView.swift:157 macos/Iris/ShortcutsView.swift:21
+#: macos/Iris/SettingsView.swift:196 macos/Iris/ShortcutsView.swift:21
 msgid "Reading"
 msgstr "Reading"
 
-#: macos/Iris/SettingsView.swift:158
+#: macos/Iris/SettingsView.swift:197
 msgid "Group Messages into Conversations"
 msgstr "Group Messages into Conversations"
 
-#: macos/Iris/SettingsView.swift:159
+#: macos/Iris/SettingsView.swift:198
 msgid "Show a thread's replies together instead of one row per message"
 msgstr "Show a thread's replies together instead of one row per message"
 
-#: macos/Iris/SettingsView.swift:161
+#: macos/Iris/SettingsView.swift:200
 msgid "Group Inbox into Categories"
 msgstr "Group Inbox into Categories"
 
-#: macos/Iris/SettingsView.swift:162
+#: macos/Iris/SettingsView.swift:201
 msgid "Sort the inbox into Primary, Updates, Promotions, and Social, as Gmail does"
 msgstr "Sort the inbox into Primary, Updates, Promotions, and Social, as Gmail does"
 
-#: macos/Iris/SettingsView.swift:164
+#: macos/Iris/SettingsView.swift:203
 msgid "Open the Inbox On"
 msgstr "Open the Inbox On"
 
-#: macos/Iris/SettingsView.swift:164
+#: macos/Iris/SettingsView.swift:203
 msgid "Which category the window starts on"
 msgstr "Which category the window starts on"
 
-#: macos/Iris/SettingsView.swift:167
+#: macos/Iris/SettingsView.swift:206
 msgid "Suggest Follow-Ups"
 msgstr "Suggest Follow-Ups"
 
-#: macos/Iris/SettingsView.swift:168
+#: macos/Iris/SettingsView.swift:207
 msgid "List mail you sent that has had no reply for three days"
 msgstr "List mail you sent that has had no reply for three days"
 
-#: macos/Iris/SettingsView.swift:171
+#: macos/Iris/SettingsView.swift:210
 msgid "Loading them can tell senders when you read their mail"
 msgstr "Loading them can tell senders when you read their mail"
 
-#: macos/Iris/SettingsView.swift:171
+#: macos/Iris/SettingsView.swift:210
 msgid "Remote Images"
 msgstr "Remote Images"
 
-#: macos/Iris/SettingsView.swift:174
+#: macos/Iris/SettingsView.swift:213
 msgid "Text Size"
 msgstr "Text Size"
 
-#: macos/Iris/SettingsView.swift:176
+#: macos/Iris/SettingsView.swift:215
 msgid "Appearance"
 msgstr "Appearance"
 
-#: macos/Iris/SettingsView.swift:177
+#: macos/Iris/SettingsView.swift:216
 msgid "Style"
 msgstr "Style"
 
-#: macos/Iris/SettingsView.swift:181
+#: macos/Iris/SettingsView.swift:220
 msgid "Notifications"
 msgstr "Notifications"
 
-#: macos/Iris/SettingsView.swift:182
+#: macos/Iris/SettingsView.swift:221
 msgid "Notify About New Mail"
 msgstr "Notify About New Mail"
 
-#: macos/Iris/SettingsView.swift:184
+#: macos/Iris/SettingsView.swift:223
 msgid "Only for VIPs"
 msgstr "Only for VIPs"
 
-#: macos/Iris/SettingsView.swift:184
+#: macos/Iris/SettingsView.swift:223
 msgid "Stay quiet about mail from everyone else"
 msgstr "Stay quiet about mail from everyone else"
 
-#: macos/Iris/SettingsView.swift:186
+#: macos/Iris/SettingsView.swift:225
 msgid "Show Sender and Subject"
 msgstr "Show Sender and Subject"
 
-#: macos/Iris/SettingsView.swift:186
+#: macos/Iris/SettingsView.swift:225
 msgid "Turn off to see only how much mail arrived"
 msgstr "Turn off to see only how much mail arrived"
 
-#: macos/Iris/SettingsView.swift:194
+#: macos/Iris/SettingsView.swift:233
 msgid "Buttons"
 msgstr "Buttons"
 
-#: macos/Iris/SettingsView.swift:194
+#: macos/Iris/SettingsView.swift:233
 msgid "What a notification offers besides opening the conversation"
 msgstr "What a notification offers besides opening the conversation"
 
-#: macos/Iris/SettingsView.swift:217
+#: macos/Iris/SettingsView.swift:256
 msgid "Anyone at this domain"
 msgstr "Anyone at this domain"
 
-#: macos/Iris/SettingsView.swift:217
+#: macos/Iris/SettingsView.swift:256
 msgid "This address"
 msgstr "This address"
 
-#: macos/Iris/SettingsView.swift:226
+#: macos/Iris/SettingsView.swift:265
 msgid "Stop Loading Images from This Sender"
 msgstr "Stop Loading Images from This Sender"
 
-#: macos/Iris/SettingsView.swift:227
+#: macos/Iris/SettingsView.swift:266
 msgid "Stop loading images from {sender}"
 msgstr "Stop loading images from {sender}"
 
-#: macos/Iris/SettingsView.swift:231
+#: macos/Iris/SettingsView.swift:270
 msgid "Senders Who May Load Images"
 msgstr "Senders Who May Load Images"
 
-#: macos/Iris/SettingsView.swift:237
+#: macos/Iris/SettingsView.swift:276
 msgid "Nobody yet"
 msgstr "Nobody yet"
 
-#: macos/Iris/SettingsView.swift:238
+#: macos/Iris/SettingsView.swift:277
 msgid "{count} sender"
 msgid_plural "{count} senders"
 msgstr[0] "{count} sender"
 msgstr[1] "{count} senders"
 
-#: macos/Iris/SettingsView.swift:250
+#: macos/Iris/SettingsView.swift:289
 msgid "New Messages"
 msgstr "New Messages"
 
-#: macos/Iris/SettingsView.swift:259
+#: macos/Iris/SettingsView.swift:298
 msgid "Send New Messages From"
 msgstr "Send New Messages From"
 
-#: macos/Iris/SettingsView.swift:260
+#: macos/Iris/SettingsView.swift:299
 msgid "Replies always come from the account that received the message"
 msgstr "Replies always come from the account that received the message"
 
-#: macos/Iris/SettingsView.swift:262
+#: macos/Iris/SettingsView.swift:301
 msgid "New Messages Start As"
 msgstr "New Messages Start As"
 
-#: macos/Iris/SettingsView.swift:263
+#: macos/Iris/SettingsView.swift:302
 msgid "Rich text styles the words themselves; Markdown shows its marks"
 msgstr "Rich text styles the words themselves; Markdown shows its marks"
 
-#: macos/Iris/SettingsView.swift:265
+#: macos/Iris/SettingsView.swift:304
 msgid "How long you can take a message back after sending it"
 msgstr "How long you can take a message back after sending it"
 
-#: macos/Iris/SettingsView.swift:265
+#: macos/Iris/SettingsView.swift:304
 msgid "Undo Send"
 msgstr "Undo Send"
 
-#: macos/Iris/SettingsView.swift:267
+#: macos/Iris/SettingsView.swift:306
 msgid "Check for Missing Attachments"
 msgstr "Check for Missing Attachments"
 
-#: macos/Iris/SettingsView.swift:268
+#: macos/Iris/SettingsView.swift:307
 msgid "Ask before sending a message that promises a file and carries none"
 msgstr "Ask before sending a message that promises a file and carries none"
 
-#: macos/Iris/SettingsView.swift:271
+#: macos/Iris/SettingsView.swift:310
 msgid "Signatures"
 msgstr "Signatures"
 
-#: macos/Iris/SettingsView.swift:273
+#: macos/Iris/SettingsView.swift:312
 msgid "No Accounts Yet"
 msgstr "No Accounts Yet"
 
-#: macos/Iris/SettingsView.swift:299
+#: macos/Iris/SettingsView.swift:338
 msgid "Event Reminders"
 msgstr "Event Reminders"
 
-#: macos/Iris/SettingsView.swift:300
+#: macos/Iris/SettingsView.swift:339
 msgid "A notification before each event, at the times the event or its calendar sets"
 msgstr "A notification before each event, at the times the event or its calendar sets"
 
-#: macos/Iris/SettingsView.swift:302
+#: macos/Iris/SettingsView.swift:341
 msgid "Week Starts On"
 msgstr "Week Starts On"
 
-#: macos/Iris/SettingsView.swift:303
+#: macos/Iris/SettingsView.swift:342
 msgid "Automatic follows the locale's own first day of the week"
 msgstr "Automatic follows the locale's own first day of the week"
 
-#: macos/Iris/SettingsView.swift:306
+#: macos/Iris/SettingsView.swift:345
 msgid "Working Hours"
 msgstr "Working Hours"
 
-#: macos/Iris/SettingsView.swift:325
+#: macos/Iris/SettingsView.swift:364
 msgid "Hours"
 msgstr "Hours"
 
-#: macos/Iris/SettingsView.swift:332
+#: macos/Iris/SettingsView.swift:371
 msgid "–"
 msgstr "–"
 
-#: macos/Iris/SettingsView.swift:340
+#: macos/Iris/SettingsView.swift:379
 msgid "Days"
 msgstr "Days"
 
-#: macos/Iris/SettingsView.swift:395
+#: macos/Iris/SettingsView.swift:434
 msgid "Checking"
 msgstr "Checking"
 
-#: macos/Iris/SettingsView.swift:396
+#: macos/Iris/SettingsView.swift:435
 msgid "Check for New Mail"
 msgstr "Check for New Mail"
 
-#: macos/Iris/SettingsView.swift:398
+#: macos/Iris/SettingsView.swift:437
 msgid "Storage"
 msgstr "Storage"
 
-#: macos/Iris/SettingsView.swift:399
+#: macos/Iris/SettingsView.swift:438
 msgid "Keep Mail on This Computer For"
 msgstr "Keep Mail on This Computer For"
 
-#: macos/Iris/SettingsView.swift:400
+#: macos/Iris/SettingsView.swift:439
 msgid "Everything in your inbox stays too, and older mail remains searchable"
 msgstr "Everything in your inbox stays too, and older mail remains searchable"
 
-#: macos/Iris/SettingsView.swift:402
+#: macos/Iris/SettingsView.swift:441
 msgid "Bodies of mail you have read, kept for opening offline"
 msgstr "Bodies of mail you have read, kept for opening offline"
 
-#: macos/Iris/SettingsView.swift:402
+#: macos/Iris/SettingsView.swift:441
 msgid "Message Cache"
 msgstr "Message Cache"
 
-#: macos/Iris/SettingsView.swift:439
+#: macos/Iris/SettingsView.swift:478
 msgid "Signature for {account}"
 msgstr "Signature for {account}"
 
-#: macos/Iris/SettingsView.swift:442
+#: macos/Iris/SettingsView.swift:481
 msgid "This signature goes out as it was made, pictures and layout included."
 msgstr "This signature goes out as it was made, pictures and layout included."
 
-#: macos/Iris/SettingsView.swift:465
+#: macos/Iris/SettingsView.swift:504
 msgid "Import from Gmail"
 msgstr "Import from Gmail"
 
-#: macos/Iris/SettingsView.swift:466
+#: macos/Iris/SettingsView.swift:505
 msgid "Paste Formatted Signature"
 msgstr "Paste Formatted Signature"
 
-#: macos/Iris/SettingsView.swift:467
+#: macos/Iris/SettingsView.swift:506
 msgid "Import from File…"
 msgstr "Import from File…"
 
-#: macos/Iris/SettingsView.swift:469
+#: macos/Iris/SettingsView.swift:508
 msgid "Remove Formatted Signature"
 msgstr "Remove Formatted Signature"
 
-#: macos/Iris/SettingsView.swift:484
+#: macos/Iris/SettingsView.swift:523
 msgid "Gmail has no signature for this account"
 msgstr "Gmail has no signature for this account"
 
-#: macos/Iris/SettingsView.swift:491
+#: macos/Iris/SettingsView.swift:530
 msgid "Imported the signature from Gmail"
 msgstr "Imported the signature from Gmail"
 
-#: macos/Iris/SettingsView.swift:493 macos/Iris/SettingsView.swift:516
+#: macos/Iris/SettingsView.swift:532 macos/Iris/SettingsView.swift:555
 msgid "Could not import: {reason}"
 msgstr "Could not import: {reason}"
 
-#: macos/Iris/SettingsView.swift:502
+#: macos/Iris/SettingsView.swift:541
 msgid "There is no formatted signature to bring in"
 msgstr "There is no formatted signature to bring in"
 
-#: macos/Iris/SettingsView.swift:528
+#: macos/Iris/SettingsView.swift:567
 msgid "Formatted signature saved"
 msgstr "Formatted signature saved"
 
-#: macos/Iris/SettingsView.swift:546
+#: macos/Iris/SettingsView.swift:585
 msgid "Follow System"
 msgstr "Follow System"
 
-#: macos/Iris/SettingsView.swift:552
+#: macos/Iris/SettingsView.swift:591
 msgid "Iris shows a new language after a restart"
 msgstr "Iris shows a new language after a restart"
 
