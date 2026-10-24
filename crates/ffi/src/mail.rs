@@ -1426,6 +1426,61 @@ mod tests {
         assert!(!mail.run(async move { db.read(move |c| follow_ups::waiting(c, now)).await }).unwrap().iter().any(|f| f.account_id == account && f.thread_id == id));
     }
 
+    /// A reaction answers the message it names, in the conversation it
+    /// sits in, with both reaction formats; a word or a list's mail is
+    /// refused before anything is queued.
+    #[test]
+    fn a_reaction_goes_out_answering_its_message() {
+        use mailrs_store::{accounts, messages, outbox};
+        let dir = tempfile::tempdir().unwrap();
+        let mail = Mail::open_demo(dir.path().join("mailrs.db").display().to_string()).unwrap();
+        let db = mail.db.clone();
+        let (target, listed) = mail
+            .run(async move {
+                db.read(move |c| {
+                    let me: Vec<String> = accounts::list_accounts(c)?.into_iter().map(|a| a.email).collect();
+                    let mut target = None;
+                    let mut listed = None;
+                    let threads: Vec<(i64, String)> = c
+                        .prepare("SELECT DISTINCT account_id, thread_id FROM messages ORDER BY account_id, thread_id")?
+                        .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))?
+                        .collect::<rusqlite::Result<_>>()?;
+                    for (account, thread) in threads {
+                        for meta in messages::thread_messages(c, account, &thread)? {
+                            if mailrs_render::conversation::may_react(&meta, &me) {
+                                target.get_or_insert(meta);
+                            } else if meta.list_unsubscribe.is_some() {
+                                listed.get_or_insert(meta);
+                            }
+                        }
+                    }
+                    Ok((target, listed))
+                })
+                .await
+            })
+            .unwrap();
+        let target = target.expect("demo has mail sent to the account");
+        let listed = listed.expect("demo has mail from a list");
+        let refused = |meta: &mailrs_domain::MessageMeta, emoji: &str| {
+            mail.react(meta.account_id, meta.thread_id.clone(), meta.id.clone(), emoji.into()).is_err()
+        };
+        assert!(refused(&target, "thanks"));
+        assert!(refused(&listed, "👍"));
+        mail.react(target.account_id, target.thread_id.clone(), target.id.clone(), "👍".into()).unwrap();
+        let db = mail.db.clone();
+        let queued = mail.run(async move { db.read(outbox::list).await }).unwrap();
+        // The demo's Outbox already holds mail of its own.
+        let reactions: Vec<_> = queued
+            .iter()
+            .filter_map(|q| Some((q, mailrs_mime::read(q.raw.as_deref()?).reaction?)))
+            .collect();
+        let [(message, reaction)] = reactions.as_slice() else { panic!("one reaction queued, not {}", reactions.len()) };
+        assert_eq!(message.thread_id.as_deref(), Some(target.thread_id.as_str()));
+        let reaction = reaction.clone();
+        assert_eq!(Some(reaction.to), target.rfc822_msgid);
+        assert_eq!(reaction.emoji, "👍");
+    }
+
     /// The assistant's tools run on a thread that drives a current-thread
     /// runtime, and they start, sign and send drafts through `Mail`. With
     /// tokio's `block_on` there, every one of them panicked and the model

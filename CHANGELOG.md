@@ -9,6 +9,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 - An emoji reaction someone sends from Gmail shows under the message it
   answers, with who reacted, instead of as a message of its own.
+- React to a message with an emoji, from the smiley beside Reply or the
+  React menu in the toolbar. Gmail shows it as a reaction, not as an email.
 
 ## 1.2.4 (2026-10-24)
 

@@ -151,6 +151,9 @@ pub struct ConversationPage {
     pub remote_hidden: bool,
     /// Some message's body has not been fetched yet, and shows as loading.
     pub bodies_missing: bool,
+    /// The newest message on the page that may take a reaction, which the
+    /// toolbar's React answers. `None` when none may.
+    pub react_to: Option<String>,
 }
 
 /// The mail store, opened to read.
@@ -348,10 +351,16 @@ impl Store {
         }
         html.push_str(page::TAIL);
         let bodies_missing = bodies.iter().any(Option::is_none);
+        let react_to = metas
+            .iter()
+            .rev()
+            .find(|m| !folded.hidden.contains(&m.id) && page::may_react(m, &me))
+            .map(|m| m.id.clone());
         Ok(ConversationPage {
             html,
             remote_hidden,
             bodies_missing,
+            react_to,
         })
     }
 }

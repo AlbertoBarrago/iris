@@ -697,6 +697,8 @@ final class MailModel {
             saveAttachment(message: id, index: index, account: account)
         } else if let id = text.removingPrefix("mailrs:attachments/") {
             saveAllAttachments(message: id.removingPercentEncoding ?? id, account: account)
+        } else if let rest = text.removingPrefix("mailrs:react/"), let (id, emoji) = Self.reactLink(rest) {
+            react(message: id, emoji: emoji, account: account, thread: thread)
         } else if text.hasPrefix("mailto:") {
             composeAsked = ComposeRequest(kind: .new, mailto: text)
         } else if let address = text.removingPrefix("mailrs:contact/") {
@@ -713,6 +715,30 @@ final class MailModel {
             if let id = text.removingPrefix(prefix) { return (kind, id.removingPercentEncoding ?? id) }
         }
         return nil
+    }
+
+    /// `<message>/<emoji>` from a React link. A message id may hold a
+    /// slash, and an emoji never does, so the last one splits them.
+    private static func reactLink(_ rest: String) -> (String, String)? {
+        guard let slash = rest.lastIndex(of: "/") else { return nil }
+        let id = String(rest[..<slash]), emoji = String(rest[rest.index(after: slash)...])
+        guard let emoji = emoji.removingPercentEncoding, !id.isEmpty, !emoji.isEmpty else { return nil }
+        return (id.removingPercentEncoding ?? id, emoji)
+    }
+
+    /// Answers a message with an emoji, off the main thread. The toast
+    /// says what came of it; the chip shows once the reaction comes back
+    /// from the server, as Gmail's own does.
+    func react(message: String, emoji: String, account: Int64? = nil, thread: String? = nil) {
+        guard let mail, let account = account ?? openThread?.account, let thread = thread ?? openThread?.thread else { return }
+        Task.detached {
+            do {
+                let words = try mail.react(accountId: account, threadId: thread, messageId: message, emoji: emoji)
+                await MainActor.run { self.toast = Toast(words: words, undo: false) }
+            } catch {
+                await MainActor.run { self.show(problem: error) }
+            }
+        }
     }
 
     /// `<message>/<index>` from an attachment's link.

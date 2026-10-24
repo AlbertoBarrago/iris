@@ -88,6 +88,32 @@ pub struct Folded {
     pub chips: HashMap<String, Vec<ReactionChip>>,
 }
 
+/// The emoji the React button offers.
+pub const QUICK_REACTIONS: [&str; 6] = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
+
+/// Most distinct people To and Cc may name for a message to take a
+/// reaction. Gmail draws the line here, so a reaction to a message sent
+/// wider would reach people as mail rather than as an emoji.
+const MOST_REACTION_RECIPIENTS: usize = 20;
+
+/// Whether the app offers to react to `meta`, by Gmail's own limits: not
+/// to mail from a list, not to mail sent to more than twenty people, and
+/// only to mail that names one of `me` in To or Cc.
+pub fn may_react(meta: &MessageMeta, me: &[String]) -> bool {
+    let mut named: Vec<String> = meta.to.iter().chain(&meta.cc).map(|a| a.email.trim().to_lowercase()).collect();
+    named.sort();
+    named.dedup();
+    meta.list_unsubscribe.is_none()
+        && named.len() <= MOST_REACTION_RECIPIENTS
+        && named.iter().any(|a| me.iter().any(|m| m.eq_ignore_ascii_case(a)))
+}
+
+/// The `mailrs:` link that reacts to message `id` with `emoji`.
+fn react_link(id: &str, emoji: &str) -> String {
+    let encoded: String = emoji.bytes().map(|b| format!("%{b:02X}")).collect();
+    format!("mailrs:react/{}/{encoded}", escape(id))
+}
+
 /// Puts each reaction on the message it answers, when that message is in
 /// `metas`. A reaction to one that is not stays a message of its own, as
 /// Gmail shows it.
@@ -383,6 +409,25 @@ fn render_message(
             words = escape(&words),
         );
     }
+    // React opens a row of emoji without script: a details element,
+    // whose summary the page can focus and a screen reader names.
+    if may_react(meta, me) {
+        let react = escape(&gettext("React"));
+        let _ = write!(
+            html,
+            "<details class=\"react\"><summary class=\"act smile\" title=\"{react}\" aria-label=\"{react}\"></summary>\
+             <span class=\"picker\" role=\"group\" aria-label=\"{react}\">"
+        );
+        for emoji in QUICK_REACTIONS {
+            let words = escape(&fill(&gettext("React with {emoji}"), &[("emoji", emoji)]));
+            let _ = write!(
+                html,
+                "<a class=\"pick\" href=\"{link}\" title=\"{words}\" aria-label=\"{words}\">{emoji}</a>",
+                link = react_link(&meta.id, emoji),
+            );
+        }
+        html.push_str("</span></details>");
+    }
     let _ = write!(
         html,
         "</span><span class=\"date\">{}</span><span class=\"chev\" aria-hidden=\"true\"></span>",
@@ -394,7 +439,7 @@ fn render_message(
         "<span class=\"line snippet\">{}</span></div>",
         escape(&meta.snippet)
     );
-    render_reactions(html, view.reactions);
+    render_reactions(html, view.reactions, may_react(meta, me).then_some(meta.id.as_str()));
     // The body and its files live in one fold, which is what the expand
     // animation grows and shrinks. A collapsed message keeps them in the
     // page at zero height rather than dropping them, so the two states
@@ -420,7 +465,9 @@ fn render_message(
 
 /// The chips under a message's header, outside its fold, so a closed
 /// message shows them too.
-fn render_reactions(html: &mut String, chips: &[ReactionChip]) {
+/// A chip someone else's reaction made is a link that adds the same
+/// emoji, when the message may take one (`react_to`).
+fn render_reactions(html: &mut String, chips: &[ReactionChip], react_to: Option<&str>) {
     if chips.is_empty() {
         return;
     }
@@ -432,16 +479,34 @@ fn render_reactions(html: &mut String, chips: &[ReactionChip]) {
     for chip in chips {
         let people = chip.people.join(", ");
         let said = fill(&gettext("{emoji} from {people}"), &[("emoji", &chip.emoji), ("people", &people)]);
-        let _ = write!(
-            html,
-            "<span class=\"reaction{mine}\" role=\"listitem\" title=\"{people}\" aria-label=\"{said}\">\
-             <span aria-hidden=\"true\">{emoji}</span><span class=\"count\" aria-hidden=\"true\">{count}</span></span>",
-            mine = if chip.mine { " mine" } else { "" },
-            people = escape(&people),
-            said = escape(&said),
+        let inner = format!(
+            "<span aria-hidden=\"true\">{emoji}</span><span class=\"count\" aria-hidden=\"true\">{count}</span>",
             emoji = escape(&chip.emoji),
             count = chip.people.len(),
         );
+        match react_to.filter(|_| !chip.mine) {
+            Some(id) => {
+                let also = fill(&gettext("React with {emoji}"), &[("emoji", &chip.emoji)]);
+                let _ = write!(
+                    html,
+                    "<span role=\"listitem\"><a class=\"reaction\" href=\"{link}\" title=\"{people}\" \
+                     aria-label=\"{said}. {also}\">{inner}</a></span>",
+                    link = react_link(id, &chip.emoji),
+                    people = escape(&people),
+                    said = escape(&said),
+                    also = escape(&also),
+                );
+            }
+            None => {
+                let _ = write!(
+                    html,
+                    "<span class=\"reaction{mine}\" role=\"listitem\" title=\"{people}\" aria-label=\"{said}\">{inner}</span>",
+                    mine = if chip.mine { " mine" } else { "" },
+                    people = escape(&people),
+                    said = escape(&said),
+                );
+            }
+        }
     }
     html.push_str("</div>");
 }
@@ -967,12 +1032,24 @@ column-gap:12px;align-items:center;color:inherit}}\
 -webkit-mask:url(\"{REPLY}\") center/15px no-repeat}}\
 .act.all{{-webkit-mask-image:url(\"{REPLY_ALL}\")}}\
 .act.forward{{-webkit-mask-image:url(\"{FORWARD}\")}}\
+.act.smile{{-webkit-mask-image:url(\"{SMILE}\");display:block;list-style:none;cursor:pointer}}\
+.act.smile::-webkit-details-marker{{display:none}}\
+.react{{position:relative}}\
+.react[open] .act{{opacity:1;background:var(--accent)}}\
+.picker{{position:absolute;top:28px;right:0;z-index:2;display:flex;gap:2px;padding:4px;border-radius:999px;\
+background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 20px rgba(0,0,0,.18)}}\
+.pick{{font-size:19px;line-height:28px;width:32px;text-align:center;border-radius:999px;text-decoration:none;\
+transition:background-color 120ms ease,transform 120ms ease}}\
+.pick:hover,.pick:focus-visible{{background:var(--hover);transform:scale(1.15)}}\
+@media (prefers-reduced-motion:reduce){{.pick{{transition:none}}.pick:hover,.pick:focus-visible{{transform:none}}}}\
 .message:hover .act{{opacity:.8}}\
 .act:hover,.act:focus-visible{{opacity:1;background:var(--accent)}}\
 @media print{{.acts{{display:none}}}}\
 .reactions{{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 52px}}\
 .reaction{{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;\
 background:var(--card);font-size:14px;line-height:22px;cursor:default}}\
+a.reaction{{color:inherit;text-decoration:none;cursor:pointer;transition:background-color 120ms ease}}\
+a.reaction:hover{{background:color-mix(in srgb,var(--card) 100%,var(--fg) 8%)}}\
 .reaction .count{{font-size:12px;font-weight:700;color:var(--dim)}}\
 .reaction.mine{{background:color-mix(in srgb,var(--accent) 16%,var(--bg));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent)}}\
 .reaction.mine .count{{color:var(--accent-text)}}\
@@ -1080,6 +1157,10 @@ const REPLY_ALL: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2
 <path fill='black' d='M8.5 3.5 4 8l4.5 4.5V9.6c2.8 0 4.8 1 6 3.9-.3-4-2.3-6.9-6-7.4V3.5zM5.2 4.4 1 8l4.2 3.6v-1.5L2.7 8l2.5-2.1z'/></svg>";
 const FORWARD: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
 <path fill='black' d='M9.5 3.5 14.5 8l-5 4.5V9.6c-3.3 0-5.8 1-7.5 3.9.4-4 2.8-6.9 7.5-7.4V3.5z'/></svg>";
+const SMILE: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
+<circle cx='8' cy='8' r='6.2' fill='none' stroke='black' stroke-width='1.5'/>\
+<circle cx='5.9' cy='6.5' r='1' fill='black'/><circle cx='10.1' cy='6.5' r='1' fill='black'/>\
+<path d='M5.2 9.4c.7 1.2 1.7 1.8 2.8 1.8s2.1-.6 2.8-1.8' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round'/></svg>";
 
 /// The chevron beside a message's date, which says the header opens it.
 const CHEV: &str = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>\
@@ -2208,5 +2289,60 @@ mod tests {
         assert!(html.contains("title=\"Bob, You\""));
         assert!(html.contains("aria-label=\"👍 from Bob, You\""));
         assert!(html.contains("<span class=\"count\" aria-hidden=\"true\">2</span>"));
+    }
+
+    #[test]
+    fn only_mail_sent_to_me_by_a_person_to_few_people_takes_a_reaction() {
+        let me = ["me@example.com".to_string()];
+        let mine = meta("m1", "Ann", &[]);
+        assert!(may_react(&mine, &me));
+        let mut list = mine.clone();
+        list.list_unsubscribe = Some("<mailto:leave@list.example>".into());
+        assert!(!may_react(&list, &me));
+        let mut elsewhere = mine.clone();
+        elsewhere.to.retain(|a| a.email != "me@example.com");
+        assert!(!may_react(&elsewhere, &me));
+        let mut crowd = mine.clone();
+        crowd.cc = (0..20).map(|n| Address { name: None, email: format!("p{n}@example.com") }).collect();
+        assert!(!may_react(&crowd, &me), "22 people is too many");
+        crowd.cc.truncate(18);
+        assert!(may_react(&crowd, &me), "20 people is not");
+    }
+
+    #[test]
+    fn react_offers_six_emoji_and_a_chip_adds_the_same_one() {
+        let one = meta("m1", "Ann", &[]);
+        let no_thumbs = HashMap::new();
+        let chips = [ReactionChip { emoji: "🎉".into(), people: vec!["Bob".into()], mine: false }];
+        let html = page(
+            "Hello",
+            vec![MessageView {
+                meta: &one,
+                body: BodyState::Loading,
+                expanded: true,
+                thumbnails: &no_thumbs,
+                sanitized: None,
+                event_slot: false,
+                reactions: &chips,
+            }],
+        );
+        assert_eq!(html.matches("class=\"pick\"").count(), QUICK_REACTIONS.len());
+        assert!(html.contains("href=\"mailrs:react/m1/%F0%9F%91%8D\""));
+        assert!(html.contains("<a class=\"reaction\" href=\"mailrs:react/m1/%F0%9F%8E%89\""));
+        let mut list = meta("m2", "News", &[]);
+        list.list_unsubscribe = Some("<mailto:leave@list.example>".into());
+        let html = page(
+            "Hello",
+            vec![MessageView {
+                meta: &list,
+                body: BodyState::Loading,
+                expanded: true,
+                thumbnails: &no_thumbs,
+                sanitized: None,
+                event_slot: false,
+                reactions: &chips,
+            }],
+        );
+        assert!(!html.contains("mailrs:react/"));
     }
 }

@@ -1485,7 +1485,7 @@ msgstr "Tempo per concentrarsi"
 msgid "Declined because I am out of office"
 msgstr "Rifiutato perché sono fuori sede"
 
-#: crates/appcore/src/compose.rs:592 crates/appcore/src/compose.rs:2871
+#: crates/appcore/src/compose.rs:592 crates/appcore/src/compose.rs:2915
 msgid "Add at least one recipient."
 msgstr "Aggiungi almeno un destinatario."
 
@@ -1493,7 +1493,7 @@ msgstr "Aggiungi almeno un destinatario."
 msgid "“{address}” is not an email address."
 msgstr "“{address}” non è un indirizzo email."
 
-#: crates/appcore/src/compose.rs:849 crates/appcore/src/compose.rs:2877
+#: crates/appcore/src/compose.rs:849 crates/appcore/src/compose.rs:2921
 msgid "Choose a time in the future"
 msgstr "Scegli un orario nel futuro"
 
@@ -3998,6 +3998,7 @@ msgid "the account is not connected."
 msgstr "l'account non è connesso."
 
 #: crates/ffi/src/compose.rs:336 crates/ffi/src/compose.rs:343
+#: crates/ffi/src/compose.rs:396 crates/ffi/src/compose.rs:403
 msgid "Not sent: {reason}"
 msgstr "Non inviato: {reason}"
 
@@ -4005,11 +4006,27 @@ msgstr "Non inviato: {reason}"
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: crates/ffi/src/compose.rs:342
+#: crates/ffi/src/compose.rs:342 crates/ffi/src/compose.rs:402
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "In attesa in Posta in uscita. Partirà appena possibile."
 
-#: crates/ffi/src/compose.rs:456
+#: crates/ffi/src/compose.rs:362
+msgid "A reaction is one emoji."
+msgstr "Una reazione è una sola emoji."
+
+#: crates/ffi/src/compose.rs:375
+msgid "The message is no longer here."
+msgstr "Il messaggio non c'è più."
+
+#: crates/ffi/src/compose.rs:377
+msgid "This message cannot take a reaction."
+msgstr "A questo messaggio non si può reagire."
+
+#: crates/ffi/src/compose.rs:400
+msgid "Reacted with {emoji}"
+msgstr "Hai reagito con {emoji}"
+
+#: crates/ffi/src/compose.rs:513
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."
 
@@ -4138,7 +4155,7 @@ msgstr ""
 "Una versione più recente di Iris ha aggiornato la tua posta dopo l'ultima "
 "volta che hai usato questa. Aggiorna Iris per aprirla."
 
-#: crates/ffi/src/lib.rs:381
+#: crates/ffi/src/lib.rs:390
 msgid "Unknown sender"
 msgstr "Mittente sconosciuto"
 
@@ -4625,147 +4642,155 @@ msgstr "Nessuna risposta"
 msgid "{time} {city}"
 msgstr "{time} {city}"
 
-#: crates/render/src/conversation.rs:268
+#: crates/render/src/conversation.rs:294
 msgid "{count} message"
 msgid_plural "{count} messages"
 msgstr[0] "{count} messaggio"
 msgstr[1] "{count} messaggi"
 
-#: crates/render/src/conversation.rs:276
+#: crates/render/src/conversation.rs:302
 msgid "Summarize"
 msgstr "Riassumi"
 
-#: crates/render/src/conversation.rs:330
+#: crates/render/src/conversation.rs:356
 msgid "Show or hide this message"
 msgstr "Mostra o nascondi questo messaggio"
 
-#: crates/render/src/conversation.rs:332
+#: crates/render/src/conversation.rs:358
 msgid "Contact"
 msgstr "Contatto"
 
-#: crates/render/src/conversation.rs:337
+#: crates/render/src/conversation.rs:363
 msgid "Contact card for {person}"
 msgstr "Scheda contatto di {person}"
 
-#: crates/render/src/conversation.rs:376
+#: crates/render/src/conversation.rs:402
 msgid "Reply All"
 msgstr "Rispondi a tutti"
 
-#: crates/render/src/conversation.rs:377
+#: crates/render/src/conversation.rs:403
 msgid "Forward"
 msgstr "Inoltra"
 
-#: crates/render/src/conversation.rs:414
+#: crates/render/src/conversation.rs:415
+msgid "React"
+msgstr "Reagisci"
+
+#: crates/render/src/conversation.rs:422 crates/render/src/conversation.rs:489
+msgid "React with {emoji}"
+msgstr "Reagisci con {emoji}"
+
+#: crates/render/src/conversation.rs:459
 msgid "Invitation"
 msgstr "Invito"
 
-#: crates/render/src/conversation.rs:430
+#: crates/render/src/conversation.rs:477
 msgid "Reactions"
 msgstr "Reazioni"
 
-#: crates/render/src/conversation.rs:434
+#: crates/render/src/conversation.rs:481
 msgid "{emoji} from {people}"
 msgstr "{emoji} da {people}"
 
-#: crates/render/src/conversation.rs:455
+#: crates/render/src/conversation.rs:520
 msgid "Loading…"
 msgstr "Caricamento…"
 
-#: crates/render/src/conversation.rs:460
+#: crates/render/src/conversation.rs:525
 msgid "This message could not be loaded: {reason}"
 msgstr "Impossibile caricare questo messaggio: {reason}"
 
-#: crates/render/src/conversation.rs:510
+#: crates/render/src/conversation.rs:575
 msgid "Details"
 msgstr "Dettagli"
 
-#: crates/render/src/conversation.rs:531
+#: crates/render/src/conversation.rs:596
 msgid "from"
 msgstr "da"
 
-#: crates/render/src/conversation.rs:542
+#: crates/render/src/conversation.rs:607
 msgid "to"
 msgstr "a"
 
-#: crates/render/src/conversation.rs:544
+#: crates/render/src/conversation.rs:609
 msgid "cc"
 msgstr "cc"
 
-#: crates/render/src/conversation.rs:546
+#: crates/render/src/conversation.rs:611
 msgid "date"
 msgstr "data"
 
-#: crates/render/src/conversation.rs:547
+#: crates/render/src/conversation.rs:612
 msgid "subject"
 msgstr "oggetto"
 
-#: crates/render/src/conversation.rs:549
+#: crates/render/src/conversation.rs:614
 msgid "mailed-by"
 msgstr "inviato da"
 
-#: crates/render/src/conversation.rs:552
+#: crates/render/src/conversation.rs:617
 msgid "signed-by"
 msgstr "firmato da"
 
-#: crates/render/src/conversation.rs:556
+#: crates/render/src/conversation.rs:621
 msgid "security"
 msgstr "sicurezza"
 
-#: crates/render/src/conversation.rs:558
+#: crates/render/src/conversation.rs:623
 msgid "Standard encryption (TLS)"
 msgstr "Crittografia standard (TLS)"
 
-#: crates/render/src/conversation.rs:563
+#: crates/render/src/conversation.rs:628
 msgid "Not encrypted in transit"
 msgstr "Non cifrato durante il transito"
 
-#: crates/render/src/conversation.rs:600
+#: crates/render/src/conversation.rs:665
 msgid "{count} attachment"
 msgid_plural "{count} attachments"
 msgstr[0] "{count} allegato"
 msgstr[1] "{count} allegati"
 
-#: crates/render/src/conversation.rs:632
+#: crates/render/src/conversation.rs:697
 msgid "Quick Look"
 msgstr "Quick Look"
 
-#: crates/render/src/conversation.rs:633
+#: crates/render/src/conversation.rs:698
 msgid "Save to Downloads"
 msgstr "Salva in Download"
 
-#: crates/render/src/conversation.rs:635
+#: crates/render/src/conversation.rs:700
 msgid "Open {file}, {size}"
 msgstr "Apri {file}, {size}"
 
-#: crates/render/src/conversation.rs:642
+#: crates/render/src/conversation.rs:707
 msgid "Save {file} to Downloads"
 msgstr "Salva {file} in Download"
 
-#: crates/render/src/conversation.rs:649
+#: crates/render/src/conversation.rs:714
 msgid "Save All ({count})"
 msgid_plural "Save All ({count})"
 msgstr[0] "Salva tutto ({count})"
 msgstr[1] "Salva tutti ({count})"
 
-#: crates/render/src/conversation.rs:660
+#: crates/render/src/conversation.rs:725
 msgid "Save every attachment to a folder"
 msgstr "Salva tutti gli allegati in una cartella"
 
-#: crates/render/src/conversation.rs:724
+#: crates/render/src/conversation.rs:789
 msgid "undisclosed recipients"
 msgstr "destinatari nascosti"
 
-#: crates/render/src/conversation.rs:727
+#: crates/render/src/conversation.rs:792
 msgid "{named}, and {count} other"
 msgid_plural "{named}, and {count} others"
 msgstr[0] "{named} e {count} altro"
 msgstr[1] "{named} e altri {count}"
 
-#: crates/render/src/conversation.rs:740
+#: crates/render/src/conversation.rs:805
 msgid "me"
 msgstr "me"
 
-#: crates/render/src/conversation.rs:750
+#: crates/render/src/conversation.rs:815
 msgid "Show trimmed content"
 msgstr "Mostra il contenuto tagliato"
 
@@ -5692,7 +5717,7 @@ msgstr ""
 "Approva ogni messaggio che l'assistente invia e ogni modifica alle "
 "impostazioni di Gmail, come risposte automatiche e regole"
 
-#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:859
+#: macos/Iris/AISettingsView.swift:26 macos/Iris/MailModel.swift:885
 msgid "Conversation"
 msgstr "Conversazione"
 
@@ -6562,66 +6587,66 @@ msgstr "Nessuna conversazione selezionata"
 msgid "Edit Draft"
 msgstr "Modifica bozza"
 
-#: macos/Iris/ConversationView.swift:110 macos/Iris/ConversationView.swift:111
+#: macos/Iris/ConversationView.swift:111 macos/Iris/ConversationView.swift:112
 #: macos/Iris/ThreadListView.swift:388
 msgid "Remove from Follow Up"
 msgstr "Rimuovi da «Da seguire»"
 
-#: macos/Iris/ConversationView.swift:127 macos/Iris/ConversationView.swift:348
+#: macos/Iris/ConversationView.swift:128 macos/Iris/ConversationView.swift:370
 #: macos/Iris/ThreadListView.swift:43 macos/Iris/ThreadListView.swift:298
 #: macos/Iris/ThreadListView.swift:396
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
-#: macos/Iris/ConversationView.swift:155 macos/Iris/ConversationView.swift:171
+#: macos/Iris/ConversationView.swift:177 macos/Iris/ConversationView.swift:193
 msgid "Load Images"
 msgstr "Carica immagini"
 
-#: macos/Iris/ConversationView.swift:156
+#: macos/Iris/ConversationView.swift:178
 msgid "Always Load Images"
 msgstr "Carica sempre le immagini"
 
-#: macos/Iris/ConversationView.swift:157
+#: macos/Iris/ConversationView.swift:179
 msgid "From {sender}"
 msgstr "Da {sender}"
 
-#: macos/Iris/ConversationView.swift:161
+#: macos/Iris/ConversationView.swift:183
 msgid "From Anyone at {domain}"
 msgstr "Da chiunque su {domain}"
 
-#: macos/Iris/ConversationView.swift:340
+#: macos/Iris/ConversationView.swift:362
 msgid "Several Conversations Selected"
 msgstr "Più conversazioni selezionate"
 
-#: macos/Iris/ConversationView.swift:342
+#: macos/Iris/ConversationView.swift:364
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 
-#: macos/Iris/ConversationView.swift:352
+#: macos/Iris/ConversationView.swift:374
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
-#: macos/Iris/ConversationView.swift:507
+#: macos/Iris/ConversationView.swift:529
 msgid "Checked"
 msgstr "Verificata"
 
-#: macos/Iris/ConversationView.swift:508
+#: macos/Iris/ConversationView.swift:530
 msgid "Warning"
 msgstr "Avviso"
 
-#: macos/Iris/ConversationView.swift:509
+#: macos/Iris/ConversationView.swift:531
 msgid "Not checked"
 msgstr "Non verificata"
 
-#: macos/Iris/ConversationView.swift:525
+#: macos/Iris/ConversationView.swift:547
 msgid "Categorize Sender"
 msgstr "Classifica mittente"
 
-#: macos/Iris/ConversationView.swift:532
+#: macos/Iris/ConversationView.swift:554
 msgid "Block Sender…"
 msgstr "Blocca mittente…"
 
-#: macos/Iris/ConversationView.swift:541
+#: macos/Iris/ConversationView.swift:563
 msgid "Block"
 msgstr "Blocca"
 
@@ -6855,48 +6880,48 @@ msgstr ""
 "La conversazione lascia ora la Posta in arrivo e torna a quest'ora, segnata "
 "come non letta."
 
-#: macos/Iris/MailModel.swift:761
+#: macos/Iris/MailModel.swift:787
 msgid "Saved {file} to Downloads"
 msgstr "{file} salvato in Download"
 
-#: macos/Iris/MailModel.swift:763
+#: macos/Iris/MailModel.swift:789
 msgid "Could not save {file}: {reason}"
 msgstr "Impossibile salvare {file}: {reason}"
 
-#: macos/Iris/MailModel.swift:788 macos/Iris/SourceView.swift:53
+#: macos/Iris/MailModel.swift:814 macos/Iris/SourceView.swift:53
 #: macos/Iris/SourceView.swift:92
 msgid "Saved {file}"
 msgstr "{file} salvato"
 
-#: macos/Iris/MailModel.swift:949
+#: macos/Iris/MailModel.swift:975
 msgid "Message discarded"
 msgstr "Messaggio scartato"
 
-#: macos/Iris/MailModel.swift:1008
+#: macos/Iris/MailModel.swift:1034
 msgid "Sending…"
 msgstr "Invio…"
 
-#: macos/Iris/MailModel.swift:1098
+#: macos/Iris/MailModel.swift:1124
 msgid "Cancel Send"
 msgstr "Annulla invio"
 
-#: macos/Iris/MailModel.swift:1405
+#: macos/Iris/MailModel.swift:1431
 msgid "Translating…"
 msgstr "Traduzione…"
 
-#: macos/Iris/MailModel.swift:1444
+#: macos/Iris/MailModel.swift:1470
 msgid "This Mac cannot translate this message: {reason}"
 msgstr "Questo Mac non può tradurre il messaggio: {reason}"
 
-#: macos/Iris/MailModel.swift:1953
+#: macos/Iris/MailModel.swift:1979
 msgid "Removed {account}"
 msgstr "{account} rimosso"
 
-#: macos/Iris/MailModel.swift:1958
+#: macos/Iris/MailModel.swift:1984
 msgid "Could not remove {account}: {reason}"
 msgstr "Impossibile rimuovere {account}: {reason}"
 
-#: macos/Iris/MailModel.swift:2008
+#: macos/Iris/MailModel.swift:2034
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 

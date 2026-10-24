@@ -102,6 +102,7 @@ struct ConversationView: View {
                         .keyboardShortcut("f", modifiers: [.command, .shift])
                 }
                 .disabled(model.openThread == nil)
+                ReactMenu()
             }
             }
             ToolbarItemGroup {
@@ -142,6 +143,27 @@ struct ConversationView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSColor.systemColorsDidChangeNotification)) { _ in
             model.refreshTheme()
         }
+    }
+}
+
+/// React to the newest message that may take a reaction, with the emoji
+/// the page offers beside each message.
+private struct ReactMenu: View {
+    @Environment(MailModel.self) private var model
+    private static let emoji = quickReactions()
+
+    var body: some View {
+        let target = model.page?.reactTo
+        Menu(tr("React"), systemImage: "face.smiling") {
+            ForEach(Self.emoji, id: \.self) { emoji in
+                Button(emoji) {
+                    if let target { model.react(message: target, emoji: emoji) }
+                }
+                .accessibilityLabel(tr("React with {emoji}").replacingOccurrences(of: "{emoji}", with: emoji))
+            }
+        }
+        .help(tr("React"))
+        .disabled(target == nil)
     }
 }
 

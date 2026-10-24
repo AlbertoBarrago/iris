@@ -345,8 +345,65 @@ impl Mail {
     }
 }
 
+/// The emoji React offers, in the order it shows them, the same in the
+/// toolbar's menu as on the page.
+#[uniffi::export]
+pub fn quick_reactions() -> Vec<String> {
+    mailrs_render::conversation::QUICK_REACTIONS.iter().map(|e| e.to_string()).collect()
+}
+
 #[uniffi::export]
 impl Mail {
+    /// Answers message `message_id` of a conversation with `emoji`, as a
+    /// reaction to everyone it went to, from the address it was written
+    /// to. Says what came of it, or why it was refused.
+    pub fn react(&self, account_id: i64, thread_id: String, message_id: String, emoji: String) -> Result<String, CoreError> {
+        let emoji = mailrs_mime::reaction::one_emoji(&emoji)
+            .ok_or_else(|| CoreError::Store(gettext("A reaction is one emoji.")))?;
+        let db = self.db.clone();
+        let (thread, id) = (thread_id, account_id);
+        let (metas, me) = self.run(async move {
+            db.read(move |c| {
+                let me: Vec<String> = accounts::list_accounts(c)?.into_iter().map(|a| a.email).collect();
+                Ok((messages::thread_messages(c, id, &thread)?, me))
+            })
+            .await
+        })?;
+        let original = metas
+            .iter()
+            .find(|m| m.id == message_id)
+            .ok_or_else(|| CoreError::Store(gettext("The message is no longer here.")))?;
+        if !mailrs_render::conversation::may_react(original, &me) {
+            return Err(CoreError::Store(gettext("This message cannot take a reaction.")));
+        }
+        let mine: Vec<Address> = self
+            .senders()?
+            .iter()
+            .filter(|s| s.account_id == account_id)
+            .map(address)
+            .collect();
+        // A reply to everyone, so the reaction reaches each person the
+        // message did, and to its Reply-To when it names one.
+        let reply_to = self.stored_body(account_id, &original.id).map(|b| b.reply_to).unwrap_or_default();
+        let draft = compose::respond(ReplyKind::ReplyAll, account_id, &mine, original, "", None, &reply_to, &metas);
+        let message_id = compose::new_message_id(&draft.from.email);
+        let raw = compose::build_reaction(&draft, &emoji, mailrs_sync::now_millis() / 1000, &message_id).map_err(|err| {
+            CoreError::Store(fill(&gettext("Could not build the message: {reason}"), &[("reason", &err)]))
+        })?;
+        let outbox = Arc::new(Outbox::new(Arc::clone(&self.running), self.db.clone()));
+        let posted = self
+            .run(async move { outbox.post(queued(&draft, raw)).await })
+            .map_err(|err| CoreError::Store(fill(&gettext("Not sent: {reason}"), &[("reason", &err.to_string())])))?;
+        match posted {
+            Posted::Sent(_) => {
+                self.check_account(account_id);
+                Ok(fill(&gettext("Reacted with {emoji}"), &[("emoji", &emoji)]))
+            }
+            Posted::Waiting(_) => Ok(gettext("Waiting in the Outbox. It goes out as soon as it can.")),
+            Posted::Refused(problem) => Err(CoreError::Store(fill(&gettext("Not sent: {reason}"), &[("reason", &problem)]))),
+        }
+    }
+
     /// Keeps what the composer holds to go out at `at`, as Send Later: a
     /// server draft and the hour here, or the bytes here alone while the
     /// server is out of reach. Says when it goes, or why it was refused.

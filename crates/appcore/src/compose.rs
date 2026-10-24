@@ -1414,6 +1414,31 @@ pub fn build_mime(draft: &Draft, date_secs: i64, message_id: &str) -> Result<Vec
         .map_err(|e| e.to_string())
 }
 
+/// The RFC 822 bytes of a reaction: `draft` answers the message it reacts
+/// to, and its body says `emoji` three ways. Gmail reads the
+/// `text/vnd.google.email-reaction+json` part, which it asks to sit between
+/// the plain and the HTML ones because some clients show the first part
+/// and some the last. The plain part carries RFC 9078's disposition, for
+/// clients that read reactions that way, and holds the emoji alone, which
+/// is also what a client that knows neither shows.
+pub fn build_reaction(draft: &Draft, emoji: &str, date_secs: i64, message_id: &str) -> Result<Vec<u8>, String> {
+    let body = MimePart::new(
+        "multipart/alternative",
+        vec![
+            MimePart::new("text/plain", emoji.to_string()).header("Content-Disposition", Raw::new("reaction")),
+            MimePart::new(
+                mailrs_mime::reaction::GMAIL_REACTION,
+                mailrs_mime::reaction::gmail_part(emoji),
+            ),
+            MimePart::new("text/html", format!("<p style=\"font-size:32px\">{emoji}</p>")),
+        ],
+    );
+    envelope(draft, date_secs, message_id)
+        .body(body)
+        .write_to_vec()
+        .map_err(|e| e.to_string())
+}
+
 /// The RFC 822 bytes Gmail keeps for `draft` in Drafts: the message
 /// [`build_mime`] writes, with [`QUOTE_MARK`] where a folded quote starts,
 /// so the draft reopens folded.
@@ -2360,6 +2385,25 @@ mod tests {
         assert!(html.contains("Hi Bob,<br />"), "{html}");
         assert!(html.contains("<strong>this</strong>"));
         assert!(html.contains("<blockquote style="));
+    }
+
+    #[test]
+    fn a_reaction_reads_back_as_one_in_both_formats() {
+        let mut draft = Draft::new(1, me());
+        draft.to = vec![addr(None, "ann@example.com")];
+        draft.subject = "Re: Plans".into();
+        draft.in_reply_to = Some("<plans@example.com>".into());
+        draft.references = vec!["<plans@example.com>".into()];
+        let raw = build_reaction(&draft, "👍", 0, "r@example.com").unwrap();
+        let reaction = mailrs_mime::read(&raw).reaction.expect("a reaction");
+        assert_eq!((reaction.emoji.as_str(), reaction.to.as_str()), ("👍", "<plans@example.com>"));
+        let parts = mailrs_mime::parts(&raw).unwrap();
+        let types: Vec<&str> = parts.root.children.iter().map(|p| p.mime_type.as_str()).collect();
+        assert_eq!(types, ["text/plain", mailrs_mime::reaction::GMAIL_REACTION, "text/html"]);
+        assert!(parts.root.children[0].reaction);
+        // Without Gmail's part, the RFC 9078 mark alone still reads.
+        let only_plain = String::from_utf8(raw).unwrap().replace("email-reaction+json", "plain");
+        assert_eq!(mailrs_mime::read(only_plain.as_bytes()).reaction.map(|r| r.emoji).as_deref(), Some("👍"));
     }
 
     #[test]
