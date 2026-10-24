@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.5 (2026-10-24)
+
 ### New
 
 - An emoji reaction someone sends from Gmail shows under the message it
