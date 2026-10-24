@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.4 (2026-10-24)
+
 ### New
 
 - Iris can be your default mail app (Settings, General): an email link on a
