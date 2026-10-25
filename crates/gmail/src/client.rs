@@ -706,7 +706,7 @@ impl GmailClient {
         let body = self
             .send_request(cost::CONNECTIONS, || {
                 let mut request = self.http().get(&url).query(&[
-                    ("readMask", "names,emailAddresses,photos"),
+                    ("readMask", people::OTHER_CONTACT_FIELDS),
                     ("pageSize", &people::PAGE_SIZE.to_string()),
                     ("requestSyncToken", "true"),
                 ]);
@@ -722,7 +722,53 @@ impl GmailClient {
             .text()
             .await
             .map_err(|e| GmailError::Decode(e.to_string()))?;
-        people::parse_connections(&body)
+        let (mut page, profiles) = people::parse_other_contacts(&body)?;
+        if !profiles.is_empty() {
+            let ids: Vec<&str> = profiles.iter().map(|(_, profile)| profile.as_str()).collect();
+            // The photos are a nicety on top of the contacts: a failed read
+            // leaves these people lettered rather than losing the page.
+            let photos = match self.profile_photos(&ids).await {
+                Ok(photos) => photos,
+                Err(error) => {
+                    tracing::warn!(%error, "could not read the photos of other contacts");
+                    Default::default()
+                }
+            };
+            for (resource, profile) in &profiles {
+                let person = page.people.iter_mut().find(|p| p.resource == *resource);
+                if let (Some(person), Some(url)) = (person, photos.get(profile.as_str())) {
+                    person.photo_url = Some(url.clone());
+                }
+            }
+        }
+        Ok(page)
+    }
+
+    /// The photo each Google profile in `profiles` (`people/<id>`) shows,
+    /// by profile, read [`PROFILES_PER_CALL`](people::PROFILES_PER_CALL)
+    /// at a time. Profiles with no photo of their own are missing.
+    async fn profile_photos(
+        &self,
+        profiles: &[&str],
+    ) -> Result<std::collections::HashMap<String, String>, GmailError> {
+        let url = format!("{}/people:batchGet", self.people_url);
+        let mut photos = std::collections::HashMap::new();
+        for chunk in profiles.chunks(people::PROFILES_PER_CALL) {
+            let body = self
+                .send_request(cost::CONNECTIONS, || {
+                    let mut request = self.http().get(&url).query(&[("personFields", "photos")]);
+                    for profile in chunk {
+                        request = request.query(&[("resourceNames", profile)]);
+                    }
+                    request
+                })
+                .await?
+                .text()
+                .await
+                .map_err(|e| GmailError::Decode(e.to_string()))?;
+            photos.extend(people::parse_profile_photos(&body)?);
+        }
+        Ok(photos)
     }
 
     /// Adds a contact to the account's Google contacts. Gmail answers

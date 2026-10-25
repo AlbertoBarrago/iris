@@ -139,8 +139,28 @@ pub fn parse_person(body: &str) -> Result<(Person, String), GmailError> {
 /// Reads one page. A person with no address is left out: there is nothing
 /// to suggest them by and nothing to match a message against.
 pub fn parse_connections(body: &str) -> Result<ConnectionsPage, GmailError> {
+    Ok(parse_other_contacts(body)?.0)
+}
+
+/// The fields one page of other contacts carries. `metadata` names the
+/// Google profile behind each person, where their photo can still be read.
+pub const OTHER_CONTACT_FIELDS: &str = "names,emailAddresses,photos,metadata";
+
+/// People one `people:batchGet` call may name, Google's ceiling.
+pub const PROFILES_PER_CALL: usize = 200;
+
+/// Reads one page of other contacts, and pairs each person who came
+/// without a photo with the Google profile behind them, as
+/// `(resource, people/<profile id>)`. Since early 2024 `otherContacts.list`
+/// hands back only Google's lettered placeholder in place of a profile
+/// photo, while `people.get` on the profile still returns the photo
+/// (<https://issuetracker.google.com/issues/321249335>).
+pub fn parse_other_contacts(
+    body: &str,
+) -> Result<(ConnectionsPage, Vec<(String, String)>), GmailError> {
     let reply: Connections =
         serde_json::from_str(body).map_err(|e| GmailError::Decode(e.to_string()))?;
+    let mut profiles = Vec::new();
     let mut page = ConnectionsPage {
         next_page_token: reply.next_page_token,
         next_sync_token: reply.next_sync_token,
@@ -154,12 +174,43 @@ pub fn parse_connections(body: &str) -> Result<ConnectionsPage, GmailError> {
             page.deleted.push(person.resource_name);
             continue;
         }
+        let profile = profile_of(&person);
         let person = flatten(person);
         if !person.emails.is_empty() {
+            if let (None, Some(profile)) = (&person.photo_url, profile) {
+                profiles.push((person.resource.clone(), profile));
+            }
             page.people.push(person);
         }
     }
-    Ok(page)
+    Ok((page, profiles))
+}
+
+/// The Google profile behind `person`, as `people/<id>`, from the sources
+/// Google says it merged the person from or the one its photo came from.
+fn profile_of(person: &Connection) -> Option<String> {
+    let sources = person.metadata.iter().flat_map(|m| &m.sources);
+    let photo_sources = person.photos.iter().filter_map(|p| p.metadata.source.as_ref());
+    sources
+        .chain(photo_sources)
+        .find(|s| s.kind == "PROFILE" && !s.id.is_empty())
+        .map(|s| format!("people/{}", s.id))
+}
+
+/// The photo each profile shows, from a `people:batchGet` reply, as
+/// `(people/<id>, url)`. A profile with only the placeholder, or one Google
+/// would not return, is left out.
+pub fn parse_profile_photos(body: &str) -> Result<Vec<(String, String)>, GmailError> {
+    let reply: BatchGet =
+        serde_json::from_str(body).map_err(|e| GmailError::Decode(e.to_string()))?;
+    Ok(reply
+        .responses
+        .into_iter()
+        .filter_map(|r| {
+            let url = flatten(r.person?).photo_url?;
+            Some((r.requested_resource_name, url))
+        })
+        .collect())
 }
 
 fn flatten(person: Connection) -> Person {
@@ -262,9 +313,40 @@ struct Connection {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct BatchGet {
+    #[serde(default)]
+    responses: Vec<BatchGetResponse>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct BatchGetResponse {
+    #[serde(default)]
+    requested_resource_name: String,
+    person: Option<Connection>,
+}
+
+#[derive(Deserialize)]
 struct PersonMetadata {
     #[serde(default)]
     deleted: bool,
+    #[serde(default)]
+    sources: Vec<Source>,
+}
+
+/// Where Google took a person or a field from, such as their profile.
+#[derive(Deserialize)]
+struct Source {
+    #[serde(rename = "type", default)]
+    kind: String,
+    #[serde(default)]
+    id: String,
+}
+
+#[derive(Default, Deserialize)]
+struct PhotoMetadata {
+    source: Option<Source>,
 }
 
 #[derive(Default, Deserialize)]
@@ -294,6 +376,8 @@ struct Photo {
     /// Set on Google's stand-in silhouette.
     #[serde(default)]
     default: bool,
+    #[serde(default)]
+    metadata: PhotoMetadata,
 }
 
 #[derive(Deserialize)]
@@ -336,7 +420,7 @@ mod tests {
         let page =
             parse_connections(include_str!("../tests/people/other-contacts-page-1.json")).unwrap();
         assert_eq!(page.next_page_token.as_deref(), Some("other-page-2"));
-        assert_eq!(page.people.len(), 2);
+        assert_eq!(page.people.len(), 3);
         assert_eq!(page.people[0].resource, "otherContacts/c1");
         assert_eq!(page.people[0].name.as_deref(), Some("Ana Lima"));
         assert_eq!(
@@ -345,6 +429,32 @@ mod tests {
         );
         assert_eq!(page.people[1].photo_url, None);
         assert_eq!(page.deleted, ["otherContacts/deleted"]);
+    }
+
+    #[test]
+    fn other_contacts_without_a_photo_point_at_their_profile() {
+        let (_, profiles) =
+            parse_other_contacts(include_str!("../tests/people/other-contacts-page-1.json"))
+                .unwrap();
+        // Ana has a photo already, so only Bo, through the source of the
+        // placeholder, and Cy, through the person's own sources, are asked.
+        assert_eq!(
+            profiles,
+            [
+                ("otherContacts/c2".to_string(), "people/111".to_string()),
+                ("otherContacts/c3".to_string(), "people/222".to_string()),
+            ]
+        );
+    }
+
+    #[test]
+    fn profile_photos_skip_placeholders_and_missing_profiles() {
+        let photos =
+            parse_profile_photos(include_str!("../tests/people/profile-photos.json")).unwrap();
+        assert_eq!(
+            photos,
+            [("people/111".to_string(), "https://photos.example/bo=s128-c".to_string())]
+        );
     }
 
     #[test]

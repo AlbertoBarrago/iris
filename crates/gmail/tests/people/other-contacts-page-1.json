@@ -1,10 +1,14 @@
 {
   "otherContacts": [
     {"resourceName": "otherContacts/c1", "names": [{"displayName": "Ana Lima"}],
+     "metadata": {"sources": [{"type": "PROFILE", "id": "100"}]},
      "emailAddresses": [{"value": "ana@example.org"}],
      "photos": [{"url": "https://photos.example/ana=s100"}]},
     {"resourceName": "otherContacts/c2", "emailAddresses": [{"value": "bo@example.org"}],
-     "photos": [{"url": "https://photos.example/default", "default": true}]},
+     "photos": [{"url": "https://photos.example/default", "default": true,
+                 "metadata": {"source": {"type": "PROFILE", "id": "111"}}}]},
+    {"resourceName": "otherContacts/c3", "emailAddresses": [{"value": "cy@example.org"}],
+     "metadata": {"sources": [{"type": "OTHER_CONTACT", "id": "c3"}, {"type": "PROFILE", "id": "222"}]}},
     {"resourceName": "otherContacts/deleted", "metadata": {"deleted": true}}
   ],
   "nextPageToken": "other-page-2"

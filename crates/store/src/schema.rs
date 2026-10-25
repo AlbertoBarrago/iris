@@ -902,6 +902,12 @@ ALTER TABLE contacts ADD COLUMN source TEXT NOT NULL DEFAULT 'saved'
 ALTER TABLE contact_books ADD COLUMN other_sync_token TEXT;
 ALTER TABLE contact_books ADD COLUMN other_synced_at INTEGER;
 "#,
+    // Other contacts read before Iris asked Google for their profile
+    // photos came without one, and a sync token only hands back what
+    // changed. Forgetting the token reads them all again, photos and all.
+    r#"
+UPDATE contact_books SET other_sync_token = NULL, other_synced_at = NULL;
+"#,
 ];
 
 /// How long the copy taken before a migration stays once the store has
@@ -1115,7 +1121,7 @@ fn contact_lists_migrate_an_existing_address_book_without_changing_it() {
 
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("mail.db");
-    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 3]).unwrap();
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 4]).unwrap();
     let account = accounts::insert_account(&old, "me@example.org", 0).unwrap();
     let contact = address_book::Contact {
         account_id: account,
@@ -1157,7 +1163,7 @@ fn reactions_migrate_existing_messages_as_plain_ones() {
 
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("mail.db");
-    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 2]).unwrap();
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 3]).unwrap();
     let account = accounts::insert_account(&old, "me@example.org", 0).unwrap();
     old.execute(
         "INSERT INTO messages (account_id, id, thread_id, rfc822_msgid, to_addrs, cc_addrs, subject, \
@@ -1178,7 +1184,7 @@ fn other_contacts_migrate_saved_contacts_and_their_cursor_unchanged() {
 
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("mail.db");
-    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 2]).unwrap();
     let id = accounts::insert_account(&old, "me@example.org", 0).unwrap();
     old.execute(
         "INSERT INTO contacts (account_id, resource, name, photo_file) VALUES (?1, 'people/c1', 'Ana', 'ana.jpg')",
@@ -1198,6 +1204,22 @@ fn other_contacts_migrate_saved_contacts_and_their_cursor_unchanged() {
     assert_eq!(saved.len(), 1);
     assert_eq!(saved[0].photo_file.as_deref(), Some("ana.jpg"));
     assert!(address_book::holds(&conn, id, "ana@example.org").unwrap());
+    assert_eq!(address_book::book(&conn, id).unwrap(), Some((Some("saved-token".into()), 12)));
+    assert_eq!(address_book::other_book(&conn, id).unwrap(), None);
+}
+
+#[test]
+fn other_contacts_read_again_for_their_photos() {
+    use crate::{accounts, address_book};
+
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("mail.db");
+    let old = open_with(&path, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    let id = accounts::insert_account(&old, "me@example.org", 0).unwrap();
+    address_book::set_book(&old, id, Some("saved-token"), 12).unwrap();
+    address_book::set_other_book(&old, id, Some("other-token"), 34).unwrap();
+    drop(old);
+    let conn = open_connection(&path).unwrap();
     assert_eq!(address_book::book(&conn, id).unwrap(), Some((Some("saved-token".into()), 12)));
     assert_eq!(address_book::other_book(&conn, id).unwrap(), None);
 }

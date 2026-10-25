@@ -1,0 +1,12 @@
+{
+  "responses": [
+    {"requestedResourceName": "people/111",
+     "person": {"resourceName": "people/111",
+                "photos": [{"url": "https://photos.example/bo=s100",
+                            "metadata": {"source": {"type": "PROFILE", "id": "111"}}}]}},
+    {"requestedResourceName": "people/222",
+     "person": {"resourceName": "people/222",
+                "photos": [{"url": "https://photos.example/placeholder", "default": true}]}},
+    {"requestedResourceName": "people/333", "status": {"code": 5}}
+  ]
+}

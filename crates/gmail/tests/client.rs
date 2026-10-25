@@ -916,7 +916,7 @@ async fn other_contacts_use_their_own_mask_pages_and_sync_token() {
     mount_token(&server, 1).await;
     Mock::given(method("GET"))
         .and(path("/v1/otherContacts"))
-        .and(query_param("readMask", "names,emailAddresses,photos"))
+        .and(query_param("readMask", "names,emailAddresses,photos,metadata"))
         .and(query_param("pageSize", "200"))
         .and(query_param("requestSyncToken", "true"))
         .respond_with(ResponseTemplate::new(200).set_body_raw(
@@ -951,9 +951,31 @@ async fn other_contacts_use_their_own_mask_pages_and_sync_token() {
         .expect(1)
         .mount(&server)
         .await;
+    Mock::given(method("GET"))
+        .and(path("/v1/people:batchGet"))
+        .and(query_param("personFields", "photos"))
+        .and(query_param("resourceNames", "people/111"))
+        .and(query_param("resourceNames", "people/222"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            include_str!("people/profile-photos.json"),
+            "application/json",
+        ))
+        .expect(1)
+        .mount(&server)
+        .await;
     let client = client(&server);
     let page = client.other_contacts(None, None).await.unwrap();
-    assert_eq!(page.people.len(), 2);
+    let photos: Vec<_> = page.people.iter().map(|p| p.photo_url.as_deref()).collect();
+    // Bo's photo comes from Bo's profile; Cy's profile has only the
+    // placeholder, so Cy stays without one.
+    assert_eq!(
+        photos,
+        [
+            Some("https://photos.example/ana=s128-c"),
+            Some("https://photos.example/bo=s128-c"),
+            None,
+        ]
+    );
     let page = client
         .other_contacts(page.next_page_token.as_deref(), None)
         .await
@@ -965,6 +987,31 @@ async fn other_contacts_use_their_own_mask_pages_and_sync_token() {
             .await,
         Err(GmailError::ExpiredSyncToken)
     ));
+}
+
+#[tokio::test]
+async fn other_contacts_keep_their_page_when_profile_photos_fail() {
+    let server = MockServer::start().await;
+    mount_token(&server, 1).await;
+    Mock::given(method("GET"))
+        .and(path("/v1/otherContacts"))
+        .respond_with(ResponseTemplate::new(200).set_body_raw(
+            include_str!("people/other-contacts-page-1.json"),
+            "application/json",
+        ))
+        .mount(&server)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/v1/people:batchGet"))
+        .respond_with(ResponseTemplate::new(400).set_body_json(json!({"error": {
+            "code": 400, "status": "INVALID_ARGUMENT"
+        }})))
+        .expect(1)
+        .mount(&server)
+        .await;
+    let page = client(&server).other_contacts(None, None).await.unwrap();
+    assert_eq!(page.people.len(), 3);
+    assert_eq!(page.people[1].photo_url, None);
 }
 
 #[tokio::test]

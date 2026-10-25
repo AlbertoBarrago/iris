@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- People you write to but never saved show their Google profile photo
+  again, not just their initials.
+
 ## 1.2.6 (2026-10-25)
 
 ### Fixed
