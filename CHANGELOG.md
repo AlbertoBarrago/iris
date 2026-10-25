@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.6 (2026-10-25)
+
 ### Fixed
 
 - After you authorize an account again, its contacts and their photos
