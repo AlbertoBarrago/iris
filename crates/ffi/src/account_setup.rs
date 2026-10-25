@@ -469,7 +469,7 @@ impl AccountSetup {
                 Ok((account, services)) => {
                     self.start(&engine, account.id, services);
                     keep_send_as_name(&account, &name);
-                    self.signed_in_again(&account.email);
+                    self.signed_in_again(account.id, &account.email);
                     self.mail.changed("accounts");
                     return Ok(SignInAnswer::Added {
                         account_id: account.id,
@@ -548,7 +548,7 @@ impl AccountSetup {
         if let Some(name) = &signed.name {
             keep_send_as_name(&signed.account, name);
         }
-        self.signed_in_again(&signed.account.email);
+        self.signed_in_again(signed.account.id, &signed.account.email);
         self.mail.changed("accounts");
         Ok(SignInAnswer::Added {
             account_id: signed.account.id,
@@ -668,8 +668,9 @@ impl AccountSetup {
 
 impl AccountSetup {
     /// An account that signed in again asks Gmail for its send-as
-    /// addresses at once, as the GTK app does.
-    fn signed_in_again(&self, email: &str) {
+    /// addresses at once, as the GTK app does, and reads its address book
+    /// again with whatever access it now grants.
+    fn signed_in_again(&self, account_id: AccountId, email: &str) {
         if self.lock().again.as_deref() != Some(email) {
             return;
         }
@@ -679,6 +680,7 @@ impl AccountSetup {
         if let Err(err) = settings.save(&path) {
             tracing::warn!(error = %err, "could not note an account signed in again");
         }
+        self.mail.reread_contacts(account_id, email);
     }
 
     fn lock(&self) -> std::sync::MutexGuard<'_, State> {

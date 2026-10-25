@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- After you authorize an account again, its contacts and their photos
+  arrive at once instead of up to an hour later.
+
 ## 1.2.5 (2026-10-24)
 
 ### New

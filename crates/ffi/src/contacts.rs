@@ -413,6 +413,24 @@ impl Mail {
         self.changed("contacts");
     }
 
+    /// Reads account `account_id`'s address book again in the background,
+    /// when Iris reads its contacts at all. Signing in again can grant
+    /// access the last read lacked, such as other contacts, which the
+    /// hourly look would otherwise leave unused for up to an hour.
+    pub(crate) fn reread_contacts(self: &Arc<Self>, account_id: i64, email: &str) {
+        if !prefs::load().reads_contacts(email) {
+            return;
+        }
+        let book = self.contact_book();
+        let mail = Arc::clone(self);
+        self.runtime.spawn(async move {
+            match book.refresh(account_id).await {
+                Ok(_) => mail.contacts_changed(),
+                Err(err) => tracing::warn!(%err, "could not read the address book again"),
+            }
+        });
+    }
+
     /// The address book over every account, with its photos in the cache
     /// the GTK app keeps them in.
     pub(crate) fn contact_book(&self) -> Arc<ContactBook<Running>> {

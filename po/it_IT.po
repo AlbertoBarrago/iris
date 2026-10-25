@@ -3910,7 +3910,7 @@ msgstr "La risposta automatica è disattivata"
 msgid "Remove {account}?"
 msgstr "Rimuovere {account}?"
 
-#: crates/ffi/src/account_setup.rs:703
+#: crates/ffi/src/account_setup.rs:705
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr ""
 "Un'altra copia di Iris sta sincronizzando la posta. Chiudila e riprova."
@@ -6489,10 +6489,9 @@ msgstr ""
 "Iris può leggere i contatti di un account: nomi, indirizzi email, foto, "
 "organizzazioni e numeri di telefono. Da un account Google legge anche le "
 "persone che Google ricorda dalla tua posta ma che non hai mai salvato. Li "
-"usa per suggerire destinatari, "
-"mostrare i volti accanto alla posta e compilare la scheda dietro il nome di "
-"un mittente. Ciò che legge resta su questo computer, e disattivando un "
-"account i suoi contatti vengono eliminati."
+"usa per suggerire destinatari, mostrare i volti accanto alla posta e "
+"compilare la scheda dietro il nome di un mittente. Ciò che legge resta su "
+"questo computer, e disattivando un account i suoi contatti vengono eliminati."
 
 #: macos/Iris/ContactsSettings.swift:121 macos/Iris/ContactsSettings.swift:124
 #: macos/Iris/ContactsSettings.swift:206

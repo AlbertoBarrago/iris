@@ -3699,7 +3699,7 @@ msgstr ""
 msgid "Remove {account}?"
 msgstr ""
 
-#: crates/ffi/src/account_setup.rs:703
+#: crates/ffi/src/account_setup.rs:705
 msgid "Another copy of Iris is syncing your mail. Quit it, then try again."
 msgstr ""
 
