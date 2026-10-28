@@ -43,6 +43,14 @@ modified copy.
 - Something that does not work on macOS gets made to work the macOS way
   (AppKit, Launch Services, the Keychain, `SMAppService`, Sparkle), not
   worked around.
+- Base every solution on the current source and the technologies already
+  in it. Read the code before proposing, reuse the modules, crates and
+  patterns that exist, and invent nothing: no API, flag, behaviour or
+  dependency that the code or its documentation does not show. When
+  something is unknown, check it in the code or ask.
+- Centralize what can be centralized: a rule or a piece of work lives in
+  one place (the Rust core, per AGENTS.md) and every caller goes through
+  it, rather than each front end doing its own copy.
 
 ## Commands
 
