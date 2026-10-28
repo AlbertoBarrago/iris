@@ -49,7 +49,7 @@ struct IrisApp: App {
             }
             CommandGroup(replacing: .help) {
                 Button(tr("Keyboard shortcuts")) { openWindow(id: "shortcuts") }
-                    .keyboardShortcut("/", modifiers: [.command, .shift])
+                    .keyboardShortcut("?", modifiers: .command)
                 Divider()
                 Button(aboutWords().reportTitle) {
                     if let url = URL(string: aboutWords().reportUrl) { openURL(url) }

@@ -9,6 +9,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 - Pictures in mail from senders such as Anthropic show once you allow
   remote images, instead of staying broken.
+- Cmd-? opens the list of keyboard shortcuts on every keyboard layout,
+  Italian included.
 
 ## 1.2.7 (2026-10-25)
 
