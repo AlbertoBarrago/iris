@@ -5,6 +5,8 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.8 (2026-10-28)
+
 ### Fixed
 
 - Pictures in mail from senders such as Anthropic show once you allow
