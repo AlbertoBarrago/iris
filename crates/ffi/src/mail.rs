@@ -682,6 +682,20 @@ impl Mail {
         }))
     }
 
+    /// The picture or font on the web at `address`, which a message's page
+    /// asks for through `mailrs-remote:`. The core downloads it, because
+    /// WebKit refuses one whose server allows only its own pages.
+    pub fn remote_picture(&self, address: String) -> Result<FilePart, CoreError> {
+        let fetched = self
+            .run(async move { mailrs_appcore::remote_pictures::fetch(&address).await })
+            .map_err(CoreError::Store)?;
+        Ok(FilePart {
+            filename: String::new(),
+            mime_type: fetched.mime_type,
+            data: fetched.data,
+        })
+    }
+
     /// The attachments the page lists for a message: every file but the
     /// pictures its body shows.
     pub fn attachments(&self, account_id: i64, message_id: String) -> Result<Vec<AttachmentInfo>, CoreError> {

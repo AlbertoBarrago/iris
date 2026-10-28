@@ -146,8 +146,10 @@ impl Web {
 }
 
 /// An HTTP client with a time limit, which checks every redirect a page
-/// takes against the same rule as the address the model asked for.
-fn client(local: bool) -> reqwest::Client {
+/// takes against the same rule as the address the model asked for. The
+/// pictures a message's page shows come through it too (see
+/// [`crate::remote_pictures`]).
+pub(crate) fn client(local: bool) -> reqwest::Client {
     let policy = reqwest::redirect::Policy::custom(move |attempt| {
         if attempt.previous().len() >= MAX_REDIRECTS {
             attempt.error("the page redirected too many times")
@@ -417,7 +419,7 @@ fn allowed(url: &Url, local: bool) -> Result<(), String> {
 
 /// Whether the address names this computer or a private network. A name
 /// that only resolves to one is not caught; the ones people type are.
-fn is_local(url: &Url) -> bool {
+pub(crate) fn is_local(url: &Url) -> bool {
     match url.host() {
         None => true,
         Some(Host::Domain(name)) => {

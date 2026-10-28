@@ -5,6 +5,11 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+### Fixed
+
+- Pictures in mail from senders such as Anthropic show once you allow
+  remote images, instead of staying broken.
+
 ## 1.2.7 (2026-10-25)
 
 ### Fixed

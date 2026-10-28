@@ -4642,155 +4642,155 @@ msgstr "Nessuna risposta"
 msgid "{time} {city}"
 msgstr "{time} {city}"
 
-#: crates/render/src/conversation.rs:294
+#: crates/render/src/conversation.rs:300
 msgid "{count} message"
 msgid_plural "{count} messages"
 msgstr[0] "{count} messaggio"
 msgstr[1] "{count} messaggi"
 
-#: crates/render/src/conversation.rs:302
+#: crates/render/src/conversation.rs:308
 msgid "Summarize"
 msgstr "Riassumi"
 
-#: crates/render/src/conversation.rs:356
+#: crates/render/src/conversation.rs:362
 msgid "Show or hide this message"
 msgstr "Mostra o nascondi questo messaggio"
 
-#: crates/render/src/conversation.rs:358
+#: crates/render/src/conversation.rs:364
 msgid "Contact"
 msgstr "Contatto"
 
-#: crates/render/src/conversation.rs:363
+#: crates/render/src/conversation.rs:369
 msgid "Contact card for {person}"
 msgstr "Scheda contatto di {person}"
 
-#: crates/render/src/conversation.rs:402
+#: crates/render/src/conversation.rs:408
 msgid "Reply All"
 msgstr "Rispondi a tutti"
 
-#: crates/render/src/conversation.rs:403
+#: crates/render/src/conversation.rs:409
 msgid "Forward"
 msgstr "Inoltra"
 
-#: crates/render/src/conversation.rs:415
+#: crates/render/src/conversation.rs:421
 msgid "React"
 msgstr "Reagisci"
 
-#: crates/render/src/conversation.rs:422 crates/render/src/conversation.rs:489
+#: crates/render/src/conversation.rs:428 crates/render/src/conversation.rs:495
 msgid "React with {emoji}"
 msgstr "Reagisci con {emoji}"
 
-#: crates/render/src/conversation.rs:459
+#: crates/render/src/conversation.rs:465
 msgid "Invitation"
 msgstr "Invito"
 
-#: crates/render/src/conversation.rs:477
+#: crates/render/src/conversation.rs:483
 msgid "Reactions"
 msgstr "Reazioni"
 
-#: crates/render/src/conversation.rs:481
+#: crates/render/src/conversation.rs:487
 msgid "{emoji} from {people}"
 msgstr "{emoji} da {people}"
 
-#: crates/render/src/conversation.rs:520
+#: crates/render/src/conversation.rs:526
 msgid "Loading…"
 msgstr "Caricamento…"
 
-#: crates/render/src/conversation.rs:525
+#: crates/render/src/conversation.rs:531
 msgid "This message could not be loaded: {reason}"
 msgstr "Impossibile caricare questo messaggio: {reason}"
 
-#: crates/render/src/conversation.rs:575
+#: crates/render/src/conversation.rs:581
 msgid "Details"
 msgstr "Dettagli"
 
-#: crates/render/src/conversation.rs:596
+#: crates/render/src/conversation.rs:602
 msgid "from"
 msgstr "da"
 
-#: crates/render/src/conversation.rs:607
+#: crates/render/src/conversation.rs:613
 msgid "to"
 msgstr "a"
 
-#: crates/render/src/conversation.rs:609
+#: crates/render/src/conversation.rs:615
 msgid "cc"
 msgstr "cc"
 
-#: crates/render/src/conversation.rs:611
+#: crates/render/src/conversation.rs:617
 msgid "date"
 msgstr "data"
 
-#: crates/render/src/conversation.rs:612
+#: crates/render/src/conversation.rs:618
 msgid "subject"
 msgstr "oggetto"
 
-#: crates/render/src/conversation.rs:614
+#: crates/render/src/conversation.rs:620
 msgid "mailed-by"
 msgstr "inviato da"
 
-#: crates/render/src/conversation.rs:617
+#: crates/render/src/conversation.rs:623
 msgid "signed-by"
 msgstr "firmato da"
 
-#: crates/render/src/conversation.rs:621
+#: crates/render/src/conversation.rs:627
 msgid "security"
 msgstr "sicurezza"
 
-#: crates/render/src/conversation.rs:623
+#: crates/render/src/conversation.rs:629
 msgid "Standard encryption (TLS)"
 msgstr "Crittografia standard (TLS)"
 
-#: crates/render/src/conversation.rs:628
+#: crates/render/src/conversation.rs:634
 msgid "Not encrypted in transit"
 msgstr "Non cifrato durante il transito"
 
-#: crates/render/src/conversation.rs:665
+#: crates/render/src/conversation.rs:671
 msgid "{count} attachment"
 msgid_plural "{count} attachments"
 msgstr[0] "{count} allegato"
 msgstr[1] "{count} allegati"
 
-#: crates/render/src/conversation.rs:697
+#: crates/render/src/conversation.rs:703
 msgid "Quick Look"
 msgstr "Quick Look"
 
-#: crates/render/src/conversation.rs:698
+#: crates/render/src/conversation.rs:704
 msgid "Save to Downloads"
 msgstr "Salva in Download"
 
-#: crates/render/src/conversation.rs:700
+#: crates/render/src/conversation.rs:706
 msgid "Open {file}, {size}"
 msgstr "Apri {file}, {size}"
 
-#: crates/render/src/conversation.rs:707
+#: crates/render/src/conversation.rs:713
 msgid "Save {file} to Downloads"
 msgstr "Salva {file} in Download"
 
-#: crates/render/src/conversation.rs:714
+#: crates/render/src/conversation.rs:720
 msgid "Save All ({count})"
 msgid_plural "Save All ({count})"
 msgstr[0] "Salva tutto ({count})"
 msgstr[1] "Salva tutti ({count})"
 
-#: crates/render/src/conversation.rs:725
+#: crates/render/src/conversation.rs:731
 msgid "Save every attachment to a folder"
 msgstr "Salva tutti gli allegati in una cartella"
 
-#: crates/render/src/conversation.rs:789
+#: crates/render/src/conversation.rs:795
 msgid "undisclosed recipients"
 msgstr "destinatari nascosti"
 
-#: crates/render/src/conversation.rs:792
+#: crates/render/src/conversation.rs:798
 msgid "{named}, and {count} other"
 msgid_plural "{named}, and {count} others"
 msgstr[0] "{named} e {count} altro"
 msgstr[1] "{named} e altri {count}"
 
-#: crates/render/src/conversation.rs:805
+#: crates/render/src/conversation.rs:811
 msgid "me"
 msgstr "me"
 
-#: crates/render/src/conversation.rs:815
+#: crates/render/src/conversation.rs:821
 msgid "Show trimmed content"
 msgstr "Mostra il contenuto tagliato"
 
@@ -6132,8 +6132,8 @@ msgstr "Sempre consentito"
 msgid "Not allowed"
 msgstr "Non consentito"
 
-#: macos/Iris/AssistantView.swift:511 macos/Iris/ConversationView.swift:45
-#: macos/Iris/ConversationView.swift:53
+#: macos/Iris/AssistantView.swift:511 macos/Iris/ConversationView.swift:48
+#: macos/Iris/ConversationView.swift:56
 msgid "Unsubscribe"
 msgstr "Annulla iscrizione"
 
@@ -6577,82 +6577,82 @@ msgstr "Controlla aggiornamenti…"
 msgid "OK"
 msgstr "OK"
 
-#: macos/Iris/ConversationView.swift:26
+#: macos/Iris/ConversationView.swift:29
 msgid "Remote images are hidden to protect your privacy"
 msgstr "Le immagini remote sono nascoste per proteggere la tua privacy"
 
-#: macos/Iris/ConversationView.swift:43
+#: macos/Iris/ConversationView.swift:46
 msgid "This message is from a mailing list"
 msgstr "Questo messaggio proviene da una mailing list"
 
-#: macos/Iris/ConversationView.swift:78
+#: macos/Iris/ConversationView.swift:81
 msgid "No Conversation Selected"
 msgstr "Nessuna conversazione selezionata"
 
-#: macos/Iris/ConversationView.swift:86 macos/Iris/ConversationView.swift:87
+#: macos/Iris/ConversationView.swift:89 macos/Iris/ConversationView.swift:90
 msgid "Edit Draft"
 msgstr "Modifica bozza"
 
-#: macos/Iris/ConversationView.swift:111 macos/Iris/ConversationView.swift:112
+#: macos/Iris/ConversationView.swift:114 macos/Iris/ConversationView.swift:115
 #: macos/Iris/ThreadListView.swift:388
 msgid "Remove from Follow Up"
 msgstr "Rimuovi da «Da seguire»"
 
-#: macos/Iris/ConversationView.swift:128 macos/Iris/ConversationView.swift:370
+#: macos/Iris/ConversationView.swift:131 macos/Iris/ConversationView.swift:375
 #: macos/Iris/ThreadListView.swift:43 macos/Iris/ThreadListView.swift:298
 #: macos/Iris/ThreadListView.swift:396
 msgid "Mark as Unread"
 msgstr "Segna come non letto"
 
-#: macos/Iris/ConversationView.swift:177 macos/Iris/ConversationView.swift:193
+#: macos/Iris/ConversationView.swift:180 macos/Iris/ConversationView.swift:196
 msgid "Load Images"
 msgstr "Carica immagini"
 
-#: macos/Iris/ConversationView.swift:178
+#: macos/Iris/ConversationView.swift:181
 msgid "Always Load Images"
 msgstr "Carica sempre le immagini"
 
-#: macos/Iris/ConversationView.swift:179
+#: macos/Iris/ConversationView.swift:182
 msgid "From {sender}"
 msgstr "Da {sender}"
 
-#: macos/Iris/ConversationView.swift:183
+#: macos/Iris/ConversationView.swift:186
 msgid "From Anyone at {domain}"
 msgstr "Da chiunque su {domain}"
 
-#: macos/Iris/ConversationView.swift:362
+#: macos/Iris/ConversationView.swift:367
 msgid "Several Conversations Selected"
 msgstr "Più conversazioni selezionate"
 
-#: macos/Iris/ConversationView.swift:364
+#: macos/Iris/ConversationView.swift:369
 msgid "Actions and shortcuts apply to all of them. Esc clears the selection."
 msgstr "Azioni e scorciatoie si applicano a tutte. Esc cancella la selezione."
 
-#: macos/Iris/ConversationView.swift:374
+#: macos/Iris/ConversationView.swift:379
 msgid "Move to Trash"
 msgstr "Sposta nel Cestino"
 
-#: macos/Iris/ConversationView.swift:529
+#: macos/Iris/ConversationView.swift:553
 msgid "Checked"
 msgstr "Verificata"
 
-#: macos/Iris/ConversationView.swift:530
+#: macos/Iris/ConversationView.swift:554
 msgid "Warning"
 msgstr "Avviso"
 
-#: macos/Iris/ConversationView.swift:531
+#: macos/Iris/ConversationView.swift:555
 msgid "Not checked"
 msgstr "Non verificata"
 
-#: macos/Iris/ConversationView.swift:547
+#: macos/Iris/ConversationView.swift:571
 msgid "Categorize Sender"
 msgstr "Classifica mittente"
 
-#: macos/Iris/ConversationView.swift:554
+#: macos/Iris/ConversationView.swift:578
 msgid "Block Sender…"
 msgstr "Blocca mittente…"
 
-#: macos/Iris/ConversationView.swift:563
+#: macos/Iris/ConversationView.swift:587
 msgid "Block"
 msgstr "Blocca"
 

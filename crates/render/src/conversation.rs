@@ -10,6 +10,7 @@ use mailrs_domain::{Address, MessageBody, MessageMeta, Provenance};
 
 use crate::format::{avatar_hue, full_date, header_date, human_size, initials};
 use crate::quoted;
+use crate::REMOTE_SCHEME;
 use mailrs_domain::translate::{fill, fill_plural, gettext};
 
 /// How long a message's fold takes to open or close.
@@ -207,9 +208,11 @@ pub fn render(conversation: &Conversation, theme: &Theme) -> String {
     html
 }
 
-/// Whether lower-case HTML loads a picture or a background from the web.
+/// Whether lower-case HTML loads a picture or a background from the web,
+/// directly or through the app's [`REMOTE_SCHEME`].
 pub fn loads_remote(lower: &str) -> bool {
     [
+        REMOTE_SCHEME,
         "src=\"http",
         "src='http",
         "url(http",
@@ -273,15 +276,18 @@ pub fn head(conversation: &Head, theme: &Theme) -> String {
         let _ = write!(html, " lang=\"{}\"", escape(&language));
     }
     html.push_str("><head><meta charset=\"utf-8\">");
-    let remote = if conversation.allow_remote {
-        " https: http:"
+    // Pictures and fonts a message names go through the app's scheme. The
+    // web itself stays listed for what a remote stylesheet names, which
+    // the cleaner never reads.
+    let (remote, routed) = if conversation.allow_remote {
+        (" https: http:", format!(" {REMOTE_SCHEME} https: http:"))
     } else {
-        ""
+        ("", String::new())
     };
     let _ = write!(
         html,
         "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'none'; \
-         style-src 'unsafe-inline'{remote}; img-src data: mailrs-cid:{remote}; font-src data:{remote}\">"
+         style-src 'unsafe-inline'{remote}; img-src data: mailrs-cid:{routed}; font-src data:{routed}\">"
     );
     let _ = write!(html, "<style>{}</style></head><body>", page_css(theme));
     let subject = if conversation.subject.trim().is_empty() {
@@ -2140,7 +2146,8 @@ mod tests {
             },
             &theme(),
         );
-        assert!(allowed.contains("img-src data: mailrs-cid: https: http:"));
+        assert!(allowed.contains("img-src data: mailrs-cid: mailrs-remote: https: http:"));
+        assert!(allowed.contains("font-src data: mailrs-remote: https: http:"));
     }
 
     /// The desktop accent is a fill colour. Text in it (links, "and N

@@ -35,6 +35,7 @@ pub mod permission;
 pub mod pgp;
 pub mod photos;
 pub mod protection;
+pub mod remote_pictures;
 pub mod richtext;
 pub mod rules;
 pub mod search;

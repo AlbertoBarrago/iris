@@ -12,6 +12,13 @@ pub mod locale_time;
 pub mod quoted;
 pub mod sanitize;
 
+/// What the app's page puts in front of a web address it shows a picture
+/// or a font from, so the app fetches it rather than WebKit. WebKit
+/// honours `Cross-Origin-Resource-Policy`, and a sender that answers
+/// `same-origin`, as claude.ai does, never shows its pictures in a page of
+/// ours. The core downloads them instead (`mailrs_appcore::remote_pictures`).
+pub const REMOTE_SCHEME: &str = "mailrs-remote:";
+
 /// A content id as it goes into an address: letters, digits and `-._~@`
 /// as they are, every other byte as `%XX`.
 pub fn escape_cid(cid: &str) -> String {

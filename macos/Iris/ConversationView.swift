@@ -1,6 +1,9 @@
 import AppKit
+import OSLog
 import SwiftUI
 import WebKit
+
+private let log = Logger(subsystem: "io.github.AlbertoBarrago.Iris", category: "pictures")
 
 /// The open conversation: one page the Rust core draws, the same page the
 /// GTK app shows, in the window's colors.
@@ -234,7 +237,8 @@ extension Comparable {
 /// open in the browser; the page itself never navigates.
 struct MailPage: NSViewRepresentable {
     let html: String
-    /// Answers the page's `mailrs-cid:` requests for pictures in the mail.
+    /// Answers the page's `mailrs-cid:` requests for pictures in the mail,
+    /// and its `mailrs-remote:` ones for pictures and fonts on the web.
     var pictures: PictureScheme? = nil
     /// How much the page is magnified, from Preferences' Text Size.
     var zoom: Double = 1
@@ -252,6 +256,7 @@ struct MailPage: NSViewRepresentable {
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
         if let pictures {
             configuration.setURLSchemeHandler(pictures, forURLScheme: "mailrs-cid")
+            configuration.setURLSchemeHandler(pictures, forURLScheme: "mailrs-remote")
         }
         let view = WKWebView(frame: .zero, configuration: configuration)
         // Never hold the window open for the page's own size.
@@ -384,9 +389,11 @@ struct SeveralSelected: View {
 }
 
 /// Gives the page the pictures its mail names by `cid:`, asked for at
-/// `mailrs-cid:<account>/<message>/<version>/<content id>`. The bytes come
-/// from the Rust core, which fetches the part from the cache or the
-/// server, and never enter the page's own HTML.
+/// `mailrs-cid:<account>/<message>/<version>/<content id>`, and the
+/// pictures and fonts on the web, asked for at `mailrs-remote:<address>`.
+/// The bytes come from the Rust core, which fetches the part from the
+/// cache or the server, or downloads it from the web, and never enter the
+/// page's own HTML.
 @MainActor
 final class PictureScheme: NSObject, WKURLSchemeHandler {
     private let mail: Mail?
@@ -398,13 +405,30 @@ final class PictureScheme: NSObject, WKURLSchemeHandler {
     }
 
     func webView(_ webView: WKWebView, start task: any WKURLSchemeTask) {
-        guard let mail, let url = task.request.url, let address = Self.address(url) else {
+        guard let mail, let url = task.request.url else {
             task.didFailWithError(URLError(.fileDoesNotExist))
             return
         }
         // WebKit hands the task over on the main thread and wants its
         // answer there; the box carries it across the fetch.
         let asked = Asked(task: task)
+        if let remote = url.absoluteString.removingPrefix("mailrs-remote:") {
+            Task.detached {
+                let part: FilePart?
+                do {
+                    part = try mail.remotePicture(address: remote)
+                } catch {
+                    log.info("Remote picture not shown: \(String(describing: error), privacy: .private)")
+                    part = nil
+                }
+                await self.answer(asked, url: url, part: part)
+            }
+            return
+        }
+        guard let address = Self.address(url) else {
+            task.didFailWithError(URLError(.fileDoesNotExist))
+            return
+        }
         Task.detached {
             let part = try? mail.picture(accountId: address.account, messageId: address.message, cid: address.cid)
             await self.answer(asked, url: url, part: part ?? nil)

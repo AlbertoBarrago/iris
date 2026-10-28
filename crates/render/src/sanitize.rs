@@ -22,6 +22,8 @@ use std::collections::HashSet;
 
 use ammonia::{Builder, UrlRelative};
 
+use crate::REMOTE_SCHEME;
+
 const EXTRA_TAGS: [&str; 5] = ["style", "font", "center", "span", "div"];
 
 const LAYOUT_ATTRIBUTES: [&str; 17] = [
@@ -47,8 +49,13 @@ const LAYOUT_ATTRIBUTES: [&str; 17] = [
 /// Sanitizes `html`. A `cid:` image source becomes `pictures` followed by
 /// the escaped `Content-ID`, the address the conversation view serves that
 /// picture at; with no `pictures` it loses its source.
+///
+/// With `pictures`, the page is the app's own, which also answers
+/// [`REMOTE_SCHEME`]: every web address an image or a `url()` names goes
+/// through it. Whether those load at all stays the page's policy to say.
 pub fn sanitize_html(html: &str, pictures: Option<&str>) -> String {
     let root = Root::read(html, pictures);
+    let routed = pictures.is_some();
     let pictures = pictures.map(str::to_string);
     let mut builder = Builder::default();
     builder
@@ -70,7 +77,7 @@ pub fn sanitize_html(html: &str, pictures: Option<&str>) -> String {
         .attribute_filter(move |element, attribute, value| {
             filter_url(pictures.as_deref(), element, attribute, value)
         });
-    let (styled, rewrote) = restyle(&builder.clean(html).to_string());
+    let (styled, rewrote) = restyle(&builder.clean(html).to_string(), routed);
     name_images(&root.wrap(&styled, rewrote))
 }
 
@@ -182,7 +189,9 @@ fn background(pictures: Option<&str>, value: &str) -> Option<String> {
     }
     let address = filter_url(pictures, "img", "src", value)?;
     let lower = address.to_ascii_lowercase();
-    let allowed = ["http://", "https://", "data:image/"]
+    // With `pictures`, `filter_url` has already sent a web address
+    // through the app's scheme.
+    let allowed = ["http://", "https://", "data:image/", REMOTE_SCHEME]
         .iter()
         .any(|scheme| lower.starts_with(scheme))
         || pictures.is_some_and(|p| lower.starts_with(&p.to_ascii_lowercase()));
@@ -376,7 +385,7 @@ fn has_alt(tag: &str) -> bool {
 /// ask for one, and points `html` and `body` selectors at the elements
 /// that stand in for those tags. Everything else stays as it was. Also
 /// says whether any selector changed.
-fn restyle(html: &str) -> (String, bool) {
+fn restyle(html: &str, routed: bool) -> (String, bool) {
     if !html.contains("<style") {
         return (html.to_string(), false);
     }
@@ -402,7 +411,10 @@ fn restyle(html: &str) -> (String, bool) {
         };
         let (css, hit) = point_at_stand_ins(&css);
         rewrote |= hit;
-        out.push_str(&css);
+        match routed {
+            true => out.push_str(&route_css(&css)),
+            false => out.push_str(&css),
+        }
         rest = &rest[end..];
     }
     out.push_str(rest);
@@ -614,6 +626,9 @@ fn filter_url<'u>(
     attribute: &str,
     value: &'u str,
 ) -> Option<Cow<'u, str>> {
+    if attribute == "style" && pictures.is_some() {
+        return Some(route_css(value));
+    }
     if !matches!(attribute, "src" | "href") {
         return Some(Cow::Borrowed(value));
     }
@@ -628,7 +643,40 @@ fn filter_url<'u>(
         return (element == "img" && lower.starts_with("data:image/"))
             .then_some(Cow::Borrowed(value));
     }
+    if element == "img" && pictures.is_some() && is_web(&lower) {
+        return Some(Cow::Owned(format!("{REMOTE_SCHEME}{}", value.trim())));
+    }
     Some(Cow::Borrowed(value))
+}
+
+/// Whether lower-case `address` is on the web.
+fn is_web(address: &str) -> bool {
+    address.starts_with("https://") || address.starts_with("http://")
+}
+
+/// `css` with each `url()` that names a web address sent through
+/// [`REMOTE_SCHEME`], quoted or not. Other addresses stay as they are.
+fn route_css(css: &str) -> Cow<'_, str> {
+    // ASCII lowercasing keeps byte offsets, so indexes into `lower` fit `css`.
+    let lower = css.to_ascii_lowercase();
+    let mut out = String::new();
+    let mut from = 0;
+    for (at, mark) in lower.match_indices("url(") {
+        let inside = &lower[at + mark.len()..];
+        let unpadded = inside.trim_start();
+        let quote = usize::from(unpadded.starts_with(['\'', '"']));
+        let start = at + mark.len() + (inside.len() - unpadded.len()) + quote;
+        if is_web(&lower[start..]) {
+            out.push_str(&css[from..start]);
+            out.push_str(REMOTE_SCHEME);
+            from = start;
+        }
+    }
+    if from == 0 {
+        return Cow::Borrowed(css);
+    }
+    out.push_str(&css[from..]);
+    Cow::Owned(out)
 }
 
 #[cfg(test)]
@@ -836,6 +884,48 @@ mod tests {
         assert!(!out.contains("href"), "only a picture is served: {out}");
         let none = sanitize_html(r#"<img src="cid:logo@x">"#, None);
         assert!(!none.contains("cid"), "{none}");
+    }
+
+    /// claude.ai answers its pictures with `Cross-Origin-Resource-Policy:
+    /// same-origin`, which WebKit honours, so the app's page fetches web
+    /// pictures through the core instead.
+    #[test]
+    fn web_pictures_go_through_the_app_s_scheme() {
+        let out = sanitize_html(
+            r#"<body background="https://x.example/paper.png"><style>.a{background:url( "https://x.example/a.png")}</style>
+               <img src=" https://claude.ai/images/logo.png?v=2">
+               <div style="background:url('https://x.example/b.gif') center, URL(http://x.example/c.png)"></div>
+               <img src="data:image/gif;base64,R0lG"><a href="https://x.example/">x</a>"#,
+            Some("mailrs-cid:1/m1/0/"),
+        );
+        assert!(out.contains(r#"src="mailrs-remote:https://claude.ai/images/logo.png?v=2""#), "{out}");
+        assert!(out.contains(r#"url( "mailrs-remote:https://x.example/a.png")"#), "{out}");
+        assert!(out.contains("url('mailrs-remote:https://x.example/b.gif')"), "{out}");
+        assert!(out.contains("URL(mailrs-remote:http://x.example/c.png)"), "{out}");
+        assert!(out.contains("url('mailrs-remote:https://x.example/paper.png')"), "{out}");
+        assert!(out.contains(r#"src="data:image/gif;base64,R0lG""#), "{out}");
+        assert!(out.contains(r#"href="https://x.example/""#), "links stay links: {out}");
+    }
+
+    /// Without the app's page, as when writing a reply, addresses stay as
+    /// the sender wrote them.
+    #[test]
+    fn web_pictures_stay_put_outside_the_app_s_page() {
+        let out = clean(
+            r#"<img src="https://x.example/a.png"><div style="background:url(https://x.example/b.png)"></div>"#,
+        );
+        assert!(!out.contains("mailrs-remote:"), "{out}");
+        assert!(out.contains(r#"src="https://x.example/a.png""#), "{out}");
+    }
+
+    /// A sender cannot name the app's scheme in an image's source.
+    #[test]
+    fn mail_cannot_name_the_remote_scheme_itself() {
+        let out = sanitize_html(
+            r#"<img src="mailrs-remote:file:///etc/hosts">"#,
+            Some("mailrs-cid:1/m1/0/"),
+        );
+        assert!(!out.contains("mailrs-remote:"), "{out}");
     }
 
     /// Mail cannot name the view's scheme itself: only a `cid:` source
