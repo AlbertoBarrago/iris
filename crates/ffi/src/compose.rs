@@ -345,6 +345,21 @@ impl Mail {
     }
 }
 
+/// The line kind after Return, without changing the text being edited.
+#[uniffi::export]
+pub fn rich_block_after_return(kind: String, level: u8, empty: bool, at_end: bool) -> RichBlock {
+    let body = rich_body(vec![RichBlock {
+        kind,
+        level,
+        spans: vec![],
+    }]);
+    let kind = body.blocks[0].kind.after_return(empty, at_end);
+    rich_blocks(RichBody {
+        blocks: vec![Block::new(kind, vec![])],
+    })
+    .remove(0)
+}
+
 /// The emoji React offers, in the order it shows them, the same in the
 /// toolbar's menu as on the page.
 #[uniffi::export]

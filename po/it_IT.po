@@ -3998,7 +3998,7 @@ msgid "the account is not connected."
 msgstr "l'account non è connesso."
 
 #: crates/ffi/src/compose.rs:336 crates/ffi/src/compose.rs:343
-#: crates/ffi/src/compose.rs:396 crates/ffi/src/compose.rs:403
+#: crates/ffi/src/compose.rs:411 crates/ffi/src/compose.rs:418
 msgid "Not sent: {reason}"
 msgstr "Non inviato: {reason}"
 
@@ -4006,27 +4006,27 @@ msgstr "Non inviato: {reason}"
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: crates/ffi/src/compose.rs:342 crates/ffi/src/compose.rs:402
+#: crates/ffi/src/compose.rs:342 crates/ffi/src/compose.rs:417
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "In attesa in Posta in uscita. Partirà appena possibile."
 
-#: crates/ffi/src/compose.rs:362
+#: crates/ffi/src/compose.rs:377
 msgid "A reaction is one emoji."
 msgstr "Una reazione è una sola emoji."
 
-#: crates/ffi/src/compose.rs:375
+#: crates/ffi/src/compose.rs:390
 msgid "The message is no longer here."
 msgstr "Il messaggio non c'è più."
 
-#: crates/ffi/src/compose.rs:377
+#: crates/ffi/src/compose.rs:392
 msgid "This message cannot take a reaction."
 msgstr "A questo messaggio non si può reagire."
 
-#: crates/ffi/src/compose.rs:400
+#: crates/ffi/src/compose.rs:415
 msgid "Reacted with {emoji}"
 msgstr "Hai reagito con {emoji}"
 
-#: crates/ffi/src/compose.rs:513
+#: crates/ffi/src/compose.rs:528
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."
 
@@ -6314,7 +6314,7 @@ msgstr "I segnaposto come {{first_name}} si compilano ogni volta che lo usi."
 msgid "Sign"
 msgstr "Firma"
 
-#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:390
+#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:391
 msgid "Encrypt"
 msgstr "Cifra"
 
@@ -6377,49 +6377,49 @@ msgstr "Rimuovi testo citato"
 msgid "Forwarded Message"
 msgstr "Messaggio inoltrato"
 
-#: macos/Iris/ComposeView.swift:424
+#: macos/Iris/ComposeView.swift:425
 msgid "Template saved"
 msgstr "Modello salvato"
 
-#: macos/Iris/ComposeView.swift:435
+#: macos/Iris/ComposeView.swift:436
 msgid "Attach Files"
 msgstr "Allega file"
 
-#: macos/Iris/ComposeView.swift:456
+#: macos/Iris/ComposeView.swift:457
 msgid "Could not read {count} file"
 msgid_plural "Could not read {count} files"
 msgstr[0] "Impossibile leggere {count} file"
 msgstr[1] "Impossibile leggere {count} file"
 
-#: macos/Iris/ComposeView.swift:461
+#: macos/Iris/ComposeView.swift:462
 msgid "Attached {count} file"
 msgid_plural "Attached {count} files"
 msgstr[0] "{count} file allegato"
 msgstr[1] "{count} file allegati"
 
-#: macos/Iris/ComposeView.swift:480 macos/Iris/FileDrop.swift:39
+#: macos/Iris/ComposeView.swift:481 macos/Iris/FileDrop.swift:39
 msgid "Image"
 msgstr "Immagine"
 
-#: macos/Iris/ComposeView.swift:525
+#: macos/Iris/ComposeView.swift:526
 msgid "Draft saved"
 msgstr "Bozza salvata"
 
-#: macos/Iris/ComposeView.swift:716
+#: macos/Iris/ComposeView.swift:717
 msgid "Save as Draft?"
 msgstr "Salvare come bozza?"
 
-#: macos/Iris/ComposeView.swift:717
+#: macos/Iris/ComposeView.swift:718
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 "La bozza resta in Gmail, così puoi completarla più tardi su qualsiasi "
 "dispositivo."
 
-#: macos/Iris/ComposeView.swift:718
+#: macos/Iris/ComposeView.swift:719
 msgid "Save Draft"
 msgstr "Salva bozza"
 
-#: macos/Iris/ComposeView.swift:719
+#: macos/Iris/ComposeView.swift:720
 msgid "Discard"
 msgstr "Scarta"
 
@@ -6934,32 +6934,32 @@ msgstr "Impossibile rimuovere {account}: {reason}"
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
-#: macos/Iris/RichEditor.swift:227
+#: macos/Iris/RichEditor.swift:228
 msgid "Add a Link"
 msgstr "Aggiungi un link"
 
-#: macos/Iris/RichEditor.swift:231
+#: macos/Iris/RichEditor.swift:232
 msgid "Add Link"
 msgstr "Aggiungi link"
 
-#: macos/Iris/RichEditor.swift:467 macos/Iris/RichEditor.swift:472
-#: macos/Iris/RichEditor.swift:476
+#: macos/Iris/RichEditor.swift:479 macos/Iris/RichEditor.swift:484
+#: macos/Iris/RichEditor.swift:488
 msgid "Paragraph"
 msgstr "Paragrafo"
 
-#: macos/Iris/RichEditor.swift:468
+#: macos/Iris/RichEditor.swift:480
 msgid "Heading 1"
 msgstr "Titolo 1"
 
-#: macos/Iris/RichEditor.swift:469
+#: macos/Iris/RichEditor.swift:481
 msgid "Heading 2"
 msgstr "Titolo 2"
 
-#: macos/Iris/RichEditor.swift:470
+#: macos/Iris/RichEditor.swift:482
 msgid "Heading 3"
 msgstr "Titolo 3"
 
-#: macos/Iris/RichEditor.swift:488 macos/Iris/RichEditor.swift:490
+#: macos/Iris/RichEditor.swift:500 macos/Iris/RichEditor.swift:502
 msgid "Clear Formatting"
 msgstr "Cancella formattazione"
 

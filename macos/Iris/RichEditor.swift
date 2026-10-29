@@ -106,8 +106,7 @@ struct RichEditor: NSViewRepresentable {
             }
         }
 
-        /// Return at the end of a list line carries the list on, and on an
-        /// empty list line ends it, as in the GTK composer.
+        /// The core chooses the next line kind; AppKit inserts the text.
         func textView(_ textView: NSTextView, doCommandBy selector: Selector) -> Bool {
             guard selector == #selector(NSResponder.insertNewline(_:)) else { return false }
             return parent.controller.newline()
@@ -138,6 +137,7 @@ final class RichController {
 
     func toggle(bold: Bool = false, italic: Bool = false, strike: Bool = false, code: Bool = false) {
         guard let text, let storage = text.textStorage else { return }
+        text.window?.makeFirstResponder(text)
         let range = text.selectedRange()
         if range.length == 0 {
             // No selection: the style applies to what is typed next.
@@ -192,6 +192,7 @@ final class RichController {
     /// again when they all are `kind` already.
     func setBlock(_ kind: String, level: UInt8 = 0) {
         guard let text, let storage = text.textStorage else { return }
+        text.window?.makeFirstResponder(text)
         let string = storage.string as NSString
         let lines = string.paragraphRange(for: text.selectedRange())
         var starts: [Int] = []
@@ -263,22 +264,33 @@ final class RichController {
         changed()
     }
 
-    /// Return on a list line: a new item, or the end of the list when the
-    /// line is empty. False lets the text view handle it.
+    /// Applies the core's Return behavior to the text and typing attributes.
     func newline() -> Bool {
         guard let text, let storage = text.textStorage else { return false }
         let at = text.selectedRange().location
         let string = storage.string as NSString
         let line = string.paragraphRange(for: NSRange(location: at, length: 0))
-        let (kind, _) = blockAt(line.location)
-        guard kind == "bullet" || kind == "numbered" else { return false }
+        let (kind, level) = blockAt(line.location)
         let content = string.substring(with: line).trimmingCharacters(in: .newlines)
         let marker = marker(kind, number: number(at: line.location))
-        if content == marker || content.isEmpty {
-            restyleLine(at: line.location, as: ("paragraph", 0), number: 1, in: storage)
-            changed()
+        let empty = content == marker || content.isEmpty
+        let end = line.location + (content as NSString).length
+        let following = richBlockAfterReturn(
+            kind: kind, level: level, empty: empty,
+            atEnd: NSMaxRange(text.selectedRange()) == end
+        )
+        if following.kind != kind {
+            if empty && (kind == "bullet" || kind == "numbered") {
+                restyleLine(at: line.location, as: (following.kind, following.level), number: 1, in: storage)
+                changed()
+            } else {
+                let attrs = Self.lineAttributes(following.kind, level: following.level)
+                text.insertText(NSAttributedString(string: "\n", attributes: attrs), replacementRange: text.selectedRange())
+                text.typingAttributes = attrs
+            }
             return true
         }
+        guard kind == "bullet" || kind == "numbered" else { return false }
         let next = "\n" + self.marker(kind, number: number(at: line.location) + 1)
         let attrs = Self.lineAttributes(kind, level: 0)
         text.insertText(NSAttributedString(string: next, attributes: attrs), replacementRange: text.selectedRange())

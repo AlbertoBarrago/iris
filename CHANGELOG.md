@@ -5,6 +5,13 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.10 (2026-10-29)
+
+### Fixed
+
+- Compose field labels stay on one line in Italian.
+- Return after a heading starts a normal paragraph, and formatting can be chosen before typing.
+
 ## 1.2.9 (2026-10-29)
 
 ### Improved

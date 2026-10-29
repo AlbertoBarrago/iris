@@ -26,6 +26,17 @@ pub enum BlockKind {
     Code,
 }
 
+impl BlockKind {
+    /// The line Return opens. Splitting a heading keeps both halves as headings.
+    pub fn after_return(self, empty: bool, at_end: bool) -> Self {
+        match self {
+            Self::Heading(_) if at_end => Self::Paragraph,
+            Self::Bullet | Self::Numbered if empty => Self::Paragraph,
+            _ => self,
+        }
+    }
+}
+
 /// The character styles a run of text can carry at once.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
@@ -907,6 +918,32 @@ impl HtmlBuilder {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn return_leaves_a_finished_heading_and_an_empty_list() {
+        use super::BlockKind;
+        for level in 1..=3 {
+            assert_eq!(
+                BlockKind::Heading(level).after_return(false, true),
+                BlockKind::Paragraph
+            );
+            assert_eq!(
+                BlockKind::Heading(level).after_return(false, false),
+                BlockKind::Heading(level)
+            );
+            assert_eq!(
+                BlockKind::Heading(level).after_return(true, true),
+                BlockKind::Paragraph
+            );
+        }
+        for kind in [BlockKind::Bullet, BlockKind::Numbered] {
+            assert_eq!(kind.after_return(true, true), BlockKind::Paragraph);
+            assert_eq!(kind.after_return(false, true), kind);
+        }
+        for kind in [BlockKind::Paragraph, BlockKind::Code, BlockKind::Quote] {
+            assert_eq!(kind.after_return(false, true), kind);
+        }
+    }
+
     use super::*;
 
     fn bold(text: &str) -> Span {

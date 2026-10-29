@@ -333,7 +333,8 @@ struct ComposeView: View {
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Text(title)
                     .foregroundStyle(.secondary)
-                    .frame(width: 44, alignment: .leading)
+                    .lineLimit(1)
+                    .frame(width: 64, alignment: .leading)
                 content()
             }
             .font(.callout)
