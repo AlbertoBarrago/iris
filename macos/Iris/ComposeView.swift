@@ -187,12 +187,13 @@ struct ComposeView: View {
                     Divider()
                     Button(tr("Choose a Time…")) { if readyToSend() { choosingTime = true } }
                 } label: {
-                    Label(tr("Send"), systemImage: "paperplane.fill")
+                    Label(tr("Send"), systemImage: "arrow.up")
                 } primaryAction: {
                     send()
                 }
                 .menuIndicator(.visible)
-                .help(tr("Send Later"))
+                .help(tr("Send"))
+                .tint(.accentColor)
                 .keyboardShortcut(.return, modifiers: .command)
                 .disabled(draft == nil)
             }
@@ -201,11 +202,42 @@ struct ComposeView: View {
 
     private func form(_ draft: Binding<ComposeDraft>) -> some View {
         VStack(spacing: 0) {
-            Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 8) {
-                if senders.count > 1 {
-                    GridRow {
-                        label(tr("From"))
-                        Picker("", selection: Binding(
+            VStack(spacing: 0) {
+                addressRow(tr("To")) {
+                    HStack(alignment: .top) {
+                        RecipientField(placeholder: tr("Recipients"), text: draft.to, account: draft.wrappedValue.accountId)
+                            .accessibilityLabel(tr("To"))
+                        Button(tr("Cc/Bcc")) { showCopies.toggle() }
+                            .buttonStyle(.borderless)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                if let sendProblem {
+                    Text(sendProblem)
+                        .font(.callout)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 74)
+                        .padding(.bottom, 8)
+                }
+                if showCopies || !draft.wrappedValue.cc.isEmpty || !draft.wrappedValue.bcc.isEmpty {
+                    addressRow(tr("Cc")) {
+                        RecipientField(placeholder: "", text: draft.cc, account: draft.wrappedValue.accountId)
+                            .accessibilityLabel(tr("Cc"))
+                    }
+                    addressRow(tr("Bcc")) {
+                        RecipientField(placeholder: "", text: draft.bcc, account: draft.wrappedValue.accountId)
+                            .accessibilityLabel(tr("Bcc"))
+                    }
+                }
+                addressRow(tr("Subject")) {
+                    TextField("", text: draft.subject)
+                        .textFieldStyle(.plain)
+                        .accessibilityLabel(tr("Subject"))
+                }
+                addressRow(tr("From")) {
+                    if senders.count > 1 {
+                        Picker(tr("From"), selection: Binding(
                             get: { "\(draft.wrappedValue.accountId)|\(draft.wrappedValue.from)" },
                             set: { picked in
                                 let parts = picked.split(separator: "|", maxSplits: 1).map(String.init)
@@ -221,42 +253,18 @@ struct ComposeView: View {
                             }
                         }
                         .labelsHidden()
+                        .pickerStyle(.menu)
+                        .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text(senders.first.map { sender in
+                            sender.name.map { "\($0) <\(sender.email)>" } ?? sender.email
+                        } ?? draft.wrappedValue.from)
+                        .textSelection(.enabled)
                     }
-                }
-                GridRow(alignment: .top) {
-                    label(tr("To"))
-                    HStack(alignment: .top) {
-                        RecipientField(placeholder: tr("Recipients"), text: draft.to, account: draft.wrappedValue.accountId)
-                        Button(tr("Cc/Bcc")) { showCopies.toggle() }
-                            .buttonStyle(.borderless)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                if let sendProblem {
-                    GridRow {
-                        label("")
-                        Text(sendProblem)
-                            .font(.callout)
-                            .foregroundStyle(.red)
-                    }
-                }
-                if showCopies || !draft.wrappedValue.cc.isEmpty || !draft.wrappedValue.bcc.isEmpty {
-                    GridRow(alignment: .top) {
-                        label(tr("Cc"))
-                        RecipientField(placeholder: "", text: draft.cc, account: draft.wrappedValue.accountId)
-                    }
-                    GridRow(alignment: .top) {
-                        label(tr("Bcc"))
-                        RecipientField(placeholder: "", text: draft.bcc, account: draft.wrappedValue.accountId)
-                    }
-                }
-                GridRow {
-                    label(tr("Subject"))
-                    TextField("", text: draft.subject).textFieldStyle(.plain).font(.headline)
+                    Spacer(minLength: 0)
                 }
             }
-            .padding(14)
-            Divider()
+            .padding(.horizontal, 20)
             FormatBar(controller: editor)
             Divider()
             ScrollView {
@@ -318,11 +326,20 @@ struct ComposeView: View {
         }
     }
 
-    private func label(_ text: String) -> some View {
-        Text(text)
-            .foregroundStyle(.secondary)
-            .frame(width: 64, alignment: .trailing)
-            .padding(.top, 1)
+    private func addressRow<Content: View>(
+        _ title: String, @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text(title)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 44, alignment: .leading)
+                content()
+            }
+            .font(.callout)
+            .frame(minHeight: 38)
+            Divider()
+        }
     }
 
     private func load() async {

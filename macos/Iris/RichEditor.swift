@@ -457,29 +457,29 @@ final class RichController {
     }
 }
 
-/// The GTK composer's formatting bar: character styles, the kinds of line,
-/// a link and Clear Formatting.
+/// Formatting controls grouped by paragraph, character style, list and link.
 struct FormatBar: View {
     let controller: RichController
 
     var body: some View {
         HStack(spacing: 2) {
-            button("bold", "Bold (Ctrl+B)", "b", []) { controller.toggle(bold: true) }
-            button("italic", "Italic (Ctrl+I)", "i", []) { controller.toggle(italic: true) }
-            button("strikethrough", "Strikethrough (Ctrl+Shift+X)", "x", .shift) { controller.toggle(strike: true) }
-            button("chevron.left.forwardslash.chevron.right", "Code (Ctrl+E)", "e", []) { controller.toggle(code: true) }
-            Divider().frame(height: 16).padding(.horizontal, 4)
             Menu {
                 Button(tr("Paragraph")) { controller.setBlock("paragraph") }
                 Button(tr("Heading 1")) { controller.setBlock("heading", level: 1) }
                 Button(tr("Heading 2")) { controller.setBlock("heading", level: 2) }
                 Button(tr("Heading 3")) { controller.setBlock("heading", level: 3) }
             } label: {
-                Image(systemName: "textformat.size")
+                Label(tr("Paragraph"), systemImage: "textformat.size")
             }
             .menuStyle(.borderlessButton)
             .fixedSize()
             .help(tr("Paragraph"))
+            Divider().frame(height: 16).padding(.horizontal, 6)
+            button("bold", "Bold (Ctrl+B)", "b", []) { controller.toggle(bold: true) }
+            button("italic", "Italic (Ctrl+I)", "i", []) { controller.toggle(italic: true) }
+            button("strikethrough", "Strikethrough (Ctrl+Shift+X)", "x", .shift) { controller.toggle(strike: true) }
+            button("chevron.left.forwardslash.chevron.right", "Code (Ctrl+E)", "e", []) { controller.toggle(code: true) }
+            Divider().frame(height: 16).padding(.horizontal, 4)
             button("list.bullet", "Bulleted List (Ctrl+Shift+8)", "8", .shift) { controller.setBlock("bullet") }
             button("list.number", "Numbered List (Ctrl+Shift+7)", "7", .shift) { controller.setBlock("numbered") }
             button("text.quote", "Quote (Ctrl+Shift+9)", "9", .shift) { controller.setBlock("quote") }
@@ -492,8 +492,9 @@ struct FormatBar: View {
             Spacer()
         }
         .buttonStyle(.borderless)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 4)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+        .background(.bar)
     }
 
     /// A button named by the GTK composer's own words, its keys in the

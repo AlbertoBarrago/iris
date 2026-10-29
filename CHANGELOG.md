@@ -5,6 +5,12 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.9 (2026-10-29)
+
+### Improved
+
+- The compose window has compact address rows, a visible sender and grouped formatting controls.
+
 ## 1.2.8 (2026-10-28)
 
 ### Fixed
