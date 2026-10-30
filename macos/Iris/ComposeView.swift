@@ -36,7 +36,7 @@ struct ComposeView: View {
     /// would lose anything.
     @State private var saved: ComposeDraft?
     @State private var senders: [Sender] = []
-    @State private var showCopies = false
+    @State private var showCopies: Bool?
     @State private var showQuote = false
     /// Send Later's "Choose a Time…" is open.
     @State private var choosingTime = false
@@ -202,25 +202,29 @@ struct ComposeView: View {
 
     private func form(_ draft: Binding<ComposeDraft>) -> some View {
         VStack(spacing: 0) {
-            VStack(spacing: 0) {
+            Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 0) {
                 addressRow(tr("To")) {
                     HStack(alignment: .top) {
                         RecipientField(placeholder: tr("Recipients"), text: draft.to, account: draft.wrappedValue.accountId)
                             .accessibilityLabel(tr("To"))
-                        Button(tr("Cc/Bcc")) { showCopies.toggle() }
+                        Button(copiesVisible ? tr("Hide Cc/Bcc") : tr("Show Cc/Bcc")) {
+                            showCopies = !copiesVisible
+                        }
                             .buttonStyle(.borderless)
                             .foregroundStyle(.secondary)
                     }
                 }
                 if let sendProblem {
-                    Text(sendProblem)
-                        .font(.callout)
-                        .foregroundStyle(.red)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.leading, 74)
-                        .padding(.bottom, 8)
+                    GridRow {
+                        Text("")
+                        Text(sendProblem)
+                            .font(.callout)
+                            .foregroundStyle(.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 8)
+                    }
                 }
-                if showCopies || !draft.wrappedValue.cc.isEmpty || !draft.wrappedValue.bcc.isEmpty {
+                if copiesVisible {
                     addressRow(tr("Cc")) {
                         RecipientField(placeholder: "", text: draft.cc, account: draft.wrappedValue.accountId)
                             .accessibilityLabel(tr("Cc"))
@@ -326,21 +330,26 @@ struct ComposeView: View {
         }
     }
 
+    private var copiesVisible: Bool {
+        showCopies ?? (!(draft?.cc.isEmpty ?? true) || !(draft?.bcc.isEmpty ?? true))
+    }
+
+    @ViewBuilder
     private func addressRow<Content: View>(
         _ title: String, @ViewBuilder content: () -> Content
     ) -> some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                Text(title)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .frame(width: 64, alignment: .leading)
+        GridRow(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: true, vertical: false)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
                 content()
             }
             .font(.callout)
-            .frame(minHeight: 38)
-            Divider()
+            .frame(maxWidth: .infinity, minHeight: 38, alignment: .leading)
         }
+        Divider().gridCellColumns(2)
     }
 
     private func load() async {

@@ -1,4 +1,5 @@
 import AppKit
+import Observation
 import SwiftUI
 
 /// The composer's words in the Mac's own rich text view, with the GTK
@@ -75,9 +76,14 @@ struct RichEditor: NSViewRepresentable {
             push()
         }
 
+        func textViewDidChangeSelection(_ notification: Notification) {
+            parent.controller.refreshFormatting()
+        }
+
         /// Reads the text back into lines for the draft.
         func push() {
             guard let text = parent.controller.text, let storage = text.textStorage else { return }
+            parent.controller.refreshFormatting()
             parent.blocks = RichController.blocks(storage)
             text.enclosingScrollView?.invalidateIntrinsicContentSize()
             revealCaret(in: text)
@@ -117,13 +123,34 @@ struct RichEditor: NSViewRepresentable {
 /// Acts on the editor for the formatting bar and the shortcuts, and turns
 /// its text into lines and back.
 @MainActor
+@Observable
 final class RichController {
-    weak var text: NSTextView?
-    var changed: () -> Void = {}
+    @ObservationIgnored weak var text: NSTextView?
+    @ObservationIgnored var changed: () -> Void = {}
     /// Files dropped on the words, with how many could not be had.
-    var dropped: ([URL], Int) -> Void = { _, _ in }
+    @ObservationIgnored var dropped: ([URL], Int) -> Void = { _, _ in }
     /// A drag carrying files is over the words, or has left them.
-    var hovering: (Bool) -> Void = { _ in }
+    @ObservationIgnored var hovering: (Bool) -> Void = { _ in }
+
+    private(set) var hasSelection = false
+    private(set) var style = (bold: false, italic: false, strike: false, code: false)
+
+    /// The toolbar reflects the selection, or the style waiting at the caret.
+    func refreshFormatting() {
+        guard let text, let storage = text.textStorage else { return }
+        let range = text.selectedRange()
+        hasSelection = range.length > 0
+        if range.length == 0 {
+            style = Self.runStyle(text.typingAttributes)
+        } else {
+            style = (
+                Self.all(storage, range) { Self.runStyle($0).bold },
+                Self.all(storage, range) { Self.runStyle($0).italic },
+                Self.all(storage, range) { Self.runStyle($0).strike },
+                Self.all(storage, range) { Self.runStyle($0).code }
+            )
+        }
+    }
 
     static let blockKey = NSAttributedString.Key("IrisBlock")
     static let bodyFont = NSFont.systemFont(ofSize: NSFont.systemFontSize + 1)
@@ -138,6 +165,7 @@ final class RichController {
     func toggle(bold: Bool = false, italic: Bool = false, strike: Bool = false, code: Bool = false) {
         guard let text, let storage = text.textStorage else { return }
         text.window?.makeFirstResponder(text)
+        defer { refreshFormatting() }
         let range = text.selectedRange()
         if range.length == 0 {
             // No selection: the style applies to what is typed next.
@@ -487,19 +515,21 @@ struct FormatBar: View {
             .fixedSize()
             .help(tr("Paragraph"))
             Divider().frame(height: 16).padding(.horizontal, 6)
-            button("bold", "Bold (Ctrl+B)", "b", []) { controller.toggle(bold: true) }
-            button("italic", "Italic (Ctrl+I)", "i", []) { controller.toggle(italic: true) }
-            button("strikethrough", "Strikethrough (Ctrl+Shift+X)", "x", .shift) { controller.toggle(strike: true) }
-            button("chevron.left.forwardslash.chevron.right", "Code (Ctrl+E)", "e", []) { controller.toggle(code: true) }
+            button("bold", "Bold (Ctrl+B)", "b", [], active: controller.style.bold) { controller.toggle(bold: true) }
+            button("italic", "Italic (Ctrl+I)", "i", [], active: controller.style.italic) { controller.toggle(italic: true) }
+            button("strikethrough", "Strikethrough (Ctrl+Shift+X)", "x", .shift, active: controller.style.strike) { controller.toggle(strike: true) }
+            button("chevron.left.forwardslash.chevron.right", "Code (Ctrl+E)", "e", [], active: controller.style.code) { controller.toggle(code: true) }
             Divider().frame(height: 16).padding(.horizontal, 4)
             button("list.bullet", "Bulleted List (Ctrl+Shift+8)", "8", .shift) { controller.setBlock("bullet") }
             button("list.number", "Numbered List (Ctrl+Shift+7)", "7", .shift) { controller.setBlock("numbered") }
             button("text.quote", "Quote (Ctrl+Shift+9)", "9", .shift) { controller.setBlock("quote") }
             Divider().frame(height: 16).padding(.horizontal, 4)
             button("link", "Link (Ctrl+K)", "k", []) { controller.link() }
+                .disabled(!controller.hasSelection)
             Button(tr("Clear Formatting"), systemImage: "textformat") { controller.clear() }
                 .labelStyle(.iconOnly)
                 .help(tr("Clear Formatting"))
+                .disabled(!controller.hasSelection)
                 .frame(width: 26, height: 22)
             Spacer()
         }
@@ -509,15 +539,17 @@ struct FormatBar: View {
         .background(.bar)
     }
 
-    /// A button named by the GTK composer's own words, its keys in the
-    /// Mac's symbols, and the same shortcut with Command for Control.
-    private func button(_ symbol: String, _ words: String, _ key: Character, _ extra: EventModifiers, run: @escaping () -> Void) -> some View {
+    /// Shows the formatting action with its Mac shortcut and current state.
+    private func button(_ symbol: String, _ words: String, _ key: Character, _ extra: EventModifiers, active: Bool = false, run: @escaping () -> Void) -> some View {
         let name = macKeys(tr(words))
         return Button(name, systemImage: symbol, action: run)
             .keyboardShortcut(KeyEquivalent(key), modifiers: extra.union(.command))
             .labelStyle(.iconOnly)
             .help(name)
             .frame(width: 26, height: 22)
+            .background(active ? Color.accentColor.opacity(0.18) : Color.clear, in: RoundedRectangle(cornerRadius: 4))
+            .foregroundStyle(active ? Color.accentColor : Color.primary)
+            .accessibilityAddTraits(active ? .isSelected : [])
     }
 }
 

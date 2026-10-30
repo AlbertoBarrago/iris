@@ -5,6 +5,12 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.11 (2026-10-30)
+
+### Improved
+
+- Compose fields use tighter spacing, the Cc/Bcc button names its action, and formatting buttons show the active style before you type. Link and Clear Formatting are available when text is selected.
+
 ## 1.2.10 (2026-10-29)
 
 ### Fixed

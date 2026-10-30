@@ -6174,8 +6174,8 @@ msgstr "Primo giorno"
 msgid "Last Day"
 msgstr "Ultimo giorno"
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:233
-#: macos/Iris/ComposeView.swift:236 macos/Iris/RulesView.swift:171
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:237
+#: macos/Iris/ComposeView.swift:240 macos/Iris/RulesView.swift:171
 #: macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr "Oggetto"
@@ -6314,7 +6314,7 @@ msgstr "I segnaposto come {{first_name}} si compilano ogni volta che lo usi."
 msgid "Sign"
 msgstr "Firma"
 
-#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:391
+#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:400
 msgid "Encrypt"
 msgstr "Cifra"
 
@@ -6349,77 +6349,81 @@ msgid "Recipients"
 msgstr "Destinatari"
 
 #: macos/Iris/ComposeView.swift:210
-msgid "Cc/Bcc"
-msgstr "Cc/Ccn"
+msgid "Hide Cc/Bcc"
+msgstr "Nascondi Cc/Ccn"
 
-#: macos/Iris/ComposeView.swift:224 macos/Iris/ComposeView.swift:226
+#: macos/Iris/ComposeView.swift:210
+msgid "Show Cc/Bcc"
+msgstr "Mostra Cc/Ccn"
+
+#: macos/Iris/ComposeView.swift:228 macos/Iris/ComposeView.swift:230
 msgid "Cc"
 msgstr "Cc"
 
-#: macos/Iris/ComposeView.swift:228 macos/Iris/ComposeView.swift:230
+#: macos/Iris/ComposeView.swift:232 macos/Iris/ComposeView.swift:234
 msgid "Bcc"
 msgstr "Ccn"
 
-#: macos/Iris/ComposeView.swift:238 macos/Iris/ComposeView.swift:240
+#: macos/Iris/ComposeView.swift:242 macos/Iris/ComposeView.swift:244
 #: macos/Iris/RulesView.swift:169
 msgid "From"
 msgstr "Da"
 
-#: macos/Iris/ComposeView.swift:284 macos/Iris/ComposeView.swift:287
+#: macos/Iris/ComposeView.swift:288 macos/Iris/ComposeView.swift:291
 msgid "Remove {file}"
 msgstr "Rimuovi {file}"
 
-#: macos/Iris/ComposeView.swift:305 macos/Iris/ComposeView.swift:310
+#: macos/Iris/ComposeView.swift:309 macos/Iris/ComposeView.swift:314
 msgid "Remove Quoted Text"
 msgstr "Rimuovi testo citato"
 
-#: macos/Iris/ComposeView.swift:320
+#: macos/Iris/ComposeView.swift:324
 msgid "Forwarded Message"
 msgstr "Messaggio inoltrato"
 
-#: macos/Iris/ComposeView.swift:425
+#: macos/Iris/ComposeView.swift:434
 msgid "Template saved"
 msgstr "Modello salvato"
 
-#: macos/Iris/ComposeView.swift:436
+#: macos/Iris/ComposeView.swift:445
 msgid "Attach Files"
 msgstr "Allega file"
 
-#: macos/Iris/ComposeView.swift:457
+#: macos/Iris/ComposeView.swift:466
 msgid "Could not read {count} file"
 msgid_plural "Could not read {count} files"
 msgstr[0] "Impossibile leggere {count} file"
 msgstr[1] "Impossibile leggere {count} file"
 
-#: macos/Iris/ComposeView.swift:462
+#: macos/Iris/ComposeView.swift:471
 msgid "Attached {count} file"
 msgid_plural "Attached {count} files"
 msgstr[0] "{count} file allegato"
 msgstr[1] "{count} file allegati"
 
-#: macos/Iris/ComposeView.swift:481 macos/Iris/FileDrop.swift:39
+#: macos/Iris/ComposeView.swift:490 macos/Iris/FileDrop.swift:39
 msgid "Image"
 msgstr "Immagine"
 
-#: macos/Iris/ComposeView.swift:526
+#: macos/Iris/ComposeView.swift:535
 msgid "Draft saved"
 msgstr "Bozza salvata"
 
-#: macos/Iris/ComposeView.swift:717
+#: macos/Iris/ComposeView.swift:726
 msgid "Save as Draft?"
 msgstr "Salvare come bozza?"
 
-#: macos/Iris/ComposeView.swift:718
+#: macos/Iris/ComposeView.swift:727
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 "La bozza resta in Gmail, così puoi completarla più tardi su qualsiasi "
 "dispositivo."
 
-#: macos/Iris/ComposeView.swift:719
+#: macos/Iris/ComposeView.swift:728
 msgid "Save Draft"
 msgstr "Salva bozza"
 
-#: macos/Iris/ComposeView.swift:720
+#: macos/Iris/ComposeView.swift:729
 msgid "Discard"
 msgstr "Scarta"
 
@@ -6934,32 +6938,32 @@ msgstr "Impossibile rimuovere {account}: {reason}"
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
-#: macos/Iris/RichEditor.swift:228
+#: macos/Iris/RichEditor.swift:256
 msgid "Add a Link"
 msgstr "Aggiungi un link"
 
-#: macos/Iris/RichEditor.swift:232
+#: macos/Iris/RichEditor.swift:260
 msgid "Add Link"
 msgstr "Aggiungi link"
 
-#: macos/Iris/RichEditor.swift:479 macos/Iris/RichEditor.swift:484
-#: macos/Iris/RichEditor.swift:488
+#: macos/Iris/RichEditor.swift:507 macos/Iris/RichEditor.swift:512
+#: macos/Iris/RichEditor.swift:516
 msgid "Paragraph"
 msgstr "Paragrafo"
 
-#: macos/Iris/RichEditor.swift:480
+#: macos/Iris/RichEditor.swift:508
 msgid "Heading 1"
 msgstr "Titolo 1"
 
-#: macos/Iris/RichEditor.swift:481
+#: macos/Iris/RichEditor.swift:509
 msgid "Heading 2"
 msgstr "Titolo 2"
 
-#: macos/Iris/RichEditor.swift:482
+#: macos/Iris/RichEditor.swift:510
 msgid "Heading 3"
 msgstr "Titolo 3"
 
-#: macos/Iris/RichEditor.swift:500 macos/Iris/RichEditor.swift:502
+#: macos/Iris/RichEditor.swift:529 macos/Iris/RichEditor.swift:531
 msgid "Clear Formatting"
 msgstr "Cancella formattazione"
 
@@ -7662,6 +7666,9 @@ msgstr "Non ci sono ancora anteprime dei messaggi su questo Mac."
 #: macos/Iris/ThreadListView.swift:426
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
+
+#~ msgid "Cc/Bcc"
+#~ msgstr "Cc/Ccn"
 
 #~ msgid "Grant Directory Access"
 #~ msgstr "Concedi accesso alla rubrica aziendale"
@@ -8807,9 +8814,6 @@ msgstr "Rimuovi contrassegno"
 #~ msgid "Blind carbon copy"
 #~ msgstr "Copia conoscenza nascosta"
 
-#~ msgid "Show Cc and Bcc"
-#~ msgstr "Mostra Cc e Ccn"
-
 #~ msgid "Formatting"
 #~ msgstr "Formattazione"
 
@@ -8818,9 +8822,6 @@ msgstr "Rimuovi contrassegno"
 
 #~ msgid "Remove Signature"
 #~ msgstr "Rimuovi firma"
-
-#~ msgid "Hide Cc and Bcc"
-#~ msgstr "Nascondi Cc e Ccn"
 
 #~ msgid "Do Not Forward the Original"
 #~ msgstr "Non inoltrare l'originale"
