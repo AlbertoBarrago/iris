@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iris privacy policy</title>
+<meta name="description" content="What Iris accesses in your Google and Microsoft accounts, where that data goes, and how it is protected.">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../iris.css">
+</head>
+<body>
+<header class="band slim">
+  <div class="wrap">
+    <nav class="nav" aria-label="Iris">
+      <a class="brand" href="../"><img src="../icon.svg" alt="">Iris</a>
+      <a href="/">albz.it</a>
+    </nav>
+    <h1>Privacy policy</h1>
+  </div>
+</header>
+<main>
+  <div class="wrap doc">
+    <p>Last updated: 7 October 2026</p>
+    <p>Iris is a mail and calendar app for macOS and Linux, published by Alberto Barrago (albz). It is a modified version of Penguin Mail, and like it, it works with Google accounts, through Google's APIs, with Microsoft accounts, through Microsoft Graph, and with other mail providers over IMAP and SMTP. It runs on your own computer. This policy explains what it accesses, where that data goes, and how it is protected.</p>
+    <h2>What Iris accesses in a Google account</h2>
+    <p>You grant access through Google's own sign-in page. Adding an account asks for every permission Iris uses, in one visit:</p>
+    <ul>
+    <li><code><a href="https://mail.google.com/</code>">https://mail.google.com/</code></a>, to read your messages, labels and drafts so it can show them; to change labels, so you can archive, star, and mark mail read or unread; to move messages to the Trash; to save drafts and send the messages you write; and to erase mail permanently when you choose Delete Forever in the Trash.</li>
+    <li><code>gmail.settings.basic</code>, to read and change your automatic reply, your signature, and your Gmail filters, when you change them in Iris.</li>
+    <li><code>contacts</code>, to show your contacts' names and photos and suggest recipients, once you turn contacts on in Preferences, and to write a contact to Google Contacts when you ask the assistant to add or change one.</li>
+    <li><code>calendar.events</code>, to read your calendars and show your events; to make, change and delete events when you do so in Iris; to mark your answer to a meeting invitation; to add the events in a calendar file you open; to link a file you attach to an event; and to let the assistant read and change events when you ask it.</li>
+    <li><code>calendar.calendarlist</code>, to read the list of your calendars, so Iris can show more than the primary one; to change a calendar's color or hide it, when you do so in Iris; and to subscribe to a calendar by its address or to a public holiday calendar, when you ask.</li>
+    <li><code>calendar.calendars</code>, to make, rename and delete a calendar you own, when you ask.</li>
+    <li><code>drive.file</code>, to upload a file you attach to a calendar event to your Google Drive, and to share that file with the event's guests when you leave sharing on. It reaches only the files Iris itself put in your Drive, never any other file there.</li>
+    </ul>
+    <p>You may leave any of these unticked on Google's screen. Iris then turns off the feature that needs it and says why where you would use that feature, with a Grant Access button that asks Google again. An account added before Iris asked for all of them at once gets a bar at the top of its mail list that names what it lacks and offers the same button.</p>
+    <h2>What Iris accesses in a Microsoft account</h2>
+    <p>This covers Outlook.com, Hotmail, Live and Microsoft 365 accounts. You grant access through Microsoft's own sign-in page. Adding an account asks for every permission Iris uses, in one visit:</p>
+    <ul>
+    <li><code>openid</code> and <code>User.Read</code>, to learn your address and whether the account is a personal one or an organization's.</li>
+    <li><code>offline_access</code>, to keep you signed in without asking for your password again.</li>
+    <li><code>Mail.ReadWrite</code> and <code>Mail.Send</code>, to read your messages, folders and drafts so it can show them; to move, flag, categorize and delete mail when you do so in Iris; to save drafts; and to send the messages you write.</li>
+    <li><code>MailboxSettings.ReadWrite</code>, to read and change your inbox rules, your Focused Inbox choices and your automatic reply, when you change them in Iris.</li>
+    <li><code>Calendars.ReadWrite</code>, to read your calendars and show your events; to make, change and delete events and calendars when you do so in Iris; to answer a meeting invitation; and to let the assistant read and change events when you ask it.</li>
+    <li><code>Contacts.ReadWrite</code>, to show your contacts' names and suggest recipients, once you turn contacts on in Preferences, and to add or change a contact when you ask the assistant to.</li>
+    </ul>
+    <p>You may leave any of these unticked on Microsoft's screen. Iris then turns off the feature that needs it and says why where you would use that feature, with a Grant Access button that asks Microsoft again.</p>
+    <p>Your mail and events are downloaded from Microsoft straight to your computer and kept in the same local database as for a Google account. For these accounts Iris talks only to <code>graph.microsoft.com</code> and <code>login.microsoftonline.com</code>. Microsoft's refresh token stays in your system's keychain, as described below.</p>
+    <h2>Where your data goes</h2>
+    <ul>
+    <li>Your mail is downloaded from Google straight to your computer and kept in a local database in your user folder: the last 30 days of mail plus everything in your inbox.</li>
+    <li>Iris has no server of its own. No data is sent to its author or to any third party, and Iris contains no analytics, tracking or advertising.</li>
+    <li>Iris connects to Google's Gmail, People, Calendar and Drive APIs, to Microsoft Graph and Microsoft's sign-in service for a Microsoft account, and to GitHub once a day, on Linux, to check for a new version of the app. The update check sends nothing about you or your mail.</li>
+    <li>When you choose to load remote images in a message, your computer fetches those images from wherever the sender hosted them. When you click Unsubscribe, Iris contacts the address the mailing list gave for that purpose.</li>
+    <li>When you add an account from a provider other than Google or Microsoft, Iris looks for its mail servers using the part of your address after the @, never the whole address. For a provider it knows, such as Fastmail or iCloud, it asks nobody. Otherwise it asks your DNS servers for the domain's mail records, and stops there when they point at a provider it knows. If they do not, it asks the domain's own web server and Mozilla's Thunderbird database (autoconfig.thunderbird.net) for its mail settings, asks the same of the company that receives the domain's mail, and tries to connect to the usual mail server names at the domain. It sends your password only to the servers you then sign in to.</li>
+    <li>After an account from another provider signs in, Iris looks for the same provider's calendar, contacts and rules servers (CalDAV, CardDAV and ManageSieve) the same way: through its own list of providers, the domain's DNS records and web server, and the mail server's own name. It signs in to one inside your address's domain with the account's login, and to one outside it only after you agree.</li>
+    <li>Iris has three AI features: the assistant, translation, and help with unsubscribe pages. Each is off until you choose a model for it, and each sends what it reads to the model chosen for it, which may run on your own computer or at Anthropic. The assistant sends the messages it reads to answer your request, and only when you ask it something. Translation sends the message you asked to translate, and only when you press Translate. Unsubscribe help sends a newsletter's unsubscribe page, its address, title, visible text and form fields, together with the address the newsletter was sent to, and only when you press Unsubscribe and Iris's own rules cannot read that page. It never sends the message itself. With a model running on your own computer, your mail stays on your computer. With the Anthropic API or Claude Code, it goes to Anthropic, under Anthropic's terms. Iris does not use your data to train or improve any AI model.</li>
+    <li>The assistant can search the web and read web pages. This is on for Claude and can be turned off under Web Search on the AI page. Each search sends its words to the search engine in use: Anthropic, when the assistant runs on Claude; Brave, when you chose Brave Search for a local model; or the SearXNG server you named. The words of a search come from your request and can include what the assistant read in your mail. When it reads a page, the site that serves it sees a request from your computer, or from Anthropic's servers when the assistant runs on Claude.</li>
+    <li>On the AI page you can add MCP servers: programs on your computer or services on the web that give the assistant more tools. Iris adds none by itself. A server you add receives what the assistant sends it in each tool call, which can include text from your mail, and the assistant asks you before each call unless you chose Always Allow for that tool. What the server does with it is up to whoever runs the server.</li>
+    <li>The assistant can follow skills, which are instruction folders you add and turn on yourself. A skill's scripts run on your computer in a sandbox that has no access to your mail, your keys or your home folder, and no network unless you allow it for that skill. The assistant asks before each script runs.</li>
+    </ul>
+    <h2>How your data is protected</h2>
+    <ul>
+    <li><strong>In transit.</strong> Every connection to Google or Microsoft uses HTTPS with TLS. Sign-in uses OAuth 2.0 with PKCE through your web browser, so Iris never sees your Google or Microsoft password.</li>
+    <li><strong>Sign-in tokens.</strong> Google's and Microsoft's refresh tokens, an IMAP account's password, any assistant API keys, and the tokens of MCP servers you add are stored in your system's keychain: the macOS Keychain, or on Linux your desktop's keyring (GNOME Keyring or another Secret Service). Both encrypt them with your login password. On Linux the Flatpak keeps them in its own encrypted store instead, through the Secret portal, so no other app on your desktop can read them. Short-lived access tokens are kept in memory only and never written to disk.</li>
+    <li><strong>Files on disk.</strong> The folders Iris keeps its data in are readable by your user account alone, and its configuration file is written the same way. Iris does not add its own encryption to the local mail database, so we recommend turning on full-disk encryption: FileVault on macOS, or the encryption Ubuntu offers during installation.</li>
+    <li><strong>Logs.</strong> Iris writes problems to its log so they can be diagnosed. It masks email addresses there, keeping only their first letter and domain, and it never logs message text or sign-in tokens.</li>
+    <li><strong>Reading mail safely.</strong> Messages are displayed with JavaScript turned off and in a sandbox. Remote content is blocked twice, by a content filter and by the page's own security policy, so senders cannot track when you open a message unless you allow images for it.</li>
+    <li><strong>Encryption and signatures.</strong> OpenPGP and S/MIME are handled by your own GnuPG installation. Iris never holds your private keys or asks for their passphrases.</li>
+    <li><strong>Updates.</strong> On Linux, new versions are downloaded from GitHub over HTTPS and checked against a published SHA-256 checksum before they are installed. On macOS the app does not update itself.</li>
+    <li><strong>Security reports.</strong> Vulnerabilities can be reported privately by email to <a href="mailto:albertobarrago@gmail.com">albertobarrago@gmail.com</a>.</li>
+    </ul>
+    <h2>Keeping and removing data</h2>
+    <p>Your data stays on your computer until you remove it. Removing an account in Iris deletes its downloaded mail and its sign-in token from your computer. Removing the app and deleting its folders removes everything else: <code>~/Library/Application Support/iris</code> and <code>~/.cache/iris</code> on macOS, or <code>~/.local/share/iris</code>, <code>~/.config/iris</code> and <code>~/.cache/iris</code> on Linux. To revoke Iris's access on Google's side, visit <a href="https://myaccount.google.com/permissions">https://myaccount.google.com/permissions</a>. On Microsoft's side, visit <a href="https://account.live.com/consent/Manage">https://account.live.com/consent/Manage</a> for a personal account, or your organization's My Apps page for a work or school account.</p>
+    <h2>Google API Services User Data Policy</h2>
+    <p>Iris's use and transfer of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements. Data from Google APIs is used only to provide the features you see in the app, is never sold, is never used for advertising, and is never used to develop, improve or train generalized AI or machine learning models.</p>
+    <h2>Contact</h2>
+    <p>Questions about this policy: <a href="mailto:albertobarrago@gmail.com">albertobarrago@gmail.com</a>.</p>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>Iris &copy; 2026 Alberto Barrago</span>
+    <span><a href="../">Iris</a> &nbsp;&middot;&nbsp; <a href="mailto:albertobarrago@gmail.com">albertobarrago@gmail.com</a></span>
+  </div>
+</footer>
+</body>
+</html>
