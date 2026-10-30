@@ -5,6 +5,16 @@ Each release of Iris, newest first. GitHub shows the same text on the
 
 ## Unreleased
 
+## 1.2.12 (2026-10-30)
+
+### Improved
+
+- The compose window is laid out like Mail's: To, Cc, Subject and From on full-width rows, a Signature menu beside the sender, a formatting bar you can hide, and buttons for emoji, Writing Tools, Bcc and Send Later.
+
+### Fixed
+
+- Closing a message you have not written anything in no longer asks to save a draft.
+
 ## 1.2.11 (2026-10-30)
 
 ### Improved

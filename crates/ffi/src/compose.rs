@@ -319,6 +319,55 @@ impl Mail {
         }
     }
 
+    /// Whether closing the composer would lose something written since it
+    /// showed `opened`, so it asks to save a draft only then. A composer
+    /// opened and closed again, or emptied back to how it started, goes
+    /// without a word.
+    pub fn would_lose(&self, opened: ComposeDraft, current: ComposeDraft) -> bool {
+        match (self.draft_from(opened), self.draft_from(current)) {
+            (Ok(opened), Ok(current)) => current.differs_from(&opened),
+            // Asking is the safe answer when either cannot be read.
+            _ => true,
+        }
+    }
+
+    /// Whether `composed` shows its sender's signature, as the composer's
+    /// Signature menu reads it; `None` when the address has no signature
+    /// to show.
+    pub fn signature_shown(&self, composed: ComposeDraft) -> Option<bool> {
+        let signature = self.signature_of(composed.account_id, &composed.from);
+        if let Some(html) = signature.html() {
+            return Some(composed.signature_html.as_deref() == Some(html));
+        }
+        let lines = signature.markdown();
+        if lines.trim().is_empty() {
+            return None;
+        }
+        let draft = self.draft_from(composed).ok()?;
+        Some(compose::has_signature(&draft.markdown, lines))
+    }
+
+    /// `composed` with its sender's signature put under the words, or
+    /// taken away, as the Signature menu picks. A signature someone has
+    /// edited stays as they left it.
+    pub fn show_signature(&self, composed: ComposeDraft, shown: bool) -> Result<ComposeDraft, CoreError> {
+        let signature = self.signature_of(composed.account_id, &composed.from);
+        let mut draft = self.draft_from(composed)?;
+        match signature.html() {
+            Some(html) => draft.signature = shown.then(|| html.to_string()),
+            None => {
+                let lines = signature.markdown();
+                let (old, new) = if shown { ("", lines) } else { (lines, "") };
+                if shown == compose::has_signature(&draft.markdown, lines) {
+                    return Ok(self.shown(draft));
+                }
+                draft.markdown = compose::restyle_signature(&draft.markdown, old, new);
+                draft.rich = Some(RichBody::from_markdown(&draft.markdown));
+            }
+        }
+        Ok(self.shown(draft))
+    }
+
     /// Sends what the composer holds through the engine's outbox, which
     /// keeps it and tries again while the network is away. Says what came
     /// of it, or why it was refused.
@@ -547,18 +596,23 @@ impl Mail {
     /// app signs a message it starts: Markdown lines under the words, or a
     /// formatted signature beside them.
     pub(crate) fn signed(&self, mut draft: Draft) -> Draft {
-        let settings = Settings::load(&Settings::default_path());
-        let (db, id) = (self.db.clone(), draft.account_id);
-        let account = self
-            .run(async move { db.read(move |c| accounts::account(c, id)).await })
-            .ok()
-            .flatten()
-            .map(|a| a.email)
-            .unwrap_or_else(|| draft.from.email.clone());
-        let signature = settings.signature_for(&account, &draft.from.email);
+        let signature = self.signature_of(draft.account_id, &draft.from.email);
         draft.markdown = compose::with_signature(&draft.markdown, signature.markdown());
         draft.signature = signature.html().map(str::to_string);
         draft
+    }
+
+    /// The signature a message from `email` on `account_id` goes out with.
+    fn signature_of(&self, account_id: i64, email: &str) -> compose::SignatureBlock {
+        let settings = Settings::load(&Settings::default_path());
+        let db = self.db.clone();
+        let account = self
+            .run(async move { db.read(move |c| accounts::account(c, account_id)).await })
+            .ok()
+            .flatten()
+            .map(|a| a.email)
+            .unwrap_or_else(|| email.to_string());
+        settings.signature_for(&account, email)
     }
 
     /// The draft as the composer shows it.

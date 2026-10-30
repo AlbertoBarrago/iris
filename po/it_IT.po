@@ -1485,7 +1485,7 @@ msgstr "Tempo per concentrarsi"
 msgid "Declined because I am out of office"
 msgstr "Rifiutato perché sono fuori sede"
 
-#: crates/appcore/src/compose.rs:592 crates/appcore/src/compose.rs:2915
+#: crates/appcore/src/compose.rs:592 crates/appcore/src/compose.rs:3001
 msgid "Add at least one recipient."
 msgstr "Aggiungi almeno un destinatario."
 
@@ -1493,11 +1493,11 @@ msgstr "Aggiungi almeno un destinatario."
 msgid "“{address}” is not an email address."
 msgstr "“{address}” non è un indirizzo email."
 
-#: crates/appcore/src/compose.rs:849 crates/appcore/src/compose.rs:2921
+#: crates/appcore/src/compose.rs:875 crates/appcore/src/compose.rs:3007
 msgid "Choose a time in the future"
 msgstr "Scegli un orario nel futuro"
 
-#: crates/appcore/src/compose.rs:1083
+#: crates/appcore/src/compose.rs:1109
 msgid "On {date}, {sender} wrote:"
 msgstr "Il giorno {date}, {sender} ha scritto:"
 
@@ -3997,36 +3997,36 @@ msgstr "La bozza salvata resta in Bozze: {reason}"
 msgid "the account is not connected."
 msgstr "l'account non è connesso."
 
-#: crates/ffi/src/compose.rs:336 crates/ffi/src/compose.rs:343
-#: crates/ffi/src/compose.rs:411 crates/ffi/src/compose.rs:418
+#: crates/ffi/src/compose.rs:385 crates/ffi/src/compose.rs:392
+#: crates/ffi/src/compose.rs:460 crates/ffi/src/compose.rs:467
 msgid "Not sent: {reason}"
 msgstr "Non inviato: {reason}"
 
-#: crates/ffi/src/compose.rs:340
+#: crates/ffi/src/compose.rs:389
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: crates/ffi/src/compose.rs:342 crates/ffi/src/compose.rs:417
+#: crates/ffi/src/compose.rs:391 crates/ffi/src/compose.rs:466
 msgid "Waiting in the Outbox. It goes out as soon as it can."
 msgstr "In attesa in Posta in uscita. Partirà appena possibile."
 
-#: crates/ffi/src/compose.rs:377
+#: crates/ffi/src/compose.rs:426
 msgid "A reaction is one emoji."
 msgstr "Una reazione è una sola emoji."
 
-#: crates/ffi/src/compose.rs:390
+#: crates/ffi/src/compose.rs:439
 msgid "The message is no longer here."
 msgstr "Il messaggio non c'è più."
 
-#: crates/ffi/src/compose.rs:392
+#: crates/ffi/src/compose.rs:441
 msgid "This message cannot take a reaction."
 msgstr "A questo messaggio non si può reagire."
 
-#: crates/ffi/src/compose.rs:415
+#: crates/ffi/src/compose.rs:464
 msgid "Reacted with {emoji}"
 msgstr "Hai reagito con {emoji}"
 
-#: crates/ffi/src/compose.rs:528
+#: crates/ffi/src/compose.rs:577
 msgid "Add an account to write mail."
 msgstr "Aggiungi un account per scrivere."
 
@@ -6174,9 +6174,8 @@ msgstr "Primo giorno"
 msgid "Last Day"
 msgstr "Ultimo giorno"
 
-#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:237
-#: macos/Iris/ComposeView.swift:240 macos/Iris/RulesView.swift:171
-#: macos/Iris/TemplatesSettings.swift:98
+#: macos/Iris/AutoReplyView.swift:85 macos/Iris/ComposeView.swift:275
+#: macos/Iris/RulesView.swift:171 macos/Iris/TemplatesSettings.swift:98
 msgid "Subject"
 msgstr "Oggetto"
 
@@ -6276,154 +6275,195 @@ msgstr "Note"
 msgid "Close"
 msgstr "Chiudi"
 
-#: macos/Iris/ComposeView.swift:75 macos/Iris/ContactCardView.swift:42
+#: macos/Iris/ComposeView.swift:83 macos/Iris/ContactCardView.swift:42
 #: macos/Iris/ContactCardView.swift:58 macos/Iris/ContactCardView.swift:59
 #: macos/Iris/IrisApp.swift:59 macos/Iris/ThreadListView.swift:131
 #: macos/Iris/ThreadListView.swift:134
 msgid "New Message"
 msgstr "Nuovo messaggio"
 
-#: macos/Iris/ComposeView.swift:91
+#: macos/Iris/ComposeView.swift:103
 msgid "Drop to attach"
 msgstr "Rilascia per allegare"
 
-#: macos/Iris/ComposeView.swift:109
+#: macos/Iris/ComposeView.swift:121
 msgid "Iris sends it at this time while it runs, even in the tray."
 msgstr ""
 "Iris lo invia a quest'ora mentre è in esecuzione, anche nella barra di "
 "sistema."
 
-#: macos/Iris/ComposeView.swift:110
+#: macos/Iris/ComposeView.swift:122
 msgid "Schedule"
 msgstr "Programma"
 
-#: macos/Iris/ComposeView.swift:113
+#: macos/Iris/ComposeView.swift:125
 msgid "Save as Template"
 msgstr "Salva come modello"
 
-#: macos/Iris/ComposeView.swift:114 macos/Iris/ContactsSettings.swift:207
+#: macos/Iris/ComposeView.swift:126 macos/Iris/ContactsSettings.swift:207
 #: macos/Iris/SmartEditorView.swift:31 macos/Iris/TemplatesSettings.swift:97
 msgid "Name"
 msgstr "Nome"
 
-#: macos/Iris/ComposeView.swift:119
+#: macos/Iris/ComposeView.swift:131
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr "I segnaposto come {{first_name}} si compilano ogni volta che lo usi."
 
-#: macos/Iris/ComposeView.swift:135
-msgid "Sign"
-msgstr "Firma"
+#: macos/Iris/ComposeView.swift:151 macos/Iris/ComposeView.swift:152
+msgid "Formatting"
+msgstr "Formattazione"
 
-#: macos/Iris/ComposeView.swift:140 macos/Iris/ComposeView.swift:400
-msgid "Encrypt"
-msgstr "Cifra"
+#: macos/Iris/ComposeView.swift:154 macos/Iris/ComposeView.swift:158
+msgid "Emoji & Symbols"
+msgstr "Emoji e simboli"
 
-#: macos/Iris/ComposeView.swift:158
+#: macos/Iris/ComposeView.swift:159 macos/Iris/ComposeView.swift:163
+msgid "Writing Tools"
+msgstr "Strumenti di scrittura"
+
+#: macos/Iris/ComposeView.swift:167
+msgid "Bcc Field"
+msgstr "Campo Ccn"
+
+#: macos/Iris/ComposeView.swift:169 macos/Iris/ComposeView.swift:171
+msgid "Header Fields"
+msgstr "Campi intestazione"
+
+#: macos/Iris/ComposeView.swift:176
+msgid "Attach Files…"
+msgstr "Allega file…"
+
+#: macos/Iris/ComposeView.swift:179
 msgid "No Templates Yet"
 msgstr "Ancora nessun modello"
 
-#: macos/Iris/ComposeView.swift:164
+#: macos/Iris/ComposeView.swift:185
 msgid "Save as Template…"
 msgstr "Salva come modello…"
 
-#: macos/Iris/ComposeView.swift:169 macos/Iris/ComposeView.swift:171
-#: macos/Iris/TemplatesSettings.swift:35
-msgid "Templates"
-msgstr "Modelli"
-
-#: macos/Iris/ComposeView.swift:175 macos/Iris/ComposeView.swift:176
+#: macos/Iris/ComposeView.swift:190 macos/Iris/ComposeView.swift:194
 msgid "Attach Files (Ctrl+Shift+A)"
 msgstr "Allega file (Ctrl+Maiusc+A)"
 
-#: macos/Iris/ComposeView.swift:188 macos/Iris/LaterView.swift:86
+#: macos/Iris/ComposeView.swift:204 macos/Iris/LaterView.swift:86
 msgid "Choose a Time…"
 msgstr "Scegli un orario…"
 
-#: macos/Iris/ComposeView.swift:206 macos/Iris/ComposeView.swift:209
-#: macos/Iris/RulesView.swift:170
+#: macos/Iris/ComposeView.swift:216
+msgid "Sign"
+msgstr "Firma"
+
+#: macos/Iris/ComposeView.swift:221 macos/Iris/ComposeView.swift:498
+msgid "Encrypt"
+msgstr "Cifra"
+
+#: macos/Iris/ComposeView.swift:249
+msgid "To:"
+msgstr "A:"
+
+#: macos/Iris/ComposeView.swift:251 macos/Iris/RulesView.swift:170
 msgid "To"
 msgstr "A"
 
-#: macos/Iris/ComposeView.swift:208
-msgid "Recipients"
-msgstr "Destinatari"
+#: macos/Iris/ComposeView.swift:262
+msgid "Cc:"
+msgstr "Cc:"
 
-#: macos/Iris/ComposeView.swift:210
-msgid "Hide Cc/Bcc"
-msgstr "Nascondi Cc/Ccn"
-
-#: macos/Iris/ComposeView.swift:210
-msgid "Show Cc/Bcc"
-msgstr "Mostra Cc/Ccn"
-
-#: macos/Iris/ComposeView.swift:228 macos/Iris/ComposeView.swift:230
+#: macos/Iris/ComposeView.swift:264
 msgid "Cc"
 msgstr "Cc"
 
-#: macos/Iris/ComposeView.swift:232 macos/Iris/ComposeView.swift:234
+#: macos/Iris/ComposeView.swift:267
+msgid "Bcc:"
+msgstr "Ccn:"
+
+#: macos/Iris/ComposeView.swift:269
 msgid "Bcc"
 msgstr "Ccn"
 
-#: macos/Iris/ComposeView.swift:242 macos/Iris/ComposeView.swift:244
-#: macos/Iris/RulesView.swift:169
-msgid "From"
-msgstr "Da"
+#: macos/Iris/ComposeView.swift:272
+msgid "Subject:"
+msgstr "Oggetto:"
 
-#: macos/Iris/ComposeView.swift:288 macos/Iris/ComposeView.swift:291
+#: macos/Iris/ComposeView.swift:277
+msgid "From:"
+msgstr "Da:"
+
+#: macos/Iris/ComposeView.swift:281
+msgid "Signature:"
+msgstr "Firma:"
+
+#: macos/Iris/ComposeView.swift:283 macos/Iris/ComposeView.swift:291
+msgid "Signature"
+msgstr "Firma"
+
+#: macos/Iris/ComposeView.swift:284
+msgid "None"
+msgstr "Nessuna"
+
+#: macos/Iris/ComposeView.swift:285
+msgid "Account Signature"
+msgstr "Firma dell'account"
+
+#: macos/Iris/ComposeView.swift:312 macos/Iris/ComposeView.swift:315
 msgid "Remove {file}"
 msgstr "Rimuovi {file}"
 
-#: macos/Iris/ComposeView.swift:309 macos/Iris/ComposeView.swift:314
+#: macos/Iris/ComposeView.swift:333 macos/Iris/ComposeView.swift:338
 msgid "Remove Quoted Text"
 msgstr "Rimuovi testo citato"
 
-#: macos/Iris/ComposeView.swift:324
+#: macos/Iris/ComposeView.swift:348
 msgid "Forwarded Message"
 msgstr "Messaggio inoltrato"
 
-#: macos/Iris/ComposeView.swift:434
+#: macos/Iris/ComposeView.swift:363 macos/Iris/RulesView.swift:169
+msgid "From"
+msgstr "Da"
+
+#: macos/Iris/ComposeView.swift:532
 msgid "Template saved"
 msgstr "Modello salvato"
 
-#: macos/Iris/ComposeView.swift:445
+#: macos/Iris/ComposeView.swift:543
 msgid "Attach Files"
 msgstr "Allega file"
 
-#: macos/Iris/ComposeView.swift:466
+#: macos/Iris/ComposeView.swift:564
 msgid "Could not read {count} file"
 msgid_plural "Could not read {count} files"
 msgstr[0] "Impossibile leggere {count} file"
 msgstr[1] "Impossibile leggere {count} file"
 
-#: macos/Iris/ComposeView.swift:471
+#: macos/Iris/ComposeView.swift:569
 msgid "Attached {count} file"
 msgid_plural "Attached {count} files"
 msgstr[0] "{count} file allegato"
 msgstr[1] "{count} file allegati"
 
-#: macos/Iris/ComposeView.swift:490 macos/Iris/FileDrop.swift:39
+#: macos/Iris/ComposeView.swift:588 macos/Iris/FileDrop.swift:39
 msgid "Image"
 msgstr "Immagine"
 
-#: macos/Iris/ComposeView.swift:535
+#: macos/Iris/ComposeView.swift:633
 msgid "Draft saved"
 msgstr "Bozza salvata"
 
-#: macos/Iris/ComposeView.swift:726
+#: macos/Iris/ComposeView.swift:824
 msgid "Save as Draft?"
 msgstr "Salvare come bozza?"
 
-#: macos/Iris/ComposeView.swift:727
+#: macos/Iris/ComposeView.swift:825
 msgid "The draft is kept in Gmail, so you can finish it later on any device."
 msgstr ""
 "La bozza resta in Gmail, così puoi completarla più tardi su qualsiasi "
 "dispositivo."
 
-#: macos/Iris/ComposeView.swift:728
+#: macos/Iris/ComposeView.swift:826
 msgid "Save Draft"
 msgstr "Salva bozza"
 
-#: macos/Iris/ComposeView.swift:729
+#: macos/Iris/ComposeView.swift:827
 msgid "Discard"
 msgstr "Scarta"
 
@@ -6938,34 +6978,38 @@ msgstr "Impossibile rimuovere {account}: {reason}"
 msgid "{account} is signed in again."
 msgstr "{account} ha effettuato di nuovo l'accesso."
 
-#: macos/Iris/RichEditor.swift:256
+#: macos/Iris/RichEditor.swift:263
 msgid "Add a Link"
 msgstr "Aggiungi un link"
 
-#: macos/Iris/RichEditor.swift:260
+#: macos/Iris/RichEditor.swift:267
 msgid "Add Link"
 msgstr "Aggiungi link"
 
-#: macos/Iris/RichEditor.swift:507 macos/Iris/RichEditor.swift:512
-#: macos/Iris/RichEditor.swift:516
+#: macos/Iris/RichEditor.swift:531 macos/Iris/RichEditor.swift:553
+#: macos/Iris/SettingsView.swift:216
+msgid "Style"
+msgstr "Stile"
+
+#: macos/Iris/RichEditor.swift:538
 msgid "Paragraph"
 msgstr "Paragrafo"
 
-#: macos/Iris/RichEditor.swift:508
+#: macos/Iris/RichEditor.swift:539
 msgid "Heading 1"
 msgstr "Titolo 1"
 
-#: macos/Iris/RichEditor.swift:509
+#: macos/Iris/RichEditor.swift:540
 msgid "Heading 2"
 msgstr "Titolo 2"
 
-#: macos/Iris/RichEditor.swift:510
+#: macos/Iris/RichEditor.swift:541
 msgid "Heading 3"
 msgstr "Titolo 3"
 
-#: macos/Iris/RichEditor.swift:529 macos/Iris/RichEditor.swift:531
-msgid "Clear Formatting"
-msgstr "Cancella formattazione"
+#: macos/Iris/RichEditor.swift:542
+msgid "Quote"
+msgstr "Citazione"
 
 #: macos/Iris/RulesView.swift:22
 msgid "Allow Rules"
@@ -7148,10 +7192,6 @@ msgstr "Dimensione del testo"
 #: macos/Iris/SettingsView.swift:215
 msgid "Appearance"
 msgstr "Aspetto"
-
-#: macos/Iris/SettingsView.swift:216
-msgid "Style"
-msgstr "Stile"
 
 #: macos/Iris/SettingsView.swift:220
 msgid "Notifications"
@@ -7605,6 +7645,10 @@ msgstr "Elimina {template}"
 msgid "Add Template"
 msgstr "Aggiungi modello"
 
+#: macos/Iris/TemplatesSettings.swift:35
+msgid "Templates"
+msgstr "Modelli"
+
 #: macos/Iris/TemplatesSettings.swift:37
 msgid ""
 "Saved bodies the composer's Templates menu drops into a message. Markdown "
@@ -7666,6 +7710,18 @@ msgstr "Non ci sono ancora anteprime dei messaggi su questo Mac."
 #: macos/Iris/ThreadListView.swift:426
 msgid "Clear Flag"
 msgstr "Rimuovi contrassegno"
+
+#~ msgid "Recipients"
+#~ msgstr "Destinatari"
+
+#~ msgid "Hide Cc/Bcc"
+#~ msgstr "Nascondi Cc/Ccn"
+
+#~ msgid "Show Cc/Bcc"
+#~ msgstr "Mostra Cc/Ccn"
+
+#~ msgid "Clear Formatting"
+#~ msgstr "Cancella formattazione"
 
 #~ msgid "Cc/Bcc"
 #~ msgstr "Cc/Ccn"
@@ -8177,9 +8233,6 @@ msgstr "Rimuovi contrassegno"
 #~ msgid "New only"
 #~ msgstr "Solo nuove"
 
-#~ msgid "None"
-#~ msgstr "Nessuna"
-
 #~ msgid "Start date"
 #~ msgstr "Data di inizio"
 
@@ -8244,9 +8297,6 @@ msgstr "Rimuovi contrassegno"
 
 #~ msgid "Attachments"
 #~ msgstr "Allegati"
-
-#~ msgid "Attach File…"
-#~ msgstr "Allega file…"
 
 #~ msgid "Grant access to upload {file}"
 #~ msgstr "Concedi l'accesso per caricare {file}"
@@ -8814,12 +8864,6 @@ msgstr "Rimuovi contrassegno"
 #~ msgid "Blind carbon copy"
 #~ msgstr "Copia conoscenza nascosta"
 
-#~ msgid "Formatting"
-#~ msgstr "Formattazione"
-
-#~ msgid "Signature"
-#~ msgstr "Firma"
-
 #~ msgid "Remove Signature"
 #~ msgstr "Rimuovi firma"
 
@@ -9363,9 +9407,6 @@ msgstr "Rimuovi contrassegno"
 
 #~ msgid "Web Pages"
 #~ msgstr "Pagine web"
-
-#~ msgid "Import Signature"
-#~ msgstr "Importa firma"
 
 #~ msgid "The file is not on this computer."
 #~ msgstr "Il file non si trova su questo computer."

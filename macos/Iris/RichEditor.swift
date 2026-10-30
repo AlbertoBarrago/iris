@@ -134,12 +134,19 @@ final class RichController {
 
     private(set) var hasSelection = false
     private(set) var style = (bold: false, italic: false, strike: false, code: false)
+    /// The kind of the line the caret is on, as the Style menu names it:
+    /// `paragraph`, `heading1` to `heading3`, `bullet`, `numbered`,
+    /// `quote` or `code`.
+    private(set) var block = "paragraph"
 
     /// The toolbar reflects the selection, or the style waiting at the caret.
     func refreshFormatting() {
         guard let text, let storage = text.textStorage else { return }
         let range = text.selectedRange()
         hasSelection = range.length > 0
+        let line = (storage.string as NSString).paragraphRange(for: NSRange(location: range.location, length: 0))
+        let (kind, level) = blockAt(line.location)
+        block = Self.tag(kind, level: level)
         if range.length == 0 {
             style = Self.runStyle(text.typingAttributes)
         } else {
@@ -280,6 +287,21 @@ final class RichController {
         text.didChangeText()
         text.setSelectedRange(NSRange(location: range.location + words.length, length: 0))
         text.window?.makeFirstResponder(text)
+        changed()
+    }
+
+    /// Puts `blocks` in place of everything written, as one step Undo
+    /// takes back, keeping the caret where it was when the text still
+    /// reaches it.
+    func replaceAll(_ blocks: [RichBlock]) {
+        guard let text, let storage = text.textStorage else { return }
+        let caret = text.selectedRange().location
+        let everything = NSRange(location: 0, length: storage.length)
+        let words = Self.attributed(blocks)
+        guard text.shouldChangeText(in: everything, replacementString: words.string) else { return }
+        storage.replaceCharacters(in: everything, with: words)
+        text.didChangeText()
+        text.setSelectedRange(NSRange(location: min(caret, words.length), length: 0))
         changed()
     }
 
@@ -497,59 +519,113 @@ final class RichController {
     }
 }
 
-/// Formatting controls grouped by paragraph, character style, list and link.
+/// The formatting bar under the composer's fields, laid out as Mail's:
+/// the line's style, the character styles in one group, the lists, then
+/// the link. Its keyboard shortcuts live in `FormatShortcuts`, so they
+/// work while the bar is hidden too.
 struct FormatBar: View {
     let controller: RichController
 
     var body: some View {
-        HStack(spacing: 2) {
-            Menu {
-                Button(tr("Paragraph")) { controller.setBlock("paragraph") }
-                Button(tr("Heading 1")) { controller.setBlock("heading", level: 1) }
-                Button(tr("Heading 2")) { controller.setBlock("heading", level: 2) }
-                Button(tr("Heading 3")) { controller.setBlock("heading", level: 3) }
-            } label: {
-                Label(tr("Paragraph"), systemImage: "textformat.size")
+        HStack(spacing: 8) {
+            Picker(tr("Style"), selection: Binding(
+                get: { controller.block },
+                set: { picked in
+                    let kind = picked.hasPrefix("heading") ? "heading" : picked
+                    controller.setBlock(kind, level: UInt8(picked.dropFirst("heading".count)) ?? 0)
+                }
+            )) {
+                Text(tr("Paragraph")).tag("paragraph")
+                Text(tr("Heading 1")).tag("heading1")
+                Text(tr("Heading 2")).tag("heading2")
+                Text(tr("Heading 3")).tag("heading3")
+                Text(tr("Quote")).tag("quote")
+                // Lines that are a list or code show no style here; their
+                // own controls say what they are.
+                if !["paragraph", "heading1", "heading2", "heading3", "quote"].contains(controller.block) {
+                    Divider()
+                    Text(tr("Other")).tag(controller.block)
+                }
             }
-            .menuStyle(.borderlessButton)
+            .labelsHidden()
+            .pickerStyle(.menu)
             .fixedSize()
-            .help(tr("Paragraph"))
-            Divider().frame(height: 16).padding(.horizontal, 6)
-            button("bold", "Bold (Ctrl+B)", "b", [], active: controller.style.bold) { controller.toggle(bold: true) }
-            button("italic", "Italic (Ctrl+I)", "i", [], active: controller.style.italic) { controller.toggle(italic: true) }
-            button("strikethrough", "Strikethrough (Ctrl+Shift+X)", "x", .shift, active: controller.style.strike) { controller.toggle(strike: true) }
-            button("chevron.left.forwardslash.chevron.right", "Code (Ctrl+E)", "e", [], active: controller.style.code) { controller.toggle(code: true) }
-            Divider().frame(height: 16).padding(.horizontal, 4)
-            button("list.bullet", "Bulleted List (Ctrl+Shift+8)", "8", .shift) { controller.setBlock("bullet") }
-            button("list.number", "Numbered List (Ctrl+Shift+7)", "7", .shift) { controller.setBlock("numbered") }
-            button("text.quote", "Quote (Ctrl+Shift+9)", "9", .shift) { controller.setBlock("quote") }
-            Divider().frame(height: 16).padding(.horizontal, 4)
-            button("link", "Link (Ctrl+K)", "k", []) { controller.link() }
-                .disabled(!controller.hasSelection)
-            Button(tr("Clear Formatting"), systemImage: "textformat") { controller.clear() }
-                .labelStyle(.iconOnly)
-                .help(tr("Clear Formatting"))
-                .disabled(!controller.hasSelection)
-                .frame(width: 26, height: 22)
-            Spacer()
+            .help(tr("Style"))
+            FormatGroup {
+                button("bold", "Bold (Ctrl+B)", active: controller.style.bold) { controller.toggle(bold: true) }
+                button("italic", "Italic (Ctrl+I)", active: controller.style.italic) { controller.toggle(italic: true) }
+                button("strikethrough", "Strikethrough (Ctrl+Shift+X)", active: controller.style.strike) { controller.toggle(strike: true) }
+                button("chevron.left.forwardslash.chevron.right", "Code (Ctrl+E)", active: controller.style.code) { controller.toggle(code: true) }
+            }
+            FormatGroup {
+                button("list.bullet", "Bulleted List (Ctrl+Shift+8)", active: controller.block == "bullet") { controller.setBlock("bullet") }
+                button("list.number", "Numbered List (Ctrl+Shift+7)", active: controller.block == "numbered") { controller.setBlock("numbered") }
+            }
+            FormatGroup {
+                button("link", "Link (Ctrl+K)") { controller.link() }
+                    .disabled(!controller.hasSelection)
+                button("textformat", "Clear Formatting") { controller.clear() }
+                    .disabled(!controller.hasSelection)
+            }
+            Spacer(minLength: 0)
         }
-        .buttonStyle(.borderless)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 8)
-        .background(.bar)
+        .controlSize(.small)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
     }
 
-    /// Shows the formatting action with its Mac shortcut and current state.
-    private func button(_ symbol: String, _ words: String, _ key: Character, _ extra: EventModifiers, active: Bool = false, run: @escaping () -> Void) -> some View {
+    /// One formatting action, named with its Mac shortcut, lit while the
+    /// selection has it, as Mail lights its alignment buttons.
+    private func button(_ symbol: String, _ words: String, active: Bool = false, run: @escaping () -> Void) -> some View {
         let name = macKeys(tr(words))
         return Button(name, systemImage: symbol, action: run)
-            .keyboardShortcut(KeyEquivalent(key), modifiers: extra.union(.command))
             .labelStyle(.iconOnly)
+            .buttonStyle(.plain)
             .help(name)
-            .frame(width: 26, height: 22)
-            .background(active ? Color.accentColor.opacity(0.18) : Color.clear, in: RoundedRectangle(cornerRadius: 4))
-            .foregroundStyle(active ? Color.accentColor : Color.primary)
+            .frame(width: 24, height: 20)
+            .background(active ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 4))
+            .foregroundStyle(active ? Color.white : Color.primary)
+            .contentShape(Rectangle())
             .accessibilityAddTraits(active ? .isSelected : [])
+    }
+}
+
+/// Buttons sitting side by side on one rounded plate, as Mail groups its
+/// formatting buttons.
+private struct FormatGroup<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        HStack(spacing: 1) { content }
+            .padding(1)
+            .background(Color(nsColor: .quaternaryLabelColor).opacity(0.5), in: RoundedRectangle(cornerRadius: 5))
+    }
+}
+
+/// The formatting shortcuts, kept apart from `FormatBar` so they work
+/// while the bar is hidden. The buttons are there only for their keys.
+struct FormatShortcuts: View {
+    let controller: RichController
+
+    var body: some View {
+        ZStack {
+            key("b", []) { controller.toggle(bold: true) }
+            key("i", []) { controller.toggle(italic: true) }
+            key("x", .shift) { controller.toggle(strike: true) }
+            key("e", []) { controller.toggle(code: true) }
+            key("8", .shift) { controller.setBlock("bullet") }
+            key("7", .shift) { controller.setBlock("numbered") }
+            key("9", .shift) { controller.setBlock("quote") }
+            key("k", []) { controller.link() }
+        }
+        .frame(width: 0, height: 0)
+        .opacity(0)
+        .accessibilityHidden(true)
+    }
+
+    private func key(_ key: Character, _ extra: EventModifiers, run: @escaping () -> Void) -> some View {
+        Button("", action: run)
+            .keyboardShortcut(KeyEquivalent(key), modifiers: extra.union(.command))
     }
 }
 

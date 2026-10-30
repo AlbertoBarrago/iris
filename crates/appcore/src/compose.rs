@@ -604,6 +604,32 @@ impl Draft {
             })
     }
 
+    /// Whether closing this draft would lose something written since it
+    /// was `opened`, which is when the composer asks to save it.
+    ///
+    /// The words are compared line by line without blank lines and
+    /// trailing spaces: the editor reshapes those on its own, and a person
+    /// who typed a word and deleted it again has nothing to keep. Signing
+    /// and encrypting are left out, because the composer turns them on by
+    /// itself when the recipients' keys allow it.
+    pub fn differs_from(&self, opened: &Draft) -> bool {
+        fn words(markdown: &str) -> Vec<&str> {
+            markdown
+                .lines()
+                .map(str::trim_end)
+                .filter(|line| !line.trim().is_empty())
+                .collect()
+        }
+        self.to != opened.to
+            || self.cc != opened.cc
+            || self.bcc != opened.bcc
+            || self.subject.trim() != opened.subject.trim()
+            || words(&self.markdown) != words(&opened.markdown)
+            || self.attachments != opened.attachments
+            || self.quoted != opened.quoted
+            || self.signature != opened.signature
+    }
+
     /// Takes the body of a message this composer reopens: the Markdown
     /// source from the text part, and the styled blocks from the HTML
     /// part, so a draft written in rich text comes back as it was
@@ -1174,6 +1200,13 @@ pub fn restyle_signature(markdown: &str, old: &str, new: &str) -> String {
         false => signature_block(new),
     };
     format!("{typed}{block}{gap}{tail}")
+}
+
+/// Whether `markdown` still carries `signature` as [`with_signature`] left
+/// it, above any quote.
+pub fn has_signature(markdown: &str, signature: &str) -> bool {
+    let quote = quote_starts_at(markdown).unwrap_or(markdown.len());
+    !signature.trim().is_empty() && signature_starts_at(&markdown[..quote], signature).is_some()
 }
 
 /// Lines to put in place of others: `removed` lines from `first` on go,
@@ -2194,6 +2227,59 @@ mod tests {
             restyle_signature("Hi Ann\n\nOn Monday, Ann wrote:\n> hi", "", "Dana"),
             "Hi Ann\n\n-- \nDana\n\nOn Monday, Ann wrote:\n> hi"
         );
+    }
+
+    #[test]
+    fn a_signature_is_found_only_while_it_is_left_as_it_was() {
+        let signed = with_signature("Hi Ann\n\nOn Monday, Ann wrote:\n> hi", "Dana");
+        assert!(has_signature(&signed, "Dana"));
+        let round_tripped = crate::richtext::RichBody::from_markdown(&signed).to_markdown();
+        assert!(has_signature(&round_tripped, "Dana"), "{round_tripped:?}");
+        assert!(!has_signature("Hi Ann", "Dana"));
+        assert!(!has_signature(&signed.replace("Dana", "D."), "Dana"));
+        assert!(!has_signature(&signed, ""));
+    }
+
+    #[test]
+    fn a_composer_left_as_it_opened_has_nothing_to_lose() {
+        let mut opened = Draft::new(1, me());
+        opened.markdown = with_signature("", "Dana");
+        let mut now = opened.clone();
+        // The editor gives the words back with its own blank lines and
+        // trailing spaces, and the composer may turn on encryption.
+        now.markdown = crate::richtext::RichBody::from_markdown(&opened.markdown).to_markdown() + "\n\n";
+        now.encrypt = true;
+        now.subject = " ".into();
+        assert!(!now.differs_from(&opened));
+        // A word typed and deleted again leaves nothing behind either.
+        now.markdown = format!("Hi\n{}", opened.markdown);
+        assert!(now.differs_from(&opened));
+        now.markdown = opened.markdown.clone();
+        assert!(!now.differs_from(&opened));
+    }
+
+    #[test]
+    fn anything_written_or_added_is_worth_keeping() {
+        let opened = Draft::new(1, me());
+        let changes: [fn(&mut Draft); 5] = [
+            |d| d.to = vec![addr(None, "ann@example.com")],
+            |d| d.bcc = vec![addr(None, "ann@example.com")],
+            |d| d.subject = "Lunch".into(),
+            |d| d.markdown = "Hi".into(),
+            |d| {
+                d.attachments.push(OutgoingAttachment {
+                    filename: "a.txt".into(),
+                    mime_type: "text/plain".into(),
+                    data: b"a".to_vec(),
+                    content_id: None,
+                })
+            },
+        ];
+        for change in changes {
+            let mut now = opened.clone();
+            change(&mut now);
+            assert!(now.differs_from(&opened), "{now:?}");
+        }
     }
 
     #[test]

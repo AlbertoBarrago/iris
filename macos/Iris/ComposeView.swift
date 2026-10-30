@@ -36,7 +36,15 @@ struct ComposeView: View {
     /// would lose anything.
     @State private var saved: ComposeDraft?
     @State private var senders: [Sender] = []
-    @State private var showCopies: Bool?
+    /// The Bcc row shows, picked in the header fields menu; until then it
+    /// shows when the draft has a Bcc.
+    @State private var showBcc: Bool?
+    /// Whether the sender's signature is in the message; `nil` when the
+    /// address has none, which hides the Signature menu.
+    @State private var signatureShown: Bool?
+    /// The formatting bar shows under the fields, as Mail's Aa button
+    /// leaves it. A per-person convenience, so the defaults keep it.
+    @AppStorage("composeShowsFormatBar") private var showsFormatBar = true
     @State private var showQuote = false
     /// Send Later's "Choose a Time…" is open.
     @State private var choosingTime = false
@@ -68,11 +76,15 @@ struct ComposeView: View {
         }
         .frame(minWidth: 560, minHeight: 420)
         .background(WindowCloseGuard(
-            mustAsk: { draft != nil && draft != saved },
+            mustAsk: { mustAskToSave },
             save: { await saveAndClose() },
             discard: { discard() }
         ))
         .navigationTitle(draft.map { $0.subject.isEmpty ? tr("New Message") : $0.subject } ?? tr("New Message"))
+        // Mail shows no title over its composer's toolbar; the window
+        // keeps it for the Window menu and Mission Control.
+        .toolbar(removing: .title)
+        .background { FormatShortcuts(controller: editor) }
         .task { await load() }
         .onAppear {
             editor.dropped = { urls, failed in attach(urls, failed: failed) }
@@ -120,157 +132,169 @@ struct ComposeView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .templatesChanged)) { _ in loadTemplates() }
         .onChange(of: recipientsKey) { sendProblem = nil }
+        .task(id: senderKey) { readSignature() }
         .task(id: recipientsKey) {
             // Asked once the typing pauses, as the GTK composer does.
             try? await Task.sleep(for: .milliseconds(400))
             guard !Task.isCancelled else { return }
             checkKeys()
         }
-        .toolbar {
-            ToolbarItem {
-                // Sign and Encrypt, as the GTK composer's More menu has
-                // them. Encrypt works only once every recipient has a key
-                // or certificate here, and says why not otherwise.
-                Menu {
-                    Toggle(tr("Sign"), isOn: Binding(
-                        get: { draft?.sign ?? false },
-                        set: { draft?.sign = $0 }
-                    ))
-                    .disabled(!(protection?.canSign ?? false))
-                    Toggle(tr("Encrypt"), isOn: Binding(
-                        get: { draft?.encrypt ?? false },
-                        set: { draft?.encrypt = $0 }
-                    ))
-                    .disabled(!(protection?.canEncrypt ?? false) && !(draft?.encrypt ?? false))
-                    if let note = protection?.encryptNote, !note.isEmpty {
-                        Divider()
-                        Text(note)
-                    }
-                } label: {
-                    Label(shieldWords, systemImage: shieldSymbol)
-                }
-                .help(shieldWords)
-                .disabled(draft == nil)
+        .toolbar { toolbar }
+    }
+
+    /// The composer's toolbar, laid out as Mail's: the writing tools, the
+    /// header fields, attaching, sending later, then Send on its own at
+    /// the far end.
+    @ToolbarContentBuilder
+    private var toolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigation) {
+            Button(tr("Formatting"), systemImage: "textformat") { showsFormatBar.toggle() }
+                .help(tr("Formatting"))
+                .accessibilityAddTraits(showsFormatBar ? .isSelected : [])
+            Button(tr("Emoji & Symbols"), systemImage: "face.smiling") {
+                focusWords()
+                NSApp.orderFrontCharacterPalette(nil)
             }
-            ToolbarItem {
-                Menu {
-                    if templates.isEmpty {
-                        Button(tr("No Templates Yet")) {}.disabled(true)
-                    }
-                    ForEach(templates, id: \.id) { template in
-                        Button(template.name) { insertTemplate(template.id) }
-                    }
+            .help(tr("Emoji & Symbols"))
+            Button(tr("Writing Tools"), systemImage: "apple.writing.tools") {
+                focusWords()
+                NSApp.sendAction(#selector(NSResponder.showWritingTools(_:)), to: nil, from: nil)
+            }
+            .help(tr("Writing Tools"))
+        }
+        ToolbarItem(placement: .navigation) {
+            Menu {
+                Toggle(tr("Bcc Field"), isOn: Binding(get: { bccVisible }, set: { showBcc = $0 }))
+            } label: {
+                Label(tr("Header Fields"), systemImage: "list.bullet.rectangle")
+            }
+            .help(tr("Header Fields"))
+            .disabled(draft == nil)
+        }
+        ToolbarItem(placement: .navigation) {
+            Menu {
+                Button(tr("Attach Files…")) { pickFiles() }
+                Divider()
+                if templates.isEmpty {
+                    Button(tr("No Templates Yet")) {}.disabled(true)
+                }
+                ForEach(templates, id: \.id) { template in
+                    Button(template.name) { insertTemplate(template.id) }
+                }
+                Divider()
+                Button(tr("Save as Template…")) {
+                    templateName = draft?.subject ?? ""
+                    savingTemplate = true
+                }
+            } label: {
+                Label(macKeys(tr("Attach Files (Ctrl+Shift+A)")), systemImage: "paperclip")
+            } primaryAction: {
+                pickFiles()
+            }
+            .help(macKeys(tr("Attach Files (Ctrl+Shift+A)")))
+            .keyboardShortcut("a", modifiers: [.command, .shift])
+            .disabled(draft == nil)
+        }
+        ToolbarItem(placement: .navigation) {
+            Menu {
+                ForEach(model.sendLaterTimes(), id: \.at) { time in
+                    Button(time.label) { sendLater(time.at) }
+                }
+                Divider()
+                Button(tr("Choose a Time…")) { if readyToSend() { choosingTime = true } }
+            } label: {
+                Label(tr("Send Later"), systemImage: "clock")
+            }
+            .help(tr("Send Later"))
+            .disabled(draft == nil)
+        }
+        ToolbarItem(placement: .navigation) {
+            // Sign and Encrypt, as the GTK composer's More menu has them.
+            // Encrypt works only once every recipient has a key or
+            // certificate here, and says why not otherwise.
+            Menu {
+                Toggle(tr("Sign"), isOn: Binding(
+                    get: { draft?.sign ?? false },
+                    set: { draft?.sign = $0 }
+                ))
+                .disabled(!(protection?.canSign ?? false))
+                Toggle(tr("Encrypt"), isOn: Binding(
+                    get: { draft?.encrypt ?? false },
+                    set: { draft?.encrypt = $0 }
+                ))
+                .disabled(!(protection?.canEncrypt ?? false) && !(draft?.encrypt ?? false))
+                if let note = protection?.encryptNote, !note.isEmpty {
                     Divider()
-                    Button(tr("Save as Template…")) {
-                        templateName = draft?.subject ?? ""
-                        savingTemplate = true
-                    }
-                } label: {
-                    Label(tr("Templates"), systemImage: "doc.text")
+                    Text(note)
                 }
-                .help(tr("Templates"))
-                .disabled(draft == nil)
+            } label: {
+                Label(shieldWords, systemImage: shieldSymbol)
             }
-            ToolbarItem {
-                Button(macKeys(tr("Attach Files (Ctrl+Shift+A)")), systemImage: "paperclip") { pickFiles() }
-                    .help(macKeys(tr("Attach Files (Ctrl+Shift+A)")))
-                    .keyboardShortcut("a", modifiers: [.command, .shift])
-                    .disabled(draft == nil)
-            }
-            ToolbarItem(placement: .primaryAction) {
-                // Send, with Send Later behind its arrow, as the GTK
-                // composer's split button.
-                Menu {
-                    ForEach(model.sendLaterTimes(), id: \.at) { time in
-                        Button(time.label) { sendLater(time.at) }
-                    }
-                    Divider()
-                    Button(tr("Choose a Time…")) { if readyToSend() { choosingTime = true } }
-                } label: {
-                    Label(tr("Send"), systemImage: "arrow.up")
-                } primaryAction: {
-                    send()
-                }
-                .menuIndicator(.visible)
+            .help(shieldWords)
+            .disabled(draft == nil)
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Button(tr("Send"), systemImage: "arrow.up") { send() }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.circle)
                 .help(tr("Send"))
-                .tint(.accentColor)
                 .keyboardShortcut(.return, modifiers: .command)
                 .disabled(draft == nil)
-            }
         }
     }
 
     private func form(_ draft: Binding<ComposeDraft>) -> some View {
         VStack(spacing: 0) {
-            Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 0) {
-                addressRow(tr("To")) {
-                    HStack(alignment: .top) {
-                        RecipientField(placeholder: tr("Recipients"), text: draft.to, account: draft.wrappedValue.accountId)
-                            .accessibilityLabel(tr("To"))
-                        Button(copiesVisible ? tr("Hide Cc/Bcc") : tr("Show Cc/Bcc")) {
-                            showCopies = !copiesVisible
-                        }
-                            .buttonStyle(.borderless)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                if let sendProblem {
-                    GridRow {
-                        Text("")
-                        Text(sendProblem)
-                            .font(.callout)
-                            .foregroundStyle(.red)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.bottom, 8)
-                    }
-                }
-                if copiesVisible {
-                    addressRow(tr("Cc")) {
-                        RecipientField(placeholder: "", text: draft.cc, account: draft.wrappedValue.accountId)
-                            .accessibilityLabel(tr("Cc"))
-                    }
-                    addressRow(tr("Bcc")) {
-                        RecipientField(placeholder: "", text: draft.bcc, account: draft.wrappedValue.accountId)
-                            .accessibilityLabel(tr("Bcc"))
-                    }
-                }
-                addressRow(tr("Subject")) {
-                    TextField("", text: draft.subject)
-                        .textFieldStyle(.plain)
-                        .accessibilityLabel(tr("Subject"))
-                }
-                addressRow(tr("From")) {
-                    if senders.count > 1 {
-                        Picker(tr("From"), selection: Binding(
-                            get: { "\(draft.wrappedValue.accountId)|\(draft.wrappedValue.from)" },
-                            set: { picked in
-                                let parts = picked.split(separator: "|", maxSplits: 1).map(String.init)
-                                if parts.count == 2, let account = Int64(parts[0]) {
-                                    draft.wrappedValue.accountId = account
-                                    draft.wrappedValue.from = parts[1]
-                                }
-                            }
-                        )) {
-                            ForEach(senders, id: \.email) { sender in
-                                Text(sender.name.map { "\($0) <\(sender.email)>" } ?? sender.email)
-                                    .tag("\(sender.accountId)|\(sender.email)")
-                            }
-                        }
-                        .labelsHidden()
-                        .pickerStyle(.menu)
-                        .fixedSize(horizontal: false, vertical: true)
-                    } else {
-                        Text(senders.first.map { sender in
-                            sender.name.map { "\($0) <\(sender.email)>" } ?? sender.email
-                        } ?? draft.wrappedValue.from)
-                        .textSelection(.enabled)
-                    }
-                    Spacer(minLength: 0)
+            addressRow(tr("To:")) {
+                RecipientField(placeholder: "", text: draft.to, account: draft.wrappedValue.accountId)
+                    .accessibilityLabel(tr("To"))
+            }
+            if let sendProblem {
+                Text(sendProblem)
+                    .font(.callout)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
+                Divider()
+            }
+            addressRow(tr("Cc:")) {
+                RecipientField(placeholder: "", text: draft.cc, account: draft.wrappedValue.accountId)
+                    .accessibilityLabel(tr("Cc"))
+            }
+            if bccVisible {
+                addressRow(tr("Bcc:")) {
+                    RecipientField(placeholder: "", text: draft.bcc, account: draft.wrappedValue.accountId)
+                        .accessibilityLabel(tr("Bcc"))
                 }
             }
-            .padding(.horizontal, 20)
-            FormatBar(controller: editor)
-            Divider()
+            addressRow(tr("Subject:")) {
+                TextField("", text: draft.subject)
+                    .textFieldStyle(.plain)
+                    .accessibilityLabel(tr("Subject"))
+            }
+            addressRow(tr("From:")) {
+                fromField(draft)
+                Spacer(minLength: 12)
+                if let shown = signatureShown {
+                    Text(tr("Signature:"))
+                        .foregroundStyle(.secondary)
+                    Picker(tr("Signature"), selection: Binding(get: { shown }, set: { showSignature($0) })) {
+                        Text(tr("None")).tag(false)
+                        Text(tr("Account Signature")).tag(true)
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .controlSize(.small)
+                    .fixedSize()
+                    .help(tr("Signature"))
+                }
+            }
+            if showsFormatBar {
+                FormatBar(controller: editor)
+                Divider()
+            }
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     RichEditor(
@@ -325,31 +349,105 @@ struct ComposeView: View {
                         SignaturePreview(html: forwarded).frame(height: 280)
                     }
                 }
-                .padding(14)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
             }
         }
     }
 
-    private var copiesVisible: Bool {
-        showCopies ?? (!(draft?.cc.isEmpty ?? true) || !(draft?.bcc.isEmpty ?? true))
+    /// Who the message comes from: a menu when there is more than one
+    /// address to send from, as Mail's From field.
+    @ViewBuilder
+    private func fromField(_ draft: Binding<ComposeDraft>) -> some View {
+        if senders.count > 1 {
+            Picker(tr("From"), selection: Binding(
+                get: { "\(draft.wrappedValue.accountId)|\(draft.wrappedValue.from)" },
+                set: { picked in
+                    let parts = picked.split(separator: "|", maxSplits: 1).map(String.init)
+                    if parts.count == 2, let account = Int64(parts[0]) {
+                        draft.wrappedValue.accountId = account
+                        draft.wrappedValue.from = parts[1]
+                    }
+                }
+            )) {
+                ForEach(senders, id: \.email) { sender in
+                    Text(senderName(sender)).tag("\(sender.accountId)|\(sender.email)")
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .buttonStyle(.borderless)
+            .fixedSize()
+        } else {
+            Text(senders.first.map(senderName) ?? draft.wrappedValue.from)
+                .textSelection(.enabled)
+        }
     }
 
+    private func senderName(_ sender: Sender) -> String {
+        sender.name.map { "\($0) <\(sender.email)>" } ?? sender.email
+    }
+
+    private var bccVisible: Bool {
+        showBcc ?? !(draft?.bcc.isEmpty ?? true)
+    }
+
+    /// One header line as Mail draws it: the label and its field on one
+    /// row, a hairline under it from edge to edge.
     @ViewBuilder
     private func addressRow<Content: View>(
         _ title: String, @ViewBuilder content: () -> Content
     ) -> some View {
-        GridRow(alignment: .firstTextBaseline) {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
             Text(title)
-                .font(.callout)
                 .foregroundStyle(.secondary)
-                .fixedSize(horizontal: true, vertical: false)
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                content()
-            }
-            .font(.callout)
-            .frame(maxWidth: .infinity, minHeight: 38, alignment: .leading)
+                .fixedSize()
+            content()
         }
-        Divider().gridCellColumns(2)
+        .frame(maxWidth: .infinity, minHeight: 39, alignment: .leading)
+        .padding(.horizontal, 14)
+        Divider()
+    }
+
+    /// Whether closing must ask to save: only when something was written
+    /// since the composer opened or last saved, which the core decides. A
+    /// message Undo Send brought back was never saved, so it always asks.
+    private var mustAskToSave: Bool {
+        guard let draft else { return false }
+        guard let saved else { return true }
+        return model.mail?.wouldLose(opened: saved, current: draft) ?? (draft != saved)
+    }
+
+    /// The address the message comes from, so the Signature menu reads
+    /// again when it changes.
+    private var senderKey: String {
+        guard let draft else { return "" }
+        return "\(draft.accountId)|\(draft.from)"
+    }
+
+    private func readSignature() {
+        guard let draft else { return }
+        signatureShown = model.mail?.signatureShown(composed: draft)
+    }
+
+    /// Puts the sender's signature in or takes it out, through the core,
+    /// and gives the words back to the editor as one step Undo takes back.
+    private func showSignature(_ shown: Bool) {
+        guard let mail = model.mail, let current = draft else { return }
+        do {
+            let signed = try mail.showSignature(composed: current, shown: shown)
+            draft = signed
+            editor.replaceAll(signed.rich ?? [])
+            signatureShown = shown
+        } catch {
+            model.say("\(error)")
+        }
+    }
+
+    /// Puts the cursor in the words, where emoji and Writing Tools act.
+    private func focusWords() {
+        guard let text = editor.text else { return }
+        text.window?.makeFirstResponder(text)
     }
 
     private func load() async {
